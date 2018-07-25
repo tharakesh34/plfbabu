@@ -44,8 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,26 +51,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SysNotificationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.SysNotification;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>SysNotification model</b> class.<br>
  * 
  */
-public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> implements SysNotificationDAO {
+public class SysNotificationDAOImpl extends SequenceDao<SysNotification> implements SysNotificationDAO {
 	private static Logger logger = Logger.getLogger(SysNotificationDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
 	public SysNotificationDAOImpl() {
@@ -108,7 +102,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		RowMapper<SysNotification> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SysNotification.class);
 
 		try{
-			sysNotification = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			sysNotification = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			sysNotification = null;
@@ -117,14 +111,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		return sysNotification;
 	}
 
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the SysNotification or SysNotification_Temp.
@@ -153,7 +140,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -181,7 +168,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		logger.debug("Entering");
 
 		if (sysNotification.getId() == Long.MIN_VALUE) {
-			sysNotification.setSysNotificationId(getNextidviewDAO().getNextId("SeqSysNotification"));
+			sysNotification.setSysNotificationId(getNextId("SeqSysNotification"));
 			logger.debug("Next ID ; " + sysNotification.getSysNotificationId());
 		}
 
@@ -195,7 +182,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return sysNotification.getSysNotificationId();
@@ -231,7 +218,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -257,7 +244,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
 
@@ -275,7 +262,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		logger.debug("Query: "+ sql.toString());
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -299,7 +286,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		logger.debug("Query: "+ sql.toString());
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		} finally {

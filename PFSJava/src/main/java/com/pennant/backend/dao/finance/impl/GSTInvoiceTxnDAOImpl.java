@@ -42,8 +42,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,46 +49,36 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.SeqGSTInvoice;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
  */
-public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> implements GSTInvoiceTxnDAO {
+public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements GSTInvoiceTxnDAO {
 	private static Logger logger = Logger.getLogger(GSTInvoiceTxnDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public GSTInvoiceTxnDAOImpl() {
 		super();
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	@Override
 	public long save(GSTInvoiceTxn gstInvoiceTxn) {
 		logger.debug(Literal.ENTERING);
 
 		if (gstInvoiceTxn.getInvoiceId() <= 0) {
-			gstInvoiceTxn.setInvoiceId(getNextidviewDAO().getNextId("Seq_Gst_Invoice_Txn"));
+			gstInvoiceTxn.setInvoiceId(getNextId("Seq_Gst_Invoice_Txn"));
 			logger.debug("get NextID:" + gstInvoiceTxn.getInvoiceId());
 		}
 
@@ -108,7 +96,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gstInvoiceTxn);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -116,7 +104,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		if (CollectionUtils.isNotEmpty(gstInvoiceTxn.getGstInvoiceTxnDetailsList())) {
 			for (GSTInvoiceTxnDetails invoiceDetail : gstInvoiceTxn.getGstInvoiceTxnDetailsList()) {
 				if (invoiceDetail.getId() <= 0) {
-					invoiceDetail.setId(getNextidviewDAO().getNextId("Seq_Gst_Invoice_Txn_Details"));
+					invoiceDetail.setId(getNextId("Seq_Gst_Invoice_Txn_Details"));
 					logger.debug("get NextID:" + invoiceDetail.getId());
 				}
 				invoiceDetail.setInvoiceId(gstInvoiceTxn.getInvoiceId());
@@ -130,7 +118,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 				paramSource = new BeanPropertySqlParameterSource(invoiceDetail);
 
 				try {
-					namedParameterJdbcTemplate.update(sqlQuery.toString(), paramSource);
+					jdbcTemplate.update(sqlQuery.toString(), paramSource);
 				} catch (DuplicateKeyException e) {
 					throw new ConcurrencyException(e);
 				}
@@ -154,7 +142,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gstInvoiceTxn);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -183,7 +171,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		RowMapper<GSTInvoiceTxn> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GSTInvoiceTxn.class);
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	@Override
@@ -200,7 +188,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(seqGSTInvoice);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -222,7 +210,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(seqGSTInvoice);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -250,7 +238,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 			parameter.addValue("GstStateCode", seqGSTInvoice.getGstStateCode());
 			parameter.addValue("TransactionType", seqGSTInvoice.getTransactionType());
 			
-			seqNo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, Long.class);
+			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), parameter, Long.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -278,7 +266,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		RowMapper<SeqGSTInvoice> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SeqGSTInvoice.class);
 
 		try {
-			seqGSTInvoice = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			seqGSTInvoice = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			seqGSTInvoice = null;

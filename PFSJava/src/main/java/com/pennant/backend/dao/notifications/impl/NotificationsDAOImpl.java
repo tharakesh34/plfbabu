@@ -47,8 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,28 +54,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.model.MailData;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>Notifications model</b> class.<br>
  * 
  */
-public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> implements NotificationsDAO {
+public class NotificationsDAOImpl extends SequenceDao<Notifications> implements NotificationsDAO {
+   private static Logger logger = Logger.getLogger(NotificationsDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(NotificationsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public NotificationsDAOImpl() {
 		super();
 	}
@@ -111,7 +105,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
 
 		try {
-			notifications = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			notifications = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			notifications = null;
@@ -150,22 +144,14 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
 
 		try {
-			notifications = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-			this.namedParameterJdbcTemplate.queryForMap(selectSql.toString(), beanParameters);
+			notifications = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			this.jdbcTemplate.queryForMap(selectSql.toString(), beanParameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			notifications = null;
 		}
 		logger.debug("Leaving");
 		return notifications;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -195,7 +181,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -224,7 +210,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		logger.debug("Entering");
 		
 		if (notifications.getId() == Long.MIN_VALUE) {
-			notifications.setId(getNextidviewDAO().getNextId("SeqNotifications"));
+			notifications.setId(getNextId("SeqNotifications"));
 			logger.debug("get NextID:" + notifications.getId());
 		}
 		
@@ -243,7 +229,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return notifications.getRuleId();
@@ -284,7 +270,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -322,7 +308,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
 		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
-		List<Notifications> notificationsList =  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<Notifications> notificationsList =  this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		logger.debug("Leaving");
 		return notificationsList;
@@ -346,7 +332,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
-		List<Notifications> notificationsList =  this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<Notifications> notificationsList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return notificationsList;
     }
@@ -368,7 +354,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
     }
 
 	
@@ -383,7 +369,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<MailData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailData.class);
-		List<MailData> mailData =  this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<MailData> mailData =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return mailData;
 		
@@ -395,7 +381,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		Map<String, Object> mergeData = new HashMap<String, Object>();
 		Map<String, String> paramMap = new HashMap<String, String>();
 		try {
-			mergeData = this.namedParameterJdbcTemplate.queryForMap(query ,paramMap);
+			mergeData = this.jdbcTemplate.queryForMap(query ,paramMap);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -409,7 +395,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		Object object = new Object();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(object);
 		try {
-			value = this.namedParameterJdbcTemplate.queryForObject(query, beanParameters, Integer.class);
+			value = this.jdbcTemplate.queryForObject(query, beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

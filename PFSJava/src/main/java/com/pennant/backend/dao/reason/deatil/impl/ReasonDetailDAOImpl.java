@@ -2,37 +2,31 @@ package com.pennant.backend.dao.reason.deatil.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.model.reason.details.ReasonHeader;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implements ReasonDetailDAO {
+public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements ReasonDetailDAO {
 	private static Logger logger = Logger.getLogger(ReasonDetailDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 
 	public ReasonDetailDAOImpl() {
 		super();
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	@Override
 	public long save(ReasonHeader reasonHeader) {
@@ -62,7 +56,6 @@ public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implem
 
 		try {
 			if (reasonHeader.getId() == Long.MIN_VALUE) {
-				reasonHeader.setId(getNextidviewDAO().getNextId("SeqReasonHeader"));
 			}
 			sql = new StringBuilder("Insert Into  ReasonHeader ");
 			sql.append(" (Id, Module, Reference, Remarks, Rolecode, Activity, ToUser, LogTime)");
@@ -70,7 +63,7 @@ public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implem
 			logger.debug("insertSql: " + sql.toString());
 
 			beanParameters = new BeanPropertySqlParameterSource(reasonHeader);
-			this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			this.jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -93,7 +86,7 @@ public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implem
 			logger.debug("insertSql: " + sql.toString());
 
 			beanParameters = SqlParameterSourceUtils.createBatch(detailsList.toArray());
-			this.namedParameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -127,7 +120,7 @@ public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implem
 		source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		try {
-			return this.namedParameterJdbcTemplate.query(sql.toString(),source, mapper);
+			return this.jdbcTemplate.query(sql.toString(),source, mapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -149,7 +142,7 @@ public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implem
 		selectSql.append(" Where reasonid=:reasonid");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;

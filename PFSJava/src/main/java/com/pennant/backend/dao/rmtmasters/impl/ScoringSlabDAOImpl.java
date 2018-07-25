@@ -46,37 +46,30 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ScoringSlab model</b> class.<br>
  * 
  */
 
-public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implements ScoringSlabDAO {
-
-	private static Logger logger = Logger.getLogger(ScoringSlabDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements ScoringSlabDAO {
+   private static Logger logger = Logger.getLogger(ScoringSlabDAOImpl.class);
 
 	public ScoringSlabDAOImpl() {
 		super();
@@ -144,7 +137,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		RowMapper<ScoringSlab> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
 		try{
-			scoringSlab = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString()
+			scoringSlab = this.jdbcTemplate.queryForObject(selectSql.toString()
 					, beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -176,7 +169,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		RowMapper<ScoringSlab> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
 		try{
-			scoringSlabList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			scoringSlabList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scoringSlabList = null;
@@ -185,14 +178,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		return scoringSlabList;
 	}
 
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the RMTScoringSlab or RMTScoringSlab_Temp.
@@ -218,7 +204,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -243,7 +229,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		deleteSql.append(" Where ScoreGroupId =:ScoreGroupId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	/**
@@ -264,7 +250,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 	public long save(ScoringSlab scoringSlab,String type) {
 		logger.debug("Entering");
 		if (scoringSlab.getId()==Long.MIN_VALUE){
-			scoringSlab.setId(getNextidviewDAO().getNextId("SeqRMTScoringSlab"));
+			scoringSlab.setId(getNextId("SeqRMTScoringSlab"));
 			logger.debug("get NextID:"+scoringSlab.getId());
 		}
 
@@ -280,7 +266,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return scoringSlab.getId();
 	}
@@ -317,7 +303,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

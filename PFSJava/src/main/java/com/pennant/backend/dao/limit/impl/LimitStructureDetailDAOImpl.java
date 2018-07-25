@@ -48,8 +48,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,11 +55,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitDetails;
@@ -70,18 +66,16 @@ import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>LimitStructureDetail model</b> class.<br>
  * 
  */
 
-public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> implements LimitStructureDetailDAO {
-
-	private static Logger logger = Logger.getLogger(LimitStructureDetailDAOImpl.class);
+public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> implements LimitStructureDetailDAO {
+     	private static Logger logger = Logger.getLogger(LimitStructureDetailDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitStructureDetail 
@@ -116,13 +110,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		return limitStructureDetail;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	/**
 	 * This method Deletes the Record from the LimitStructureDetails or LimitStructureDetails_Temp.
@@ -150,7 +138,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructureDetail);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -175,7 +163,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructureDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount < 0) {
 				throw new ConcurrencyException();
 			}
@@ -200,7 +188,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructureDetail);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -228,7 +216,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 			limitStructureDetail.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (limitStructureDetail.getId()==Long.MIN_VALUE){
-			limitStructureDetail.setId(getNextidviewDAO().getNextId("SeqLimitStructureDetails"));
+			limitStructureDetail.setId(getNextId("SeqLimitStructureDetails"));
 			logger.debug("get NextID:"+limitStructureDetail.getId());
 		}
 
@@ -242,7 +230,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructureDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitStructureDetail.getId();
 	}
@@ -282,7 +270,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructureDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -303,7 +291,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructureDetail);
-		 this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		 this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -337,7 +325,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		
 		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -362,7 +350,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -387,7 +375,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -429,7 +417,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
 		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
-			structureDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			structureDetail = null;
@@ -463,7 +451,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		int recordCount = 0;
 		try {
 			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		}
@@ -499,7 +487,7 @@ logger.debug("Entering");
 		
 		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
-			structureList= this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			structureList= this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -548,7 +536,7 @@ logger.debug("Entering");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
 		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
-			structureDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			structureDetail = null;

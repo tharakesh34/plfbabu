@@ -45,19 +45,15 @@ package com.pennant.backend.dao.reports.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -66,20 +62,18 @@ import com.pennant.backend.model.reports.ReportsMonthEndConfiguration;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ReportConfiguration model</b> class.<br>
  * 
  */
 
-public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfiguration> implements ReportConfigurationDAO {
+public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration> implements ReportConfigurationDAO {
+    private static Logger logger = Logger.getLogger(ReportConfigurationDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(ReportConfigurationDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	public ReportConfigurationDAOImpl() {
+public ReportConfigurationDAOImpl() {
 		super();
 	}
 	
@@ -144,7 +138,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		RowMapper<ReportConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReportConfiguration.class);
 
 		try{
-			reportConfiguration = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			reportConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			reportConfiguration = null;
@@ -153,13 +147,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		return reportConfiguration;
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	/**
 	 * This method Deletes the Record from the ReportConfiguration or ReportConfiguration_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -185,7 +173,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -212,7 +200,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		logger.debug("Entering ");
 
 		if (reportConfiguration.getId()==Long.MIN_VALUE){
-			reportConfiguration.setId(getNextidviewDAO().getNextId("SeqReportConfiguration"));
+			reportConfiguration.setId(getNextId("SeqReportConfiguration"));
 			logger.debug("get NextID:"+reportConfiguration.getId());
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into ReportConfiguration" );
@@ -230,7 +218,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return reportConfiguration.getId();
@@ -271,7 +259,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -293,7 +281,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
 
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
     }
 	
 	/**
@@ -316,7 +304,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
 
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
     }
 	
 }

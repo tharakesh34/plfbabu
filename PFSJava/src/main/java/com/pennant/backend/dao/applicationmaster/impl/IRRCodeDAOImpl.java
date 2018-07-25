@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,15 +49,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRCodeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.IRRCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,10 +65,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>IRRCode</code> with set of CRUD
  * operations.
  */
-public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCodeDAO {
+public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 	private static Logger logger = Logger.getLogger(IRRCodeDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public IRRCodeDAOImpl() {
 		super();
@@ -99,7 +95,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 		RowMapper<IRRCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRCode.class);
 
 		try {
-			iRRCode = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			iRRCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			iRRCode = null;
@@ -134,7 +130,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 		paramSource.addValue("iRRID", iRRID);
 		paramSource.addValue("iRRCode", iRRCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -160,7 +156,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 
 		// Get the identity sequence number.
 		if (iRRCode.getId() <= 0) {
-			iRRCode.setId(getNextidviewDAO().getNextId("SeqIRRCodes"));
+			iRRCode.setId(getNextId("SeqIRRCodes"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -168,7 +164,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRCode);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -193,7 +189,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -205,15 +201,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	@Override
 	public void update(IRRCode entity, TableType tableType) {
@@ -232,7 +220,7 @@ public class IRRCodeDAOImpl extends BasisNextidDaoImpl<IRRCode> implements IRRCo
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {

@@ -42,34 +42,29 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.MMAgreementDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>MMAgreement model</b> class.<br>
  */
-public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implements MMAgreementDAO {
+public class MMAgreementDAOImpl extends SequenceDao<MMAgreement> implements MMAgreementDAO {
 	private static Logger logger = Logger.getLogger(MMAgreementDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public MMAgreementDAOImpl() {
 		super();
@@ -146,7 +141,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 				.newInstance(MMAgreement.class);
 		
 		try{
-			aMMAgreement = this.namedParameterJdbcTemplate.queryForObject(
+			aMMAgreement = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -193,7 +188,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 				.newInstance(MMAgreement.class);
 		
 		try{
-			aMMAgreement = this.namedParameterJdbcTemplate.queryForObject(
+			aMMAgreement = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -203,12 +198,6 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 		return aMMAgreement;
 	}
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * This method Deletes the Record from the MMAgreement or
@@ -234,7 +223,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aMMAgreement);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(
+			recordCount = this.jdbcTemplate.update(
 					deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -265,7 +254,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 	public long save(MMAgreement aMMAgreement,String type) {
 		logger.debug("Entering ");
 		if (aMMAgreement.getId()==Long.MIN_VALUE){
-			aMMAgreement.setId(getNextidviewDAO().getNextId("SeqMMAgreements"));
+			aMMAgreement.setId(getNextId("SeqMMAgreements"));
 			logger.debug("get NextID:"+aMMAgreement.getId());
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into MMAgreements" );
@@ -290,7 +279,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 		insertSql.append(" :Dealer,:AssetDesc,:SharePerc,:AssetValue)" );
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aMMAgreement);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return aMMAgreement.getId();
 		
@@ -334,7 +323,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aMMAgreement);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

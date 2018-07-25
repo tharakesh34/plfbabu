@@ -45,36 +45,31 @@ package com.pennant.backend.dao.financemanagement.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.FinSuspHoldDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FinSuspHold model</b> class.<br>
  * 
  */
-public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  implements FinSuspHoldDAO{
+public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements FinSuspHoldDAO{
+   private static Logger logger = Logger.getLogger(FinSuspHoldDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(FinSuspHoldDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 
 	public FinSuspHoldDAOImpl() {
 		super();
@@ -144,7 +139,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
-			finSuspHold = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finSuspHold = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finSuspHold = null;
@@ -153,13 +148,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		return finSuspHold;
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the FinSuspHold or
@@ -188,7 +177,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -217,7 +206,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		logger.debug("Entering");
 		
 		if (finSuspHold.getId() == Long.MIN_VALUE) {
-			finSuspHold.setSuspHoldID(getNextidviewDAO().getNextId("SeqFinSuspHold"));
+			finSuspHold.setSuspHoldID(getNextId("SeqFinSuspHold"));
 		}
 		
 		StringBuilder insertSql = new StringBuilder();
@@ -231,7 +220,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return finSuspHold.getId();
@@ -270,7 +259,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -305,7 +294,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
-			finSuspHoldTemp = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finSuspHoldTemp = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finSuspHoldTemp = null;
@@ -339,7 +328,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
-			List<FinSuspHold> finSuspHoldTemp = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			List<FinSuspHold> finSuspHoldTemp = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 			if (!finSuspHoldTemp.isEmpty()) {
 				return true;
 			}

@@ -55,21 +55,18 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleManufacturerDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>VehicleManufacturer model</b> class.<br>
  */
-public class VehicleManufacturerDAOImpl extends
-		BasisNextidDaoImpl<VehicleManufacturer> implements VehicleManufacturerDAO {
+public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer> implements VehicleManufacturerDAO {
 	private static Logger logger = Logger.getLogger(VehicleManufacturerDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	public VehicleManufacturerDAOImpl() {
 		super();
 	}
@@ -102,7 +99,7 @@ public class VehicleManufacturerDAOImpl extends
 				.newInstance(VehicleManufacturer.class);
 		
 		try{
-			vehicleManufacturer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			vehicleManufacturer = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -111,15 +108,7 @@ public class VehicleManufacturerDAOImpl extends
 		logger.debug("Leaving");
 		return vehicleManufacturer;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the AMTVehicleManufacturer or
 	 * AMTVehicleManufacturer_Temp. if Record not deleted then throws
@@ -144,7 +133,7 @@ public class VehicleManufacturerDAOImpl extends
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -173,7 +162,7 @@ public class VehicleManufacturerDAOImpl extends
 	public long save(VehicleManufacturer vehicleManufacturer,String type) {
 		logger.debug("Entering");
 		if (vehicleManufacturer.getId()==Long.MIN_VALUE){
-			vehicleManufacturer.setId(getNextidviewDAO().getNextId("SeqAMTVehicleManufacturer"));
+			vehicleManufacturer.setId(getNextId("SeqAMTVehicleManufacturer"));
 			logger.debug("get NextID:"+vehicleManufacturer.getId());
 		}
 		
@@ -188,7 +177,7 @@ public class VehicleManufacturerDAOImpl extends
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vehicleManufacturer.getId();
 	}
@@ -228,7 +217,7 @@ public class VehicleManufacturerDAOImpl extends
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

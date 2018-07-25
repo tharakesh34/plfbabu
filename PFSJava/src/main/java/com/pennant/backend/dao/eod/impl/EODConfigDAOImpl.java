@@ -44,23 +44,20 @@ package com.pennant.backend.dao.eod.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,10 +65,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>EODConfig</code> with set of CRUD operations.
  */
-public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements EODConfigDAO {
-	private static Logger				logger	= Logger.getLogger(EODConfigDAOImpl.class);
+public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfigDAO {
+	private static Logger	logger	= Logger.getLogger(EODConfigDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public EODConfigDAOImpl() {
 		super();
@@ -100,7 +96,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		RowMapper<EODConfig> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EODConfig.class);
 
 		try {
-			eODConfig = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			eODConfig = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			eODConfig = null;
@@ -124,7 +120,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (eODConfig.getEodConfigId() <= 0) {
-			eODConfig.setEodConfigId(getNextidviewDAO().getNextId("SeqEodConfig"));
+			eODConfig.setEodConfigId(getNextId("SeqEodConfig"));
 		}
 		
 		// Execute the SQL, binding the arguments.
@@ -132,7 +128,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -159,7 +155,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -185,7 +181,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -217,7 +213,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
 		RowMapper<EODConfig> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EODConfig.class);
 
-		List<EODConfig> list = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		List<EODConfig> list = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return list ;
 	}	
@@ -236,7 +232,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -248,14 +244,5 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 	}
 	
 	
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+
 }	

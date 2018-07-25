@@ -47,8 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,29 +54,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>Promotion model</b> class.<br>
  * 
  */
 
-public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements PromotionDAO {
+public class PromotionDAOImpl extends SequenceDao<Promotion> implements PromotionDAO {
+   private static Logger logger = Logger.getLogger(PromotionDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(PromotionDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	public PromotionDAOImpl() {
+   public PromotionDAOImpl() {
 		super();
 	}
 
@@ -119,7 +112,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
 
 		try {
-			promotion = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			promotion = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			promotion = null;
 		}
@@ -156,7 +149,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deletSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deletSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -188,7 +181,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		StringBuilder sql = new StringBuilder();
 		
 		if (promotion.getPromotionId() == Long.MIN_VALUE) {
-			promotion.setPromotionId(getNextidviewDAO().getNextId("SeqPromotions"));
+			promotion.setPromotionId(getNextId("SeqPromotions"));
 			logger.debug("get NextID:" + promotion.getPromotionId());
 		}
 		
@@ -209,7 +202,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		
@@ -256,7 +249,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -281,7 +274,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		source.addValue("PromotionCode", promotionCode);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -291,14 +284,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		return count;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+
 	/**
 	 * Fetch record count of product
 	 * 
@@ -320,7 +306,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
 		try {
-			financeTypeCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+			financeTypeCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			financeTypeCount = 0;
@@ -351,7 +337,7 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
 		List<Promotion> PromotionList = new ArrayList<>();
 		try {
-			PromotionList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			PromotionList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			return Collections.emptyList();
@@ -376,6 +362,6 @@ public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements P
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }

@@ -42,20 +42,16 @@
 */
 package com.pennant.backend.dao.others.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.others.JVPosting;
@@ -63,17 +59,16 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>JVPosting model</b> class.<br>
  * 
  */
-public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements JVPostingDAO {
+public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostingDAO {
 	private static Logger logger = Logger.getLogger(JVPostingDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public JVPostingDAOImpl() {
 		super();
 	}
@@ -144,7 +139,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		        .newInstance(JVPosting.class);
 
 		try {
-			jVPosting = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -170,7 +165,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 
 		logger.debug("Leaving");
 		try {
-			jVPosting = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -180,15 +175,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		return jVPosting;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the JVPostings or JVPostings_Temp. if Record not deleted then throws
@@ -214,7 +201,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -243,7 +230,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 	public long save(JVPosting jVPosting, String type) {
 		logger.debug("Entering");
 		if (jVPosting.isNewRecord() && jVPosting.getBatchReference() == 0) {
-			jVPosting.setBatchReference(getNextidviewDAO().getNextId("SeqJVpostings"));
+			jVPosting.setBatchReference(getNextId("SeqJVpostings"));
 		}
 		logger.debug("get NextID:" + jVPosting.getId());
 
@@ -261,7 +248,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return jVPosting.getBatchReference();
 	}
@@ -299,7 +286,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -322,7 +309,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -342,7 +329,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -362,7 +349,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -388,7 +375,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jvPosting);
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -409,7 +396,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jvPosting);
 		try {
-			ref = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			ref = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			ref = 0;

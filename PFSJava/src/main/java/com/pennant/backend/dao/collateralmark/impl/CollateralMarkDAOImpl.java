@@ -3,29 +3,23 @@ package com.pennant.backend.dao.collateralmark.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateralmark.CollateralMarkDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.collateral.FinCollateralMark;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark> implements CollateralMarkDAO {
+public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implements CollateralMarkDAO {
+   private static Logger logger = Logger.getLogger(CollateralMarkDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(CollateralMarkDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public CollateralMarkDAOImpl() {
 		super();
 	}
@@ -35,7 +29,7 @@ public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark>
 		logger.debug("Entering ");
 		
 		if(finCollateralMark.getId()== 0 ||finCollateralMark.getId()==Long.MIN_VALUE){
-			finCollateralMark.setFinCollateralId(getNextidviewDAO().getNextId("SeqCollateralMarkLog"));	
+			finCollateralMark.setFinCollateralId(getNextId("SeqCollateralMarkLog"));	
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into CollateralMarkLog" );
@@ -48,7 +42,7 @@ public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollateralMark);
 		logger.debug("Leaving ");
 		try {
-			return this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			return this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch(DataAccessException e) {
 			logger.error("Exception: ", e);
 			return 0;
@@ -81,7 +75,7 @@ public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark>
 		RowMapper<FinCollateralMark> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCollateralMark.class);
 
 		try {
-			finCollateralMark = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			finCollateralMark = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finCollateralMark = null;
@@ -112,7 +106,7 @@ public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark>
 		RowMapper<FinCollateralMark> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCollateralMark.class);
 
 		try {
-			finCollateralMark = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			finCollateralMark = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finCollateralMark = null;
@@ -142,7 +136,7 @@ public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark>
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			finCollateralList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, FinCollateralMark.class);
+			finCollateralList = this.jdbcTemplate.queryForList(selectSql.toString(), source, FinCollateralMark.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finCollateralList = null;
@@ -152,10 +146,5 @@ public class CollateralMarkDAOImpl extends BasisNextidDaoImpl<FinCollateralMark>
 		return finCollateralList;
     }
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+
 }

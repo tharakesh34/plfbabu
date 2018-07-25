@@ -42,34 +42,29 @@
 */
 package com.pennant.backend.dao.amtmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.AuthorizationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>Authorization model</b> class.<br>
  * 
  */
-public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> implements AuthorizationDAO {
+public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements AuthorizationDAO {
 	private static Logger logger = Logger.getLogger(AuthorizationDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	public AuthorizationDAOImpl() {
 		super();
 	}
@@ -100,7 +95,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 		RowMapper<Authorization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Authorization.class);
 		
 		try{
-			authorization = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			authorization = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			authorization = null;
@@ -128,7 +123,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 		RowMapper<Authorization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Authorization.class);
 
 		try {
-			authorization = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			authorization = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			authorization = null;
@@ -137,14 +132,6 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 		return authorization;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * This method Deletes the Record from the AMTAuthorization or AMTAuthorization_Temp.
@@ -169,7 +156,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorization);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {                                      
 				throw new ConcurrencyException();
 			}
@@ -197,7 +184,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 	public long save(Authorization authorization,String type) {
 		logger.debug("Entering");
 		if (authorization.getId()==Long.MIN_VALUE){
-			authorization.setId(getNextidviewDAO().getNextId("SeqAMTAuthorization"));
+			authorization.setId(getNextId("SeqAMTAuthorization"));
 			logger.debug("get NextID:"+authorization.getId());
 		}
 		
@@ -211,7 +198,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorization);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return authorization.getId();
 	}
@@ -245,7 +232,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorization);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

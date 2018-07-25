@@ -2,35 +2,26 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.DealerResponseDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.DealerResponse;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> implements
-        DealerResponseDAO {
+public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implements   DealerResponseDAO {
+ private static Logger logger = Logger.getLogger(DealerResponseDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(DealerResponseDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public DealerResponseDAOImpl() {
 		super();
 	}
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * get DealerResponse List based on finance reference
@@ -55,7 +46,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 		RowMapper<DealerResponse> typeRowMapper = ParameterizedBeanPropertyRowMapper
 		        .newInstance(DealerResponse.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -83,7 +74,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 		RowMapper<DealerResponse> typeRowMapper = ParameterizedBeanPropertyRowMapper
 		        .newInstance(DealerResponse.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 	/**
@@ -104,7 +95,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
 	}
 
 	@Override
@@ -116,7 +107,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -132,7 +123,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -144,7 +135,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 		logger.debug("Entering");
 
 		if (dealerResponse.getDealerResponseId() == Long.MIN_VALUE) {
-			dealerResponse.setDealerResponseId(getNextidviewDAO().getNextId("SeqDealerResponse"));
+			dealerResponse.setDealerResponseId(getNextId("SeqDealerResponse"));
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into DealerResponse");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -158,7 +149,7 @@ public class DealerResponseDAOImpl extends BasisNextidDaoImpl<DealerResponse> im
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return dealerResponse.getId();
 	}

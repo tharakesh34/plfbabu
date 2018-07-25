@@ -44,37 +44,29 @@ package com.pennant.backend.dao.amtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>VehicleDealer model</b> class.<br>
  */
-public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> implements VehicleDealerDAO {
+public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements VehicleDealerDAO {
 	private static Logger logger = Logger.getLogger(VehicleDealerDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private JdbcTemplate jdbcTemplate;
 
 	public VehicleDealerDAOImpl() {
 		super();
@@ -84,7 +76,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 	 * Fetch the Record  Vehicle Dealer details by key field
 	 * 
 	 * @param id (int)
-	 * @param  type (String)
+	 * @param  type (String)s
 	 * 			""/_Temp/_View          
 	 * @return VehicleDealer
 	 */
@@ -113,24 +105,14 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(VehicleDealer.class);
 
-		try{
-			vehicleDealer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vehicleDealer = null;
 		}
 		logger.debug("Leaving");
 		return vehicleDealer;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	/**
@@ -157,7 +139,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(
+			recordCount = this.jdbcTemplate.update(
 					deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -187,7 +169,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 	public long save(VehicleDealer vehicleDealer,String type) {
 		logger.debug("Entering");
 		if (vehicleDealer.getId()==Long.MIN_VALUE){
-			vehicleDealer.setId(getNextidviewDAO().getNextId("SeqAMTVehicleDealer"));
+			vehicleDealer.setId(getNextId("SeqAMTVehicleDealer"));
 			logger.debug("get NextID:"+vehicleDealer.getId());
 		}
 
@@ -207,7 +189,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vehicleDealer.getId();
 	}
@@ -249,7 +231,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		}
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -263,10 +245,12 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		logger.debug(" Inside searchname");
 		boolean status = false;
 		try{
-			String searchQuery="select count(dealerName) from AMTVehicleDealer_View where dealerName=?";
+			String searchQuery="select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName";
 			
-			@SuppressWarnings("deprecation")
-            int count =jdbcTemplate.queryForInt(searchQuery, new Object []{dealerName});
+			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+			parameterSource.addValue("dealerName", dealerName);
+			
+            int count =jdbcTemplate.queryForObject(searchQuery, parameterSource, Integer.class);
 			logger.debug(" dealer name  : "+count);
 			if(count != 0){
 				status = true;
@@ -304,7 +288,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 	}
 
 	@Override
@@ -322,7 +306,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			 count= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
+			 count= this.jdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -342,7 +326,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 			RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
 					.newInstance(VehicleDealer.class);
 			logger.debug(Literal.LEAVING);
-			return this.namedParameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
 
 		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -368,7 +352,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 }

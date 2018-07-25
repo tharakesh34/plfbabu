@@ -46,8 +46,6 @@ package com.pennant.backend.dao.inventorysettlement.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,12 +53,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.inventorysettlement.InventorySettlementDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.inventorysettlement.InventorySettlement;
@@ -69,19 +65,17 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>InventorySettlement model</b> class.<br>
  * 
  */
 
-public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySettlement> implements InventorySettlementDAO {
+public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement> implements InventorySettlementDAO {
+   private static Logger	logger	= Logger.getLogger(InventorySettlementDAOImpl.class);
 
-	private static Logger				logger	= Logger.getLogger(InventorySettlementDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	/**
 	 * This method set the Work Flow id based on the module name and return the
 	 * new InventorySettlement
@@ -147,7 +141,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		RowMapper<InventorySettlement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InventorySettlement.class);
 
 		try {
-			inventorySettlement = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			inventorySettlement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			inventorySettlement = null;
@@ -156,15 +150,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		return inventorySettlement;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the InventorySettlement or
@@ -191,7 +177,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(inventorySettlement);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -221,7 +207,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 	public long save(InventorySettlement inventorySettlement, String type) {
 		logger.debug("Entering");
 		if (inventorySettlement.getId() == Long.MIN_VALUE) {
-			inventorySettlement.setId(getNextidviewDAO().getNextId("SeqInventorySettlement"));
+			inventorySettlement.setId(getNextId("SeqInventorySettlement"));
 			logger.debug("get NextID:" + inventorySettlement.getId());
 		}
 
@@ -235,7 +221,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(inventorySettlement);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return inventorySettlement.getId();
 	}
@@ -272,7 +258,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(inventorySettlement);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -304,7 +290,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		RowMapper<InventorySettlementDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InventorySettlementDetails.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -319,7 +305,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(details.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

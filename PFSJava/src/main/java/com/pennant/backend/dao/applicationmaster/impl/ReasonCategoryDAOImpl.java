@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,15 +49,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.applicationmaster.ReasonCategoryDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCategory;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -67,10 +64,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>ReasonCategory</code> with set of CRUD operations.
  */
-public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> implements ReasonCategoryDAO {
-	private static Logger				logger	= Logger.getLogger(ReasonCategoryDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class ReasonCategoryDAOImpl extends SequenceDao<ReasonCategory> implements ReasonCategoryDAO {
+	private static Logger	logger	= Logger.getLogger(ReasonCategoryDAOImpl.class);
 
 	public ReasonCategoryDAOImpl() {
 		super();
@@ -99,7 +94,7 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		RowMapper<ReasonCategory> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCategory.class);
 
 		try {
-			reasonCategory = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			reasonCategory = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			reasonCategory = null;
@@ -134,7 +129,7 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("code", code);
 		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -160,7 +155,7 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		
 		// Get the identity sequence number.
 		if (reasonCategory.getId() <= 0) {
-			reasonCategory.setId(getNextidviewDAO().getNextId("SeqReasonCategory"));
+			reasonCategory.setId(getNextId("SeqReasonCategory"));
 		}
 		
 		// Execute the SQL, binding the arguments.
@@ -168,7 +163,7 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCategory);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -195,7 +190,7 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCategory);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -221,7 +216,7 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -232,16 +227,5 @@ public class ReasonCategoryDAOImpl extends BasisNextidDaoImpl<ReasonCategory> im
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+	}	
 }	

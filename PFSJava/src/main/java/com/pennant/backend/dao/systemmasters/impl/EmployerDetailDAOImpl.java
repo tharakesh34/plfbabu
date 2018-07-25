@@ -44,8 +44,6 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -71,12 +68,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 
-public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> implements EmployerDetailDAO {
-
-	private static Logger logger = Logger.getLogger(EmployerDetailDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implements EmployerDetailDAO {
+   private static Logger logger = Logger.getLogger(EmployerDetailDAOImpl.class);
 	
 	public EmployerDetailDAOImpl() {
 		super();
@@ -111,7 +104,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		RowMapper<EmployerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmployerDetail.class);
 		
 		try{
-			employerDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			employerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			employerDetail = null;
@@ -120,14 +113,6 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		return employerDetail;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * This method Deletes the Record from the EmployerDetail or EmployerDetail_Temp.
@@ -153,7 +138,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -184,7 +169,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 	public String save(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		if (employerDetail.getId()==Long.MIN_VALUE){
-			employerDetail.setId(getNextidviewDAO().getNextId("SeqEmployerDetail"));
+			employerDetail.setId(getNextId("SeqEmployerDetail"));
 			logger.debug("get NextID:"+employerDetail.getId());
 		}
 		
@@ -199,7 +184,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -235,7 +220,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		logger.trace(Literal.SQL + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();

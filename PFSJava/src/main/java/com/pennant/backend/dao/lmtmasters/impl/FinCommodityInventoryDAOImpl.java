@@ -2,39 +2,32 @@ package com.pennant.backend.dao.lmtmasters.impl;
 
 import java.math.BigDecimal;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.lmtmasters.FinCommodityInventoryDAO;
 import com.pennant.backend.model.commodity.FinCommodityInventory;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodityInventory> 
-										  implements FinCommodityInventoryDAO {
-
-	private static Logger logger = Logger.getLogger(FinCommodityInventoryDAOImpl.class);
+public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInventory>   implements FinCommodityInventoryDAO {
+   private static Logger logger = Logger.getLogger(FinCommodityInventoryDAOImpl.class);
 
 	public FinCommodityInventoryDAOImpl() {
 		super();
 	}
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	@Override
 	public long save(FinCommodityInventory finCommodityInventory,String type) {
 		logger.debug("Entering");
 		
 		if(finCommodityInventory.getId()== 0 || finCommodityInventory.getId()==Long.MIN_VALUE){
-			finCommodityInventory.setFinInventoryID(getNextidviewDAO().getNextId("SeqFinCommodityInventory"));	
+			finCommodityInventory.setFinInventoryID(getNextId("SeqFinCommodityInventory"));	
 		}
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into FinCommodityInventory");
@@ -49,7 +42,7 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommodityInventory);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finCommodityInventory.getFinInventoryID();
 	}
@@ -69,7 +62,7 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommodityInventory);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -100,7 +93,7 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCommodityInventory.class);
 		
 		try{
-			finCommodityInventory = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			finCommodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finCommodityInventory = null;
@@ -129,7 +122,7 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommInventory);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
     }
 	
 	/**
@@ -151,7 +144,7 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommInventory);
 
-		BigDecimal totQuantity = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+		BigDecimal totQuantity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 		if(totQuantity == null){
 			totQuantity = BigDecimal.ZERO;
 		}
@@ -159,13 +152,6 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 		return totQuantity;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 }

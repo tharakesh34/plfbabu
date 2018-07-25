@@ -5,20 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditReviewSummaryDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
@@ -26,11 +22,11 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditReviewSummary> implements CreditReviewSummaryDAO {
+public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSummary> implements CreditReviewSummaryDAO {
 	private static Logger logger = Logger.getLogger(CreditReviewSummaryDAOImpl.class);
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
 	
 	public CreditReviewSummaryDAOImpl() {
 		super();
@@ -97,7 +93,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		RowMapper<FinCreditReviewSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewSummary.class);
 
 		try{
-			creditReviewSummary = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			creditReviewSummary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			creditReviewSummary = null;
@@ -106,15 +102,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		return creditReviewSummary;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	/**
 	 * Fetch the Record  FinCreditReviewSummary details by key field
 	 * 
@@ -147,7 +135,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		RowMapper<FinCreditReviewSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				FinCreditReviewSummary.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 	/**
@@ -174,7 +162,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -199,7 +187,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -226,7 +214,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		logger.debug("Entering");
 		
 		if (creditReviewSummary.getSummaryId() == Long.MIN_VALUE){
-			creditReviewSummary.setSummaryId(getNextidviewDAO().getNextId("SeqFinCreditReviewSummary"));
+			creditReviewSummary.setSummaryId(getNextId("SeqFinCreditReviewSummary"));
 		}
 		
 		logger.debug("get NextID:"+creditReviewSummary.getSummaryId());
@@ -241,7 +229,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return creditReviewSummary.getId();
 	}
@@ -274,7 +262,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -302,7 +290,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 				FinCreditReviewSummary.class);
 		logger.debug("Leaving");
 		try{
-			listOfCreditReviewSummary = this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);	
+			listOfCreditReviewSummary = this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			listOfCreditReviewSummary = null;
@@ -337,7 +325,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
 
 		try{
-			creditReviewDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			creditReviewDetails = null;
@@ -368,7 +356,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		        .newInstance(FinCreditReviewSummary.class);
 
 		try {
-			listOfCreditReviewSummary = this.namedParameterJdbcTemplate.query(sql.toString(),
+			listOfCreditReviewSummary = this.jdbcTemplate.query(sql.toString(),
 			        namedParameterMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -410,7 +398,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 				FinCreditReviewSummary.class);
 		logger.debug("Leaving");
 		try{
-			listOfCreditReviewSummary = this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);	
+			listOfCreditReviewSummary = this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			listOfCreditReviewSummary = null;
@@ -464,7 +452,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 				FinCreditReviewSummary.class);
 		logger.debug("Leaving");
 		try{
-			listOfCreditReviewSummary = this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);	
+			listOfCreditReviewSummary = this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			listOfCreditReviewSummary = null;
@@ -487,7 +475,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				Currency.class);
 		try{
-			currency =  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper).get(0);
+			currency =  this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper).get(0);
 		}catch (EmptyResultDataAccessException e) {
             logger.error("Exception: ", e);
 		}

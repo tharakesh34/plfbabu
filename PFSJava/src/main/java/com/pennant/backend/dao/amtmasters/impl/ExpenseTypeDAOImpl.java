@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -51,15 +49,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.ExpenseTypeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,12 +65,10 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>ExpenseType model</b> class.<br>
  * 
  */
-public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implements ExpenseTypeDAO {
-	private static Logger				logger	= Logger.getLogger(ExpenseTypeDAOImpl.class);
+public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements ExpenseTypeDAO {
+	private static Logger	logger	= Logger.getLogger(ExpenseTypeDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	public ExpenseTypeDAOImpl() {
 		super();
 	}
@@ -106,7 +101,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		RowMapper<ExpenseType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExpenseType.class);
 
 		try {
-			expenseType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			expenseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -116,14 +111,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		return expenseType;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the AMTExpenseType or AMTExpenseType_Temp. if Record not deleted then throws
@@ -149,7 +137,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseType);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -178,7 +166,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 	public long save(ExpenseType expenseType, String type) {
 		logger.debug("Entering");
 		if (expenseType.getId() == Long.MIN_VALUE) {
-			expenseType.setId(getNextidviewDAO().getNextId("SeqAMTExpenseType"));
+			expenseType.setId(getNextId("SeqAMTExpenseType"));
 			logger.debug("get NextID:" + expenseType.getId());
 		}
 
@@ -193,7 +181,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseType);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return expenseType.getId();
@@ -233,7 +221,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		}
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -266,7 +254,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		paramSource.addValue("ExpenseTypeId", expenseTypeId);
 		paramSource.addValue("ExpenseTypeCode", expenseTypeCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -292,7 +280,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		source.addValue("ExpenseTypeCode", expTypeCode);
 		
 		try {
-			finExpenseId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			finExpenseId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			finExpenseId = Long.MIN_VALUE;
 		}

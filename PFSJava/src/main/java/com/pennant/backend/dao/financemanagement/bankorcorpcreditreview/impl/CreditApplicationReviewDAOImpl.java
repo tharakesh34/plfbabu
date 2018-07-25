@@ -3,8 +3,6 @@ package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl;
 import java.util.List;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -12,12 +10,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -26,12 +22,11 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCreditReviewDetails> implements CreditApplicationReviewDAO {
+public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewDetails> implements CreditApplicationReviewDAO {
 	private static Logger logger = Logger.getLogger(CreditApplicationReviewDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public CreditApplicationReviewDAOImpl() {
 		super();
@@ -58,19 +53,10 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	@Override
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId) {
 		logger.debug("Entering");
@@ -88,7 +74,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 	
@@ -110,7 +96,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 	
@@ -136,7 +122,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 
@@ -161,7 +147,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 	
@@ -228,7 +214,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
 
 		try{
-			creditReviewDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			creditReviewDetails = null;
@@ -265,7 +251,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
 
 		try{
-			creditReviewDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			creditReviewDetails = null;
@@ -293,7 +279,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 				selectSql.append(StringUtils.trimToEmpty(type));
 				selectSql.append(" Where CustomerId =:customerId and AuditYear = :auditYear");
 				beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-				period = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+				period = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 			} else {
 				period = getAuditPeriod(customerId, auditYear, auditPeriod, type);
 			}
@@ -333,7 +319,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -362,7 +348,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 	public long save(FinCreditReviewDetails creditReviewDetails,String type) {
 		logger.debug("Entering");
 		if (creditReviewDetails.getDetailId()==Long.MIN_VALUE){
-			creditReviewDetails.setDetailId(getNextidviewDAO().getNextId("SeqFinCreditReviewDetails"));
+			creditReviewDetails.setDetailId(getNextId("SeqFinCreditReviewDetails"));
 		}	
 		StringBuilder insertSql =new StringBuilder("Insert Into FinCreditReviewDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -376,7 +362,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return creditReviewDetails.getDetailId();
 	}
@@ -416,7 +402,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -444,7 +430,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 	
@@ -470,7 +456,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 		
 	}
 	
@@ -498,7 +484,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		creditReviewDetails.setAuditPeriod(auditPeriod);
 		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
 		try{
-			period = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			period = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		}catch (EmptyResultDataAccessException e) {
             logger.error("Exception: ", e);
 		}
@@ -519,7 +505,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("selectSql: " + selectSql.toString());
 		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
 		try{
-			maxAuditYear = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			maxAuditYear = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		}catch (EmptyResultDataAccessException e) {
             logger.error("Exception: ", e);
 		}
@@ -546,7 +532,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	
@@ -567,7 +553,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -593,7 +579,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditRevSubCategory.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}

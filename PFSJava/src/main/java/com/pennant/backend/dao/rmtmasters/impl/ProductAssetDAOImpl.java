@@ -48,8 +48,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,29 +55,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ProductAsset model</b> class.<br>
  * 
  */
-public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implements ProductAssetDAO {
+public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements ProductAssetDAO {
+    private static Logger logger = Logger.getLogger(ProductAssetDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(ProductAssetDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public ProductAssetDAOImpl() {
 		super();
 	}
@@ -144,7 +138,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		RowMapper<ProductAsset> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
 
 		try {
-			productAsset = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			productAsset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			productAsset = null;
@@ -182,7 +176,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		RowMapper<ProductAsset> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
 	}
 	
 	
@@ -205,17 +199,9 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		logger.debug("selectSql: " + selectSql.toString());
 		List<ProductAsset> finPurposeList = null;
 		RowMapper<ProductAsset> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
-		finPurposeList = this.namedParameterJdbcTemplate.query(selectSql.toString(),mapSqlParameterSource,rowMapper);
+		finPurposeList = this.jdbcTemplate.query(selectSql.toString(),mapSqlParameterSource,rowMapper);
 		logger.debug("Leaving");
 		return finPurposeList;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -244,7 +230,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -282,7 +268,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			/*if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}*/
@@ -307,7 +293,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 	public long save(ProductAsset productAsset,String type) {
 		logger.debug("Entering");
 		if (productAsset.getId()==Long.MIN_VALUE){
-			productAsset.setId(getNextidviewDAO().getNextId("SeqRMTProductAssets"));
+			productAsset.setId(getNextId("SeqRMTProductAssets"));
 			logger.debug("get NextID:"+productAsset.getId());
 		}
 		StringBuilder insertSql =new StringBuilder();
@@ -322,7 +308,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return productAsset.getId();
 	}
@@ -356,7 +342,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

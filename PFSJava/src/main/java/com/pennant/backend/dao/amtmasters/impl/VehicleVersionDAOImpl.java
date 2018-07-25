@@ -42,34 +42,28 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleVersionDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.VehicleVersion;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>VehicleVersion model</b> class.<br>
  */
-public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
-		implements VehicleVersionDAO {
+public class VehicleVersionDAOImpl extends SequenceDao<VehicleVersion> implements VehicleVersionDAO {
 	private static Logger logger = Logger.getLogger(VehicleVersionDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public VehicleVersionDAOImpl() {
 		super();
 	}
@@ -106,7 +100,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 				.newInstance(VehicleVersion.class);
 
 		try{
-			vehicleVersion = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			vehicleVersion = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -116,13 +110,6 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 		return vehicleVersion;
 	}
 
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * This method Deletes the Record from the AMTVehicleVersion or
@@ -150,7 +137,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleVersion);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -179,7 +166,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 	public long save(VehicleVersion vehicleVersion,String type) {
 		logger.debug("Entering");
 		if (vehicleVersion.getId()==Long.MIN_VALUE){
-			vehicleVersion.setId(getNextidviewDAO().getNextId("SeqAMTVehicleVersion"));
+			vehicleVersion.setId(getNextId("SeqAMTVehicleVersion"));
 			logger.debug("get NextID:"+vehicleVersion.getId());
 		}
 		StringBuilder insertSql = new StringBuilder();
@@ -196,7 +183,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleVersion);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vehicleVersion.getId();
 	}
@@ -233,7 +220,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleVersion);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("AND Version= :Version-1");
@@ -274,7 +261,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 				.newInstance(VehicleVersion.class);
 
 		try{
-			vehicleVersion = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			vehicleVersion = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);

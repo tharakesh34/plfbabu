@@ -14,20 +14,17 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limits.ClosedFacilityDetail;
 import com.pennant.backend.model.limits.FinanceLimitProcess;
 import com.pennant.backend.model.limits.LimitDetail;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProcess> implements LimitInterfaceDAO {
+public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> implements LimitInterfaceDAO {
+    private static Logger logger = Logger.getLogger(LimitInterfaceDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(LimitInterfaceDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public LimitInterfaceDAOImpl() {
 		super();
 	}
@@ -42,7 +39,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		logger.debug("Entering");
 
 		if(finLimitProcess.getId()== 0 || finLimitProcess.getId()==Long.MIN_VALUE){
-			finLimitProcess.setFinLimitId(getNextidviewDAO().getNextId("SeqFinanceLimitProcess"));	
+			finLimitProcess.setFinLimitId(getNextId("SeqFinanceLimitProcess"));	
 		}
 		
 		StringBuilder insertSql = new StringBuilder("INSERT INTO FinanceLimitProcess ");
@@ -55,7 +52,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLimitProcess);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -81,7 +78,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	    
@@ -111,7 +108,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		RowMapper<FinanceLimitProcess> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceLimitProcess.class);
 
 		try {
-			limitProcess = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			limitProcess = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			limitProcess = null;
@@ -145,7 +142,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		RowMapper<LimitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetail.class);
 		
 		try{
-			limitDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			limitDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitDetail = null;
@@ -175,7 +172,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	    
@@ -202,7 +199,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		
 		int[] recordCount;
 		try{	
-			recordCount = this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 			if(recordCount.length > 0) {
 				return true;
 			} else {
@@ -241,7 +238,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeMain = null;
@@ -249,13 +246,4 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		logger.debug("Leaving");
 		return financeMain;
     }
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

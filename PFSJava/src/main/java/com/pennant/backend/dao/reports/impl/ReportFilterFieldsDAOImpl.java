@@ -45,38 +45,33 @@ package com.pennant.backend.dao.reports.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.reports.ReportFilterFieldsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ReportFilterFields model</b> class.<br>
  * 
  */
 
-public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFields> implements ReportFilterFieldsDAO {
+public class ReportFilterFieldsDAOImpl extends SequenceDao<ReportFilterFields> implements ReportFilterFieldsDAO {
 
 	private static Logger logger = Logger.getLogger(ReportFilterFieldsDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public ReportFilterFieldsDAOImpl() {
 		super();
 	}
@@ -143,7 +138,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		RowMapper<ReportFilterFields> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReportFilterFields.class);
 
 		try{
-			reportFilterFields = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			reportFilterFields = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			reportFilterFields = null;
@@ -184,15 +179,9 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		RowMapper<ReportFilterFields> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReportFilterFields.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * This method Deletes the Record from the ReportFilterFields or ReportFilterFields_Temp.
@@ -219,7 +208,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportFilterFields);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -246,7 +235,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportFilterFields);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		
 	}
@@ -266,7 +255,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		logger.debug("Entering ");
 
 		if (reportFilterFields.getId()==Long.MIN_VALUE){
-			reportFilterFields.setId(getNextidviewDAO().getNextId("SeqReportFilterFields"));
+			reportFilterFields.setId(getNextId("SeqReportFilterFields"));
 			logger.debug("get NextID:"+reportFilterFields.getId());
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into ReportFilterFields" );
@@ -286,7 +275,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportFilterFields);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return reportFilterFields.getId();
@@ -331,7 +320,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportFilterFields);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

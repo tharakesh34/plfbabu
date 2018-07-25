@@ -44,8 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,15 +52,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,11 +67,10 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>NPABucketConfiguration</code> with set of CRUD operations.
  */
-public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketConfiguration> implements
-		NPABucketConfigurationDAO {
-	private static Logger				logger	= Logger.getLogger(NPABucketConfigurationDAOImpl.class);
+public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfiguration> implements NPABucketConfigurationDAO {
+	private static Logger	logger	= Logger.getLogger(NPABucketConfigurationDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	
 
 	public NPABucketConfigurationDAOImpl() {
 		super();
@@ -106,7 +102,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 				.newInstance(NPABucketConfiguration.class);
 
 		try {
-			nPABucketConfiguration = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			nPABucketConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			nPABucketConfiguration = null;
@@ -143,7 +139,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		paramSource.addValue("productCode", productCode);
 		paramSource.addValue("bucketID", bucketID);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -168,14 +164,14 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (nPABucketConfiguration.getConfigID() <= 0) {
-			nPABucketConfiguration.setConfigID(getNextidviewDAO().getNextId("SeqNPABUCKETSCONFIG"));
+			nPABucketConfiguration.setConfigID(getNextId("SeqNPABUCKETSCONFIG"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucketConfiguration);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -203,7 +199,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucketConfiguration);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -229,7 +225,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -242,15 +238,6 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	@Override
 	public int getByProductCode(String producCode, int dueDys, String type) {
@@ -267,7 +254,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nPABucketConfiguration);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -284,7 +271,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nPABucketConfiguration);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -302,7 +289,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(NPABucketConfiguration.class);
 
-		List<NPABucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+		List<NPABucketConfiguration> list = jdbcTemplate.query(sql.toString(), rowMapper);
 
 		logger.debug(Literal.LEAVING);
 		return list;
@@ -325,7 +312,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(NPABucketConfiguration.class);
 
-		List<NPABucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), source, rowMapper);
+		List<NPABucketConfiguration> list = jdbcTemplate.query(sql.toString(), source, rowMapper);
 
 		logger.debug(Literal.LEAVING);
 		return list;

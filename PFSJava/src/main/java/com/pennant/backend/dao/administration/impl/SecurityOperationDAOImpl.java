@@ -45,8 +45,6 @@ package com.pennant.backend.dao.administration.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,29 +52,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityOperationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>SecurityOperation model</b> class.<br>
  * 
  */
-public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperation> implements SecurityOperationDAO{
+public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> implements SecurityOperationDAO{
 	private static Logger logger = Logger.getLogger(SecurityOperationDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	
 	
 	public SecurityOperationDAOImpl() {
 		super();
@@ -122,7 +116,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityOperation.class);
 
 		try{
-			securityOperation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			securityOperation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			securityOperation = null;
@@ -160,7 +154,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityOperation.class);
 
 		try{
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			return  null;
@@ -170,13 +164,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		}
 	}
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the SecOperations or SecOperations_Temp.
@@ -203,7 +191,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -233,7 +221,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 	public long save(SecurityOperation securityOperation,String type) {
 		logger.debug("Entering ");
 		if (securityOperation.getId()==Long.MIN_VALUE){
-			securityOperation.setId(getNextidviewDAO().getNextId("SeqSecOperations"));
+			securityOperation.setId(getNextId("SeqSecOperations"));
 			logger.debug("get NextID:"+securityOperation.getId());
 		}
 
@@ -247,7 +235,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
 		
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return securityOperation.getId();
@@ -284,7 +272,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -310,7 +298,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityOperation.class);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 }

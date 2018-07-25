@@ -44,8 +44,6 @@ package com.pennant.backend.dao.administration.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,34 +51,31 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * DAO methods implementation for the <b>SecurityUsers model</b> class.<br>
  * 
  */
-public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements SecurityUserDAO {
+public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements SecurityUserDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserDAOImpl.class);
 
 	public SecurityUserDAOImpl() {
 		super();
 	}
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	/**
 	 * This method set the Work Flow id based on the module name and return the new SecurityUsers 
 	 * @return SecurityUsers
@@ -147,7 +142,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try{
-			securityUser = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			securityUser = null;
@@ -193,7 +188,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 				SecurityUser.class);
 
 		try{
-			securityUser = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -203,12 +198,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		return securityUser;
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the SecUsers or SecUsers_Temp.
@@ -235,7 +225,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		logger.debug("deleteSql:"+deleteSql.toString());
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetail errorDetails= getError ("41003",securityUser.getUsrLogin() , 
 						securityUser.getUserDetails().getLanguage());
@@ -269,7 +259,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	public long save(SecurityUser securityUser,String type) {
 		logger.debug("Entering ");
 		if (securityUser.getId()==Long.MIN_VALUE){
-			securityUser.setId(getNextidviewDAO().getNextId("SeqSecUsers"));
+			securityUser.setId(getNextId("SeqSecUsers"));
 			logger.debug("get NextID:"+securityUser.getId());
 		}
 
@@ -293,7 +283,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		logger.debug("insertSql:" +insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return securityUser.getId();
@@ -336,7 +326,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		logger.debug("updateSql:"+updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -365,7 +355,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 
 		logger.debug("updateSql:"+updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -406,7 +396,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		RowMapper<SecurityUserDivBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
 		
 		try{
-			securityUserDivBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			securityUserDivBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			securityUserDivBranch = null;
@@ -432,7 +422,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		logger.debug("insertSql:" +insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving ");
 		return securityUserDivBranch.getId();
@@ -456,7 +446,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		logger.debug("updateSql:"+updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -484,7 +474,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		logger.debug("deleteSql:"+deleteSql.toString());
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetail errorDetails= getError ("41003",String.valueOf(securityUserDivBranch.getUsrID()) , 
 						securityUserDivBranch.getUserDetails().getLanguage());
@@ -526,7 +516,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		RowMapper<SecurityUserDivBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -546,7 +536,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		logger.debug("deleteSql:"+deleteSql.toString());
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetail errorDetails= getError ("41003",String.valueOf(securityUser.getUsrID()) , 
 						securityUser.getUserDetails().getLanguage());
@@ -571,7 +561,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		paramMap.addValue("usrId", userId);
 		paramMap.addValue("usrenabled", 1);
 
-		return namedParameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		return jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 	}
 
 	@Override
@@ -581,7 +571,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 
 		paramMap.addValue("usrenabled", 1);
 
-		return namedParameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		return jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 	}
 	
 	

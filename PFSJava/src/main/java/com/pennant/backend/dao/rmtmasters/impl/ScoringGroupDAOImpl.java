@@ -44,35 +44,29 @@
 package com.pennant.backend.dao.rmtmasters.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ScoringGroupDAO;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ScoringGroup model</b> class.<br>
  * 
  */
 
-public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implements ScoringGroupDAO {
-
-	private static Logger logger = Logger.getLogger(ScoringGroupDAOImpl.class);
+public class ScoringGroupDAOImpl extends SequenceDao<ScoringGroup> implements ScoringGroupDAO {
+   private static Logger logger = Logger.getLogger(ScoringGroupDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public ScoringGroupDAOImpl() {
 		super();
@@ -108,7 +102,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 		RowMapper<ScoringGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringGroup.class);
 		
 		try{
-			scoringGroup = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			scoringGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scoringGroup = null;
@@ -117,14 +111,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 		return scoringGroup;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * This method Deletes the Record from the RMTScoringGroup or RMTScoringGroup_Temp.
@@ -150,7 +137,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringGroup);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -178,7 +165,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 	public long save(ScoringGroup scoringGroup,String type) {
 		logger.debug("Entering");
 		if (scoringGroup.getId()==Long.MIN_VALUE){
-			scoringGroup.setId(getNextidviewDAO().getNextId("SeqRMTScoringGroup"));
+			scoringGroup.setId(getNextId("SeqRMTScoringGroup"));
 			logger.debug("get NextID:"+scoringGroup.getId());
 		}
 		
@@ -192,7 +179,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringGroup);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return scoringGroup.getId();
 	}
@@ -226,7 +213,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringGroup);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

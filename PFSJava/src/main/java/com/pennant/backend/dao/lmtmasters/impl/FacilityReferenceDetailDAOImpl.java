@@ -48,41 +48,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.lmtmasters.FacilityReferenceDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FacilityReferenceDetail model</b> class.<br>
  * 
  */
 
-public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityReferenceDetail> implements FacilityReferenceDetailDAO {
-
-	private static Logger logger = Logger.getLogger(FacilityReferenceDetailDAOImpl.class);
+public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenceDetail> implements FacilityReferenceDetailDAO {
+    private static Logger logger = Logger.getLogger(FacilityReferenceDetailDAOImpl.class);
 
 	public FacilityReferenceDetailDAOImpl() {
 		super();
 	}
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the
@@ -151,7 +145,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
 
 		try {
-			facilityReferenceDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			facilityReferenceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			facilityReferenceDetail = null;
@@ -213,19 +207,10 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * This method Deletes the Record from the LMTFinRefDetail or
@@ -253,7 +238,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -283,7 +268,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 	public long save(FacilityReferenceDetail facilityReferenceDetail, String type) {
 		logger.debug("Entering");
 		if (facilityReferenceDetail.getId() == Long.MIN_VALUE) {
-			facilityReferenceDetail.setId(getNextidviewDAO().getNextId("SeqLMTFacilityRefDetail"));
+			facilityReferenceDetail.setId(getNextId("SeqLMTFacilityRefDetail"));
 			logger.debug("get NextID:" + facilityReferenceDetail.getId());
 		}
 
@@ -297,7 +282,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return facilityReferenceDetail.getId();
 	}
@@ -335,7 +320,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -398,7 +383,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);
 
 	}
 	@Override
@@ -412,7 +397,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -438,6 +423,6 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
 		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }

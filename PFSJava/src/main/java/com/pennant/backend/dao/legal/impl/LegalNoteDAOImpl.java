@@ -44,8 +44,6 @@ package com.pennant.backend.dao.legal.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.legal.LegalNoteDAO;
 import com.pennant.backend.model.legal.LegalNote;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -69,10 +66,8 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalNote</code> with set of CRUD
  * operations.
  */
-public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements LegalNoteDAO {
+public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNoteDAO {
 	private static Logger logger = Logger.getLogger(LegalNoteDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public LegalNoteDAOImpl() {
 		super();
@@ -102,7 +97,7 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 		RowMapper<LegalNote> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalNote.class);
 
 		try {
-			legalNote = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			legalNote = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			legalNote = null;
 		}
@@ -134,7 +129,7 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalNote);
 		RowMapper<LegalNote> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalNote.class);
 		try {
-			return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 		} finally {
@@ -159,7 +154,7 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalNote.getId() == Long.MIN_VALUE) {
-			legalNote.setId(getNextidviewDAO().getNextId("SeqLegalNotes"));
+			legalNote.setId(getNextId("SeqLegalNotes"));
 			logger.debug("get NextID:" + legalNote.getId());
 		}
 
@@ -168,7 +163,7 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalNote);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -194,7 +189,7 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalNote);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -219,7 +214,7 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -241,17 +236,9 @@ public class LegalNoteDAOImpl extends BasisNextidDaoImpl<LegalNote> implements L
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(legalNote);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 }

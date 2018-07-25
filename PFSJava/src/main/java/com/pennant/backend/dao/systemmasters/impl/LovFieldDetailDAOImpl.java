@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.LovFieldDetailDAO;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,13 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>LovFieldDetail model</b> class.<br>
  * 
  */
-public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
-		implements LovFieldDetailDAO {
-
-	private static Logger logger = Logger.getLogger(LovFieldDetailDAOImpl.class);
+public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implements LovFieldDetailDAO {
+     private static Logger logger = Logger.getLogger(LovFieldDetailDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public LovFieldDetailDAOImpl() {
 		super();
@@ -86,6 +79,8 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	 * Fetch the Record  LOV Field Details details by key field
 	 * 
 	 * @param id (int)
+	 * 
+	 * 
 	 * @param  type (String)
 	 * 			""/_Temp/_View          
 	 * @return LovFieldDetail
@@ -113,7 +108,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 				.newInstance(LovFieldDetail.class);
 		
 		try{
-			lovFieldDetail = this.namedParameterJdbcTemplate.queryForObject(
+			lovFieldDetail = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -123,13 +118,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		return lovFieldDetail;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	/**
 	 * This method Deletes the Record from the RMTLovFieldDetail or RMTLovFieldDetail_Temp.
@@ -156,7 +145,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		          
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -188,7 +177,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		logger.debug(Literal.ENTERING);
 		
 		if (lovFieldDetail.getId()==Long.MIN_VALUE){
-			lovFieldDetail.setId(getNextidviewDAO().getNextId("SeqRMTLovFieldDetail"));
+			lovFieldDetail.setId(getNextId("SeqRMTLovFieldDetail"));
 			logger.debug("get NextID:"+lovFieldDetail.getId());
 		}
 		
@@ -204,7 +193,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -242,7 +231,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		
 		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -279,7 +268,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		int sysDftCount = 0;
 		try {
-			sysDftCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			sysDftCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
         } catch (Exception e) {
         	logger.warn("Exception: ", e);
         	sysDftCount = 0;
@@ -314,7 +303,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		paramSource.addValue("fieldCode", fieldCode);
 		paramSource.addValue("fieldDetail", fieldDetail);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

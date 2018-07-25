@@ -2,58 +2,38 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.Date;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHeader> implements BulkRateChangeProcessDAO {
-
+public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHeader> implements BulkRateChangeProcessDAO {
 	private static Logger logger = Logger.getLogger(BulkRateChangeProcessDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	private NextidviewDAO nextidviewDAO;
+	
+	
 
 	public BulkRateChangeProcessDAOImpl() {
 		super();
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
-	public NextidviewDAO getNextidviewDAO() {
-		return nextidviewDAO;
-	}
-
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		this.nextidviewDAO = nextidviewDAO;
-	}
-
+	
 	/**
 	 * This method set the Work Flow id based on the module name and return the
 	 * new BulkRateChangeHeader
@@ -104,7 +84,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 
 		if (StringUtils.isBlank(bulkRateChangeHeader.getBulkRateChangeRef())) {
 			String appMonthName = DateUtility.format(DateUtility.getAppDate(), PennantConstants.monthYearFormat);
-			String seqNo = String.valueOf(getNextidviewDAO().getNextId("SeqBulkRateChangeHeader"));
+			String seqNo = String.valueOf(getNextId("SeqBulkRateChangeHeader"));
 			bulkRateChangeHeader.setBulkRateChangeRef(appMonthName + " - " + seqNo);
 			logger.debug("get NextID: " + bulkRateChangeHeader.getBulkRateChangeRef());
 		}
@@ -122,7 +102,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return bulkRateChangeHeader.getBulkRateChangeRef();
@@ -164,7 +144,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -201,7 +181,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -243,7 +223,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeHeader.class);
 
 		try {
-			bulkRateChangeHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			bulkRateChangeHeader = null;
@@ -277,7 +257,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeHeader.class);
 
 		try {
-			bulkRateChangeHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			bulkRateChangeHeader = null;
@@ -293,7 +273,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 	public String getBulkRateChangeReference() {
 		logger.debug("Entering");
 		String appMonthName = DateUtility.format(DateUtility.getAppDate(), PennantConstants.monthYearFormat);
-		String seqNo = String.valueOf(getNextidviewDAO().getNextId("SeqBulkRateChangeHeader"));
+		String seqNo = String.valueOf(getNextId("SeqBulkRateChangeHeader"));
 		logger.debug("BulkRateChange Ref: " + appMonthName + " - " + seqNo);
 
 		logger.debug("Leaving");

@@ -46,8 +46,6 @@ package com.pennant.backend.dao.limit.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,31 +53,28 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>LimitDetail model</b> class.<br>
  * 
  */
 
-public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> implements LimitDetailDAO {
+public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements LimitDetailDAO {
+    private static Logger logger = Logger.getLogger(LimitDetailDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(LimitDetailDAOImpl.class);
+	public LimitDetailDAOImpl() {
+		super();
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-
-
+	}
 	/**
 	 * Fetch the Record  Limit Details details by key field
 	 * 
@@ -111,7 +106,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 
-		List<LimitDetails> detailsList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		
+		List<LimitDetails> detailsList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		
 		return detailsList;
 	}
 	
@@ -139,19 +134,12 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 
-		List<LimitDetails> detailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<LimitDetails> detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		return detailsList;
 	}
 	
 
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 
 	/**
@@ -180,7 +168,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -208,7 +196,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 	public long save(LimitDetails limitDetail,String type) {
 		logger.debug("Entering");
 		if (limitDetail.getId()==Long.MIN_VALUE){
-			limitDetail.setId(getNextidviewDAO().getNextId("SeqLimitDetails"));
+			limitDetail.setId(getNextId("SeqLimitDetails"));
 			logger.debug("get NextID:"+limitDetail.getId());
 		}
 
@@ -222,7 +210,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitDetail.getId();
 	}
@@ -267,7 +255,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -286,7 +274,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -303,7 +291,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		} finally {
@@ -329,7 +317,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		} finally {
@@ -354,7 +342,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		} finally {
@@ -378,7 +366,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 		logger.debug("Leaving");
-		List<LimitDetails> limitDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,typeRowMapper);
+		List<LimitDetails> limitDetailsList = this.jdbcTemplate.query(selectSql.toString(), source,typeRowMapper);
 		return limitDetailsList;
 	}
 
@@ -399,7 +387,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 		logger.debug("Leaving");
 
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);	
+		return  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);	
 	}
 
 	@Override
@@ -415,7 +403,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 		logger.debug("Leaving");
-		ArrayList<LimitDetails> limitDetailsList=(ArrayList<LimitDetails>) this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		ArrayList<LimitDetails> limitDetailsList=(ArrayList<LimitDetails>) this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 
 		return limitDetailsList;
 	}
@@ -443,7 +431,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		int recordCount = 0;
 		try {
 			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitDetails);
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		}
@@ -483,7 +471,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 
 		try {
-			limitDetail = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
+			limitDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitDetail = null;
@@ -509,7 +497,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);			
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);			
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -536,7 +524,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
-		List<LimitDetails> limitDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,
+		List<LimitDetails> limitDetailsList = this.jdbcTemplate.query(selectSql.toString(), source,
 				typeRowMapper);
 
 		logger.debug("Leaving");
@@ -560,7 +548,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(limitDetailsList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -576,7 +564,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 
 		for (LimitDetails limitDetail : limitDetailsList) {
 			if (limitDetail.getId() == Long.MIN_VALUE) {
-				limitDetail.setId(getNextidviewDAO().getNextId("SeqLimitDetails"));
+				limitDetail.setId(getNextId("SeqLimitDetails"));
 				logger.debug("get NextID:" + limitDetail.getId());
 			}
 		}
@@ -595,7 +583,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("updateSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(limitDetailsList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 }

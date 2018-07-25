@@ -48,8 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,11 +55,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
@@ -71,16 +67,13 @@ import com.pennant.backend.model.rulefactory.RuleModule;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
  */
-public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
-
-	private static Logger logger = Logger.getLogger(RuleDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
+   private static Logger logger = Logger.getLogger(RuleDAOImpl.class);
 
 	public RuleDAOImpl() {
 		super();
@@ -121,7 +114,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
 		try {
-			rule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			rule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			rule = null;
@@ -155,7 +148,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		
 		try {
-			rule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			rule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			rule = null;
@@ -189,7 +182,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 
 		try {
-			sqlRule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			sqlRule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			sqlRule = "";
@@ -230,7 +223,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		try {
-			sqlRule = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			sqlRule = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			sqlRule = new ArrayList<Rule>();
@@ -276,17 +269,10 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 			
 	
 		logger.debug("Leaving");
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return  this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	/**
-	 * Set the DataSource object to the NamedParameterJdbcTemplate
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the Rules or Rules_Temp. if
@@ -316,7 +302,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -346,7 +332,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	public long save(Rule rule, String type) {
 		logger.debug("Entering");
 		if (rule.getId() == Long.MIN_VALUE) {
-			rule.setId(getNextidviewDAO().getNextId("SeqRules"));
+			rule.setId(getNextId("SeqRules"));
 			logger.debug("get NextID:" + rule.getId());
 		}			
 		StringBuilder insertSql = new StringBuilder();
@@ -363,7 +349,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return rule.getId();
 	}
@@ -404,7 +390,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -451,7 +437,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		        .newInstance(BMTRBFldDetails.class);
 
 		try {
-			fieldList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,
+			fieldList = this.jdbcTemplate.query(selectSql.toString(), source,
 			        typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -479,7 +465,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		RowMapper<BMTRBFldCriterias> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BMTRBFldCriterias.class);
 
 		try {
-			fieldList = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			fieldList = null;
@@ -504,7 +490,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug(" selectSql: " + selectSql.toString());
 		RowMapper<RuleModule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RuleModule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 	}
 	
 	/**
@@ -531,7 +517,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 	
 	/**
@@ -555,7 +541,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
     }
 	
 	/**
@@ -579,7 +565,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);
     }
 	
 	/**
@@ -602,7 +588,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NFScoreRuleDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);
     }
 	
 	/**
@@ -625,7 +611,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NFScoreRuleDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
     }
 	
 	/**
@@ -649,7 +635,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NFScoreRuleDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
     }
 	
 	/**
@@ -680,7 +666,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
     }
 
 	/**
@@ -708,7 +694,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
 		try {
-			rule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameter, typeRowMapper);
+			rule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameter, typeRowMapper);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.warn("Exception: ", dae);
 			rule = null;
@@ -748,7 +734,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
     }
 
 	@Override
@@ -764,7 +750,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		source.addValue("AllowedEvent", event);
 
 		try {
-			aeAmountCodesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+			aeAmountCodesList = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -790,7 +776,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	//### 08-05-2018 Start Development Iteam 81 
@@ -820,7 +806,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		
 		Integer count =0;
 		try {
-			count = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

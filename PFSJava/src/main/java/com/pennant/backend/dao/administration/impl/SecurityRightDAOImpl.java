@@ -56,16 +56,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityRightDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> implements SecurityRightDAO {
-	private static Logger				logger	= Logger.getLogger(SecurityRightDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements SecurityRightDAO {
+	private static Logger logger	= Logger.getLogger(SecurityRightDAOImpl.class);
 
 	public SecurityRightDAOImpl() {
 		super();
@@ -91,7 +89,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -122,7 +120,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -135,7 +133,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		paramSource.addValue("rightName", rightName);
 		String sql = QueryUtil.getCountQuery(new String[] { "SecRights" }, "rightName = :rightName ");
 		logger.trace(Literal.SQL + sql);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 		if (count > 0) {
 			exists = true;
 		}
@@ -148,7 +146,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		logger.debug(Literal.ENTERING);
 
 		if (right.getId() == Long.MIN_VALUE) {
-			right.setId(getNextidviewDAO().getNextId("SeqSecRights"));
+			right.setId(getNextId("SeqSecRights"));
 			logger.debug("get NextID:" + right.getId());
 		}
 		StringBuilder sql = new StringBuilder();
@@ -158,7 +156,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append(":RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(right);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug(Literal.ENTERING);
 		return right.getId();
 	}
@@ -167,16 +165,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	public void updateSeqSecRights() {
 		logger.debug(Literal.ENTERING);
 		String query = "UPDATE SEQSECRIGHTS SET SEQNO=(SELECT MAX(RIGHTID) FROM SECRIGHTS)";
-		this.namedParameterJdbcTemplate.getJdbcOperations().update(query);
+		this.jdbcTemplate.getJdbcOperations().update(query);
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Setting DataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

@@ -44,8 +44,6 @@ package com.pennant.backend.dao.legal.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,25 +51,24 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.legal.LegalECDetailDAO;
 import com.pennant.backend.model.legal.LegalECDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
  * Data access layer implementation for <code>LegalECDetail</code> with set of CRUD operations.
  */
-public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> implements LegalECDetailDAO {
-	private static Logger				logger	= Logger.getLogger(LegalECDetailDAOImpl.class);
+public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements LegalECDetailDAO {
+	private static Logger	logger	= Logger.getLogger(LegalECDetailDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+
 
 	public LegalECDetailDAOImpl() {
 		super();
@@ -99,7 +96,7 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		RowMapper<LegalECDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalECDetail.class);
 
 		try {
-			legalECDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			legalECDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			legalECDetail = null;
 		}
@@ -129,7 +126,7 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		RowMapper<LegalECDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalECDetail.class);
 		
 		try {
-			return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 		} finally {
@@ -152,7 +149,7 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalECDetail.getId()==Long.MIN_VALUE){
-			legalECDetail.setId(getNextidviewDAO().getNextId("SeqLegalECDetails"));
+			legalECDetail.setId(getNextId("SeqLegalECDetails"));
 			logger.debug("get NextID:"+legalECDetail.getId());
 		}
 
@@ -161,7 +158,7 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -187,7 +184,7 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -210,7 +207,7 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
 		int recordCount = 0;
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -232,16 +229,8 @@ public class LegalECDetailDAOImpl extends BasisNextidDaoImpl<LegalECDetail> impl
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(legalECDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 }	

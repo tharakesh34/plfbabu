@@ -46,8 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,12 +53,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dedup.DedupParmDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
@@ -68,16 +64,16 @@ import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
  * 
  */
-public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements DedupParmDAO {
+public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupParmDAO {
 	private static Logger logger = Logger.getLogger(DedupParmDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 
 	public DedupParmDAOImpl() {
 		super();
@@ -116,7 +112,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		RowMapper<DedupParm> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupParm.class);
 
 		try{
-			dedupParm = this.namedParameterJdbcTemplate.queryForObject(
+			dedupParm = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -155,7 +151,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		RowMapper<DedupParm> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupParm.class);
 		
 		try{
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -163,13 +159,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		return null;
 	}
 
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	/**
 	 * Method getting list of Data in validation of result builded Query
@@ -178,7 +168,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 	@Override
 	public List validate(String resultQuery,CustomerDedup customerDedup) {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDedup);
-		return this.namedParameterJdbcTemplate.queryForList(resultQuery, beanParameters);	
+		return this.jdbcTemplate.queryForList(resultQuery, beanParameters);	
 	}
 
 	/**
@@ -206,7 +196,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -234,7 +224,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		logger.debug("Entering");
 		
 		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
-			dedupParm.setQueryId(getNextidviewDAO().getNextId("SeqDedupParams"));
+			dedupParm.setQueryId(getNextId("SeqDedupParams"));
 			logger.debug("get NextID:" + dedupParm.getQueryId());
 		}
 
@@ -249,7 +239,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return dedupParm.getQueryId();
@@ -290,7 +280,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -317,7 +307,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 					.newInstance(CustomerDedup.class);
 
 		try{
-			rowTypes = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+			rowTypes = this.jdbcTemplate.query(selectSql.toString(),
 					beanParameters,typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -346,7 +336,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 					.newInstance(FinanceDedup.class);
 
 		try{
-			rowTypes = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			dedup = null;
@@ -374,7 +364,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceReferenceDetail.class);
 
 		try {
-			finRefDetail = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			finRefDetail = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finRefDetail = null;
@@ -395,7 +385,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		try{
-			fieldNames = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, null);	
+			fieldNames = this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, null);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			fieldNames = new ArrayList<String>();
@@ -419,7 +409,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		logger.debug("selectSql: " + query);
 
 		try {
-			collateralSetups = this.namedParameterJdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource, ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class));
+			collateralSetups = this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource, ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class));
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

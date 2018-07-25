@@ -27,35 +27,28 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>AccountingSet model</b> class.<br>
  */
-public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> implements
-        AccountingSetDAO {
+public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements  AccountingSetDAO {
+ private static Logger logger = Logger.getLogger(AccountingSetDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(AccountingSetDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public AccountingSetDAOImpl() {
 		super();
 	}
@@ -95,7 +88,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		        .newInstance(AccountingSet.class);
 
 		try {
-			accountingSet = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -105,15 +98,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		return accountingSet;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	/**
 	 * This method Deletes the Record from the RMTAccountingSet or RMTAccountingSet_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Accounting Set by key AccountSetid
@@ -138,7 +123,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -168,7 +153,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 	public long save(AccountingSet accountingSet, String type) {
 		logger.debug("Entering");
 		if (accountingSet.getId() == Long.MIN_VALUE) {
-			accountingSet.setId(getNextidviewDAO().getNextId("SeqRMTAccountingSet"));
+			accountingSet.setId(getNextId("SeqRMTAccountingSet"));
 			logger.debug("get NextID:" + accountingSet.getId());
 		}
 
@@ -188,7 +173,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return accountingSet.getId();
 	}
@@ -229,7 +214,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -256,7 +241,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
 		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountingSet.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	/**Method for Fetching Accounting Set ID by Using EventCode and AccSetCode
@@ -284,7 +269,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		long accSetId = 0;
 		
 		try {
-			accSetId =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			accSetId =  this.jdbcTemplate.queryForObject(selectSql.toString(),
 		        beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -316,7 +301,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		        .newInstance(AccountingSet.class);
 
 		try {
-			accountingSet = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			accountingSet = null;
@@ -338,7 +323,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountingSet.class);
 		
 		try{
-			accountingset = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			accountingset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accountingset = null;

@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,15 +50,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,10 +65,10 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>BounceReason</code> with set of CRUD operations.
  */
-public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implements BounceReasonDAO {
-	private static Logger				logger	= Logger.getLogger(BounceReasonDAOImpl.class);
+public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements BounceReasonDAO {
+	private static Logger logger	= Logger.getLogger(BounceReasonDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	
 
 	public BounceReasonDAOImpl() {
 		super();
@@ -103,7 +100,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		RowMapper<BounceReason> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BounceReason.class);
 
 		try {
-			bounceReason = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			bounceReason = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			bounceReason = null;
@@ -139,7 +136,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		paramSource.addValue("bounceID", bounceID);
 		paramSource.addValue("bounceCode", bounceCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -167,7 +164,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (bounceReason.getBounceID() <= 0) {
-			bounceReason.setBounceID(getNextidviewDAO().getNextId("SeqBounceReasons"));
+			bounceReason.setBounceID(getNextId("SeqBounceReasons"));
 		}
 		
 		// Execute the SQL, binding the arguments.
@@ -175,7 +172,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -204,7 +201,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -230,7 +227,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -267,7 +264,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 
 		RowMapper<BounceReason> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BounceReason.class);
 		try {
-			return namedParameterJdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -278,16 +275,6 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		return null;
 	}	
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 	@Override
 	public int getBounceReasonByRuleCode(long ruleId, String type) {
 		logger.debug("Entering");
@@ -303,7 +290,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bounceReason);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -332,7 +319,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		paramSource.addValue("bounceID", bounceID);
 		paramSource.addValue("returnCode", returnCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

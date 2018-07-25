@@ -46,7 +46,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,40 +55,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
 import com.pennant.backend.dao.administration.SecurityOperationRolesDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityOperationRoles;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserOperations;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOperation> implements
-		SecurityOperationRolesDAO {
-	private static Logger logger = Logger.getLogger(SecurityOperationRolesDAOImpl .class);
-	private NamedParameterJdbcTemplate jdbcTemplate;
-	
+public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation> implements SecurityOperationRolesDAO {
+	 private static Logger logger = Logger.getLogger(SecurityOperationRolesDAOImpl .class);
+		
 	public SecurityOperationRolesDAOImpl() {
 		super();
 	}
 	
-	public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-		return jdbcTemplate;
-	}
-
-	public void setNamedParameterJdbcTemplate(
-			NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-		this.jdbcTemplate = namedParameterJdbcTemplate;
-	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
 
 	@Override
 	public SecurityOperationRoles getSecurityOperationRoles() {
@@ -96,13 +81,6 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 		return new SecurityOperationRoles();
 	}
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {	
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	/**
 	 * This Method selects the records from SecOperationRoles_AView table with UsrID condition
 	 * @param secOperation(secOperation)
@@ -181,7 +159,7 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 	public void save(SecurityOperationRoles securityOperationRoles, String type) {
 		logger.debug("Entering ");
 
-		 securityOperationRoles.setId(getNextidviewDAO().getNextId("SeqSecOperationRoles"));
+		 securityOperationRoles.setId(getNextId("SeqSecOperationRoles"));
 		logger.debug("get NextID:"+ securityOperationRoles.getOprRoleID());
 		StringBuilder  insertSql = new StringBuilder ("INSERT INTO SecOperationRoles");
 		insertSql.append(StringUtils.trimToEmpty(type));

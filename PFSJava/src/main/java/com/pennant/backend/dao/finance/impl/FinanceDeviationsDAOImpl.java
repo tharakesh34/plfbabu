@@ -2,38 +2,29 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviations>  implements FinanceDeviationsDAO{
+public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  implements FinanceDeviationsDAO{
+   private static Logger logger = Logger.getLogger(FinanceDeviationsDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(FinanceDeviationsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FinanceDeviationsDAOImpl(){
 		super();
 	}
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	/**
 	 * get Deviation Details List based on finance reference
 	 * 
@@ -55,7 +46,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
 		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDeviations.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 
 	@Override
@@ -77,7 +68,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDeviations.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}	
 
 	/**
@@ -107,7 +98,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 
 		logger.debug("Leaving");
@@ -121,7 +112,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("Entering");
 
 		if (financeDeviations.getDeviationId() == Long.MIN_VALUE) {
-			financeDeviations.setDeviationId(getNextidviewDAO().getNextId("SeqDeviations"));
+			financeDeviations.setDeviationId(getNextId("SeqDeviations"));
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into FinanceDeviations");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -135,7 +126,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeDeviations.getId();
 	}
@@ -153,7 +144,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (Exception e) {
 			logger.debug(e);
@@ -182,7 +173,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), mapSqlParameterSource);
+			this.jdbcTemplate.update(deleteSql.toString(), mapSqlParameterSource);
 
 		} catch (Exception e) {
 			logger.debug(e);
@@ -205,7 +196,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		updateSql.append("  where FinReference = :FinReference and  DeviProcessed =:DeviNotProcessed ");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -223,7 +214,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (Exception e) {
 			logger.debug(e);
@@ -244,7 +235,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

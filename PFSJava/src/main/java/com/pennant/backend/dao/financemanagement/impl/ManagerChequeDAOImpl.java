@@ -46,37 +46,31 @@ package com.pennant.backend.dao.financemanagement.impl;
 
 import java.math.BigDecimal;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.ManagerChequeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.ManagerCheque;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ManagerCheque model</b> class.<br>
  * 
  */
 
-public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> implements ManagerChequeDAO {
-
-	private static Logger logger = Logger.getLogger(ManagerChequeDAOImpl.class);
+public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements ManagerChequeDAO {
+   private static Logger logger = Logger.getLogger(ManagerChequeDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public ManagerChequeDAOImpl() {
 		super();
@@ -121,17 +115,9 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 	 * In Notes table ChequeID is stored in reference field.
 	 */
 	public long getNextId() {
-		return getNextidviewDAO().getNextId("SeqManagerCheques");
+		return getNextId("SeqManagerCheques");
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * Fetch the Record  Manager Cheques details by key field
@@ -163,7 +149,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		RowMapper<ManagerCheque> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManagerCheque.class);
 		
 		try{
-			managerCheque = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			managerCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			managerCheque = null;
@@ -202,7 +188,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		RowMapper<ManagerCheque> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManagerCheque.class);
 		
 		try{
-			managerCheque = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			managerCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			managerCheque = null;
@@ -236,7 +222,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -264,7 +250,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 	public long save(ManagerCheque managerCheque,String type) {
 		logger.debug("Entering");
 		if (managerCheque.getId()==Long.MIN_VALUE){
-			managerCheque.setId(getNextidviewDAO().getNextId("SeqManagerCheques"));
+			managerCheque.setId(getNextId("SeqManagerCheques"));
 			logger.debug("get NextID:"+managerCheque.getId());
 		}
 		
@@ -280,7 +266,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return managerCheque.getId();
 	}
@@ -319,7 +305,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -346,7 +332,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
 
 		try {
-			totalChequeAmt = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			totalChequeAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			totalChequeAmt = BigDecimal.ZERO;
@@ -374,7 +360,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
 		try{
-			count = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+			count = this.jdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
  		}catch (EmptyResultDataAccessException e) {
  			logger.warn("Exception: ", e);
 			count = 0;
@@ -406,7 +392,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
 		try{
-			count = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+			count = this.jdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

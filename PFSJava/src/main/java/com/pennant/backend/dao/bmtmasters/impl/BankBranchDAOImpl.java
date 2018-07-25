@@ -44,38 +44,32 @@
 package com.pennant.backend.dao.bmtmasters.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>BankBranch model</b> class.<br>
  * 
  */
 
-public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements BankBranchDAO {
+public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBranchDAO {
+   private static Logger logger = Logger.getLogger(BankBranchDAOImpl.class);
+	
 
-	private static Logger logger = Logger.getLogger(BankBranchDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
 	public BankBranchDAOImpl(){
 		super();
 	}
@@ -142,7 +136,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
 		
 		try{
-			bankBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			bankBranch = null;
@@ -176,18 +170,9 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the BankBranches or BankBranches_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -212,7 +197,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -240,7 +225,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 	public long save(BankBranch bankBranch,String type) {
 		logger.debug("Entering");
 		if (bankBranch.getId()==Long.MIN_VALUE){
-			bankBranch.setId(getNextidviewDAO().getNextId("SeqBankBranches"));
+			bankBranch.setId(getNextId("SeqBankBranches"));
 			logger.debug("get NextID:"+bankBranch.getId());
 		}
 		//since it has foreign key
@@ -256,7 +241,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return bankBranch.getId();
 	}
@@ -293,7 +278,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -329,7 +314,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
-			bankBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			bankBranch = null;
@@ -362,7 +347,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
-			bankBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			bankBranch = null;
@@ -386,7 +371,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -407,7 +392,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
-			bankBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -443,7 +428,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 	}
 	
 }

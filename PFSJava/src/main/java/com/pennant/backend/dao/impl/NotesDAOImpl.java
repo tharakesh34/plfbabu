@@ -45,14 +45,11 @@ package com.pennant.backend.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -60,12 +57,13 @@ import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
+public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO{
 	private static Logger logger = Logger.getLogger(NotesDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 
 	public NotesDAOImpl() {
 		super();
@@ -89,7 +87,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	public List<Notes> getNotesForAgreements(Notes notes){
@@ -106,7 +104,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	@Override
@@ -126,7 +124,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	public String getRolesWithFormat(String[] roleCodes) {
@@ -183,7 +181,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 
 		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
+		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	public List<Notes> getNotesListAsc(String reference, List<String> moduleNames) {
@@ -210,17 +208,14 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	@Override
 	public void save(Notes notes) {
 		logger.debug("Entering");
-		notes.setId(getNextidviewDAO().getNextId("SeqNotes"));
+		notes.setId(getNextId("SeqNotes"));
 		
 		StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Notes (NoteId, ModuleName, Reference , " );
 		insertSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate )");
@@ -229,7 +224,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		logger.debug("Leaving");
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 	}
 	
 	public void delete(Notes notes) {
@@ -239,7 +234,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			logger.error("Exception: ", e);
 			throw e;
@@ -256,7 +251,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			logger.error("Exception: ", e);
 			throw e;

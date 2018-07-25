@@ -46,13 +46,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -61,12 +58,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> implements WorkFlowDetailsDAO{
-	
-	private static Logger logger = Logger.getLogger(WorkFlowDetailsDAOImpl.class);
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO{
+	 private static Logger logger = Logger.getLogger(WorkFlowDetailsDAOImpl.class);
+	 
 	// Adding a new cache property :
 	private LoadingCache<String, WorkFlowDetails> workflowCache = CacheBuilder.newBuilder().maximumSize(100)
 			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<String, WorkFlowDetails>() {
@@ -82,13 +78,6 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 		super();
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * Fetch the Record Work Flow details by key field
@@ -133,7 +122,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 						newInstance(WorkFlowDetails.class);
 		
 		try{
-			workFlowDetails = this.namedParameterJdbcTemplate.queryForObject(
+			workFlowDetails = this.jdbcTemplate.queryForObject(
 					selectListSql, beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -152,7 +141,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new WorkFlowDetails());
 		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(WorkFlowDetails.class);
-		return this.namedParameterJdbcTemplate.query(selectListSql, beanParameters,typeRowMapper);	
+		return this.jdbcTemplate.query(selectListSql, beanParameters,typeRowMapper);	
 		
 	}
 
@@ -170,7 +159,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 	 */
 	public long save(WorkFlowDetails workFlowDetails){
 		logger.debug("Entering + save()");
-		long  workFlowId = getNextidviewDAO().getNextId("SeqWorkFlowDetails");
+		long  workFlowId = getNextId("SeqWorkFlowDetails");
 		workFlowDetails.setId(workFlowId);
 		String insertSql = 	"insert into WorkFlowDetails (WorkFlowId, WorkFlowType, " +
 					" WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles," +
@@ -179,7 +168,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 					" :WorkFlowXml,:WorkFlowRoles, :FirstTaskOwner, :WorkFlowActive," +
 					" :Version , :LastMntBy, :LastMntOn, :JsonDesign, :roleCode, :nextRoleCode, :taskId, :nextTaskId)";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-		this.namedParameterJdbcTemplate.update(insertSql, beanParameters);
+		this.jdbcTemplate.update(insertSql, beanParameters);
 		
 		return workFlowId;
  	}
@@ -191,7 +180,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 							" version=:version, lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + 
 							"where WorkFlowId= :WorkFlowId" ;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql, beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql, beanParameters);
 		logger.info("Number of Records Update :"+recordCount);
 		clearWorkflowCache(workFlowDetails.getWorkFlowId()); // added this line to clear the cache after update.
 	}
@@ -212,7 +201,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
            RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
                         .newInstance(WorkFlowDetails.class);
            try{
-                  workFlowDetails = this.namedParameterJdbcTemplate.queryForObject(
+                  workFlowDetails = this.jdbcTemplate.queryForObject(
                                selectListSql, beanParameters, typeRowMapper);  
            }catch (EmptyResultDataAccessException e) {
         	   logger.warn("Exception: ", e);
@@ -239,7 +228,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		try {
-			rowCount = this.namedParameterJdbcTemplate.queryForLong(selectListSql, beanParameters);
+			rowCount = this.jdbcTemplate.queryForLong(selectListSql, beanParameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workFlowDetails = null;
@@ -258,7 +247,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		try {
-			version = this.namedParameterJdbcTemplate.queryForInt(selectListSql, beanParameters);
+			version = this.jdbcTemplate.queryForInt(selectListSql, beanParameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workFlowDetails = null;
@@ -283,7 +272,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 				workFlowDetails);
 		boolean result = false;
 		try {
-			int rowCount = this.namedParameterJdbcTemplate.queryForInt(
+			int rowCount = this.jdbcTemplate.queryForInt(
 					selectListSql, beanParameters);
 			if (rowCount > 0) {
 				result = true;

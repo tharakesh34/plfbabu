@@ -48,7 +48,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -57,24 +57,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserOperations;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements
+public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> implements
 		SecurityUserOperationsDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserOperationsDAOImpl.class);
-	private NamedParameterJdbcTemplate jdbcTemplate;
-
+	
 	/**
 	 * This method returns new SecurityUserOperations Object
 	 */
@@ -98,16 +95,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		return securityUserOperations;
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
-	}
-
+	
 	/**
 	 * This Method selects the records from SecUserOperations_AView table with
 	 * UsrID condition
@@ -248,7 +236,6 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		logger.debug("Entering ");
 
 		if (securityUserOperations.getOprID() == Long.MIN_VALUE) {
-			securityUserOperations.setId(getNextidviewDAO().getNextId("SeqSecUserOperations"));
 			logger.debug("get NextID:" + securityUserOperations.getId());
 		}
 

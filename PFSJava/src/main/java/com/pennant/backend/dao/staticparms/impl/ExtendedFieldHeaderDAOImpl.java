@@ -57,7 +57,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.util.CollateralConstants;
@@ -65,16 +64,16 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldHeader model</b> class.<br>
  */
-public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedFieldHeader> implements ExtendedFieldHeaderDAO {
+public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader> implements ExtendedFieldHeaderDAO {
 
 	private static Logger logger = Logger.getLogger(ExtendedFieldHeaderDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 	private NamedParameterJdbcTemplate adtNamedParameterJdbcTemplate;
 
 	public ExtendedFieldHeaderDAOImpl() {
@@ -110,7 +109,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try{
-			extendedFieldHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			extendedFieldHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			extendedFieldHeader = null;
@@ -149,7 +148,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception :", e);
 		}
@@ -183,7 +182,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				.newInstance(ExtendedFieldHeader.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception :", e);
 		}
@@ -191,13 +190,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		return null;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	/**
 	 * To Set  dataSource
@@ -233,7 +226,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
 		
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -261,7 +254,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("Entering");
 
 		if (extendedFieldHeader.getId() == Long.MIN_VALUE) {
-			extendedFieldHeader.setId(getNextidviewDAO().getNextId("SeqExtendedFieldHeader"));
+			extendedFieldHeader.setId(getNextId("SeqExtendedFieldHeader"));
 			logger.debug("get NextID:" + extendedFieldHeader.getId());
 		}
 
@@ -278,7 +271,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return extendedFieldHeader.getId();
@@ -320,7 +313,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -467,7 +460,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if (i == 2 || i == 6) {// Audit DB
 					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
 				} else {
-					this.namedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
+					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
@@ -554,7 +547,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if(i == 2){// Audit DB
 					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}else{
-					this.namedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
+					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);

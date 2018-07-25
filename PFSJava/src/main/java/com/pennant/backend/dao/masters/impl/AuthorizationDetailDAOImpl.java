@@ -45,32 +45,25 @@ package com.pennant.backend.dao.masters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.masters.AuthorizationDetailDAO;
 import com.pennant.backend.model.masters.AuthorizationDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>AuthorizationDetail model</b> class.<br>
  * 
  */
-public class AuthorizationDetailDAOImpl extends
-		BasisNextidDaoImpl<AuthorizationDetail> implements
-		AuthorizationDetailDAO {
-	private static Logger logger = Logger
-			.getLogger(AuthorizationDetailDAOImpl.class);
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail> implements AuthorizationDetailDAO {
+	private static Logger logger = Logger.getLogger(AuthorizationDetailDAOImpl.class);
+	
 	@Override
 	public AuthorizationDetail getAuthorizationDetail() {
 		logger.debug("Entering");
@@ -81,21 +74,12 @@ public class AuthorizationDetailDAOImpl extends
 		return authorizationDetail;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
-	}
-
+	
 	@Override
 	public long save(AuthorizationDetail authorizationDetail, String type) {
 		logger.debug("Entering");
 		if (authorizationDetail.getId() == Long.MIN_VALUE) {
-			authorizationDetail.setId(getNextidviewDAO().getNextId("SeqAuthDetails"));
+			authorizationDetail.setId(getNextId("SeqAuthDetails"));
 			logger.debug("get NextID:" + authorizationDetail.getId());
 		}
 
@@ -113,7 +97,7 @@ public class AuthorizationDetailDAOImpl extends
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				authorizationDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(),
+		this.jdbcTemplate.update(insertSql.toString(),
 				beanParameters);
 		logger.debug("Leaving");
 		return authorizationDetail.getId();
@@ -139,7 +123,7 @@ public class AuthorizationDetailDAOImpl extends
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				authorizationDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(
+		recordCount = this.jdbcTemplate.update(
 				updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
@@ -169,7 +153,7 @@ public class AuthorizationDetailDAOImpl extends
 		RowMapper<AuthorizationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(AuthorizationDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),
+		return this.jdbcTemplate.query(selectSql.toString(),
 				beanParameters, typeRowMapper);
 	}
 

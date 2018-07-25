@@ -44,8 +44,6 @@ package com.pennant.backend.dao.administration.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,27 +51,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityRoleDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>SecurityRole model</b> class.<br>
  * 
  */
-public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implements SecurityRoleDAO {
+public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleDAO {
 	private static Logger logger = Logger.getLogger(SecurityRoleDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public SecurityRoleDAOImpl() {
 		super();
@@ -128,7 +123,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				SecurityRole.class);
 		try{
-			secRoles = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -171,7 +166,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 				SecurityRole.class);
 
 		try{
-			secRoles = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -181,13 +176,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		return secRoles;
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the SecRoles or SecRoles_Temp.
@@ -207,7 +196,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		String deleteSql = 	"Delete From SecRoles" + StringUtils.trimToEmpty(type) +
 		" Where RoleID =:RoleID";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		recordCount = this.namedParameterJdbcTemplate.update(deleteSql, beanParameters);
+		recordCount = this.jdbcTemplate.update(deleteSql, beanParameters);
 		logger.debug("deleteSql:"+deleteSql);
 		try {
 			if (recordCount <= 0) {
@@ -234,7 +223,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 	public long save(SecurityRole secRoles,String type) {
 		logger.debug("Entering");
 		if (secRoles.getId()==Long.MIN_VALUE){
-			secRoles.setId(getNextidviewDAO().getNextId("SeqSecRoles"));
+			secRoles.setId(getNextId("SeqSecRoles"));
 			logger.debug("get NextID:"+secRoles.getId());
 		}
 
@@ -249,7 +238,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		logger.debug("insertSql:"+insertSql);
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return secRoles.getId();
@@ -289,7 +278,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		logger.debug("updateSql:"+updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -324,7 +313,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 	@Override
@@ -342,7 +331,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
     }
 
 	/**
@@ -362,7 +351,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.debug(e);
 		}
@@ -386,7 +375,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 		
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.debug(e);
 		}

@@ -2,14 +2,11 @@ package com.pennant.backend.dao.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -17,25 +14,17 @@ import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.TATNotificationLog;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements TATDetailDAO {
+public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetailDAO {
+    private static Logger logger = Logger.getLogger(TATDetailDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(TATDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public TATDetailDAOImpl() {
 		super();
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * Get TAT Detail
@@ -60,7 +49,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 			logger.debug("selectSql: " + selectSql.toString());
 
-			detail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			detail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -86,7 +75,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -96,7 +85,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 	@Override
 	public void save(TATDetail tatDetail) {
 		logger.debug("Entering");
-		tatDetail.setSerialNo(getNextidviewDAO().getNextId("SeqTATDetails"));
+		tatDetail.setSerialNo(getNextId("SeqTATDetails"));
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO TATDetails ");
 		insertSql.append(" (Module, Reference, SerialNo, RoleCode, TATStartTime, TATEndTime, FinType)");
@@ -104,7 +93,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(tatDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			logger.debug("Exception: ", e);
 		}
@@ -135,7 +124,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(tatDetail);
 
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}
@@ -159,7 +148,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			notificationLog = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			notificationLog = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -186,7 +175,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationCode);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			notificationCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			notificationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -206,7 +195,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			logger.debug("Exception: ", e);
 		}
@@ -226,7 +215,7 @@ public class TATDetailDAOImpl extends BasisNextidDaoImpl<TATDetail> implements T
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
 		try {
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			logger.debug("Exception: ", e);
 		}

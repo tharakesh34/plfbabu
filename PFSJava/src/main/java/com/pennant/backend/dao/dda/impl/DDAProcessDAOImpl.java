@@ -1,30 +1,23 @@
 package com.pennant.backend.dao.dda.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dda.DDAProcessDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.limits.FinanceLimitProcess;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class DDAProcessDAOImpl extends BasisNextidDaoImpl<FinanceLimitProcess> implements DDAProcessDAO {
-
-private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+public class DDAProcessDAOImpl extends SequenceDao<FinanceLimitProcess> implements DDAProcessDAO {
+       private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
+	 
 	public DDAProcessDAOImpl() {
 		super();
 	}
@@ -39,7 +32,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 		logger.debug("Entering ");
 		
 		if(ddaProcessData.getId()== 0 ||ddaProcessData.getId()==Long.MIN_VALUE){
-			ddaProcessData.setSeqNo(getNextidviewDAO().getNextId("SeqDDAReferenceLog"));	
+			ddaProcessData.setSeqNo(getNextId("SeqDDAReferenceLog"));	
 		}
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into DDAReferenceLog" );
@@ -56,7 +49,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ddaProcessData);
 		logger.debug("Leaving ");
 		try {
-			return this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			return this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch(DataAccessException e) {
 			logger.error("Exception: ", e);
 			return 0;
@@ -82,7 +75,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 
 		logger.debug("updateSql: " + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 
@@ -119,7 +112,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 		RowMapper<DDAProcessData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAProcessData.class);
 
 		try {
-			ddaProcessData = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			ddaProcessData = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			ddaProcessData = null;
@@ -152,7 +145,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 		
 		try {
-			aFinanceType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			aFinanceType = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			aFinanceType = null;
@@ -162,12 +155,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 		
 	}
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+
 
 	@Override
 	public DDAProcessData getDDADetailsByReference(String finReference,
@@ -193,7 +181,7 @@ private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
 		RowMapper<DDAProcessData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAProcessData.class);
 
 		try {
-			ddaProcessData = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			ddaProcessData = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			ddaProcessData = null;

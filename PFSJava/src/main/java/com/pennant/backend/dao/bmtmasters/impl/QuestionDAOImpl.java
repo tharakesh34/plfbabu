@@ -43,37 +43,30 @@
 package com.pennant.backend.dao.bmtmasters.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.QuestionDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.Question;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>Question model</b> class.<br>
  * 
  */
 
-public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements QuestionDAO {
-
-	private static Logger logger = Logger.getLogger(QuestionDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+public class QuestionDAOImpl extends SequenceDao<Question> implements QuestionDAO {
+   private static Logger logger = Logger.getLogger(QuestionDAOImpl.class);
 	
 	/**
 	 * This method set the Work Flow id based on the module name and return the new Question 
@@ -138,22 +131,13 @@ public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements Que
 		RowMapper<Question> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Question.class);
 		
 		try{
-			question = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			question = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			question = null;
 		}
 		logger.debug("Leaving");
 		return question;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -180,7 +164,7 @@ public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements Que
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -208,7 +192,7 @@ public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements Que
 	public long save(Question question,String type) {
 		logger.debug("Entering");
 		if (question.getId()==Long.MIN_VALUE){
-			question.setId(getNextidviewDAO().getNextId("SeqBMTQuestion"));
+			question.setId(getNextId("SeqBMTQuestion"));
 			logger.debug("get NextID:"+question.getId());
 		}
 		
@@ -222,7 +206,7 @@ public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements Que
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return question.getId();
 	}
@@ -256,7 +240,7 @@ public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements Que
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

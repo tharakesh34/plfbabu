@@ -45,35 +45,29 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FinContributorDetail model</b> class.<br>
  * 
  */
-public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContributorDetail> implements FinContributorDetailDAO {
+public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetail> implements FinContributorDetailDAO {
+     private static Logger logger = Logger.getLogger(FinContributorDetailDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(FinContributorDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FinContributorDetailDAOImpl() {
 		super();
 	}
@@ -110,7 +104,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 				FinContributorDetail.class);
 
 		try{
-			contributorDetail = this.namedParameterJdbcTemplate.queryForObject(
+			contributorDetail = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -146,15 +140,10 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinContributorDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the FinContributorDetails or FinContributorDetails_Temp.
@@ -181,7 +170,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -206,7 +195,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -227,7 +216,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 		logger.debug("Entering");
 		
 		if(contributorDetail.getContributorBaseNo() == 0 || contributorDetail.getContributorBaseNo()==Long.MIN_VALUE){
-			contributorDetail.setContributorBaseNo(getNextidviewDAO().getNextId("SeqFinContributorDetail"));	
+			contributorDetail.setContributorBaseNo(getNextId("SeqFinContributorDetail"));	
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -244,7 +233,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return contributorDetail.getContributorBaseNo();
@@ -285,7 +274,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

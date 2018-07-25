@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,15 +49,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ProfitCenterDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -67,10 +64,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>ProfitCenter</code> with set of CRUD operations.
  */
-public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implements ProfitCenterDAO {
-	private static Logger				logger	= Logger.getLogger(ProfitCenterDAOImpl.class);
+public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements ProfitCenterDAO {
+	private static Logger	logger	= Logger.getLogger(ProfitCenterDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public ProfitCenterDAOImpl() {
 		super();
@@ -99,7 +95,7 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		RowMapper<ProfitCenter> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProfitCenter.class);
 
 		try {
-			profitCenter = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			profitCenter = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			profitCenter = null;
@@ -135,7 +131,7 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		paramSource.addValue("profitCenterID", profitCenterID);
 		paramSource.addValue("profitCenterCode", profitCenterCode);
 		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -160,14 +156,14 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (profitCenter.getProfitCenterID() <= 0) {
-			profitCenter.setProfitCenterID(getNextidviewDAO().getNextId("SeqProfitCenters"));
+			profitCenter.setProfitCenterID(getNextId("SeqProfitCenters"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(profitCenter);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -194,7 +190,7 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(profitCenter);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -220,7 +216,7 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -233,14 +229,6 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+
 	
 }	

@@ -26,8 +26,6 @@ package com.pennant.backend.dao.commodity.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -35,27 +33,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.commodity.CommodityInventoryDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.commodity.CommodityInventory;
 import com.pennant.backend.model.commodity.FinCommodityInventory;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>CommodityInventory model</b> class.<br>
  * 
  */
-public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInventory> implements CommodityInventoryDAO {
+public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> implements CommodityInventoryDAO {
 	private static Logger logger = Logger.getLogger(CommodityInventoryDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public CommodityInventoryDAOImpl() {
 		super();
@@ -97,7 +92,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityInventory.class);
 
 		try {
-			commodityInventory = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			commodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commodityInventory = null;
@@ -108,15 +103,6 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		return commodityInventory;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * This method Deletes the Record from the FCMTCommodityInventory or FCMTCommodityInventory_Temp. if Record not
@@ -144,7 +130,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -174,7 +160,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		logger.debug("Entering");
 		
 		if (commodityInventory.getId() == Long.MIN_VALUE) {
-			commodityInventory.setId(getNextidviewDAO().getNextId("SeqFCMTCommodityInventory"));
+			commodityInventory.setId(getNextId("SeqFCMTCommodityInventory"));
 			logger.debug("get NextID:" + commodityInventory.getId());
 		}
 
@@ -193,7 +179,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		
@@ -236,7 +222,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -268,7 +254,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommodityInventory);
 		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCommodityInventory.class);
 
-		List<FinCommodityInventory> finCommInventoryList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		List<FinCommodityInventory> finCommInventoryList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	
 		logger.debug("Leaving");
 		return finCommInventoryList;
@@ -294,7 +280,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
 		}catch(EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return 0;
@@ -323,7 +309,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
 		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityInventory.class);
 		try {
-			commodityInventory = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			commodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			commodityInventory = null;
 			logger.debug(e);
@@ -357,7 +343,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
  		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 	}
 
 	/**
@@ -378,7 +364,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 
 		logger.debug("selectSql: " + selectSql.toString());
  		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);	
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);	
 	}
     
 }

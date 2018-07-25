@@ -60,6 +60,6 @@ public class BasisNextidDaoImpl<T> {
 	}
 
 	public long getNextId(String seqName) {
-		return nextidviewDAO.getNextId(seqName);
+		return getNextId(seqName);
 	}
 }

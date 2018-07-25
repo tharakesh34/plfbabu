@@ -46,8 +46,6 @@ package com.pennant.backend.dao.rulefactory.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,11 +53,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.LimitFilterQuery;
@@ -67,17 +63,15 @@ import com.pennant.backend.model.rulefactory.LimitFldCriterias;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
  */
-public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> implements LimitRuleDAO {
+public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements LimitRuleDAO {
+   private static Logger logger = Logger.getLogger(LimitRuleDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(LimitRuleDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public LimitRuleDAOImpl() {
 		super();
 	}
@@ -150,7 +144,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		RowMapper<LimitFilterQuery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
 		try{
-			dedupParm = this.namedParameterJdbcTemplate.queryForObject(
+			dedupParm = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -190,7 +184,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		RowMapper<LimitFilterQuery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 		
 		try{
-			dedupParmList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			dedupParmList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		}
@@ -198,14 +192,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		return dedupParmList;
 	}
 
-	/**
-	 * Set the DataSource object to the NamedParameterJdbcTemplate
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the DedupParams or DedupParams_Temp.
@@ -232,7 +219,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -260,7 +247,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		logger.debug("Entering");
 		
 		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
-			dedupParm.setQueryId(getNextidviewDAO().getNextId("SeqLimitParams"));
+			dedupParm.setQueryId(getNextId("SeqLimitParams"));
 			logger.debug("get NextID:" + dedupParm.getQueryId());
 		}
 
@@ -275,7 +262,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return dedupParm.getQueryId();
@@ -316,7 +303,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -363,7 +350,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		        .newInstance(BMTRBFldDetails.class);
 
 		try {
-			fieldList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,
+			fieldList = this.jdbcTemplate.query(selectSql.toString(), source,
 			        typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
@@ -391,7 +378,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		RowMapper<LimitFldCriterias> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitFldCriterias.class);
 
 		try {
-			fieldList = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			fieldList = null;

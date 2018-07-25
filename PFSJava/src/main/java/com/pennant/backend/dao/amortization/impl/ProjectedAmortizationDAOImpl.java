@@ -47,42 +47,27 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAmortization> implements ProjectedAmortizationDAO {
-
-	private static Logger logger = Logger.getLogger(ProjectedAmortizationDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization> implements ProjectedAmortizationDAO {
+             private static Logger logger = Logger.getLogger(ProjectedAmortizationDAOImpl.class);
 
 	public ProjectedAmortizationDAOImpl() {
 		super();
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * 
@@ -110,7 +95,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
-			projAMZList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			return Collections.emptyList();
 		}
@@ -145,7 +130,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
-			projAMZList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			return Collections.emptyList();
 		}
@@ -180,7 +165,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
-			projAMZList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			return Collections.emptyList();
 		}
@@ -217,7 +202,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
-			projAMZList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			return Collections.emptyList();
 		}
@@ -235,7 +220,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		logger.debug("Entering");
 
 		if (proAmortization.getIncomeAmzID() == Long.MIN_VALUE) {
-			proAmortization.setIncomeAmzID(getNextidviewDAO().getNextId("SeqIncomeAmortization"));
+			proAmortization.setIncomeAmzID(getNextId("SeqIncomeAmortization"));
 			logger.debug("get NextID:" + proAmortization.getIncomeAmzID());
 		}
 
@@ -247,7 +232,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(proAmortization);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return proAmortization.getIncomeAmzID();
@@ -263,7 +248,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 
 		for (ProjectedAmortization proAmortization : amortizationList) {
 			if (proAmortization.getIncomeAmzID() == Long.MIN_VALUE) {
-				proAmortization.setIncomeAmzID(getNextidviewDAO().getNextId("SeqIncomeAmortization"));
+				proAmortization.setIncomeAmzID(getNextId("SeqIncomeAmortization"));
 				logger.debug("get NextID:" + proAmortization.getIncomeAmzID());
 			}
 		}
@@ -277,7 +262,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(amortizationList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -297,7 +282,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(amortizationList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -318,7 +303,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(amzList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -347,7 +332,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
 
 		try {
-			projAccrualList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			projAccrualList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			return Collections.emptyList();
 		}
@@ -366,7 +351,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 
 		for (ProjectedAccrual projAccrual : projAccrualList) {
 			if (projAccrual.getProjAccrualID() == Long.MIN_VALUE) {
-				projAccrual.setProjAccrualID(getNextidviewDAO().getNextId("SeqProjectedAccruals"));
+				projAccrual.setProjAccrualID(getNextId("SeqProjectedAccruals"));
 				logger.debug("get NextID:" + projAccrual.getProjAccrualID());
 			}
 		}
@@ -380,7 +365,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(projAccrualList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -400,7 +385,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		deleteSql.append(" Where FinReference = :FinReference AND AccruedOn = :AccruedOn");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -414,7 +399,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 
 		for (ProjectedAmortization incomeAMZ : projIncomeAMZ) {
 			if (incomeAMZ.getProjIncomeAMZID() == Long.MIN_VALUE) {
-				incomeAMZ.setProjIncomeAMZID(getNextidviewDAO().getNextId("SeqProjectedIncomeAMZ"));
+				incomeAMZ.setProjIncomeAMZID(getNextId("SeqProjectedIncomeAMZ"));
 				logger.debug("get NextID:" + incomeAMZ.getProjIncomeAMZID());
 			}
 		}
@@ -428,7 +413,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(projIncomeAMZ.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -448,7 +433,7 @@ public class ProjectedAmortizationDAOImpl extends BasisNextidDaoImpl<ProjectedAm
 		deleteSql.append(" Where FinReference = :FinReference AND MonthEndDate = :MonthEndDate");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 }
