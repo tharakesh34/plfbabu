@@ -653,7 +653,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal recalSGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalUGSTFee = BigDecimal.ZERO;
 	
-	private String eligibilityMethod;
+	private long eligibilityMethod;
+	private String lovEligibilityMethod;
+	private String lovDescEligibilityMethod;
 	
 	// Exposed For Workflow Rules
 	private String collateralType=null;
@@ -806,6 +808,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		
 		// Repay Base Rate value for Agreements
 		excludeFields.add("repayBaseRateVal");
+		
+		excludeFields.add("lovEligibilityMethod");
+		excludeFields.add("lovDescEligibilityMethod");
 		
 		return excludeFields;
 	}
@@ -3635,12 +3640,28 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.status = status;
 	}
 
-	public String getEligibilityMethod() {
+	public long getEligibilityMethod() {
 		return eligibilityMethod;
 	}
 
-	public void setEligibilityMethod(String eligibilityMethod) {
+	public void setEligibilityMethod(long eligibilityMethod) {
 		this.eligibilityMethod = eligibilityMethod;
+	}
+
+	public String getLovEligibilityMethod() {
+		return lovEligibilityMethod;
+	}
+
+	public void setLovEligibilityMethod(String lovEligibilityMethod) {
+		this.lovEligibilityMethod = lovEligibilityMethod;
+	}
+
+	public String getLovDescEligibilityMethod() {
+		return lovDescEligibilityMethod;
+	}
+
+	public void setLovDescEligibilityMethod(String lovDescEligibilityMethod) {
+		this.lovDescEligibilityMethod = lovDescEligibilityMethod;
 	}
 
 	public boolean isBpiResetReq() {

@@ -54,4 +54,29 @@
 			<modifyDataType tableName="AdtFinancedeviations" columnName="DeviationCategory" newDataType="Char(1)" />	
 	</changeSet>
 	
+	<changeSet id="2" author="Vinay">
+		<sql>
+			update adtfinancemain set eligibilitymethod=(select fieldcodeid from plf.rmtlovfielddetail t2 where adtfinancemain.eligibilitymethod = t2.fieldcodevalue);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3" author="Vinay">
+		<sql>
+			update adtfinancemain set eligibilitymethod=0 where eligibilitymethod is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="4" author="Vinay">
+		<dropDefaultValue tableName="AdtFinanceMain" columnName="EligibilityMethod"/>
+	</changeSet>
+	
+	<changeSet id="5" author="Vinay">
+		<sql>
+			alter table AdtFinanceMain alter column EligibilityMethod drop default;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="6" author="Vinay">
+		<modifyDataType tableName="AdtFinanceMain" columnName="EligibilityMethod" newDataType="bigint"/>
+	</changeSet>
 </databaseChangeLog>

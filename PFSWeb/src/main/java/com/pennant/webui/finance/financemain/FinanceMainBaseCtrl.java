@@ -3855,7 +3855,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// ###_0.3
-		this.eligibilityMethod.setValue(aFinanceMain.getEligibilityMethod());
+		this.eligibilityMethod.setValue(aFinanceMain.getLovEligibilityMethod());
+		this.eligibilityMethod.setDescription(aFinanceMain.getLovDescEligibilityMethod());
+		this.eligibilityMethod.setAttribute("FieldCodeId", aFinanceMain.getEligibilityMethod());
 
 		//FinanceMain Details Tab ---> 5. DDA Registration Details
 		if (this.gb_ddaRequest.isVisible()) {
@@ -8434,6 +8436,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	public void onFulfill$eligibilityMethod(Event event) {
+		logger.debug("Entering");
+		Object dataObject = eligibilityMethod.getObject();
+		if (dataObject instanceof String) {
+			this.eligibilityMethod.setValue(dataObject.toString());
+			this.eligibilityMethod.setDescription("");
+		} else {
+			LovFieldDetail details = (LovFieldDetail) dataObject;
+			if (details != null) {
+				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
+			}
+		}
+		logger.debug("Leaving");
+	}
 
 	public void onFulfill$dsaCode(Event event) {
 		logger.debug("Entering");
@@ -11698,12 +11715,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		// ###_0.3
 		//Eligibility Method
-		if (this.row_EligibilityMethod.isVisible()) {
-			try {
-				aFinanceMain.setEligibilityMethod(this.eligibilityMethod.getValidatedValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
+		try {
+			this.eligibilityMethod.getValidatedValue();
+			Object object = this.eligibilityMethod.getAttribute("FieldCodeId");
+			if (object != null) {
+				aFinanceMain.setEligibilityMethod(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setEligibilityMethod(0);
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		//FinanceMain Details Tab ---> Rollover Finance Details
@@ -15386,7 +15407,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setCustDSR(detail.getCustomerEligibilityCheck().getDSCR());
 		detail.getCustomerEligibilityCheck().setAgreeName(financeMain.getAgreeName());
 		// ###_0.3
-		detail.getCustomerEligibilityCheck().setEligibilityMethod(financeMain.getEligibilityMethod());
+		detail.getCustomerEligibilityCheck().setEligibilityMethod(financeMain.getLovEligibilityMethod());
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 
 		// Customer Extended Value
