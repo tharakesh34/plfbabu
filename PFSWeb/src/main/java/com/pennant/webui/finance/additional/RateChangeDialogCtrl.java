@@ -588,9 +588,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.appendChild(comboitem);
 					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
 						dateCombobox.setSelectedItem(comboitem);
+						includedPrvSchTerm = true;
 					}
 				} else { 
 					dateCombobox.appendChild(comboitem);
+					includedPrvSchTerm = true;
 				}
 				//in over draft review from date to be selected the date which is greater than the app date
 				if(isOverdraft && isOdSelected ){

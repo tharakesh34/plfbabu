@@ -3127,7 +3127,7 @@ public class ScheduleCalculator {
 			}
 
 			if ((curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())
-					&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+					&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && i != 0) {
 				instNumber = instNumber + 1;
 				curSchd.setInstNumber(instNumber);
 			} else {
