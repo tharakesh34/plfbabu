@@ -543,7 +543,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 					
 				}
 			} else {
-				fillComboBox(this.subCategory, "", subSectorList, "");
+				//PSD 127735
+				fillComboBox(this.subCategory, "MI", subSectorList, "HF");
 				this.subCategory.setDisabled(false);
 			}
 		}
