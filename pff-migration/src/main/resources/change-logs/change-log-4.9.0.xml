@@ -947,6 +947,32 @@
     		update ExtendedFieldHeader_temp set modulename = 'ASSETTYPE' where modulename ='AssetType';
 		</sql>
 	</changeSet>	
+	
+	<changeSet id="11" author="Manoj">
+		<comment>To support Custom Deviations the  field ManualDeviation changed to DeviationCategory and also datatype </comment>
+		<renameColumn tableName="Financedeviations_temp" oldColumnName="ManualDeviation" newColumnName="DeviationCategory"/>
+	</changeSet>
+	
+	<changeSet id="12" author="Manoj">
+		<renameColumn tableName="Financedeviations" oldColumnName="ManualDeviation" newColumnName="DeviationCategory"/>
+	</changeSet>
+	
+	<changeSet id="13" author="Manoj">
+			<modifyDataType tableName="FinanceDeviations_Temp" columnName="DeviationCategory" newDataType="Char(1)" />	
+	</changeSet>
+	
+	<changeSet id="14" author="Manoj">
+		<modifyDataType tableName="Financedeviations" columnName="DeviationCategory" newDataType="Char(1)" />
+	</changeSet>
+	
+	<changeSet id="15" author="Manoj">
+		<sql>
+			update FinanceDeviations_Temp set DeviationCategory = 'A' where DeviationCategory = '0'; 
+			update FinanceDeviations  set DeviationCategory = 'A' where DeviationCategory = '0'; 
+			update FinanceDeviations_Temp set DeviationCategory = 'M' where DeviationCategory = '1'; 
+			update FinanceDeviations set DeviationCategory = 'M' where DeviationCategory = '1'; 
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>
 	
