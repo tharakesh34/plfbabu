@@ -63,6 +63,7 @@ import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
@@ -347,7 +348,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LegalDetailService legalDetailService;
 
 	@Autowired(required = false)
-	private PostValidationHook financeDetailPostValidationHook;
+	@Qualifier("financeDetailPostValidationHook")
+	private PostValidationHook postValidationHook;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -6213,8 +6215,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	// ### 22-06-2018 -End
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
-		if (financeDetailPostValidationHook != null) {
-			List<ErrorDetail> errorDetails = financeDetailPostValidationHook.validation(auditHeader);
+		if (postValidationHook != null) {
+			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
 
 			if (errorDetails != null) {
 				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());

@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.lang.Objects;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
@@ -271,7 +272,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private Crm crm;
 
 	@Autowired(required = false)
-	private PostValidationHook customerPostValidationHook;
+	@Qualifier("customerPostValidationHook")
+	private PostValidationHook postValidationHook;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -1490,9 +1492,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					customerDetails.getCustomer().getBefImage(), customerDetails);
 			auditDetails.add(validation(auditDetail, usrLanguage, method));
 
-			if (customerPostValidationHook != null) {
+			if (postValidationHook != null) {
 				AuditHeader auditHeader = new AuditHeader(String.valueOf(customerDetails.getCustID()), String.valueOf(customerDetails.getCustID()), null, null, auditDetail,customerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
-				List<ErrorDetail> errorDetails = customerPostValidationHook.validation(auditHeader);
+				List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
 				if(CollectionUtils.isNotEmpty(errorDetails)){
 					if(CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())){
 						auditDetail.getErrorDetails().addAll(ErrorUtil.getErrorDetails(errorDetails, usrLanguage));	
@@ -3047,8 +3049,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	// ### 19-06-2018 -End
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
-		if (customerPostValidationHook != null) {
-			List<ErrorDetail> errorDetails = customerPostValidationHook.validation(auditHeader);
+		if (postValidationHook != null) {
+			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
 
 			if (errorDetails != null) {
 				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
