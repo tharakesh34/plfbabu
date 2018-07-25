@@ -46,4 +46,12 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="12" author="Manoj">
+		<renameColumn tableName="AdtFinancedeviations" oldColumnName="ManualDeviation" newColumnName="DeviationCategory"/>
+	</changeSet>
+	
+	<changeSet id="13" author="Manoj">
+			<modifyDataType tableName="AdtFinancedeviations" columnName="DeviationCategory" newDataType="Char(1)" />	
+	</changeSet>
+	
 </databaseChangeLog>
