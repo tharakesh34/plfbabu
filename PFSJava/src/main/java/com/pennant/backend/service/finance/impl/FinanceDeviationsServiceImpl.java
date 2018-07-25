@@ -32,6 +32,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
+import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -371,7 +372,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				.getFinanceDeviations(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "");
 		List<FinanceDeviations> deviations = new ArrayList<>();
 		for (FinanceDeviations financeDeviation : financedeviations) {
-			if (financeDeviation.isManualDeviation()) {
+			if (StringUtils.equals(DeviationConstants.CAT_MANUAL, financeDeviation.getDeviationCategory())) {
 				deviations.add(financeDeviation);
 			}
 		}

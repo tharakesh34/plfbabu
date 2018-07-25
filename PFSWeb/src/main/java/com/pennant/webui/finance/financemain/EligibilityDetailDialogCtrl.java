@@ -174,6 +174,10 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
 
+		if (arguments.containsKey("roleCode")) {
+			//this.userRole = arguments.get("roleCode").toString();
+		}
+		
 		doShowDialog();
 		logger.debug("Leaving " + event.toString());
 	}

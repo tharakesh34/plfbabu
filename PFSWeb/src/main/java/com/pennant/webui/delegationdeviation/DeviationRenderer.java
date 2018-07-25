@@ -138,26 +138,35 @@ public class DeviationRenderer {
 
 			Listitem listitem = new Listitem();
 
-			String deviationCodedesc = deviationHelper.getDeviationDesc(deviationDetail, deviationParams);
-			listcell = getNewListCell(deviationCodedesc, deviationNotallowed);
-			listitem.appendChild(listcell);
-			listcell = getNewListCell(deviationDetail.getDeviationType(), deviationNotallowed);
-			listitem.appendChild(listcell);
-			String deviationValue = deviationHelper.getDeviationValue(deviationDetail, ccyformat);
-			listcell = getNewListCell(deviationValue, deviationNotallowed);
-			listitem.appendChild(listcell);
-			listcell = getNewListCell(deviationDetail.getUserRole(), deviationNotallowed);
-			listitem.appendChild(listcell);
-			listcell = new Listcell(
-					PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
-			listitem.appendChild(listcell);
-			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()),
-					deviationNotallowed);
+			if (StringUtils.equals(DeviationConstants.CAT_AUTO, deviationDetail.getDeviationCategory())) {
+				String deviationCodedesc = deviationHelper.getDeviationDesc(deviationDetail, deviationParams);
+				listcell = getNewListCell(deviationCodedesc, deviationNotallowed);
+			} else {
+				listcell = new Listcell(deviationDetail.getDeviationCode());
+			}
 			listitem.appendChild(listcell);
 
-			listcell = getNewListCell(
-					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
-					deviationNotallowed);
+			listcell = getNewListCell(deviationDetail.getDeviationType(), deviationNotallowed);
+			listitem.appendChild(listcell);
+
+			if (StringUtils.equals(DeviationConstants.CAT_AUTO, deviationDetail.getDeviationCategory())) {
+				String deviationValue = deviationHelper.getDeviationValue(deviationDetail, ccyformat);
+				listcell = getNewListCell(deviationValue, deviationNotallowed);
+			} else {
+				listcell = new Listcell(deviationDetail.getDeviationValue());
+			}
+			listitem.appendChild(listcell);
+			
+			listcell = getNewListCell(deviationDetail.getUserRole(), deviationNotallowed);
+			listitem.appendChild(listcell);
+			
+			listcell = new Listcell(PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
+			listitem.appendChild(listcell);
+			
+			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()), deviationNotallowed);
+			listitem.appendChild(listcell);
+
+			listcell = getNewListCell(PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus), deviationNotallowed);
 
 			if (approverScreen || workflow) {
 				if (!approved) {
@@ -167,7 +176,7 @@ public class DeviationRenderer {
 					combobox.setWidth("100px");
 					combobox.setId("combo_" + (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
 									+ deviationDetail.getDeviationCode() + StringUtils.trimToEmpty(deviationDetail.getModule())
-									+ (deviationDetail.isManualDeviation() ? "M" : "A"));
+									+ deviationDetail.getDeviationCategory());
 					combobox.addForward("onChange", "", "onChangeAutoDevStatus", deviationDetail);
 					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(readOnly);
@@ -303,7 +312,7 @@ public class DeviationRenderer {
 					combobox.setWidth("100px");
 					combobox.setId("combo_" + (deviation.getDeviationId() < 0 ? 0 : deviation.getDeviationId())
 							+ deviation.getDeviationCode() + StringUtils.trimToEmpty(deviation.getModule())
-							+ (deviation.isManualDeviation() ? "M" : "A"));
+							+ deviation.getDeviationCategory());
 					fillComboBox(combobox, deviation.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(pending);
 					listcell.appendChild(combobox);
@@ -372,7 +381,7 @@ public class DeviationRenderer {
 	public void setDescriptions(List<FinanceDeviations> financeDeviations) {
 		if (financeDeviations != null && !financeDeviations.isEmpty()) {
 			for (FinanceDeviations finDeviations : financeDeviations) {
-				if (finDeviations.isManualDeviation()) {
+				if (StringUtils.equals(DeviationConstants.CAT_MANUAL, finDeviations.getDeviationCategory())) {
 					long parseLong = Long.parseLong(finDeviations.getDeviationCode());
 					ManualDeviation deviation = deviationHelper.getManualDeviationDesc(parseLong);
 					if (deviation != null) {

@@ -41,6 +41,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DeviationExecutionCtrl {
 	private static final Logger		logger				= Logger.getLogger(DeviationExecutionCtrl.class);
@@ -114,6 +115,57 @@ public class DeviationExecutionCtrl {
 
 		logger.debug(" Leaving ");
 		return deviationslist;
+	}
+
+	/**
+	 * Check custom deviations and add to finance deviations, if any.
+	 * 
+	 * @param financeDetail
+	 *            Finance detail object.
+	 */
+	public void checkCustomDeviations(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinanceDeviations> deviations = new ArrayList<>();
+		
+		// Prepare additional data like co-applicants, collateral details.
+		
+		// Clone the object.
+		
+		// Call the customization hook.
+		
+		// Loop through the deviations, if any, check whether to add to the list and set the required attributes.
+		
+		// *****************************************************
+		/*FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		FinanceDeviations deviation = new FinanceDeviations();
+		deviation.setFinReference(financeMain.getFinReference());
+		deviation.setModule(DeviationConstants.TY_CUSTOM);
+		deviation.setDeviationCode("Temp");
+		deviation.setDelegationRole("DRCM");
+		deviation.setDeviationValue("20");
+		deviation.setDeviationType("");
+		deviation.setUserRole(this.userRole);
+		deviation.setApprovalStatus("");
+		deviation.setDeviationDate(new Timestamp(System.currentTimeMillis()));
+		deviation.setDeviationUserId(String.valueOf(this.userid));
+		deviation.setDeviationCategory(DeviationConstants.CAT_CUSTOM);
+
+		if (isInApprovedList(getApprovedFinanceDeviations(), deviation)) {
+			// DO Nothing
+		} else if (isInCurrentDevaitionList(financeDeviations, deviation)) {
+			// DO Nothing
+		} else {
+			deviations.add(deviation);
+		}*/
+		// *****************************************************
+
+		if (!deviations.isEmpty()) {
+			fillDeviationListbox(deviations, userRole, DeviationConstants.TY_CUSTOM);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -454,6 +506,7 @@ public class DeviationExecutionCtrl {
 		deviations.setApprovalStatus("");
 		deviations.setDeviationDate(new Timestamp(System.currentTimeMillis()));
 		deviations.setDeviationUserId(String.valueOf(this.userid));
+		deviations.setDeviationCategory(DeviationConstants.CAT_AUTO);
 		logger.debug(" Leaving ");
 		return deviations;
 	}

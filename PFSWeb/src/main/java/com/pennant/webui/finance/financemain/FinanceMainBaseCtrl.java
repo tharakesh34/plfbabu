@@ -266,6 +266,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.sms.ShortMessageService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -6618,6 +6619,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 		}
+		
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			deviationExecutionCtrl.checkCustomDeviations(getFinanceDetail());
+		}
 
 		if (ImplementationConstants.ALLOW_DEVIATIONS) {
 			if (StringUtils.isEmpty(moduleDefiner) && deviationDetailDialogCtrl != null) {
@@ -6637,7 +6642,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						if (getUserWorkspace().getUserRoles().contains(deviation.getDelegationRole())
 								&& (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
 										|| StringUtils.isBlank(deviation.getApprovalStatus()))) {
-							pendingDecisions.add(deviation.isManualDeviation() ? deviation.getDeviationCodeDesc()
+							pendingDecisions.add(StringUtils.equals(DeviationConstants.CAT_MANUAL, deviation.getDeviationCategory()) ? deviation.getDeviationCodeDesc()
 									: deviation.getModule() + " - " + deviation.getDeviationCode());
 						}
 					}

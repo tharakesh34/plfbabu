@@ -126,8 +126,8 @@ public class DeviationHelper {
 		if (list2 != null && !list2.isEmpty()) {
 			renderList.addAll(list2);
 		}
-		return renderList;
 
+		return renderList;
 	}
 
 	public List<FinanceDeviations> getDeviationDetais(List<FinanceDeviations> list, boolean manual) {
@@ -138,11 +138,11 @@ public class DeviationHelper {
 
 		for (FinanceDeviations financeDeviations : list) {
 			if (manual) {
-				if (financeDeviations.isManualDeviation()) {
+				if (StringUtils.equals(DeviationConstants.CAT_MANUAL, financeDeviations.getDeviationCategory())) {
 					deviations.add(financeDeviations);
 				}
 			} else {
-				if (!financeDeviations.isManualDeviation()) {
+				if (!StringUtils.equals(DeviationConstants.CAT_MANUAL, financeDeviations.getDeviationCategory())) {
 					deviations.add(financeDeviations);
 				}
 			}
@@ -178,6 +178,7 @@ public class DeviationHelper {
 
 			return getScoreinglabelDesc(devCode);
 		}
+
 		return "";
 	}
 

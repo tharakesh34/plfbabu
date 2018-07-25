@@ -173,6 +173,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -1657,7 +1658,7 @@ public class AgreementGeneration implements Serializable {
 					if(null!=deviations.getDeviationDate()){
 						loanDeviation.setDeviationRaisedDate(DateUtil.formatToShortDate(new Date(deviations.getDeviationDate().getTime())));
 					}
-					if(deviations.isManualDeviation()){
+					if (StringUtils.equals(DeviationConstants.CAT_MANUAL, deviations.getDeviationCategory())) {
 						loanDeviation.setDeviationType("Manual");
 						loanDeviation.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationCodeDesc()));
 						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCodeName()));

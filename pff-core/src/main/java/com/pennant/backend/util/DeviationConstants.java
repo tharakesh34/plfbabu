@@ -53,6 +53,11 @@ public class DeviationConstants {
 	public static final String CL_WAIVED 		= "_W";
 	public static final String CL_POSTPONED 	= "_P";
 	public static final String CL_EXPIRED 		= "_E";
+	
+	// Deviation categories.
+	public static final String CAT_AUTO = "A";
+	public static final String CAT_MANUAL = "M";
+	public static final String CAT_CUSTOM = "C";	
 
 	public static final String TY_LOAN 			= "LOAN";
 	public static final String TY_PRODUCT 		= "PRODUCT";
@@ -60,6 +65,7 @@ public class DeviationConstants {
 	public static final String TY_CHECKLIST 	= "CHECKLIST";
 	public static final String TY_FEE 			= "FEES";
 	public static final String TY_SCORE 		= "SCORE";
+	public static final String TY_CUSTOM 		= "CUSTOM";
 
 	public static final String FI_DEVIATION 	= "Deviation";
 	public static final String FI_RESULT 		= "Result";

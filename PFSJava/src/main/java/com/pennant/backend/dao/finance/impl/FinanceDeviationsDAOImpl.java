@@ -45,8 +45,8 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		financeDeviations.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks, ");
-		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
-		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,MarkDeleted,");
+		selectSql.append(" DeviationCode, DeviationType, DeviationValue, UserRole, DeviationCategory,");
+		selectSql.append(" DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId, MarkDeleted,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
@@ -66,7 +66,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		financeDeviations.setDeviProcessed(deviProcessed);
 
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
-		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
+		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole, DeviationCategory,");
 		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,DeviProcessed,MarkDeleted,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -78,39 +78,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 				.newInstance(FinanceDeviations.class);
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * get Deviation Details List based on finance reference
-	 * 
-	 */
-	@Override
-	public FinanceDeviations getFinanceDeviationsByID(String finReference,String module,String deviationCode, String type) {
-		logger.debug("Entering");
-		FinanceDeviations financeDeviations = new FinanceDeviations();
-		financeDeviations.setFinReference(finReference);
-		financeDeviations.setModule(module);
-		financeDeviations.setDeviationCode(deviationCode);
-		
-		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
-		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
-		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,MarkDeleted,");
-		selectSql.append(" DelegatedUserId From FinanceDeviations");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference and Module=:Module and DeviationCode=:DeviationCode");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDeviations.class);
-		logger.debug("Leaving");
-		try {
-	        return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
-        } catch (DataAccessException e) {
-	       logger.debug(e);
-        }
-		return null;
-	}
-	
+	}	
 
 	/**
 	 * This method updates the Record BMTAcademics or BMTAcademics_Temp. if
@@ -134,7 +102,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		updateSql.append("  Set FinReference = :FinReference, Module = :Module, DeviationCode =:DeviationCode, ");
 		updateSql.append(" DeviationType = :DeviationType , DeviationValue = :DeviationValue, UserRole = :UserRole,");
 		updateSql.append(" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
-		updateSql.append(" ManualDeviation = :ManualDeviation,Remarks =:Remarks, ");
+		updateSql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
 		updateSql.append("  DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId where DeviationId=:DeviationId ");
 
 		logger.debug("updateSql: "+ updateSql.toString());
@@ -159,11 +127,11 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" ( DeviationId, FinReference, Module, DeviationCode, DeviationType, ");
 		insertSql.append(" DeviationValue, UserRole, DelegationRole,ApprovalStatus,");
-		insertSql.append(" DeviationDate, DeviationUserId,DelegatedUserId,ManualDeviation,Remarks,DeviProcessed  )");
+		insertSql.append(" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed  )");
 
 		insertSql.append(" Values( :DeviationId, :FinReference, :Module, :DeviationCode, :DeviationType,");
 		insertSql.append(" :DeviationValue, :UserRole, :DelegationRole, :ApprovalStatus,");
-		insertSql.append(" :DeviationDate, :DeviationUserId, :DelegatedUserId, :ManualDeviation, :Remarks, :DeviProcessed  )");
+		insertSql.append(" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed  )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);

@@ -330,7 +330,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 			}
 			Component component = listitem.getFellowIfAny("combo_" + (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
 							+ deviationDetail.getDeviationCode() + StringUtils.trimToEmpty(deviationDetail.getModule())
-							+ (deviationDetail.isManualDeviation() ? "M" : "A"));
+							+ deviationDetail.getDeviationCategory());
 			if (component != null && component instanceof Combobox) {
 				Combobox combobox = (Combobox) component;
 				if (combobox.getSelectedItem() != null

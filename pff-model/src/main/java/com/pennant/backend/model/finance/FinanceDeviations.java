@@ -26,7 +26,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private Timestamp			deviationDate;
 	private String				deviationUserId;
 	private String				delegatedUserId;
-	private boolean				manualDeviation;
+	private String				deviationCategory;
 	private boolean				deviProcessed=false;
 	private String				remarks;
 	private boolean				newRecord			= false;
@@ -262,14 +262,6 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 		this.deviationCodeName = deviationCodeName;
 	}
 
-	public boolean isManualDeviation() {
-		return manualDeviation;
-	}
-
-	public void setManualDeviation(boolean manualDeviation) {
-		this.manualDeviation = manualDeviation;
-	}
-
 	public String getSeverityCode() {
 		return severityCode;
 	}
@@ -316,5 +308,13 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 
 	public void setMarkDeleted(boolean markDeleted) {
 		this.markDeleted = markDeleted;
+	}
+
+	public String getDeviationCategory() {
+		return deviationCategory;
+	}
+
+	public void setDeviationCategory(String deviationCategory) {
+		this.deviationCategory = deviationCategory;
 	}
 }
