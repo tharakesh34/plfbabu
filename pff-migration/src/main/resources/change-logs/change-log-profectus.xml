@@ -1184,7 +1184,7 @@
 			update CustomerBankInfo_Temp set NoOfMonths=0;
 			
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			
+			 
 			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerBankInfoDialog_NoOfMonths','CustomerBankInfoDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
 			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_NoOfMonths'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 			
@@ -1364,6 +1364,11 @@
 			update extendedfielddetail set scriptlet = 'onChange>>default;'
 			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'STOCK') and fieldname = 'UNITPRICE';
 		</sql>
+	</changeSet>
+	
+	<changeSet id="65" author="Vinay" dbms="postgresql">
+		<modifyDataType tableName="ExtendedFieldHeader" columnName="modulename" newDataType="CITEXT"/>
+		<modifyDataType tableName="ExtendedFieldHeader_TEMP" columnName="modulename" newDataType="CITEXT"/>
 	</changeSet>
 </databaseChangeLog>
 	

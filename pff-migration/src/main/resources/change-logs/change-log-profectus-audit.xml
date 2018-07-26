@@ -53,5 +53,9 @@
 			Alter table adtverification_RECEIV_tv drop column loancoverage;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="8" author="Vinay" dbms="postgresql">
+		<modifyDataType tableName="AdtExtendedFieldHeader" columnName="modulename" newDataType="CITEXT"/>
+	</changeSet>
 </databaseChangeLog>
 	
