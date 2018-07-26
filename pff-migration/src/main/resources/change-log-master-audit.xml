@@ -14,4 +14,5 @@
 	<include file="change-logs/change-log-sampling-audit.xml"/>
 	<include file="change-logs/change-log-auditlegal.xml"/>
 	<include file="change-logs/change-log-4.7.17-audit.xml" />
+	<include file="change-logs/change-log-4.9.0-audit.xml" />
 </databaseChangeLog>
