@@ -56,7 +56,7 @@
 	
 	<changeSet id="11" author="Vinay">
 		<sql>
-			update AdtExtendedFieldHeader set modulename='VAS';
+			update AdtExtendedFieldHeader set modulename='VAS' where modulename='Vas';
 		</sql>
 	</changeSet>
 </databaseChangeLog>
