@@ -1839,6 +1839,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 			}
 			
+			if (CollectionUtils.isEmpty(gstInvoiceTxnDetails)) {	
+				return;	//TODO check this case
+			}
+			
 			gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
 			gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
 			
