@@ -462,7 +462,7 @@
 			     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 			  WHERE NOT (EXISTS ( SELECT 1 AS expr1
 			           FROM rmtfinancetypes_temp
-			          WHERE rmtfinancetypes_temp.fintype = t1.fintype));
+			          WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 		</createView>
 	</changeSet>
 	
@@ -669,7 +669,7 @@
 			     LEFT JOIN rules t59 ON t1.downpayrule = t59.ruleid
 			     LEFT JOIN rules t67 ON t1.grcpricingmethod = t67.ruleid
 			     LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
-			     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid;
+			     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
 	</changeSet>
 	
@@ -688,7 +688,7 @@
 			    t1.fincategory,
 			    t1.developerfinance,
 			    t1.PartiallySecured
-			   FROM rmtfinancetypes t1;
+			   FROM rmtfinancetypes t1
 		</createView>
 	</changeSet>
 	
@@ -851,7 +851,7 @@
 			     LEFT JOIN rules t5 ON t1.downpayrule = t5.ruleid
 			     LEFT JOIN rules t6 ON t1.grcpricingmethod = t6.ruleid
 			     LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
-			     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode;
+			     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 		</createView>
 	</changeSet>
 	
