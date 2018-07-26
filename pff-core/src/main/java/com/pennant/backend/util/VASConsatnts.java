@@ -4,7 +4,7 @@ public class VASConsatnts {
 
 
 	// Extended Field Detail Module Name
-	public static final String	MODULE_NAME						= "Vas";
+	public static final String	MODULE_NAME						= "VAS";
 	public static final String 	VAS_DIVISION 					= "VAS";
 	
 	//Recording Against

@@ -2227,5 +2227,11 @@
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 	</createView>
 	</changeSet>
+	<changeSet id="23" author="Vijaykumar.l">
+		<sql>
+			update ExtendedFieldHeader set modulename='VAS' where modulename='Vas';
+			update ExtendedFieldHeader_Temp set modulename='VAS' where modulename='Vas';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

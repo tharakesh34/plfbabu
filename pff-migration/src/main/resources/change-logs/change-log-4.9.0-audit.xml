@@ -79,4 +79,9 @@
 	<changeSet id="6" author="Vinay">
 		<modifyDataType tableName="AdtFinanceMain" columnName="EligibilityMethod" newDataType="bigint"/>
 	</changeSet>
+	<changeSet id="7" author="Vijaykumar.l">
+		<sql>
+			update AdtExtendedFieldHeader set modulename='VAS' where modulename='Vas';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
