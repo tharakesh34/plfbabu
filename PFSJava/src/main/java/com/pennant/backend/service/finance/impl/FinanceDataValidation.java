@@ -3559,6 +3559,15 @@ public class FinanceDataValidation {
 				
 			}
 		}
+		if (StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
+			if (finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "GrcMaxAmount";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+				
+			}
+		}
 		return errorDetails;
 	}
 
