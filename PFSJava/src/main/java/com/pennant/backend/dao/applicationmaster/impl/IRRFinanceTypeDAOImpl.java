@@ -44,8 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,26 +52,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
  * Data access layer implementation for <code>IRRFinanceType</code> with set of CRUD operations.
  */
-public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> implements IRRFinanceTypeDAO {
+public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements IRRFinanceTypeDAO {
 	private static Logger				logger	= Logger.getLogger(IRRFinanceTypeDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+
 
 	public IRRFinanceTypeDAOImpl() {
 		super();
@@ -106,7 +103,7 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		RowMapper<IRRFinanceType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFinanceType.class);
 
 		try {
-			iRRFinanceType = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			iRRFinanceType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			iRRFinanceType = null;
@@ -134,7 +131,7 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFinanceType);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -162,7 +159,7 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFinanceType);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -188,7 +185,7 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -218,22 +215,14 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		logger.debug(Literal.LEAVING);
 		List<IRRFinanceType> resultList = null;
 		try{
-			resultList = namedParameterJdbcTemplate.query(sql.toString(), param, rowMapper);
+			resultList = jdbcTemplate.query(sql.toString(), param, rowMapper);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		return resultList;
 	}
 	
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	@Override
 	public List<IRRFinanceType> getIRRFinanceTypeList(String finType,String type) {
@@ -259,7 +248,7 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		RowMapper<IRRFinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				IRRFinanceType.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters,typeRowMapper);
 
 	}	
 	
@@ -275,7 +264,7 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}	
 }	

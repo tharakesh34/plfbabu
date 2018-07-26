@@ -44,34 +44,28 @@
 package com.pennant.backend.dao.mandate.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 /**
  * DAO methods implementation for the <b>MandateStatus model</b> class.<br>
  * 
  */
 
-public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> implements MandateStatusDAO {
-
-	private static Logger logger = Logger.getLogger(MandateStatusDAOImpl.class);
+public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements MandateStatusDAO {
+   private static Logger logger = Logger.getLogger(MandateStatusDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public MandateStatusDAOImpl(){
 		super();
@@ -105,7 +99,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		RowMapper<MandateStatus> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MandateStatus.class);
 		
 		try{
-			mandateStatus = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
+			mandateStatus = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mandateStatus = null;
@@ -114,14 +108,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		return mandateStatus;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * This method Deletes the Record from the MandatesStatus or MandatesStatus_Temp.
@@ -148,7 +135,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -188,7 +175,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		logger.debug("sql: " + sql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return mandateStatus.getId();
 	}
@@ -223,7 +210,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		logger.debug("Sql: " + sql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

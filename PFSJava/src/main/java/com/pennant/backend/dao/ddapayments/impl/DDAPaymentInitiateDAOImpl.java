@@ -14,15 +14,12 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ddapayments.DDAPaymentInitiateDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ddapayments.DDAPayments;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> implements DDAPaymentInitiateDAO {
+public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implements DDAPaymentInitiateDAO {
+     private static Logger logger = Logger.getLogger(DDAPaymentInitiateDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(DDAPaymentInitiateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public DDAPaymentInitiateDAOImpl() {
 		super();
@@ -37,7 +34,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 		logger.debug("Entering");
 
 		if(ddaPaymentInitiation.getId()== 0 || ddaPaymentInitiation.getId()==Long.MIN_VALUE){
-			ddaPaymentInitiation.setDdaSeqId(getNextidviewDAO().getNextExtId("SeqDDS_PFF_DD500"));	
+			ddaPaymentInitiation.setDdaSeqId(getNextId("SeqDDS_PFF_DD500"));	
 		}
 
 		ddaPaymentInitiation.setDirectDebitRefNo(ddaPaymentInitiation.getdDAReferenceNo()+ddaPaymentInitiation.getDdaSeqId());
@@ -49,7 +46,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ddaPaymentInitiation);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -67,7 +64,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(DDAPayments.class);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		
 		// Update Seq table to 0
 		StringBuilder updateSql = new StringBuilder();
@@ -75,7 +72,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 
 		logger.debug("updateSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -97,7 +94,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 		RowMapper<DDAPayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAPayments.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -119,7 +116,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(backUpDDAPaymentList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -129,7 +126,7 @@ public class DDAPaymentInitiateDAOImpl extends BasisNextidDaoImpl<DDAPayments> i
 	 * @param dataSource
 	 */
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 }

@@ -2,27 +2,21 @@ package com.pennant.backend.dao.ddapayments.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ddapayments.DDAPaymentResponseDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ddapayments.DDAPayments;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class DDAPaymentResponseDAOImpl  extends BasisNextidDaoImpl<DDAPayments> implements DDAPaymentResponseDAO {
+public class DDAPaymentResponseDAOImpl  extends BasicDao<DDAPayments> implements DDAPaymentResponseDAO {
+    private static Logger logger = Logger.getLogger(DDAPaymentResponseDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(DDAPaymentResponseDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public DDAPaymentResponseDAOImpl() {
 		super();
@@ -40,7 +34,7 @@ public class DDAPaymentResponseDAOImpl  extends BasisNextidDaoImpl<DDAPayments> 
 		RowMapper<DDAPayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAPayments.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -61,7 +55,7 @@ public class DDAPaymentResponseDAOImpl  extends BasisNextidDaoImpl<DDAPayments> 
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(DDAPayments.class);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		// Update Seq table to 0
 		StringBuilder updateSql = new StringBuilder();
@@ -69,7 +63,7 @@ public class DDAPaymentResponseDAOImpl  extends BasisNextidDaoImpl<DDAPayments> 
 
 		logger.debug("updateSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -88,17 +82,10 @@ public class DDAPaymentResponseDAOImpl  extends BasisNextidDaoImpl<DDAPayments> 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(ddaPaymentResList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 }

@@ -10,18 +10,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.ddapayments.DDARepresentmentDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.DdaPresentment;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class DDARepresentmentDAOImpl extends BasisNextidDaoImpl<DDAPayments>
-		implements DDARepresentmentDAO {
+public class DDARepresentmentDAOImpl extends SequenceDao<DDAPayments> implements DDARepresentmentDAO {
+private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
 
-	private static Logger logger = Logger
-			.getLogger(DDARepresentmentDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public DDARepresentmentDAOImpl() {
 		super();
@@ -37,7 +32,7 @@ public class DDARepresentmentDAOImpl extends BasisNextidDaoImpl<DDAPayments>
 
 		if (ddaRepresentment.getId() == 0
 				|| ddaRepresentment.getId() == Long.MIN_VALUE) {
-			ddaRepresentment.setDdaSeqId(getNextidviewDAO().getNextExtId("SeqDDS_PFF_DD500_SETTLED"));
+			ddaRepresentment.setDdaSeqId(getNextId("SeqDDS_PFF_DD500_SETTLED"));
 		}
 
 		ddaRepresentment.setDirectDebitRefNo(ddaRepresentment
@@ -50,7 +45,7 @@ public class DDARepresentmentDAOImpl extends BasisNextidDaoImpl<DDAPayments>
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ddaRepresentment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(),
+		this.jdbcTemplate.update(insertSql.toString(),
 				beanParameters);
 		logger.debug("Leaving");
 	}
@@ -75,7 +70,7 @@ public class DDARepresentmentDAOImpl extends BasisNextidDaoImpl<DDAPayments>
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				ddaRepresentment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(),
+		this.jdbcTemplate.update(insertSql.toString(),
 				beanParameters);
 		logger.debug("Leaving");
 	}
@@ -91,19 +86,11 @@ public class DDARepresentmentDAOImpl extends BasisNextidDaoImpl<DDAPayments>
 		for (DdaPresentment presentment : list) {
 			SqlParameterSource source = new BeanPropertySqlParameterSource(
 					presentment);
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		}
 
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
-	}
+	
 }

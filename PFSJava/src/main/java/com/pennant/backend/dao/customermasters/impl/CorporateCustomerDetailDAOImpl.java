@@ -42,36 +42,30 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CorporateCustomerDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CorporateCustomerDetail model</b> class.<br>
  * 
  */
-public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<CorporateCustomerDetail> 
-				implements CorporateCustomerDetailDAO {
+public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDetail>  implements CorporateCustomerDetailDAO {
 
 	private static Logger logger = Logger.getLogger(CorporateCustomerDetailDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	public CorporateCustomerDetailDAOImpl() {
 		super();
 	}
@@ -115,7 +109,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 				CorporateCustomerDetail.class);
 		
 		try{
-			corporateCustomerDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			corporateCustomerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -125,13 +119,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 		return corporateCustomerDetail;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	/**
 	 * This method Deletes the Record from the CustomerCorporateDetail or CustomerCorporateDetail_Temp.
@@ -157,7 +145,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -212,7 +200,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return corporateCustomerDetail.getId();
 	}
@@ -262,7 +250,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

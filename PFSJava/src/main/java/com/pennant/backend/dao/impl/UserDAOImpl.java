@@ -48,15 +48,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -66,14 +63,13 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>SecUser model</b> class.<br>
  */
-public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements UserDAO {
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
 
 	public UserDAOImpl() {
@@ -130,7 +126,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 			updateSql.append("LastLoginOn =:LastLoginOn,LastFailLoginOn=:LastFailLoginOn,UsrInvldLoginTries=:UsrInvldLoginTries");
 			updateSql.append(" Where UsrLogin =:UsrLogin");
 			logger.debug("updateSql:" + updateSql.toString());
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), namedParameters);
+			this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 		} else {
 			//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
 			int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1 ;
@@ -141,14 +137,14 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 			updateSql.append(" UsrInvldLoginTries=(UsrInvldLoginTries+1), UsrEnabled=:UsrEnabled,LastFailLoginOn =:LastFailLoginOn  Where UsrLogin = :UsrLogin");
 			updateSql.append(" and UsrInvldLoginTries >= :invalidLogins");
 			logger.debug("updateSql:" + updateSql.toString());
-			int count = this.namedParameterJdbcTemplate.update(updateSql.toString(), namedParameters);
+			int count = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 			if (count == 0) {
 				namedParameters.put("LastFailLoginOn", loginTime);
 				updateSql = new StringBuilder("Update SecUsers  set ");
 				updateSql.append("LastFailLoginOn =:LastFailLoginOn");
 				updateSql.append(",UsrInvldLoginTries=(UsrInvldLoginTries+1) Where UsrLogin = :UsrLogin");
 				logger.debug("updateSql:" + updateSql.toString());
-				this.namedParameterJdbcTemplate.update(updateSql.toString(), namedParameters);
+				this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 			}
 		}
 		logger.debug("Leaving ");
@@ -179,7 +175,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
-			secUser = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			secUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 //			logger.warn("Exception: ", e);
 			secUser = null;
@@ -201,10 +197,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		return new ArrayList<SecurityUser>();
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	public List<SecurityUser> getUserListByLogin(String login) {
 		return new ArrayList<SecurityUser>();
 	}
@@ -237,7 +230,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		logger.debug(Literal.LEAVING);
 
 		
-		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	/**
@@ -269,7 +262,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		// If the number of updated records are less than or equals zero
 		// generate new exception
 		if (recordCount <= 0) {

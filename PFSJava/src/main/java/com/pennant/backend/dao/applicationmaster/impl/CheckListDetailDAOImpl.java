@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,12 +53,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.util.FinanceConstants;
@@ -68,16 +64,16 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CheckListDetail model</b> class.<br>
  * 
  */
-public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> implements CheckListDetailDAO {
+public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements CheckListDetailDAO {
 	private static Logger logger = Logger.getLogger(CheckListDetailDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
 	
 	public CheckListDetailDAOImpl() {
 		super();
@@ -138,7 +134,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
 		
 		try{
-			checkListDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			checkListDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			checkListDetail = null;
@@ -170,7 +166,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
 		
 		try{
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.debug("Exception",e);
 		}
@@ -201,7 +197,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
 
 		try{
-			chkListDetailList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			chkListDetailList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			chkListDetailList = null;
@@ -231,7 +227,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
 
 		try{
-			chkListDetailList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			chkListDetailList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			chkListDetailList = null;
@@ -240,13 +236,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		return chkListDetailList;
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 	
 	/**
 	 * This method Deletes the Record from the RMTCheckListDetails or RMTCheckListDetails_Temp.
@@ -271,7 +261,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -303,7 +293,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		valueParm[0]=String.valueOf(checkListDetail.getId());
 		errParm[0]=PennantJavaUtil.getLabel("label_AnsSeqNo")+":"+valueParm[0];
 		logger.debug("DeleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -334,7 +324,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return checkListDetail.getId();
 	}
@@ -371,7 +361,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

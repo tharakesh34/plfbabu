@@ -45,33 +45,29 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
  * Data access layer implementation for <code>IRRFinanceType</code> with set of CRUD operations.
  */
-public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> implements FinIRRDetailsDAO {
-	private static Logger				logger	= Logger.getLogger(FinIRRDetailsDAOImpl.class);
+public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements FinIRRDetailsDAO {
+	private static Logger	logger	= Logger.getLogger(FinIRRDetailsDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	
 
 	@Override
 	public List<FinIRRDetails> getFinIRRList(String finReference, String type) {
@@ -92,7 +88,7 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finIRRDetails);
 		RowMapper<FinIRRDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinIRRDetails.class);
-		details = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		details = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		
 		logger.debug(Literal.LEAVING);
 		return details;
@@ -115,7 +111,7 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -140,7 +136,7 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 		logger.trace(Literal.SQL + updatesql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
-		int recordCount = namedParameterJdbcTemplate.update(updatesql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(updatesql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -160,7 +156,7 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(entity);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(),  beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(),  beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -178,7 +174,7 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(irrFeeType);
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		jdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -197,7 +193,7 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finIrrDetails.toArray());
 
 		try {
-			namedParameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+			jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -206,7 +202,5 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 }	

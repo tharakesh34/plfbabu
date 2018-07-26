@@ -45,23 +45,20 @@ package com.pennant.backend.dao.eodsnapshot.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.eodsnapshot.SnapShotConditionsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.eodsnapshot.SnapShotCondition;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,10 +66,10 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>SnapShotConditions</code> with set of CRUD operations.
  */
-public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondition> implements SnapShotConditionsDAO {
+public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> implements SnapShotConditionsDAO {
 	private static Logger				logger	= Logger.getLogger(SnapShotConditionsDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	
 
 	public SnapShotConditionsDAOImpl() {
 		super();
@@ -102,7 +99,7 @@ public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondit
 		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotCondition.class);
 
 		try {
-			snapShotConditions = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			snapShotConditions = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			snapShotConditions = null;
@@ -130,7 +127,7 @@ public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondit
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -157,7 +154,7 @@ public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondit
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -183,7 +180,7 @@ public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondit
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -216,7 +213,7 @@ public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondit
 		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotCondition.class);
 
 		try {
-			conditions = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			conditions = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			snapShotConditions = null;
@@ -226,14 +223,5 @@ public class SnapShotConditionsDAOImpl extends BasisNextidDaoImpl<SnapShotCondit
 		return conditions;
 	}		
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 }	

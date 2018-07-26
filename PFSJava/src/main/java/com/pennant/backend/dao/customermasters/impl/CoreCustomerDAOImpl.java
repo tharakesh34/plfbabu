@@ -1,24 +1,18 @@
 package com.pennant.backend.dao.customermasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.customermasters.CoreCustomerDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CoreCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CoreCustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements CoreCustomerDAO {
+public class CoreCustomerDAOImpl extends BasicDao<Customer> implements CoreCustomerDAO {
 
 	private static Logger logger = Logger.getLogger(CoreCustomerDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	public CoreCustomerDAOImpl() {
 		super();
 	}
@@ -58,7 +52,7 @@ public class CoreCustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements
 		
         logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(coreCustomer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -69,18 +63,5 @@ public class CoreCustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements
 	    
     }
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
-	public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-		return namedParameterJdbcTemplate;
-	}
-
-	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-	}
 }

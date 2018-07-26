@@ -2,8 +2,6 @@ package com.pennant.backend.ws.dao;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -11,21 +9,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.channeldetails.APIChannel;
 import com.pennant.backend.model.channeldetails.APIChannelIP;
 import com.pennant.ws.exception.APIException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements APIChannelDAO {
+public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APIChannelDAO {
 	private static Logger logger = Logger.getLogger(APIChannelDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the
@@ -87,7 +82,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannel.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -98,13 +93,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		}
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the ChannelDetails or
@@ -133,7 +122,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannel);
 
 		try {
-			if (this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters) <= 0) {
+			if (this.jdbcTemplate.update(deleteSql.toString(), beanParameters) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
@@ -174,7 +163,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannel);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return aPIChannel.getId();
@@ -209,7 +198,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannel);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -273,7 +262,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		RowMapper<APIChannelIP> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannelIP.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -310,7 +299,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannelIP);
 		try {
-			if (this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters) <= 0) {
+			if (this.jdbcTemplate.update(deleteSql.toString(), beanParameters) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
@@ -348,7 +337,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannelIP);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return aPIChannelIP.getId();
@@ -385,7 +374,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannelIP);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -408,7 +397,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		source = new MapSqlParameterSource();
 		source.addValue("ChannelId", id);
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		} finally {
@@ -436,7 +425,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		source.addValue("ChannelId", id);
 		RowMapper<APIChannelIP> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannelIP.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -456,7 +445,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		source.addValue("IP", channelIp);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 			throw new APIException("99003");

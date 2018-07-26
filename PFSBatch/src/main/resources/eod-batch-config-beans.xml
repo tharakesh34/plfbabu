@@ -184,9 +184,8 @@
 		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
 	</bean>
 	<!-- Transaction Entry -->
-	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl" parent="basicDao"/>
+		
 	<!-- Rule -->
 	<bean id="ruleDAO" class="com.pennant.backend.dao.rulefactory.impl.RuleDAOImpl" parent="sequenceDao"/>
 		
@@ -342,9 +341,8 @@
 		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 	<!-- DDA Representment Details -->
-	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="extDataSource" />
-	</bean>
+	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="extSequenceRDao"/>
+		
 	<bean id="ddaRepresentmentService" class="com.pennant.backend.service.ddapayments.impl.DDARepresentmentService">
 		<property name="ddaRepresentmentDAO" ref="ddaRepresentmentDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -575,17 +573,13 @@
 	</bean>
 	
 	<!-- SnapShotConfiguration -->
-<!-- 	<bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<bean id="snapShotConditionsDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConditionsDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	
+<!-- 	<bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl" parent="basicDao"/>
+		
+	<bean id="snapShotConditionsDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConditionsDAOImpl"  parent="basicDao"/>
+		
 	SnapShotColumn
-	<bean id="snapShotColumnDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotColumnDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
+	<bean id="snapShotColumnDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotColumnDAOImpl" parent="basicDao"/>
+		
 	
 	
 	<bean name="snapShotService" class="com.pennant.eod.SnapShotService">

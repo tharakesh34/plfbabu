@@ -44,34 +44,29 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CustomerPRelation;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerPRelation model</b> class.<br>
  * 
  */
-public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelation> implements CustomerPRelationDAO {
+public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implements CustomerPRelationDAO {
 
 	private static Logger logger = Logger.getLogger(CustomerPRelationDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public CustomerPRelationDAOImpl() {
 		super();
@@ -115,7 +110,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 				CustomerPRelation.class);
 
 		try{
-			customerPRelation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerPRelation = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -126,12 +121,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		return customerPRelation;
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Record from the CustomersPRelations or
@@ -161,7 +151,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
 		
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -191,7 +181,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -245,7 +235,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		
 		 logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerPRelation.getPRCustPRSNo();
@@ -292,7 +282,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -315,7 +305,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 			selectSql.append(pRCustID);
 			
 			logger.debug("selectSql: " + selectSql.toString());
-			count = this.namedParameterJdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Integer.class);
+			count = this.jdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Integer.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -355,7 +345,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 				CustomerPRelation.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
 }

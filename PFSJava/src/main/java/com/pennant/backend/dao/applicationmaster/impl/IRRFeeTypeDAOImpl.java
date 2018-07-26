@@ -44,8 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.IRRFeeType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -69,10 +66,10 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>IRRFeeType</code> with set of CRUD
  * operations.
  */
-public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements IRRFeeTypeDAO {
+public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTypeDAO {
 	private static Logger logger = Logger.getLogger(IRRFeeTypeDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 
 	public IRRFeeTypeDAOImpl() {
 		super();
@@ -100,7 +97,7 @@ public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements
 		RowMapper<IRRFeeType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFeeType.class);
 
 		try {
-			iRRFeeType = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			iRRFeeType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			iRRFeeType = null;
@@ -134,21 +131,13 @@ public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFeeType);
 		RowMapper<IRRFeeType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFeeType.class);
 
-		List<IRRFeeType> feeTypes = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		List<IRRFeeType> feeTypes = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 		logger.debug(Literal.LEAVING);
 		return feeTypes;
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method Deletes the Records from the CollateralThirdParty or
@@ -173,7 +162,7 @@ public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(irrFeeType);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -194,7 +183,7 @@ public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(irrFeeType);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -220,7 +209,7 @@ public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(irrFeeType);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -243,7 +232,7 @@ public class IRRFeeTypeDAOImpl extends BasisNextidDaoImpl<IRRFeeType> implements
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

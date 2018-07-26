@@ -61,7 +61,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -71,12 +70,13 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldDetail model</b> class.<br>
  */
-public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedFieldDetail> implements ExtendedFieldDetailDAO {
+public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> implements ExtendedFieldDetailDAO {
 	private static Logger logger = Logger.getLogger(ExtendedFieldDetailDAOImpl.class);
 	
 	private enum FieldType {
@@ -85,8 +85,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
 	}
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 	private NamedParameterJdbcTemplate adtNamedParameterJdbcTemplate;
 
 	public ExtendedFieldDetailDAOImpl() {
@@ -130,7 +129,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
 
 		try{
-			extendedFieldDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			extendedFieldDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			extendedFieldDetail = null;
@@ -139,13 +138,6 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		return extendedFieldDetail;
 	}
 
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	/**
 	 * To Set  dataSource
@@ -179,7 +171,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -204,7 +196,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -243,7 +235,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}
@@ -290,7 +282,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -325,7 +317,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				ExtendedFieldDetail.class);
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 	/**
@@ -355,7 +347,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
 		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 	@Override
@@ -378,7 +370,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
 		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**
@@ -425,7 +417,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if (isAudit) {
 					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
 				} else {
-					this.namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
@@ -470,7 +462,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if(isAudit){
 					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
 				}else{
-					this.namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
 			} catch(DataAccessException e) {
 				fieldDetail.setLovDescErroDesc(e.getMessage());
@@ -702,7 +694,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		}
 		insertSql.append(" (".concat(columnames).concat(") values (").concat(columnValues).concat(")"));
 		logger.debug("insertSql: " + insertSql.toString());
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
+		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -733,7 +725,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		}
 		sql.append(" (").append(columnames).append(") values (").append(columnValues).append(")");
 		logger.debug("insertSql: " + sql.toString());
-		this.namedParameterJdbcTemplate.update(sql.toString(), mappedValues);
+		this.jdbcTemplate.update(sql.toString(), mappedValues);
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -751,7 +743,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try{
-			map = this.namedParameterJdbcTemplate.queryForMap(selectSql.toString(), map);
+			map = this.jdbcTemplate.queryForMap(selectSql.toString(), map);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			if("_Temp".equals(type)){
@@ -760,7 +752,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 				logger.debug("selectSql: " + selectSql.toString());
 				try{
-					map = this.namedParameterJdbcTemplate.queryForMap(selectSql.toString(), map);
+					map = this.jdbcTemplate.queryForMap(selectSql.toString(), map);
 				}catch (EmptyResultDataAccessException ex) {
 					logger.warn("Exception: ", ex);
 					map = null;
@@ -792,7 +784,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("selectSql: " + query.toString());
 		try {
-			map = this.namedParameterJdbcTemplate.queryForMap(query.toString(), source);
+			map = this.jdbcTemplate.queryForMap(query.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			if ("_Temp".equals(type)) {
@@ -801,7 +793,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 				logger.debug("selectSql: " + query.toString());
 				try {
-					map = this.namedParameterJdbcTemplate.queryForMap(
+					map = this.jdbcTemplate.queryForMap(
 							query.toString(), map);
 				} catch (EmptyResultDataAccessException ex) {
 					logger.warn("Exception: ", ex);
@@ -826,7 +818,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try{
-			this.namedParameterJdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), String.class);
+			this.jdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), String.class);
 			return true;
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -855,7 +847,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("selectSql: " + query.toString());
 		try{
-			this.namedParameterJdbcTemplate.queryForObject(query.toString(), source, String.class);
+			this.jdbcTemplate.queryForObject(query.toString(), source, String.class);
 			return true;
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -883,7 +875,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		insertSql.append(" where FinReference='").append(id).append("'");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
+		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -907,7 +899,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		insertSql.append(" where ").append(primaryKeyColumn).append("='").append(id).append("'");
 		
 		logger.debug("insertSql: " + insertSql.toString());
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
+		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -930,7 +922,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		deleteSql.append(" where FinReference ='" + id +"'");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.getJdbcOperations().update(deleteSql.toString());
+		this.jdbcTemplate.getJdbcOperations().update(deleteSql.toString());
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -941,7 +933,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		deleteSql.append(" where "+primaryKeyColumn+" ='" + id +"'");
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.getJdbcOperations().update(deleteSql.toString());
+		this.jdbcTemplate.getJdbcOperations().update(deleteSql.toString());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -954,7 +946,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		sql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName");
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(),
+			this.jdbcTemplate.update(sql.toString(),
 					new BeanPropertySqlParameterSource(efd));
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -991,7 +983,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				ExtendedFieldDetail.class);
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 
@@ -1017,7 +1009,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				ExtendedFieldDetail.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 }

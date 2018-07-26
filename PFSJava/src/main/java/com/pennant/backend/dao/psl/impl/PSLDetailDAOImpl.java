@@ -42,23 +42,20 @@
 */
 package com.pennant.backend.dao.psl.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -67,10 +64,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PSLDetail</code> with set of CRUD
  * operations.
  */
-public class PSLDetailDAOImpl extends BasisNextidDaoImpl<PSLDetail> implements PSLDetailDAO {
+public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDAO {
 	private static Logger logger = Logger.getLogger(PSLDetailDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public PSLDetailDAOImpl() {
 		super();
@@ -104,7 +99,7 @@ public class PSLDetailDAOImpl extends BasisNextidDaoImpl<PSLDetail> implements P
 		RowMapper<PSLDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PSLDetail.class);
 
 		try {
-			pSLDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			pSLDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			pSLDetail = null;
@@ -136,7 +131,7 @@ public class PSLDetailDAOImpl extends BasisNextidDaoImpl<PSLDetail> implements P
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pSLDetail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -165,7 +160,7 @@ public class PSLDetailDAOImpl extends BasisNextidDaoImpl<PSLDetail> implements P
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pSLDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -191,7 +186,7 @@ public class PSLDetailDAOImpl extends BasisNextidDaoImpl<PSLDetail> implements P
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -204,14 +199,6 @@ public class PSLDetailDAOImpl extends BasisNextidDaoImpl<PSLDetail> implements P
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 }
