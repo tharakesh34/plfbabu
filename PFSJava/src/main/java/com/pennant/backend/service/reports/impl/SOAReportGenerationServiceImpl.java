@@ -82,6 +82,7 @@ import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.model.EventProperties;
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount> implements SOAReportGenerationService{
 	private static Logger logger = Logger.getLogger(SOAReportGenerationServiceImpl .class);
@@ -847,6 +848,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			if (finAdvancePaymentsList != null && !finAdvancePaymentsList.isEmpty()) {
 				for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
 					advancePayment = "Amount Paid Vide "; 
+					String status = "";
+					if(StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_AWAITCON)){
+						status = " - Subject to realization";
+					}
 					soaTransactionReport = new SOATransactionReport();
 					if(StringUtils.isNotBlank(finAdvancePayments.getPaymentType())){
 					advancePayment = advancePayment.concat(finAdvancePayments.getPaymentType()+":");
@@ -863,7 +868,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						}
 						soaTransactionReport.setValueDate(finAdvancePayments.getLlDate());
 					}
-					soaTransactionReport.setEvent(advancePayment+finRef);
+					soaTransactionReport.setEvent(advancePayment+finRef+status);
 					soaTransactionReport.setTransactionDate(finAdvancePayments.getLlDate());
 					soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
 					soaTransactionReport.setDebitAmount(finAdvancePayments.getAmtToBeReleased());
@@ -1053,10 +1058,26 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							if (StringUtils.isBlank(finReceiptHeader.getReceiptModeStatus())
 									|| !StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), "C")) {
 								if (!StringUtils.equals("PAYABLE", finReceiptDetail.getPaymentType())) {
+									String status = "";
 									soaTransactionReport = new SOATransactionReport();
 									soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
 									if (!(StringUtils.equals("EXCESS", finReceiptDetail.getPaymentType())
 											|| StringUtils.equals("CASH", finReceiptDetail.getPaymentType()))) {
+										
+										for (PresentmentDetail presentmentDetail : PresentmentDetailsList) {
+											
+											if (finReceiptDetail.getReceiptID() == presentmentDetail.getReceiptID() 
+													&& StringUtils.equals(finReceiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)
+													&& StringUtils.equals(presentmentDetail.getStatus(), RepayConstants.PEXC_APPROV)) {
+													status = " - Subject to realization";
+											}
+										}
+										
+										if (StringUtils.equals(finReceiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
+												&& StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_APPROVED)) {
+											status = " - Subject to realization";
+										} 
+										
 										if (StringUtils.isNotBlank(finReceiptDetail.getPaymentType())) {
 											receiptHeaderEventExcess = receiptHeaderEventExcess.concat(finReceiptDetail.getPaymentType()+"No.:");
 										}
@@ -1077,7 +1098,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										}
 									}
 									soaTransactionReport.setValueDate(finReceiptDetail.getReceivedDate());
-									soaTransactionReport.setEvent(receiptHeaderEventExcess);
+									soaTransactionReport.setEvent(receiptHeaderEventExcess + status);
 									soaTransactionReport.setCreditAmount(finReceiptDetail.getAmount());
 									
 									if (StringUtils.equals(finReceiptDetail.getPaymentType(), "EXCESS")) {

@@ -767,7 +767,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		List<PresentmentDetail> presentmentDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Distinct PRD.ReceiptId,SchDate,BR.REASON BounceReason FROM PRESENTMENTDETAILS PRD ");
+		sql.append(" SELECT Distinct PRD.ReceiptId,SchDate,BR.REASON BounceReason, Status FROM PRESENTMENTDETAILS PRD ");
 		sql.append(" Left join BOUNCEREASONS BR ON PRD.BOUNCEID  = BR.BOUNCEID ");
 		sql.append(" Where PRD.RECEIPTID != 0 and FinReference = :FinReference");
 
