@@ -330,6 +330,8 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		sql.append(" EXPIRYDATE END_DATE,");
 		sql.append(" APPLICATIONNO APPLICATION_NUMBER,");
 		sql.append(" MANDATETYPE MANDATE_TYPE,");
+		sql.append(" NUMBEROFTERMS NUMBER_OF_TERMS,");
+		sql.append(" PERIODICITY FREQUENCY,");
 		sql.append(" STATUS");
 		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
 		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
@@ -403,7 +405,12 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 					rowMap.remove("FIRSTDUEDATE");
 					
 					long id = insertData(rowMap);
-					logMandateHistory((Long) rowMap.get("mandateid"), id);
+					Object obj= rowMap.get("mandateid");
+					String mandateId=null;
+					if(obj!=null) {
+						mandateId=obj.toString();
+					}
+					logMandateHistory(new Long(mandateId), id);
 					rowMap = null;
 					return id;
 				}
