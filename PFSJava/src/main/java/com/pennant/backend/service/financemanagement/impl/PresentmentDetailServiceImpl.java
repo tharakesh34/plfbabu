@@ -441,6 +441,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 			finScheduleData.getFinanceMain().setRecordType("");
 			finScheduleData.getFinanceMain().setVersion(finScheduleData.getFinanceMain().getVersion() + 1);
+			finScheduleData.getFinanceMain().setUserDetails(userDetails);
 			if (finScheduleData.getFinFeeDetailList() != null) {
 				for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
 					if (StringUtils.equals(finFeeDetail.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
