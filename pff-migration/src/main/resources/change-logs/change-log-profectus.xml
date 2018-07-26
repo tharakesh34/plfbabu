@@ -969,7 +969,7 @@
 		</addColumn>
 	</changeSet> -->
 	
-	<changeSet id="48" author="Vinay">
+	<!-- <changeSet id="48" author="Vinay">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
@@ -1205,8 +1205,14 @@
 			update extendedfielddetail set scriptlet = 'onChange>>default;'
 			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'STOCK') and fieldname = 'UNITPRICE';
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	
+	<changeSet id="66" author="Vinay">
+		<sql>
+			update ExtendedFieldHeader set modulename='VAS' ;
+			update ExtendedFieldHeader_Temp set modulename='VAS';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
