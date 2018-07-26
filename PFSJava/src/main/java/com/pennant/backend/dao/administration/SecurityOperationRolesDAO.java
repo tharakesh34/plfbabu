@@ -77,5 +77,6 @@ public interface SecurityOperationRolesDAO {
 	List<SecurityOperationRoles> getSecOprRolesByOprID(SecurityUserOperations secUserOpr, String type);
 
 	int getOprById(final long oprID, String type);
-
+	
+	long getNextValue();
 }

@@ -333,7 +333,6 @@
 		<property name="ddaProcessDAO" ref="ddaProcessDAO" />
 	</bean>
 	<bean id="ddaProcessDAO" class="com.pennant.backend.dao.dda.impl.DDAProcessDAOImpl" parent="sequenceDao"/>
-	<bean id="basisNextidDao" abstract="true" p:nextidviewDAO-ref="nextidviewDAO" class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
 	<bean id="finSuspHoldDAO" class="com.pennant.backend.dao.financemanagement.impl.FinSuspHoldDAOImpl" parent="sequenceDao"/>
 	
 	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
@@ -341,7 +340,7 @@
 		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 	<!-- DDA Representment Details -->
-	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="extSequenceRDao"/>
+	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="extSequenceDao"/>
 		
 	<bean id="ddaRepresentmentService" class="com.pennant.backend.service.ddapayments.impl.DDARepresentmentService">
 		<property name="ddaRepresentmentDAO" ref="ddaRepresentmentDAO" />

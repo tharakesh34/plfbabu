@@ -48,16 +48,27 @@ import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
 
-public interface  SecurityRoleGroupsDAO {
-	
+public interface SecurityRoleGroupsDAO {
+
 	SecurityRoleGroups getSecRoleGroups();
+
 	List<SecurityRoleGroups> getSecRoleGroupsByRoleID(SecurityRole secRole);
+
 	void save(SecurityRoleGroups securityRoleGroups);
+
 	void delete(SecurityRoleGroups securityRoleGroups);
+
 	void deleteByRoleID(SecurityRoleGroups securityRoleGroups);
+
 	int getRoleIdCount(long roleID);
+
 	int getGroupIdCount(long groupId);
+
 	List<SecurityGroup> getGroupsByRoleId(long roleId, boolean isAssigned);
+
 	SecurityRoleGroups getRoleGroupsByRoleAndGrpId(long roleID, long groupId);
-	List<SecurityRoleGroups> getRoleGroupsByRoleID(long roleId,String type);
+
+	List<SecurityRoleGroups> getRoleGroupsByRoleID(long roleId, String type);
+	
+	long getNextValue();
 }

@@ -61,9 +61,9 @@ import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class SecurityGroupRightsDAOImpl extends BasicDao<SecurityGroup> implements SecurityGroupRightsDAO{
+public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> implements SecurityGroupRightsDAO{
 	private static Logger logger = Logger.getLogger(SecurityGroupRightsDAOImpl .class);
 
 	public SecurityGroupRightsDAOImpl() {
@@ -273,5 +273,10 @@ public class SecurityGroupRightsDAOImpl extends BasicDao<SecurityGroup> implemen
 		}
 		logger.debug("Leaving ");
 		return secGroupRights;	
+	}
+
+	@Override
+	public long getNextValue() {
+		return getNextId("SeqSecGroupRights");
 	}
 }

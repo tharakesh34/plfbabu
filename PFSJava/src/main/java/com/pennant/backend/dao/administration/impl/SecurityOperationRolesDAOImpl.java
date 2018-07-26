@@ -432,4 +432,10 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		}
 		return 0;
 	}
+
+
+	@Override
+	public long getNextValue() {
+		return getNextId("SeqSecOperationRoles");
+	}
 }

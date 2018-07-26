@@ -42,17 +42,5 @@
 		<constructor-arg name="dataSource" ref="extDataSource" />
 	</bean>
 	
-	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
-	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="dataSource" />
-		<property name="extDataSource" ref="extDataSource" />
-	</bean>
-
-	<bean id="secNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
-
-	<bean id="auditNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="auditDataSource" />
-	</bean>
+	<bean id="sequenceGenetor" class="com.pennanttech.pennapps.core.jdbc.SequenceDao" parent="basicDao" />
 </beans>

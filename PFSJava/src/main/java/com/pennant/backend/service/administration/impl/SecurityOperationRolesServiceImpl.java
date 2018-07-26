@@ -50,7 +50,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.administration.SecurityOperationDAO;
 import com.pennant.backend.dao.administration.SecurityOperationRolesDAO;
@@ -75,14 +74,12 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 		SecurityOperationRolesService {
 	private static Logger logger = Logger.getLogger(SecurityOperationRolesServiceImpl.class);
 
-	private  SecurityOperationRolesDAO securityOperationRolesDAO;
-	private  SecurityRoleGroupsDAO    securityRoleGroupsDAO;
-	private  SecurityRoleDAO securityRoleDAO;
-	private  SecurityOperationDAO securityOperationDAO;
-	private  SecurityGroupRightsDAO  securityGroupRightsDAO;
-	
-	private  AuditHeaderDAO auditHeaderDAO;
-	private  NextidviewDAO 	nextidviewDAO;
+	private SecurityOperationRolesDAO securityOperationRolesDAO;
+	private SecurityRoleGroupsDAO securityRoleGroupsDAO;
+	private SecurityRoleDAO securityRoleDAO;
+	private SecurityOperationDAO securityOperationDAO;
+	private SecurityGroupRightsDAO securityGroupRightsDAO;
+	private AuditHeaderDAO auditHeaderDAO;
 
 	public SecurityOperationRoles getSecurityOperationRoles(){
 		return getSecurityOperationRolesDAO().getSecurityOperationRoles();
@@ -316,10 +313,6 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 		boolean deleteRecord = false;
 		boolean approveRec=false;
 
-		long seqNumber = getNextidviewDAO().getSeqNumber("SeqSecOperationRoles"); 
-		int count = 0;
-		
-		
 		List<AuditDetail> list= new ArrayList<AuditDetail>();
 		
 		for (AuditDetail auditDetail : auditDetails) {
@@ -346,8 +339,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 			}else  if(securityOperationRoles.isNewRecord()){
 				saveRecord=true;
 				if(securityOperationRoles.getId()==Long.MIN_VALUE){
-					count++;
-					securityOperationRoles.setId(seqNumber+count);
+					securityOperationRoles.setId(securityOperationRolesDAO.getNextValue());
 				}
 				if (securityOperationRoles.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					securityOperationRoles.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
@@ -409,10 +401,6 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 				}
 				list.add(auditDetail);
 			}
-		}
-		
-		if(count!=0){
-			getNextidviewDAO().setSeqNumber("SeqSecOperationRoles", seqNumber+count);
 		}
 		
 		logger.debug("Leaving ");
@@ -648,13 +636,6 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
-	}
-
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		this.nextidviewDAO = nextidviewDAO;
-	}
-	public NextidviewDAO getNextidviewDAO() {
-		return nextidviewDAO;
 	}
 
 	public SecurityRoleGroupsDAO getSecurityRoleGroupsDAO() {

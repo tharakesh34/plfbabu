@@ -66,7 +66,6 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleGroupsDAO {
 	private static Logger logger = Logger.getLogger(SecurityRoleGroupsDAOImpl.class);
-
 	
 	 public SecurityRoleGroupsDAOImpl() {
 		 super();
@@ -331,5 +330,10 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		}
 		logger.debug("Leaving ");
 		return list;
+	}
+
+	@Override
+	public long getNextValue() {
+		return getNextId("SeqSecRoleGroups");
 	}
 }

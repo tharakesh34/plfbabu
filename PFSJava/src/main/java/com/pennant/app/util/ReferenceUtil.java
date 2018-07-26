@@ -48,7 +48,6 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.FacilityDetailDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -63,18 +62,19 @@ import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class ReferenceUtil implements Serializable {
     private static final long serialVersionUID = -4965488291173350445L;
 	private static Logger logger = Logger.getLogger(ReferenceUtil.class);
 	
-	private static NextidviewDAO nextidviewDAO;
 	private static FinanceMainDAO financeMainDAO;
 	private static TreasuaryFinHeaderDAO treasuaryFinHeaderDAO;
 	private static FacilityDAO facilityDAO;
 	private static FacilityDetailDAO facilityDetailDAO;
 	private static CollateralSetupDAO collateralSetupDAO;
 	private static VASRecordingDAO vASRecordingDAO;
+	private static SequenceDao<?> sequenceGenetor;
 
 	/**
 	 * Method for Generating Sequence Reference Number based on Division code
@@ -82,13 +82,14 @@ public class ReferenceUtil implements Serializable {
 	 * @param finDivision
 	 * @return
 	 */
+	@Deprecated
 	public static String generateNewFinRef(boolean isWIF, String finDivision) {
 		logger.debug("Entering");
 		long   generatedSeqNo=0;
 		boolean refUpdated = false;
 		String referenceNumber = "";
 		while(!refUpdated){
-			long   befSeqNumber =getNextidviewDAO().getSeqNumber("SeqWIFFinanceMain");
+			long   befSeqNumber = sequenceGenetor.getSeqNumber("SeqWIFFinanceMain");
 
 			String seqNumString=String.valueOf(befSeqNumber);
 
@@ -164,7 +165,7 @@ public class ReferenceUtil implements Serializable {
 		boolean refUpdated = false;
 		String referenceNumber = "";
 		while (!refUpdated) {
-			long befSeqNumber = getNextidviewDAO().getSeqNumber("SeqCollateralSetup");
+			long befSeqNumber = sequenceGenetor.getSeqNumber("SeqCollateralSetup");
 
 			String seqNumString = String.valueOf(befSeqNumber).trim();
 
@@ -234,7 +235,7 @@ public class ReferenceUtil implements Serializable {
 		boolean refUpdated = false;
 		String referenceNumber = "";
 		while (!refUpdated) {
-			long befSeqNumber = getNextidviewDAO().getSeqNumber("SeqVasReference");
+			long befSeqNumber = sequenceGenetor.getSeqNumber("SeqVasReference");
 			
 			String seqNumString = String.valueOf(befSeqNumber);
 			
@@ -320,7 +321,7 @@ public class ReferenceUtil implements Serializable {
 		String year=String.valueOf(DateUtility.getYear(appldate));
 		String yearToAppend=year.substring(year.length()-2);
 		//Unique Sequence
-		long befSeqNumber = getNextidviewDAO().getSeqNumber("SeqCAFReference");
+		long befSeqNumber = sequenceGenetor.getSeqNumber("SeqCAFReference");
 		befSeqNumber = befSeqNumber + 1;
 		if (String.valueOf(befSeqNumber).length()>=6) {
 			befSeqNumber=1;
@@ -340,7 +341,7 @@ public class ReferenceUtil implements Serializable {
 		caf.append('/');
 		//Current Year
 		caf.append(yearToAppend);
-		getNextidviewDAO().setSeqNumber("SeqCAFReference", befSeqNumber);
+		sequenceGenetor.setSeqNumber("SeqCAFReference", befSeqNumber);
 
 		logger.debug("CAFReferenceNum--->"+caf.toString());
 		logger.debug("Leaving");
@@ -352,7 +353,7 @@ public class ReferenceUtil implements Serializable {
 		logger.debug("Entering");
 		StringBuilder facilityref=new StringBuilder(cafRefrence);
 		//Unique Sequence
-		long   befSeqNumber =getNextidviewDAO().getSeqNumber("SeqFacilityDetails");
+		long   befSeqNumber = sequenceGenetor.getSeqNumber("SeqFacilityDetails");
 		befSeqNumber = befSeqNumber + 1;
 		if (String.valueOf(befSeqNumber).length()>=3) {
 			befSeqNumber=1;
@@ -369,7 +370,7 @@ public class ReferenceUtil implements Serializable {
 		}
 		facilityref.append('/');
 		facilityref.append(StringUtils.leftPad(String.valueOf(befSeqNumber), 2, '0'));
-		getNextidviewDAO().setSeqNumber("SeqFacilityDetails", befSeqNumber);
+		sequenceGenetor.setSeqNumber("SeqFacilityDetails", befSeqNumber);
 		
 		logger.debug("facilityRef--->"+facilityref.toString());
 		logger.debug("Leaving");
@@ -383,7 +384,7 @@ public class ReferenceUtil implements Serializable {
 		
 		long   investmentRef = 0;
 
-		long   befSeqNumber = getNextidviewDAO().getSeqNumber("SeqInvestment");
+		long   befSeqNumber = sequenceGenetor.getSeqNumber("SeqInvestment");
 
 		String seqNumString = String.valueOf(befSeqNumber).trim();
 
@@ -431,7 +432,7 @@ public class ReferenceUtil implements Serializable {
 				status = false;
 			}
 		}
-		getNextidviewDAO().setSeqNumber("SeqInvestment", investmentRef);
+		sequenceGenetor.setSeqNumber("SeqInvestment", investmentRef);
 
 		logger.debug("Back Office Reference --->"+investmentRef);
 		logger.debug("Leaving");
@@ -443,12 +444,12 @@ public class ReferenceUtil implements Serializable {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
+	/*public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
 		ReferenceUtil.nextidviewDAO = nextidviewDAO;
 	}
 	public static NextidviewDAO getNextidviewDAO() {
 		return nextidviewDAO;
-	}
+	}*/
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		ReferenceUtil.financeMainDAO = financeMainDAO;
@@ -490,4 +491,9 @@ public class ReferenceUtil implements Serializable {
 	public static void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		ReferenceUtil.vASRecordingDAO = vASRecordingDAO;
 	}
+
+	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
+		ReferenceUtil.sequenceGenetor = sequenceGenetor;
+	}
+
 }

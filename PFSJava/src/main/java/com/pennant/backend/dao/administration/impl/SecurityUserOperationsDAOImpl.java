@@ -490,4 +490,9 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
+
+	@Override
+	public long getNextValue() {
+		return getNextId("SeqSecUserOperations");
+	}
 }

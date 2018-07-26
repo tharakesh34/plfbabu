@@ -43,10 +43,6 @@ public class PennantConstants {
 		super();
 	}
 
-	public enum SeqTables {
-		SeqFinReference, SeqReceiptNumber;
-	}
-
 	public static boolean CITY_FREETEXT = false;
 	public static final String default_Language = "EN";
 	public static final int searchGridSize = 10;

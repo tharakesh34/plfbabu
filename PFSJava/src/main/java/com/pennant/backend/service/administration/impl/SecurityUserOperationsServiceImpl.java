@@ -52,7 +52,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.administration.SecurityOperationDAO;
 import com.pennant.backend.dao.administration.SecurityOperationRolesDAO;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
@@ -76,13 +75,12 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		implements SecurityUserOperationsService {
 	private static final Logger			logger	= Logger.getLogger(SecurityUserOperationsServiceImpl.class);
 
-	private SecurityUserOperationsDAO	securityUserOperationsDAO;
-	private SecurityRoleGroupsDAO		securityRoleGroupsDAO;
-	private SecurityOperationRolesDAO	securityOperationRolesDAO;
-	private SecurityOperationDAO		securityOperationDAO;
-	private SecurityUserDAO				securityUserDAO;
-	private AuditHeaderDAO				auditHeaderDAO;
-	private NextidviewDAO				nextidviewDAO;
+	private SecurityUserOperationsDAO securityUserOperationsDAO;
+	private SecurityRoleGroupsDAO securityRoleGroupsDAO;
+	private SecurityOperationRolesDAO securityOperationRolesDAO;
+	private SecurityOperationDAO securityOperationDAO;
+	private SecurityUserDAO securityUserDAO;
+	private AuditHeaderDAO auditHeaderDAO;
 
 	@Override
 	public SecurityUserOperations getSecurityUserOperations() {
@@ -354,9 +352,6 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
-		long seqNumber = nextidviewDAO.getSeqNumber("SeqSecUserOperations");
-		int count = 0;
-
 		List<AuditDetail> list = new ArrayList<AuditDetail>();
 
 		for (AuditDetail auditDetail : auditDetails) {
@@ -383,8 +378,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 			} else if (suo.isNewRecord()) {
 				saveRecord = true;
 				if (suo.getId() == Long.MIN_VALUE) {
-					count++;
-					suo.setId(seqNumber + count);
+					suo.setId(securityUserOperationsDAO.getNextValue());
 				}
 				if (suo.getRecordType().equals(PennantConstants.RCD_ADD)) {
 					suo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -444,10 +438,6 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 				}
 				list.add(auditDetail);
 			}
-		}
-
-		if (count != 0) {
-			nextidviewDAO.setSeqNumber("SeqSecUserOperations", seqNumber + count);
 		}
 
 		logger.debug("Leaving ");
@@ -719,8 +709,5 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		this.nextidviewDAO = nextidviewDAO;
-	}
+	
 }

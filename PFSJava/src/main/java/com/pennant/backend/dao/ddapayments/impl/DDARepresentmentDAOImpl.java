@@ -2,11 +2,8 @@ package com.pennant.backend.dao.ddapayments.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.ddapayments.DDARepresentmentDAO;

@@ -1,12 +1,11 @@
 package com.pennant.Interface.service.impl;
 
 import com.pennant.Interface.service.NorkamCheckService;
-import com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennant.coreinterface.process.NorkamCheckProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
-public class NorkamCheckServiceImpl extends NextIdViewSQLServerDaoImpl implements NorkamCheckService {
+public class NorkamCheckServiceImpl implements NorkamCheckService {
 	
 	private NorkamCheckProcess norkamCheckProcess;
 	

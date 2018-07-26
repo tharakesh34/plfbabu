@@ -96,4 +96,6 @@ public interface SecurityUserOperationsDAO {
 	List<String> getUsersByRoles(String[] roleCodes, String division, String branch);
 
 	List<String> getUsrMailsByRoleIds(String roleCode);
+	
+	long getNextValue();
 }

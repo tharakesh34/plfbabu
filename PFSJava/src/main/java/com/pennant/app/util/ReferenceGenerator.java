@@ -47,23 +47,25 @@ import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.ReferenceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class ReferenceGenerator implements Serializable {
 	private static final long		serialVersionUID	= -4965488291173350445L;
 	private static Logger			logger				= Logger.getLogger(ReferenceGenerator.class);
 
-	private static NextidviewDAO	nextidviewDAO;
+	//private static NextidviewDAO	nextidviewDAO;
 	private static final String		DEFAULT_FORMAT		= "BBBB_PPP_SSSSSSS";
 	private static final String		BRANCH				= "B";
 	private static final String		DIVISION			= "D";
 	private static final String		PRODUCT				= "P";
 	private static final String		LOANTYPE			= "L";
 	private static final String		SEQUENCE			= "S";
+	
+	private static SequenceDao<?> sequenceGenetor;
 
 	/**
 	 * Method for Generating Sequence Reference Number based on Branch and product code
@@ -107,7 +109,7 @@ public class ReferenceGenerator implements Serializable {
 
 				if (formatCode.startsWith(SEQUENCE)) {
 					int length = formatCode.length();
-					long referenceSeqNumber = nextidviewDAO.getNextId("SeqFinReference");
+					long referenceSeqNumber = sequenceGenetor.getNextValue("SeqFinReference");
 					String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), length, '0');
 					lonRef.append(sequence);
 				}
@@ -159,7 +161,7 @@ public class ReferenceGenerator implements Serializable {
 		}
 
 		// Get the sequence number.
-		long referenceSeqNumber = nextidviewDAO.getNextId("SeqFinReference");
+		long referenceSeqNumber = sequenceGenetor.getNextValue("SeqFinReference");
 		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 7, '0');
 
 		logger.debug("Leaving");
@@ -180,7 +182,7 @@ public class ReferenceGenerator implements Serializable {
 		logger.debug("Entering");
 
 		// Get the sequence number.
-		long referenceSeqNumber = nextidviewDAO.getNextId("SeqReceiptNumber");
+		long referenceSeqNumber = sequenceGenetor.getNextValue("SeqReceiptNumber");
 		String rcptNo = String.valueOf(referenceSeqNumber);
 		if(rcptNo.length() < 8){
 			rcptNo = StringUtils.leftPad(rcptNo, 8, '0');
@@ -190,8 +192,8 @@ public class ReferenceGenerator implements Serializable {
 		return rcptNo;
 	}
 
-	public static void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		ReferenceGenerator.nextidviewDAO = nextidviewDAO;
+	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
+		ReferenceGenerator.sequenceGenetor = sequenceGenetor;
 	}
 
 }

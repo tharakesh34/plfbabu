@@ -15,7 +15,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
-import com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl;
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.customermasters.CoreCustomer;
@@ -59,7 +58,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.TableType;
 
-public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl implements CustomerInterfaceService{
+public class CustomerInterfaceServiceImpl implements CustomerInterfaceService{
 	
 	private static Logger logger = Logger.getLogger(CustomerInterfaceServiceImpl.class);
 	

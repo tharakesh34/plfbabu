@@ -41,7 +41,6 @@ import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
@@ -72,12 +71,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private AuditHeaderDAO auditHeaderDAO;
 	private JVPostingDAO jVPostingDAO;
 	private JVPostingEntryDAO jVPostingEntryDAO;
-	private NextidviewDAO nextidviewDAO;
 	private AccountInterfaceService accountInterfaceService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
-	private AccountProcessUtil			accountProcessUtil;
+	private AccountProcessUtil accountProcessUtil;
 
 	public JVPostingServiceImpl() {
 		super();
@@ -1029,14 +1027,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	public void setjVPostingEntryDAO(JVPostingEntryDAO jVPostingEntryDAO) {
 		this.jVPostingEntryDAO = jVPostingEntryDAO;
-	}
-
-	public NextidviewDAO getNextidviewDAO() {
-		return nextidviewDAO;
-	}
-
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		this.nextidviewDAO = nextidviewDAO;
 	}
 
 	@Override

@@ -49,7 +49,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.administration.SecurityGroupRights;
@@ -62,10 +61,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroupRights> implements SecurityGroupRightsService{
-
 	private static Logger logger = Logger.getLogger(SecurityGroupRightsServiceImpl.class);
+	
 	private SecurityGroupRightsDAO securityGroupRightsDAO;
-	private NextidviewDAO 	nextidviewDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 
 	public SecurityGroupRightsServiceImpl() {
@@ -88,7 +86,6 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 
 	 **/
 	public AuditHeader save(AuditHeader auditHeader){
-
 		logger.debug("Entering ");
 
 		auditHeader =businessValidation(auditHeader);
@@ -96,7 +93,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		long nextID=getNextidviewDAO().getSeqNumber("SeqSecGroupRights");
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		for (int i = 0; i < auditHeader.getAuditDetails().size(); i++) {
 
@@ -106,8 +103,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 
 			if(StringUtils.equals(auditDetail.getAuditTranType()
 					,PennantConstants.TRAN_ADD)){
-				nextID=nextID+1;
-				aSecGroupRights.setId(nextID);
+				aSecGroupRights.setId(securityGroupRightsDAO.getNextValue());
 				aSecGroupRights.setRecordStatus("");
 				aSecGroupRights.setRoleCode("");
 				aSecGroupRights.setNextRoleCode("");
@@ -129,7 +125,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 				auditDetails.add(auditDetail);
 			}
 		}
-		getNextidviewDAO().setSeqNumber("SeqSecGroupRights", nextID);
+		
 		auditHeader.setAuditModule("SecurityGroupRights");
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -236,12 +232,5 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
-	}
-
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		this.nextidviewDAO = nextidviewDAO;
-	}
-	public NextidviewDAO getNextidviewDAO() {
-		return nextidviewDAO;
 	}
 }

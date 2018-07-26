@@ -18,16 +18,6 @@
 		class="com.pennant.backend.dao.impl.BasisCodeDAO" />
 
 	<!-- ====================================================== -->
-	<!-- Base bean for getting the tables primary key -->
-	<!-- ====================================================== -->
-
-	<bean id="basisNextidDao" abstract="true" p:nextidviewDAO-ref="nextidviewDAO"
-		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
-
-	<bean id="pfsNextidDao" abstract="true" p:nextidviewDAO-ref="pfsNextidviewDAO"
-		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
-
-	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
 	<!-- ====================================================== -->
 
@@ -307,7 +297,6 @@
 		<property name="securityRoleGroupsDAO" ref="securityRoleGroupsDAO" />
 		<property name="securityGroupRightsDAO" ref="securityGroupRightsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
 	</bean>
 
 	<!--================= Security GroupRight Details ================ -->
@@ -333,7 +322,6 @@
 		class="com.pennant.backend.service.administration.impl.SecurityGroupRightsServiceImpl">
 		<property name="securityGroupRightsDAO" ref="securityGroupRightsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -6049,7 +6037,6 @@
 		<property name="jVPostingDAO" ref="jVPostingDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="jVPostingEntryDAO" ref="jVPostingEntryDAO" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="legalExpensesDAO" ref="legalExpensesDAO" />
@@ -6478,7 +6465,7 @@
 	<!--============ Reference ID Generation Util ============== -->
 
 	<bean name="ReferenceUtil" class="com.pennant.app.util.ReferenceUtil">
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
+		<property name="sequenceGenetor" ref="sequenceGenetor" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="treasuaryFinHeaderDAO" ref="treasuaryFinHeaderDAO" />
 		<property name="facilityDAO" ref="facilityDAO" />
@@ -7418,7 +7405,6 @@
 		<property name="securityRoleGroupsDAO" ref="securityRoleGroupsDAO" />
 		<property name="securityOperationRolesDAO" ref="securityOperationRolesDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
 		<property name="securityOperationDAO" ref="securityOperationDAO"></property>
 		<property name="securityUserDAO" ref="securityUserDAO"></property>
 
@@ -7483,7 +7469,6 @@
 		<property name="securityOperationRolesDAO" ref="securityOperationRolesDAO" />
 		<property name="securityRoleGroupsDAO" ref="securityRoleGroupsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
 		<property name="securityRoleDAO" ref="securityRoleDAO"></property>
 		<property name="securityOperationDAO" ref="securityOperationDAO"></property>
 		<property name="securityGroupRightsDAO" ref="securityGroupRightsDAO" />
@@ -8935,7 +8920,7 @@
 	<!--============ Reference ID Generation Configuration ============== -->
 
 	<bean name="ReferenceGenerator" class="com.pennant.app.util.ReferenceGenerator">
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
+		<property name="sequenceGenetor" ref="sequenceGenetor" />
 	</bean>
 
 	<bean id="finTypeFeesService"
