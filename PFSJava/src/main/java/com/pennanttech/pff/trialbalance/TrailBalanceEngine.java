@@ -616,7 +616,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" select AM.HOSTACCOUNT ledgerAccount, AM.ACCOUNT Account, LR.PROVINCE stateCode,");
 		sql.append(" LR.CLOSINGBAL openingBalance, LR.CLOSINGBALTYPE openingBalanceType");
 		sql.append(" from ACCOUNTMAPPING AM");
-		sql.append(" INNER JOIN TRIAL_BALANCE_REPORT_LAST_RUN LR ON LR.HOSTACCOUNT = AM.HOSTACCOUNT");
+		sql.append(" INNER JOIN TRIAL_BALANCE_REPORT_LAST_RUN LR ON LR.ACCOUNT = AM.ACCOUNT");
 		sql.append(" INNER JOIN TRIAL_BALANCE_HEADER TH ON TH.ID = LR.HEADERID");
 		sql.append(" WHERE TH.DIMENSION = :DIMENSION");
 		sql.append(" AND TH.STARTDATE =  :STARTDATE_MINUS_1M and TH.ENDDATE = :ENDDATE_MINUS_1M");
