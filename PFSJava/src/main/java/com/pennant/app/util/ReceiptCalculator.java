@@ -46,6 +46,11 @@
  * 
  * 26-06-2018       Siva					 0.6        Early Settlement balance Amount 
  * 														not closing fully(127641)           * 
+ * 
+ * 14-07-2018		Siva			 		 0.7		Payable GST, Bounce refer changes, 
+ * 																					LPP GST * 
+ * 
+ * 26-07-2018		Siva			 		 0.8		TDS ROunding for Auto Allocation 	* 
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
@@ -239,11 +244,13 @@ public class ReceiptCalculator implements Serializable {
 		boolean isSkipLastDateSet = false;
 
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		String tdsRoundMode = null;
+		int tdsRoundingTarget = 0;
 		if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
@@ -340,14 +347,14 @@ public class ReceiptCalculator implements Serializable {
 						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 						
-						/*actualPft = CalculationUtil.roundAmount(actualPft, roundingMode, roundingTarget);*/
-						tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
+						BigDecimal tdsAmt = pft.subtract(actualPft);
+						tdsAmt = CalculationUtil.roundAmount(tdsAmt, tdsRoundMode, tdsRoundingTarget);
+						tdsAccruedTillNow = tdsAccruedTillNow.add(tdsAmt);
 					}
 
 				} else if (DateUtility.compare(valueDate, schdDate) == 0) {
 
-					BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
-					//pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
+					BigDecimal remPft = curSchd.getProfitCalc();
 					if (prvSchd != null) {
 						remPft = remPft.add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount()));
 					}
@@ -379,9 +386,12 @@ public class ReceiptCalculator implements Serializable {
 					}
 
 					if (finScheduleData.getFinanceMain().isTDSApplicable()) {
+						remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
+						
 						BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-						/*actualPft = CalculationUtil.roundAmount(actualPft, roundingMode, roundingTarget);*/
-						tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
+						BigDecimal tdsAmt = remPft.subtract(actualPft);
+						tdsAmt = CalculationUtil.roundAmount(tdsAmt, tdsRoundMode, tdsRoundingTarget);
+						tdsAccruedTillNow = tdsAccruedTillNow.add(tdsAmt);
 
 					}
 					partAccrualReq = false;
@@ -401,8 +411,7 @@ public class ReceiptCalculator implements Serializable {
 						}
 						
 						accruedPft = accruedPft.add(calIntFraction).add(prvSchd.getProfitBalance()).subtract(prvSchd.getCpzAmount());
-						accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(),
-								finScheduleData.getFinanceMain().getRoundingTarget());
+						accruedPft = CalculationUtil.roundAmount(accruedPft, roundingMode,roundingTarget);
 						if (accruedPft.compareTo(BigDecimal.ZERO) < 0) {
 							accruedPft = BigDecimal.ZERO;
 						}
@@ -410,8 +419,7 @@ public class ReceiptCalculator implements Serializable {
 						// Rounding Profit Adjustment on Last Term
 						int roundRequired = SysParamUtil.getValueAsInt(SMTParameterConstants.ROUND_LASTSCHD);
 						if (roundRequired == 1) {
-							BigDecimal lastTermEMI = CalculationUtil.roundAmount(accruedPft.add(prvSchd.getClosingBalance()),
-									finScheduleData.getFinanceMain().getCalRoundingMode(), finScheduleData.getFinanceMain().getRoundingTarget());
+							BigDecimal lastTermEMI = CalculationUtil.roundAmount(accruedPft.add(prvSchd.getClosingBalance()), roundingMode,roundingTarget);
 							BigDecimal roundingPftDiff = lastTermEMI.subtract(prvSchd.getClosingBalance()).subtract(accruedPft);
 							accruedPft = accruedPft.add(roundingPftDiff);
 						}
@@ -422,9 +430,10 @@ public class ReceiptCalculator implements Serializable {
 						
 						if(finScheduleData.getFinanceMain().isTDSApplicable()){
 							BigDecimal actualPft = accruedPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-							/*actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
-									finScheduleData.getFinanceMain().getRoundingTarget());*/
-							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.subtract(actualPft));
+							BigDecimal tdsAmt = accruedPft.subtract(actualPft);
+							tdsAmt = CalculationUtil.roundAmount(tdsAmt, tdsRoundMode, tdsRoundingTarget);
+							tdsAccruedTillNow = tdsAccruedTillNow.add(tdsAmt);
+							
 						}
 					}
 
@@ -462,11 +471,17 @@ public class ReceiptCalculator implements Serializable {
 					// TDS Calculation
 					BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 					BigDecimal actualPft = unpaidPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-					/*
-					 * actualPft = CalculationUtil.roundAmount(actualPft,
-					 * roundingMode,roundingTarget);
-					 */
-					tdsAmount = tdsAmount.add(unpaidPft.subtract(actualPft));
+					
+					BigDecimal tdsAmt = unpaidPft.subtract(actualPft);
+					tdsAmt = CalculationUtil.roundAmount(tdsAmt, tdsRoundMode, tdsRoundingTarget);
+					
+					// TDS Re-adjust(minor difference) 
+					if (unpaidPft.compareTo(actualPft.add(tdsAmt)) < 0 && tdsRoundingTarget == 0) {
+						tdsAmt = tdsAmt.add(unpaidPft.subtract(actualPft.add(tdsAmt)));
+					}else if (unpaidPft.compareTo(actualPft.add(tdsAmt)) < 0 && tdsRoundingTarget > 0) {
+						actualPft = unpaidPft.subtract(tdsAmt);
+					}
+					tdsAmount = tdsAmount.add(tdsAmt);
 				}
 
 				if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
@@ -1014,11 +1029,13 @@ public class ReceiptCalculator implements Serializable {
 
 		// TDS Calculation, if Applicable
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		String tdsRoundMode = null;
+		int tdsRoundingTarget = 0;
 		if (financeMain.isTDSApplicable()) {
 
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 			
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
@@ -1464,6 +1481,23 @@ public class ReceiptCalculator implements Serializable {
 												balPft = totalReceiptAmt.multiply(tdsMultiplier);
 												actPftAdjust = totalReceiptAmt;
 											}
+											
+											// TDS Payments
+											BigDecimal tdsAdjust = balPft.subtract(actPftAdjust);
+											tdsAdjust = CalculationUtil.roundAmount(tdsAdjust, tdsRoundMode, tdsRoundingTarget);
+											
+											// TDS Re-adjust(minor difference) due to Rounding effect
+											if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) < 0 && tdsRoundingTarget == 0) {
+												tdsAdjust = tdsAdjust.add(balPft.subtract(actPftAdjust.add(tdsAdjust)));
+											}else if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) < 0 && tdsRoundingTarget > 0) {
+												actPftAdjust = balPft.subtract(tdsAdjust);
+											}else if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) > 0 && tdsRoundingTarget > 0) {
+												if(totalReceiptAmt.compareTo(balPft.subtract(actPftAdjust.add(tdsAdjust))) > 0){
+													actPftAdjust = balPft.subtract(tdsAdjust);
+												}else if(totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0){
+													actPftAdjust = actPftAdjust.add(totalReceiptAmt);
+												}
+											}
 
 											// TEMP FIX
 											if ((s == scheduleDetails.size() - 1)
@@ -1497,8 +1531,6 @@ public class ReceiptCalculator implements Serializable {
 
 											rsd = prepareRpyPaidRecord(curSchd, rsd, pftPayTo, balPft, valueDate, null);
 
-											// TDS Payments
-											BigDecimal tdsAdjust = balPft.subtract(actPftAdjust);
 											if (tdsAdjust.compareTo(BigDecimal.ZERO) > 0) {
 												rsd = prepareRpyPaidRecord(curSchd, rsd, RepayConstants.REPAY_TDS,
 														tdsAdjust, valueDate, null);
@@ -2916,11 +2948,13 @@ public class ReceiptCalculator implements Serializable {
 
 		// TDS Calculation, if Applicable
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		String tdsRoundMode = null;
+		int tdsRoundingTarget = 0;
 		if (financeMain.isTDSApplicable()) {
 
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 			
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
@@ -3060,13 +3094,7 @@ public class ReceiptCalculator implements Serializable {
 							if (balPft.compareTo(BigDecimal.ZERO) > 0) {
 
 								BigDecimal actPftAdjust = BigDecimal.ZERO;
-								if (isLastTermForES) {
-									actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-									//actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
-								}else{
-									actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-									//actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
-								}
+								actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 
 								// TDS Adjustments
 								BigDecimal tdsAdjust = BigDecimal.ZERO;
@@ -3078,10 +3106,23 @@ public class ReceiptCalculator implements Serializable {
 									tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
 									totalReceiptAmt = BigDecimal.ZERO;
 								}
+								
+								tdsAdjust = CalculationUtil.roundAmount(tdsAdjust, tdsRoundMode, tdsRoundingTarget);
 
-								// TDS Re-adjust(minor difference) TEMP FIX
-								if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) < 0) {
+								// TDS Re-adjust(minor difference) due to Rounding effect
+								if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) < 0 && tdsRoundingTarget == 0) {
 									tdsAdjust = tdsAdjust.add(balPft.subtract(actPftAdjust.add(tdsAdjust)));
+								}else if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) < 0 && tdsRoundingTarget > 0) {
+									totalReceiptAmt = totalReceiptAmt.add(actPftAdjust.add(tdsAdjust).subtract(balPft));
+									actPftAdjust = balPft.subtract(tdsAdjust);
+								}else if (balPft.compareTo(actPftAdjust.add(tdsAdjust)) > 0 && tdsRoundingTarget > 0) {
+									if(totalReceiptAmt.compareTo(balPft.subtract(actPftAdjust.add(tdsAdjust))) > 0){
+										actPftAdjust = balPft.subtract(tdsAdjust);
+										totalReceiptAmt = totalReceiptAmt.subtract(balPft.subtract(actPftAdjust.add(tdsAdjust)));
+									}else if(totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0){
+										actPftAdjust = actPftAdjust.add(totalReceiptAmt);
+										totalReceiptAmt = BigDecimal.ZERO;
+									}
 								}
 
 								// Profit Amount Payments
