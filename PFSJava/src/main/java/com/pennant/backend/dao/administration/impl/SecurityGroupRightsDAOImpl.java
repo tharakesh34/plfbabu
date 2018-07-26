@@ -47,28 +47,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup> implements SecurityGroupRightsDAO{
+public class SecurityGroupRightsDAOImpl extends BasicDao<SecurityGroup> implements SecurityGroupRightsDAO{
 	private static Logger logger = Logger.getLogger(SecurityGroupRightsDAOImpl .class);
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public SecurityGroupRightsDAOImpl() {
 		super();
@@ -77,9 +73,6 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	public SecurityGroupRights getSecurityGroupRights(){
 		return new SecurityGroupRights();
 	}
@@ -103,7 +96,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		RowMapper<SecurityGroupRights> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityGroupRights.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
 	/**
@@ -124,7 +117,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		RowMapper<SecurityGroupRights> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityGroupRights.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParamters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), namedParamters,typeRowMapper);
 	}
 
 	/**
@@ -144,7 +137,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroupRights);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 
 	}
@@ -161,7 +154,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("deleteSql:"+ deleteSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroupRights);
 		try {
-			long recordCount=this.namedParameterJdbcTemplate.update(deleteSql, beanParameters);
+			long recordCount=this.jdbcTemplate.update(deleteSql, beanParameters);
 			if (recordCount <= 0) {		
 				throw new ConcurrencyException();
 			}
@@ -185,7 +178,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("getGroupIdCountSql: " + groupIdCountSql);      
 
 		try{
-			status=this.namedParameterJdbcTemplate.queryForObject(groupIdCountSql, namedParamters, Integer.class);
+			status=this.jdbcTemplate.queryForObject(groupIdCountSql, namedParamters, Integer.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			status=0;
@@ -208,7 +201,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("selectSql: " + righIdCountSql);      
 
 		try{
-			status=this.namedParameterJdbcTemplate.queryForObject(righIdCountSql, namedParamters, Integer.class);
+			status=this.jdbcTemplate.queryForObject(righIdCountSql, namedParamters, Integer.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			status=0;
@@ -243,7 +236,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		}
 		
 		logger.debug("selectSql: " + selectSql);
-		secRightList = this.namedParameterJdbcTemplate.query(selectSql, beanParameters,typeRowMapper);
+		secRightList = this.jdbcTemplate.query(selectSql, beanParameters,typeRowMapper);
 		
 		logger.debug("Leaving");
 		return secRightList;
@@ -273,7 +266,7 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 				.newInstance(SecurityGroupRights.class);
 
 		try {
-			secGroupRights = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			secGroupRights = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			secGroupRights = null;

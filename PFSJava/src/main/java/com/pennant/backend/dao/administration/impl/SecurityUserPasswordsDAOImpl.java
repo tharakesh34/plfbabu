@@ -2,38 +2,26 @@ package com.pennant.backend.dao.administration.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements SecurityUserPasswordsDAO {
+public class SecurityUserPasswordsDAOImpl extends BasicDao<SecurityUser> implements SecurityUserPasswordsDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserPasswordsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public SecurityUserPasswordsDAOImpl() {
 		super();
 	}
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
- 
+	 
 	/**
 	 * This method inserts record into SecUserPasswords
 	 */
@@ -44,7 +32,7 @@ public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUse
 		insertSql .append(" (UsrID, UsrPwd,UsrToken,LastMntOn) Values(:UsrID,:UsrPwd,:UsrToken,:LastMntOn)");
 		logger.debug("saveRecentPasswordSql:"+insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return securityUser.getId();
 	}
@@ -64,7 +52,7 @@ public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUse
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
 	/**
@@ -81,7 +69,7 @@ public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUse
 		logger.debug("deleteOldestPasswordSql:"+deleteSql.toString());
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}

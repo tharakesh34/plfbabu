@@ -31,8 +31,7 @@
 	<!-- Audit Details Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl"
-	parent="auditSequenceDao" />
+	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl" parent="auditSequenceDao" />
 
 	<!-- ====================================================== -->
 	<!-- Notes Details Configuration -->
@@ -218,11 +217,7 @@
 
 	<!--================= Security Password Details ================ -->
 
-	<bean id="securityUserPasswordsDAO"
-		class="com.pennant.backend.dao.administration.impl.SecurityUserPasswordsDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
+	<bean id="securityUserPasswordsDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserPasswordsDAOImpl" parent="secBasicDao"/>
 
 	<!--================= Security Role Details ================ -->
 
@@ -319,12 +314,7 @@
 	</bean>
 
 	<!--================= Security GroupRight Details ================ -->
-
-	<bean id="securityGroupRightsDAO"
-		class="com.pennant.backend.dao.administration.impl.SecurityGroupRightsDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
+	<bean id="securityGroupRightsDAO" class="com.pennant.backend.dao.administration.impl.SecurityGroupRightsDAOImpl" parent="secBasicDao"/>
 
 	<bean id="securityGroupRightsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
