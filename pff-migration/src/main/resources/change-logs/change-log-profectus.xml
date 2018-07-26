@@ -969,7 +969,7 @@
 		</addColumn>
 	</changeSet> -->
 	
-	<changeSet id="48" author="Vinay">
+	<!-- <changeSet id="48" author="Vinay">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
@@ -1163,6 +1163,206 @@
 		<sql>
 			delete from LimitCodeDetail where limitcode='FEE_UPFRONT_REQ';
 			Insert into LimitCodeDetail values ((select max(limitid) from LimitCodeDetail)+1,'FEE_UPFRONT_REQ','Upfrent Fee Validation',1);
+		</sql>
+	</changeSet> -->
+	
+	<changeSet id="58" author="Vinay">
+		<addColumn tableName="CustomerBankInfo">
+			<column name="NoOfMonths" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="59" author="Vinay">
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="NoOfMonths" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="60" author="Vinay">
+		<sql>
+			update CustomerBankInfo set NoOfMonths=0;
+			update CustomerBankInfo_Temp set NoOfMonths=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerBankInfoDialog_NoOfMonths','CustomerBankInfoDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_NoOfMonths'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="61" author="Vinay">
+		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+			 SELECT t1.bankid,
+			    t1.custid,
+			    t1.bankname,
+			    t1.accountnumber,
+			    t1.accounttype,
+			    t1.salaryaccount,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.bankname AS lovdescbankname,
+			    t4.valuedesc AS lovdescaccounttype,
+			    t1.credittranno,
+			    t1.credittranamt,
+			    t1.credittranavg,
+			    t1.debittranno,
+			    t1.debittranamt,
+			    t1.cashdepositno,
+			    t1.cashdepositamt,
+			    t1.cashwithdrawalno,
+			    t1.cashwithdrawalamt,
+			    t1.chqdepositno,
+			    t1.chqdepositamt,
+			    t1.chqissueno,
+			    t1.chqissueamt,
+			    t1.inwardchqbounceno,
+			    t1.outwardchqbounceno,
+			    t1.eodbalmin,
+			    t1.eodbalmax,
+			    t1.eodbalavg,
+			    t1.NoOfMonths
+			   FROM customerbankinfo t1
+			     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			     JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+		</createView>
+	</changeSet>
+	
+	<changeSet id="62" author="Vinay">
+		<createView viewName="customerbankinfo_view" replaceIfExists="true">
+				 SELECT t1.bankid,
+				    t1.custid,
+				    t1.bankname,
+				    t1.accountnumber,
+				    t1.accounttype,
+				    t1.salaryaccount,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t3.bankname AS lovdescbankname,
+				    t4.valuedesc AS lovdescaccounttype,
+				    t1.credittranno,
+				    t1.credittranamt,
+				    t1.credittranavg,
+				    t1.debittranno,
+				    t1.debittranamt,
+				    t1.cashdepositno,
+				    t1.cashdepositamt,
+				    t1.cashwithdrawalno,
+				    t1.cashwithdrawalamt,
+				    t1.chqdepositno,
+				    t1.chqdepositamt,
+				    t1.chqissueno,
+				    t1.chqissueamt,
+				    t1.inwardchqbounceno,
+				    t1.outwardchqbounceno,
+				    t1.eodbalmin,
+				    t1.eodbalmax,
+				    t1.eodbalavg,
+			    	t1.NoOfMonths
+				   FROM customerbankinfo_temp t1
+				     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+				     JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+				UNION ALL
+				 SELECT t1.bankid,
+				    t1.custid,
+				    t1.bankname,
+				    t1.accountnumber,
+				    t1.accounttype,
+				    t1.salaryaccount,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t3.bankname AS lovdescbankname,
+				    t4.valuedesc AS lovdescaccounttype,
+				    t1.credittranno,
+				    t1.credittranamt,
+				    t1.credittranavg,
+				    t1.debittranno,
+				    t1.debittranamt,
+				    t1.cashdepositno,
+				    t1.cashdepositamt,
+				    t1.cashwithdrawalno,
+				    t1.cashwithdrawalamt,
+				    t1.chqdepositno,
+				    t1.chqdepositamt,
+				    t1.chqissueno,
+				    t1.chqissueamt,
+				    t1.inwardchqbounceno,
+				    t1.outwardchqbounceno,
+				    t1.eodbalmin,
+				    t1.eodbalmax,
+				    t1.eodbalavg,
+			    	t1.NoOfMonths
+				   FROM customerbankinfo t1
+				     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+				     JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM customerbankinfo_temp
+				          WHERE customerbankinfo_temp.bankid = t1.bankid))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="63" author="Vinay">
+		<sql>
+			delete from extendedfielddetail where moduleid in (Select moduleid from extendedfieldheader where modulename='COLLATERAL' and submodulename='stock') and fieldname='loancoverage';
+			delete from extendedfielddetail_temp where moduleid in (Select moduleid from extendedfieldheader where modulename='COLLATERAL' and submodulename='stock') and fieldname='loancoverage';
+			
+			Alter table COLLATERAL_stock_ED drop column loancoverage;
+			Alter table COLLATERAL_stock_ED_TEMP drop column loancoverage;
+			Alter table collateral_stock_ed_tv drop column loancoverage;
+			Alter table verification_stock_tv drop column loancoverage;
+			Alter table verification_stock_tv_temp drop column loancoverage;
+			
+			delete from extendedfielddetail where moduleid in (Select moduleid from extendedfieldheader where modulename='COLLATERAL' and submodulename='RECEIV') and fieldname='loancoverage';
+			delete from extendedfielddetail_temp where moduleid in (Select moduleid from extendedfieldheader where modulename='COLLATERAL' and submodulename='RECEIV') and fieldname='loancoverage';
+			                                                 
+			Alter table COLLATERAL_RECEIV_ED drop column loancoverage;
+			Alter table COLLATERAL_RECEIV_ED_TEMP drop column loancoverage;
+			Alter table collateral_RECEIV_ed_tv drop column loancoverage;
+			Alter table verification_RECEIV_tv drop column loancoverage;
+			Alter table verification_RECEIV_tv_temp drop column loancoverage;
+			
+			update extendedfielddetail set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var v = zk.Widget.$(jq("$ad_CVAL_cdb")[0]); var w = zk.Widget.$(jq("$ad_WEIGHTAGE")[0]); var r = v.getValue().$toNumber() * (w.getValue().$toNumber() / 100); zAu.send(new zk.Event(t, "onChange", r), 10);'
+			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'RECEIV') and fieldname = 'WEIGHTAGE';
+			
+			update extendedfielddetail set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var v = zk.Widget.$(jq("$ad_CVAL_cdb")[0]); var w = zk.Widget.$(jq("$ad_WEIGHTAGE")[0]); var r = v.getValue().$toNumber() * (w.getValue().$toNumber() / 100); zAu.send(new zk.Event(t, "onChange", r), 10);'
+			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'RECEIV') and fieldname = 'CVAL';
+			
+			update extendedfielddetail set scriptlet = 'onChange>>default;'
+			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'RECEIV') and fieldname = 'UNITPRICE';
+			
+			update extendedfielddetail set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var v = zk.Widget.$(jq("$ad_CONSIDEREDVALUE_cdb")[0]); var w = zk.Widget.$(jq("$ad_WEIGHTAGE")[0]); var r = v.getValue().$toNumber() * (w.getValue().$toNumber() / 100); zAu.send(new zk.Event(t, "onChange", r), 10);'
+			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'STOCK') and fieldname = 'WEIGHTAGE';
+			
+			update extendedfielddetail set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var v = zk.Widget.$(jq("$ad_CONSIDEREDVALUE_cdb")[0]); var w = zk.Widget.$(jq("$ad_WEIGHTAGE")[0]); var r = v.getValue().$toNumber() * (w.getValue().$toNumber() / 100); zAu.send(new zk.Event(t, "onChange", r), 10);'
+			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'STOCK') and fieldname = 'CONSIDEREDVALUE';
+			
+			update extendedfielddetail set scriptlet = 'onChange>>default;'
+			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'STOCK') and fieldname = 'UNITPRICE';
 		</sql>
 	</changeSet>
 </databaseChangeLog>

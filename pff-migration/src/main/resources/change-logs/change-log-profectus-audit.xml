@@ -44,5 +44,14 @@
 	<changeSet id="6" author="Vinay">
 		<modifyDataType tableName="adtExternal_liabilities" columnName="balTransfer" newDataType="boolean"/>
 	</changeSet>
+	
+	<changeSet id="7" author="Vinay">
+		<sql>
+			Alter table adtcollateral_stock_ed drop column loancoverage;
+			Alter table adtverification_stock_tv drop column loancoverage;
+			Alter table adtcollateral_RECEIV_ed drop column loancoverage;
+			Alter table adtverification_RECEIV_tv drop column loancoverage;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
