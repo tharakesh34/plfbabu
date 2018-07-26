@@ -1817,6 +1817,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			BigDecimal invoiceAmout = BigDecimal.ZERO;
 			// Invoice Transaction details preparation for Fee Details if any exists
 			for (FinFeeDetail feeDetail : finFeeDetailsList) {
+				if (!feeDetail.isTaxApplicable()) {
+					continue;
+				}
 				FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
 				if (finTaxDetails != null) {
 					GSTInvoiceTxnDetails details = new GSTInvoiceTxnDetails();

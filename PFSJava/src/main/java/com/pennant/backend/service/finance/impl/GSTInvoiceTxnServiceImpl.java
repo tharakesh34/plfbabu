@@ -248,7 +248,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			// Invoice Transaction details preparation for Fee Details if any exists
 			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) {	//Fees
 				for (FinFeeDetail feeDetail : finFeeDetailsList) {
-					if (feeDetail.isOriginationFee()) {
+					if (feeDetail.isOriginationFee() || !feeDetail.isTaxApplicable()) {
 						continue;
 					}
 					FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
