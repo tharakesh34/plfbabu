@@ -54,8 +54,5 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="8" author="Vinay" dbms="postgresql">
-		<modifyDataType tableName="AdtExtendedFieldHeader" columnName="modulename" newDataType="CITEXT"/>
-	</changeSet>
 </databaseChangeLog>
 	
