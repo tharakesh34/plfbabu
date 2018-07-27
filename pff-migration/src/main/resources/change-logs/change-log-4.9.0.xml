@@ -2233,5 +2233,201 @@
 			update ExtendedFieldHeader_Temp set modulename='VAS' where modulename='Vas';
 		</sql>
 	</changeSet>
+	<changeSet id="24" author="Kesav">
+		<comment>RBFieldDetails and Stage Accouting Rule Rights</comment>
+		<sql>
+			Delete from RBFieldDetails where RBModule = 'STGRULE' and  RBEvent ='STGRULE' and RBFldName = 'fm_productCategory';
+			Delete from RBFieldDetails where RBModule = 'STGRULE' and  RBEvent ='STGRULE' and RBFldName = 'fm_finType';
+			Delete from RBFieldDetails where RBModule = 'STGRULE' and  RBEvent ='STGRULE' and RBFldName = 'ft_product';
+			Delete from RBFieldDetails where RBModule = 'STGRULE' and  RBEvent ='STGRULE' and RBFldName = 'rd_paymentType';
+			
+			Insert into RBFieldDetails Values ('STGRULE','STGRULE','fm_productCategory','Product Category','nvarchar',8,'0','1',' ','static,global',' ');
+			Insert into RBFieldDetails Values ('STGRULE','STGRULE','fm_finType','Loan Type','nvarchar',8,'0','1','RMTFinanceTypes','static,global,dbvalue','FinanceType');	
+			Insert into RBFieldDetails Values ('STGRULE','STGRULE','ft_product', 'Product','nvarchar',8, 0,0, 'Product','static,global,dbvalue', 'Product');
+			Insert into RBFIELDDETAILS values ('STGRULE','STGRULE','rd_paymentType','Payment Type','nvarchar',8,'0','1',' ','static,global',' ');
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'StageAccountingRule_Maker') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'StageAccountingRule_Maker';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'StageAccountingRule_Maker','WF Maker for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'StageAccountingRule_Maker'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleCodeDesc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleEvent'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_returnType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_active'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleModule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_sqlRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'menuCat_RulesFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_StageAccountingRule');
+			Delete from SecRights where RightName = 'menuItem_RulesFactory_StageAccountingRule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_RulesFactory_StageAccountingRule', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_StageAccountingRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleList_NewStageAccountingRule');
+			Delete from SecRights where RightName = 'button_RuleList_NewStageAccountingRule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleList_NewStageAccountingRule', 'RuleList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleList_NewStageAccountingRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Approver');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'StageAccountingRule_Approver') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'StageAccountingRule_Approver';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'StageAccountingRule_Approver','WF Approver for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Approver'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'StageAccountingRule_Approver'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Approver'), (Select RightID from SecRights where RightName = 'menuCat_RulesFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'StageAccountingRule_Approver'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_StageAccountingRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	<changeSet id="25" author="Kesav">
+		<createView viewName="LMTFINREFDETAIL_ACVIEW" replaceIfExists="true">
+			SELECT  t1.finrefdetailid,
+				    t1.fintype,
+				    t1.finreftype,
+				    t1.finrefid,
+				    t1.isactive,
+				    t1.showinstage,
+				    t1.mandinputinstage,
+				    t1.allowinputinstage,
+				    t1.allowdeviation,
+				    t1.allowwaiver,
+				    t1.allowpostpone,
+				    t1.allowexpire,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+				    t1.override,
+				    t1.overridevalue,
+				    t1.finevent,
+				    t1.alerttype,
+					t3.rulecode AS lovdescnamelov,
+				    t3.rulecode AS lovdesccodelov,
+				    t3.rulecodedesc AS lovdescrefdesc,
+				    t3.sqlrule AS lovDescStgRuleValue
+				   FROM lmtfinrefdetail t1
+				     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+				     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+				     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+					 JOIN rules t3 ON t1.finrefid = t3.ruleid AND t1.finreftype = 5		
+		</createView>
+	</changeSet>
+	<changeSet id="26" author="Kesav">
+		<createView viewName="LMTFINREFDETAIL_TCVIEW" replaceIfExists="true">
+			SELECT  t1.finrefdetailid,
+				    t1.fintype,
+				    t1.finreftype,
+				    t1.finrefid,
+				    t1.isactive,
+				    t1.showinstage,
+				    t1.mandinputinstage,
+				    t1.allowinputinstage,
+				    t1.allowdeviation,
+				    t1.allowwaiver,
+				    t1.allowpostpone,
+				    t1.allowexpire,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+				    t1.override,
+				    t1.overridevalue,
+				    t1.finevent,
+				    t1.alerttype,
+					t3.rulecode AS lovdescnamelov,
+				    t3.rulecode AS lovdesccodelov,
+				    t3.rulecodedesc AS lovdescrefdesc,
+				    t3.sqlrule AS lovDescStgRuleValue
+				   FROM lmtfinrefdetail_temp t1
+				     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+				     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+				     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+					 JOIN rules t3 ON t1.finrefid = t3.ruleid AND t1.finreftype = 5
+				UNION ALL
+				 SELECT t1.finrefdetailid,
+				    t1.fintype,
+				    t1.finreftype,
+				    t1.finrefid,
+				    t1.isactive,
+				    t1.showinstage,
+				    t1.mandinputinstage,
+				    t1.allowinputinstage,
+				    t1.allowdeviation,
+				    t1.allowwaiver,
+				    t1.allowpostpone,
+				    t1.allowexpire,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+				    t1.override,
+				    t1.overridevalue,
+				    t1.finevent,
+				    t1.alerttype,
+					t3.rulecode AS lovdescnamelov,
+				    t3.rulecode AS lovdesccodelov,
+				    t3.rulecodedesc AS lovdescrefdesc,
+				    t3.sqlrule AS lovDescStgRuleValue
+				   FROM lmtfinrefdetail t1
+				     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+				     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+				     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+					 JOIN rules t3 ON t1.finrefid = t3.ruleid AND t1.finreftype = 5
+				  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM lmtfinrefdetail_temp
+				          WHERE lmtfinrefdetail_temp.finrefdetailid = t1.finrefdetailid))	
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
