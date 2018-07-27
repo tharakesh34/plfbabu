@@ -1002,8 +1002,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			this.partnerBankId.setConstraint(new PTStringValidator(Labels.getLabel("label_DepositDetailsDialog_PartnerBankId.value"), null, true, true));
 		}
 		
-		if (!this.transactionDate.isDisabled()) {
-			this.transactionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DepositDetailsDialog_TransactionDate.value"), true, true, null, true));
+		if (!this.transactionDate.isReadonly()) {
+			this.transactionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DepositDetailsDialog_TransactionDate.value"), true, DateUtility.getAppDate(), DateUtility.getAppDate(), true));
 		}
 
 		logger.debug(Literal.LEAVING);

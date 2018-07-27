@@ -201,7 +201,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		} else if ("_AQView".equals(StringUtils.trimToEmpty(type)) || "_TQView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(",lovDescIsRemarksAllowed,lovDescCheckMinCount,lovDescCheckMaxCount, lovDescElgRuleValue, lovDescRuleReturnType ");
 		} else if ("_ACView".equals(StringUtils.trimToEmpty(type)) || "_TCView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
+			//selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");     ////////////////////Stage Accounting with Stage Accounting Rules change///////////
+			selectSql.append(" , lovDescStgRuleValue, lovDescCodelov, lovDescNamelov ");	
 		} else if ("_ATView".equals(StringUtils.trimToEmpty(type)) || "_TTView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov, lovDescCodelov ");
 		} else if ("_AFDView".equals(StringUtils.trimToEmpty(type)) || "_TFDView".equals(StringUtils.trimToEmpty(type))) {

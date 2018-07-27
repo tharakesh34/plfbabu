@@ -6275,6 +6275,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						if(StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) ||
 								StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())){
 							tReceiptData.getReceiptHeader().setDepositProcess(true);
+							afinanceMain.setDepositProcess(true);	//Cash Management Change
 						}
 					}
 					processCompleted = true;

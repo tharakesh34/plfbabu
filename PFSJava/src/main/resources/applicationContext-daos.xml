@@ -4289,6 +4289,9 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Schedule Details ============== -->
@@ -5357,6 +5360,8 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<!-- Stage Accounting -->
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Manual Receipt Details ============== -->
@@ -5434,6 +5439,11 @@
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
 		<!-- GST Invoice Report -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -5661,6 +5671,9 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Provision Movement Details ============== -->
@@ -5745,6 +5758,9 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="accrualService" ref="accrualService" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Cancellation Details ============== -->
@@ -5809,6 +5825,9 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Maintenance Details ============== -->
@@ -5875,6 +5894,9 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Liability Letter Request Details ============== -->
@@ -5918,7 +5940,9 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Flags Details ============== -->

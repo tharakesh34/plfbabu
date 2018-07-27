@@ -66,10 +66,10 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.rulefactory.rule.model.RuleListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RuleFactory/Rule/RuleList.zul file.
@@ -157,35 +157,37 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_RuleList(Event event) {
+		
+		String ruleModuleValue = ruleModule.getValue();
 
-		if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_ELGRULE)) {
+		if (RuleConstants.MODULE_ELGRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "EligibilityRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_FEES)) {
+		} else if (RuleConstants.MODULE_FEES.equals(ruleModuleValue)) {
 			this.ruleModuleName = "FeeRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_RATERULE)) {
+		} else if (RuleConstants.MODULE_RATERULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "RateRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_SUBHEAD)) {
+		} else if (RuleConstants.MODULE_SUBHEAD.equals(ruleModuleValue)) {
 			this.ruleModuleName = "SubHeadRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_SCORES)) {
+		} else if (RuleConstants.MODULE_SCORES.equals(ruleModuleValue)) {
 			this.ruleModuleName = "ScoreRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_PROVSN)) {
+		} else if (RuleConstants.MODULE_PROVSN.equals(ruleModuleValue)) {
 			this.ruleModuleName = "ProvisionRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_REFUND)) {
+		} else if (RuleConstants.MODULE_REFUND.equals(ruleModuleValue)) {
 			this.ruleModuleName = "RefundRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_CLRULE)) {
+		} else if (RuleConstants.MODULE_CLRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "CheckRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_AGRRULE)) {
+		} else if (RuleConstants.MODULE_AGRRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "AgreementRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_DOWNPAYRULE)) {
+		} else if (RuleConstants.MODULE_DOWNPAYRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "DownpaymentRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_LMTLINE)) {
+		} else if (RuleConstants.MODULE_LMTLINE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "LimitDefRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_INSRULE)) {
+		} else if (RuleConstants.MODULE_INSRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "InsuranceRule";
-		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_BOUNCE)) {
+		} else if (RuleConstants.MODULE_BOUNCE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "BOUNCE";
-		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_GSTRULE)){
-			this.ruleModuleName="GSTRULE";
+		} else if (RuleConstants.MODULE_STGACRULE.equals(ruleModuleValue)) {
+			this.ruleModuleName = "StageAccountingRule";
 		}
 
 		// Set the page level components.
@@ -195,9 +197,12 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		// Register buttons and fields.
 		registerButton(button_RuleList_RuleSearchDialog);
 		
-		if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_AMORTIZATIONMETHOD)) {
-			this.ruleModuleName = "AmortizationMethodRule"; // FIXME Rule Module name
+		if (RuleConstants.MODULE_AMORTIZATIONMETHOD.equals(ruleModuleValue)) {
+			this.ruleModuleName = "AmortizationMethodRule";
 			button_RuleList_NewRule.setVisible(false);
+		} else if (RuleConstants.MODULE_GSTRULE.equals(ruleModuleValue)) {
+			this.ruleModuleName="GSTRULE";
+			this.button_RuleList_NewRule.setVisible(false);
 		} else {
 			registerButton(button_RuleList_NewRule, "button_RuleList_New" + this.ruleModuleName, true);
 		}
@@ -217,11 +222,6 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		doRenderPage();
 
 		search();
-		
-		// GST Rules only
-		if (StringUtils.equalsIgnoreCase(this.ruleModule.getValue(), RuleConstants.MODULE_GSTRULE)) {
-			this.button_RuleList_NewRule.setVisible(false);
-		}
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		} else if (!StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEES)) {
 			aRule.setRuleEvent(ruleModuleValue);
 		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) {	//GST Rules
-			aRule.setRuleEvent("IGST");				//Open any one of this rule Event
+			//aRule.setRuleEvent("IGST");				//Open any one of this rule Event
 			//aRule.setRuleEvent("CGST");
 			//aRule.setRuleEvent("SGST");
 			//aRule.setRuleEvent("UGST");

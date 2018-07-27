@@ -519,6 +519,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_AMORTIZATIONMETHOD:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
 			break;
+		
+		case RuleConstants.MODULE_STGACRULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			break;
 		}
 
 		// Window Title

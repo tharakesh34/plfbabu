@@ -281,7 +281,7 @@
 										</div>
 										<listbox id="listBoxAccounts" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_FinanceEventId" label="${c:l('listheader_FinanceEventId.label')}" sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceEventId" label="${c:l('listheader_FinanceEventId.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_FinanceEventName" label="${c:l('listheader_FinanceEventName.label')}" sort="auto" hflex="min" visible="false" />
 												<listheader id="listheader_FinanceEventCode" label="${c:l('listheader_FinanceEventCode.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_FinanceEventDesc" label="${c:l('listheader_FinanceEventDesc.label')}" sort="auto" hflex="min" />

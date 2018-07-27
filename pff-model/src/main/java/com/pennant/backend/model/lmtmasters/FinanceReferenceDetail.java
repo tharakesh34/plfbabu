@@ -81,7 +81,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private long lovDescCheckMinCount;
 	private long lovDescCheckMaxCount;
 	
-
+	private String lovDescStgRuleValue;	////////////////////Stage Accounting with Stage Accounting Rules change///////////
 	private String lovDescElgRuleValue;
 	private String lovDescAggReportName;
 	private String lovDescAggReportPath;
@@ -512,6 +512,14 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 
 	public void setModuleType(String moduleType) {
 		this.moduleType = moduleType;
+	}
+
+	public String getLovDescStgRuleValue() {
+		return lovDescStgRuleValue;
+	}
+
+	public void setLovDescStgRuleValue(String lovDescStgRuleValue) {
+		this.lovDescStgRuleValue = lovDescStgRuleValue;
 	}
 
 	

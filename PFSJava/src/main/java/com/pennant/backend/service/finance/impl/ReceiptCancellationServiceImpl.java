@@ -63,7 +63,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -86,7 +85,6 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -155,8 +153,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinInsurancesDAO finInsurancesDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 	private BounceReasonDAO bounceReasonDAO;
-	private RuleDAO ruleDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private LimitManagement	limitManagement;
 	private CustomerDAO		customerDAO;
 	private FinFeeReceiptDAO		finFeeReceiptDAO;
@@ -1568,22 +1564,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
 		this.bounceReasonDAO = bounceReasonDAO;
-	}
-
-	public RuleDAO getRuleDAO() {
-		return ruleDAO;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public LimitManagement getLimitManagement() {

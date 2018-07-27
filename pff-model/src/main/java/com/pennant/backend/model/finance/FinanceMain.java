@@ -665,6 +665,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean samplingRequired;
 	private boolean legalRequired;
 	
+	private boolean depositProcess = false;	// added for Cash Management 
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -811,6 +813,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		
 		excludeFields.add("lovEligibilityMethod");
 		excludeFields.add("lovDescEligibilityMethod");
+		
+		//Cash Management
+		excludeFields.add("depositProcess");
 		
 		return excludeFields;
 	}
@@ -3772,6 +3777,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRepayBaseRateVal(BigDecimal repayBaseRateVal) {
 		this.repayBaseRateVal = repayBaseRateVal;
+	}
+
+	public boolean isDepositProcess() {
+		return depositProcess;
+	}
+
+	public void setDepositProcess(boolean depositProcess) {
+		this.depositProcess = depositProcess;
 	}
 
 }

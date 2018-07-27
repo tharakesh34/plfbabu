@@ -44,13 +44,9 @@ package com.pennant.webui.lmtmasters.financereferencedetail;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -79,26 +75,20 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.lmtmasters.FinanceReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.delegationdeviation.DeviationConfigCtrl;
@@ -879,8 +869,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Leaving");
 	}
 
+	////////////////////Stage Accounting with Stage Accounting Rules change///////////
 	
-	private boolean validateFeeAccounting(){
+	/*private boolean validateFeeAccounting(){
 		List<FinanceReferenceDetail> finReferenceDetails = new ArrayList<FinanceReferenceDetail>();
 		if(this.listBoxAccounts.getItems() != null && !this.listBoxAccounts.getItems().isEmpty()){
 			for (Listitem listitem : this.listBoxAccounts.getItems()) {
@@ -931,7 +922,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		}
 		
 		return true;
-	}
+	}*/
 	
 	/**
 	 * This Method checks TV and Sampling Tabs are assigned to same loan Type or not. <br>
@@ -1011,7 +1002,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 	}
 
-	private boolean validateFees(Map<String,String> sourceFeeMap,Map<String,String>  destFeeMap,boolean isFinTypeFeesValidate){
+	////////////////////Stage Accounting with Stage Accounting Rules change///////////
+	/*private boolean validateFees(Map<String,String> sourceFeeMap,Map<String,String>  destFeeMap,boolean isFinTypeFeesValidate){
 
 		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
 
@@ -1154,7 +1146,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			eventCodes.add(accountEngineEvent.getAEEventCode());
 		}
 		return eventCodes;
-	}
+	}*/
 	
 	/**
 	 * Saves the components to table. <br>
@@ -1166,9 +1158,11 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		doSetValidation();
 		// doWriteComponentsToBean(getFinanceAgreementList());
 
-		if(!validateFeeAccounting()){
+		////////////////////Stage Accounting with Stage Accounting Rules change///////////
+		/*if(!validateFeeAccounting()){
 			return;
-		}
+		}*/
+		
 		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_FI_INIT,
 				FinanceConstants.PROCEDT_VERIFICATION_FI_APPR, VerificationType.FI)) {
 			return;
@@ -1683,11 +1677,14 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			deviationConfigCtrl.fillEligibilityDeviations(this.listBoxEligibilityRules);
 		} else if (listbox.getId().equals(this.listBoxFinanceCheckList.getId())) {
 			deviationConfigCtrl.fillCheckListDeviations(this.listBoxFinanceCheckList);
-		} else if (listbox.getId().equals(this.listBoxAccounts.getId())) {
-			deviationConfigCtrl.fillFeeDeviations(this.listBoxAccounts,this.finType.getValue());
 		} else if (listbox.getId().equals(this.listBoxScoringGroup.getId())) {
 			deviationConfigCtrl.fillScoringDeviations(this.listBoxScoringGroup);
 		}
+		////////////////////Stage Accounting with Stage Accounting Rules change///////////
+		//else if (listbox.getId().equals(this.listBoxAccounts.getId())) {
+		//	deviationConfigCtrl.fillFeeDeviations(this.listBoxAccounts,this.finType.getValue());
+		//} 
+		
 
 	}
 	

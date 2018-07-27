@@ -74,7 +74,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -87,7 +86,6 @@ import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.limits.LimitCodeDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.ProcessEditorDetail;
-import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -905,6 +903,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.btnCancel.setVisible(true);
 			this.btnSearchAggCode.setDisabled(true);
 			this.btnSearchElgRule.setDisabled(true);
+			this.btnSearchAccounting.setDisabled(true);
 			this.btnSearchQuestionId.setDisabled(true);
 			this.btnSearchScoringGroup.setDisabled(true);
 			this.btnSearchCorpScoringGroup.setDisabled(true);
@@ -979,6 +978,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		this.isActive.setDisabled(true);
 		this.btnSearchAggCode.setDisabled(true);
 		this.btnSearchElgRule.setDisabled(true);
+		this.btnSearchAccounting.setDisabled(true);
 		this.btnSearchQuestionId.setDisabled(true);
 		this.btnSearchScoringGroup.setDisabled(true);
 		this.btnSearchCorpScoringGroup.setDisabled(true);
@@ -1219,8 +1219,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	
 	public void onClick$btnSearchAccounting(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filter = new Filter[1];
+
+		//////////////////Stage Accounting with Stage Accounting Rules change///////////
+		/*Filter[] filter = new Filter[1];
 		filter[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_STAGE, Filter.OP_EQUAL);
 		
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "AccountingSet", filter);
@@ -1234,7 +1235,25 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				getFinanceReferenceDetail().setLovDescNamelov(details.getEventCode());
 				getFinanceReferenceDetail().setLovDescRefDesc(details.getAccountSetCodeName());
 			}
+		}*/
+		
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("RuleModule", RuleConstants.MODULE_STGACRULE, Filter.OP_EQUAL);
+		
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "Rule", filter);
+		if (dataObject instanceof String) {
+			this.lovDescRefDesc.setValue("");
+		} else {
+			Rule details = (Rule) dataObject;
+			if (details != null) {
+				this.finRefId.setValue(details.getRuleId());
+				this.lovDescRefDesc.setValue(details.getRuleCode() + "-" + details.getRuleCodeDesc());
+				getFinanceReferenceDetail().setLovDescCodelov(details.getRuleCode());
+				getFinanceReferenceDetail().setLovDescNamelov(details.getRuleCode());
+
+			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	

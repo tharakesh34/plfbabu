@@ -321,6 +321,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 				// Fetch Receipt Detail List
 				if(finReceiptHeader != null){
+					financeMain.setDepositProcess(finReceiptHeader.isDepositProcess());	//Cash Management 
 					List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptData.getReceiptHeader().getReceiptID(), "_TView");
 					
 					if(receiptDetailList != null && !receiptDetailList.isEmpty()){
@@ -1405,14 +1406,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,rcptDetail.getPaymentType()) ||
 					StringUtils.equals(RepayConstants.RECEIPTMODE_DD,rcptDetail.getPaymentType())) {
 				
-				if(!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,rcptDetail.getPaymentType())){
+				if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcptDetail.getPaymentType())) {
 					partnerBankId = rcptDetail.getFundingAc();
 					reqReceiptMode = CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD;
-				}else{
+				} else {
 					reqReceiptMode = CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH;
 				}
 				depositReqAmount = depositReqAmount.add(rcptDetail.getAmount());
-				reqReceiptMode = rcptDetail.getPaymentType();
 				valueDate = rcptDetail.getReceivedDate();
 			}
 		}
@@ -1457,6 +1457,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			depositMovements.setLastMntOn(receiptHeader.getLastMntOn());
 			depositMovements.setWorkflowId(0);
 			depositDetail.setDepositMovements(depositMovements);
+			
 			getDepositDetailsDAO().saveDepositMovements(depositMovements, "");
 		}
 

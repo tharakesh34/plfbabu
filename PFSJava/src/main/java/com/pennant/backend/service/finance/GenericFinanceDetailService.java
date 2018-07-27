@@ -74,6 +74,7 @@ import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -121,6 +122,7 @@ import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Entity;
@@ -175,6 +177,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
@@ -193,6 +196,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -299,6 +303,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	// Bounce Due Postings
 	private FeeTypeDAO						feeTypeDAO;
 	private ReceiptCalculator				receiptCalculator;
+	
+	//Stage Accounting
+	private RuleExecutionUtil				ruleExecutionUtil;
+	private RuleDAO 						ruleDAO;
 	
 	public GenericFinanceDetailService() {
 		super();
@@ -1902,30 +1910,69 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		
 		// If Record action is Save then, no need to do any accounting
-		if(StringUtils.equals(finMain.getRoleCode(), finMain.getNextRoleCode()) ||
+		if (StringUtils.equals(finMain.getRoleCode(), finMain.getNextRoleCode()) ||
 				StringUtils.equals(finMain.getRecordStatus(), PennantConstants.RCD_STATUS_RESUBMITTED)){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		
 		FinanceProfitDetail pftDetail;
-		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())){
+		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 			pftDetail = new FinanceProfitDetail();
-		}else{
+		} else {
 			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(finMain.getFinReference());
 		}
 
-		List<Long> acSetIdList = null;
+		// Stage Accounting Code change
+		List<Long> acSetIdList = new ArrayList<>();
+		Integer accountSetId = 0;
+		List<Long> stageAccRuleIdList = null;
+		
+		//Stage Accounting Rule Id list 
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			acSetIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getPromotionCode(), 
+			stageAccRuleIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getPromotionCode(), 
 					finMain.getRcdMaintainSts(), finMain.getRoleCode(), FinanceConstants.PROCEDT_STAGEACC);
 		} else {
-			acSetIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getFinType(), 
+			stageAccRuleIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getFinType(), 
 					finMain.getRcdMaintainSts(), finMain.getRoleCode(), FinanceConstants.PROCEDT_STAGEACC);
 		}
 		
-		// If NO Accounting Sets added against stage, no action to be done
-		if(acSetIdList == null || acSetIdList.isEmpty()){
+		// If No Rule Sets added against stage, no action to be done
+		if (getRuleExecutionUtil() == null || getRuleDAO() == null || CollectionUtils.isEmpty(stageAccRuleIdList)) {
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+		
+		// Preparing Rule Execution Map
+		HashMap<String, Object> executeMap = finMain.getDeclaredFieldValues();	//Finance Main
+		financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executeMap);	//Finance Type
+		//Receipt Detail
+		if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
+			FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+			FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
+			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
+				if (StringUtils.equals(receiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
+					finReceiptDetail.getDeclaredFieldValues(executeMap);
+					break;
+				}
+			}
+		}
+		
+		// Rule Execution
+		for (Long stageRuleId : stageAccRuleIdList) {
+			Rule rule = getRuleDAO().getRuleByID(stageRuleId, "");
+			if (rule != null) {
+				accountSetId = (Integer) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap, finMain.getFinCcy(), RuleReturnType.INTEGER);
+				if (accountSetId <= 0) {
+					logger.debug("Leaving");
+					return auditHeader;
+				}
+				acSetIdList.add(Long.valueOf(accountSetId));
+			}
+		}
+		
+		// If No Accounting Sets added against stage, no action to be done
+		if (CollectionUtils.isEmpty(acSetIdList)){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -3349,5 +3396,21 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
 	}
 }

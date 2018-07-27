@@ -371,6 +371,9 @@
 		<menuItem id="menu_Item_ProvisionRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"
 			rightName="menuItem_RulesFactory_ProvisionRules" />
+		<menuItem id="menu_Item_StageAccountingRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/StageAcRuleList.zul"
+			rightName="menuItem_RulesFactory_StageAccountingRule" />
 	</menu>
 
 	<!-- Solution Factory -->

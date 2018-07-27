@@ -65,7 +65,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
@@ -140,7 +139,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	private RuleService						ruleService;
 	private FinanceDetailService			financeDetailService;
 	private RepayCalculator					repayCalculator;
-	private RuleExecutionUtil				ruleExecutionUtil;
 	private LimitManagement					limitManagement;
 	
 	private FinTypeFeesDAO					finTypeFeesDAO;
@@ -1836,14 +1834,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 	public void setRepayCalculator(RepayCalculator repayCalculator) {
 		this.repayCalculator = repayCalculator;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public LimitManagement getLimitManagement() {
