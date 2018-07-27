@@ -16,25 +16,33 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
+import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
-import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -42,6 +50,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostDeviationHook;
+import com.rits.cloning.Cloner;
 
 public class DeviationExecutionCtrl {
 	private static final Logger		logger				= Logger.getLogger(DeviationExecutionCtrl.class);
@@ -57,7 +67,15 @@ public class DeviationExecutionCtrl {
 	private DeviationConfigService	deviationConfigService;
 	private RuleExecutionUtil		ruleExecutionUtil;
 	private CheckListDetailService	checkListDetailService;
-
+	@Autowired
+	private CustomerDetailsService customerDetailsService;
+	@Autowired
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	@Autowired
+	private CollateralSetupService collateralSetupService;
+	@Autowired(required = false)
+	@Qualifier("financePostDeviationHook")
+	private PostDeviationHook postDeviationHook;
 	/* This list which hold the all deviation across the tab's */
 	private List<FinanceDeviations>	financeDeviations	= new ArrayList<>();
 
@@ -126,43 +144,70 @@ public class DeviationExecutionCtrl {
 	public void checkCustomDeviations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceDeviations> deviations = new ArrayList<>();
-		
-		// Prepare additional data like co-applicants, collateral details.
-		
+		// If the post deviation hook not available, skip the process.
+		if (postDeviationHook == null) {
+			logger.info("Post deviation hook not available.");
+			return;
+		}
+
 		// Clone the object.
-		
+		Cloner cloner = new Cloner();
+		FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
+
+		// Prepare additional data like co-applicants, collateral details.
+		// *** Co-applicant's details. ***
+		CustomerDetails customer;
+
+		for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
+			customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
+			coApplicant.setCustomerDetails(customer);
+		}
+
+		// *** Collateral's details. ***
+		if (aFinanceDetail.getCollateralSetup() == null) {
+			aFinanceDetail.setCollateralSetup(new ArrayList<>());
+		} else {
+			aFinanceDetail.getCollateralSetup().clear();
+		}
+
+		CollateralSetup collateral;
+
+		for (CollateralAssignment collateralAssignment : aFinanceDetail.getCollateralAssignmentList()) {
+			collateral = getCollateralSetupService().getCollateralSetupByRef(collateralAssignment.getCollateralRef(),
+					"", false);
+
+			aFinanceDetail.getCollateralSetup().add(collateral);
+		}
+
 		// Call the customization hook.
+		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail);
 		
 		// Loop through the deviations, if any, check whether to add to the list and set the required attributes.
+		String finReference = financeDetail.getFinScheduleData().getFinReference();
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		List<FinanceDeviations> deviationList = new ArrayList<>();
 		
-		// *****************************************************
-		/*FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		for (FinanceDeviations deviation : deviations) {
+			deviation.setFinReference(finReference);
+			deviation.setModule(DeviationConstants.TY_CUSTOM);
+			deviation.setDeviationType("S");
+			deviation.setUserRole(userRole);
+			deviation.setApprovalStatus("");
+			deviation.setDeviationDate(timestamp);
+			deviation.setDeviationUserId(String.valueOf(userid));
+			deviation.setDeviationCategory(DeviationConstants.CAT_CUSTOM);
 
-		FinanceDeviations deviation = new FinanceDeviations();
-		deviation.setFinReference(financeMain.getFinReference());
-		deviation.setModule(DeviationConstants.TY_CUSTOM);
-		deviation.setDeviationCode("Temp");
-		deviation.setDelegationRole("DRCM");
-		deviation.setDeviationValue("20");
-		deviation.setDeviationType("");
-		deviation.setUserRole(this.userRole);
-		deviation.setApprovalStatus("");
-		deviation.setDeviationDate(new Timestamp(System.currentTimeMillis()));
-		deviation.setDeviationUserId(String.valueOf(this.userid));
-		deviation.setDeviationCategory(DeviationConstants.CAT_CUSTOM);
+			if (isInApprovedList(getApprovedFinanceDeviations(), deviation)) {
+				// DO Nothing
+			} else if (isInCurrentDevaitionList(financeDeviations, deviation)) {
+				// DO Nothing
+			} else {
+				deviationList.add(deviation);
+			}
+		}
 
-		if (isInApprovedList(getApprovedFinanceDeviations(), deviation)) {
-			// DO Nothing
-		} else if (isInCurrentDevaitionList(financeDeviations, deviation)) {
-			// DO Nothing
-		} else {
-			deviations.add(deviation);
-		}*/
-		// *****************************************************
-
-		if (!deviations.isEmpty()) {
-			fillDeviationListbox(deviations, userRole, DeviationConstants.TY_CUSTOM);
+		if (!deviationList.isEmpty()) {
+			fillDeviationListbox(deviationList, userRole, DeviationConstants.TY_CUSTOM);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -908,6 +953,22 @@ public class DeviationExecutionCtrl {
 
 		logger.debug(" Leaving ");
 		return null;
+	}
+
+	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
+		return collateralAssignmentDAO;
+	}
+
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 
 }
