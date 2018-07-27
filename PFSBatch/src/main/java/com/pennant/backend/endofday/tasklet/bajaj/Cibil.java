@@ -1,5 +1,17 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
@@ -7,16 +19,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
-import java.util.Date;
-import java.util.List;
-import javax.sql.DataSource;
-import org.apache.log4j.Logger;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pennanttech.pff.external.cibil.RetailCibilReport;
 
 public class Cibil implements Tasklet {
 	private Logger logger = Logger.getLogger(Cibil.class);
@@ -29,7 +32,7 @@ public class Cibil implements Tasklet {
 
 
 	@Autowired
-	private CIBILReport cibilReport;
+	private RetailCibilReport retailCibilReport;
 
 
 	public EODConfig getEodConfig() {
@@ -52,9 +55,9 @@ public class Cibil implements Tasklet {
 		try {			
 			logger.debug("START: CIBIL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
-			DataEngineStatus status = CIBILReport.EXTRACT_STATUS;
+			DataEngineStatus status = RetailCibilReport.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new CIBILProcessThread(cibilReport)).start();
+			new Thread(new CIBILProcessThread(retailCibilReport)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 			
@@ -67,10 +70,6 @@ public class Cibil implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -80,9 +79,9 @@ public class Cibil implements Tasklet {
 	}
 
 	public class CIBILProcessThread implements Runnable {
-		private CIBILReport cibilReport;
+		private RetailCibilReport cibilReport;
 
-		public CIBILProcessThread(CIBILReport cibilReport) {
+		public CIBILProcessThread(RetailCibilReport cibilReport) {
 			this.cibilReport = cibilReport;
 		}
 

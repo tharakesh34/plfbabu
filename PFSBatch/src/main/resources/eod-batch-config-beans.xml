@@ -538,7 +538,7 @@
 	
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl"/>
 	
-    <bean id="cibilReport" class=" com.pennanttech.pff.reports.cibil.CIBILReport" >
+    <bean id="retailCibilReport" class="com.pennanttech.pff.external.cibil.RetailCibilReport" >
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	

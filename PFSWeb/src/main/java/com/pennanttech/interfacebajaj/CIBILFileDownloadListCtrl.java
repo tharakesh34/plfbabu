@@ -67,7 +67,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
@@ -75,7 +74,8 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.cibil.RetailCibilReport;
 import com.pennanttech.service.AmazonS3Bucket;
 
 /**
@@ -104,7 +104,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 
 	protected AmazonS3Bucket bucket;
 	@Autowired
-	private CIBILReport cibilReport;
+	private RetailCibilReport retailCibilReport;
 
 	/**
 	 * default constructor.<br>
@@ -164,7 +164,8 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		cibilReport.generateReport();
+		retailCibilReport.generateReport();
+		refresh();
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {

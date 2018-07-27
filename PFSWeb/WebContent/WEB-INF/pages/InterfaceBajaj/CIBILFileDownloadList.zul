@@ -19,7 +19,7 @@
 					<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						sclass="z-toolbarbutton" />
-					<button id="btnexecute" label="execute" visible="false" sclass="z-toolbarbutton" />
+					<button id="btnexecute" label="execute" visible="true" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

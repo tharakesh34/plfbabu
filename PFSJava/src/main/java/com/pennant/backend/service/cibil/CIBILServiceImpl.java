@@ -1,10 +1,11 @@
 package com.pennant.backend.service.cibil;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pennant.backend.dao.cibil.CIBILDAO;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CIBILServiceImpl implements CIBILService {
 

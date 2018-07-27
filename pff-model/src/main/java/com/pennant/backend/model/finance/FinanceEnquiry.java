@@ -103,6 +103,20 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private String				ownership;
 	private int					NOInst				= 0;
 	private BigDecimal 			maxInstAmount 	    = BigDecimal.ZERO;
+	private Date finApprovedDate;
+	private BigDecimal futureSchedulePrin;
+	private BigDecimal instalmentDue;
+	private BigDecimal instalmentPaid;
+	private BigDecimal bounceDue;
+	private BigDecimal bouncePaid;
+	private BigDecimal latePaymentPenaltyDue;
+	private BigDecimal latePaymentPenaltyPaid;
+	private BigDecimal totalPriSchd;
+	private BigDecimal totalPriPaid;
+	private BigDecimal totalPftSchd;
+	private BigDecimal totalPftPaid;
+	private BigDecimal excessAmount;
+	private BigDecimal excessAmtPaid;
 
 	public FinanceEnquiry() {
 
@@ -127,6 +141,20 @@ public class FinanceEnquiry implements java.io.Serializable {
 		excludeFields.add("ownership");
 		excludeFields.add("NOInst");
 		excludeFields.add("MaxInstAmount");
+		excludeFields.add("finApprovedDate");
+		excludeFields.add("futureSchedulePrin");
+		excludeFields.add("instalmentDue");
+		excludeFields.add("instalmentPaid");
+		excludeFields.add("bounceDue");
+		excludeFields.add("bouncePaid");
+		excludeFields.add("latePaymentPenaltyDue");
+		excludeFields.add("latePaymentPenaltyPaid");
+		excludeFields.add("totalPriSchd");
+		excludeFields.add("totalPriPaid");
+		excludeFields.add("totalPftSchd");
+		excludeFields.add("totalPftPaid");
+		excludeFields.add("excessAmount");
+		excludeFields.add("excessAmtPaid");
 		return excludeFields;
 	}
 
@@ -516,6 +544,118 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setMaxInstAmount(BigDecimal maxInstAmount) {
 		this.maxInstAmount = maxInstAmount;
+	}
+
+	public Date getFinApprovedDate() {
+		return finApprovedDate;
+	}
+
+	public void setFinApprovedDate(Date finApprovedDate) {
+		this.finApprovedDate = finApprovedDate;
+	}
+
+	public BigDecimal getFutureSchedulePrin() {
+		return futureSchedulePrin;
+	}
+
+	public void setFutureSchedulePrin(BigDecimal futureSchedulePrin) {
+		this.futureSchedulePrin = futureSchedulePrin;
+	}
+
+	public BigDecimal getInstalmentDue() {
+		return instalmentDue;
+	}
+
+	public void setInstalmentDue(BigDecimal instalmentDue) {
+		this.instalmentDue = instalmentDue;
+	}
+
+	public BigDecimal getInstalmentPaid() {
+		return instalmentPaid;
+	}
+
+	public void setInstalmentPaid(BigDecimal instalmentPaid) {
+		this.instalmentPaid = instalmentPaid;
+	}
+
+	public BigDecimal getBounceDue() {
+		return bounceDue;
+	}
+
+	public void setBounceDue(BigDecimal bounceDue) {
+		this.bounceDue = bounceDue;
+	}
+
+	public BigDecimal getBouncePaid() {
+		return bouncePaid;
+	}
+
+	public void setBouncePaid(BigDecimal bouncePaid) {
+		this.bouncePaid = bouncePaid;
+	}
+
+	public BigDecimal getLatePaymentPenaltyDue() {
+		return latePaymentPenaltyDue;
+	}
+
+	public void setLatePaymentPenaltyDue(BigDecimal latePaymentPenaltyDue) {
+		this.latePaymentPenaltyDue = latePaymentPenaltyDue;
+	}
+
+	public BigDecimal getLatePaymentPenaltyPaid() {
+		return latePaymentPenaltyPaid;
+	}
+
+	public void setLatePaymentPenaltyPaid(BigDecimal latePaymentPenaltyPaid) {
+		this.latePaymentPenaltyPaid = latePaymentPenaltyPaid;
+	}
+
+	public BigDecimal getTotalPriSchd() {
+		return totalPriSchd;
+	}
+
+	public void setTotalPriSchd(BigDecimal totalPriSchd) {
+		this.totalPriSchd = totalPriSchd;
+	}
+
+	public BigDecimal getTotalPriPaid() {
+		return totalPriPaid;
+	}
+
+	public void setTotalPriPaid(BigDecimal totalPriPaid) {
+		this.totalPriPaid = totalPriPaid;
+	}
+
+	public BigDecimal getTotalPftSchd() {
+		return totalPftSchd;
+	}
+
+	public void setTotalPftSchd(BigDecimal totalPftSchd) {
+		this.totalPftSchd = totalPftSchd;
+	}
+
+	public BigDecimal getTotalPftPaid() {
+		return totalPftPaid;
+	}
+
+	public void setTotalPftPaid(BigDecimal totalPftPaid) {
+		this.totalPftPaid = totalPftPaid;
+	}
+
+	public BigDecimal getExcessAmount() {
+		return excessAmount;
+	}
+
+	public void setExcessAmount(BigDecimal excessAmount) {
+		this.excessAmount = excessAmount;
+	}
+
+	public BigDecimal getExcessAmtPaid() {
+		return excessAmtPaid;
+	}
+
+	public void setExcessAmtPaid(BigDecimal excessAmtPaid) {
+		this.excessAmtPaid = excessAmtPaid;
 	}
 
 }

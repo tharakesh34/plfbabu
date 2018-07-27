@@ -1,14 +1,16 @@
 package com.pennant.backend.dao.cibil;
 
+import java.util.List;
+
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
-import java.util.List;
 
 public interface CIBILDAO {
 
@@ -38,5 +40,7 @@ public interface CIBILDAO {
 	DataEngineStatus getLatestExecution();
 
 	EventProperties getEventProperties(String configName, String eventType);
+
+	List<CustomerEMail> getCustomerEmails(long customerId);
 
 }

@@ -25,7 +25,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.external.ALMProcess;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
+import com.pennanttech.pff.external.cibil.RetailCibilReport;
 import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 
 public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
@@ -122,9 +122,9 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 		}
 
-		CIBILReport.EXTRACT_STATUS = cibilService.getLatestExecution();
-		CIBILReport.EXTRACT_STATUS.setName("CIBIL_EXPORT_STATUS");
-		doFillPanel(null, CIBILReport.EXTRACT_STATUS);
+		RetailCibilReport.EXTRACT_STATUS = cibilService.getLatestExecution();
+		RetailCibilReport.EXTRACT_STATUS.setName("CIBIL_EXPORT_STATUS");
+		doFillPanel(null, RetailCibilReport.EXTRACT_STATUS);
 		timer.start();
 		logger.debug(Literal.LEAVING);
 	}
