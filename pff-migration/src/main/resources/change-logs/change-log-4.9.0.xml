@@ -2430,14 +2430,14 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="24" author="Manoj">
+	<changeSet id="24" author="Manoj" dbms="postgresql">
 		<dropSequence sequenceName="cibil_file_info_id_seq"/>
 	</changeSet>
 	
-	<changeSet id="25.1" author="Manoj">
+	<changeSet id="25.1" author="Manoj" dbms="postgresql">
 		<createSequence sequenceName="cibil_file_info_id_seq"/>
 	</changeSet>
-	<changeSet id="25" author="Manoj">
+	<changeSet id="25" author="Manoj" dbms="postgresql">
 		<sql>
 			ALTER TABLE cibil_file_info ALTER COLUMN id SET DEFAULT nextval('cibil_file_info_id_seq');
 		</sql>
