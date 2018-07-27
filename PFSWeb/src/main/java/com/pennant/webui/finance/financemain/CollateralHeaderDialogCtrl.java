@@ -140,7 +140,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		return rules;
 	}
 
-	private BigDecimal 						finAssetValue = BigDecimal.ZERO;
 	private String						    finLTVCheck;
 	public void setRules(Map<String, Object> rules) {
 		this.rules = rules;
@@ -240,10 +239,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (arguments.containsKey("assignCollateralRef")) {
 				this.assignCollateralRef = (List<String>) arguments.get("assignCollateralRef");
 			}
-
-			if (arguments.containsKey("finAssetValue")) {
-				this.finAssetValue = (BigDecimal) arguments.get("finAssetValue");
-			}
+			 
 			if (arguments.containsKey("finLTVCheck")) {
 				this.finLTVCheck = (String) arguments.get("finLTVCheck");
 			}
@@ -614,14 +610,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				
 				BigDecimal utlzedAmt = BigDecimal.ZERO;
 				if (loanAssignedValue.compareTo(BigDecimal.ZERO) > 0) {
-					if (StringUtils.equals(this.finLTVCheck, PennantConstants.COLLATERAL_LTV_CHECK_FINAMT)) {
-						utlzedAmt = (curAssignValue.multiply(
-								(finAssetValue.compareTo(BigDecimal.ZERO) > 0 ? finAssetValue : utilizedAmount)))
-										.divide(loanAssignedValue, 0, RoundingMode.HALF_DOWN);
-					} else {
-						utlzedAmt = (curAssignValue.multiply(utilizedAmount)).divide(loanAssignedValue, 0,
-								RoundingMode.HALF_DOWN);
-					}
+					utlzedAmt = (curAssignValue.multiply(utilizedAmount)).divide(loanAssignedValue, 0, RoundingMode.HALF_DOWN);
 				}
 				listcell = new Listcell(PennantAppUtil.amountFormate(utlzedAmt, ccyFormat));
 				listcell.setStyle("text-align:right;");

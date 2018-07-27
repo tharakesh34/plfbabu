@@ -1840,17 +1840,24 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		final HashMap<String, Object> map = getDefaultArguments();
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
-
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			BigDecimal utilizedAmt = BigDecimal.ZERO;
+			
 			map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
 			map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
 			map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());
-			map.put("utilizedAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCurrAssetValue()
-					.subtract(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinRepaymentAmount()));
-			map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
-			map.put("customerId", getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+			
+			if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+				utilizedAmt = financeMain.getFinAssetValue().subtract(financeMain.getFinRepaymentAmount());
+			} else {
+				utilizedAmt = financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount());
+			}
+			map.put("utilizedAmount", utilizedAmt);
+			map.put("finType", financeMain.getFinType());
+			map.put("customerId", financeMain.getCustID());
 			map.put("assetsReq", true);
-			map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()
-					|| !getFinanceDetail().getCollateralAssignmentList().isEmpty());
+			map.put("collateralReq", financeType.isFinCollateralReq() || !getFinanceDetail().getCollateralAssignmentList().isEmpty());
 
 			collateralAssignmentWindow = Executions.createComponents(
 					"/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul", tabpanel, map);

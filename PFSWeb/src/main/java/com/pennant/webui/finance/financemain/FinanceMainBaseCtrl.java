@@ -2602,14 +2602,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final HashMap<String, Object> map = getDefaultArguments();
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			BigDecimal utilizedAmt = BigDecimal.ZERO;
 			if (ImplementationConstants.COLLATERAL_INTERNAL) {
-
 				map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
 				map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
-		
-
 				map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());	
-				map.put("utilizedAmount",financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount()));
+				
+				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+					utilizedAmt = financeMain.getFinAssetValue().subtract(financeMain.getFinRepaymentAmount());
+				} else {
+					utilizedAmt = financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount());
+				}
+				map.put("utilizedAmount",utilizedAmt);
 				map.put("finAssetValue",financeMain.getFinAssetValue());
 				map.put("finType", financeMain.getFinType());
 				map.put("customerId", financeMain.getCustID());
@@ -2772,41 +2776,40 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (!financeMain.isLovDescIsSchdGenerated()) {
 					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
-						utilizedAmt = PennantAppUtil
-								.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
-										? this.finAssetValue.getActualValue() : this.finAmount.getActualValue())
-												.subtract(this.downPayBank.getActualValue()).subtract(
-														this.downPaySupl.getActualValue()), formatter)
-								.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+						boolean allowDisb = financeType.isAlwMaxDisbCheckReq();
+						if (allowDisb) {
+							utilizedAmt = PennantAppUtil.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
+									? this.finAssetValue.getActualValue() : this.finAmount.getActualValue()).subtract(this.downPayBank.getActualValue()).subtract(
+													this.downPaySupl.getActualValue()), formatter).add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+						} else {
+							utilizedAmt = PennantAppUtil.unFormateAmount(this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
+									.subtract(this.downPaySupl.getActualValue()), formatter).add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+						}
 					} else {
-						utilizedAmt = PennantAppUtil
-								.unFormateAmount(
-										this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
-												.subtract(this.downPaySupl.getActualValue()), formatter)
-								.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+						utilizedAmt = PennantAppUtil.unFormateAmount(this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
+												.subtract(this.downPaySupl.getActualValue()), formatter).add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
 					}
-
 				} else {
 					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
-						utilizedAmt = utilizedAmt
-								.add(BigDecimal.ZERO.compareTo(financeMain.getFinAssetValue()) < 0
-										? financeMain.getFinAssetValue() : financeMain.getFinAmount())
-								.add(financeMain.getFeeChargeAmt().add(financeMain.getInsuranceAmt()));
+					   boolean allowDisb = 	financeType.isAlwMaxDisbCheckReq();
+					   if(allowDisb){
+						   utilizedAmt = utilizedAmt.add(BigDecimal.ZERO.compareTo(financeMain.getFinAssetValue()) < 0
+								   ? financeMain.getFinAssetValue() : financeMain.getFinAmount()).add(financeMain.getFeeChargeAmt().add(financeMain.getInsuranceAmt()));
+					   } else {
+						   utilizedAmt = utilizedAmt.add(BigDecimal.ZERO.compareTo(financeMain.getFinAmount()) < 0
+								   ? financeMain.getFinAmount() : BigDecimal.ZERO).add(financeMain.getFeeChargeAmt().add(financeMain.getInsuranceAmt()));
+					   }
 					} else {
-						for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData()
-								.getDisbursementDetails()) {
+						for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
 							if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 								continue;
 							}
-							utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
-									.add(curDisb.getFeeChargeAmt().add(curDisb.getInsuranceAmt()));
+							utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(curDisb.getFeeChargeAmt().add(curDisb.getInsuranceAmt()));
 						}
-						utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
-								this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter))
+						utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter))
 								.subtract(financeMain.getFinRepaymentAmount());
 					}
 				}
-
 				if (this.oldVar_utilizedAmount != utilizedAmt) {
 					collateralHeaderDialogCtrl.updateUtilizedAmount(utilizedAmt);
 					this.oldVar_utilizedAmount = utilizedAmt;
