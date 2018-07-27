@@ -967,7 +967,7 @@
 		<dropDefaultValue tableName="FinanceMain_Temp" columnName="EligibilityMethod"/>
 	</changeSet>
 	
-	<changeSet id="15.0" author="Vinay">
+	<changeSet id="15.0" author="Vinay" dbms="postgresql">
 		<sql>
 			alter table FinanceMain alter column EligibilityMethod drop default;
 			alter table FinanceMain_Temp alter column EligibilityMethod drop default;
