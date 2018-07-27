@@ -327,6 +327,12 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custIncomeType.setDescColumn("IncomeTypeDesc");
 		this.custIncomeType.setValidateColumns(new String[] { "IncomeTypeCode" });
 		
+		if (this.samplingDialogCtrl != null) {
+			Filter incomeTypeFilter[] = new Filter[1];
+			incomeTypeFilter[0] = new Filter("IncomeExpense", PennantConstants.INCOME, Filter.OP_EQUAL);
+			custIncomeType.setFilters(incomeTypeFilter);
+		}
+		
 		this.custIncome.setMandatory(true);
 		this.custIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.custIncome.setScale(ccyFormatter);
@@ -556,7 +562,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void onChange$custType(Event event) {
 		logger.debug(Literal.ENTERING);
 		String type = this.custType.getSelectedItem().getValue();
-		if (type != "#") {
+		if (!type.equals("#")) {
 			visibleComponent(Integer.parseInt(type));
 		}
 		logger.debug(Literal.LEAVING);
