@@ -3044,7 +3044,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="96" author="DurgaPrasad G">
+	<changeSet id="96" author="DurgaPrasad G" dbms="postgresql">
 		<sql>
 			delete from DocumentCategory where code = 'LEGAL';
 			Insert Into DocumentCategory values ((Select Max(id) +1  from DocumentCategory),'LEGAL', 'Legal Investigation.');
@@ -3057,7 +3057,19 @@
 			Insert Into bmtdocumenttypes values ('LEG003',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Legal Investigation MODT/RMDT Documents.',0,0,0,(select id from documentcategory Where Code = 'FINANCE'),0,0,0,0);
 	</sql>
 	</changeSet>
-	
+	<changeSet id="96" author="DurgaPrasad G" dbms="oracle,mssql">
+		<sql>
+			delete from DocumentCategory where code = 'LEGAL';
+			Insert Into DocumentCategory values ((Select Max(id) +1  from DocumentCategory),'LEGAL', 'Legal Investigation.');
+			
+			Delete from bmtdocumenttypes Where doctypecode = 'LEG001';
+			Insert Into bmtdocumenttypes values ('LEG001','Legal Investigation Preliminary Document.',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,0,0,0,(select id from documentcategory Where Code = 'LEGAL'),0,0,0,0);
+			Delete from bmtdocumenttypes Where doctypecode = 'LEG002';
+			Insert Into bmtdocumenttypes values ('LEG002','Legal Investigation Final Opinion Document.',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,0,0,0,(select id from documentcategory Where Code = 'LEGAL'),0,0,0,0);
+			Delete from bmtdocumenttypes Where doctypecode = 'LEG003';
+			Insert Into bmtdocumenttypes values ('LEG003','Legal Investigation MODT/RMDT Documents.',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,0,0,0,(select id from documentcategory Where Code = 'FINANCE'),0,0,0,0);
+	</sql>
+	</changeSet>
 	<changeSet id="97" author="DurgaPrasad G">
 		<addColumn tableName="LegalApplicantDetails">
 			<column name="customerId" type="bigint"/>
