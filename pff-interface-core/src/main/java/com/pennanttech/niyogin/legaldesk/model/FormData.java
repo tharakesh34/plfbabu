@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "instalmentType", "sactionAmt", "purposeOfLoan", "tenure", "intrestType", "rateOfIntrest",
 		"instalmentAmt", "instalmentStartdate", "instalmentSchedule", "processingFees", "penaltyCharges",
 		"documentationCharges", "foreclosure", "chargesForDihorner", "defaultEmiCharges", "insuranceGstAmt",
-		"disbursementOfLoan", "insuranceAmount", "loanType" })
+		"disbursementOfLoan", "insuranceAmount", "loanType","bankDetails" })
 @XmlRootElement(name = "FormData")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FormData {
@@ -77,6 +77,10 @@ public class FormData {
 	
 	@XmlElement(name = "insurance")
 	private BigDecimal	insuranceAmount		= BigDecimal.ZERO;
+	
+	@XmlElement(name="bank_details")
+	private List<CustomerBankData> bankDetails;
+
 
 	public String getPurposeOfLoan() {
 		return purposeOfLoan;
@@ -244,6 +248,13 @@ public class FormData {
 
 	public void setInstalmentType(String instalmentType) {
 		this.instalmentType = instalmentType;
+	}
+	public List<CustomerBankData> getBankDetails() {
+		return bankDetails;
+	}
+
+	public void setBankDetails(List<CustomerBankData> bankDetails) {
+		this.bankDetails = bankDetails;
 	}
 
 }

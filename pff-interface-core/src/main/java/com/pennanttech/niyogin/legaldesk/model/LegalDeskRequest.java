@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "custCIF", "finReference", "stampPaperData", "signersInfo", "formData" })
+@XmlType(propOrder = { "custCIF", "finReference","apiType", "stampPaperData", "signersInfo", "formData" })
 @XmlRootElement(name = "LegalDesk")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LegalDeskRequest implements Serializable{
@@ -26,7 +26,10 @@ public class LegalDeskRequest implements Serializable{
 
 	@XmlElement(name = "FormData")
 	private FormData		formData;
+	@XmlElement(name="api_type")
+	private String		 apiType;
 
+	
 	public StampPaperData getStampPaperData() {
 		return stampPaperData;
 	}
@@ -65,6 +68,13 @@ public class LegalDeskRequest implements Serializable{
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+	public String getApiType() {
+		return apiType;
+	}
+
+	public void setApiType(String apiType) {
+		this.apiType = apiType;
 	}
 
 }

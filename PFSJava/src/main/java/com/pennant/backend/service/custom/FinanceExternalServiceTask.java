@@ -218,7 +218,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					setInstallmentType(auditHeader);
 					setRateOfInst(auditHeader);
-					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
+					auditHeader = legalDeskService.executeLegalDesk(auditHeader,PennantConstants.method_LegalDesk);
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in LegalDesk:", e);
@@ -263,6 +263,17 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			case PennantConstants.METHOD_DO_VALIDATE_LEGAL_APPROVAL:
 				auditHeader = getLegalDetailService().isLegalApproved(auditHeader);
 				taskExecuted = true;
+				break;
+			case PennantConstants.METHOD_OFFERLETTER:
+				try {
+					setInstallmentType(auditHeader);
+					setRateOfInst(auditHeader);
+					auditHeader = legalDeskService.executeLegalDesk(auditHeader,PennantConstants.METHOD_OFFERLETTER);
+					taskExecuted = true;
+				} catch (InterfaceException e) {
+					logger.error("Exception in LegalDesk:", e);
+					taskExecuted = true;
+				}
 				break;
 			default:
 				return taskExecuted;

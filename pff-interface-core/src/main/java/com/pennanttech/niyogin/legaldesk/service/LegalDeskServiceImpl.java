@@ -3,6 +3,7 @@ package com.pennanttech.niyogin.legaldesk.service;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -24,7 +26,9 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.logging.model.InterfaceLogDetail;
+import com.pennanttech.niyogin.legaldesk.model.CustomerBankData;
 import com.pennanttech.niyogin.legaldesk.model.FormData;
 import com.pennanttech.niyogin.legaldesk.model.LegalDeskRequest;
 import com.pennanttech.niyogin.legaldesk.model.PartyAddress;
@@ -63,7 +67,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader executeLegalDesk(AuditHeader auditHeader) throws InterfaceException {
+	public AuditHeader executeLegalDesk(AuditHeader auditHeader,String apiType) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		
 		if (StringUtils.isBlank(serviceUrl)) {
@@ -73,7 +77,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		LegalDeskRequest legalDeskRequest = prepareRequestObj(financeDetail);
+		LegalDeskRequest legalDeskRequest = prepareRequestObj(financeDetail,apiType);
 
 		//send request and log
 		String reference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
@@ -120,9 +124,10 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * Method for prepare the LegalDeskRequest request object.
 	 * 
 	 * @param financeDetail
+	 * @param apiType 
 	 * @return
 	 */
-	private LegalDeskRequest prepareRequestObj(FinanceDetail financeDetail) {
+	private LegalDeskRequest prepareRequestObj(FinanceDetail financeDetail, String apiType) {
 		logger.debug(Literal.ENTERING);
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
@@ -132,6 +137,11 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		legalDeskRequest.setStampPaperData(prepareStampPaperData(financeDetail));
 		legalDeskRequest.setSignersInfo(prepareSignersInfo(financeDetail));
 		legalDeskRequest.setFormData(prepareFormData(financeDetail));
+		if(StringUtils.equals(PennantConstants.METHOD_OFFERLETTER,apiType )) {
+			legalDeskRequest.setApiType("createOfferLetter");
+		} else {
+			legalDeskRequest.setApiType("createLoanAgreement");
+		}
 		logger.debug(Literal.LEAVING);
 		return legalDeskRequest;
 	}
@@ -355,6 +365,18 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setLoanType(finMain.getFinType());
 		List<FinFeeDetail> fereedetails = financeDetail.getFinScheduleData().getFinFeeDetailList();
 		formData.setInsuranceAmount(formateAmount(getFeeAmount(fereedetails, INSURANCE_FEE)));
+		List<CustomerBankInfo> bankDetails = new ArrayList<CustomerBankInfo>();
+		List <CustomerBankData> bankData = new ArrayList<CustomerBankData> ();
+		if(financeDetail.getCustomerDetails()!=null) {
+			 bankDetails=financeDetail.getCustomerDetails().getCustomerBankInfoList();
+		}
+		for (CustomerBankInfo customerBankInfo : bankDetails) {
+			CustomerBankData CustomerBankData = new CustomerBankData();
+			CustomerBankData.setBankName(customerBankInfo.getLovDescBankName());
+			CustomerBankData.setAccountNumber(customerBankInfo.getAccountNumber());
+			bankData.add(CustomerBankData);
+		}
+		formData.setBankDetails(bankData);
 		logger.debug(Literal.LEAVING);
 		return formData;
 	}

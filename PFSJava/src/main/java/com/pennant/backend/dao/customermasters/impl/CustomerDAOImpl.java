@@ -959,7 +959,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Entering");
 		
 		if(customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE){
-			customer.setCustID(getNextId("SeqWIFCustomer"));	
+			customer.setCustID(getNextValue("SeqWIFCustomer"));	
 		}
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into WIFCustomers" );

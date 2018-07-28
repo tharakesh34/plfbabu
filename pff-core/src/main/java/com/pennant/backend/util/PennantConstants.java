@@ -187,6 +187,8 @@ public class PennantConstants {
 	public static final String METHOD_DO_CHECK_DEVIATION_APPROVAL = "doCheckDeviationApproval";
 	public static final String METHOD_DO_VALIDATE_QUERYMGMT_APPROVAL = "doValidateQueryMGMTApproval";
 	public static final String METHOD_DO_VALIDATE_LEGAL_APPROVAL = "executeLegalApproval";
+	public static final String METHOD_OFFERLETTER = "executeofferLetter";
+
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
 	public static final String ERR_SEV_WARNING = "W";
