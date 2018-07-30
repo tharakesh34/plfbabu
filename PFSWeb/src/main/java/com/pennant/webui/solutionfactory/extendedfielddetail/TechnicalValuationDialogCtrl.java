@@ -133,12 +133,9 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			boolean actionRenderReq = true;
 			if (arguments.containsKey("dialogCtrl")) {
 				this.dialogCtrl = (Object) arguments.get("dialogCtrl");
-				try {
-					dialogCtrl.getClass().getMethod("setTechnicalValuationDialogCtrl", this.getClass()).invoke(dialogCtrl,
-							this);
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
+				dialogCtrl.getClass().getMethod("setTechnicalValuationDialogCtrl", this.getClass()).invoke(dialogCtrl,
+						this);
+				
 				//this.extendedFieldHeader.setWorkflowId(0);
 				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);

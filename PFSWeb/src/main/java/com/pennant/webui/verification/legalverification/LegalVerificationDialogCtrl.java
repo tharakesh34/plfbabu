@@ -231,7 +231,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
@@ -414,9 +414,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.reason.setAttribute("ReasonId", null);
 		} else {
 			ReasonCode details = (ReasonCode) dataObject;
-			if (details != null) {
 				this.reason.setAttribute("ReasonId", details.getId());
-			}
 		}
 		logger.debug("Leaving");
 	}
@@ -445,7 +443,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.agentName.setValue(lv.getAgentName());
 		this.recommendations.setValue(String.valueOf(lv.getStatus()));
 		if (!lv.isNewRecord()) {
-			this.reason.setValue(StringUtils.trimToEmpty((lv.getReasonCode())),
+			this.reason.setValue(StringUtils.trimToEmpty(lv.getReasonCode()),
 					StringUtils.trimToEmpty(lv.getReasonDesc()));
 			if (lv.getReason() != null) {
 				this.reason.setAttribute("ReasonId", lv.getReason());
@@ -681,7 +679,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		ComponentsCtrl.applyForward(tab, "onSelect=" + selectMethodName);
 		logger.debug("Leaving");
 	}
 
@@ -757,7 +755,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.reason.getValidatedValue();
 			Object object = this.reason.getAttribute("ReasonId");
 			if (object != null) {
-				lv.setReason((Long.parseLong(object.toString())));
+				lv.setReason(Long.parseLong(object.toString()));
 			} else {
 				lv.setReason(null);
 			}
@@ -815,7 +813,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		lvDoc.setRecordStatus(this.recordStatus.getValue());
 	}
 
-	private org.zkoss.zk.ui.Component getComponent(Listitem listitem, String listcellId) {
+	private Component getComponent(Listitem listitem, String listcellId) {
 		List<Listcell> listcels = listitem.getChildren();
 
 		for (Listcell listcell : listcels) {
@@ -1034,7 +1032,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ entity.getVerificationId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
+			if (("").equals(StringUtils.trimToEmpty(entity.getRecordType()))) {
 				entity.setVersion(entity.getVersion() + 1);
 				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 

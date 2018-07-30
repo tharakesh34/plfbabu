@@ -159,7 +159,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
 		this.agency.setValidateColumns(new String[] { "DealerName", "DealerCity" });
-		Filter agencyFilter[] = new Filter[1];
+		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 		

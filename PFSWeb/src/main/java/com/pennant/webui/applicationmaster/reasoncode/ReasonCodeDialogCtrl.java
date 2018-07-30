@@ -211,9 +211,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonTypeID.setAttribute("ReasonTypeId", null);
 		} else {
 			ReasonTypes details = (ReasonTypes) dataObject;
-			if (details != null) {
 				this.reasonTypeID.setAttribute("ReasonTypeId", details.getId());
-			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -227,9 +225,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonCategoryID.setAttribute("ReasonCategoryId", null);
 		} else {
 			ReasonCategory details = (ReasonCategory) dataObject;
-			if (details != null) {
 				this.reasonCategoryID.setAttribute("ReasonCategoryId", details.getId());
-			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -385,10 +381,9 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonTypeID.setDescription("");
 			this.reasonCategoryID.setValue("");
 			this.reasonTypeID.setValue("");
-		} 
-		else {
+		} else {
 			// Reason Type
-			this.reasonTypeID.setValue(StringUtils.trimToEmpty((aReasonCode.getReasonTypeCode())),
+			this.reasonTypeID.setValue(StringUtils.trimToEmpty(aReasonCode.getReasonTypeCode()),
 					StringUtils.trimToEmpty(aReasonCode.getReasonTypeDesc()));
 			if (aReasonCode.getReasonTypeID() != null) {
 				this.reasonTypeID.setAttribute("ReasonTypeId", aReasonCode.getReasonTypeID());
@@ -396,7 +391,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 				this.reasonTypeID.setAttribute("ReasonTypeId", null);
 			}
 			// Reason Category
-			this.reasonCategoryID.setValue(StringUtils.trimToEmpty((aReasonCode.getReasonCategoryCode())),
+			this.reasonCategoryID.setValue(StringUtils.trimToEmpty(aReasonCode.getReasonCategoryCode()),
 					StringUtils.trimToEmpty(aReasonCode.getReasonCategoryDesc()));
 			if (aReasonCode.getReasonTypeID() != null) {
 				this.reasonCategoryID.setAttribute("ReasonCategoryId", aReasonCode.getReasonCategoryID());
@@ -434,7 +429,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonTypeID.getValidatedValue();
 			Object object = this.reasonTypeID.getAttribute("ReasonTypeId");
 			if (object != null) {
-				aReasonCode.setReasonTypeID((Long.parseLong(object.toString())));
+				aReasonCode.setReasonTypeID(Long.parseLong(object.toString()));
 			} else {
 				aReasonCode.setReasonTypeID(null);
 			}
@@ -449,7 +444,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonCategoryID.getValidatedValue();
 			Object object = this.reasonCategoryID.getAttribute("ReasonCategoryId");
 			if (object != null) {
-				aReasonCode.setReasonCategoryID((Long.parseLong(object.toString())));
+				aReasonCode.setReasonCategoryID(Long.parseLong(object.toString()));
 			} else {
 				aReasonCode.setReasonCategoryID(null);
 			}

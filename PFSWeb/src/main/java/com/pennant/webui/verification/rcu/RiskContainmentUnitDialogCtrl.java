@@ -220,7 +220,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
@@ -368,9 +368,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.reason.setAttribute("ReasonId", null);
 		} else {
 			ReasonCode details = (ReasonCode) dataObject;
-			if (details != null) {
 				this.reason.setAttribute("ReasonId", details.getId());
-			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -398,7 +396,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.agentName.setValue(rcu.getAgentName());
 		this.recommendations.setValue(String.valueOf(rcu.getStatus()));
 		if (!rcu.isNewRecord()) {
-			this.reason.setValue(StringUtils.trimToEmpty((rcu.getReasonCode())),
+			this.reason.setValue(StringUtils.trimToEmpty(rcu.getReasonCode()),
 					StringUtils.trimToEmpty(rcu.getReasonDesc()));
 			if (rcu.getReason() != null) {
 				this.reason.setAttribute("ReasonId", rcu.getReason());
@@ -632,7 +630,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		ComponentsCtrl.applyForward(tab, "onSelect=" + selectMethodName);
 		logger.debug("Leaving");
 	}
 
@@ -715,7 +713,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.reason.getValidatedValue();
 			Object object = this.reason.getAttribute("ReasonId");
 			if (object != null) {
-				rcu.setReason((Long.parseLong(object.toString())));
+				rcu.setReason(Long.parseLong(object.toString()));
 			} else {
 				rcu.setReason(null);
 			}
@@ -803,7 +801,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		rcuDocument.setRecordStatus(this.recordStatus.getValue());
 	}
 
-	private org.zkoss.zk.ui.Component getComponent(Listitem listitem, String listcellId) {
+	private Component getComponent(Listitem listitem, String listcellId) {
 		List<Listcell> listcels = listitem.getChildren();
 
 		for (Listcell listcell : listcels) {
@@ -1066,7 +1064,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ entity.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
+			if (("").equals(StringUtils.trimToEmpty(entity.getRecordType()))) {
 				entity.setVersion(entity.getVersion() + 1);
 				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 

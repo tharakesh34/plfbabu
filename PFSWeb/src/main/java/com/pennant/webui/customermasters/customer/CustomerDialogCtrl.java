@@ -1588,7 +1588,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		try {
-			aCustomer.setLovDesccustGroupIDName((this.custGroupId.getDescription()));
+			aCustomer.setLovDesccustGroupIDName(this.custGroupId.getDescription());
 			aCustomer.setLovDescCustGroupCode(this.custGroupId.getValue());
 			this.custGroupId.getValidatedValue();
 			Object object = this.custGroupId.getAttribute("CustGroupId");

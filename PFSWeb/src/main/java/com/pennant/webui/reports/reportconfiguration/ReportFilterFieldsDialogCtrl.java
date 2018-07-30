@@ -1852,33 +1852,28 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	
 	private String getInstructions(String component) {
 		StringBuilder builder = new StringBuilder();
-		
-		if(component.equals("TXT")) {
+
+		if ("TXT".equals(component)) {
 			builder.append("* 'Field Constraint' is regix .It is must to avoid injection problems .<br/>");
 			builder.append("* 'Field ErrorMessage' is error message to show when regix fails.<br/>");
 			builder.append("*  Regix must follow single \\ pattern .Eg:\\+^[0-9\\s]+");
 			return builder.toString();
-		}
-		else if (component.equals("STATICLIST")) {
+		} else if ("STATICLIST".equals(component)) {
 			builder.append("* This StaticList Type renders a ComboBox with value labels.<br/>");
 			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod,java method name which returns value,Labels to render ComboBox.");
 			return builder.toString();
-		}
-		else if (component.equals("DYNAMICLIST")) {
+		} else if ("DYNAMICLIST".equals(component)) {
 			builder.append("* This DynamicList Type renders a ComboBox with value labels witch comes from table.<br/>");
 			builder.append("* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
 			builder.append("* 'Value Get Method' is getMethod for ComboBox Value.<br/>");
 			builder.append("* 'Value Label Method' is getMethod for ComboBox Label.");
 			return builder.toString();
-		}
-		
-		else if (component.equals("LOVSEARCH")) {
+		} else if ("LOVSEARCH".equals(component)) {
 			builder.append("* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
 			builder.append("* 'Value Get Method' is getMethod for hidden TextBox value.<br/>");
-			builder.append( "* 'Value Label Method' is getMethod for Label TextBox value.");
+			builder.append("* 'Value Label Method' is getMethod for Label TextBox value.");
 			return builder.toString();
-		}
-		else if (component.equals("MULTISELANDLIST")) {
+		} else if ("MULTISELANDLIST".equals(component)) {
 			builder.append("* This is useful in use single component for different status.<br/>");
 			builder.append("* This Multi Select(With And Condition) Type renders a BandBox with multi select check boxes values.<br/>");
 			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns dbFieldName,value,Labels to render BandBox.<br/>");
@@ -1890,16 +1885,14 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 			builder.append("reportNames.add(new ValueLabel(\"usrCanOverrideLimits\",\"1\",\"Over Ride Limits\" <br/>");
 			builder.append("return reportNames;<br/>");
 			builder.append("}");
-			
+
 			return builder.toString();
-		}
-		else if (component.equals("MULTISELINLIST")) {
+		} else if ("MULTISELINLIST".equals(component)) {
 			builder.append("* This Multi Select(With In Condition) Type renders a BandBox with multi select check boxes values .<br/>");
 			builder.append("* This will form a In condition for all Selected values. Eg . RecordType in ('NEW','Edit','Delete')<br/>");
 			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns value,Labels to render BandBox.");
 			return builder.toString();
-		}
-		else if (component.equals("STATICVALUE")) {
+		} else if ("STATICVALUE".equals(component)) {
 			builder.append("* This is for hidden values with no filter to display .like our report always select Active records only.<br/>");
 			builder.append("* As it appends in query must follow sql rules");
 			return builder.toString();

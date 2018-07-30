@@ -122,7 +122,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		// LV Documents
 		if (lv.getLvDocuments() != null && !lv.getLvDocuments().isEmpty()) {
 			List<AuditDetail> details = lv.getAuditDetailMap().get("LVDocumentDetails");
-			details = processingLVDocumnets(details, lv, tableType.getSuffix());
+			details = processingLVDocumnets(details, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 
@@ -272,7 +272,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			List<LVDocument> lvDocuments = lv.getLvDocuments();
 			if (lvDocuments != null && !lvDocuments.isEmpty()) {
 				List<AuditDetail> details = lv.getAuditDetailMap().get("LVDocumentDetails");
-				details = processingLVDocumnets(details, lv, "");
+				details = processingLVDocumnets(details, "");
 				auditDetails.addAll(details);
 			}
 
@@ -693,7 +693,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		return auditDetails;
 	}
 
-	private List<AuditDetail> processingLVDocumnets(List<AuditDetail> auditDetails, LegalVerification lv, String type) {
+	private List<AuditDetail> processingLVDocumnets(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -713,7 +713,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			String rcdType = "";
 			String recordStatus = "";
 
-			if (StringUtils.isEmpty(type.toString())) {
+			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
 				lvDocument.setRoleCode("");
 				lvDocument.setNextRoleCode("");

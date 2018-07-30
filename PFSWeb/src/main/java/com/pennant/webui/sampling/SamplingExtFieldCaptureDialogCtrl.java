@@ -43,6 +43,10 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private transient SamplingService samplingService;
 	protected String sLinkId;
 	
+	public SamplingExtFieldCaptureDialogCtrl() {
+		super();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SamplingExtendedFieldDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);

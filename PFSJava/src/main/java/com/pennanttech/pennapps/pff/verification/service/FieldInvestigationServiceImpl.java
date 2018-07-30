@@ -582,7 +582,11 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			details = getDocumentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-
+		
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+		
 		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);

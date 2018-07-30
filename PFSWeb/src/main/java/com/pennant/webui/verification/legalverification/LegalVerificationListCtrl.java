@@ -139,7 +139,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
 		this.agency.setValidateColumns(new String[] { "DealerName", "DealerCity" });
-		Filter agencyFilter[] = new Filter[1];
+		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 

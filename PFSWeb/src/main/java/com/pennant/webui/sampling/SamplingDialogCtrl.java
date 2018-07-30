@@ -455,7 +455,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc = new Listcell(customer.getCustShrtName());
 				lc.setParent(item);
 
-				if (customer.getCustTypeCode().equals("1")) {
+				if ("1".equals(customer.getCustTypeCode())) {
 					lc = new Listcell("primary");
 					lc.setParent(item);
 				} else {
@@ -656,8 +656,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
-				externalLiability.setCustCif(externalLiability.getCustCif());
-				externalLiability.setCustShrtName(externalLiability.getCustShrtName());
 				map.put("externalLiability", externalLiability);
 				map.put("finFormatter", ccyFormatter);
 				map.put("samplingDialogCtrl", this);
@@ -1031,7 +1029,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		ComponentsCtrl.applyForward(tab, "onSelect=" + selectMethodName);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1751,7 +1749,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ entity.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
+			if ("".equals(StringUtils.trimToEmpty(entity.getRecordType()))) {
 				entity.setVersion(entity.getVersion() + 1);
 				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 

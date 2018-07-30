@@ -358,9 +358,9 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.ENTERING);
 
 		String table = null;
-		if (inputSource.equals("income")) {
+		if ("income".equals(inputSource)) {
 			table = "link_sampling_incomes";
-		} else if (inputSource.equals("obligation")) {
+		} else if ("obligation".equals(inputSource)) {
 			table = "link_sampling_liabilities";
 		} else {
 			table = "link_sampling_collaterals";
@@ -370,7 +370,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("select coalesce(max(linkid),0) from ");
 		sql.append(table);
 		sql.append(" where samplingid = :id");
-		if (inputSource.equals("collaterals")) {
+		if ("collaterals".equals(inputSource)) {
 			sql.append(" and collateralreference = :collref");
 		}
 

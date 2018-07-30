@@ -95,6 +95,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	@Autowired
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 
+	public SamplingServiceImpl() {
+		super();
+	}
+	
 	@Override
 	public void save(Sampling sampling) {
 		setWorkflowDetails(sampling);
@@ -239,12 +243,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		if (extendedDetails != null && !extendedDetails.isEmpty()) {
 			for (int i = 0; i < extendedDetails.size(); i++) {
 				ExtendedFieldRender extRender = (ExtendedFieldRender) extendedDetails.get(i).getModelData();
-				// Table Name
-				StringBuilder tableName = new StringBuilder();
-				tableName.append(CollateralConstants.VERIFICATION_MODULE);
-				tableName.append("_");
-				tableName.append(extRender.getTypeCode());
-				tableName.append("_tv");
 				auditList.addAll(
 						extendedFieldDetailsService.delete(sampling.getExtendedFieldHeader(), extRender.getReference(),
 								extRender.getTableName(), tableType, auditTranType, extendedDetails.get(i)));
@@ -653,12 +651,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			}
 
 			if (CollectionUtils.isNotEmpty(temp.getCollaterals())) {
-				List<String> collReference = new ArrayList<>();
 				List<SamplingCollateral> collList = temp.getCollaterals();
 				Map<String, ExtendedFieldRender> extFieldRender = new LinkedHashMap<>();
 
 				for (SamplingCollateral collateral : collList) {
-					collReference.add(collateral.getCollateralRef());
 
 					StringBuilder table = new StringBuilder();
 					table.append(CollateralConstants.VERIFICATION_MODULE);
@@ -676,7 +672,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 							table.toString().toLowerCase(), "_view");
 
 					if (MapUtils.isNotEmpty(renderMap)) {
-						List<ExtendedFieldRender> renderList = new ArrayList<>();
 						Map<String, Object> extFieldMap = renderMap;
 						ExtendedFieldRender field = new ExtendedFieldRender();
 						field.setReference(String.valueOf(extFieldMap.get("Reference")));
@@ -712,8 +707,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						field.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 						extFieldMap.remove("WorkflowId");
 						field.setMapValues(extFieldMap);
-						renderList.add(field);
-
 
 						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())), field);
 
@@ -857,7 +850,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			String rcdType = "";
 			String recordStatus = "";
 
-			if (StringUtils.isEmpty(type.toString())) {
+			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
 				custIncome.setRoleCode("");
 				custIncome.setNextRoleCode("");

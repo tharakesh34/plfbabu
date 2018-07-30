@@ -214,7 +214,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 				" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, verifiedDate, ");
 		sql.append(
 				" agentcode, agentname, status, reason, summaryremarks,");
-		if (type.equalsIgnoreCase("_view")) {
+		if ("_view".equalsIgnoreCase(type)) {
 			sql.append("cif, custid, keyreference, createdon, lovrelationdesc, reasoncode, reasondesc,");
 		}
 		sql.append(

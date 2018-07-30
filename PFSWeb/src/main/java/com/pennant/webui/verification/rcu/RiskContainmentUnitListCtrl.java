@@ -132,7 +132,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
 		this.agency.setValidateColumns(new String[] { "DealerName", "DealerCity" });
-		Filter agencyFilter[] = new Filter[1];
+		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.RCUVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 

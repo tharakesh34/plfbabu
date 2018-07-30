@@ -96,7 +96,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		// RCU Documents
 		if (rcu.getRcuDocuments() != null && !rcu.getRcuDocuments().isEmpty()) {
 			List<AuditDetail> details = rcu.getAuditDetailMap().get("RCUDocumentDetails");
-			details = processingRCUDocumnets(details, rcu, tableType.getSuffix());
+			details = processingRCUDocumnets(details, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 
@@ -107,8 +107,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 	}
 
-	private List<AuditDetail> processingRCUDocumnets(List<AuditDetail> auditDetails, RiskContainmentUnit rcu,
-			String type) {
+	private List<AuditDetail> processingRCUDocumnets(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -128,7 +127,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			String rcdType = "";
 			String recordStatus = "";
 
-			if (StringUtils.isEmpty(type.toString())) {
+			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
 				rcuDocument.setRoleCode("");
 				rcuDocument.setNextRoleCode("");
@@ -437,7 +436,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			List<RCUDocument> rcuDocuments = rcu.getRcuDocuments();
 			if (rcuDocuments != null && !rcuDocuments.isEmpty()) {
 				List<AuditDetail> details = rcu.getAuditDetailMap().get("RCUDocumentDetails");
-				details = processingRCUDocumnets(details, rcu, "");
+				details = processingRCUDocumnets(details, "");
 				auditDetails.addAll(details);
 			}
 
@@ -557,6 +556,10 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			List<AuditDetail> details = rcu.getAuditDetailMap().get("DocumentDetails");
 			details = getDocumentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
+		}
+		
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
 
 		auditHeader = nextProcess(auditHeader);

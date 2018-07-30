@@ -237,7 +237,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.TVSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
@@ -422,7 +422,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				PennantApplicationUtil.formateAmount(tv.getValuationAmount(), PennantConstants.defaultCCYDecPos));
 
 		if (!tv.isNewRecord()) {
-			this.reason.setValue(StringUtils.trimToEmpty((tv.getReasonCode())),
+			this.reason.setValue(StringUtils.trimToEmpty(tv.getReasonCode()),
 					StringUtils.trimToEmpty(tv.getReasonDesc()));
 			if (tv.getReason() != null) {
 				this.reason.setAttribute("ReasonId", tv.getReason());
@@ -506,7 +506,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		ComponentsCtrl.applyForward(tab, "onSelect=" + selectMethodName);
 		logger.debug(Literal.LEAVING);
 	}
 

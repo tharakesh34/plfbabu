@@ -809,7 +809,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		logger.debug(Literal.ENTERING);
 		// this.reason.setErrorMessage("");
 		String type = this.custType.getSelectedItem().getValue();
-		if (type != "#") {
+		if (!type.equals("#")) {
 			visibleComponent(Integer.parseInt(type));
 		}
 		logger.debug(Literal.LEAVING);

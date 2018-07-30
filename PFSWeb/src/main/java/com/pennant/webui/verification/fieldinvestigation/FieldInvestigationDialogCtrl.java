@@ -239,7 +239,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
@@ -385,9 +385,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.reason.setAttribute("ReasonId", null);
 		} else {
 			ReasonCode details = (ReasonCode) dataObject;
-			if (details != null) {
 				this.reason.setAttribute("ReasonId", details.getId());
-			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -431,7 +429,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.agentName.setValue(fi.getAgentName());
 		this.recommendations.setValue(String.valueOf(fi.getStatus()));
 		if (!fi.isNewRecord()) {
-			this.reason.setValue(StringUtils.trimToEmpty((fi.getReasonCode())),
+			this.reason.setValue(StringUtils.trimToEmpty(fi.getReasonCode()),
 					StringUtils.trimToEmpty(fi.getReasonDesc()));
 			if (fi.getReason() != null) {
 				this.reason.setAttribute("ReasonId", fi.getReason());
@@ -569,7 +567,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		ComponentsCtrl.applyForward(tab, "onSelect=" + selectMethodName);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -643,7 +641,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.reason.getValidatedValue();
 			Object object = this.reason.getAttribute("ReasonId");
 			if (object != null) {
-				fi.setReason((Long.parseLong(object.toString())));
+				fi.setReason(Long.parseLong(object.toString()));
 			} else {
 				fi.setReason(null);
 			}
@@ -856,7 +854,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ entity.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
+			if (("").equals(StringUtils.trimToEmpty(entity.getRecordType()))) {
 				entity.setVersion(entity.getVersion() + 1);
 				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
