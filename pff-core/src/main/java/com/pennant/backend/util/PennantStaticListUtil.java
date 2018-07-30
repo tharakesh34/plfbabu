@@ -1177,6 +1177,7 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_CONTACT,Labels.getLabel("label_AggContact")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_COAPPDT,Labels.getLabel("label_AggCoApplicantDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_COLLTRL,Labels.getLabel("label_AggCollateralDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_VAS,Labels.getLabel("label_VasRecordingBasicDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_REPAYDT,Labels.getLabel("label_AggRepaymentDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_CHRGDET,Labels.getLabel("label_AggChargesDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_DISBURS,Labels.getLabel("label_AggDisbursementDetails")));
