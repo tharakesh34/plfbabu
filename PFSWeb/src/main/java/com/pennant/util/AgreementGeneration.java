@@ -163,6 +163,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -175,6 +176,7 @@ import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -239,6 +241,8 @@ public class AgreementGeneration implements Serializable {
 	private PSLDetailService pSLDetailService;
 	@Autowired
 	private FinSamplingService finSamplingService;
+	
+	private  List<DocumentType> documentTypeList;
 	
 	private List<ValueLabel> listLandHolding=PennantStaticListUtil.getYesNo();
 	private List<ValueLabel> subCategoryList=PennantStaticListUtil.getSubCategoryList();
@@ -469,6 +473,7 @@ public class AgreementGeneration implements Serializable {
 
 				if (detail.getCustomerDetails() != null && detail.getCustomerDetails().getCustomer() != null) {
 					Customer customer = detail.getCustomerDetails().getCustomer();
+					agreement.setBranchDesc(StringUtils.trimToEmpty(customer.getLovDescCustDftBranchName()));
 					agreement.setCustId(customer.getCustID());
 					agreement.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 					agreement.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
@@ -669,6 +674,7 @@ public class AgreementGeneration implements Serializable {
 						}
 						externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
 						externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
+						externalLiabilityDetail.setBankDesc(extLiability.getLoanBankName());
 						externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
 						externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
@@ -839,7 +845,9 @@ public class AgreementGeneration implements Serializable {
 					SourcingDetail sourcingDetail=agreement.new SourcingDetail();
 					FinanceMain financeMain2=detail.getFinScheduleData().getFinanceMain();
 					sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
+					sourcingDetail.setDmaCodeDesc(StringUtils.trimToEmpty(financeMain2.getDmaCodeDesc()));
 					sourcingDetail.setSourceChannel(StringUtils.trimToEmpty(financeMain2.getSalesDepartmentDesc()));
+					sourcingDetail.setSalesManager(StringUtils.trimToEmpty(financeMain2.getReferralId()));
 					agreement.getSourcingDetails().add(sourcingDetail);
 				}
 			}
@@ -925,6 +933,12 @@ public class AgreementGeneration implements Serializable {
 				agreement.getDisbursements().add(agreement.new Disbursement());
 			}
 			
+			if(CollectionUtils.isEmpty(documentTypeList)){
+				JdbcSearchObject<DocumentType> searchObject = new JdbcSearchObject<DocumentType>(DocumentType.class);
+				 searchObject.addSortAsc("doctypecode");
+				 documentTypeList = searchProcessor.getResults(searchObject);
+			}
+			
 			// ----------------Document Details
 			if(aggModuleDetails.contains(PennantConstants.AGG_DOCDTLS)){
 				if(CollectionUtils.isEmpty(agreement.getDocuments())){
@@ -974,9 +988,9 @@ public class AgreementGeneration implements Serializable {
 				agreement.setVasData(new ArrayList<AgreementDetail.VasDetails>());
 			}
 			
-			
+			if (aggModuleDetails.contains(PennantConstants.AGG_VAS)&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getVasRecordingList())) {
 			getVasRecordingDetails(agreement,detail, formatter);
-			
+			}
 			if (CollectionUtils.isEmpty(agreement.getVasData())) {
 				agreement.getVasData().add(agreement.new VasDetails());
 			}
@@ -1834,7 +1848,8 @@ public class AgreementGeneration implements Serializable {
 		documentDetailsList.forEach((documentDetail)->{
 			if(null!=documentDetail && StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), "Finance")){
 				Document document=agreement.new Document();
-				document.setCusDocName(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
+				DocumentType documentType = documentTypeList.stream().filter(docType -> docType.getDocTypeCode().equals(StringUtils.trimToEmpty(documentDetail.getDocCategory()))).findFirst().get();
+				document.setCusDocName(StringUtils.trimToEmpty(documentDetail.getDocCategory())+"-"+StringUtils.trimToEmpty(documentType.getDocTypeDesc()));
 				document.setReceiveDate(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 				document.setDocType("LOAN");
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
@@ -2111,6 +2126,7 @@ public class AgreementGeneration implements Serializable {
 				//co applicant
 				CoApplicant coapplicant = agreement.new CoApplicant();
 				Customer customer = customerDetails.getCustomer();
+				coapplicant.setCustRelation(StringUtils.trimToEmpty(customer.getCustRelation()));
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				//pan number
 				List<CustomerDocument> doclist = customerDetails.getCustomerDocumentsList();
@@ -2500,6 +2516,7 @@ public class AgreementGeneration implements Serializable {
 			agreement.setFinCcy(main.getFinCcy());
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
+			agreement.setFinBranchName(StringUtils.trimToEmpty(main.getLovDescFinBranchName()));
 			
 			if (StringUtils.isNotBlank(main.getFinBranch())) {
 				if (branchService != null) {

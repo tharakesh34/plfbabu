@@ -89,7 +89,7 @@ public class AgreementDetail {
 	private String  custCPRNo="";														// Customer CPR/EID/Trade License
 	private String  custTotIncome="";													// Customer Total Income
 	private String  custTotExpense="";													// Customer Total Expense
-	
+	private String  branchDesc="";
 	private String panNumber ="";
 	private String  custEmpStsCode="";													// Customer Employee Status Code
 	private String  custEmpStsDesc="";													// Customer Employee Status Description
@@ -165,7 +165,15 @@ public class AgreementDetail {
 	public void setCustPOBox(String custPOBox) {
 		this.custPOBox = custPOBox;
 	}
+	
+	public String getBranchDesc() {
+		return branchDesc;
+	}
 
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
+	}
+	
 	public String getCustAddrCountry() {
 		return custAddrCountry;
 	}
@@ -291,6 +299,7 @@ public class AgreementDetail {
 	private String 	finCcy ="";															// Currency Code
 	private String 	pftDaysBasis ="";													// Profit Days Basis
 	private String 	finBranch ="";														// Finance Branch
+	private String  finBranchName="";
 	private String repayRateBasis;
 	private String 	startDate ="";														// Finance Start Date
 	private String 	contractDate ="";													// Contract Date
@@ -3106,7 +3115,13 @@ private String custAccount ="";
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
-	
+	public String getFinBranchName() {
+		return finBranchName;
+	}
+
+	public void setFinBranchName(String lovDescFinBranchName) {
+		this.finBranchName = lovDescFinBranchName;
+	}
 	public String getRepayRateBasis() {
 		return repayRateBasis;
 	}
@@ -4524,6 +4539,7 @@ private String custAccount ="";
 		private String custAddrHNbr="";
 		private String custFlatNbr="";
 		private String custAddrStreet="";
+		private String  custRelation="";
 		private String custAddrLine1="";
 		private String custAddrLine2="";
 		private String custPOBox="";
@@ -4566,7 +4582,13 @@ private String custAccount ="";
 		public void setAddress(String address) {
 			Address = address;
 		}
+		public String getCustRelation() {
+			return custRelation;
+		}
 
+		public void setCustRelation(String custRelation) {
+			this.custRelation = custRelation;
+		}
 		public String getCustAddrHNbr() {
 			return StringUtils.trimToEmpty(custAddrHNbr);
 		}
@@ -5836,7 +5858,18 @@ private String custAccount ="";
 		private String loanDate="";
 		private String appType="";
 		private String outStandingAmt="";
+		private String bankDesc="";
 		
+		
+
+		public String getBankDesc() {
+			return bankDesc;
+		}
+
+		public void setBankDesc(String bankDesc) {
+			this.bankDesc = bankDesc;
+		}
+
 		public ExternalLiabilityDetail() {
 		}
 
@@ -6459,8 +6492,28 @@ private String custAccount ="";
 		private String sourceChannel="";
 		private String salesPerson="";
 		private String dsaName="";
+		private String salesManager ="";
+		private String dmaCodeDesc = "";
+		
 		public SourcingDetail() {
 		}
+		
+		public String getDmaCodeDesc() {
+			return dmaCodeDesc;
+		}
+
+		public void setDmaCodeDesc(String dmaCodeDesc) {
+			this.dmaCodeDesc = dmaCodeDesc;
+		}
+
+		public String getSalesManager() {
+			return salesManager;
+		}
+
+		public void setSalesManager(String salesManager) {
+			this.salesManager = salesManager;
+		}
+
 		public String getSourceChannel() {
 			return sourceChannel;
 		}
