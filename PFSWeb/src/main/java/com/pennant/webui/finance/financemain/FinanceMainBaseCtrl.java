@@ -11720,6 +11720,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Eligibility Method
 		try {
 			this.eligibilityMethod.getValidatedValue();
+			aFinanceMain.setLovEligibilityMethod(this.eligibilityMethod.getValue());
 			Object object = this.eligibilityMethod.getAttribute("FieldCodeId");
 			if (object != null) {
 				aFinanceMain.setEligibilityMethod(Long.parseLong(object.toString()));
