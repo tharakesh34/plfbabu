@@ -55,7 +55,7 @@ public interface DepositChequesDAO {
 	String save(DepositCheques depositCheques, String type);
 	void delete(DepositCheques depositCheques, String type);
 	void deleteByMovementId(long movementId, String tableType);
-	List<DepositCheques> getDepositChequesList();
+	List<DepositCheques> getDepositChequesList(String branchCode);
 	DepositCheques getDepositChequeByReceiptID(long receiptID);
 	void reverseChequeStatus(long movementId, long receiptID, long linkedTranId);
 }

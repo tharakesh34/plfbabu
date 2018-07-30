@@ -23,6 +23,6 @@ public interface DepositDetailsService {
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 	
 	//Deposit Cheques
-	List<DepositCheques> getDepositChequesList();
+	List<DepositCheques> getDepositChequesList(String branchCode);
 	
 }

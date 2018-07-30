@@ -1314,7 +1314,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * Method for fetching list of Deposit Cheques
 	 */
 	@Override
-	public List<DepositCheques> getDepositChequesList() {
-		return getDepositChequesDAO().getDepositChequesList();
+	public List<DepositCheques> getDepositChequesList(String branchCode) {
+		return getDepositChequesDAO().getDepositChequesList(branchCode);
 	}
 }

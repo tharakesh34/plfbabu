@@ -52,7 +52,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zkmax.zul.Tablechildren;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
@@ -386,27 +385,22 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			lc.setStyle("text-align:right");
 			lc.appendChild(countBox);
 			lc.setParent(item);
-			countBox.addForward("onChange", window_DepositMovementsDialog, "onChangeCount", cashDenomination);
 
 			// Total Amount
+			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(), PennantConstants.defaultCCYDecPos);
 			Decimalbox amountBox = new Decimalbox();
 			amountBox.setMaxlength(18);
 			amountBox.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 			amountBox.setId("Amount" + i);
-			amountBox.setValue(cashDenomination.getAmount());
+			amountBox.setValue(amount);
 			amountBox.setWidth("150px");
+			amountBox.setDisabled(isReadOnly);
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
 
-			if (coins) {
-				amountBox.setDisabled(isReadOnly);
-				amountBox.addForward("onChange", window_DepositMovementsDialog, "onChangeAmount", cashDenomination);
-			} else {
-				amountBox.setDisabled(true);
-			}
 			lc.appendChild(amountBox);
 			lc.setParent(item);
-			totalAmount = totalAmount.add(cashDenomination.getAmount());
+			totalAmount = totalAmount.add(amount);
 			this.listBox_DenominationsList.appendChild(item);
 		}
 
@@ -444,45 +438,6 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChangeCount(ForwardEvent event) {
-		logger.debug("Entering" + event.toString());
-
-		Intbox count = (Intbox) event.getOrigin().getTarget();
-
-		CashDenomination cashDenomination = (CashDenomination) event.getData();
-
-		if (count.getValue() == null) {
-			cashDenomination.setCount(0);
-			cashDenomination.setAmount(BigDecimal.ZERO);
-		} else {
-			cashDenomination.setCount(count.getValue());
-			BigDecimal denomination = new BigDecimal(cashDenomination.getDenomination());
-			cashDenomination.setAmount(denomination.multiply(new BigDecimal(count.getValue())));
-		}
-
-		doFillDenominationsList(getCashDenominations());
-
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onChangeAmount(ForwardEvent event) {
-		logger.debug("Entering" + event.toString());
-
-		Decimalbox amount = (Decimalbox) event.getOrigin().getTarget();
-
-		CashDenomination cashDenomination = (CashDenomination) event.getData();
-
-		if (amount.getValue() == null) {
-			cashDenomination.setAmount(BigDecimal.ZERO);
-		} else {
-			cashDenomination.setAmount(amount.getValue());
-		}
-
-		doFillDenominationsList(getCashDenominations());
-
-		logger.debug("Leaving" + event.toString());
-	}
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -501,8 +456,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		// Posting Details Rendering
 		if (depositMovements.getLinkedTranId() > 0) {
-			List<ReturnDataSet> postings = this.depositDetailsService
-					.getPostingsByLinkTransId(depositMovements.getLinkedTranId());
+			List<ReturnDataSet> postings = this.depositDetailsService.getPostingsByLinkTransId(depositMovements.getLinkedTranId());
 			doFillPostings(postings);
 			this.listBoxPosting.setHeight(getListBoxHeight(6));
 		}

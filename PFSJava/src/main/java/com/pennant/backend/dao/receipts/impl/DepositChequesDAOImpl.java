@@ -220,7 +220,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 	}
 	
 	@Override
-	public List<DepositCheques> getDepositChequesList() {
+	public List<DepositCheques> getDepositChequesList(String branchCode) {
 		logger.debug(Literal.ENTERING);
 		List<DepositCheques> list;
 
@@ -232,12 +232,14 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		sql.append(" Inner Join FinanceMain T3 ON T1.Reference = T3.finReference");
 		sql.append(" Inner Join Customers T4 ON T3.CustId = T4.CustId");
 		sql.append(" Inner Join PartnerBanks T5 ON T5.PartnerBankId = T2.FundingAc");
-		sql.append(" where T1.ReceiptMode in ('CHEQUE', 'DD') and T1.DepositProcess = 1 And T1.ReceiptId Not In (Select ReceiptId from DepositCheques_Temp)");
+		sql.append(" Where T1.ReceiptMode In ('CHEQUE', 'DD') And T1.DepositProcess = 1 And T3.FinBranch = :BranchCode"); //TODO Branch Code check once
+		sql.append(" And T1.ReceiptId Not In (Select ReceiptId from DepositCheques_Temp)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		DepositCheques depositCheques = new DepositCheques();
+		depositCheques.setBranchCode(branchCode);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositCheques);
 		RowMapper<DepositCheques> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);

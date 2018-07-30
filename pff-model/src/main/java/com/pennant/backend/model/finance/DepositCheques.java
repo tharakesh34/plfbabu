@@ -37,7 +37,8 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 	private String				partnerBankCode;
 	private String				partnerBankName;
 	private boolean				visible				= false;		// For Display purpose
-
+	private String 				branchCode;	// Respective branch cheques we have show the user 
+	
 	@XmlTransient
 	private LoggedInUser		userDetails;
 
@@ -67,6 +68,7 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
 		excludeFields.add("visible");
+		excludeFields.add("branchCode");
 		
 		return excludeFields;
 	}
@@ -244,5 +246,13 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 
 	public void setRevLinkedTranId(long revLinkedTranId) {
 		this.revLinkedTranId = revLinkedTranId;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
 	}
 }
