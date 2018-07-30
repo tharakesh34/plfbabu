@@ -2534,7 +2534,7 @@ public class AgreementGeneration implements Serializable {
 						agreement.setFinBranchAddrProvinceName(branchdetails.getLovDescBranchProvinceName());
 						agreement.setFinBranchAddrCity(branchdetails.getBranchCity());
 						agreement.setFinBranchAddrCityName(branchdetails.getLovDescBranchCityName());
-						agreement.setFinBranchAddrZIP(branchdetails.getBranchPOBox());
+						agreement.setFinBranchAddrZIP(branchdetails.getPinCode());
 						agreement.setFinBranchAddrPhone(branchdetails.getBranchTel());
 					}
 
