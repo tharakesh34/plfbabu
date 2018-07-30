@@ -2515,5 +2515,11 @@
 			select deps_restore_dependencies('plf','cashdenominations_temp');
 		</sql>
 	</changeSet>
+	<changeSet id="31" author="Manoj">
+		<sql>
+			Delete from smtparameters where sysparmcode = 'CIBIL_SOCKET_TIMEOUT';
+			Insert into SMTPARAMETERS  values ('CIBIL_SOCKET_TIMEOUT','Socket timeout to CIBIL','int',1,'45000',30,0,null,null,'Socket timeout to CIBIL',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
