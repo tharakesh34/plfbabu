@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -97,6 +99,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	@Autowired(required = false)
 	private CreditInterfaceDAO creditInterfaceDao;
 	private final String extConfigFileName = "RetailCibilConsumer.properties";
+	private boolean cibil_Button;
 
 	/**
 	 * Method to get the CIBIL details of the Customer and set these details to
@@ -137,6 +140,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		loadCibilIdTypesforRequest();
 		loadCibilPhoneTypes();
 		loadCibilLoanTypes();
+		cibil_Button = false;
 
 		if (StringUtils.equals("RETAIL", customer.getCustCtgCode())) {
 			// Check score for primary applicant.
@@ -181,6 +185,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			loadCibilIdTypesforRequest();
 			loadCibilPhoneTypes();
 			loadCibilLoanTypes();
+			cibil_Button = true;
 
 			if (StringUtils.equals("RETAIL", customer.getCustCtgCode())) {
 
@@ -1065,10 +1070,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		String socketIp = (String) getSMTParameter("CIBIL_SOCKET_IP", String.class);
 		int port = (int) getSMTParameter("CIBIL_SOCKET_PORT", Integer.class);
-
+		int timeout = (int) getSMTParameter("CIBIL_SOCKET_TIMEOUT", Integer.class);
 		try {
-			Socket socket = new Socket(socketIp, port);
-			socket.setSoTimeout(10000);
+			SocketAddress sockaddr = new InetSocketAddress(socketIp, port);
+			Socket socket = new Socket();
+			socket.setSoTimeout(timeout);
+			socket.connect(sockaddr);
 			logger.debug("Connected to CIBIL");
 			OutputStream out = socket.getOutputStream();
 			InputStream in = socket.getInputStream();
@@ -1168,7 +1175,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
-		iLogDetail.setServiceName("CIBIL");
+		
+		if (cibil_Button) {
+			iLogDetail.setServiceName("CIBIL_B");
+		} else {
+			iLogDetail.setServiceName("CIBIL");
+		}
 		iLogDetail.setEndPoint((String) getSMTParameter("CIBIL_SOCKET_IP", String.class));
 		iLogDetail.setRequest(requets);
 		iLogDetail.setReqSentOn(reqSentOn);
