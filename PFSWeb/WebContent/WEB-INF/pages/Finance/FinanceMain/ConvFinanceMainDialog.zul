@@ -698,6 +698,13 @@
 															id="legalRequired" checked="false"/>
 													</hbox>
 												</row>
+												<row id="row_Connector">
+													<label
+														id="label_FinanceMainDialog_Connector"
+														value="${c:l('label_FinanceMainDialog_Connector.value')}" />
+													<extendedcombobox 
+															id="connector" width="200px" />
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

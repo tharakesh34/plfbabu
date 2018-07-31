@@ -188,6 +188,9 @@
 				<menuItem id="menu_Item_DirectMarketAgent"
 					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=DMA"
 					rightName="menuItem_SystemMaster_VehicleDealer" />
+				<menuItem id="menu_Item_Connector"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=CONN"
+					rightName="menuItem_SystemMaster_Connector" />
 			</menu>
 			<menuItem id="menu_Item_BuilderGroup"
 				zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul"

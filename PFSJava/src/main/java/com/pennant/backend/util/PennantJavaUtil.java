@@ -1736,13 +1736,17 @@ public class PennantJavaUtil {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF, new String[] { "DealerName", "Code" },
 				new Object[][] { { "DealerType", "0", "DMA" },{ "Active", "0", 1 } }, 350));
 		
+		ModuleUtil.register("Connector", new ModuleMapping("Connector", VehicleDealer.class, new String[] {
+				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF, new String[] { "DealerName", "DealerCity" },
+				new Object[][] { { "DealerType", "0", "CONN" },{ "Active", "0", 1 } }, 350));
+		
 		ModuleUtil.register("DSA", new ModuleMapping("DSA", VehicleDealer.class, new String[] {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF, new String[] { "DealerName", "Code" },
 				new Object[][] { { "DealerType", "0", "DSA" },{ "Active", "0", 1 } }, 350));
 		
 		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class, new String[] {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, 
-				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_PARTNER } }, 300));
+				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_PARTNER },{ "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("VehicleManufacturer", new ModuleMapping("VehicleManufacturer", VehicleManufacturer.class,
 				new String[] { "AMTVehicleManufacturer", "AMTVehicleManufacturer_AView" }, masterWF , new String[] {

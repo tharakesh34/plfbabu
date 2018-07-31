@@ -667,6 +667,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	
 	private boolean depositProcess = false;	// added for Cash Management 
 	
+	private long connector;
+	private String connectorCode;
+	private String connectorDesc;
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -816,6 +820,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		
 		//Cash Management
 		excludeFields.add("depositProcess");
+		
+		excludeFields.add("connectorCode");
+		excludeFields.add("connectorDesc");
 		
 		return excludeFields;
 	}
@@ -3785,6 +3792,30 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setDepositProcess(boolean depositProcess) {
 		this.depositProcess = depositProcess;
+	}
+
+	public long getConnector() {
+		return connector;
+	}
+
+	public void setConnector(long connector) {
+		this.connector = connector;
+	}
+
+	public String getConnectorCode() {
+		return connectorCode;
+	}
+
+	public void setConnectorCode(String connectorCode) {
+		this.connectorCode = connectorCode;
+	}
+
+	public String getConnectorDesc() {
+		return connectorDesc;
+	}
+
+	public void setConnectorDesc(String connectorDesc) {
+		this.connectorDesc = connectorDesc;
 	}
 
 }

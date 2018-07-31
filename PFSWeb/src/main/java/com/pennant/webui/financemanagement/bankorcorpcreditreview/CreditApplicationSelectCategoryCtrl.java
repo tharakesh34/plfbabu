@@ -169,7 +169,8 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 			this.creditReviewDetail = null;
 		}
 		fillComboBox(custCategory, "", PennantAppUtil.getcustCtgCodeList(), "");
-		fillComboBox(auditPeriod, "", PennantStaticListUtil.getPeriodList(), "");
+		fillComboBox(auditPeriod, "12", PennantStaticListUtil.getPeriodList(), "");
+		this.auditPeriod.setDisabled(true);
 //		if (!this.auditYear.isReadonly()) {
 //			this.auditYear.setConstraint(new IntValidator(4,Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), false));
 //		}
@@ -451,17 +452,8 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
                   }
               }
               
-              if(!"#".equals(StringUtils.trimToEmpty(this.auditPeriod.getSelectedItem().getValue().toString()))){
-            	  creditReviewDetail.setAuditPeriod(Integer.parseInt(this.auditPeriod.getSelectedItem().getValue().toString()));
-              } else {
-            	  try{
-            	  throw new WrongValueException(this.auditPeriod, Labels.getLabel("FIELD_NO_EMPTY",
-            			  new String[] {Labels.getLabel("label_CreditRevSelectCategory_auditPeriod.value"),
-            			  Labels.getLabel("label_CreditRevSelectCategory_auditPeriod.value") }));
-            	  }catch(WrongValueException wve){
-            		  wveList.add(wve);
-            	  }
-              }
+              //Default yearly setting for Audit Year
+              creditReviewDetail.setAuditPeriod(12);
               
               if (wveList.size() > 0) {
         			WrongValueException[] wvea = new WrongValueException[wveList.size()];

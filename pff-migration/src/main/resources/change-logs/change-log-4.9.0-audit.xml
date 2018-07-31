@@ -121,4 +121,16 @@
 		<comment>TransactionAmount column removing from DepositDetails</comment>
 		<dropColumn tableName="AdtDepositDetails" columnName="TransactionAmount"/>
 	</changeSet>
+	
+	<changeSet id="12" author="Vinay">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="Connector" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="59" author="Vinay">
+		<sql>
+			update adtfinancemain set connector=0;
+		</sql>
+	</changeSet>
 	</databaseChangeLog>

@@ -584,6 +584,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_EligibilityMethod;
 	protected ExtendedCombobox eligibilityMethod;
 
+	protected Row row_Connector;
+	protected ExtendedCombobox connector;
+
 	protected Row samplingRequiredRow;
 	protected Checkbox samplingRequired;
 	
@@ -1005,6 +1008,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible)) {
 			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 4);
 		}
+		this.connector.setProperties("Connector", "DealerName", "DealerCity", false, LengthConstants.LEN_MASTER_CODE);
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finContractDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -3082,6 +3086,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.dmaCode.setAttribute("DMAdealerID", aFinanceMain.getDmaCode());
 			} else {
 				this.dmaCode.setAttribute("DMAdealerID", null);
+			}
+		}
+		
+		if (!aFinanceMain.isNewRecord()) {
+			this.connector.setValue(StringUtils.trimToEmpty((aFinanceMain.getConnectorCode())),
+					StringUtils.trimToEmpty(aFinanceMain.getConnectorDesc()));
+			if (aFinanceMain.getDsaCode() != null) {
+				this.connector.setAttribute("DealerID", aFinanceMain.getConnector());
+			} else {
+				this.connector.setAttribute("DealerID", 0);
 			}
 		}
 
@@ -5576,6 +5590,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dsaCode.setConstraint("");
 		this.referralId.setConstraint("");
 		this.dmaCode.setConstraint("");
+		this.connector.setConstraint("");
 		this.salesDepartment.setConstraint("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -8486,6 +8501,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	public void onFulfill$connector(Event event) {
+		logger.debug("Entering");
+		Object dataObject = connector.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.connector.setValue("");
+			this.connector.setDescription("");
+			this.connector.setAttribute("DealerId", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.connector.setAttribute("DealerId", details.getId());
+			}
+		}
+		logger.debug("Leaving");
+	}
 	//FinanceMain Details Tab ---> 2. Grace Period Details
 
 	/**
@@ -10325,6 +10356,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceMain.setDmaCode(object.toString());
 			} else {
 				aFinanceMain.setDmaCode(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aFinanceMain.setConnectorCode(this.connector.getValue());
+			aFinanceMain.setConnectorDesc(this.connector.getDescription());
+			Object object = this.connector.getAttribute("DealerId");
+			if (object != null) {
+				aFinanceMain.setConnector(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setConnector(0);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -13421,6 +13465,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_employeeName"), this.employeeName);
 		}
 		readOnlyComponent(isReadOnly("FinanceMainDialog_dmaCode"), this.dmaCode);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_connector"), this.connector);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_salesDepartment"), this.salesDepartment);
 
 		//FIXME: AlloW QUick Disbursement to be added in RMTFinanceTypes also. Explained to Chaitanya and Siva
@@ -14127,6 +14172,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		this.referralId.setReadonly(true);
 		this.dmaCode.setReadonly(true);
+		this.connector.setReadonly(true);
 		this.salesDepartment.setReadonly(true);
 		this.quickDisb.setDisabled(true);
 		this.row_shariaApproval.setVisible(false);

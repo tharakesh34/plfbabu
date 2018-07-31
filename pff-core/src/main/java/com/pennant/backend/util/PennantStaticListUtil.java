@@ -1063,6 +1063,7 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("DMA", Labels.getLabel("label_DMA")));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
+			dealerType.add(new ValueLabel("CONN", Labels.getLabel("label_Connector")));
 
 			dealerType.add(new ValueLabel("FIAGENCY", Labels.getLabel("label_Field_Investigation")));
 			dealerType.add(new ValueLabel("LVAGENCY", Labels.getLabel("label_Legal_Verification")));
