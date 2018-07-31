@@ -198,9 +198,11 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			// READ OVERHANDED params !
 			if (arguments.containsKey("finCovenantTypes")) {
 				this.finCovenantTypes = (FinCovenantType) arguments.get("finCovenantTypes");
-				FinCovenantType befImage = new FinCovenantType();
-				BeanUtils.copyProperties(this.finCovenantTypes, befImage);
-				this.finCovenantTypes.setBefImage(befImage);
+				if (this.finCovenantTypes.isNewRecord()) {
+					FinCovenantType befImage = new FinCovenantType();
+					BeanUtils.copyProperties(this.finCovenantTypes, befImage);
+					this.finCovenantTypes.setBefImage(befImage);
+				}
 
 				setFinCovenantType(this.finCovenantTypes);
 			} else {

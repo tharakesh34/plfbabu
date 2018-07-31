@@ -46,8 +46,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -335,6 +337,15 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering ");
 		
 		doFillFinCovenantTypeDetails(getFinCovenantTypeDetailList());
+		// Bug Fix for covenant at delete operation. so befImage is placed here
+		// instead of at fincovenantDialogctrl
+		if (CollectionUtils.isNotEmpty(getFinCovenantTypeDetailList())) {
+			for (FinCovenantType covenantType : getFinCovenantTypeDetailList()) {
+				FinCovenantType befImage = new FinCovenantType();
+				BeanUtils.copyProperties(covenantType, befImage);
+				covenantType.setBefImage(befImage);
+			}
+		}
 		
 		logger.debug("Leaving ");
 	}
