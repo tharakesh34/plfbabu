@@ -2586,5 +2586,421 @@
 			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 		</sql>
 	</changeSet> 
+	
+	<changeSet id="39" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader tables</comment>
+		<addColumn tableName="FinReceiptHeader">
+			<column name="DepositBranch" type="varchar(8)"/>
+		</addColumn>
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="DepositBranch" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="40" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader Views</comment>
+		<createView viewName="finreceiptheader_fcview" replaceIfExists="true">
+			SELECT  t1.receiptid,
+				    t1.receiptdate,
+				    t1.receipttype,
+				    t1.recagainst,
+				    t1.reference,
+				    t1.receiptpurpose,
+				    t1.receiptmode,
+				    t1.excessadjustto,
+				    t1.allocationtype,
+				    t1.receiptamount,
+				    t1.effectschdmethod,
+				    t1.receiptmodestatus,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.fintype,
+				    t2.finbranch,
+				    t3.custcif,
+				    t3.custshrtname,
+				    t2.finccy,
+				    t1.realizationdate,
+				    t1.cancelreason,
+				    t4.fintypedesc,
+				    t6.branchdesc AS finbranchdesc,
+				    t5.ccydesc AS finccydesc,
+				    t7.rejectdesc AS cancelreasondesc,
+				    t2.finisactive,
+				    t2.schedulemethod,
+				    t2.profitdaysbasis AS pftdaysbasis,
+				    t1.waviedamt,
+				    t3.custid,
+				    t1.totfeeamount,
+				    t1.bouncedate,
+				    t1.remarks,
+				    t1.rcdmaintainsts,
+				    t1.depositprocess,
+					t1.DepositBranch
+				   FROM finreceiptheader_temp t1
+				     JOIN financemain_temp t2 ON t1.reference = t2.finreference
+				     JOIN customers t3 ON t2.custid = t3.custid
+				     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+				     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+				     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+				     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
+				UNION ALL
+				 SELECT t1.receiptid,
+				    t1.receiptdate,
+				    t1.receipttype,
+				    t1.recagainst,
+				    t1.reference,
+				    t1.receiptpurpose,
+				    t1.receiptmode,
+				    t1.excessadjustto,
+				    t1.allocationtype,
+				    t1.receiptamount,
+				    t1.effectschdmethod,
+				    t1.receiptmodestatus,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.fintype,
+				    t2.finbranch,
+				    t3.custcif,
+				    t3.custshrtname,
+				    t2.finccy,
+				    t1.realizationdate,
+				    t1.cancelreason,
+				    t4.fintypedesc,
+				    t6.branchdesc AS finbranchdesc,
+				    t5.ccydesc AS finccydesc,
+				    t7.rejectdesc AS cancelreasondesc,
+				    t2.finisactive,
+				    t2.schedulemethod,
+				    t2.profitdaysbasis AS pftdaysbasis,
+				    t1.waviedamt,
+				    t3.custid,
+				    t1.totfeeamount,
+				    t1.bouncedate,
+				    t1.remarks,
+				    t1.rcdmaintainsts,
+				    t1.depositprocess,
+					t1.DepositBranch
+				   FROM finreceiptheader t1
+				     JOIN financemain_temp t2 ON t1.reference = t2.finreference
+				     JOIN customers t3 ON t2.custid = t3.custid
+				     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+				     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+				     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+				     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM finreceiptheader_temp
+				          WHERE finreceiptheader_temp.receiptid = t1.receiptid))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="41" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader Views</comment>
+		<createView viewName="finreceiptheader_feview" replaceIfExists="true">
+			SELECT  t1.receiptid,
+				    t1.receiptdate,
+				    t1.receipttype,
+				    t1.recagainst,
+				    t1.reference,
+				    t1.receiptpurpose,
+				    t1.receiptmode,
+				    t1.excessadjustto,
+				    t1.allocationtype,
+				    t1.receiptamount,
+				    t1.effectschdmethod,
+				    t1.receiptmodestatus,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.fintype,
+				    t2.finbranch,
+				    t3.custcif,
+				    t3.custshrtname,
+				    t2.finccy,
+				    t1.realizationdate,
+				    t1.cancelreason,
+				    t4.fintypedesc,
+				    t6.branchdesc AS finbranchdesc,
+				    t5.ccydesc AS finccydesc,
+				    t7.rejectdesc AS cancelreasondesc,
+				    t2.finisactive,
+				    t2.schedulemethod,
+				    t2.profitdaysbasis AS pftdaysbasis,
+				    t1.waviedamt,
+				    t3.custid,
+				    t1.totfeeamount,
+				    t1.bouncedate,
+				    t1.remarks,
+				    t1.rcdmaintainsts,
+				    t1.depositprocess,
+					t1.DepositBranch
+			   FROM finreceiptheader_temp t1
+			     JOIN financemain_temp t2 ON t1.reference = t2.finreference
+			     JOIN customers t3 ON t2.custid = t3.custid
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+			     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+			     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
+			UNION ALL
+			 SELECT t1.receiptid,
+				    t1.receiptdate,
+				    t1.receipttype,
+				    t1.recagainst,
+				    t1.reference,
+				    t1.receiptpurpose,
+				    t1.receiptmode,
+				    t1.excessadjustto,
+				    t1.allocationtype,
+				    t1.receiptamount,
+				    t1.effectschdmethod,
+				    t1.receiptmodestatus,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.fintype,
+				    t2.finbranch,
+				    t3.custcif,
+				    t3.custshrtname,
+				    t2.finccy,
+				    t1.realizationdate,
+				    t1.cancelreason,
+				    t4.fintypedesc,
+				    t6.branchdesc AS finbranchdesc,
+				    t5.ccydesc AS finccydesc,
+				    t7.rejectdesc AS cancelreasondesc,
+				    t2.finisactive,
+				    t2.schedulemethod,
+				    t2.profitdaysbasis AS pftdaysbasis,
+				    t1.waviedamt,
+				    t3.custid,
+				    t1.totfeeamount,
+				    t1.bouncedate,
+				    t1.remarks,
+				    t1.rcdmaintainsts,
+				    t1.depositprocess,
+					t1.DepositBranch
+			   FROM finreceiptheader t1
+			     JOIN ( SELECT financemain_temp.finreference,
+			            financemain_temp.finbranch,
+			            financemain_temp.fintype,
+			            financemain_temp.finccy,
+			            financemain_temp.schedulemethod,
+			            financemain_temp.profitdaysbasis,
+			            financemain_temp.finisactive,
+			            financemain_temp.custid
+			           FROM financemain_temp
+			        UNION
+			         SELECT financemain.finreference,
+			            financemain.finbranch,
+			            financemain.fintype,
+			            financemain.finccy,
+			            financemain.schedulemethod,
+			            financemain.profitdaysbasis,
+			            financemain.finisactive,
+			            financemain.custid
+			           FROM financemain) t2 ON t1.reference = t2.finreference
+			     JOIN customers t3 ON t2.custid = t3.custid
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+			     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+			     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM finreceiptheader_temp
+			          WHERE finreceiptheader_temp.receiptid = t1.receiptid))		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="42" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader Views</comment>
+		<createView viewName="finreceiptheader_fview" replaceIfExists="true">
+			SELECT t1.receiptid,
+			    t1.receiptdate,
+			    t1.receipttype,
+			    t1.recagainst,
+			    t1.reference,
+			    t1.receiptpurpose,
+			    t1.receiptmode,
+			    t1.excessadjustto,
+			    t1.allocationtype,
+			    t1.receiptamount,
+			    t1.effectschdmethod,
+			    t1.receiptmodestatus,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.fintype,
+			    t2.finbranch,
+			    t3.custcif,
+			    t3.custshrtname,
+			    t2.finccy,
+			    t1.realizationdate,
+			    t1.cancelreason,
+			    t4.fintypedesc,
+			    t6.branchdesc AS finbranchdesc,
+			    t5.ccydesc AS finccydesc,
+			    t7.rejectdesc AS cancelreasondesc,
+			    t2.finisactive,
+			    t2.schedulemethod,
+			    t2.profitdaysbasis AS pftdaysbasis,
+			    t1.waviedamt,
+			    t3.custid,
+			    t1.totfeeamount,
+			    t1.bouncedate,
+			    t1.remarks,
+			    t1.rcdmaintainsts,
+			    t1.depositprocess,
+				t1.DepositBranch
+			   FROM finreceiptheader_temp t1
+			     JOIN financemain_temp t2 ON t1.reference = t2.finreference
+			     JOIN customers t3 ON t2.custid = t3.custid
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+			     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+			     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="43" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader Views</comment>
+		<createView viewName="finreceiptheader_view" replaceIfExists="true">
+			SELECT t1.receiptid,
+			    t1.receiptdate,
+			    t1.receipttype,
+			    t1.recagainst,
+			    t1.reference,
+			    t1.receiptpurpose,
+			    t1.receiptmode,
+			    t1.excessadjustto,
+			    t1.allocationtype,
+			    t1.receiptamount,
+			    t1.effectschdmethod,
+			    t1.receiptmodestatus,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.fintype,
+			    t2.finbranch,
+			    t3.custcif,
+			    t3.custshrtname,
+			    t2.finccy,
+			    t1.realizationdate,
+			    t1.cancelreason,
+			    t4.fintypedesc,
+			    t6.branchdesc AS finbranchdesc,
+			    t5.ccydesc AS finccydesc,
+			    t7.rejectdesc AS cancelreasondesc,
+			    t2.finisactive,
+			    t1.waviedamt,
+			    t1.totfeeamount,
+			    t1.bouncedate,
+			    t1.remarks,
+			    t1.rcdmaintainsts,
+			    t1.depositprocess,
+				t1.DepositBranch
+			   FROM finreceiptheader_temp t1
+			     JOIN financemain t2 ON t1.reference = t2.finreference
+			     JOIN customers t3 ON t2.custid = t3.custid
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+			     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+			     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
+			UNION ALL
+			 SELECT t1.receiptid,
+			    t1.receiptdate,
+			    t1.receipttype,
+			    t1.recagainst,
+			    t1.reference,
+			    t1.receiptpurpose,
+			    t1.receiptmode,
+			    t1.excessadjustto,
+			    t1.allocationtype,
+			    t1.receiptamount,
+			    t1.effectschdmethod,
+			    t1.receiptmodestatus,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.fintype,
+			    t2.finbranch,
+			    t3.custcif,
+			    t3.custshrtname,
+			    t2.finccy,
+			    t1.realizationdate,
+			    t1.cancelreason,
+			    t4.fintypedesc,
+			    t6.branchdesc AS finbranchdesc,
+			    t5.ccydesc AS finccydesc,
+			    t7.rejectdesc AS cancelreasondesc,
+			    t2.finisactive,
+			    t1.waviedamt,
+			    t1.totfeeamount,
+			    t1.bouncedate,
+			    t1.remarks,
+			    t1.rcdmaintainsts,
+			    t1.depositprocess,
+				t1.DepositBranch
+			   FROM finreceiptheader t1
+			     JOIN financemain t2 ON t1.reference = t2.finreference
+			     JOIN customers t3 ON t2.custid = t3.custid
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
+			     JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
+			     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM finreceiptheader_temp
+			          WHERE finreceiptheader_temp.receiptid = t1.receiptid))		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
 	

@@ -109,4 +109,11 @@
 		  WHERE a.auditimage = 'W' and a.workflowid != 0
 		</createView>
 	</changeSet> -->
+	
+	<changeSet id="10" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader tables</comment>
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="DepositBranch" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
