@@ -752,6 +752,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		long logKey = 0;
 		BigDecimal totalPriAmount = BigDecimal.ZERO;
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
 		//getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
@@ -1228,7 +1229,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 			}
 			
-			// Accounting Execution Process for Deposit Reversal
+			// Accounting Execution Process for Deposit Reversal for CASH
+			if(StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,receiptHeader.getReceiptMode())){
+
+				DepositMovements movement = getDepositDetailsDAO().getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+				if(movement != null){
+					this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_BANKTOCASH,
+							movement.getBranchCode(), movement.getBranchCode(), movement.getReservedAmount(),
+							movement.getPartnerBankId(), movement.getMovementId(), null);
+					
+					// DECRESE AVAILABLE ON HEADER TODO
+					// Movement updation by ReceiptID to "R" TODO
+				}
+			}
+			
+			// Accounting Execution Process for Deposit Reversal for Cheque / DD
 			if(StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) ||
 					StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())){
 				
@@ -1248,6 +1263,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 									receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
 						}
 					}
+				}else{
+					// Available Decrease TODO
+					// Movement updation by ReceiptID to "R" TODO
 				}
 			}
 		}

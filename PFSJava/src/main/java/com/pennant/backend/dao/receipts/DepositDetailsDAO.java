@@ -27,4 +27,5 @@ public interface DepositDetailsDAO {
 	void deleteMovementsByDepositId(long depositId, String type);
 	void updateLinkedTranIdByMovementId(long movementId, long likedTranId, String type);
 	boolean isDuplicateKey(String depositSlipNumber, TableType tableType);
+	DepositMovements getDepositMovementsByReceiptId(long receiptId, String type);
 }

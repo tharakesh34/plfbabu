@@ -360,6 +360,47 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.debug(Literal.LEAVING);
 		return depositMovements;
 	}
+	/**
+	 * Fetch the Record Academic Details details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Academic
+	 */
+	@Override
+	public DepositMovements getDepositMovementsByReceiptId(long receiptId, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		DepositMovements depositMovements = new DepositMovements();
+		depositMovements.setReceiptId(receiptId);
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
+		if (type.contains("View")) {
+			selectSql.append(" PartnerBankCode, PartnerBankName, BranchCode, BranchDesc,");
+		}
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM DepositMovements");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ReceiptId = :ReceiptId");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
+		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositMovements.class);
+		
+		try {
+			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info("Information: ", e);
+			depositMovements = null;
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return depositMovements;
+	}
 
 	@Override
 	public long saveDepositMovements(DepositMovements depositMovements, String type) {

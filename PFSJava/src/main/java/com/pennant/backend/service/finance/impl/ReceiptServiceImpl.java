@@ -1416,6 +1416,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				valueDate = rcptDetail.getReceivedDate();
 			}
 		}
+		
+		// UPDATE Deposit Branch in Receipt Header based on deposit updation details TODO
 
 		// IF Deposited Requested amount is greater than zero then Deposit process details should be inserted/updated
 		if (depositReqAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(reqReceiptMode)) {
@@ -1446,6 +1448,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			depositMovements = new DepositMovements();
 			depositMovements.setDepositId(depositDetail.getDepositId());
 			depositMovements.setTransactionType(CashManagementConstants.DEPOSIT_MOVEMENT_CREDIT);
+			depositMovements.setReservedAmount(depositReqAmount);
 			depositMovements.setPartnerBankId(partnerBankId);
 			depositMovements.setReceiptId(receiptHeader.getReceiptID());
 			depositMovements.setTransactionDate(valueDate);
