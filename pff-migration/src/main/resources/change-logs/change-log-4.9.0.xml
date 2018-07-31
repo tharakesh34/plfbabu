@@ -3062,5 +3062,27 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="50" author="Kesav">
+		<comment>Bank To Cash Accounting Configuration</comment>
+		<sql>
+			Delete from BMTAEEVENTS where AeEventCode = 'B2C';
+			Insert into BMTAEEVENTS values('B2C','BANK TO CASH',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0, 1, 0, 1);
+									
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'B2C' And AmountCode = 'ae_transfer';
+			Insert into BMTAMOUNTCODES values('B2C',0,'ae_transfer','BANK TO CASH',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+						
+			Insert Into RMTACCOUNTINGSET Values ((Select Max(AccountSetId) + 1 from RMTACCOUNTINGSET), 'B2C', 'B2C', 'BANK TO CASH', 0, 0, 1, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0);
+			UPDATE seqRMTACCOUNTINGSET SET SEQNO = (Select Max(AccountSetId) from RMTACCOUNTINGSET);
+									
+			Insert Into RMTTRANSACTIONENTRY Values
+						((Select AccountSetId from RMTACCOUNTINGSET where EventCode = 'B2C'), '1', 'Deposit Bank A/c', 'C', '0','23122COLL','1000','BUILD','GLCREATE','510','010', 'Result = ae_transfer;', null, ' ', 'D', 0, 0, 1, 0, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, 'E', '0');
+			Insert Into RMTTRANSACTIONENTRY Values
+						((Select AccountSetId from RMTACCOUNTINGSET where EventCode = 'B2C'), '2', 'Cash A/c', 'D', '0','BANK','1000','BUILD','GLCREATE','010','510', 'Result = ae_transfer;', null, ' ', 'D', 0, 0, 1, 0, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, 'E', '0');
+									
+			Delete from SMTPARAMETERS where SysParmCode = 'GL_CM_GLHEAD_B2C';
+			Insert into SMTPARAMETERS  values ('GL_CM_GLHEAD_B2C','Bank To Cash','String',0,(Select AccountSetId from RMTAccountingSet where EVentCode = 'B2C'),10,0,null,null,'Bank To Cash Id',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);		
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
