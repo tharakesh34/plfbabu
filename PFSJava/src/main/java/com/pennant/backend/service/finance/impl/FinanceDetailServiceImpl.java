@@ -5971,24 +5971,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							if (financeDetail.getCovenantTypeList() != null
 									&& financeDetail.getCovenantTypeList().size() > 0) {
 								for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
-									// validate the document is in the current uploaded list
-									for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
-										if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())) {
-											isDocExist = true;
-											break;
-										}
-									}
-
-									if (!isDocExist) {
-										// validate the covenants against the document details
-										List<DocumentDetails> docList = getDocumentDetailsDAO().getDocumentDetailsByRef(
-												covenantType.getFinReference(), FinanceConstants.MODULE_NAME, "_View");
-										if (docList != null && docList.size() > 0) {
-											for (DocumentDetails documentDetails : docList) {
-												if (documentDetails.getDocCategory()
-														.equals(covenantType.getCovenantType())) {
-													isDocExist = true;
-												}
+									isDocExist = false;
+									if (!covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+										// validate the document against the current list.
+										for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
+											if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
+													&& !documentDetails.getRecordType()
+															.equals(PennantConstants.RECORD_TYPE_CAN)) {
+												isDocExist = true;
+												break;
 											}
 										}
 										if (!isDocExist && covenantType.isAlwOtc()) {
