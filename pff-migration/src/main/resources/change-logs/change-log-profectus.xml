@@ -969,7 +969,7 @@
 		</addColumn>
 	</changeSet> -->
 	
-	<!-- <changeSet id="48" author="Vinay">
+	<changeSet id="48" author="Vinay">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
@@ -996,7 +996,7 @@
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
-	</changeSet>
+	</changeSet> 
 	
 	<changeSet id="49" author="Vinay">
 		<sql>
@@ -1205,12 +1205,54 @@
 			update extendedfielddetail set scriptlet = 'onChange>>default;'
 			where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'STOCK') and fieldname = 'UNITPRICE';
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="66" author="Vinay">
 		<sql>
 			update ExtendedFieldHeader set modulename='VAS' where modulename='Vas';
 			update ExtendedFieldHeader_Temp set modulename='VAS' where modulename='Vas';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="70" author="Vinay">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_GST_InvoiceReport','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_GST_InvoiceReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="71" author="Vinay">
+		<sql>
+		delete from extendedfielddetail where moduleid in (Select moduleid from extendedfieldheader where modulename='COLLATERAL' and submodulename='LSDFLDG') and fieldname='loancoverage';
+		delete from extendedfielddetail_temp where moduleid in (Select moduleid from extendedfieldheader where modulename='COLLATERAL' and submodulename='LSDFLDG') and fieldname='loancoverage';
+		
+		Alter table COLLATERAL_LSDFLDG_ED drop column loancoverage;
+		Alter table COLLATERAL_LSDFLDG_ED_TEMP drop column loancoverage;
+		Alter table collateral_LSDFLDG_ed_tv drop column loancoverage;
+		Alter table verification_LSDFLDG_tv drop column loancoverage;
+		Alter table verification_LSDFLDG_tv_temp drop column loancoverage;
+		Alter table plfaudit.adtcollateral_LSDFLDG_ed drop column loancoverage;
+		Alter table plfaudit.adtverification_LSDFLDG_tv drop column loancoverage;
+		
+		update extendedfielddetail set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var v = zk.Widget.$(jq("$ad_TVAL_cdb")[0]); var w = zk.Widget.$(jq("$ad_WEIGHTAGE")[0]); var r = v.getValue().$toNumber() * (w.getValue().$toNumber() / 100); zAu.send(new zk.Event(t, "onChange", r), 10);'
+		where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'LSDFLDG') and fieldname = 'TVAL';
+		
+		update extendedfielddetail
+		set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var v = zk.Widget.$(jq("$ad_TVAL_cdb")[0]); var w = zk.Widget.$(jq("$ad_WEIGHTAGE")[0]); var r = v.getValue().$toNumber() * (w.getValue().$toNumber() / 100); zAu.send(new zk.Event(t, "onChange", r), 10);'
+		where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'LSDFLDG') and fieldname = 'WEIGHTAGE';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="72" author="Vinay">
+		<sql>
+			update fincreditrevcategory set Changedsply='0';
 		</sql>
 	</changeSet>
 </databaseChangeLog>
