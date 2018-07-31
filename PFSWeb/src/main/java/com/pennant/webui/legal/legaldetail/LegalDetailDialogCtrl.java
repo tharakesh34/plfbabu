@@ -980,7 +980,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 						|| "LEGAL_APPROVAL_BRANCH_MANAGER".equals(getRole())
 						|| "LEGAL_APPROVAL_AREA_MANAGER".equals(getRole())
 						|| "LEGAL_APPROVAL_REGIONAL_MANAGER".equals(getRole())
-						|| "LEGAL_APPROVAL_HEAD".equals(getRole())) {
+						|| "LEGAL_APPROVAL_HEAD".equals(getRole())
+						|| "LEGAL_APPROVAL_MAKER".equals(getRole())) {
 					if (PennantConstants.List_Select.equals(document.getDocumentTypeApprove())
 							|| Labels.getLabel("Combo.Select").equals(document.getDocumentTypeApprove())) {
 						this.documentDetailTab.setSelected(true);
