@@ -116,4 +116,9 @@
 			<column name="DepositBranch" type="varchar(8)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="11" author="Kesav">
+		<comment>TransactionAmount column removing from DepositDetails</comment>
+		<dropColumn tableName="AdtDepositDetails" columnName="TransactionAmount"/>
+	</changeSet>
 	</databaseChangeLog>
