@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id = "1" author = "Siva">
+	<changeSet id = "1" author = "Siva">
 		<comment> Profit Fraction setting based on Parameter </comment>
 		<sql>
 			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
@@ -3082,7 +3082,7 @@
 			Delete from SMTPARAMETERS where SysParmCode = 'GL_CM_GLHEAD_B2C';
 			Insert into SMTPARAMETERS  values ('GL_CM_GLHEAD_B2C','Bank To Cash','String',0,(Select AccountSetId from RMTAccountingSet where EVentCode = 'B2C'),10,0,null,null,'Bank To Cash Id',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);		
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="51" author="Vinay">
 		<sql>
