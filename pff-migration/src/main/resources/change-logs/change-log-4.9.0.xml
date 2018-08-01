@@ -4251,5 +4251,67 @@
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
+	
+	<changeSet id="61" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where CODE = '65035';
+			Insert into ERRORDETAILS values ('65035','EN','E','Available Amount should be greater than or equals to Deposit Amount.','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);		
+		</sql>
+	</changeSet>
+	
+	<changeSet id="62" author="Kesav">
+		<comment>BranchCode and BranchDesc columns added in DepositMovements</comment>
+		<createView viewName="DepositMovements_AView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+                        T4.BranchCode, T4.BranchDesc
+			From 		DepositMovements T1
+			Left Join   PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+            Inner Join  DepositDetails T3 ON T3.DepositId = T1.DepositId
+            Inner Join  RMTBranches T4 ON T4.BranchCode = T3.BranchCode		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="63" author="Kesav">
+		<comment>BranchCode and BranchDesc columns added in DepositMovements</comment>
+		<createView viewName="DepositMovements_TView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+                        T4.BranchCode, T4.BranchDesc
+			From 		DepositMovements_Temp T1
+			Left Join   PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+            Inner Join  DepositDetails T3 ON T3.DepositId = T1.DepositId
+            Inner Join  RMTBranches T4 ON T4.BranchCode = T3.BranchCode
+		</createView>
+	</changeSet>
+	
+	<changeSet id="64" author="Kesav">
+		<comment>BranchCode and BranchDesc columns added in DepositMovements</comment>
+		<createView viewName="DepositMovements_View" replaceIfExists="true">
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+                        T4.BranchCode, T4.BranchDesc
+			From 		DepositMovements_Temp T1
+			Left Join   PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+            Inner Join  DepositDetails T3 ON T3.DepositId = T1.DepositId
+            Inner Join  RMTBranches T4 ON T4.BranchCode = T3.BranchCode
+			
+			Union All
+			
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+                        T4.BranchCode, T4.BranchDesc
+			From 		DepositMovements T1
+			Left Join   PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+            Inner Join  DepositDetails T3 ON T3.DepositId = T1.DepositId
+            Inner Join  RMTBranches T4 ON T4.BranchCode = T3.BranchCode
+			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositDetails_Temp WHERE DepositDetails_Temp.DepositId = T1.DepositId))		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
 	
