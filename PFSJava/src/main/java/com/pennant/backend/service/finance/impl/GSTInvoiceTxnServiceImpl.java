@@ -248,7 +248,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			// Invoice Transaction details preparation for Fee Details if any exists
 			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) {	//Fees
 				for (FinFeeDetail feeDetail : finFeeDetailsList) {
-					if (feeDetail.isOriginationFee() || !feeDetail.isTaxApplicable()) {
+					if (feeDetail.isOriginationFee() || !feeDetail.isTaxApplicable() || BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) {
 						continue;
 					}
 					FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
@@ -284,7 +284,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				for (ManualAdviseMovements movement: movements) {
 					if (movement != null) {
 						GSTInvoiceTxnDetails advTran = new GSTInvoiceTxnDetails();
-						if (StringUtils.isBlank(movement.getFeeTypeCode())) {
+						if (StringUtils.isBlank(movement.getFeeTypeCode()) || BigDecimal.ZERO.compareTo(movement.getMovementAmount()) == 0) {
 							continue;
 						}
 						advTran.setFeeCode(movement.getFeeTypeCode());
