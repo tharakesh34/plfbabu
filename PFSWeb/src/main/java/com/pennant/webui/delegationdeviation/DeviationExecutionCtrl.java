@@ -173,6 +173,10 @@ public class DeviationExecutionCtrl {
 		CollateralSetup collateral;
 
 		for (CollateralAssignment collateralAssignment : aFinanceDetail.getCollateralAssignmentList()) {
+			if (PennantConstants.RECORD_TYPE_CAN.equals(collateralAssignment.getRecordType())) {
+				continue;
+			}
+			
 			collateral = getCollateralSetupService().getCollateralSetupByRef(collateralAssignment.getCollateralRef(),
 					"", false);
 
