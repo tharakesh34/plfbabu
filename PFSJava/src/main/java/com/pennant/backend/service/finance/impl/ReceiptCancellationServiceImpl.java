@@ -91,6 +91,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.DepositCheques;
+import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -576,7 +577,28 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60210", null),usrLanguage));
 			}
 		}
+		
+		if (!PennantConstants.method_doReject.equals(method) && RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
+			DepositMovements movement = getDepositDetailsDAO().getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+			if (movement != null) {
+				// Find Amount of Deposited Request
+				BigDecimal reqAmount = BigDecimal.ZERO;
+				for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+					if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+						reqAmount = reqAmount.add(rcptDetail.getAmount());
+					}
+				}
+				//getDepositDetailsById
+				DepositDetails depositDetails = getDepositDetailsDAO().getDepositDetailsById(movement.getDepositId(), "");
+
+				//if deposit Details amount is less than Requested amount throw an error
+				if (depositDetails != null && reqAmount.compareTo(depositDetails.getActualAmount()) > 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65036", null),usrLanguage));
+				}
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !receiptHeader.isWorkflow()) {
@@ -1230,22 +1252,36 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 			
 			// Accounting Execution Process for Deposit Reversal for CASH
-			if(StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,receiptHeader.getReceiptMode())){
+			if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
 				DepositMovements movement = getDepositDetailsDAO().getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
-				if(movement != null){
-					this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_BANKTOCASH,
+				if (movement != null) {
+					// Find Amount of Deposited Request
+					BigDecimal reqAmount = BigDecimal.ZERO;
+					for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+						if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+							reqAmount = reqAmount.add(rcptDetail.getAmount());
+						}
+					}
+
+					//need to check accounting should be reversal or not for Bank To Cash
+					/*AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_BANKTOCASH,
 							movement.getBranchCode(), movement.getBranchCode(), movement.getReservedAmount(),
-							movement.getPartnerBankId(), movement.getMovementId(), null);
+							movement.getPartnerBankId(), movement.getMovementId(), null);*/
 					
-					// DECRESE AVAILABLE ON HEADER TODO
-					// Movement updation by ReceiptID to "R" TODO
+					if(reqAmount.compareTo(BigDecimal.ZERO) > 0){
+						// DECRESE Available amount in Deposit Details
+						getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
+
+						// Movement update by Transaction Type to Reversal
+						getDepositDetailsDAO().reverseMovementTranType(movement.getDepositId());
+					}
 				}
 			}
 			
 			// Accounting Execution Process for Deposit Reversal for Cheque / DD
-			if(StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) ||
-					StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())){
+			if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptHeader.getReceiptMode())
+					|| RepayConstants.RECEIPTMODE_DD.equals(receiptHeader.getReceiptMode())) {
 				
 				// Verify Cheque or DD Details exists in Deposited Cheques 
 				DepositCheques depositCheque = getDepositChequesDAO().getDepositChequeByReceiptID(receiptHeader.getReceiptID());
@@ -1259,13 +1295,29 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						
 						// Make Deposit Cheque to Reversal Status
 						if(aeEvent.isPostingSucess()){
-							getDepositChequesDAO().reverseChequeStatus(movement.getMovementId(), 
-									receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
+							getDepositChequesDAO().reverseChequeStatus(movement.getMovementId(), receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
 						}
 					}
 				}else{
-					// Available Decrease TODO
-					// Movement updation by ReceiptID to "R" TODO
+					// Available Decrease 
+					DepositMovements movement = getDepositDetailsDAO().getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+					if (movement != null) {
+						
+						// Find Amount of Deposited Request
+						BigDecimal reqAmount = BigDecimal.ZERO;
+						for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+							if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rcptDetail.getPaymentType())
+									|| RepayConstants.RECEIPTMODE_DD.equals(rcptDetail.getPaymentType())) { // Cheque/DD
+								reqAmount = reqAmount.add(rcptDetail.getAmount());
+							}
+						}
+						
+						// DECRESE Available amount in Deposit Details
+						getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
+						
+						// Movement update by Transaction Type to Reversal
+						getDepositDetailsDAO().reverseMovementTranType(movement.getDepositId());
+					}
 				}
 			}
 		}

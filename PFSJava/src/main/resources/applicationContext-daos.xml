@@ -5587,6 +5587,7 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="cashManagementAccounting" ref="cashManagementAccounting" />
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
+		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
 		
 		<!-- GST Invoice Changes -->
 		<property name="financeDetailService" ref="financeDetailService" />

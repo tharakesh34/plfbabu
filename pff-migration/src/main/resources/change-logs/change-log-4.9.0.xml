@@ -4313,5 +4313,15 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="65" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where CODE = '65036';
+			Delete from ErrorDetails where CODE = '65037';
+			
+			Insert into ERRORDETAILS values ('65036','EN','E','Receipt Cancellation Cannot be Processed, Insufficient funds in Deposit Process.','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);		
+			Insert into ERRORDETAILS values ('65037','EN','E','Receipt Cancellation is in progress to this branch.','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);		
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	

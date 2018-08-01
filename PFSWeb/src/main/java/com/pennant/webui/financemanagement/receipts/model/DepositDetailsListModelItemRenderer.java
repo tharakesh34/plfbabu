@@ -44,7 +44,6 @@
 package com.pennant.webui.financemanagement.receipts.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
@@ -80,8 +79,7 @@ public class DepositDetailsListModelItemRenderer implements ListitemRenderer<Dep
 		lc = new Listcell(depositDetails.getBranchCode() + " - " + depositDetails.getBranchDesc());
 		lc.setParent(item);
 		//Available Amount
-		BigDecimal actualAmount = depositDetails.getActualAmount().subtract(depositDetails.getTransactionAmount());
-		lc = new Listcell(PennantAppUtil.amountFormate(actualAmount, PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(PennantAppUtil.amountFormate(depositDetails.getActualAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		//Record Status

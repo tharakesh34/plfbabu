@@ -568,6 +568,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		this.branchCode.setValue(aDepositDetails.getBranchCode(), aDepositDetails.getBranchDesc());
 
 		DepositMovements depositMovements = aDepositDetails.getDepositMovements();
+		BigDecimal availableAmount = aDepositDetails.getActualAmount();
+		this.availableAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 
 		if (depositMovements == null) {
 			this.transactionDate.setValue(DateUtility.getAppDate());
@@ -577,16 +579,12 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			depositMovements.setVersion(1);
 			depositMovements.setNewRecord(true);
 			aDepositDetails.setDepositMovements(depositMovements);
-			BigDecimal availableAmount = aDepositDetails.getActualAmount().subtract(aDepositDetails.getTransactionAmount());
-			this.availableAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 			if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(aDepositDetails.getDepositType())) {
 				this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 			} else {
 				this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
 			}
 		} else {
-			BigDecimal availableAmount = aDepositDetails.getActualAmount().subtract(aDepositDetails.getTransactionAmount());
-			this.availableAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 			this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(aDepositDetails.getReservedAmount(), PennantConstants.defaultCCYDecPos));
 			this.partnerBankId.setValue(String.valueOf(depositMovements.getPartnerBankId()), depositMovements.getPartnerBankName());
 			this.transactionDate.setValue(depositMovements.getTransactionDate());
@@ -783,13 +781,17 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			double reservedAmount = this.reservedAmount.getValidateValue().doubleValue();
 			double availableAmount = this.availableAmount.getValidateValue().doubleValue();
 			
-			if (reservedAmount != 0 && availableAmount != 0 && availableAmount < reservedAmount) {
-				throw new WrongValueException(this.reservedAmount,
-						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[]{Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
-								Labels.getLabel("label_DepositDetailsDialog_AvailableAmount.value")}));
-			} else if (reservedAmount == 0) {
-				throw new WrongValueException(this.reservedAmount, Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value") + " must be greater than 0.");
+			String recordStatus = this.userAction.getSelectedItem().getLabel();
+			if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus) && !"Resubmit".equalsIgnoreCase(recordStatus)) {
+				if (reservedAmount != 0 && availableAmount != 0 && availableAmount < reservedAmount) {
+					throw new WrongValueException(this.reservedAmount,
+							Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[]{Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
+									Labels.getLabel("label_DepositDetailsDialog_AvailableAmount.value")}));
+				} else if (reservedAmount == 0) {
+					throw new WrongValueException(this.reservedAmount, Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value") + " must be greater than 0.");
+				}
 			}
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

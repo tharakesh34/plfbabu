@@ -23,7 +23,6 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 	private String branchCode;
 	private String branchDesc;
 	private BigDecimal actualAmount = BigDecimal.ZERO;
-	private BigDecimal transactionAmount = BigDecimal.ZERO;
 	private BigDecimal reservedAmount = BigDecimal.ZERO;
 	private boolean newRecord = false;
 	private DepositDetails befImage;
@@ -135,14 +134,6 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setActualAmount(BigDecimal actualAmount) {
 		this.actualAmount = actualAmount;
-	}
-
-	public BigDecimal getTransactionAmount() {
-		return transactionAmount;
-	}
-
-	public void setTransactionAmount(BigDecimal transactionAmount) {
-		this.transactionAmount = transactionAmount;
 	}
 
 	public List<DepositMovements> getDepositMovementsList() {

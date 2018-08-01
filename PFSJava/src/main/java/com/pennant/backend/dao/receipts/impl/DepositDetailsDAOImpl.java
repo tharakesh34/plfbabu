@@ -55,6 +55,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
@@ -94,7 +95,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		depositDetails.setDepositId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select DepositId, DepositType, BranchCode, ActualAmount, TransactionAmount, ReservedAmount,");
+		selectSql.append(" Select DepositId, DepositType, BranchCode, ActualAmount, ReservedAmount,");
 		if (type.contains("View")) {
 			selectSql.append(" BranchDesc,");
 		}
@@ -128,7 +129,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		depositDetails.setBranchCode(branchCode);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select DepositId, DepositType, BranchCode, ActualAmount, TransactionAmount, ReservedAmount,");
+		selectSql.append(" Select DepositId, DepositType, BranchCode, ActualAmount, ReservedAmount,");
 		if (type.contains("View")) {
 			selectSql.append(" BranchDesc,");
 		}
@@ -196,9 +197,9 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert into DepositDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DepositId, DepositType, BranchCode, ActualAmount, TransactionAmount, ReservedAmount,");
+		sql.append(" (DepositId, DepositType, BranchCode, ActualAmount, ReservedAmount,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values (:DepositId, :DepositType, :BranchCode, :ActualAmount, :TransactionAmount, :ReservedAmount,");
+		sql.append(" values (:DepositId, :DepositType, :BranchCode, :ActualAmount, :ReservedAmount,");
 		sql.append("  :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Get the identity sequence number.
@@ -230,9 +231,9 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		
 		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");
 		if ("_Temp".equalsIgnoreCase(tableType.getSuffix())) {
-			sql.append(" ActualAmount = :ActualAmount, TransactionAmount = :TransactionAmount, ReservedAmount = :ReservedAmount,");
+			sql.append(" ActualAmount = :ActualAmount, ReservedAmount = :ReservedAmount,");
 		} else {
-			sql.append(" TransactionAmount = TransactionAmount + :ReservedAmount, ReservedAmount = 0,");
+			sql.append(" ActualAmount = ActualAmount - :ReservedAmount, ReservedAmount = 0,");
 		}
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -253,26 +254,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 	}
 	
 	@Override
-	public void updateTransactionAmount(long depositId, BigDecimal transactionAmount, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("TransactionAmount", transactionAmount);
-		source.addValue("DepositId", depositId);
-
-		StringBuilder updateSql = new StringBuilder("Update DepositDetails");
-		updateSql.append(type);
-		updateSql.append(" Set TransactionAmount = TransactionAmount + :TransactionAmount");
-		updateSql.append(" Where DepositId = :DepositId");
-		logger.trace(Literal.SQL + updateSql.toString());
-
-		this.jdbcTemplate.update(updateSql.toString(), source);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void updateActualAmount(long depositId, BigDecimal actualAmount, String type) {
+	public void updateActualAmount(long depositId, BigDecimal actualAmount, boolean increese, String type) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -281,7 +263,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		StringBuilder updateSql = new StringBuilder("Update DepositDetails");
 		updateSql.append(type);
-		updateSql.append(" Set ActualAmount = ActualAmount + :ActualAmount");
+		if (increese) {
+			updateSql.append(" Set ActualAmount = ActualAmount + :ActualAmount");
+		} else {
+			updateSql.append(" Set ActualAmount = ActualAmount - :ActualAmount");
+		}
 		updateSql.append(" Where DepositId = :DepositId");
 		logger.trace(Literal.SQL + updateSql.toString());
 
@@ -602,5 +588,23 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+	
+	@Override
+	public void reverseMovementTranType(long movementId) {
+		logger.debug(Literal.ENTERING);
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("TransactionType", CashManagementConstants.DEPOSIT_MOVEMENT_REVERSE);
+		source.addValue("MovementId", movementId);
+
+		StringBuilder updateSql = new StringBuilder("Update DepositMovements");
+		updateSql.append(" Set TransactionType = :TransactionType");
+		updateSql.append(" Where MovementId = :MovementId");
+		logger.trace(Literal.SQL + updateSql.toString());
+
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		
+		logger.debug(Literal.LEAVING);
 	}
 }

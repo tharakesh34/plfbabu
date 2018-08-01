@@ -845,7 +845,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
@@ -1238,7 +1238,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		// Get the model object.
@@ -1254,13 +1254,16 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-
-		/*
-		 * if (StringUtils.trimToEmpty(depositDetails.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-		 * boolean exist = this.customerDAO.isCasteExist(depositDetails.getCasteId(), "_View"); if (exist) {
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006",
-		 * parameters, null), usrLanguage)); } }
-		 */
+		
+		//Validation for Available amount is less than Reserved Amount
+		if (!PennantConstants.method_doReject.equals(method) && depositDetails.getActualAmount().compareTo(depositDetails.getReservedAmount()) < 0) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65035", parameters, null));
+		}
+		
+		//Validation for Receipt Cancellation process if any available
+		if (!PennantConstants.method_doReject.equals(method) && getFinReceiptHeaderDAO().isCancelProcess(depositDetails.getBranchCode(), "_Temp")) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65037", parameters, null));
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

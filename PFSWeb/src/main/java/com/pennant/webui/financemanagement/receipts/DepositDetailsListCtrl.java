@@ -45,7 +45,6 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -159,7 +158,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		registerField("branchDesc");
 		registerField("DepositId");
 		registerField("ActualAmount");
-		registerField("TransactionAmount");
 		registerField("ReservedAmount");
 		
 		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
@@ -244,9 +242,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 
 		if (depositDetails == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
-			return;
-		} else if (StringUtils.isBlank(depositDetails.getRecordType()) && depositDetails.getTransactionAmount().compareTo(depositDetails.getActualAmount()) >= 0 ) {
-			MessageUtil.showMessage(Labels.getLabel("info.DepositDetails_NoLimit"));
 			return;
 		} else {
 			StringBuffer whereCond= new StringBuffer();

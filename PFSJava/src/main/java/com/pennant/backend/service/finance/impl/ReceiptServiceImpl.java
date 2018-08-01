@@ -574,7 +574,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		//Save Deposit Details
-		saveDepositDetails(receiptHeader, null);
+		saveDepositDetails(receiptHeader, null, tableType.getSuffix());
 
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
@@ -1159,7 +1159,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		//Save Deposit Details
-		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove);
+		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove, "");
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
@@ -1367,7 +1367,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Method for Saving Deposit Details for Both Receipt Modes of CASH & Cheque/DD
 	 * @param receiptHeader
 	 */
-	private void saveDepositDetails(FinReceiptHeader receiptHeader, String method) {
+	private void saveDepositDetails(FinReceiptHeader receiptHeader, String method, String tableType) {
 		logger.debug("Entering");
 		
 		// If Process is not required for Client
@@ -1428,7 +1428,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (depositDetail == null) {
 				depositDetail = new DepositDetails();
 				depositDetail.setActualAmount(depositReqAmount);
-				depositDetail.setTransactionAmount(BigDecimal.ZERO);
 				depositDetail.setReservedAmount(BigDecimal.ZERO);
 				depositDetail.setDepositType(reqReceiptMode);
 				depositDetail.setBranchCode(receiptHeader.getUserDetails().getBranchCode());
@@ -1440,7 +1439,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				depositDetail.setNewRecord(true);
 				depositDetail.setDepositId(getDepositDetailsDAO().save(depositDetail, TableType.MAIN_TAB));
 			} else {
-				getDepositDetailsDAO().updateActualAmount(depositDetail.getDepositId(), depositReqAmount, "");
+				getDepositDetailsDAO().updateActualAmount(depositDetail.getDepositId(), depositReqAmount, true, "");
 			}
 
 			// Deposit Details movement creation for the increased credit of Available Amount
@@ -1463,6 +1462,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			getDepositDetailsDAO().saveDepositMovements(depositMovements, "");
 		}
+		
+		// Update Deposit Branch
+		getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(), receiptHeader.getUserDetails().getBranchCode(), tableType);
 
 		logger.debug("Leaving");
 	}

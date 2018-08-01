@@ -14,8 +14,7 @@ public interface DepositDetailsDAO {
 	long save(DepositDetails depositDetails,TableType type);
 	boolean isDuplicateKey(long depositId, TableType tableType);
 	void update(DepositDetails depositDetails,TableType type);
-	void updateTransactionAmount(long depositId, BigDecimal transactionAmount, String type);
-	void updateActualAmount(long depositId, BigDecimal actualAmount, String type);
+	void updateActualAmount(long depositId, BigDecimal actualAmount, boolean increese, String type);
 	void delete(DepositDetails depositDetails,TableType type);
 	
 	//Deposit Movements
@@ -28,4 +27,5 @@ public interface DepositDetailsDAO {
 	void updateLinkedTranIdByMovementId(long movementId, long likedTranId, String type);
 	boolean isDuplicateKey(String depositSlipNumber, TableType tableType);
 	DepositMovements getDepositMovementsByReceiptId(long receiptId, String type);
+	void reverseMovementTranType(long movementId);
 }

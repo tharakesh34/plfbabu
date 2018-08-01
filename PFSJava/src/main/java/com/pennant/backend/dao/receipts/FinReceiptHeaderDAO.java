@@ -13,4 +13,6 @@ public interface FinReceiptHeaderDAO {
 	int geFeeReceiptCount(String reference, String receiptPurpose,long receiptID);
 	long generatedReceiptID(FinReceiptHeader receiptHeader);
 	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type);	//Cash Management Change
+	void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type); //Cash Management Change
+	boolean isCancelProcess(String depositBranch, String type); //Cash Management Change
 }

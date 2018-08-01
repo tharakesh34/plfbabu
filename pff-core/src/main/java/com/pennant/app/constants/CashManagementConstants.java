@@ -51,6 +51,7 @@ public class CashManagementConstants {
 	//Deposit Movement Transaction Types
 	public static final String	DEPOSIT_MOVEMENT_CREDIT					= "C";
 	public static final String	DEPOSIT_MOVEMENT_DEBIT					= "D";
+	public static final String	DEPOSIT_MOVEMENT_REVERSE				= "R";
 
 	//Cheque/DD process Accounting Status
 	public static final String	DEPOSIT_CHEQUE_STATUS_APPROVE			= "A";

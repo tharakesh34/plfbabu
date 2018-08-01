@@ -56,6 +56,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -227,12 +228,15 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Select T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount, T1.Remarks,");
 		sql.append(" T3.FinReference, T4.CustShrtName, T5.PartnerBankCode, T5.PartnerBankName");
-		sql.append(" From FinReceiptHeader_Temp T1");
-		sql.append(" Inner Join FinReceiptDetail_Temp T2 On T2.ReceiptId = T1.ReceiptId");
+		sql.append(" From FinReceiptHeader_Temp T1 Inner Join ");
+		sql.append(" (Select T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount");
+		sql.append(" From   FinReceiptDetail_Temp T Union All");
+		sql.append(" Select T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount");
+		sql.append(" From   FinReceiptDetail T WHERE  NOT  EXISTS (SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId");
 		sql.append(" Inner Join FinanceMain T3 ON T1.Reference = T3.finReference");
 		sql.append(" Inner Join Customers T4 ON T3.CustId = T4.CustId");
 		sql.append(" Inner Join PartnerBanks T5 ON T5.PartnerBankId = T2.FundingAc");
-		sql.append(" Where T1.ReceiptMode In ('CHEQUE', 'DD') And T1.DepositProcess = 1 And T3.FinBranch = :BranchCode"); //TODO Branch Code check once
+		sql.append(" where T1.ReceiptMode in ('CHEQUE', 'DD') and T1.DepositProcess = 1 And T1.DepositBranch = :BranchCode");
 		sql.append(" And T1.ReceiptId Not In (Select ReceiptId from DepositCheques_Temp)");
 
 		// Execute the SQL, binding the arguments.
@@ -322,7 +326,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		DepositCheques depositCheques = new DepositCheques();
 		depositCheques.setReceiptId(receiptID);
 		depositCheques.setMovementId(movementId);
-		depositCheques.setStatus("R");
+		depositCheques.setStatus(CashManagementConstants.DEPOSIT_CHEQUE_STATUS_REVERSE);
 		depositCheques.setRevLinkedTranId(linkedTranId);
 
 		// Prepare the SQL.
