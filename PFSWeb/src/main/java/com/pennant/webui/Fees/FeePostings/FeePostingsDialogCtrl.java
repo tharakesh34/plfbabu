@@ -652,7 +652,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postingDivision.setModuleName("DivisionDetail");
 		this.postingDivision.setValueColumn("DivisionCode");
 		this.postingDivision.setDescColumn("DivisionCodeDesc");
-		this.postingDivision.setValidateColumns(new String[] { "DivisionCodeDesc" });
+		this.postingDivision.setValidateColumns(new String[] { "DivisionCode" });
 		
 		this.postingAmount.setProperties(true, aCurrency.getCcyEditField());
 
