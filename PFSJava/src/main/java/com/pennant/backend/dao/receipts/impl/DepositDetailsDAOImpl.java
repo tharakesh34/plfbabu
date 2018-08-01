@@ -426,11 +426,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update DepositMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set MovementId = :MovementId, TransactionType = :TransactionType, ReservedAmount = :ReservedAmount, PartnerBankId = :PartnerBankId,");
+		sql.append(" set TransactionType = :TransactionType, ReservedAmount = :ReservedAmount, PartnerBankId = :PartnerBankId,");
 		sql.append(" DepositSlipNumber = DepositSlipNumber, TransactionDate = :TransactionDate, LinkedTranId = :LinkedTranId,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where DepositId = :DepositId");
+		sql.append(" where MovementId = :MovementId And DepositId = :DepositId");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
 		// Execute the SQL, binding the arguments.
