@@ -4322,6 +4322,11 @@
 			Insert into ERRORDETAILS values ('65037','EN','E','Receipt Cancellation is in progress to this branch.','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);		
 		</sql>
 	</changeSet>
-	
+	<changeSet id="66" author="Jayant" dbms="postgresql">
+		<dropPrimaryKey tableName="seqjvpostingentry" constraintName="seqjvpostingentry_pkey"/>
+	</changeSet>
+	<changeSet id="66" author="Jayant" dbms="oracle">
+		<dropPrimaryKey tableName="seqjvpostingentry"/>
+	</changeSet>
 </databaseChangeLog>
 	
