@@ -26,7 +26,7 @@
 		</sql>
 	</changeSet>
 	
-<!-- 	<changeSet id="1" author="Vinay">
+	<changeSet id="1" author="Vinay">
 		<dropNotNullConstraint tableName="AdtFinCreditReviewDetails" columnName="Auditors"/>
 		<dropNotNullConstraint tableName="AdtFinCreditReviewDetails" columnName="Location"/>
 	</changeSet>
@@ -52,12 +52,13 @@
 			Alter table adtcollateral_RECEIV_ed drop column loancoverage;
 			Alter table adtverification_RECEIV_tv drop column loancoverage;
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="11" author="Vinay">
 		<sql>
 			update AdtExtendedFieldHeader set modulename='VAS' where modulename='Vas';
 		</sql>
 	</changeSet>
+	
 </databaseChangeLog>
 	
