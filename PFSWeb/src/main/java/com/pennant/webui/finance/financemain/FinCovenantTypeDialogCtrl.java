@@ -1022,6 +1022,19 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			covenantsList = getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList();
 		}
 		
+		// Bug Fix Related to when covennant deleted i.e recently added with out loan saving
+		// with this we can stop adding covennant to finCovenantTypesDetails list
+		if (afinCovenantTypes.getBefImage() != null) {
+			if (afinCovenantTypes.getBefImage().getRecordType() != null
+					&& afinCovenantTypes.getBefImage().getRecordStatus() != null) {
+				if (StringUtils.equals(afinCovenantTypes.getBefImage().getRecordType(),PennantConstants.RECORD_TYPE_NEW)
+						&& StringUtils.isBlank(afinCovenantTypes.getBefImage().getRecordStatus())) {
+					afinCovenantTypes.setRecordType(PennantConstants.RCD_ADD);
+				}
+			} else {
+				afinCovenantTypes.setRecordType(PennantConstants.RCD_ADD);
+			}
+		}
 		if (covenantsList != null && covenantsList.size() > 0) {
 			for (int i = 0; i < covenantsList.size(); i++) {
 				FinCovenantType loanDetail = covenantsList.get(i);
