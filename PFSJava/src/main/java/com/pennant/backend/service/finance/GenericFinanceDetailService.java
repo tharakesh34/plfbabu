@@ -906,6 +906,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 					approveRec = true;
 				}
+				if (DocumentCategories.FINANCE.getKey().equals(documentDetails.getCategoryCode())) {
+					approveRec = true;
+				}
+				
 
 				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
