@@ -743,13 +743,11 @@ public class AgreementDefinitionDialogCtrl extends
 
 		if (this.autoGeneration.isChecked()){
 			this.auto_check.setVisible(true);
-			this.docType.setValue("");
 			this.autoDownload.setVisible(true);
 
 		} else {
 			if(!this.autoGeneration.isChecked())
 			this.auto_check.setVisible(false);
-			this.docType.setValue("");
 			this.autoDownload.setVisible(false);
 			this.auto_check.setVisible(false);
 			}
