@@ -118,7 +118,12 @@ public class AgreementDefinitionDialogCtrl extends
 	protected Combobox	moduleName;
 	protected Space		space_ModuleName;
 	protected Row		agrRule_row;
+	protected Row		auto_check;
 	protected Row		allowMultiple_row;
+	protected ExtendedCombobox docType;
+	protected Checkbox autoGeneration;
+	protected Checkbox autoDownload;
+	protected ExtendedCombobox doctype_Check;
 	
 	// protected Button brwAgreementDoc; // autoWired
 	// protected Div signCopyPdf; // autoWired
@@ -225,10 +230,18 @@ public class AgreementDefinitionDialogCtrl extends
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.aggCode.setMaxlength(50);
-		this.aggName.setMaxlength(100);
 		this.aggDesc.setMaxlength(100);
 		this.aggReportName.setMaxlength(500);
 
+		
+		this.docType.setMaxlength(8);
+		//this.docType.setMandatoryStyle(false);
+		this.docType.setModuleName("DocumentType");
+		this.docType.setValueColumn("DocTypeCode");
+		this.docType.setDescColumn("DocTypeDesc");
+		this.docType.setValidateColumns(new String[] {"DocTypeCode"});
+		
+		
 		this.agrRule.setMaxlength(8);
 		this.agrRule.setMandatoryStyle(false);
 		this.agrRule.setModuleName("Rule");
@@ -324,12 +337,48 @@ public class AgreementDefinitionDialogCtrl extends
 		if (this.allowMultiple.isChecked()) {
 			this.space_ModuleType.setSclass(PennantConstants.mandateSclass);
 			this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
+		
 		} else {
 			this.space_ModuleType.setSclass("");
 		}
 		logger.debug("Leaving");
 	}
+	
+	
+	
+	public void doCheckAutoGeneration() {
+		logger.debug("Entering");
+		if (this.autoGeneration.isChecked()) {
+			this.auto_check.setSclass(PennantConstants.mandateSclass);
+			this.auto_check.setVisible(true);
+		//	doAutoCheckValidation(agreementDefinition);
+		} else {
+			this.space_ModuleType.setSclass("");
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void doAutoCheckValidation(AgreementDefinition aAgreementDefinition){
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		
+	
+		
+	}
 
+	public void doCheckAllowDoctType() {
+		logger.debug("Entering");
+		
+		String autoGenCheckbox = autoGeneration.getValue().toString();
+		if(autoGenCheckbox.equals(true)){
+			this.auto_check.setSclass(PennantConstants.mandateSclass);
+			this.docType.setVisible(true);
+			this.autoDownload.setVisible(true);
+			this.auto_check.setVisible(true);
+		}else{
+			this.auto_check.setVisible(false);
+		}
+	}
+		
 	/**
 	 * when the "edit" button is clicked. <br>
 	 * 
@@ -431,6 +480,11 @@ public class AgreementDefinitionDialogCtrl extends
 			fillComboBox(this.moduleName, aAgreementDefinition.getModuleName(),
 					PennantStaticListUtil.getWorkFlowModules(), "");
 		}
+		
+		this.autoGeneration.setChecked(aAgreementDefinition.isAutoGeneration());
+		this.docType.setValue(agreementDefinition.getDocType());
+		this.docType.setDescription(agreementDefinition.getLovDescDocumentType());
+		this.autoDownload.setChecked(aAgreementDefinition.isAutoDownload());
 				
 		if (aAgreementDefinition.isNew()
 				|| (aAgreementDefinition.getRecordType() != null ? aAgreementDefinition
@@ -442,6 +496,8 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggImage = aAgreementDefinition.getAggImage();
 		doFillAggDetailsList(aAgreementDefinition);
 		doCheckAllowMuliple();
+		doCheckAutoGeneration();
+		
 		String modulename = this.moduleName.getSelectedItem().getValue().toString();
 		doModuleSelection(modulename);
 
@@ -485,6 +541,12 @@ public class AgreementDefinitionDialogCtrl extends
 		logger.debug("Leaving");
 	}
 
+	private void fillComboBox(ExtendedCombobox docType2, String docType3, ArrayList<ValueLabel> documentTypes,
+			String excludeFields) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -524,11 +586,7 @@ public class AgreementDefinitionDialogCtrl extends
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		/*
-		 * try {
-		 * aAgreementDefinition.setAggReportPath(this.aggReportPath.getValue());
-		 * }catch (WrongValueException we ) { wve.add(we); }
-		 */
+
 		try {
 			if ("#".equals(getComboboxValue(this.moduleName))) {
 				throw new WrongValueException(this.moduleName, Labels.getLabel("STATIC_INVALID",
@@ -567,7 +625,28 @@ public class AgreementDefinitionDialogCtrl extends
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			aAgreementDefinition.setAutoGeneration(this.autoGeneration.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		
+		try {
+			aAgreementDefinition.setAutoDownload(this.autoDownload.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+	
+		try {
+			aAgreementDefinition.setDocType(this.docType.getValue());
+			aAgreementDefinition.setLovDescDocumentType(this.docType.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+	
 		try {
 			aAgreementDefinition.setAllowMultiple(this.allowMultiple
 					.isChecked());
@@ -611,6 +690,7 @@ public class AgreementDefinitionDialogCtrl extends
 
 		logger.debug("Entering " + event.toString());
 		String modulename = this.moduleName.getSelectedItem().getValue().toString();
+		doAutoCheckSelection(autoGeneration);
 		doModuleSelection(modulename);
 		logger.debug("Leaving " + event.toString());
 
@@ -618,19 +698,61 @@ public class AgreementDefinitionDialogCtrl extends
 
 	private void doModuleSelection(String modulename) {
 
+		if ((PennantConstants.WORFLOW_MODULE_FINANCE.equals(modulename))) {
+			this.auto_check.setVisible(false);
+		} else {
+			this.auto_check.setVisible(true);
+			Filter[] filtersDoc = new Filter[1];
+			filtersDoc[0] = new Filter("categorycode", PennantConstants.WORFLOW_MODULE_FINANCE, Filter.OP_EQUAL);
+			this.docType.setFilters(filtersDoc);
+
+		}
+
 		if ((PennantConstants.WORFLOW_MODULE_FACILITY.equals(modulename))
 				|| (PennantConstants.WORFLOW_MODULE_COLLATERAL.equals(modulename))
 				|| (PennantConstants.WORFLOW_MODULE_VAS.equals(modulename))
 				|| (PennantConstants.WORFLOW_MODULE_COMMITMENT.equals(modulename))) {
 			this.agrRule_row.setVisible(false);
-			this.agrRule.setValue("");
 			this.allowMultiple_row.setVisible(false);
+			this.auto_check.setVisible(false);
+			this.docType.setValue("");
 
 		} else {
 			this.agrRule_row.setVisible(true);
-			this.agrRule.setValue("");
 			this.allowMultiple_row.setVisible(true);
+			this.auto_check.setVisible(true);
+			
 		}
+
+	}
+	
+	public void onCheck$autoGeneration(Event event) {
+		logger.debug("Entering" + event.toString());
+		
+		if (autoGeneration.isChecked()) {
+			this.autoDownload.setVisible(true);
+		} else {
+			this.autoDownload.setVisible(false);
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	
+	private void doAutoCheckSelection(Checkbox autogeneration) {
+
+		if (this.autoGeneration.isChecked()){
+			this.auto_check.setVisible(true);
+			this.docType.setValue("");
+			this.autoDownload.setVisible(true);
+
+		} else {
+			if(!this.autoGeneration.isChecked())
+			this.auto_check.setVisible(false);
+			this.docType.setValue("");
+			this.autoDownload.setVisible(false);
+			this.auto_check.setVisible(false);
+			}
 
 	}
 
@@ -760,6 +882,12 @@ public class AgreementDefinitionDialogCtrl extends
 					Labels.getLabel("label_AgreementDefinitionDialog_AggReportName.value"), null, true));
 		}
 
+		if(!this.docType.isReadonly()){
+			this.docType.setConstraint(new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_doc_Type.value"), null,autoGeneration.isChecked()));
+		}
+		
+	
+		
 		/*
 		 * if (!this.aggReportPath.isReadonly()){ this.aggReportPath.setConstraint(new SimpleConstraint(
 		 * PennantConstants.PATH_REGEX, Labels.getLabel( "MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new
@@ -779,6 +907,8 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggDesc.setConstraint("");
 		this.agrRule.setConstraint("");
 		this.aggReportName.setConstraint("");
+		
+		this.docType.setConstraint("");
 		// this.aggReportPath.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -809,6 +939,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggType.setErrorMessage("");
 		this.moduleType.setErrorMessage("");
 		this.moduleName.setErrorMessage("");
+		this.docType.setErrorMessage("");
 		// this.aggReportPath.setErrorMessage("");
 		logger.debug("Leaving");
 	}
@@ -895,6 +1026,8 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggCheck_SelectAll
 				.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		this.moduleName.setDisabled(isReadOnly("AgreementDefinitionDialog_moduleName"));
+		
+	
 		doDisable(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		if (this.allowMultiple.isChecked()) {
 			this.moduleType
@@ -964,6 +1097,11 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggDesc.setValue("");
 		this.aggReportName.setValue("");
 		this.agrRule.setValue("");
+		//added 3 new Fields
+		this.docType.setValue("");
+		this.autoGeneration.setValue("");
+		this.autoDownload.setValue("");
+		
 		this.moduleType.setValue("");
 		this.aggType.setValue("");
 		this.allowMultiple.setChecked(false);
@@ -1112,7 +1250,7 @@ public class AgreementDefinitionDialogCtrl extends
 			String operationRefs = getServiceOperations(taskId, aAgreementDefinition);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader, null);
+			processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
