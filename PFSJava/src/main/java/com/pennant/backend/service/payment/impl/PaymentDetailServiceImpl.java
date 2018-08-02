@@ -62,6 +62,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.PaymentInstruction;
@@ -581,16 +582,22 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			// Payable Amount make utilization
 			ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(
 					paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			
+			BigDecimal amount = paymentDetail.getAmount();
+			if(paymentDetail.getPaymentTaxDetail() != null && 
+					StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				amount = amount.subtract(paymentDetail.getPaymentTaxDetail().getTotalGST());
+			}
 			if (payableReserve == null) {
 				// Update Payable Amount in Reserve
-				getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+				getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), amount);
 
 				// Save Payable Reserve Log Amount
 				getManualAdviseDAO().savePayableReserveLog(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId(), paymentDetail.getAmount());
+						paymentDetail.getReferenceId(), amount);
 			} else {
-				if (paymentDetail.getAmount().compareTo(payableReserve.getReservedAmt()) != 0) {
-					BigDecimal diffInReserve = paymentDetail.getAmount().subtract(payableReserve.getReservedAmt());
+				if (amount.compareTo(payableReserve.getReservedAmt()) != 0) {
+					BigDecimal diffInReserve = amount.subtract(payableReserve.getReservedAmt());
 
 					// Update Reserve Amount in Manual Advise
 					getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), diffInReserve);
@@ -660,7 +667,26 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			getFinExcessAmountDAO().saveExcessMovement(movement);
 
 		} else {
-			getManualAdviseDAO().updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+			
+			ManualAdvise advise = new ManualAdvise();
+			advise.setAdviseID(paymentDetail.getReferenceId());
+			
+			BigDecimal amount = paymentDetail.getAmount();
+			if(paymentDetail.getPaymentTaxDetail() != null && 
+					StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				amount = amount.subtract(paymentDetail.getPaymentTaxDetail().getTotalGST());
+			}
+			
+			advise.setPaidAmount(amount);
+			advise.setReservedAmt(amount.negate());
+			if(paymentDetail.getPaymentTaxDetail() != null){
+				advise.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
+				advise.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
+				advise.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
+				advise.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
+			}
+			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
+			
 			// Delete Reserved Log against Advise and Receipt Seq ID
 			getManualAdviseDAO().deletePayableReserve(paymentDetail.getPaymentDetailId(),
 					paymentDetail.getReferenceId());
@@ -671,8 +697,16 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			movement.setReceiptID(paymentDetail.getPaymentDetailId());
 			movement.setReceiptSeqID(0);
 			movement.setMovementDate(DateUtility.getAppDate());
-			movement.setMovementAmount(paymentDetail.getAmount());
-			movement.setPaidAmount(paymentDetail.getAmount());
+			movement.setMovementAmount(amount);
+			movement.setPaidAmount(amount);
+			
+			// GST Details
+			if(paymentDetail.getPaymentTaxDetail() != null){
+				movement.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
+				movement.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
+				movement.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
+				movement.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
+			}
 			getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 		}
 		logger.debug("Leaving");
