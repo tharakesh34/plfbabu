@@ -5858,16 +5858,16 @@ private String custAccount ="";
 		private String loanDate="";
 		private String appType="";
 		private String outStandingAmt="";
-		private String bankDesc="";
+		private String finBranchName="";
 		
 		
 
-		public String getBankDesc() {
-			return bankDesc;
+		public String getFinBranchName() {
+			return finBranchName;
 		}
 
-		public void setBankDesc(String bankDesc) {
-			this.bankDesc = bankDesc;
+		public void setFinBranchName(String finBranchName) {
+			this.finBranchName = finBranchName;
 		}
 
 		public ExternalLiabilityDetail() {

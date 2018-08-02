@@ -674,7 +674,7 @@ public class AgreementGeneration implements Serializable {
 						}
 						externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
 						externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
-						externalLiabilityDetail.setBankDesc(extLiability.getLoanBankName());
+						externalLiabilityDetail.setFinBranchName(extLiability.getLoanBankName());
 						externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
 						externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
@@ -2507,7 +2507,7 @@ public class AgreementGeneration implements Serializable {
 			agreement.setFinTypeDesc(StringUtils.trimToEmpty(type.getFinTypeDesc()));
 			agreement.setFinDivision(StringUtils.trimToEmpty(type.getFinDivision()));
 			agreement.setInitiatedDate(DateUtility.formatToLongDate(main.getInitiateDate()));
-
+			
 			agreement.setNextInstDate(DateUtility.formatToLongDate(main.getNextRepayDate()));
 			agreement.setRepayAmount(PennantApplicationUtil.amountFormate(main.getFirstRepay(), formatter));
 			agreement.setProfitRate(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2));
@@ -2516,7 +2516,6 @@ public class AgreementGeneration implements Serializable {
 			agreement.setFinCcy(main.getFinCcy());
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
-			agreement.setFinBranchName(StringUtils.trimToEmpty(main.getLovDescFinBranchName()));
 			
 			if (StringUtils.isNotBlank(main.getFinBranch())) {
 				if (branchService != null) {
