@@ -1739,7 +1739,7 @@ public class PennantJavaUtil {
 				new Object[][] { { "DealerType", "0", "DMA" },{ "Active", "0", 1 } }, 350));
 		
 		ModuleUtil.register("Connector", new ModuleMapping("Connector", VehicleDealer.class, new String[] {
-				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF, new String[] { "DealerName", "DealerCity" },
+				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF, new String[] { "DealerName", "Code" },
 				new Object[][] { { "DealerType", "0", "CONN" },{ "Active", "0", 1 } }, 350));
 		
 		ModuleUtil.register("DSA", new ModuleMapping("DSA", VehicleDealer.class, new String[] {

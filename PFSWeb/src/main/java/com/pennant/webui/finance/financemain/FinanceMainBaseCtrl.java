@@ -1017,7 +1017,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible)) {
 			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 4);
 		}
-		this.connector.setProperties("Connector", "DealerName", "DealerCity", false, LengthConstants.LEN_MASTER_CODE);
+		this.connector.setProperties("Connector", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
+		this.connector.getTextbox().setMaxlength(50);
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finContractDate.setFormat(DateFormat.SHORT_DATE.getPattern());

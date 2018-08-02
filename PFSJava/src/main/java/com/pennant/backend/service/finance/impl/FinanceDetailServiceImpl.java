@@ -630,6 +630,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<Long> dealerIds = new ArrayList<Long>();
 		long dsaCode = 0;
 		long dmaCode = 0;
+		long connectorCode=0;
 		if (StringUtils.isNotBlank(financeMain.getDsaCode()) && StringUtils.isNumeric(financeMain.getDsaCode())) {
 			dsaCode = Long.valueOf(financeMain.getDsaCode());
 			dealerIds.add(dsaCode);
@@ -637,6 +638,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (StringUtils.isNotBlank(financeMain.getDmaCode()) && StringUtils.isNumeric(financeMain.getDmaCode())) {
 			dmaCode = Long.valueOf(financeMain.getDmaCode());
 			dealerIds.add(dmaCode);
+		}
+		if (financeMain.getConnector()>0) {
+			connectorCode=financeMain.getConnector();
+			dealerIds.add(financeMain.getConnector());
 		}
 		if (dealerIds.size() > 0) {
 			List<VehicleDealer> vehicleDealerList = vehicleDealerService.getVehicleDealerById(dealerIds);
@@ -648,6 +653,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					} else if (dealer.getDealerId() == dsaCode) {
 						financeMain.setDsaName(dealer.getDealerName());
 						financeMain.setDsaCodeDesc(dealer.getCode());
+					}else if(dealer.getDealerId() == connectorCode){
+						financeMain.setConnectorCode(dealer.getDealerName());
+						financeMain.setConnectorDesc(dealer.getCode());
 					}
 				}
 			}
