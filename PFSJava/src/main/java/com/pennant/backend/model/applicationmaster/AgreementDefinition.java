@@ -54,14 +54,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class AgreementDefinition extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 6547333014929558827L;
-	
-	private long aggId= Long.MIN_VALUE;
+
+	private long aggId = Long.MIN_VALUE;
 	private String aggCode;
 	private String aggName;
 	private String aggDesc;
 	private String aggReportName;
 	private String aggReportPath;
 	private String agrRule;
+	private String docType;
+	private boolean autoGeneration;
+	private boolean autoDownload;
+	private String lovDescDocumentType;
 	private String lovDescAgrRuleDesc;
 	private boolean aggIsActive;
 	private String aggtype;
@@ -109,6 +113,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public String getAggCode() {
 		return aggCode;
 	}
+
 	public void setAggCode(String aggCode) {
 		this.aggCode = aggCode;
 	}
@@ -116,6 +121,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public String getAggName() {
 		return aggName;
 	}
+
 	public void setAggName(String aggName) {
 		this.aggName = aggName;
 	}
@@ -123,13 +129,23 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public String getAggDesc() {
 		return aggDesc;
 	}
+
 	public void setAggDesc(String aggDesc) {
 		this.aggDesc = aggDesc;
+	}
+
+	public String getLovDescDocumentType() {
+		return lovDescDocumentType;
+	}
+
+	public void setLovDescDocumentType(String lovDescDocumentType) {
+		this.lovDescDocumentType = lovDescDocumentType;
 	}
 
 	public String getAggReportName() {
 		return aggReportName;
 	}
+
 	public void setAggReportName(String aggReportName) {
 		this.aggReportName = aggReportName;
 	}
@@ -137,13 +153,15 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public String getAggReportPath() {
 		return aggReportPath;
 	}
+
 	public void setAggReportPath(String aggReportPath) {
 		this.aggReportPath = aggReportPath;
 	}
-	
+
 	public String getAgrRule() {
 		return agrRule;
 	}
+
 	public void setAgrRule(String agrRule) {
 		this.agrRule = agrRule;
 	}
@@ -151,6 +169,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public String getLovDescAgrRuleDesc() {
 		return lovDescAgrRuleDesc;
 	}
+
 	public void setLovDescAgrRuleDesc(String lovDescAgrRuleDesc) {
 		this.lovDescAgrRuleDesc = lovDescAgrRuleDesc;
 	}
@@ -158,29 +177,31 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public boolean isAggIsActive() {
 		return aggIsActive;
 	}
+
 	public void setAggIsActive(boolean aggIsActive) {
 		this.aggIsActive = aggIsActive;
 	}
-	
+
 	public String getAggtype() {
-    	return aggtype;
-    }
+		return aggtype;
+	}
 
 	public void setAggtype(String aggtype) {
-    	this.aggtype = aggtype;
-    }
+		this.aggtype = aggtype;
+	}
 
 	public String getAggImage() {
-    	return aggImage;
-    }
+		return aggImage;
+	}
 
 	public void setAggImage(String aggImage) {
-    	this.aggImage = aggImage;
-    }
+		this.aggImage = aggImage;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -188,20 +209,23 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public AgreementDefinition getBefImage(){
+	public AgreementDefinition getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(AgreementDefinition beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AgreementDefinition beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -218,6 +242,14 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 		return moduleType;
 	}
 
+	public String getDocType() {
+		return docType;
+	}
+
+	public void setDocType(String docType) {
+		this.docType = docType;
+	}
+
 	public void setModuleType(String moduleType) {
 		this.moduleType = moduleType;
 	}
@@ -229,8 +261,26 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	
+	public boolean isAutoGeneration() {
+		return autoGeneration;
+	}
+
+	public AgreementDefinition setAutoGeneration(boolean autoGeneration) {
+		this.autoGeneration = autoGeneration;
+		return befImage;
+	}
+
+	public boolean isAutoDownload() {
+		return autoDownload;
+	}
+
+	public void setAutoDownload(boolean autoDownload) {
+		this.autoDownload = autoDownload;
 	}
 }
