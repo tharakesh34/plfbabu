@@ -1838,7 +1838,7 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="legalDetailService" ref="legalDetailService" />
 		<property name="baseRateService" ref="baseRateService" />
-		
+		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
