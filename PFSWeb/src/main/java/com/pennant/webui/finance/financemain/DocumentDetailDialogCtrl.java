@@ -435,6 +435,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
 			listcell = new Listcell(getlabelDesc(documentDetail.getDocCategory(), documentTypes));
+			listcell = new Listcell(documentDetail.getDoctype());
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
