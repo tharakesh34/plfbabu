@@ -585,7 +585,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		for (int i = 0; i < accountingSet.getTransactionEntries().size(); i++) {
 			TransactionEntry transactionEntry = accountingSet.getTransactionEntries().get(i);
 			
-			if (StringUtils.isEmpty(transactionEntry.getRecordType())) {
+			if (StringUtils.isBlank(transactionEntry.getRecordType())) {
 				continue;
 			}
 			

@@ -41,6 +41,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
+import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -139,7 +140,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
 	private DocumentDetailsDAO			documentDetailsDAO;
 	private DocumentService				documentService;
-
+	private DivisionDetailDAO			divisionDetailDAO;
 
 	protected transient WorkflowEngine	workFlow	= null;
 
@@ -882,7 +883,12 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void doProcessMandate(FinanceDetail financeDetail) {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceType finType = finScheduleData.getFinanceType();
 		LoggedInUser userDetails = financeDetail.getUserDetails();
+		String entityCode = null;
+		if(finType!=null) {
+		 entityCode = divisionDetailDAO.getEntityCodeByDivision(finType.getFinDivision(), "");
+		}
 		Mandate mandate = financeDetail.getMandate();
 		if (mandate != null) {
 			BankBranch bankBranch = new BankBranch();
@@ -900,7 +906,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), financeDetail.isStp()));
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
 			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
-
+			financeDetail.getMandate().setEntityCode(entityCode);
 			//workflow
 			/*
 			 * financeDetail.getMandate().setWorkflowId(financeMain.getWorkflowId());
@@ -1753,5 +1759,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;
+	}
+
+	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
+		this.divisionDetailDAO = divisionDetailDAO;
 	}
 }
