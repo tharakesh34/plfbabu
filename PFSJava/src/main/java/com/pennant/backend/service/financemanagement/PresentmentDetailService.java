@@ -75,5 +75,8 @@ public interface PresentmentDetailService {
 	String getPaymenyMode(String presentmentRef);
 
 	PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode);
+	
+	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
+
 
 }

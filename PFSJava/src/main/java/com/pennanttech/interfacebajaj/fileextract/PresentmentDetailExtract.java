@@ -62,7 +62,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	private PresentmentDetailService presentmentDetailService;
 	
-	
 
 	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService) {
 		super(datsSource);
@@ -289,6 +288,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						String status = rs.getString("STATUS");
 						String reasonCode = rs.getString("REASONCODE");
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
+                        processInactiveLoan(presentmentRef);
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
@@ -359,6 +359,17 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		return this.presentmentDetailService.presentmentCancellation(presentmentRef, reasonCode);
 	}
 
+	public void processInactiveLoan(String presentmentRef) throws Exception {
+		
+		Boolean isLoanActive = isLoanActive(presentmentRef);
+		if (!isLoanActive){
+			PresentmentDetail presentmentDetail=isPresentmentResponseIsExist(presentmentRef);
+			if (presentmentDetail!=null && presentmentDetail.getReceiptID()==0){
+				presentmentDetailService.processReceipts(presentmentDetail);
+			}
+		}
+		
+	}
 	// Truncating the data from staging tables
 	private void clearTables() {
 		logger.debug(Literal.ENTERING);
@@ -1149,7 +1160,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			sql = new StringBuilder();
 			sql.append("update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
 			logger.trace(Literal.SQL + sql.toString());
-
+	
 			source = new MapSqlParameterSource();
 			source.addValue("Chequestatus", chequestatus);
 			source.addValue("ChequeDetailsId", chequeDetailsId);
@@ -1160,5 +1171,31 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+	
+	private PresentmentDetail isPresentmentResponseIsExist(String batchId) {
+		logger.debug(Literal.ENTERING);
+
+		PresentmentDetail presentmentDetail = new PresentmentDetail();
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append(
+				" SELECT PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,PD.ADVANCEAMT, PD.EXCESSID,PD.RECEIPTID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID , PB.ACCOUNTNO, PB.ACTYPE");
+		sql.append(" FROM PRESENTMENTDETAILS PD INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID ");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID WHERE  PD.PRESENTMENTREF = :PRESENTMENTREF");
+
+		source.addValue("PRESENTMENTREF", batchId);
+
+		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+		try {
+			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			presentmentDetail = null;
+		}
+		return presentmentDetail;
+	}
 
 }
+

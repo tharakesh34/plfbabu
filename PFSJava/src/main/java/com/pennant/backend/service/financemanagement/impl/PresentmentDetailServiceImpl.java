@@ -56,14 +56,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -71,10 +75,13 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -111,6 +118,16 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	
 	@Autowired(required = false)
 	private PresentmentRequest presentmentRequest;
+	
+	@Autowired
+	private RepaymentProcessUtil	repaymentProcessUtil;
+	@Autowired
+	private CustomerDetailsService			customerDetailsService;
+	@Autowired
+	private FinanceProfitDetailDAO			profitDetailsDAO;
+	@Autowired
+	private FinanceTypeDAO					financeTypeDAO;
+
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -538,4 +555,57 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(),
 				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
+	
+public void processReceipts(PresentmentDetail presentmentDetail) throws Exception{
+		
+		FinReceiptData finReceiptData = new FinReceiptData();
+		FinReceiptHeader header = new FinReceiptHeader();
+		long receiptId=finReceiptHeaderDAO.generatedReceiptID(header);
+		header.setReference(presentmentDetail.getFinReference());
+		header.setReceiptDate(presentmentDetail.getSchDate());
+		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+        header.setReceiptID(receiptId);
+		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		header.setExcessAdjustTo(PennantConstants.List_Select);
+		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
+		header.setEffectSchdMethod(PennantConstants.List_Select);
+		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		header.setLogSchInPresentment(true);
+		
+		
+		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+		
+		FinReceiptDetail receiptDetail = new FinReceiptDetail();
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
+		receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
+		receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
+		receiptDetail.setValueDate(presentmentDetail.getSchDate());
+		receiptDetail.setReceivedDate(DateUtility.getAppDate());
+		receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
+		receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+		receiptDetails.add(receiptDetail);
+		
+		header.setReceiptDetails(receiptDetails);
+		
+		header.setRemarks("");
+		finReceiptData.setReceiptHeader(header);
+		finReceiptData.setFinReference(presentmentDetail.getFinReference());
+		finReceiptData.setSourceId("");
+		FinanceMain financeMain=financeMainDAO.getFinanceMainById(presentmentDetail.getFinReference(), "_View", false);
+		CustomerDetails custDetails=customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View");
+		List<FinanceScheduleDetail> scheduleDetails=financeScheduleDetailDAO.getFinScheduleDetails("", "_View", false);
+		FinanceProfitDetail profitDetail=profitDetailsDAO.getFinProfitDetailsById(presentmentDetail.getFinReference());
+		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
+		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null, profitDetail, header,
+				financeType.getRpyHierarchy(), DateUtility.getAppDate(),DateUtility.getAppDate());
+		if (presentmentDetail.getId() != Long.MIN_VALUE) {
+			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+		}
+	}
+
 }

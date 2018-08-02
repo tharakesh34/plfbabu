@@ -114,6 +114,7 @@ public class RepayConstants {
 	public static final String	RECEIPTTO_CUSTOMER		= "C";
 	
 	// Receipt Payment Type
+	public static final String	PAYTYPE_PRESENTMENT		= "PRESENT";
 
 	
 	// Presentment Exclude Reasons
