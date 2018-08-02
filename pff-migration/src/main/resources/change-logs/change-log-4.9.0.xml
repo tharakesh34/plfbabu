@@ -2122,6 +2122,16 @@
 			Insert into RBFIELDDETAILS values ('STGRULE','STGRULE','rd_paymentType','Payment Type','nvarchar',8,'0','1',' ','static,global',' ');
 		</sql>
 	</changeSet>
+		<changeSet id="18" author="UmaRohini">
+	<createView replaceIfExists="true" viewName="BMTAggrementDef_AView">
+	SELECT T1.AggId, T1.AggCode, T1.AggName, T1.AggDesc, T1.AggReportName, T1.AggReportPath, T1.AggIsActive, T1.Aggtype, 
+		T1.AggImage, T1.AgrRule, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.RuleCodeDesc LovDescAgrRuleDesc,
+		T1.AllowMultiple, T1.ModuleType,T1.ModuleName,T1.Doctype,T1.AutoGeneration,T1.AutoDownload
+	FROM BMTAggrementDef  T1 LEFT OUTER JOIN Rules T2 ON T1.AgrRule = T2.RuleCode AND T2.RuleModule ='AGRRULE'
+</createView>   
+</changeSet>	
+	
 	<changeSet id="18" author="Vasu">
 		<sql>
 			update workflowdetails set WorkFlowActive='0' where WorkFlowType='CORPORATECREDITREVIEW';
