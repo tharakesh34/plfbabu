@@ -11194,4 +11194,28 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 	</bean>
+	
+	<!-- Organization -->
+	<bean id="organizationDAO" class="com.pennanttech.pff.organization.dao.OrganizationDAOImpl" parent="sequenceDao" />
+	
+	<bean id="organizationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="organizationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="organizationServiceTarget" class="com.pennanttech.pff.organization.service.OrganizationServiceImpl"/>
 </beans>

@@ -580,6 +580,12 @@
 		<menuItem id="menu_Item_Sampling"
 			zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul" rightName="menuItem_Sampling"/>
 	</menu>
+	
+	<!-- Organization -->
+	<menu id="menu_Category_Organization">
+		<menuItem id="menu_Item_School"
+			zulNavigation="/WEB-INF/pages/Organization/OrganizationList.zul?module=SCHOOL" rightName="menuItem_OrganizationSchool"/>
+	</menu>
 
 	<!-- Loan Management -->
 	<menu id="menu_Category_FinanceManagement">

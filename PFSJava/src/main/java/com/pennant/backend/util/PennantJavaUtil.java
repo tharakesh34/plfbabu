@@ -411,6 +411,7 @@ import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.organization.model.Organization;
 
 public class PennantJavaUtil {
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
@@ -423,7 +424,7 @@ public class PennantJavaUtil {
 	private static String finMaintainWF = "FIN_RATECHANGE";
 	private static String securityWF = "SECURITY_USERS";
 	private static String crReviewCommWF = "CREDIT_REVIEW_COMMERCIAL";
-	//private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";
+	//private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";sa
 	private static String crReviewCorpWF = "CORPORATECREDITREVIEW";
 	private static String facilityCommitWF = "FACILITY_COMMITMENT";
 	//private static String scoreGrpWF = "SCORGRP";
@@ -457,6 +458,7 @@ public class PennantJavaUtil {
 	private final static String acntingSet_WF="ACNTINGSET";
 	private final static String hostGLMapping_WF="HOSTGLMAPPING";
 	private final static String sampling_WF="SAMPLING";
+	private final static String org_School_WF="ORGANIZATION_SCHOOL";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -2391,6 +2393,9 @@ public class PennantJavaUtil {
 		//DepositCheques
 		ModuleUtil.register("DepositCheques", new ModuleMapping("DepositCheques", DepositCheques.class,
 				new String[] { "DepositCheques", "DepositCheques_AView" }, null, new String[] { "ReceiptMode" }, null, 400));
+		// Organization
+		ModuleUtil.register("Organization", new ModuleMapping("Organization", Organization.class,
+				new String[] { "Organizations", "organizations_view" }, org_School_WF, new String[] { "id" }, null, 600));
 
 	}
 

@@ -164,6 +164,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	private List<ValueLabel>   custCtgList = PennantAppUtil.getcustCtgCodeList();
 	private List<FinServicingEvent>				events				= PennantStaticListUtil.getFinEvents(true);
 	private List<ValueLabel>   verificatinList = PennantStaticListUtil.getVerificatinTypes();
+	private List<ValueLabel>   orgnizationList = PennantStaticListUtil.getOrganizationTypes();
 	
 	private String subModuleVal;
 
@@ -314,6 +315,16 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			this.space_event.setVisible(false);
 			this.finEvent.setVisible(false);
 			fillComboBox(subModule, subModuleVal, verificatinList, "");
+		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_ORGANIZATION)) {
+			this.subModule.setVisible(true);
+			this.space_subModule.setVisible(true);
+			this.label_SubModule.setVisible(true);
+			this.product.setVisible(false);
+			this.product.setValue(null);
+			this.label_Event.setVisible(false);
+			this.space_event.setVisible(false);
+			this.finEvent.setVisible(false);
+			fillComboBox(subModule, subModuleVal, orgnizationList, "");
 		} else {
 			this.subModule.setVisible(false);
 			this.space_subModule.setVisible(false);

@@ -143,6 +143,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		moduleNames.add(ExtendedFieldConstants.MODULE_CUSTOMER);
 		moduleNames.add(ExtendedFieldConstants.MODULE_LOAN);
 		moduleNames.add(ExtendedFieldConstants.MODULE_VERIFICATION);
+		moduleNames.add(ExtendedFieldConstants.MODULE_ORGANIZATION);
 		this.searchObject.addFilterIn("MODULENAME", moduleNames);
 	}
 	/**

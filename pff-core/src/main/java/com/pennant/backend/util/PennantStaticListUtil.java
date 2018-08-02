@@ -236,6 +236,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> responseStatus;
 	private static ArrayList<ValueLabel> expenseCalculatedOn;
 	private static ArrayList<ValueLabel> verificatinTypes;
+	private static ArrayList<ValueLabel> organizationTypes;
 	
 	//Expense Upload
 	private static ArrayList<ValueLabel> uploadLevels;
@@ -3149,6 +3150,7 @@ public class PennantStaticListUtil {
 			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_CUSTOMER, Labels.getLabel("label_ExtendedFieldModule_Customer.value")));
 			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_LOAN, Labels.getLabel("label_ExtendedFieldModule_Loan.value")));
 			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_VERIFICATION, Labels.getLabel("label_ExtendedFieldModule_Verification.value")));
+			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_ORGANIZATION, Labels.getLabel("label_ExtendedFieldModule_Organization.value")));
 		}
 		return configTypes;
 	}
@@ -3161,6 +3163,15 @@ public class PennantStaticListUtil {
 			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_FI, Labels.getLabel("label_ExtendedFieldModule_Verification_FI.value")));
 		}
 		return verificatinTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getOrganizationTypes() {
+		if (organizationTypes == null) {
+			organizationTypes = new ArrayList<ValueLabel>(3);
+			organizationTypes.add(new ValueLabel(ExtendedFieldConstants.ORGANIZATION_SCHOOL, Labels.getLabel("label_ExtendedFieldModule_Organization_Scholl.value")));
+			organizationTypes.add(new ValueLabel(ExtendedFieldConstants.ORGANIZATION_INDUSTRY, Labels.getLabel("label_ExtendedFieldModule_Organization_Industry.value")));
+		}
+		return organizationTypes;
 	}
 
 	public static ArrayList<ValueLabel> getConfigNames() {

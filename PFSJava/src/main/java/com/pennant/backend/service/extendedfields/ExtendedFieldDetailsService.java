@@ -1097,6 +1097,8 @@ public class ExtendedFieldDetailsService {
 			errParm[0] = PennantJavaUtil.getLabel("label_Module_Customer") + ":" + valueParm[0];
 		} else if (StringUtils.startsWith(tableName, ExtendedFieldConstants.MODULE_LOAN)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_Module_Loan") + ":" + valueParm[0];
+		} else if (StringUtils.startsWith(tableName, ExtendedFieldConstants.MODULE_ORGANIZATION)) {
+			errParm[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ":" + valueParm[0];
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_SeqNo") + ":" + valueParm[1];
 
