@@ -4434,11 +4434,17 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="68" author="MadhuBabu">
+	<changeSet id="68" author="MadhuBabu" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="VERSION"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="FINREFERENCE"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="EVENT"/>
+	</changeSet>
+	<changeSet id="68" author="MadhuBabu" dbms="mssql">
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="WAIVERID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="VERSION" columnDataType="INT"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="FINREFERENCE" columnDataType="VARCHAR(20)"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="EVENT" columnDataType="VARCHAR(20)"/>
 	</changeSet>
 	<changeSet id="69" author="Madhubabu">
 	<comment> New Development </comment>
@@ -4463,11 +4469,17 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="70" author="MadhuBabu">
+	<changeSet id="70" author="oracle,postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="EVENT"/>
+	</changeSet>
+	<changeSet id="70" author="mssql">
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="WAIVERID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION" columnDataType="INT"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE" columnDataType="VARCHAR(20)"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="EVENT" columnDataType="VARCHAR(20)"/>
 	</changeSet>
 	<changeSet id="71" author="Madhubabu">
 	<comment> New Development </comment>
@@ -4492,9 +4504,13 @@
 			<column name="WORKFLOWID" type="BIGINT"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="72" author="MadhuBabu">
+	<changeSet id="72" author="MadhuBabu" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERDETAILS" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERDETAILS" columnName="VERSION"/>
+	</changeSet>
+	<changeSet id="72" author="MadhuBabu" dbms="mssql">
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS" columnName="WAIVERID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS" columnName="VERSION" columnDataType="INT"/>
 	</changeSet>
 	<changeSet id="73" author="Madhubabu">
 	<comment> New Development </comment>
@@ -4519,9 +4535,13 @@
 			<column name="WORKFLOWID" type="BIGINT"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="74" author="MadhuBabu">
+	<changeSet id="74" author="MadhuBabu" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERDETAILS_TEMP" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERDETAILS_TEMP" columnName="VERSION"/>
+	</changeSet>
+	<changeSet id="74" author="MadhuBabu" dbms="mssql">
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS_TEMP" columnName="WAIVERID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS_TEMP" columnName="VERSION" columnDataType="INT"/>
 	</changeSet>
 	<changeSet id="75" author="Madhubabu">
 		<comment> New Development </comment>
