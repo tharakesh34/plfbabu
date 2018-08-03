@@ -4704,5 +4704,17 @@
 			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 		</sql>
 	</changeSet>
+	
+  <changeSet id="82" author="Akhilesh.k">
+		<sql>
+			Delete from REPORTFILTERFIELDS Where reportid = (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_DisbursmentOTCDownloadReport');
+			Delete from REPORTCONFIGURATION Where menuitemcode = 'menu_Item_DisbursmentOTCDownloadReport';
+	
+			Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Disbursment OTC Report','Disbursment OTC Report',1,'DisbursmentOTCDownloadReport','dataSource',1,'menu_Item_DisbursmentOTCDownloadReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0);
+			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_DisbursmentOTCDownloadReport'),1,'FinType','LOVSEARCH','Loan
+			Type','fm.fintype',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		</sql>
+ </changeSet>	
+
 </databaseChangeLog>
 	
