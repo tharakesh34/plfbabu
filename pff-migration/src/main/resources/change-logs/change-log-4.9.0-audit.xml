@@ -133,4 +133,76 @@
 			update adtfinancemain set connector=0;
 		</sql>
 	</changeSet>
+	<changeSet id="13" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="ADTFEEWAIVERHEADER">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WAIVERID" type="BIGINT"/>
+			<column name="FINREFERENCE" type="VARCHAR(20)"/>
+			<column name="EVENT" type="VARCHAR(20)"/>
+			<column name="REMARKS" type="VARCHAR(500)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+			<column name="POSTINGDATE" type="DATETIME"/>
+			<column name="VALUEDATE" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="14" author="Madhubabu">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERHEADER" tableName="ADTFEEWAIVERHEADER" />
+	</changeSet>
+	<changeSet id="15" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="ADTFEEWAIVERDETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WAIVERDETAILID" type="BIGINT"/>
+			<column name="WAIVERID" type="BIGINT"/>
+			<column name="ADVISEID" type="BIGINT"/>
+			<column name="FINODSCHDDATE" type="DATETIME"/>
+			<column name="FEETYPECODE" type="VARCHAR(20)"/>
+			<column name="FEETYPEDESC" type="VARCHAR(100)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="16" author="Madhubabu">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERDETAILS" tableName="ADTFEEWAIVERDETAILS" />
+	</changeSet>
 	</databaseChangeLog>

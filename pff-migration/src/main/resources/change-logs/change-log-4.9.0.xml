@@ -4338,5 +4338,200 @@
 	<changeSet id="66" author="Jayant" dbms="oracle">
 		<dropPrimaryKey tableName="seqjvpostingentry"/>
 	</changeSet>
+	
+	 <changeSet id="67" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="FEEWAIVERHEADER">
+			<column name="WAIVERID" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="PK_FEEWAIVERHEADER"/>
+			</column>
+			<column name="FINREFERENCE" type="VARCHAR(20)"/>
+			<column name="EVENT" type="VARCHAR(20)"/>
+			<column name="REMARKS" type="VARCHAR(500)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+			<column name="POSTINGDATE" type="DATETIME"/>
+			<column name="VALUEDATE" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="68" author="MadhuBabu">
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="WAIVERID"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="VERSION"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="FINREFERENCE"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="EVENT"/>
+	</changeSet>
+	<changeSet id="69" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="FEEWAIVERHEADER_TEMP">
+			<column name="WAIVERID" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="PK_FEEWAIVERHEADER_TEMP"/>
+			</column>
+			<column name="FINREFERENCE" type="VARCHAR(20)"/>
+			<column name="EVENT" type="VARCHAR(20)"/>
+			<column name="REMARKS" type="VARCHAR(500)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+			<column name="POSTINGDATE" type="DATETIME"/>
+			<column name="VALUEDATE" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="70" author="MadhuBabu">
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="WAIVERID"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="EVENT"/>
+	</changeSet>
+	<changeSet id="71" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="FEEWAIVERDETAILS">
+			<column name="WAIVERDETAILID" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="PK_FEEWAIVERDETAILS"/>
+			</column>
+			<column name="WAIVERID" type="BIGINT"/>
+			<column name="ADVISEID" type="BIGINT"/>
+			<column name="FINODSCHDDATE" type="DATETIME"/>
+			<column name="FEETYPECODE" type="VARCHAR(20)"/>
+			<column name="FEETYPEDESC" type="VARCHAR(100)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="72" author="MadhuBabu">
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS" columnName="WAIVERID"/>
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS" columnName="VERSION"/>
+	</changeSet>
+	<changeSet id="73" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="FEEWAIVERDETAILS_TEMP">
+			<column name="WAIVERDETAILID" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="PK_FEEWAIVERDETAILS_TEMP"/>
+			</column>
+			<column name="WAIVERID" type="BIGINT"/>
+			<column name="ADVISEID" type="BIGINT"/>
+			<column name="FINODSCHDDATE" type="DATETIME"/>
+			<column name="FEETYPECODE" type="VARCHAR(20)"/>
+			<column name="FEETYPEDESC" type="VARCHAR(100)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="74" author="MadhuBabu">
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS_TEMP" columnName="WAIVERID"/>
+		<addNotNullConstraint tableName="FEEWAIVERDETAILS_TEMP" columnName="VERSION"/>
+	</changeSet>
+	<changeSet id="75" author="Madhubabu">
+		<comment> New Development </comment>
+		<createView viewName="FEEWAIVERS_VIEW" replaceIfExists="true">
+			SELECT	T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+					T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+					T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments,
+					T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+					T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+					T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+					T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+					T2.CustCIF LovDescCustCIF, 
+					T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+					T4.ProductCategory, COALESCE(T9.NOINST,0) NOINST,
+					
+					COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T10.NextRoleCode)) LovDescRequestStage,
+					T10.WaiverId, T10.Event RcdMaintainSts, T10.NextRoleCode, T10.RecordStatus, T10.RecordType
+		
+			FROM     	FeeWaiverHeader_Temp T10 INNER JOIN		
+						FinanceMain  T1 ON T1.FinReference = T10.FinReference INNER JOIN		
+						Customers T2 ON T1.CustId = T2.CustId INNER JOIN		
+						RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN 
+						SecRoles T5 ON T10.NextRoleCode = T5.RoleCd INNER JOIN 		
+						BMTProduct T4 ON T3.FinCategory = T4.ProductCode LEFT JOIN 		
+						FinPftDetails T9 ON T1.FinReference = T9.FinReference
+						
+						WHERE T10.Event = 'FeeWaivers'
+			
+			UNION ALL
+				
+			SELECT	   	T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+						T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+						T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments,
+						T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+						T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+						T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+						T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+						T2.CustCIF LovDescCustCIF, 
+						T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+						T4.ProductCategory, COALESCE(T9.NOINST,0) NOINST,
+						
+						NULL LovDescRequestStage, NULL FinMaintainId, NULL RcdMaintainSts, NULL NextRoleCode, NULL RecordStatus, NULL RecordType
+						
+			FROM        FinanceMain T1 INNER JOIN
+						Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+						RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+						SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+						BMTProduct T4 ON T3.FinCategory = T4.ProductCode LEFT JOIN
+						FinPftDetails T9 ON T1.FinReference = T9.FinReference
+				  
+			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FeeWaiverHeader_Temp WHERE (FinReference = T1.FinReference)))
+		
+			 
+		</createView>
+	</changeSet>
+	<changeSet id="76" author="Madhubabu">
+	<comment> New Development </comment>
+		<createView viewName="FEEWAIVERHEADER_VIEW" replaceIfExists="true">
+			SELECT	    T1.WaiverId, T1.FinReference, T1.Event, T1.Remarks, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Postingdate,T1.valueDate
+	                  	
+	      	FROM    	FeeWaiverHeader_Temp  T1 
+	
+	     	UNION ALL
+	      
+	      	SELECT	    T1.WaiverId, T1.FinReference, T1.Event,  T1.Remarks, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Postingdate,T1.valueDate
+	                  	
+	      	FROM    	FeeWaiverHeader  T1 
+          
+
+	     	WHERE     (NOT EXISTS  (SELECT  1 FROM FeeWaiverHeader_Temp WHERE (WaiverId = T1.WaiverId)))
+			 
+		</createView>
+	</changeSet>
+	<changeSet id="77" author="Madhubabu">
+	<comment> New Development </comment>
+		<createView viewName="FEEWAIVERHEADER_TVIEW" replaceIfExists="true">
+			SELECT	    T1.WaiverId, T1.FinReference, T1.Event, T1.Remarks, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Postingdate,T1.valueDate
+	      	FROM    	FeeWaiverHeader_Temp  T1
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
