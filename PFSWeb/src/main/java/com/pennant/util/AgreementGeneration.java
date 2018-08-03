@@ -107,6 +107,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -176,7 +177,6 @@ import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -984,6 +984,8 @@ public class AgreementGeneration implements Serializable {
 				agreement.getCollateralData().add(agreement.new FinCollaterals());
 			}
 			
+			//VAS Details
+			
 			if (CollectionUtils.isEmpty(agreement.getVasData())) {
 				agreement.setVasData(new ArrayList<AgreementDetail.VasDetails>());
 			}
@@ -995,6 +997,23 @@ public class AgreementGeneration implements Serializable {
 				agreement.getVasData().add(agreement.new VasDetails());
 			}
 			
+			
+			//TODO:: Need to check after confirmation
+			//agreement.setConnectorCode(detail.getFinScheduleData().getFinanceMain().getConnectorCode());
+			
+			//Director Details
+			if (CollectionUtils.isEmpty(agreement.getDirectorDetails())) {
+				agreement.setDirectorDetails(new ArrayList<AgreementDetail.DirectorDetail>());
+			}
+			
+			if (aggModuleDetails.contains(PennantConstants.AGG_DIRECDT)
+					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerDirectorList())) {
+				getDirectorDetails(agreement, detail, formatter);
+			}
+			
+			if (CollectionUtils.isEmpty(agreement.getDirectorDetails())) {
+				agreement.getDirectorDetails().add(agreement.new DirectorDetail());
+			}
 
 			if (detail.getFinRepayHeader() != null) {
 				agreement = getFinRepayHeaderDetails(agreement, detail.getFinRepayHeader(), formatter);
@@ -1007,6 +1026,10 @@ public class AgreementGeneration implements Serializable {
 
 			// -----------------Customer Credit Review Details
 			if (aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW)) {
+				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
+					agreement.setEligibilityMethod(StringUtils
+							.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getLovDescEligibilityMethod()));
+				}
 			}
 
 			// -----------------Scoring Detail
@@ -1325,6 +1348,39 @@ public class AgreementGeneration implements Serializable {
 			logger.error(e);
 		}
 		logger.debug("Leaving");
+		return agreement;
+	}
+	
+	private AgreementDetail getDirectorDetails(AgreementDetail agreement, FinanceDetail detail, int formatter){
+		
+		List<DirectorDetail> customerDirectorList = detail.getCustomerDetails().getCustomerDirectorList();
+		
+		if (CollectionUtils.isNotEmpty(customerDirectorList)) {
+			customerDirectorList.forEach(directorDetails->{
+				com.pennant.backend.model.finance.AgreementDetail.DirectorDetail directorDetail=agreement.new DirectorDetail();
+				directorDetail.setFirstName(StringUtils.trimToEmpty(directorDetails.getFirstName()));
+				directorDetail.setLastName(StringUtils.trimToEmpty(directorDetails.getLastName()));
+				directorDetail.setMiddleName(StringUtils.trimToEmpty(directorDetails.getMiddleName()));
+				directorDetail.setCityName(StringUtils.trimToEmpty(directorDetails.getLovDescCustAddrCityName()));
+				directorDetail.setCountryName(StringUtils.trimToEmpty(directorDetails.getLovDescCustAddrCountryName()));
+				directorDetail.setProvinceName(StringUtils.trimToEmpty(directorDetails.getLovDescCustAddrProvinceName()));
+				directorDetail.setDocCategoryName(StringUtils.trimToEmpty(directorDetails.getLovDescCustDocCategoryName()));
+				directorDetail.setGender(StringUtils.trimToEmpty(directorDetails.getLovDescCustGenderCodeName()));
+				directorDetail.setDesignationName(StringUtils.trimToEmpty(directorDetails.getLovDescDesignationName()));
+				directorDetail.setNationalityName(StringUtils.trimToEmpty(directorDetails.getLovDescNationalityName()));
+				directorDetail.setSalutationCodeName(StringUtils.trimToEmpty(directorDetails.getLovDescCustSalutationCodeName()));
+				directorDetail.setShortName(StringUtils.trimToEmpty(directorDetails.getShortName()));
+				directorDetail.setSharePerc(PennantApplicationUtil.formatRate(directorDetails.getSharePerc().doubleValue(),formatter));
+				if(Boolean.TRUE == directorDetails.isDirector()){
+					directorDetail.setDirector("Yes");
+				}
+				if(Boolean.TRUE ==directorDetails.isShareholder()){
+					directorDetail.setShareholder("Yes");
+				}
+				agreement.getDirectorDetails().add(directorDetail);
+			});
+		}
+		
 		return agreement;
 	}
 	
@@ -2116,33 +2172,27 @@ public class AgreementGeneration implements Serializable {
 	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails) {
 		agreement.setCoApplicants(new ArrayList<>());
 		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT)&&detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
-			List<CustomerDetails> custIDs=new ArrayList<CustomerDetails>();
 			for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
 				CustomerDetails custdetails = customerDetailsService.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
-				custIDs.add(custdetails);
-			}
-			
-			for (CustomerDetails customerDetails : custIDs) {
-				//co applicant
 				CoApplicant coapplicant = agreement.new CoApplicant();
-				Customer customer = customerDetails.getCustomer();
-				coapplicant.setCustRelation(StringUtils.trimToEmpty(customer.getCustRelation()));
+				Customer customer = custdetails.getCustomer();
+				coapplicant.setCustRelation(StringUtils.trimToEmpty(jointAccountDetail.getCatOfcoApplicant()));
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				//pan number
-				List<CustomerDocument> doclist = customerDetails.getCustomerDocumentsList();
+				List<CustomerDocument> doclist = custdetails.getCustomerDocumentsList();
 				coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
 				
-				List<CustomerAddres> addlist = customerDetails.getAddressList();
+				List<CustomerAddres> addlist = custdetails.getAddressList();
 				if (addlist!=null && !addlist.isEmpty()) {
 					setCoapplicantAddress(coapplicant, addlist);
 				}
 				
-				List<CustomerPhoneNumber> phoneNumList = customerDetails.getCustomerPhoneNumList();
+				List<CustomerPhoneNumber> phoneNumList = custdetails.getCustomerPhoneNumList();
 				if(phoneNumList!=null && !phoneNumList.isEmpty()){
 					setCoapplicantPhoneNumber(coapplicant, phoneNumList);
 				}
 				
-				List<CustomerEMail> eMailList = customerDetails.getCustomerEMailList();
+				List<CustomerEMail> eMailList = custdetails.getCustomerEMailList();
 				if(eMailList!=null && !eMailList.isEmpty()){
 					setCoapplicantEMailId(coapplicant, eMailList);
 				}

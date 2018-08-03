@@ -7014,6 +7014,146 @@ private String custAccount ="";
 		}
 	}
 	
+	private String eligibilityMethod="";
+	private String ConnectorCode="";
+	
+    public String getConnectorCode() {
+		return ConnectorCode;
+	}
+
+	public void setConnectorCode(String connectorCode) {
+		ConnectorCode = connectorCode;
+	}
+
+	public String getEligibilityMethod() {
+		return eligibilityMethod;
+	}
+
+	public void setEligibilityMethod(String eligibilityMethod) {
+		this.eligibilityMethod = eligibilityMethod;
+	}
+
+	private List<DirectorDetail> directorDetails;
+	
+	public List<DirectorDetail> getDirectorDetails() {
+		return directorDetails;
+	}
+
+	public void setDirectorDetails(List<DirectorDetail> directorDetails) {
+		this.directorDetails = directorDetails;
+	}
+
+	public class DirectorDetail{
+		private String firstName = "";
+		private String middleName  = "";
+		private String lastName  = "";
+		private String gender   = "";
+		private String salutationCodeName  = "";
+		private String cityName  = ""; 
+		private String provinceName  = "";
+		private String countryName  = "";
+		private String shortName  = "";
+		private String shareholder   = "";
+		private String director  = "No";
+		private String sharePerc ="No";
+		private String docCategoryName ="";
+		private String designationName;
+		private String nationalityName;
+
+		public String getNationalityName() {
+			return nationalityName;
+		}
+		public void setNationalityName(String nationalityName) {
+			this.nationalityName = nationalityName;
+		}
+		public String getDesignationName() {
+			return designationName;
+		}
+		public void setDesignationName(String designationName) {
+			this.designationName = designationName;
+		}
+		public String getDocCategoryName() {
+			return docCategoryName;
+		}
+		public void setDocCategoryName(String docCategoryName) {
+			this.docCategoryName = docCategoryName;
+		}
+		public String getFirstName() {
+			return firstName;
+		}
+		public void setFirstName(String firstName) {
+			this.firstName = firstName;
+		}
+		public String getMiddleName() {
+			return middleName;
+		}
+		public void setMiddleName(String middleName) {
+			this.middleName = middleName;
+		}
+		public String getLastName() {
+			return lastName;
+		}
+		public void setLastName(String lastName) {
+			this.lastName = lastName;
+		}
+		public String getGender() {
+			return gender;
+		}
+		public void setGender(String gender) {
+			this.gender = gender;
+		}
+		public String getSalutationCodeName() {
+			return salutationCodeName;
+		}
+		public void setSalutationCodeName(String salutationCodeName) {
+			this.salutationCodeName = salutationCodeName;
+		}
+		public String getCityName() {
+			return cityName;
+		}
+		public void setCityName(String cityName) {
+			this.cityName = cityName;
+		}
+		public String getProvinceName() {
+			return provinceName;
+		}
+		public void setProvinceName(String provinceName) {
+			this.provinceName = provinceName;
+		}
+		public String getCountryName() {
+			return countryName;
+		}
+		public void setCountryName(String countryName) {
+			this.countryName = countryName;
+		}
+		public String getShortName() {
+			return shortName;
+		}
+		public void setShortName(String shortName) {
+			this.shortName = shortName;
+		}
+		public String getShareholder() {
+			return shareholder;
+		}
+		public void setShareholder(String shareholder) {
+			this.shareholder = shareholder;
+		}
+		public String getDirector() {
+			return director;
+		}
+		public void setDirector(String director) {
+			this.director = director;
+		}
+		public String getSharePerc() {
+			return sharePerc;
+		}
+		public void setSharePerc(String sharePerc) {
+			this.sharePerc = sharePerc;
+		}
+		
+		
+	}
+	
 	private List<VasDetails> vasData;
 	
 	public List<VasDetails> getVasData() {

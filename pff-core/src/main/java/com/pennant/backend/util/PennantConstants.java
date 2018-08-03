@@ -302,6 +302,7 @@ public class PennantConstants {
 	public static final String AGG_COAPPDT = "COAPPDT";
 	public static final String AGG_COLLTRL = "COLLTRL";
 	public static final String AGG_VAS     = "VAS";
+	public static final String AGG_DIRECDT = "DIRECTOR";
 	public static final String AGG_REPAYDT = "REPAYDT";
 	public static final String AGG_CHRGDET = "CHRGDET";
 	public static final String AGG_DISBURS = "DISBURS";
