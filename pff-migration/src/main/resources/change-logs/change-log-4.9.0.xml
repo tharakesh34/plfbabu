@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <!-- <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -5592,7 +5592,7 @@ UNION ALL
 			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'DISB_ALLOW_WITH_COVENANT_OTC_REPAY_METHOD';
 			INSERT INTO SMTPARAMETERS VALUES ('DISB_ALLOW_WITH_COVENANT_OTC_REPAY_METHOD', 'disbursement download allow with covenant otc repay method', 'String', 1, 'DD,CHEQUE', 200, 0, NULL, NULL,'disbursement download allow with covenant otc repay method', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	<changeSet author="Madhubabu" id="91">
 		<sql>
 
