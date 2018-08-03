@@ -737,6 +737,9 @@
 			<menuItem id="menu_Item_DisbursementDataEngine_Import"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementDataImport.zul"
 				rightName="menuItem_DataEngine_DataImport" />
+			<menuItem id="menu_Item_DisbursmentOTCDownloadReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_DisbursmentOTCDownloadReport" />
 		</menu>
 		<menu id="menu_Category_Mandates">
 			<menuItem id="menu_Item_MandateRegistration"

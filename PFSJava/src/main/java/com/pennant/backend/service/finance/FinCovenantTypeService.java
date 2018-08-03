@@ -56,6 +56,6 @@ public interface FinCovenantTypeService {
 	List<AuditDetail> delete(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> validate(List<FinCovenantType> finCovenantTypeDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
 	FinCovenantType getFinCovenantTypeById(String reference,String covenType,String type);
-	FinanceDetail getFinanceDetailById(String id, String type, String userRole, String moduleDefiner,
-			String eventCodeRef);
+	FinanceDetail getFinanceDetailById(String id, String type, String userRole, String moduleDefiner, String eventCodeRef);
+    List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry);
 }
