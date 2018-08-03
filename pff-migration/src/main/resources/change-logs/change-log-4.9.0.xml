@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <!-- <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -5592,6 +5592,87 @@ UNION ALL
 			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'DISB_ALLOW_WITH_COVENANT_OTC_REPAY_METHOD';
 			INSERT INTO SMTPARAMETERS VALUES ('DISB_ALLOW_WITH_COVENANT_OTC_REPAY_METHOD', 'disbursement download allow with covenant otc repay method', 'String', 1, 'DD,CHEQUE', 200, 0, NULL, NULL,'disbursement download allow with covenant otc repay method', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		</sql>
-	</changeSet>	
+	</changeSet> -->
+	<changeSet author="Madhubabu" id="91">
+		<sql>
+
+			INSERT INTO SecGroups Values( (SELECT max(GRPID)+1 FROM SECGROUPS), 'FIN_FEEWAIVER_MAKER', 'WF Maker for FeeWaivers', 
+			0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroups VALUES ((SELECT max(GRPID)+1 FROM SECGROUPS), 'FIN_FEEWAIVER_APPROVER', 'WF Approver for FeeWaivers', 	
+			0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menu_Item_FeeWaiverHeader','MENU',0,1000,CURRENT_TIMESTAMP,
+			'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,' menu_Category_FinanceManagement','MENU',0,1000,CURRENT_TIMESTAMP,
+			'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FeeWaiverHeaderDialog_btnNew','FeeWaiverHeaderList',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FeeWaiverHeaderDialog_btnEdit','FeeWaiverHeaderDialog',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FeeWaiverHeaderDialog_btnDelete','FeeWaiverHeaderDialog',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FeeWaiverHeaderDialog_btnSave','FeeWaiverHeaderDialog',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'FeeWaiverHeaderDialog_Remarks','FeeWaiverHeaderDialog',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'FeeWaiverHeaderDialog_CurrWaivedAmt','FeeWaiverHeaderDialog',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName=' menu_Category_FinanceManagement'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='menu_Item_FeeWaiverHeader'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='button_FeeWaiverHeaderDialog_btnNew'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='button_FeeWaiverHeaderDialog_btnEdit'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='button_FeeWaiverHeaderDialog_btnDelete'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='button_FeeWaiverHeaderDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='FeeWaiverHeaderDialog_Remarks'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select RightID from SecRights WHERE RightName='FeeWaiverHeaderDialog_CurrWaivedAmt'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_APPROVER'), 
+			(select RightID from SecRights WHERE RightName=' menu_Category_FinanceManagement'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_APPROVER'), 
+			(select RightID from SecRights WHERE RightName='menu_Item_FeeWaiverHeader'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+      
+    	    INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='FIN_FEEWAIVER_APPROVER'), 
+			(select RightID from SecRights WHERE RightName='button_FeeWaiverHeaderDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoles VALUES ((select max(RoleID)+1 from SecRoles),1,'FEE_WAIVER_MAKER','Members of the role can manange FeeWaiverHeader module.','',1,1000,
+			CURRENT_TIMESTAMP,'Approved','','','','','',0);
+
+			INSERT INTO SecRoles VALUES ((select max(RoleID)+1 from SecRoles),1,'FEE_WAIVER_APPROVER','Members of the role can approve FeeWaiverHeader module.','',1,1000,
+			CURRENT_TIMESTAMP,'Approved','','','','','',0);
+
+			INSERT INTO SecRoleGroups VALUES ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE='FIN_FEEWAIVER_MAKER'), 
+			(select roleid from SecRoles where RoleCd='FEE_WAIVER_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRoleGroups VALUES ((select MAX(ROLEGRPID)+1 from SecRoleGroups), (select GRPID from SecGroups where GRPCODE='FIN_FEEWAIVER_APPROVER'), 
+			(select roleid from SecRoles where RoleCd='FEE_WAIVER_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		</sql>
+</changeSet>	
 </databaseChangeLog>
 	
