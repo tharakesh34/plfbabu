@@ -139,7 +139,7 @@
 			<column name="companyname" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="14" author="Madhubabu">
+	<changeSet id="13" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="ADTFEEWAIVERHEADER">
 			<column name="AuditId" type="bigint">
@@ -172,10 +172,10 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="15" author="Madhubabu">
+	<changeSet id="14" author="Madhubabu">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERHEADER" tableName="ADTFEEWAIVERHEADER" />
 	</changeSet>
-	<changeSet id="16" author="Madhubabu">
+	<changeSet id="15" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="ADTFEEWAIVERDETAILS">
 			<column name="AuditId" type="bigint">
@@ -208,11 +208,10 @@
 			<column name="WORKFLOWID" type="BIGINT"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="17" author="Madhubabu">
+	<changeSet id="16" author="Madhubabu">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERDETAILS" tableName="ADTFEEWAIVERDETAILS" />
 	</changeSet>
-	
-	<changeSet id="18" author="Madhubabu">
+	<changeSet id="17" author="Madhubabu">
 	<addColumn tableName="ADTFEEWAIVERDETAILS">
 		<column name="RECEIVABLEAMOUNT" type="decimal(18,0)" />
 		<column name="RECEIVEDAMOUNT" type="decimal(18,0)" />
