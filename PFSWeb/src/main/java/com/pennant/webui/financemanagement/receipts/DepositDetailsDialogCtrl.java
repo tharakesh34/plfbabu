@@ -622,6 +622,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			doFillChequeDetails(depositMovements.getDepositChequesList());
 		}
 		
+		this.recordStatus.setValue(depositDetails.getRecordStatus());
+		
 		logger.debug(Literal.LEAVING);
 	}
 	

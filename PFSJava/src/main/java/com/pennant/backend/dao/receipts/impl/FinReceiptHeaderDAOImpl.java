@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -310,35 +313,34 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	 * 
 	 */
 	@Override
-	public boolean isCancelProcess(String depositBranch, String type) {
+	public BigDecimal getTotalReceiptAmount(String depositBranch, List<String> paymentTypes, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
+		BigDecimal amount = BigDecimal.ZERO;
 
-		StringBuilder selectSql = new StringBuilder("SELECT Count(ReceiptModeStatus) FROM FinReceiptHeader");
+		StringBuilder selectSql = new StringBuilder("Select Sum(Amount) from FinReceiptDetail");
+		//selectSql.append(type);	//TODO check this case when we are submit the cancel request Details not effected to Temp table
+		selectSql.append(" Where PaymentType In (:PaymentType) And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
 		selectSql.append(type);
-		selectSql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType And DepositBranch = :DepositBranch");
+		selectSql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType And DepositBranch = :DepositBranch)");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PaymentType", paymentTypes);
 		source.addValue("ReceiptModeStatus", "C");
 		source.addValue("RecordType", PennantConstants.RECORD_TYPE_NEW);
 		source.addValue("DepositBranch", depositBranch);
 
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			amount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
+			amount = BigDecimal.ZERO;
 		} finally {
 			logger.debug("Leaving");
 		}
 		
-		if (count > 0) {
-			return true;
-		} 
-
-		return false;
+		return amount;
 	}
 
 }

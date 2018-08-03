@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.receipts;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennanttech.pff.core.TableType;
 
@@ -14,5 +17,5 @@ public interface FinReceiptHeaderDAO {
 	long generatedReceiptID(FinReceiptHeader receiptHeader);
 	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type);	//Cash Management Change
 	void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type); //Cash Management Change
-	boolean isCancelProcess(String depositBranch, String type); //Cash Management Change
+	BigDecimal getTotalReceiptAmount(String depositBranch, List<String> paymentTypes, String type); //Cash Management Change
 }

@@ -578,7 +578,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 		
-		if (!PennantConstants.method_doReject.equals(method) && RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
+		if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()) && RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
 			DepositMovements movement = getDepositDetailsDAO().getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
 			if (movement != null) {

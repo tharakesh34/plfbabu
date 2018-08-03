@@ -39,6 +39,7 @@
  */
 package com.pennant.backend.service.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +71,7 @@ import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.finance.DepositDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -1256,13 +1258,26 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		}
 		
 		//Validation for Available amount is less than Reserved Amount
-		if (!PennantConstants.method_doReject.equals(method) && depositDetails.getActualAmount().compareTo(depositDetails.getReservedAmount()) < 0) {
+		if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus()) && depositDetails.getActualAmount().compareTo(depositDetails.getReservedAmount()) < 0) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65035", parameters, null));
 		}
 		
 		//Validation for Receipt Cancellation process if any available
-		if (!PennantConstants.method_doReject.equals(method) && getFinReceiptHeaderDAO().isCancelProcess(depositDetails.getBranchCode(), "_Temp")) {
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65037", parameters, null));
+		if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus())) {
+			List<String> paymentTypes = new ArrayList<String>();
+			if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
+				paymentTypes.add(RepayConstants.RECEIPTMODE_CASH);
+			} else if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD.equals(depositDetails.getDepositType())) {
+				paymentTypes.add(RepayConstants.RECEIPTMODE_CHEQUE);
+				paymentTypes.add(RepayConstants.RECEIPTMODE_DD);
+			}
+			
+			// Get the total maintenance amount in Receipt Cancellation
+			BigDecimal amount = getFinReceiptHeaderDAO().getTotalReceiptAmount(depositDetails.getBranchCode(), paymentTypes, "_Temp");
+			
+			if (amount != null && amount.compareTo(depositDetails.getReservedAmount()) > 0) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65037", parameters, null));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

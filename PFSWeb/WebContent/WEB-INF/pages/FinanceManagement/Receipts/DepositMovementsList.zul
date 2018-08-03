@@ -54,7 +54,7 @@
 								<row>
 									<label id="label_DepositMovementsList_DepositSlipNumber" value="${c:l('label_DepositMovementsList_DepositSlipNumber.value')}" />
 									<listbox id="sortOperator_DepositSlipNumber" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}"  />
-									<uppercasebox id="depositSlipNumber" maxlength="19" width="100px"/>
+									<uppercasebox id="depositSlipNumber" maxlength="20" width="100px"/>
 									<label id="label_DepositMovementsList_TransactionDate" value="${c:l('label_DepositMovementsList_TransactionDate.value')}" />
 									<listbox id="sortOperator_TransactionDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}"  />
 									<datebox id="transactionDate" width="100px"/>

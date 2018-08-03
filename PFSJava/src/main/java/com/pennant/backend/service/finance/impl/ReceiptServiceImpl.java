@@ -574,8 +574,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		//Save Deposit Details
-		saveDepositDetails(receiptHeader, null, tableType.getSuffix());
-
+		saveDepositDetails(receiptHeader, null);
+		// Update Deposit Branch
+		getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(), receiptHeader.getUserDetails().getBranchCode(), tableType.getSuffix());
+				
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
 
@@ -1159,7 +1161,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		//Save Deposit Details
-		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove, "");
+		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove);
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
@@ -1359,6 +1361,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			getLimitCheckDetails().doProcessLimits(financeMain,	FinanceConstants.AMENDEMENT);
 		}
 		
+		// Update Deposit Branch
+		getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(), receiptHeader.getUserDetails().getBranchCode(), "");
+		
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -1367,7 +1372,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Method for Saving Deposit Details for Both Receipt Modes of CASH & Cheque/DD
 	 * @param receiptHeader
 	 */
-	private void saveDepositDetails(FinReceiptHeader receiptHeader, String method, String tableType) {
+	private void saveDepositDetails(FinReceiptHeader receiptHeader, String method) {
 		logger.debug("Entering");
 		
 		// If Process is not required for Client
@@ -1462,9 +1467,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			getDepositDetailsDAO().saveDepositMovements(depositMovements, "");
 		}
-		
-		// Update Deposit Branch
-		getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(), receiptHeader.getUserDetails().getBranchCode(), tableType);
 
 		logger.debug("Leaving");
 	}
