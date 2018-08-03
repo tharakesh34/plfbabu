@@ -23,6 +23,8 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.delegationdeviation.DeviationConfigService;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -76,8 +78,11 @@ public class DeviationExecutionCtrl {
 	@Autowired(required = false)
 	@Qualifier("financePostDeviationHook")
 	private PostDeviationHook postDeviationHook;
+	@Autowired
+	private DeviationHelper deviationHelper;
 	/* This list which hold the all deviation across the tab's */
 	private List<FinanceDeviations>	financeDeviations	= new ArrayList<>();
+	List<ValueLabel> delegators = new ArrayList<>();
 
 	public DeviationExecutionCtrl() {
 		super();
@@ -93,47 +98,46 @@ public class DeviationExecutionCtrl {
 	 * @return
 	 * @throws ScriptException
 	 */
-	public List<FinanceDeviations> checkProductDeviations(FinanceDetail financeDetail) throws ScriptException {
-		logger.debug(" Entering ");
+	public void checkProductDeviations(FinanceDetail financeDetail) throws ScriptException {
+		logger.debug(Literal.ENTERING);
 
+		// Prepare the script engine with the required bindings.
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
 		ScriptEngine engine = prepareScriptEngine(financeMain, financeType);
 
-		List<FinanceDeviations> deviationslist = new ArrayList<FinanceDeviations>();
+		// Get the product deviations that were defined for the finance type.
+		List<DeviationHeader> deviationHeaders = getProductDeviatations(financeType.getFinType());
 
-		List<DeviationHeader> headerList = getProductDeviatations(financeType.getFinType());
-		for (DeviationHeader deviationHeader : headerList) {
-			List<DeviationDetail> detailsList = deviationHeader.getDeviationDetails();
-			if (detailsList != null && !detailsList.isEmpty()) {
+		for (DeviationHeader deviationHeader : deviationHeaders) {
+			List<DeviationDetail> deviationDetails = deviationHeader.getDeviationDetails();
 
-				DeviationParam deviationParam = getDeviationparam(deviationHeader.getModuleCode());
-				if (deviationParam != null) {
+			if (deviationDetails == null || deviationDetails.isEmpty()) {
+				continue;
+			}
 
-					String formula = deviationParam.getFormula();
+			// Get the deviation definition.
+			DeviationParam deviationParam = getDeviationparam(deviationHeader.getModuleCode());
 
-					Object object = executeRule(formula, engine);
+			if (deviationParam == null) {
+				continue;
+			}
 
-					if (object != null) {
-						FinanceDeviations deviations = getNewFindevations(deviationHeader,
-								financeMain.getFinReference(), DeviationConstants.TY_PRODUCT);
+			// Execute the deviation rule and get the deviated value.
+			Object result = executeRule(deviationParam.getFormula(), engine);
 
-						deviations = processNewDevaitions(deviationHeader, object, deviations);
-
-						if (deviations != null) {
-							deviationslist.add(deviations);
-						}
-					}
-				}
+			if (result != null) {
+				processAutoDeviation(DeviationConstants.CAT_AUTO, DeviationConstants.TY_PRODUCT, null, result, null,
+						financeMain.getFinReference(), deviationHeader, null);
 			}
 		}
 
-		fillDeviationListbox(deviationslist, userRole, DeviationConstants.TY_PRODUCT);
+		fillAutoDeviations();
 
-		logger.debug(" Leaving ");
-		return deviationslist;
+		logger.debug(Literal.LEAVING);
 	}
+
 
 	/**
 	 * Check custom deviations and add to finance deviations, if any.
@@ -141,14 +145,20 @@ public class DeviationExecutionCtrl {
 	 * @param financeDetail
 	 *            Finance detail object.
 	 */
+	@SuppressWarnings("unchecked")
 	public void checkCustomDeviations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+
 
 		// If the post deviation hook not available, skip the process.
 		if (postDeviationHook == null) {
 			logger.info("Post deviation hook not available.");
 			return;
 		}
+
+		delegators = deviationHelper
+				.getRoleAndDesc(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
+
 
 		// Clone the object.
 		Cloner cloner = new Cloner();
@@ -176,43 +186,52 @@ public class DeviationExecutionCtrl {
 			if (PennantConstants.RECORD_TYPE_CAN.equals(collateralAssignment.getRecordType())) {
 				continue;
 			}
-			
+
 			collateral = getCollateralSetupService().getCollateralSetupByRef(collateralAssignment.getCollateralRef(),
 					"", false);
-
 			aFinanceDetail.getCollateralSetup().add(collateral);
 		}
 
 		// Call the customization hook.
 		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail);
-		
-		// Loop through the deviations, if any, check whether to add to the list and set the required attributes.
-		String finReference = financeDetail.getFinScheduleData().getFinReference();
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		List<FinanceDeviations> deviationList = new ArrayList<>();
-		
-		for (FinanceDeviations deviation : deviations) {
-			deviation.setFinReference(finReference);
-			deviation.setModule(DeviationConstants.TY_CUSTOM);
-			deviation.setDeviationType("S");
-			deviation.setUserRole(userRole);
-			deviation.setApprovalStatus("");
-			deviation.setDeviationDate(timestamp);
-			deviation.setDeviationUserId(String.valueOf(userid));
-			deviation.setDeviationCategory(DeviationConstants.CAT_CUSTOM);
 
-			if (isInApprovedList(getApprovedFinanceDeviations(), deviation)) {
-				// DO Nothing
-			} else if (isInCurrentDevaitionList(financeDeviations, deviation)) {
-				// DO Nothing
-			} else {
-				deviationList.add(deviation);
+		// Remove the deviations that are invalid like duplicate code, invalid delegator etc.
+		deviations = deviationHelper.getValidCustomDeviations(deviations, delegators);
+
+		// Clear the existing deviations.
+		for (FinanceDeviations deviation : getApprovedFinanceDeviations()) {
+			if (DeviationConstants.TY_CUSTOM.equals(deviation.getModule())) {
+				if (!deviationHelper.isExists(deviations, deviation.getDeviationCode())) {
+					deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), DeviationConstants.TY_CUSTOM,
+							deviation.getDeviationCode());
+				}
 			}
 		}
 
-		if (!deviationList.isEmpty()) {
-			fillDeviationListbox(deviationList, userRole, DeviationConstants.TY_CUSTOM);
+		List<FinanceDeviations> currentDeviations = new ArrayList<>();
+
+		if (!getFinanceDeviations().isEmpty()) {
+			currentDeviations = (List<FinanceDeviations>) ((ArrayList<FinanceDeviations>) getFinanceDeviations())
+					.clone();
 		}
+
+		for (FinanceDeviations deviation : currentDeviations) {
+			if (DeviationConstants.TY_CUSTOM.equals(deviation.getModule())) {
+				if (!deviationHelper.isExists(deviations, deviation.getDeviationCode())) {
+					deviationHelper.removeDeviations(getFinanceDeviations(), DeviationConstants.TY_CUSTOM,
+							deviation.getDeviationCode());
+				}
+			}
+		}
+
+		// Process the new deviations.
+		for (FinanceDeviations deviation : deviations) {
+			processAutoDeviation(DeviationConstants.CAT_CUSTOM, DeviationConstants.TY_CUSTOM,
+					deviation.getDeviationCode(), deviation.getDeviationValue(), deviation.getDelegationRole(),
+					financeDetail.getFinScheduleData().getFinReference(), null, deviation.getDeviationDesc());
+		}
+
+		fillAutoDeviations();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -959,6 +978,122 @@ public class DeviationExecutionCtrl {
 		return null;
 	}
 
+	/**
+	 * Process the deviation and consider / ignore based on the result and previous history of the deviation, if
+	 * available.
+	 * 
+	 * @param header
+	 *            Deviation header object.
+	 * @param category
+	 *            Category of the deviation.
+	 * @param module
+	 *            Type of deviation.
+	 * @param reference
+	 *            Finance reference number.
+	 * @param result
+	 *            Deviated value.
+	 */
+	private void processAutoDeviation(String category, String module, String code, Object result, String approverRole,
+			String reference, DeviationHeader header, String desc) {
+		logger.trace(Literal.ENTERING);
+
+		String resultType;
+
+		if (header == null) {
+			resultType = "S";
+		} else {
+			code = header.getModuleCode();
+			resultType = header.getValueType();
+
+			// Get the deviation role.
+			approverRole = getRoleFromValue(result, header);
+		}
+
+		// Check the existing approved & current deviations and delete.
+		boolean approvedDeviationExists = deviationHelper.isExists(getApprovedFinanceDeviations(), module, code);
+		boolean currentDeviationExists = deviationHelper.isExists(getFinanceDeviations(), module, code);
+
+		// Two values to be considered 1) Null means No Deviation, 2) Empty means Deviation Not Allowed.
+		// So empty check should not be required until unless all cases have been changed.
+		if (approverRole == null) {
+			/* No deviation found. */
+			if (approvedDeviationExists) {
+				deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), module, code);
+			}
+
+			if (currentDeviationExists) {
+				deviationHelper.removeDeviations(getFinanceDeviations(), module, code);
+			}
+		} else {
+			/* Deviation found. */
+			// Deviation raised for the first time.
+			if (!approvedDeviationExists && !currentDeviationExists) {
+				getFinanceDeviations().add(deviationHelper.createDeviation(category, module, reference, code, userRole,
+						userid, approverRole, result, resultType, desc));
+			} else {
+				// Compare the deviation values.
+				if (approvedDeviationExists && !currentDeviationExists) {
+					if (deviationHelper.isMatchFound(getApprovedFinanceDeviations(), module, code, result)) {
+						deviationHelper.restoreDeviations(getApprovedFinanceDeviations(), module, code, result);
+					} else {
+						getFinanceDeviations().add(deviationHelper.createDeviation(category, module, reference, code,
+								userRole, userid, approverRole, result, resultType, desc));
+						deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), module, code);
+					}
+				} else if (currentDeviationExists && !approvedDeviationExists) {
+					if (deviationHelper.isMatchFound(getFinanceDeviations(), module, code, result)) {
+						// SKIP
+					} else {
+						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
+								code);
+
+						deviationHelper.updateDeviation(deviation, userRole, userid, approverRole, result);
+					}
+				} else {
+					boolean approvedDeviationMatched = false;
+					boolean currentDeviationMatched = false;
+
+					if (deviationHelper.isMatchFound(getApprovedFinanceDeviations(), module, code, result)) {
+						approvedDeviationMatched = true;
+					}
+
+					if (deviationHelper.isMatchFound(getFinanceDeviations(), module, code, result)) {
+						currentDeviationMatched = true;
+					}
+
+					if (!currentDeviationMatched && !approvedDeviationMatched) {
+						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
+								code);
+
+						deviationHelper.updateDeviation(deviation, userRole, userid, approverRole, result);
+						deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), module, code);
+					} else if (approvedDeviationMatched) {
+						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
+								code);
+
+						getFinanceDeviations().remove(deviation);
+						deviationHelper.restoreDeviations(getApprovedFinanceDeviations(), module, code, result);
+					}
+				}
+			}
+		}
+
+		logger.trace(Literal.LEAVING);
+	}
+
+	/**
+	 * Fill the list box with the auto deviations.
+	 */
+	private void fillAutoDeviations() {
+		logger.trace(Literal.ENTERING);
+
+		if (financeMainBaseCtrl != null && financeMainBaseCtrl.getDeviationDetailDialogCtrl() != null) {
+			financeMainBaseCtrl.getDeviationDetailDialogCtrl().doFillAutoDeviationDetails(financeDeviations);
+		}
+
+		logger.trace(Literal.LEAVING);
+	}
+
 	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
 		return collateralAssignmentDAO;
 	}
@@ -974,5 +1109,4 @@ public class DeviationExecutionCtrl {
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
-
 }

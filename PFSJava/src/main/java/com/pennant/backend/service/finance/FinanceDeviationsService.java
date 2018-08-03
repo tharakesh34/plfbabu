@@ -9,6 +9,9 @@ import com.pennant.backend.model.finance.FinanceMain;
 
 public interface FinanceDeviationsService {
 	void processDevaitions( String finreference,List<FinanceDeviations> newlist,AuditHeader auditHeader);
+
+	void processApprovedDevaitions(String finReference, List<FinanceDeviations> deviations, AuditHeader auditHeader);
+
 	List<FinanceDeviations> getApprovedFinanceDeviations(final String finReference);
 	List<FinanceDeviations> getFinanceDeviations(String finReference);
 	void processApproval(List<FinanceDeviations> list,AuditHeader auditHeader,String finreference);

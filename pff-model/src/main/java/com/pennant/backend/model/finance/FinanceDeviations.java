@@ -40,6 +40,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private LoggedInUser		userDetails;
 	private String				deviationCodeName;
 	private String				deviationCodeDesc;
+	private String deviationDesc;
 	private long				severity;
 	private String				severityCode;
 	private String				severityName;
@@ -75,6 +76,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 		excludeFields.add("version");
 		excludeFields.add("lastMntBy");
 		excludeFields.add("lastMntOn");
+		excludeFields.add("deviationDesc");
 
 		return excludeFields;
 	}
@@ -316,5 +318,13 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 
 	public void setDeviationCategory(String deviationCategory) {
 		this.deviationCategory = deviationCategory;
+	}
+
+	public String getDeviationDesc() {
+		return deviationDesc;
+	}
+
+	public void setDeviationDesc(String deviationDesc) {
+		this.deviationDesc = deviationDesc;
 	}
 }

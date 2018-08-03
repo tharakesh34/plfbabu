@@ -2373,6 +2373,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			if (ImplementationConstants.ALLOW_DEVIATIONS) {
 				getDeviationDetailsService().processDevaitions(finReference, deviations, auditHeader);
+				getDeviationDetailsService().processApprovedDevaitions(finReference,
+						financeDetail.getApprovedFinanceDeviations(), auditHeader);
 			}
 
 			// Dedup Details

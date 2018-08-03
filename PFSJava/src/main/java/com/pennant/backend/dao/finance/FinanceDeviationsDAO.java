@@ -26,4 +26,13 @@ public interface FinanceDeviationsDAO {
 	//### 05-05-2018 story #361(tuleap server) Manual Deviations
 	void updateMarkDeleted(long deviationId, String finReference);
 
+	/**
+	 * Updates the mark deleted flag for the specified deviation.
+	 * 
+	 * @param deviationId
+	 *            Id of the deviation.
+	 * @param markDeleted
+	 *            Flag with which the deviation to be updated.
+	 */
+	void updateMarkDeleted(long deviationId, boolean markDeleted);
 }

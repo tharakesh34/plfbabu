@@ -137,12 +137,20 @@ public class DeviationRenderer {
 			}
 
 			Listitem listitem = new Listitem();
+			if (deviationDetail.isMarkDeleted()) {
+				listitem.setStyle("background: #f5f5f5;");
+			}
 
 			if (StringUtils.equals(DeviationConstants.CAT_AUTO, deviationDetail.getDeviationCategory())) {
 				String deviationCodedesc = deviationHelper.getDeviationDesc(deviationDetail, deviationParams);
 				listcell = getNewListCell(deviationCodedesc, deviationNotallowed);
+				listcell.setTooltiptext(deviationCodedesc);
 			} else {
-				listcell = new Listcell(deviationDetail.getDeviationCode());
+				listcell = new Listcell(
+						deviationDetail.getDeviationCode() + " - " + deviationDetail.getDeviationDesc());
+				listcell.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+				listcell.setTooltiptext(deviationDetail.getDeviationDesc());
+
 			}
 			listitem.appendChild(listcell);
 
@@ -276,6 +284,7 @@ public class DeviationRenderer {
 			listcell = getNewListCell(deviation.getDeviationCodeName() + " - " + deviation.getDeviationCodeDesc(),
 					devNotallowed);
 			listcell.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+			listcell.setTooltiptext(deviation.getDeviationCodeDesc());
 			listitem.appendChild(listcell);
 
 			// Severity

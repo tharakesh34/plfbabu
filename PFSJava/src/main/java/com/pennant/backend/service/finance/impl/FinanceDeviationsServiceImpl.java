@@ -32,12 +32,12 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
-import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
@@ -240,6 +240,24 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		logger.debug(" Leaving ");
 	}
 
+	@Override
+	public void processApprovedDevaitions(String finReference, List<FinanceDeviations> deviations,
+			AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		if (deviations == null) {
+			return;
+		}
+		
+		for (FinanceDeviations deviation : deviations) {
+			if (PennantConstants.RCD_UPD.equals(deviation.getRecordType())) {
+				deviationDetailsDAO.updateMarkDeleted(deviation.getDeviationId(), deviation.isMarkDeleted());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/** 
 	 * 
 	 */
@@ -372,9 +390,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				.getFinanceDeviations(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "");
 		List<FinanceDeviations> deviations = new ArrayList<>();
 		for (FinanceDeviations financeDeviation : financedeviations) {
-			if (StringUtils.equals(DeviationConstants.CAT_MANUAL, financeDeviation.getDeviationCategory())) {
-				deviations.add(financeDeviation);
-			}
+			deviations.add(financeDeviation);
 		}
 
 		// Add the pending manual deviations.
@@ -383,10 +399,14 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		if (pendingDeviations != null && !pendingDeviations.isEmpty()) {
 			deviations.addAll(pendingDeviations);
 		}
+
+		// Add the pending auto (along with custom) deviations.
 		List<FinanceDeviations> pendingAutoDeviations = financeDetail.getFinanceDeviations();
+
 		if (pendingAutoDeviations != null && !pendingAutoDeviations.isEmpty()) {
 			deviations.addAll(pendingAutoDeviations);
 		}
+
 		// Check whether any deviations were not approved and add the error.
 		for (FinanceDeviations deviation : deviations) {
 			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)

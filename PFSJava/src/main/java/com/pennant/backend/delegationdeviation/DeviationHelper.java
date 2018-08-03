@@ -26,6 +26,7 @@
 package com.pennant.backend.delegationdeviation;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -376,4 +377,137 @@ public class DeviationHelper {
 	}
 	// ### 06-05-2018 - End
 
+	public boolean isExists(List<FinanceDeviations> list, String code) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(code, item.getDeviationCode())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isExists(List<FinanceDeviations> list, String module, String code) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isMatchFound(List<FinanceDeviations> list, String module, String code, Object result) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())
+					&& StringUtils.equals(String.valueOf(result), item.getDeviationValue())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public FinanceDeviations createDeviation(String category, String module, String reference, String code,
+			String role, long userId, String approverRole, Object result, String resultType, String desc) {
+		FinanceDeviations deviation = new FinanceDeviations();
+
+		deviation.setFinReference(reference);
+		deviation.setModule(module);
+		deviation.setDeviationCode(code);
+		deviation.setDeviationType(resultType);
+		deviation.setUserRole(role);
+		deviation.setApprovalStatus("");
+		deviation.setDeviationDate(new Timestamp(System.currentTimeMillis()));
+		deviation.setDeviationUserId(String.valueOf(userId));
+		deviation.setDeviationCategory(category);
+		deviation.setDelegationRole(approverRole);
+		deviation.setDeviationValue(String.valueOf(result));
+		deviation.setDeviationDesc(desc);
+
+		return deviation;
+	}
+
+	public FinanceDeviations findDeviation(List<FinanceDeviations> list, String module, String code) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				return item;
+			}
+		}
+
+		return null;
+	}
+
+	public void updateDeviation(FinanceDeviations deviation, String role, long userId, String approverRole,
+			Object result) {
+		deviation.setUserRole(role);
+		deviation.setDeviationDate(new Timestamp(System.currentTimeMillis()));
+		deviation.setDeviationUserId(String.valueOf(userId));
+		deviation.setDelegationRole(approverRole);
+		deviation.setDeviationValue(String.valueOf(result));
+	}
+
+	public void purgeDeviations(List<FinanceDeviations> list, String module, String code) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				if (!item.isMarkDeleted()) {
+					item.setMarkDeleted(true);
+					item.setRecordType(PennantConstants.RCD_UPD);
+				}
+			}
+		}
+	}
+
+	public void restoreDeviations(List<FinanceDeviations> list, String module, String code, Object result) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				if (StringUtils.equals(String.valueOf(result), item.getDeviationValue())) {
+					if (item.isMarkDeleted()) {
+						item.setMarkDeleted(false);
+						item.setRecordType(PennantConstants.RCD_UPD);
+					}
+				} else {
+					if (!item.isMarkDeleted()) {
+						item.setMarkDeleted(true);
+						item.setRecordType(PennantConstants.RCD_UPD);
+					}
+				}
+			}
+		}
+	}
+
+	public void removeDeviations(List<FinanceDeviations> list, String module, String code) {
+		if (list == null || list.isEmpty()) {
+			return;
+		}
+
+		@SuppressWarnings("unchecked")
+		List<FinanceDeviations> result = (List<FinanceDeviations>) ((ArrayList<FinanceDeviations>) list).clone();
+
+		for (FinanceDeviations item : result) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				list.remove(item);
+			}
+		}
+	}
+
+	public List<FinanceDeviations> getValidCustomDeviations(List<FinanceDeviations> list, List<ValueLabel> delegators) {
+		List<FinanceDeviations> deviations = new ArrayList<>();
+		List<String> codes = new ArrayList<>();
+
+		for (FinanceDeviations item : list) {
+			if (item.getDeviationCode().length() <= 50 && !codes.contains(item.getDeviationCode())) {
+				for (ValueLabel delegator : delegators) {
+					if (item.getDelegationRole().contains(delegator.getValue())) {
+						deviations.add(item);
+						codes.add(item.getDeviationCode());
+
+						break;
+					}
+				}
+			}
+		}
+
+		return deviations;
+	}
 }

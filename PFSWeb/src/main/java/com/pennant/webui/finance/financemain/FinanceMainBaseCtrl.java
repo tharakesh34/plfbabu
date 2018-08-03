@@ -6085,6 +6085,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			deviationExecutionCtrl.checkProductDeviations(getFinanceDetail());
 			deviationExecutionCtrl.checkFeeDeviations(getFinanceDetail());
+			aFinanceDetail.setApprovedFinanceDeviations(getFinanceDetail().getApprovedFinanceDeviations());
+
 		}
 
 		// Customer Details Tab ---> Customer Details 

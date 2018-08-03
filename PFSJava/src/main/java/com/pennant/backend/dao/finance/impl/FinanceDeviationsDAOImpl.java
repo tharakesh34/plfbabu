@@ -15,6 +15,7 @@ import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  implements FinanceDeviationsDAO{
    private static Logger logger = Logger.getLogger(FinanceDeviationsDAOImpl.class);
@@ -38,7 +39,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks, ");
 		selectSql.append(" DeviationCode, DeviationType, DeviationValue, UserRole, DeviationCategory,");
 		selectSql.append(" DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId, MarkDeleted,");
-		selectSql.append(" DelegatedUserId From FinanceDeviations");
+		selectSql.append(" DelegatedUserId, DeviationDesc From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -59,7 +60,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
 		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole, DeviationCategory,");
 		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,DeviProcessed,MarkDeleted,");
-		selectSql.append(" DelegatedUserId From FinanceDeviations");
+		selectSql.append(" DelegatedUserId, DeviationDesc From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference and DeviProcessed =:DeviProcessed");
 
@@ -87,21 +88,23 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 	
 	@Override
 	public void update(FinanceDeviations financeDeviations, String type) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinanceDeviations");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set FinReference = :FinReference, Module = :Module, DeviationCode =:DeviationCode, ");
-		updateSql.append(" DeviationType = :DeviationType , DeviationValue = :DeviationValue, UserRole = :UserRole,");
-		updateSql.append(" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
-		updateSql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
-		updateSql.append("  DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId where DeviationId=:DeviationId ");
+		logger.debug(Literal.ENTERING);
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		StringBuilder sql = new StringBuilder("Update FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  Set FinReference = :FinReference, Module = :Module, DeviationCode =:DeviationCode, ");
+		sql.append(" DeviationType = :DeviationType , DeviationValue = :DeviationValue, UserRole = :UserRole,");
+		sql.append(" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
+		sql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
+		sql.append(" DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId, ");
+		sql.append(" MarkDeleted = :MarkDeleted");
+		sql.append(" where DeviationId = :DeviationId");
+
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 		
 		/**
@@ -118,11 +121,13 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" ( DeviationId, FinReference, Module, DeviationCode, DeviationType, ");
 		insertSql.append(" DeviationValue, UserRole, DelegationRole,ApprovalStatus,");
-		insertSql.append(" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed  )");
+		insertSql.append(
+				" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed, DeviationDesc, MarkDeleted)");
 
 		insertSql.append(" Values( :DeviationId, :FinReference, :Module, :DeviationCode, :DeviationType,");
 		insertSql.append(" :DeviationValue, :UserRole, :DelegationRole, :ApprovalStatus,");
-		insertSql.append(" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed  )");
+		insertSql.append(
+				" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed, :DeviationDesc, :MarkDeleted)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
@@ -241,5 +246,22 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 	}
 	//### 05-05-2018- END- story #361(tuleap server) Manual Deviations
 
+	@Override
+	public void updateMarkDeleted(long deviationId, boolean markDeleted) {
+		logger.debug(Literal.ENTERING);
 
+		FinanceDeviations deviation = new FinanceDeviations();
+		deviation.setDeviationId(deviationId);
+		deviation.setMarkDeleted(markDeleted);
+
+		StringBuilder sql = new StringBuilder("update FinanceDeviations");
+		sql.append(" set MarkDeleted = :MarkDeleted");
+		sql.append(" where DeviationId = :DeviationId");
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviation);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
+	}
 }
