@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <!-- <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -4716,8 +4716,24 @@
 		</sql>
  </changeSet>	
 <changeSet id="83" author="Madhubabu">
-		<createSequence sequenceName="SeqFeeWaiverDetail"/>
-	</changeSet>
+	<createSequence sequenceName="SeqFeeWaiverDetail" />
+</changeSet> -->
+<changeSet id="84" author="Madhubabu">
+	<addColumn tableName="FEEWAIVERDETAILS">
+		<column name="RECEIVABLEAMOUNT" type="decimal(18,0)" />
+		<column name="RECEIVEDAMOUNT" type="decimal(18,0)" />
+		<column name="WAIVEDAMOUNT" type="decimal(18,0)" />
+		<column name="BALANCEAMOUNT" type="decimal(18,0)" />
+	</addColumn>
+</changeSet>
+<changeSet id="85" author="Madhubabu">
+		<addColumn tableName="FEEWAIVERDETAILS_TEMP">
+			<column name="RECEIVABLEAMOUNT" type="decimal(18,0)" />
+			<column name="RECEIVEDAMOUNT" type="decimal(18,0)" />
+			<column name="WAIVEDAMOUNT" type="decimal(18,0)" />
+			<column name="BALANCEAMOUNT" type="decimal(18,0)" />
+		</addColumn>
+</changeSet>
 
 </databaseChangeLog>
 	
