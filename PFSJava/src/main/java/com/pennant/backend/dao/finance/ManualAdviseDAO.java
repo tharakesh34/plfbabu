@@ -77,10 +77,10 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type);
 	void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType);
 	FinanceMain getFinanceDetails(String finReference);
-	
 	List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type);
 	BigDecimal getBalanceAmt(String finReference);
 	String getTaxComponent(long adviseID, String type);
-	
+	List<ManualAdvise> getManualAdvise(String finReference);
+	void updateWaivedAmount(ManualAdvise advise,TableType tableType);
 	
 }

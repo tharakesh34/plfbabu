@@ -238,7 +238,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				return auditDetail;
 			}
 
-			if (finServiceInstruction.getRecalToDate().compareTo(finServiceInstruction.getRecalFromDate()) <= 0) {
+			if (finServiceInstruction.getRecalToDate().compareTo(finServiceInstruction.getRecalFromDate()) < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalToDate());
 				valueParm[1] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());

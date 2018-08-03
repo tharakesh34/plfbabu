@@ -1870,6 +1870,7 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Covenants"), "COVN"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD,
 					Labels.getLabel("label_FinSerEvent_ChangeSchdMtd"), "CSCH"));
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_FEEWAIVERS,Labels.getLabel("label_FinSerEvent_FeeWaivers"),"FWO"));
 
 		}
 		return events;

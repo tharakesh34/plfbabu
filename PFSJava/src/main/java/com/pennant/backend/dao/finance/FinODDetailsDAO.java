@@ -121,5 +121,8 @@ public interface FinODDetailsDAO {
 	void deleteAfterODDate(String finReference, Date odDate);
 
 	void saveList(List<FinODDetails> finOdDetails);
+	
+    List<FinODDetails> getFinODPenalityByFinRef(String finReference,boolean ispft,boolean isRender);
+    
 
 }

@@ -11194,7 +11194,45 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 	</bean>
+	<!-- Fee Waiver Details -->
+	<bean id="feeWaiverHeaderDAO"
+		class="com.pennant.backend.dao.finance.impl.FeeWaiverHeaderDAOImpl"
+		parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="feeWaiverDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FeeWaiverDetailDAOImpl"
+		parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 	
+	<bean id="feeWaiverHeaderService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feeWaiverHeaderServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="feeWaiverHeaderServiceTarget"
+		class="com.pennant.backend.service.finance.impl.FeeWaiverHeaderServiceImpl">
+		<property name="feeWaiverHeaderDAO" ref="feeWaiverHeaderDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="feeWaiverDetailDAO" ref="feeWaiverDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+	</bean>
 	<!-- Organization -->
 	<bean id="organizationDAO" class="com.pennanttech.pff.organization.dao.OrganizationDAOImpl" parent="sequenceDao" />
 	

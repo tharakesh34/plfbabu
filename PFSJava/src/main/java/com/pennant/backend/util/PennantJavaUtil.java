@@ -219,6 +219,8 @@ import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
@@ -459,6 +461,7 @@ public class PennantJavaUtil {
 	private final static String hostGLMapping_WF="HOSTGLMAPPING";
 	private final static String sampling_WF="SAMPLING";
 	private final static String org_School_WF="ORGANIZATION_SCHOOL";
+	private static String feeWaiverWF = "FEE_WAIVER";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -2224,6 +2227,12 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("DataEngineStatus", new ModuleMapping("DataEngineStatus", FileBatchStatus.class, new String[] { "DataEngineStatus",
 		"DATAENGINESTATUS_AVIEW" }, null, new String[] {"Id","FileName"},null, 600));		
+		
+		ModuleUtil.register("FeeWaiverHeader", new ModuleMapping("FeeWaiverHeader", FeeWaiverHeader.class, new String[] { "FeeWaiverHeader",
+		"FeeWaiverHeader_View" }, feeWaiverWF, new String[] {"WaiverId","FinReference"},null, 600));
+
+		ModuleUtil.register("FeeWaiverDetail", new ModuleMapping("FeeWaiverDetail", FeeWaiverDetail.class, new String[] { "FeeWaiverDetail",
+		"FeeWaiverDetail" }, null, new String[] {"WaiverId","WaivedAmount"},null, 600));
  
 		ModuleUtil.register("UploadHeader", new ModuleMapping("UploadHeader", UploadHeader.class, new String[] { "uploadheader",
 		"UPLOADHEADER_AVIEW" }, null, new String[] {"UploadId","FileName"},null, 600));

@@ -82,6 +82,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -93,6 +94,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
+import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -203,6 +205,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinanceWorkFlowService  financeWorkFlowService;
 	private transient FinanceTypeService financeTypeService;
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
+	private transient FeeWaiverHeaderService		feeWaiverHeaderService;
 	
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -1062,6 +1065,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD)) {
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' AND StepFinance = 0 " );
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'");  
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+			whereClause.append(" AND FinReference IN (Select FinReference from ManualAdvise Where  AdviseType ="
+					+ "'"+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE + "' and AdviseAmount-PaidAmount-WaivedAmount >0)");
+			whereClause.append(" OR FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
 		}
 	
 		//Written Off Finance Reference Details Condition
@@ -1141,7 +1148,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY) &&
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)&& 
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 			
 			openFinanceMainDialog(item);
 			
@@ -1181,6 +1189,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 
 			openFinCovenantMaintanceDialog(item);
+
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+
+			openFeeWaiverHeaderDialog(item);
 
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
@@ -2383,6 +2395,103 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 	
+	
+	/**
+	 * 
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFeeWaiverHeaderDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			// Set WorkFlow Details
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if (workFlowDetails == null) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+
+			// Fee Waivers
+			FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
+			if (StringUtils.equals(aFinanceMain.getRcdMaintainSts(), moduleDefiner)) {
+				feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
+				feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
+			} else {
+				//get fee waiver details from manual advise and finoddetails to prepare the list. 
+				feeWaiverHeader.setNewRecord(true);
+				feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
+				feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
+			}
+			
+			// FinanceDetails
+			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
+
+		
+			// Role Code State Checking
+			String userRole = feeWaiverHeader.getNextRoleCode();
+			if (StringUtils.isEmpty(userRole)) {
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+
+			String nextroleCode = feeWaiverHeader.getNextRoleCode();
+			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+				logger.debug("Leaving");
+				return;
+			}
+
+			String maintainSts = "";
+			if (feeWaiverHeader != null) {
+				maintainSts = StringUtils.trimToEmpty(feeWaiverHeader.getEvent());
+			}
+
+			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+			} else {
+
+				if (isWorkFlowEnabled()) {
+					String whereCond = " FinReference='" + aFinanceMain.getFinReference() + "' AND version="
+							+ aFinanceMain.getVersion() + " ";
+
+					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
+							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces) {
+						showFeeWaiverHeaderView(feeWaiverHeader, financeDetail);
+					} else {
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				} else {
+					showFeeWaiverHeaderView(feeWaiverHeader, financeDetail);
+				}
+			}
+		}
+		logger.debug("Leaving ");
+	}
+	
 	/**
 	 * 
 	 * @param finMaintainInstruction
@@ -2409,6 +2518,32 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantMaintanceDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	private void showFeeWaiverHeaderView(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail)
+			throws Exception {
+		logger.debug("Entering");
+
+		if (feeWaiverHeader.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			feeWaiverHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		map.put("feeWaiverHeader", feeWaiverHeader);
+		map.put("financeSelectCtrl", this);
+		map.put("financeDetail", financeDetail);
+		map.put("moduleCode", moduleDefiner);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName", menuItemRightName);
+		map.put("eventCode", eventCodeRef);
+		map.put("isEnquiry", false);
+		map.put("roleCode", getRole());
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FeeWaiverHeaderDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -2621,6 +2756,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef	= "";
 					moduleDefiner	= FinanceConstants.FINSER_EVENT_COVENANTS;
 					workflowCode	= FinanceConstants.FINSER_EVENT_COVENANTS;
+				} else if ("tab_FeeWaivers".equals(tab.getId())) {
+					eventCodeRef = "";
+					moduleDefiner = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
+					workflowCode = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
 				}
 				else if ("tab_ChangeSchdMethod".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
@@ -2688,7 +2827,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			this.searchObject.addTabelName("CovenantsMaintenance_View");
-		} else {
+		} 
+		else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+			this.searchObject.addTabelName("FeeWaivers_View");
+		}else {
 			this.searchObject.addTabelName("FinanceMaintenance_View");
 		}
 		
@@ -2725,7 +2867,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Filter[] rcdTypeFilter = new Filter[2];
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)){
+		if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)){
 			this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 		
@@ -2844,6 +2987,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinCovenantMaintanceService(FinCovenantMaintanceService finCovenantMaintanceService) {
 		this.finCovenantMaintanceService = finCovenantMaintanceService;
 	}	
+	public FeeWaiverHeaderService getFeeWaiverHeaderService() {
+		return feeWaiverHeaderService;
+	}
+
+	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
+		this.feeWaiverHeaderService = feeWaiverHeaderService;
+	}
 	
 	
 }
