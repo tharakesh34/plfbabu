@@ -4469,13 +4469,13 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="70" author="oracle,postgresql">
+	<changeSet id="70" author="MadhuBabu" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="EVENT"/>
 	</changeSet>
-	<changeSet id="70" author="mssql">
+	<changeSet id="70" author="MadhuBabu" dbms="mssql">
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="WAIVERID" columnDataType="BIGINT"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION" columnDataType="INT"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE" columnDataType="VARCHAR(20)"/>
