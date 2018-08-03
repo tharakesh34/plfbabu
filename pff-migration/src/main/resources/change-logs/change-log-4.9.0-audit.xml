@@ -220,4 +220,7 @@
 		<column name="CURRWAIVERAMOUNT" type="decimal(18,0)" />
 	</addColumn>
 </changeSet>
+<changeSet id="18" author="">
+	<renameTable newTableName="ADTFEEWAIVERDETAIL" oldTableName="ADTFEEWAIVERDETAILS"/>
+</changeSet>
 	</databaseChangeLog>
