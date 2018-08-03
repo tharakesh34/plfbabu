@@ -7561,7 +7561,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				DocumentDetails documentDetails = autoGenerateAgreement(financeReferenceDetail,aFinanceDetail,agreementDefinition);
 				newDocList.add(documentDetails);
 			}catch (Exception e) {
-				e.printStackTrace();
+				MessageUtil.showError("Document details Empty...");
+				return;
 			}
 			}
 			}
@@ -18109,10 +18110,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// tasks #503 Auto Generation of Agreements
 	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail data ,FinanceDetail detail,AgreementDefinition agreementDefinition) throws Exception 
 	{
+		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
-	
-			try {
-				if (detail != null && detail.getFinScheduleData() != null
+
+		try {
+			if (detail != null && detail.getFinScheduleData() != null
 					&& detail.getFinScheduleData().getFinanceMain() != null) {
 				FinanceMain main = detail.getFinScheduleData().getFinanceMain();
 				String finReference = main.getFinReference();
@@ -18153,11 +18155,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					else
 						exstDetails.setDocImage(engine.getDocumentInByteArray(
 								templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
-					System.out.println("");
 					return exstDetails;
 				}
-
-				details.setDocCategory(agreementDefinition.getModuleName());
 				if (PennantConstants.WORFLOW_MODULE_FINANCE.equals(agreementDefinition.getModuleName())) {
 					details.setDocModule("Finance");
 				} else {
@@ -18165,6 +18164,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				details.setReferenceId(this.finReference.getValue());
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				details.setDocCategory(agreementDefinition.getDocType());
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype()))
 					details.setDocImage(engine.getDocumentInByteArray(
 							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
@@ -18179,23 +18179,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setCategoryCode(agreementDefinition.getModuleName());
 				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
 				engine.close();
 				engine = null;
 
 			}
-			} catch (Exception e) {
-				if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
-						|| e.getMessage().equals("Template site does not exist.")
-						|| e.getMessage().equals("Template does not exist."))) {
-					AppException exception = new AppException("Template does not exists.Please configure Template.");
-					MessageUtil.showError(exception);
-				} else {
-					MessageUtil.showError(e);
-				}
+		} catch (Exception e) {
+			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
+					|| e.getMessage().equals("Template site does not exist.")
+					|| e.getMessage().equals("Template does not exist."))) {
+				AppException exception = new AppException("Template does not exists.Please configure Template.");
+				MessageUtil.showError(exception);
+			} else {
+				MessageUtil.showError(e);
 			}
-	
-		
+		}
+		logger.debug(Literal.LEAVING);
 		return details;
 
 	}
