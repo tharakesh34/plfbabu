@@ -4715,6 +4715,9 @@
 			Type','fm.fintype',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 		</sql>
  </changeSet>	
+<changeSet id="83" author="Madhubabu">
+		<createSequence sequenceName="SeqFeeWaiverDetail"/>
+	</changeSet>
 
 </databaseChangeLog>
 	
