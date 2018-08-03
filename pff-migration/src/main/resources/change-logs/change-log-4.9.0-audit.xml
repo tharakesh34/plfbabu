@@ -223,4 +223,21 @@
 <changeSet id="18" author="">
 	<renameTable newTableName="ADTFEEWAIVERDETAIL" oldTableName="ADTFEEWAIVERDETAILS"/>
 </changeSet>
+<changeSet id="19" author="Umarohini">
+		<addColumn tableName="ADTBMTAggrementDef">
+			<column name="Doctype" type="varchar(50)"/>
+			<column name="AutoGeneration" type="boolean"/>
+			<column name="AutoDownload" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="20" author="Umarohini" dbms="mssql">
+		<sql>
+			alter table ADTBMTAggrementDef add constraint df_adtbmtagremntdef_ag default 0 for AutoGeneration;
+			alter table ADTBMTAggrementDef add constraint df_adtbmtagremntdef_ad default 0 for AutoDownload;
+		</sql>
+	</changeSet>
+	<changeSet id="21" author="Umarohini" dbms="oracle,postgresql">
+		<addDefaultValue columnName="AutoGeneration" tableName="ADTBMTAggrementDef" defaultValue="0"/>
+		<addDefaultValue columnName="AutoDownload" tableName="ADTBMTAggrementDef" defaultValue="0"/>
+	</changeSet>
 	</databaseChangeLog>

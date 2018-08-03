@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <!-- <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -4717,7 +4717,7 @@
  </changeSet>	
 <changeSet id="83" author="Madhubabu">
 	<createSequence sequenceName="SeqFeeWaiverDetail" />
-</changeSet> -->
+</changeSet>
 <changeSet id="84" author="Madhubabu">
 	<addColumn tableName="FEEWAIVERDETAILS">
 		<column name="RECEIVABLEAMOUNT" type="decimal(18,0)" />
@@ -4734,6 +4734,48 @@
 			<column name="BALANCEAMOUNT" type="decimal(18,0)" />
 		</addColumn>
 </changeSet>
-
+<changeSet id="86" author="Umarohini">
+		<addColumn tableName="BMTAggrementDef">
+			<column name="Doctype" type="varchar(50)"/>
+			<column name="AutoGeneration" type="boolean"/>
+			<column name="AutoDownload" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="87" author="Umarohini">
+		<addColumn tableName="BMTAggrementDef_Temp">
+			<column name="Doctype" type="varchar(50)"/>
+			<column name="AutoGeneration" type="boolean"/>
+			<column name="AutoDownload" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="88" author="Umarohini" dbms="oracle,postgresql">
+		<addDefaultValue columnName="AutoGeneration" tableName="BMTAggrementDef_Temp" defaultValue="0"/>
+		<addDefaultValue columnName="AutoDownload" tableName="BMTAggrementDef_Temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="89" author="Umarohini" dbms="oracle,postgresql">
+		<addDefaultValue columnName="AutoGeneration" tableName="BMTAggrementDef" defaultValue="0"/>
+		<addDefaultValue columnName="AutoDownload" tableName="BMTAggrementDef" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="90" author="Umarohini" dbms="mssql">
+		<sql>
+			alter table BMTAggrementDef add constraint df_bmtagreementdef_ag default 0 for AutoGeneration;
+			alter table BMTAggrementDef add constraint df_bmtagreementdef_ad default 0 for AutoDownload;
+		</sql>
+	</changeSet>
+	<changeSet id="91" author="Umarohini" dbms="mssql">
+		<sql>
+			alter table BMTAggrementDef_Temp add constraint df_bmtagremntdef_t_ag default 0 for AutoGeneration;
+			alter table BMTAggrementDef_Temp add constraint df_bmtagremntdef_t_ad default 0 for AutoDownload;
+		</sql>
+	</changeSet>
+<changeSet id="92" author="UmaRohini">
+	<createView replaceIfExists="true" viewName="BMTAggrementDef_AView">
+	SELECT T1.AggId, T1.AggCode, T1.AggName, T1.AggDesc, T1.AggReportName, T1.AggReportPath, T1.AggIsActive, T1.Aggtype, 
+		T1.AggImage, T1.AgrRule, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.RuleCodeDesc LovDescAgrRuleDesc,
+		T1.AllowMultiple, T1.ModuleType,T1.ModuleName,T1.Doctype,T1.AutoGeneration,T1.AutoDownload
+	FROM BMTAggrementDef  T1 LEFT OUTER JOIN Rules T2 ON T1.AgrRule = T2.RuleCode AND T2.RuleModule ='AGRRULE'
+</createView>   
+</changeSet>	
 </databaseChangeLog>
 	
