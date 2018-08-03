@@ -4734,6 +4734,16 @@
 			<column name="BALANCEAMOUNT" type="decimal(18,0)" />
 		</addColumn>
 </changeSet>
+<changeSet id="86" author="Madhubabu">
+		<addColumn tableName="FEEWAIVERDETAILS_TEMP">
+			<column name="CURRWAIVERAMOUNT" type="decimal(18,0)" />
+		</addColumn>
+</changeSet>
+<changeSet id="87" author="Madhubabu">
+		<addColumn tableName="FEEWAIVERDETAILS">
+			<column name="CURRWAIVERAMOUNT" type="decimal(18,0)" />
+		</addColumn>
+</changeSet>
 <changeSet id="86" author="Umarohini">
 		<addColumn tableName="BMTAggrementDef">
 			<column name="Doctype" type="varchar(50)"/>
