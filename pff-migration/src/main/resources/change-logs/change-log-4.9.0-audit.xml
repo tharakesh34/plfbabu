@@ -33,7 +33,7 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 	
-	<!--  <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,plf,public,pg_catalog;
@@ -138,7 +138,7 @@
 		<addColumn tableName="AdtCustomerEmpDetails" >
 			<column name="companyname" type="varchar(50)" />
 		</addColumn>
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="14" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="ADTFEEWAIVERHEADER">
