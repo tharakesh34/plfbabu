@@ -33,7 +33,7 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 	
-	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+	<!--  <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,plf,public,pg_catalog;
@@ -88,7 +88,7 @@
 		<comment>data type modified from decimal(10,0) to decimal(18,0)</comment>
 		<modifyDataType tableName="AdtCashDenominations" columnName="Amount" newDataType="decimal(18,0)" />
 	</changeSet>
-	<!-- <changeSet id="9" author="PASVarma">
+	<changeSet id="9" author="PASVarma">
 		<createView viewName="activitylog_view" replaceIfExists="true">
 			SELECT a.auditid,
 		    a.lastmnton AS auditdate,
@@ -108,7 +108,7 @@
 		     JOIN secusers u ON u.usrid = a.lastmntby
 		  WHERE a.auditimage = 'W' and a.workflowid != 0
 		</createView>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="10" author="Kesav">
 		<comment>DepositBranch column added in FinReceiptHeader tables</comment>
@@ -138,8 +138,8 @@
 		<addColumn tableName="AdtCustomerEmpDetails" >
 			<column name="companyname" type="varchar(50)" />
 		</addColumn>
-	</changeSet>
-	<changeSet id="13" author="Madhubabu">
+	</changeSet> -->
+	<changeSet id="14" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="ADTFEEWAIVERHEADER">
 			<column name="AuditId" type="bigint">
@@ -172,10 +172,10 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="14" author="Madhubabu">
+	<changeSet id="15" author="Madhubabu">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERHEADER" tableName="ADTFEEWAIVERHEADER" />
 	</changeSet>
-	<changeSet id="15" author="Madhubabu">
+	<changeSet id="16" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="ADTFEEWAIVERDETAILS">
 			<column name="AuditId" type="bigint">
@@ -208,7 +208,17 @@
 			<column name="WORKFLOWID" type="BIGINT"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="16" author="Madhubabu">
+	<changeSet id="17" author="Madhubabu">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERDETAILS" tableName="ADTFEEWAIVERDETAILS" />
 	</changeSet>
+	
+	<changeSet id="18" author="Madhubabu">
+	<addColumn tableName="ADTFEEWAIVERDETAILS">
+		<column name="RECEIVABLEAMOUNT" type="decimal(18,0)" />
+		<column name="RECEIVEDAMOUNT" type="decimal(18,0)" />
+		<column name="WAIVEDAMOUNT" type="decimal(18,0)" />
+		<column name="BALANCEAMOUNT" type="decimal(18,0)" />
+		<column name="CURRWAIVERAMOUNT" type="decimal(18,0)" />
+	</addColumn>
+</changeSet>
 	</databaseChangeLog>
