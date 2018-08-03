@@ -223,6 +223,16 @@
 <changeSet id="18" author="">
 	<renameTable newTableName="ADTFEEWAIVERDETAIL" oldTableName="ADTFEEWAIVERDETAILS"/>
 </changeSet>
+
+	<changeSet id="19" author="Mangapathi">
+			<addColumn tableName="ADTRMTFINANCETYPES">
+				<column name="AlwAdvEmi" type="boolean" defaultValue="0"/>
+				<column name="AdvEmiMinTerms" type="Number(3,0)" defaultValue="0"/>
+				<column name="AdvEmiMaxTerms" type="Number(3,0)" defaultValue="0"/>
+				<column name="AdvEmiDftTerms" type="Number(3,0)" defaultValue="0"/>
+				<column name="AdvEmiSchdMthd" type="Varchar(8)"/>
+			</addColumn>
+	</changeSet>
 <changeSet id="19" author="Umarohini">
 		<addColumn tableName="ADTBMTAggrementDef">
 			<column name="Doctype" type="varchar(50)"/>
