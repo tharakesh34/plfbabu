@@ -5673,6 +5673,15 @@ UNION ALL
 			INSERT INTO SecRoleGroups VALUES ((select MAX(ROLEGRPID)+1 from SecRoleGroups), (select GRPID from SecGroups where GRPCODE='FIN_FEEWAIVER_APPROVER'), 
 			(select roleid from SecRoles where RoleCd='FEE_WAIVER_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
 		</sql>
+</changeSet>
+
+<changeSet id="91" author="Manoj">
+	<addColumn tableName="Financedeviations_temp">
+		<column name="DeviationDesc" type="varchar(500)" />
+	</addColumn>
+	<addColumn tableName="Financedeviations">
+		<column name="DeviationDesc" type="varchar(500)" />
+	</addColumn>
 </changeSet>	
 </databaseChangeLog>
 	
