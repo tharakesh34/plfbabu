@@ -3,5 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	
+	<include file="change-logs/change-log-GSTCoreChanges-audit.xml" />
+	<include file="change-logs/change-log-verification-fi-audit.xml" />
+	<include file="change-logs/change-log-verification-tv-audit.xml" />
+	<include file="change-logs/change-log-verification-lv-audit.xml" />
+	<include file="change-logs/change-log-verification-rcu-audit.xml" />
+	<include file="change-logs/change-log-customer-extliability-enhancement-audit.xml"/>
+	<include file="change-logs/change-log-customer-income-enhancement-audit.xml"/>
+	<include file="change-logs/change-log-sampling-audit.xml"/>
+	<include file="change-logs/change-log-auditlegal.xml"/>
+	<include file="change-logs/change-log-4.7.17-audit.xml" />
 	<include file="change-logs/change-log-4.9.0-audit.xml" />
 </databaseChangeLog>
