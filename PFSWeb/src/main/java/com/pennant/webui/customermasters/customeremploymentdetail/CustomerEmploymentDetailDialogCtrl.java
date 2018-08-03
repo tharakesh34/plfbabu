@@ -69,14 +69,17 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -133,7 +136,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	private boolean newRecord=false;
 	private boolean newCustomer=false;
 	private CustomerDialogCtrl customerDialogCtrl;
-
+	protected Textbox companyName;	
 	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
 		return customerViewDialogCtrl;
 	}
@@ -148,6 +151,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	private String userRole="";
 	private boolean isCurrentEmp = false;
 	private boolean isFinanceProcess = false;
+	private boolean workflow = false;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -232,6 +237,11 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		if (arguments.containsKey("isFinanceProcess")) {
 			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
+		
+		if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
+			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		
 		doLoadWorkFlow(this.customerEmploymentDetail.isWorkflow(),
 				this.customerEmploymentDetail.getWorkflowId(),this.customerEmploymentDetail.getNextTaskId());
 		/* set components visible dependent of the users rights */
@@ -439,6 +449,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.custCIF.setValue(aCustomerEmploymentDetail.getLovDescCustCIF()==null?"":aCustomerEmploymentDetail.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerEmploymentDetail.getLovDescCustShrtName()==null?"":aCustomerEmploymentDetail.getLovDescCustShrtName().trim());
 		this.currentEmployer.setChecked(aCustomerEmploymentDetail.isCurrentEmployer());
+		this.companyName.setValue(aCustomerEmploymentDetail.getCompanyName());
+		
 		if (aCustomerEmploymentDetail.getCustEmpName() == 0){
 			this.custEmpDesg.setDescription("");
 			this.custEmpDept.setDescription("");
@@ -454,6 +466,25 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		logger.debug("Leaving");
 	}
 
+	public void onFulfill$custEmpName(Event event) {
+		String desc=null;
+		
+		Object dataObject = custEmpName.getObject();
+		if(dataObject instanceof EmployerDetail){
+			EmployerDetail details = (EmployerDetail) dataObject;
+			desc = details.getEmpName();
+		}
+			
+		if(StringUtils.equals("OTHER", desc) && !enqiryModule){
+			if(!isReadOnly("CustomerEmploymentDetailDialog_companyName")){
+				this.companyName.setReadonly(false);
+			}else{
+				this.companyName.setReadonly(true);
+			}
+		}else{
+			this.companyName.setReadonly(true);
+		}
+	}
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -553,7 +584,11 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			wve.add(we);
 		}
 
-
+		try {
+			aCustomerEmploymentDetail.setCompanyName(this.companyName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		//		try {
 		//		    aCustomerEmploymentDetail.setCustEmpHNbr(this.custEmpHNbr.getValue());
@@ -694,6 +729,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custEmpDept.setReadonly(true);
 			this.custEmpType.setReadonly(true);
 			this.currentEmployer.setDisabled(true);
+			this.companyName.setReadonly(true);
 			
 		}
 	}
@@ -716,6 +752,10 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custEmpName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}*/
+		if(!this.companyName.isReadonly()){
+			this.companyName.setConstraint(	new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CompanyName.value"),PennantRegularExpressions.REGEX_COMPANY_NAME,true,true));
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -855,7 +895,6 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 				this.btnSearchPRCustid.setVisible(true);
 			}
 			this.btnDelete.setVisible(false);
-			this.custEmpName.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpName"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
@@ -870,7 +909,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	  	this.custEmpDept.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpDept"));
 	  	this.custEmpDept.setMandatoryStyle(!isReadOnly("CustomerEmploymentDetailDialog_custEmpDept"));
 	  	this.custEmpType.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpType"));
-
+		this.companyName.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_companyName"));
+		
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1002,6 +1042,10 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 					aCustomerEmploymentDetail.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType =PennantConstants.TRAN_UPD;
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerEmploymentDetail.getRecordType())) {
+						aCustomerEmploymentDetail.setNewRecord(true);
+					}
+					
 				}
 
 				if(StringUtils.isBlank(aCustomerEmploymentDetail.getRecordType())){

@@ -4338,7 +4338,79 @@
 	<changeSet id="66" author="Jayant" dbms="oracle">
 		<dropPrimaryKey tableName="seqjvpostingentry"/>
 	</changeSet>
+
+	<changeSet id="67" author="Srinivasa Varma">
+		<comment>New Field Company Name added in Customer Employment Details.</comment>
+		<addColumn tableName="CustomerEmpDetails" >
+			<column name="companyname" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 	
+	<changeSet id="68" author="Srinivasa Varma">
+	<comment>New Field Company Name added in Customer Employment Details.</comment>
+		<addColumn tableName="CustomerEmpDetails_Temp" >
+			<column name="companyname" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="69" author="Srinivasa Varma">
+		<comment>New Field Company Name added in Customer Employment Details</comment>
+		<createView viewName="customerempdetails_view" replaceIfExists="true">
+			SELECT ce.custempid,ce.custid,ce.custempname,ce.custempfrom,ce.custempto,
+    		ce.custempdesg,de.gendesgdesc AS lovdesccustempdesgname,ce.custempdept,
+	    	dp.gendeptdesc AS lovdesccustempdeptname, ce.custemptype,et.emptypedesc AS lovdesccustemptypename,
+    		ce.version,ce.lastmntby,ce.lastmnton,ce.recordstatus,ce.rolecode,ce.nextrolecode,
+    		ce.taskid,ce.nexttaskid,ce.recordtype,ce.workflowid,emp.empname AS lovdesccustempname,ce.currentemployer,companyname
+   			FROM customerempdetails_temp ce
+     		JOIN rmtgendesignations de ON ce.custempdesg = de.gendesignation
+     		LEFT JOIN rmtgendepartments dp ON ce.custempdept = dp.gendepartment
+     		JOIN rmtemptypes et ON ce.custemptype = et.emptype
+     		JOIN employerdetail emp ON ce.custempname = emp.employerid
+		UNION ALL
+			SELECT ce.custempid,ce.custid,ce.custempname,ce.custempfrom,ce.custempto,
+    		ce.custempdesg,de.gendesgdesc AS lovdesccustempdesgname,ce.custempdept,
+	    	dp.gendeptdesc AS lovdesccustempdeptname, ce.custemptype,et.emptypedesc AS lovdesccustemptypename,
+    		ce.version,ce.lastmntby,ce.lastmnton,ce.recordstatus,ce.rolecode,ce.nextrolecode,
+    		ce.taskid,ce.nexttaskid,ce.recordtype,ce.workflowid,emp.empname AS lovdesccustempname,ce.currentemployer,companyname
+		   	FROM customerempdetails ce
+     		JOIN rmtgendesignations de ON ce.custempdesg = de.gendesignation
+     		LEFT JOIN rmtgendepartments dp ON ce.custempdept = dp.gendepartment
+     		JOIN rmtemptypes et ON ce.custemptype = et.emptype
+     		JOIN employerdetail emp ON ce.custempname = emp.employerid
+  		WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM customerempdetails_temp  WHERE customerempdetails_temp.custempid = ce.custempid))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="70" author="Srinivasa Varma">
+		<comment>New Field Company Name added in Customer Employment Details</comment>
+		<createView viewName="customerempdetails_Aview" replaceIfExists="true">
+ 			SELECT ce.custempid,ce.custid,ce.custempname,ce.custempfrom,ce.custempto,
+    		ce.custempdesg,de.gendesgdesc AS lovdesccustempdesgname,ce.custempdept,
+	    	dp.gendeptdesc AS lovdesccustempdeptname, ce.custemptype,et.emptypedesc AS lovdesccustemptypename,
+    		ce.version,ce.lastmntby,ce.lastmnton,ce.recordstatus,ce.rolecode,ce.nextrolecode,
+    		ce.taskid,ce.nexttaskid,ce.recordtype,ce.workflowid,emp.empname AS lovdesccustempname,ce.currentemployer,companyname
+   			FROM customerempdetails ce
+     		JOIN rmtgendesignations de ON ce.custempdesg = de.gendesignation
+     		LEFT JOIN rmtgendepartments dp ON ce.custempdept = dp.gendepartment
+     		JOIN rmtemptypes et ON ce.custemptype = et.emptype
+     		JOIN employerdetail emp ON ce.custempname = emp.employerid
+		</createView>
+	</changeSet>
+
+	<changeSet id="71" author="Srinivasa Varma">
+		<comment>New Field Company Name added in Customer Employment Details.</comment>
+		<sql>
+			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
+			((Select MAX(RightID)+1 From SecRights), 3, 'CustomerEmploymentDetailDialog_companyName', 'CustomerEmploymentDetailDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMEREMPLOYMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerEmploymentDetailDialog_companyName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SECGROUPRIGHTS SET SEQNO= (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);	
+		</sql>
+	</changeSet>
+		
 	 <changeSet id="67" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="FEEWAIVERHEADER">

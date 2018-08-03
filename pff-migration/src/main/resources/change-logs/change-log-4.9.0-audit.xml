@@ -133,6 +133,12 @@
 			update adtfinancemain set connector=0;
 		</sql>
 	</changeSet>
+<changeSet id="13" author="Srinivasa Varma">
+	<comment>New Field Company Name added in Customer Employment Details.</comment>
+		<addColumn tableName="AdtCustomerEmpDetails" >
+			<column name="companyname" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 	<changeSet id="13" author="Madhubabu">
 	<comment> New Development </comment>
 		<createTable tableName="ADTFEEWAIVERHEADER">

@@ -47,9 +47,14 @@
 									<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png"  />
 									<label id="custShrtName" width="150px" />
 								</hbox>
+							</row>
+							<row visible="true">
 								<label id="label_CustomerEmploymentDetailDialog_CustEmpName" value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpName.value')}" />
 								<extendedcombobox id="custEmpName"/>
+								<label id="label_CustomerEmploymentDetailDialog_CompanyName" value="${c:l('label_CustomerEmploymentDetailDialog_CompanyName.value')}" />
+									<textbox id="companyName" width="120px"/>
 							</row>
+
 							<row visible="true">
 								<label id="label_CustomerEmploymentDetailDialog_CustEmpFrom" value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpFrom.value')}" />
 								<hbox>

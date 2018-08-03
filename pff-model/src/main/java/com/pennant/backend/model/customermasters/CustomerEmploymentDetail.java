@@ -96,7 +96,8 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 
 	private CustomerEmploymentDetail befImage;
 	private LoggedInUser userDetails;
-
+	private String companyName;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -302,5 +303,12 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 		this.custEmpId = custEmpId;
 	}
 
-	
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
 }

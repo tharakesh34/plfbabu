@@ -73,7 +73,7 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustEmpId,CustID, CustEmpName, CustEmpDept, CustEmpDesg,");
-		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,");
+		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,CompanyName,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
 			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
@@ -219,11 +219,11 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		insertSql.append(" Insert Into CustomerEmpDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustEmpId,CustID, CustEmpName, CustEmpFrom, CustEmpTo, CustEmpDesg,");
-		insertSql.append(" CustEmpDept, CustEmpType,CurrentEmployer,");
+		insertSql.append(" CustEmpDept, CustEmpType,CurrentEmployer,companyName,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustEmpId, :CustID, :CustEmpName, :CustEmpFrom, :CustEmpTo, :CustEmpDesg,");
-		insertSql.append("	:CustEmpDept, :CustEmpType, :CurrentEmployer,");
+		insertSql.append("	:CustEmpDept, :CustEmpType, :CurrentEmployer,:CompanyName,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -257,7 +257,7 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CustEmpDesg = :CustEmpDesg, CustEmpDept = :CustEmpDept, CustEmpName = :CustEmpName,");
 		updateSql.append(" CustEmpType = :CustEmpType,CustEmpFrom = :CustEmpFrom, CurrentEmployer =:CurrentEmployer,");
-		updateSql.append(" CustEmpTo = :CustEmpTo , Version = :Version ,");
+		updateSql.append(" CustEmpTo = :CustEmpTo ,companyName=:CompanyName, Version = :Version ,");
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
@@ -287,7 +287,7 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		customerEmploymentDetail.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustEmpId,CustID, CustEmpName, CustEmpDept, CustEmpDesg,");
-		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,");
+		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,CompanyName,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
 			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
