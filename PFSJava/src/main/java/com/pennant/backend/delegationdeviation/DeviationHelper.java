@@ -377,16 +377,6 @@ public class DeviationHelper {
 	}
 	// ### 06-05-2018 - End
 
-	public boolean isExists(List<FinanceDeviations> list, String code) {
-		for (FinanceDeviations item : list) {
-			if (StringUtils.equals(code, item.getDeviationCode())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	public boolean isExists(List<FinanceDeviations> list, String module, String code) {
 		for (FinanceDeviations item : list) {
 			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {

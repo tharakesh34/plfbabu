@@ -24,6 +24,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -201,7 +202,7 @@ public class DeviationExecutionCtrl {
 		// Clear the existing deviations.
 		for (FinanceDeviations deviation : getApprovedFinanceDeviations()) {
 			if (DeviationConstants.TY_CUSTOM.equals(deviation.getModule())) {
-				if (!deviationHelper.isExists(deviations, deviation.getDeviationCode())) {
+				if (!DeviationUtil.isExists(deviations, deviation.getDeviationCode())) {
 					deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), DeviationConstants.TY_CUSTOM,
 							deviation.getDeviationCode());
 				}
@@ -217,7 +218,7 @@ public class DeviationExecutionCtrl {
 
 		for (FinanceDeviations deviation : currentDeviations) {
 			if (DeviationConstants.TY_CUSTOM.equals(deviation.getModule())) {
-				if (!deviationHelper.isExists(deviations, deviation.getDeviationCode())) {
+				if (!DeviationUtil.isExists(deviations, deviation.getDeviationCode())) {
 					deviationHelper.removeDeviations(getFinanceDeviations(), DeviationConstants.TY_CUSTOM,
 							deviation.getDeviationCode());
 				}
