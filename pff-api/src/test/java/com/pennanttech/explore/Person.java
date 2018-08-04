@@ -6,6 +6,12 @@ public class Person {
 	private long id;
 	private String name;
 
+	public Person(long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
 	public Person(long id, String name, Date dob) {
 		super();
 		this.id = id;
