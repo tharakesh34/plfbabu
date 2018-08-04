@@ -47,11 +47,8 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private boolean 			markDeleted;
 
 	public FinanceDeviations() {
+		super();
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
