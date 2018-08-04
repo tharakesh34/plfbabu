@@ -1011,8 +1011,8 @@ public class DeviationExecutionCtrl {
 		}
 
 		// Check the existing approved & current deviations and delete.
-		boolean approvedDeviationExists = deviationHelper.isExists(getApprovedFinanceDeviations(), module, code);
-		boolean currentDeviationExists = deviationHelper.isExists(getFinanceDeviations(), module, code);
+		boolean approvedDeviationExists = DeviationUtil.isExists(getApprovedFinanceDeviations(), module, code);
+		boolean currentDeviationExists = DeviationUtil.isExists(getFinanceDeviations(), module, code);
 
 		// Two values to be considered 1) Null means No Deviation, 2) Empty means Deviation Not Allowed.
 		// So empty check should not be required until unless all cases have been changed.

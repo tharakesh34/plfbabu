@@ -53,4 +53,25 @@ public class DeviationUtil {
 
 		return false;
 	}
+
+	/**
+	 * Returns <tt>true</tt> if the list contains the element with the specified module and code.
+	 * 
+	 * @param list
+	 *            The list that need to be searched for.
+	 * @param module
+	 *            The module that need to be looked.
+	 * @param code
+	 *            The code that need to be looked.
+	 * @return <tt>true</tt> if the list contains the element with the specified module and code.
+	 */
+	public static boolean isExists(List<FinanceDeviations> list, String module, String code) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
