@@ -377,17 +377,6 @@ public class DeviationHelper {
 	}
 	// ### 06-05-2018 - End
 
-	public boolean isMatchFound(List<FinanceDeviations> list, String module, String code, Object result) {
-		for (FinanceDeviations item : list) {
-			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())
-					&& StringUtils.equals(String.valueOf(result), item.getDeviationValue())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	public FinanceDeviations createDeviation(String category, String module, String reference, String code,
 			String role, long userId, String approverRole, Object result, String resultType, String desc) {
 		FinanceDeviations deviation = new FinanceDeviations();

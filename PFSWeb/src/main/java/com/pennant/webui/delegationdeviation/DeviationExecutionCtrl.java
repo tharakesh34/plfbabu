@@ -1034,7 +1034,7 @@ public class DeviationExecutionCtrl {
 			} else {
 				// Compare the deviation values.
 				if (approvedDeviationExists && !currentDeviationExists) {
-					if (deviationHelper.isMatchFound(getApprovedFinanceDeviations(), module, code, result)) {
+					if (DeviationUtil.isMatchFound(getApprovedFinanceDeviations(), module, code, result)) {
 						deviationHelper.restoreDeviations(getApprovedFinanceDeviations(), module, code, result);
 					} else {
 						getFinanceDeviations().add(deviationHelper.createDeviation(category, module, reference, code,
@@ -1042,7 +1042,7 @@ public class DeviationExecutionCtrl {
 						deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), module, code);
 					}
 				} else if (currentDeviationExists && !approvedDeviationExists) {
-					if (deviationHelper.isMatchFound(getFinanceDeviations(), module, code, result)) {
+					if (DeviationUtil.isMatchFound(getFinanceDeviations(), module, code, result)) {
 						// SKIP
 					} else {
 						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
@@ -1054,11 +1054,11 @@ public class DeviationExecutionCtrl {
 					boolean approvedDeviationMatched = false;
 					boolean currentDeviationMatched = false;
 
-					if (deviationHelper.isMatchFound(getApprovedFinanceDeviations(), module, code, result)) {
+					if (DeviationUtil.isMatchFound(getApprovedFinanceDeviations(), module, code, result)) {
 						approvedDeviationMatched = true;
 					}
 
-					if (deviationHelper.isMatchFound(getFinanceDeviations(), module, code, result)) {
+					if (DeviationUtil.isMatchFound(getFinanceDeviations(), module, code, result)) {
 						currentDeviationMatched = true;
 					}
 
