@@ -98,4 +98,25 @@ public class DeviationUtil {
 
 		return false;
 	}
+
+	/**
+	 * Returns the first deviation in the list that matches with the specified module and code.
+	 * 
+	 * @param list
+	 *            The list that need to be searched for.
+	 * @param module
+	 *            The module that need to be looked.
+	 * @param code
+	 *            The code that need to be looked.
+	 * @return The first deviation in the list that matches with the specified module and code.
+	 */
+	public static FinanceDeviations getFirstDeviation(List<FinanceDeviations> list, String module, String code) {
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
+				return item;
+			}
+		}
+
+		return null;
+	}
 }

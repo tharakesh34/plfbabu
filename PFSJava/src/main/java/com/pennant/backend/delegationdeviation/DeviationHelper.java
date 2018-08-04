@@ -397,16 +397,6 @@ public class DeviationHelper {
 		return deviation;
 	}
 
-	public FinanceDeviations findDeviation(List<FinanceDeviations> list, String module, String code) {
-		for (FinanceDeviations item : list) {
-			if (StringUtils.equals(module, item.getModule()) && StringUtils.equals(code, item.getDeviationCode())) {
-				return item;
-			}
-		}
-
-		return null;
-	}
-
 	public void updateDeviation(FinanceDeviations deviation, String role, long userId, String approverRole,
 			Object result) {
 		deviation.setUserRole(role);

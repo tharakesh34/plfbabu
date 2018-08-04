@@ -1045,7 +1045,7 @@ public class DeviationExecutionCtrl {
 					if (DeviationUtil.isMatchFound(getFinanceDeviations(), module, code, result)) {
 						// SKIP
 					} else {
-						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
+						FinanceDeviations deviation = DeviationUtil.getFirstDeviation(getFinanceDeviations(), module,
 								code);
 
 						deviationHelper.updateDeviation(deviation, userRole, userid, approverRole, result);
@@ -1063,13 +1063,13 @@ public class DeviationExecutionCtrl {
 					}
 
 					if (!currentDeviationMatched && !approvedDeviationMatched) {
-						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
+						FinanceDeviations deviation = DeviationUtil.getFirstDeviation(getFinanceDeviations(), module,
 								code);
 
 						deviationHelper.updateDeviation(deviation, userRole, userid, approverRole, result);
 						deviationHelper.purgeDeviations(getApprovedFinanceDeviations(), module, code);
 					} else if (approvedDeviationMatched) {
-						FinanceDeviations deviation = deviationHelper.findDeviation(getFinanceDeviations(), module,
+						FinanceDeviations deviation = DeviationUtil.getFirstDeviation(getFinanceDeviations(), module,
 								code);
 
 						getFinanceDeviations().remove(deviation);
