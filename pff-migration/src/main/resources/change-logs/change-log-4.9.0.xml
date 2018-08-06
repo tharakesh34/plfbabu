@@ -948,13 +948,13 @@
 		</sql>
 	</changeSet>	
 	
-	<changeSet id="11.1" author="Vinay">
+	<!-- <changeSet id="11.1" author="Vinay">
 		<sql>
 			update financemain set eligibilitymethod=(select fieldcodeid from rmtlovfielddetail t2 where financemain.eligibilitymethod = t2.fieldcodevalue);
 			update financemain_temp set eligibilitymethod=(select fieldcodeid from rmtlovfielddetail t2 where financemain_temp.eligibilitymethod = t2.fieldcodevalue);
 		</sql>
 	</changeSet>
-	
+	 -->
 	<changeSet id="12.1" author="Vinay">
 		<sql>
 			update financemain set eligibilitymethod=0 where eligibilitymethod is null;
@@ -4325,10 +4325,6 @@
 	<changeSet id="66" author="Jayant" dbms="postgresql">
 		<dropPrimaryKey tableName="seqjvpostingentry" constraintName="seqjvpostingentry_pkey"/>
 	</changeSet>
-	<changeSet id="66" author="Jayant" dbms="oracle">
-		<dropPrimaryKey tableName="seqjvpostingentry"/>
-	</changeSet>
-
 	<changeSet id="67" author="Srinivasa Varma">
 		<comment>New Field Company Name added in Customer Employment Details.</comment>
 		<addColumn tableName="CustomerEmpDetails" >
@@ -4429,7 +4425,12 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="68" author="MadhuBabu" dbms="oracle,postgresql">
+	<changeSet id="68" author="MadhuBabu" dbms="oracle">
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="VERSION"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="FINREFERENCE"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="EVENT"/>
+	</changeSet>
+	<changeSet id="68" author="MadhuBabu" dbms="postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="VERSION"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER" columnName="FINREFERENCE"/>
@@ -4464,7 +4465,12 @@
 			<column name="VALUEDATE" type="DATETIME"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="70" author="MadhuBabu" dbms="oracle,postgresql">
+	<changeSet id="70" author="MadhuBabu" dbms="oracle">
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE"/>
+		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="EVENT"/>
+	</changeSet>
+	<changeSet id="70" author="MadhuBabu" dbms="postgresql">
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="WAIVERID"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="VERSION"/>
 		<addNotNullConstraint tableName="FEEWAIVERHEADER_TEMP" columnName="FINREFERENCE"/>
