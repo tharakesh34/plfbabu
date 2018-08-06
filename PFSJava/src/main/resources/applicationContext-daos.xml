@@ -5431,7 +5431,9 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="bankDetailService" ref="bankDetailService"/>
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO"/>
-		<property name="feeTypeDAO" ref="feeTypeDAO"/>
+		<property name="feeTypeDAO" ref="feeTypeDAO"/>		
+		<property name="depositChequesDAO" ref="depositChequesDAO"/>
+		
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
