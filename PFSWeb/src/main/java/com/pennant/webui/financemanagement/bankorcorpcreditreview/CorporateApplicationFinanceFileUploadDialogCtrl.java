@@ -317,18 +317,12 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	}
 
 	private List<Filter> getFilterList() {
-		logger.debug("Entering");
 		filterList = new ArrayList<Filter>();
-
-		if (StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_COMMERCIAL)) {
-			filterList.add(new Filter("CustCtgCode", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL));
-		} else if (StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_CORPORATE)) {
-			filterList.add(new Filter("CustCtgCode", "---Select---", Filter.OP_NOT_EQUAL));
-		}
-
-		logger.debug("Leaving");
+		filterList.add(new Filter("lovDescCustCtgType",
+				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME }, Filter.OP_IN));
 		return filterList;
 	}
+
 
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
