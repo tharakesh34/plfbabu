@@ -303,6 +303,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row										rpyFrqRow;
 	protected Datebox									maturityDate;
 	protected Datebox									maturityDate_two;
+	protected Row 										row_advEMITerms;
+	protected Intbox 									advEMITerms;
 
 	//Advised Profit Rates
 	protected ExtendedCombobox							rpyAdvBaseRate;
@@ -320,6 +322,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Hbox										hbox_finRepayPftOnFrq;
 	protected Row										SchdlMthdRow;
 	protected Row										noOfTermsRow;
+	
 
 	// Planned Emi Holidays
 	protected Row										row_BpiTreatment;
@@ -777,7 +780,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finCurrentAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.finCurrentAssetValue.setScale(finFormatter);
 		
-		
+		if(financeType.isAlwAdvEMI()) {
+			this.row_advEMITerms.setVisible(true);
+			this.advEMITerms.setMaxlength(3);
+			this.advEMITerms.setStyle("text-align:right;");
+		}
 		setFinAssetFieldVisibility(financeType);
 
 		if (isWorkFlowEnabled()) {
@@ -1326,6 +1333,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
+		
+		this.advEMITerms.setValue(aFinanceMain.getAdvEMITerms());
 
 		//Advised profit Rates
 		doCheckAdviseRates(aFinanceMain, false, financeType.getFinCategory());
@@ -2394,6 +2403,38 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if(row_advEMITerms.isVisible()) {
+				int minTerms = financeType.getAdvEMIMinTerms();
+				int maxTerms = financeType.getAdvEMIMaxTerms();
+				int advEMITerms = this.advEMITerms.intValue();
+				int loanTerms = this.numberOfTerms_two.intValue();
+				boolean validationRequired = true;
+
+				if (minTerms == 0 && maxTerms == 0) {
+					validationRequired = false;
+				}
+
+				if (validationRequired) {
+					if (advEMITerms < minTerms || advEMITerms > maxTerms) {
+						throw new WrongValueException(this.advEMITerms, Labels.getLabel("NUMBER_RANGE_EQ", new String[] {
+								Labels.getLabel("label_FinanceMainDialog_AdvEMITerms.value"), String.valueOf(minTerms),
+								String.valueOf(maxTerms) }));
+					}
+				}
+
+				if (advEMITerms > loanTerms) {
+					throw new WrongValueException(this.advEMITerms, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
+							Labels.getLabel("label_FinanceMainDialog_AdvEMITerms.value"), String.valueOf(loanTerms)}));
+				}
+
+				aFinanceMain.setAdvEMITerms(advEMITerms);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 
 		try {
 

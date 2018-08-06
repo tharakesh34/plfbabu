@@ -263,6 +263,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<String> denominations;
 	private static ArrayList<ValueLabel> invoiceTypes;	//GST Invoice Types (Cr/Dr)
 	
+	private static ArrayList<ValueLabel> advEmiSchMthdList;
+	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getValue().equalsIgnoreCase(value)) {
@@ -3612,5 +3614,13 @@ public class PennantStaticListUtil {
 			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, Labels.getLabel("Invoice_Type_Credit")));
 		}
 		return invoiceTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getAdvEMIScheduleMethods() {
+		if(advEmiSchMthdList == null){
+			advEmiSchMthdList = new ArrayList<ValueLabel>(2);
+			advEmiSchMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_START,Labels.getLabel("label_EMIScheduleMethod_Start")));
+		}
+		return advEmiSchMthdList;
 	}
 }

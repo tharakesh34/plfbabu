@@ -126,6 +126,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String finWriteoffAc;
 	private BigDecimal minDownPayPerc = BigDecimal.ZERO;
 	private BigDecimal downPayment = BigDecimal.ZERO;
+	private BigDecimal advanceEMI = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal downPayBank = BigDecimal.ZERO;
 	@XmlElement
@@ -434,6 +435,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date lastRepayCpzDate;
 	private boolean pftIntact = false;
 	private int adjTerms = 0;
+	private boolean isAdjustClosingBal = false;
 
 	// ===========================================
 	// =========External Usage Details============
@@ -671,6 +673,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String connectorCode;
 	private String connectorDesc;
 	
+	private int advEMITerms = 0;
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -823,6 +827,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		
 		excludeFields.add("connectorCode");
 		excludeFields.add("connectorDesc");
+		
+		excludeFields.add("isAdjustClosingBal");
 		
 		return excludeFields;
 	}
@@ -3816,6 +3822,30 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setConnectorDesc(String connectorDesc) {
 		this.connectorDesc = connectorDesc;
+	}
+
+	public int getAdvEMITerms() {
+		return advEMITerms;
+	}
+
+	public void setAdvEMITerms(int advEMITerms) {
+		this.advEMITerms = advEMITerms;
+	}
+
+	public BigDecimal getAdvanceEMI() {
+		return advanceEMI;
+	}
+
+	public void setAdvanceEMI(BigDecimal advanceEMI) {
+		this.advanceEMI = advanceEMI;
+	}
+
+	public boolean isAdjustClosingBal() {
+		return isAdjustClosingBal;
+	}
+
+	public void setAdjustClosingBal(boolean isAdjustClosingBal) {
+		this.isAdjustClosingBal = isAdjustClosingBal;
 	}
 
 }

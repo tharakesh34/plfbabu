@@ -194,6 +194,7 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setProductCategory(finMain.getProductCategory());
 			pftDetail.setFirstODDate(pftDetail.getFinStartDate());
 			pftDetail.setPrvODDate(pftDetail.getFinStartDate());
+			pftDetail.setAdvanceEMI(finMain.getAdvanceEMI());
 
 		}
 

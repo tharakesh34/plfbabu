@@ -153,5 +153,6 @@ public class CalculationConstants {
 	public static final String	PFTFRACTION_ADJ_LAST_INST			= "ADJ_LAST_INST";
 	public static final String	PFTFRACTION_ADJ_NEXT_INST			= "ADJ_NEXT_INST";
 	
-	
+	// ADVANCE EMI METHODS
+	public static final String	SCHMTHD_START						= "START";	
 }

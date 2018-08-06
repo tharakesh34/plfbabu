@@ -56,11 +56,11 @@ import org.zkoss.zul.Constraint;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
-import org.zkoss.zul.Textbox;
 
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -73,7 +73,7 @@ public class ExtendedCombobox extends Hbox {
 	private static final Logger			logger				= Logger.getLogger(ExtendedCombobox.class);
 
 	private Space						space;
-	private Textbox						textbox;
+	private Uppercasebox				textbox;
 	private Button						button;
 	private Label						label;
 	private Hbox						hbox;
@@ -141,7 +141,7 @@ public class ExtendedCombobox extends Hbox {
 		hbox.setSclass("cssHbox");
 
 		//Textbox
-		textbox = new Textbox();
+		textbox = new Uppercasebox();
 		textbox.setStyle("border:0px;margin:0px;");
 
 		// If input allowed set text box editable
@@ -758,11 +758,11 @@ public class ExtendedCombobox extends Hbox {
 		}
 	}
 
-	public Textbox getTextbox() {
+	public Uppercasebox getTextbox() {
 		return textbox;
 	}
 
-	public void setTextbox(Textbox textbox) {
+	public void setTextbox(Uppercasebox textbox) {
 		this.textbox = textbox;
 	}
 

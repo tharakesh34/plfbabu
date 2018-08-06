@@ -1418,6 +1418,62 @@
 													<checkbox id="chequeCaptureReq" checked="false" />
 												</hbox>
 											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_AlwAdvEMI"
+													value="${c:l('label_FinanceTypeDialog_AlwAdvEMI.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="alwAdvEMI" checked="false" />
+												</hbox>
+											</row>
+											<row id="row_advEMITerms" visible="true">
+												<label
+													id="label_FinanceTypeDialog_AdvEMIMinTerm"
+													value="${c:l('label_FinanceTypeDialog_AdvEMIMinTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="advEMIMinTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+
+												<label
+													id="label_FinanceTypeDialog_AdvEMIMaxTerm"
+													value="${c:l('label_FinanceTypeDialog_AdvEMIMaxTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="advEMIMaxTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row id="row_advEMIMethod" visible="true">
+												<label
+													id="label_FinanceTypeDialog_AdvEMIDftTerms"
+													value="${c:l('label_FinanceTypeDialog_AdvEMIDftTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="advEMIDftTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_AdvEMIMethod"
+													value="${c:l('label_FinanceTypeDialog_AdvEMIMethod.value')}" />
+												<hbox>
+													<space
+														id="space_advEMIMethod" sclass="mandatory" spacing="2px" />
+													<combobox
+														id="cbAdvEMIMethod" width="250px" readonly="true" />
+												</hbox>
+											</row>
+											
 										</rows>
 									</grid>
 								</groupbox>

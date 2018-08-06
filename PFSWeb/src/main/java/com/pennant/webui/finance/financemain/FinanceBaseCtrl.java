@@ -900,6 +900,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.row_ReferralId.setVisible(false);
 			this.row_salesDept.setVisible(false);
 		}
+		
+		//TODO: SET SECURITY RIGHT
+		// !isReadOnly("FinanceMainDialog_AlwAdvEMI")
+		
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -2397,6 +2401,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayRate.setMarginValue(aFinanceMain.getRepayMargin());
+		
+
 
 		if (isOverdraft) {
 			fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
@@ -4950,6 +4956,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		
 
 		try {
 			if (!this.nextRepayRvwDate.isReadonly() && StringUtils.isNotEmpty(this.repayRvwFrq.getValue())) {
@@ -5106,7 +5114,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		
+		
 		try {
 
 			if (recSave) {
@@ -6999,6 +7009,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.cbScheduleMethod.setValue("");
 		this.finRepaymentAmount.setValue("");
 		this.finRepayMethod.setSelectedIndex(0);
+
 
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		this.applyODPenalty.setChecked(false);

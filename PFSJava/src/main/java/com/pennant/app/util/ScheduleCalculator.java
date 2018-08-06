@@ -256,6 +256,11 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		if (StringUtils.equals(method, PROC_GETCALSCHD)) {
+
+			if (finScheduleData.getFinanceMain().getAdvEMITerms() > 0) {
+				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
+			}
+			
 			setFinScheduleData(procGetCalSchd(finScheduleData));
 		}
 
@@ -2926,7 +2931,18 @@ public class ScheduleCalculator {
 			toDate = finMain.getMaturityDate();
 			setRpyChanges(finScheduleData, fromDate, toDate, instructAmount, fromSchdMethod);
 		}
-
+		
+		if(finMain.isAdjustClosingBal()){
+			riSize = finScheduleData.getRepayInstructions().size();
+			finScheduleData.setRepayInstructions(sortRepayInstructions(finScheduleData.getRepayInstructions()));
+			for (int j = 0; j < riSize; j++) {
+				RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(j);
+				if(DateUtility.compare(curInstruction.getRepayDate(), finMain.getGrcPeriodEndDate()) > 0){
+					finMain.setAdvanceEMI(curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvEMITerms())));
+				}
+			}
+		}
+		
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -3313,12 +3329,23 @@ public class ScheduleCalculator {
 			}
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
+			
+			/* Grace Schedule calculation */
+			if (finScheduleData.getFinanceMain().getAdvEMITerms()>0) {
+				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
+				finScheduleData = graceSchdCal(finScheduleData);
+			}
 		}
 
 		finScheduleData = repaySchdCal(finScheduleData, isCalFlat);
 
 		if (finMain.isEqualRepay() && finMain.isCalculateRepay()
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+			
+			if (finMain.getAdvEMITerms()>0 && isFirstRun) {
+				finMain.setAdjustClosingBal(true);
+			}
+			
 			finScheduleData = calEqualPayment(finScheduleData);
 			// equalRepayCal(finScheduleData);
 		}
@@ -3567,6 +3594,11 @@ public class ScheduleCalculator {
 		curSchd.setClosingBalance(
 				curSchd.getDisbAmount().add(curSchd.getFeeChargeAmt()).subtract(curSchd.getDownPaymentAmount()));
 		curSchd.setRvwOnSchDate(true);
+		
+		if (finMain.isAdjustClosingBal() || finMain.getAdvanceEMI().compareTo(BigDecimal.ZERO) > 0) {
+			curSchd.setClosingBalance(curSchd.getClosingBalance().subtract(finMain.getAdvanceEMI()));
+			finMain.setAdjustClosingBal(false);
+		}
 
 		curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
 
@@ -3732,6 +3764,8 @@ public class ScheduleCalculator {
 
 		BigDecimal calIntFraction = BigDecimal.ZERO;
 		BigDecimal calInt = BigDecimal.valueOf(0.0);
+		Date derivedMDT = finMain.getMaturityDate();
+		int advEMITerms = finMain.getAdvEMITerms();
 
 		String repayRateBasis = finMain.getRepayRateBasis();
 		
@@ -3739,17 +3773,21 @@ public class ScheduleCalculator {
 		String roundAdjMth = SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD);
 
 		List<FinanceScheduleDetail> schdDetails = finScheduleData.getFinanceScheduleDetails();
-		finMain.setNewMaturityIndex(schdDetails.size() - 1);
-
+		int schdDetailsSize = schdDetails.size();
+		
 		// FIND LAST REPAYMENT SCHEDULE DATE
-		int size = schdDetails.size();
-		Date finalRepayDate = schdDetails.get(size - 1).getSchDate();
-
 		int schdIndex = finMain.getSchdIndex();
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		FinanceScheduleDetail prvSchd = new FinanceScheduleDetail();
+				
+		if (advEMITerms>0) {
+			derivedMDT = schdDetails.get(schdDetails.size() - advEMITerms - 1).getSchDate();
+			finMain.setNewMaturityIndex(schdDetails.size()- advEMITerms - 1);
+		}else {
+			finMain.setNewMaturityIndex(schdDetails.size() - 1);
+		}
 
-		for (int i = schdIndex + 1; i < schdDetails.size(); i++) {
+		for (int i = schdIndex + 1; i < schdDetailsSize; i++) {
 
 			curSchd = schdDetails.get(i);
 			prvSchd = schdDetails.get(i - 1);
@@ -3833,7 +3871,7 @@ public class ScheduleCalculator {
 			}
 
 			// LAST REPAYMENT DATE
-			if (curSchDate.equals(finalRepayDate) && !isRolloverDate) {
+			if ((DateUtility.compare(curSchDate, derivedMDT) == 0) && !isRolloverDate) {
 				finScheduleData = procMDTRecord(finScheduleData, i, isRepayComplete);
 				isRepayComplete = true;
 			}
@@ -5451,6 +5489,8 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
+		
+		boolean isAdjustClosingBal = finMain.isAdjustClosingBal();
 
 		int sdSize = finSchdDetails.size();
 		int riSize = repayInstructions.size();
@@ -5527,7 +5567,9 @@ public class ScheduleCalculator {
 		BigDecimal number2 = new BigDecimal(2);
 		BigDecimal diff_Low_High = BigDecimal.ZERO;
 
+		
 		for (int i = 0; i < 50; i++) {
+			int size = finSchdDetails.size()-1-finMain.getAdvEMITerms();
 			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
 			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
 					finMain.getRoundingTarget());
@@ -5543,6 +5585,7 @@ public class ScheduleCalculator {
 
 			lastTriedEMI = approxEMI;
 			repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
+			finMain.setAdjustClosingBal(isAdjustClosingBal);
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
@@ -5554,9 +5597,9 @@ public class ScheduleCalculator {
 
 			// Find COMPARISION TO Amount
 			if (isComapareWithEMI) {
-				comparisionToAmount = finSchdDetails.get(sdSize - 1).getRepayAmount();
+				comparisionToAmount = finSchdDetails.get(size).getRepayAmount();
 			} else {
-				comparisionToAmount = finSchdDetails.get(sdSize - 1).getPrincipalSchd();
+				comparisionToAmount = finSchdDetails.get(size).getPrincipalSchd();
 			}
 
 			if (comparisionToAmount.compareTo(comparisionAmount) == 0) {
@@ -5608,6 +5651,7 @@ public class ScheduleCalculator {
 
 			lastTriedEMI = approxEMI;
 			repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
+			finMain.setAdjustClosingBal(isAdjustClosingBal);
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
@@ -5641,6 +5685,7 @@ public class ScheduleCalculator {
 
 		// SET EQUAL REPAYMENT AMOUNT AS EFFECTIVE REPAY AMOUNT AND CALL PROCESS
 		repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
+		finMain.setAdjustClosingBal(isAdjustClosingBal);
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 		finScheduleData = graceSchdCal(finScheduleData);
 		finScheduleData = repaySchdCal(finScheduleData, false);

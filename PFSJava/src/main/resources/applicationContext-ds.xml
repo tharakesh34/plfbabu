@@ -33,9 +33,9 @@
 	</bean>
 	
 	<!-- This data source should be in customization layer -->
-	<bean id="finOneDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<!-- <bean id="finOneDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
       <property name="resourceRef" value="true" />
       <property name="jndiName" value="jdbc/FINONE" />
       <property name="lookupOnStartup" value="true" />
-	</bean>
+	</bean> -->
 </beans>

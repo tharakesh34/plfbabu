@@ -9700,6 +9700,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// RepaymentDetails
+		financeMain.setAdvEMITerms(financeType.getAdvEMIDftTerms());
 		financeMain.setNumberOfTerms(financeType.getFinDftTerms());
 		financeMain.setRepayBaseRate(financeType.getFinBaseRate());
 		financeMain.setRepaySpecialRate(financeType.getFinSplRate());

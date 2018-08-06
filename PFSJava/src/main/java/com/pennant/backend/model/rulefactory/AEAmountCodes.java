@@ -31,6 +31,7 @@ public class AEAmountCodes {
 
 	private BigDecimal	disburse			= BigDecimal.ZERO;
 	private BigDecimal	downpay				= BigDecimal.ZERO;
+	private BigDecimal	advanceEMI			= BigDecimal.ZERO;
 	private BigDecimal	pft					= BigDecimal.ZERO;
 	private BigDecimal	pftAB				= BigDecimal.ZERO;
 	private BigDecimal	pftAP				= BigDecimal.ZERO;
@@ -1104,6 +1105,14 @@ public class AEAmountCodes {
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public BigDecimal getAdvanceEMI() {
+		return advanceEMI;
+	}
+
+	public void setAdvanceEMI(BigDecimal advanceEMI) {
+		this.advanceEMI = advanceEMI;
 	}
 	
 }

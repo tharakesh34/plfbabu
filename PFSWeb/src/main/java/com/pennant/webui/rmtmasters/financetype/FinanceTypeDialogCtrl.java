@@ -531,6 +531,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row 		row_LTVCheck;
 	protected Checkbox 	finCollateralCheck;
 	
+	//Advance EMI Details
+	protected Checkbox alwAdvEMI;
+	protected Row row_advEMITerms;
+	protected Intbox advEMIMinTerms;
+	protected Intbox advEMIMaxTerms;
+	protected Row row_advEMIMethod;
+	protected Intbox advEMIDftTerms;
+	protected Combobox cbAdvEMIMethod;
+	protected Space space_advEMIMethod;
 	
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	FinanceType 		fintypeLTVCheck = null;
@@ -945,6 +954,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finDivision.setButtonDisabled(true);
 		this.finDivision.setReadonly(false);
+		
+		//Advance EMI Details
+		this.advEMIDftTerms.setMaxlength(3);
+		this.advEMIMaxTerms.setMaxlength(3);
+		this.advEMIMinTerms.setMaxlength(3);
 		logger.debug("Leaving");
 		
 	}
@@ -1501,6 +1515,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			appendInsuranceDetailsTab();
 		}
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
+		
+		// Advance EMI Details
+		
+		this.alwAdvEMI.setChecked(aFinanceType.isAlwAdvEMI());
+		this.advEMIDftTerms.setValue(aFinanceType.getAdvEMIDftTerms());
+		this.advEMIMinTerms.setValue(aFinanceType.getAdvEMIMinTerms());
+		this.advEMIMaxTerms.setValue(aFinanceType.getAdvEMIMaxTerms());
+		fillComboBox(this.cbAdvEMIMethod, aFinanceType.getAdvEMISchdMthd(),
+				PennantStaticListUtil.getAdvEMIScheduleMethods(), "");
+		doAlwEMICheckBoxChecked(aFinanceType.isAlwAdvEMI());
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -2924,12 +2948,83 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		// Advance EMI Details
+		try {
+			aFinanceType.setAlwAdvEMI(this.alwAdvEMI.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aFinanceType.setAdvEMIMinTerms(this.advEMIMinTerms.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			int finTerms =  this.finDftTerms.intValue();
+			int advEMIMin =  this.advEMIMinTerms.intValue();
+			int advEMIMax = this.advEMIMaxTerms.intValue();
+			boolean validationRequired = true;
+
+			if (finTerms == 0 && advEMIMin == 0) {
+				validationRequired = false;
+			}
+			
+			if (validationRequired) {
+				if (advEMIMax < advEMIMin || advEMIMax > finTerms) {
+					throw new WrongValueException(this.advEMIMaxTerms, Labels.getLabel("NUMBER_RANGE_EQ", new String[] {
+							Labels.getLabel("label_FinanceTypeDialog_AdvEMIMaxTerms.value"), String.valueOf(advEMIMin),
+							String.valueOf(finTerms) }));
+				}
+			}
+			aFinanceType.setAdvEMIMaxTerms(this.advEMIMaxTerms.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+
+			int minTerms = this.advEMIMinTerms.intValue();
+			int maxTerms = this.advEMIMaxTerms.intValue();
+			int dftTerms = this.advEMIDftTerms.intValue();
+			boolean validationRequired = true;
+
+			if (minTerms == 0 && maxTerms == 0) {
+				validationRequired = false;
+			}
+
+			if (validationRequired) {
+				if (dftTerms < minTerms || dftTerms > maxTerms) {
+					throw new WrongValueException(this.advEMIDftTerms, Labels.getLabel("NUMBER_RANGE_EQ", new String[] {
+							Labels.getLabel("label_FinanceTypeDialog_AdvEMIDftTerms.value"), String.valueOf(minTerms),
+							String.valueOf(maxTerms) }));
+				}
+			}
+
+			aFinanceType.setAdvEMIDftTerms(this.advEMIDftTerms.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			this.cbAdvEMIMethod.setErrorMessage("");
+			if (this.alwAdvEMI.isChecked()) {
+				isValidComboValue(this.cbAdvEMIMethod,
+						Labels.getLabel("label_FinanceTypeDialog_AdvEMIMethod.value"));
+			}
+			aFinanceType.setAdvEMISchdMthd(getComboboxValue(this.cbAdvEMIMethod));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		if (isOverdraft) {
 			showErrorDetails(wve, basicDetails);
 		} else {
 			showErrorDetails(wve, repayment);
 		}
+		
+
 		// **************** End of Tab 3 ********************//
 
 		// ************** Start of Tab 5 *******************//
@@ -3615,6 +3710,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.costOfFunds.setConstraint("");
 		this.alwdIRRDetails.setConstraint("");
 		this.finLTVCheck.setConstraint("");
+		this.cbAdvEMIMethod.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -3933,6 +4029,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.developerFinance.setDisabled(isTrue);
 		readOnlyComponent(isTrue, this.finLTVCheck);
 		readOnlyComponent(isTrue, this.finCollateralCheck);
+		this.cbAdvEMIMethod.setDisabled(isTrue);
 		
 		// Grace Details
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);
@@ -4099,6 +4196,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_startDate.setSclass("");
 			this.space_endDate.setSclass("");
 			this.space_finAssetType.setSclass("");
+			this.space_advEMIMethod.setClass("");
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -4131,6 +4229,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finContingentAcType.setValue("");
 		}
 
+		this.alwAdvEMI.setChecked(false);
+		this.advEMIMinTerms.setValue(0);
+		this.advEMIMaxTerms.setValue(0);
+		this.advEMIDftTerms.setValue(0);
+		this.cbAdvEMIMethod.setSelectedIndex(0);
+		
 		this.finType.setValue("");
 		this.finTypeDesc.setValue("");
 		this.finCcy.setValue("");
@@ -5358,6 +5462,30 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	public void onCheck$alwAdvEMI(Event event) {
+		logger.debug("Entering" + event.toString());
+		doAlwEMICheckBoxChecked(this.alwAdvEMI.isChecked());		
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	private void doAlwEMICheckBoxChecked(boolean checked) {
+		if (checked) {
+			this.advEMIDftTerms.setDisabled(isCompReadonly);
+			this.advEMIMinTerms.setDisabled(isCompReadonly);
+			this.advEMIMaxTerms.setDisabled(isCompReadonly);
+			this.cbAdvEMIMethod.setDisabled(isCompReadonly);
+		} else {
+			this.advEMIDftTerms.setValue(0);
+			this.advEMIMinTerms.setValue(0);
+			this.advEMIMaxTerms.setValue(0);
+			this.cbAdvEMIMethod.setSelectedIndex(0);
+			this.advEMIDftTerms.setDisabled(true);
+			this.advEMIMinTerms.setDisabled(true);
+			this.advEMIMaxTerms.setDisabled(true);
+			this.cbAdvEMIMethod.setDisabled(true);	
+		}
+	}
 
 	public void onCheck$finGrcIsIntCpz(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -6156,6 +6284,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowedRpyMethods.setErrorMessage("");
 		this.roundingMode.setErrorMessage("");
 		this.roundingTarget.setErrorMessage("");
+		this.cbAdvEMIMethod.setErrorMessage("");
+		
+		this.advEMIMinTerms.setErrorMessage("");
+		this.advEMIMaxTerms.setErrorMessage("");
 
 		// OverDue Details
 		this.oDChargeCalOn.setErrorMessage("");

@@ -56,6 +56,7 @@ public class FinanceProfitDetail implements Serializable {
 	private Date				FullPaidDate;
 	private BigDecimal			FinAmount			= BigDecimal.ZERO;
 	private BigDecimal			DownPayment			= BigDecimal.ZERO;
+	private BigDecimal			advanceEMI			= BigDecimal.ZERO;
 	private BigDecimal			CurReducingRate		= BigDecimal.ZERO;
 	private BigDecimal			curFlatRate			= BigDecimal.ZERO;
 	private BigDecimal			ODPrincipal			= BigDecimal.ZERO;
@@ -1299,6 +1300,14 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setActualODDays(int actualODDays) {
 		this.actualODDays = actualODDays;
+	}
+
+	public BigDecimal getAdvanceEMI() {
+		return advanceEMI;
+	}
+
+	public void setAdvanceEMI(BigDecimal advanceEMI) {
+		this.advanceEMI = advanceEMI;
 	}
 
 }

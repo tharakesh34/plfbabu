@@ -490,31 +490,37 @@ public class ScheduleGenerator {
 		schedule.setCalculatedRate(financeMain.getRepayProfitRate());
 		schedule.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 		finScheduleData.setScheduleMap(schedule);
+		
+		Date derivedMDT = financeMain.getMaturityDate();
+		int advEMITerms = financeMain.getAdvEMITerms();
+		if(advEMITerms > 0){
+			//derivedMDT = DateUtility.addMonths(derivedMDT, -advEMITerms);
+		}
 
 		// Load Repay profit dates
 		if (StringUtils.isNotBlank(financeMain.getRepayPftFrq())) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayPftFrq(),
-					financeMain.getNextRepayPftDate(), financeMain.getMaturityDate(),
+					financeMain.getNextRepayPftDate(), derivedMDT,
 					CalculationConstants.SCHDFLAG_PFT, false);
 		}
 
 		// Load Repay profit review dates
 		if (financeMain.isAllowRepayRvw()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayRvwFrq(),
-					financeMain.getNextRepayRvwDate(), financeMain.getMaturityDate(),
+					financeMain.getNextRepayRvwDate(), derivedMDT,
 					CalculationConstants.SCHDFLAG_RVW, false);
 		}
 
 		// Load Repay capitalize dates
 		if (financeMain.isAllowRepayCpz()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayCpzFrq(),
-					financeMain.getNextRepayCpzDate(), financeMain.getMaturityDate(),
+					financeMain.getNextRepayCpzDate(), derivedMDT,
 					CalculationConstants.SCHDFLAG_CPZ, false);
 		}
 
 		// Load Repayment dates
 		finScheduleData = getSchedule(finScheduleData, financeMain.getRepayFrq(), financeMain.getNextRepayDate(),
-				financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RPY, false);
+				derivedMDT, CalculationConstants.SCHDFLAG_RPY, false);
 
 		finScheduleData.setFinanceMain(financeMain);
 

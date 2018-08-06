@@ -146,6 +146,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setPaidInst(pftDetail.getNOPaidInst());
 		amountCodes.setDisburse(pftDetail.getDisburse());
 		amountCodes.setDownpay(pftDetail.getDownpay());
+		amountCodes.setAdvanceEMI(pftDetail.getAdvanceEMI());
 		amountCodes.setDaysFromFullyPaid(getNoDays(pftDetail.getFullPaidDate(), valueDate));
 		amountCodes.setAccrue(pftDetail.getPftAccrued());
 		amountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
