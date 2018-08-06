@@ -192,8 +192,9 @@
 								<label
 									id="label_AgreementDefinitionDialog_doc_Type"
 									value="${c:l('label_AgreementDefinitionDialog_doc_Type.value')}" />
-								<extendedcombobox id="docType" />
-								<space spacing="2px" />
+								<hbox>
+								<extendedcombobox id="docType" width="250px"/>
+								</hbox>
 							</row>
 
 							<row>
