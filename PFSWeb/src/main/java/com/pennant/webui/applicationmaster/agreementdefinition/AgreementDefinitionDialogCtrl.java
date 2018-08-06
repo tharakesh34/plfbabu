@@ -85,6 +85,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
+import bsh.org.objectweb.asm.Label;
+
 /**
  * This is the controller class for the
  * /WEB-INF/pages/ApplicationMaster/AgreementDefinition
@@ -139,6 +141,7 @@ public class AgreementDefinitionDialogCtrl extends
 	private transient AgreementDefinitionListCtrl agreementDefinitionListCtrl; // overHanded
 																				// per
 																				// parameter
+	 private org.zkoss.zul.Label label_AgreementDefinitionDialog_autoDownload;
 
 	private transient boolean validationOn;
 
@@ -235,7 +238,7 @@ public class AgreementDefinitionDialogCtrl extends
 
 		
 		this.docType.setMaxlength(8);
-		//this.docType.setMandatoryStyle(false);
+		this.docType.setMandatoryStyle(true);
 		this.docType.setModuleName("DocumentType");
 		this.docType.setValueColumn("DocTypeCode");
 		this.docType.setDescColumn("DocTypeDesc");
@@ -690,7 +693,6 @@ public class AgreementDefinitionDialogCtrl extends
 
 		logger.debug("Entering " + event.toString());
 		String modulename = this.moduleName.getSelectedItem().getValue().toString();
-		doAutoCheckSelection(autoGeneration);
 		doModuleSelection(modulename);
 		logger.debug("Leaving " + event.toString());
 
@@ -726,34 +728,23 @@ public class AgreementDefinitionDialogCtrl extends
 
 	}
 	
+
 	public void onCheck$autoGeneration(Event event) {
 		logger.debug("Entering" + event.toString());
 		
 		if (autoGeneration.isChecked()) {
 			this.autoDownload.setVisible(true);
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
+			this.auto_check.setVisible(true);
 		} else {
 			this.autoDownload.setVisible(false);
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 		}
 
 		logger.debug("Leaving" + event.toString());
 	}
 
 	
-	private void doAutoCheckSelection(Checkbox autogeneration) {
-
-		if (this.autoGeneration.isChecked()){
-			this.auto_check.setVisible(true);
-			this.autoDownload.setVisible(true);
-
-		} else {
-			if(!this.autoGeneration.isChecked())
-			this.auto_check.setVisible(false);
-			this.autoDownload.setVisible(false);
-			this.auto_check.setVisible(false);
-			}
-
-	}
-
 	/**
 	 * This method Fills Agreement Details in Listbox
 	 */
@@ -816,6 +807,8 @@ public class AgreementDefinitionDialogCtrl extends
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aAgreementDefinition.isNew()) {
 			this.btnCtrl.setInitNew();
+			this.autoDownload.setVisible(false);
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 			doEdit();
 			// setFocus
 			this.aggCode.focus();
@@ -851,6 +844,8 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 		logger.debug("Leaving");
 	}
+
+	
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
