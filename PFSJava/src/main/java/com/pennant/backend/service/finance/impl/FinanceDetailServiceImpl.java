@@ -4037,7 +4037,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Fee Receipt Details
-			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
 				if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null
 						|| financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
 					getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null);
