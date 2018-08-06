@@ -50,13 +50,22 @@
 		<renameColumn tableName="AdtFinancedeviations" oldColumnName="ManualDeviation" newColumnName="DeviationCategory"/>
 	</changeSet>
 	
+	<changeSet id="13_Pre" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinancedeviations drop constraint DF_Adtfinancedeviations_manualDeviation;
+		</sql>
+	</changeSet>
 	<changeSet id="13" author="Manoj">
 			<modifyDataType tableName="AdtFinancedeviations" columnName="DeviationCategory" newDataType="Char(1)" />	
 	</changeSet>
-	
+	<changeSet id="13_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinancedeviations add constraint DF_Adtfindeviation_manualDeviation default 0 for DeviationCategory ;
+		</sql>
+	</changeSet>
 	<changeSet id="2" author="Vinay">
 		<sql>
-			update adtfinancemain set eligibilitymethod=(select fieldcodeid from plf.rmtlovfielddetail t2 where adtfinancemain.eligibilitymethod = t2.fieldcodevalue);
+			update adtfinancemain set eligibilitymethod=(select fieldcodeid from adtrmtlovfielddetail t2 where adtfinancemain.eligibilitymethod = t2.fieldcodevalue);
 		</sql>
 	</changeSet>
 	
