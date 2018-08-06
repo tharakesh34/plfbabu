@@ -950,8 +950,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<DocumentDetails> documentDetailsList;
 	protected Window window_documentDetailDialog;
 	private transient AgreementDefinitionService agreementDefinitionService;
-	AgreementDefinition agreementDefinition = new AgreementDefinition();
-	Map <String,List> autoDownloadMap = null;
+	private Map <String,List> autoDownloadMap = null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -7532,7 +7531,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
 			for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
 				long id = financeReferenceDetail.getFinRefId();
-				agreementDefinition = agreementDefinitionService.getAgreementDefinitionById(id);
+				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
 				// For Agreement Rules
 				boolean isAgrRender = true;
 				// Check Each Agreement is attached with Rule or Not, If Rule
@@ -7558,7 +7557,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								autoDownloadLst.add(documentDetails);
 							}
 						} catch (Exception e) {
-							e.printStackTrace();
+							MessageUtil.showError(e.getMessage());
 						}
 					}
 				}
@@ -18126,6 +18125,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// tasks #503 Auto Generation of Agreements
 	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata ,FinanceDetail financeDetail,AgreementDefinition agreementDefinition) throws Exception 
 	{
+		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
 	
 			try {
@@ -18216,7 +18216,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 	
-		
+			logger.debug(Literal.LEAVING);
 		return details;
 
 	}
