@@ -678,8 +678,8 @@
 			<menuItem id="menu_Item_IjaraBulkRate"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul"
 				rightName="menuItem_FinanceManagement_BulkRateChange" />
-			<!-- <menuItem id="menu_Item_FeeWaivers"
-				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" /> -->	
+			<menuItem id="menu_Item_FeeWaivers"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menu_Item_FeeWaiverHeader" />	
 		</menu>
 		<menu id="menu_Category_LmsPostDisbursementEdit">
 			<menuItem id="menu_Item_BasicDetail"
