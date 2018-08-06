@@ -665,7 +665,7 @@ update adtCustomers set marginDeviation=0;
 		</sql>
 	</changeSet>
 	
-	<changeSet id="32" author="Kesav">
+	<changeSet id="32" author="Kesav" dbms="oracle,postgresql">
 		<createTable tableName="AdtDepositCheques">
 			<column name="AuditId" type="bigint">
 				<constraints nullable="false" primaryKey="true" />
@@ -706,7 +706,56 @@ update adtCustomers set marginDeviation=0;
 			<column name="WorkflowId" type="bigint" defaultValue="0" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="32" author="Kesav" dbms="mssql">
+		<createTable tableName="AdtDepositCheques">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>			
+			<column name="MovementId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ReceiptId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptMode" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="32_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtDepositCheques add constraint df_adtdepchq_mi default 0 for MovementId;
+			alter table AdtDepositCheques add constraint df_adtdepchq_amt default 0 for Amount;
+			alter table AdtDepositCheques add constraint df_adtdepchq_ri default 0 for ReceiptId;
+			alter table AdtDepositCheques add constraint df_adtdepchq_wi default 0 for WorkflowId;
+			alter table AdtDepositCheques add constraint df_adtdepchq_ver default 0 for Version;
+		</sql>
+	</changeSet>
 	 <changeSet id="33" author="Manoj">
 	 <comment>added column to support hidden field in extended Details</comment>
 		<addColumn tableName="adtextendedfielddetail">
