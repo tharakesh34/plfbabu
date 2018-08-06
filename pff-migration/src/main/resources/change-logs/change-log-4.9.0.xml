@@ -4595,7 +4595,7 @@
 					T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
 					T4.ProductCategory, COALESCE(T9.NOINST,0) NOINST,
 					
-					COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T10.NextRoleCode)) LovDescRequestStage,
+					COALESCE(T5.RoleDesc,  ${add.schema}FN_GET_ROLEDESC(T10.NextRoleCode)) LovDescRequestStage,
 					T10.WaiverId, T10.Event RcdMaintainSts, T10.NextRoleCode, T10.RecordStatus, T10.RecordType
 		
 			FROM     	FeeWaiverHeader_Temp T10 INNER JOIN		
