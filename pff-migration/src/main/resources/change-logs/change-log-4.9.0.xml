@@ -7399,7 +7399,7 @@ UNION ALL
           WHERE wiffinancemain_temp.finreference = t1.finreference))
           </createView>
 		</changeSet>
-		<changeSet id="94" author="Mangapathi">
+		<changeSet id="95" author="Mangapathi">
 	<addColumn tableName="AdtFinanceMain">
 		<column name="AdvanceEMI" type="decimal(18,0)" defaultValue="0"/>
 		<column name="AdvEMITerms" type="Number(3,0)" defaultValue="0"/>		
