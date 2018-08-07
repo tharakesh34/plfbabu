@@ -701,9 +701,7 @@ public class AgreementDefinitionDialogCtrl extends
 	private void doModuleSelection(String modulename) {
 
 		if ((PennantConstants.WORFLOW_MODULE_FINANCE.equals(modulename))) {
-			this.auto_check.setVisible(false);
-		} else {
-			this.auto_check.setVisible(true);
+		this.auto_check.setVisible(true);
 			Filter[] filtersDoc = new Filter[1];
 			filtersDoc[0] = new Filter("categorycode", PennantConstants.WORFLOW_MODULE_FINANCE, Filter.OP_EQUAL);
 			this.docType.setFilters(filtersDoc);
@@ -809,6 +807,7 @@ public class AgreementDefinitionDialogCtrl extends
 			this.btnCtrl.setInitNew();
 			this.autoDownload.setVisible(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
+			doModuleSelection(PennantConstants.WORFLOW_MODULE_FINANCE);
 			doEdit();
 			// setFocus
 			this.aggCode.focus();
