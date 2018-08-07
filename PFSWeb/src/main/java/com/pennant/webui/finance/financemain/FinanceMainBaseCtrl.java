@@ -217,6 +217,7 @@ import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -260,6 +261,8 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
+import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
+import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryData;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
@@ -827,7 +830,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private transient FinSamplingDialogCtrl finSamplingDialogCtrl;
 	private transient PSLDetailDialogCtrl pSLDetailDialogCtrl;
-	
+	private transient CreditReviewSummaryData creditReviewSummaryData;
+	private transient CreditApplicationReviewService creditApplicationReviewService;
 
 	private transient FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private transient CustomerInterfaceService customerInterfaceService;
@@ -954,6 +958,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Window window_documentDetailDialog;
 	private transient AgreementDefinitionService agreementDefinitionService;
 	private Map <String,List> autoDownloadMap = null;
+	private Map<String, String> extValuesMap = new HashMap<String, String>();
 	/**
 	 * default constructor.<br>
 	 */
@@ -4387,7 +4392,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oldVar_planEMIMonths = getFinanceDetail().getFinScheduleData().getPlanEMIHmonths();
 				this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
 			}
-
+			
+			//Prepare credit review details for agreements
+			setCreditRevDetails(getFinanceDetail());
+			
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -15717,11 +15725,93 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 			
 		detail.getCustomerEligibilityCheck().addExtendedField("FOIR_Ratio", foir);
+		
+		//Corporate Financial Input Data to set Eligibility Rules
+		Set<Long> custIds = new HashSet<>();
+		if(!detail.getJountAccountDetailList().isEmpty()){
+			for (JointAccountDetail accountDetail : detail.getJountAccountDetailList()) {
+				custIds.add(accountDetail.getCustID());
+			}
+		}
+		int noOfYears = SysParamUtil.getValueAsInt("NO_OF_YEARS_TOSHOW");
+		long custId = customer.getCustID();
+		//Get max audit year from Corporate Financial Input Data master 
+		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
+		int toYear = Integer.parseInt(maxAuditYear);
+		//Customers data fetching and MaxAudit year is greater than zero
+		Map<String,String> dataMap = new HashMap<>();
+		if(toYear > 0){
+			//set Default values for extension finance fields
+			setExtValuesMap();
+			dataMap = creditReviewSummaryData.setDataMap(custId, custIds, toYear, noOfYears, customer.getCustCtgCode(), true, true, extValuesMap, 
+					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode));
+		}
+		detail.setDataMap(dataMap);
+		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();
 	}
 
+	/**
+	 * Prepare credit review details map for agreements
+	 * @param detail
+	 */
+	private void setCreditRevDetails(FinanceDetail detail){
+		//Corporate Financial Input Data to set Eligibility Rules
+		Set<Long> custIds = new HashSet<>();
+		if(!detail.getJountAccountDetailList().isEmpty()){
+			for (JointAccountDetail accountDetail : detail.getJountAccountDetailList()) {
+				custIds.add(accountDetail.getCustID());
+			}
+		}
+		int noOfYears = SysParamUtil.getValueAsInt("NO_OF_YEARS_TOSHOW");
+		long custId = detail.getCustomerDetails().getCustomer().getCustID();
+		//Get max audit year from Corporate Financial Input Data master 
+		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
+		int toYear = Integer.parseInt(maxAuditYear);
+		//Customers data fetching and MaxAudit year is greater than zero
+		Map<String,String> dataMap = new HashMap<>();
+		if(toYear > 0){
+			//set Default values for extension finance fields
+			setExtValuesMap();
+			dataMap = creditReviewSummaryData.setDataMap(custId, custIds, toYear, noOfYears, detail.getCustomerDetails().getCustomer().getCustCtgCode(), true, true, extValuesMap, 
+					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode));
+		}
+		detail.setDataMap(dataMap);
+	}
+	
+	private Map<String, String> setExtValuesMap() {
+		extValuesMap.put("EXT_CREDITTRANNO", "0");
+		extValuesMap.put("EXT_CREDITTRANAMT", "0");
+		extValuesMap.put("EXT_CREDITTRANAVG", "0");
+		extValuesMap.put("EXT_DEBITTRANNO", "0");
+		extValuesMap.put("EXT_DEBITTRANAMT", "0");
+		extValuesMap.put("EXT_CASHDEPOSITNO", "0");
+		extValuesMap.put("EXT_CASHDEPOSITAMT", "0");
+		extValuesMap.put("EXT_CASHWITHDRAWALNO", "0");
+		extValuesMap.put("EXT_CASHWITHDRAWALAMT", "0");
+		extValuesMap.put("EXT_CHQDEPOSITNO", "0");
+		extValuesMap.put("EXT_CHQDEPOSITAMT", "0");
+		extValuesMap.put("EXT_CHQISSUEN", "0");
+		extValuesMap.put("EXT_CHQISSUEAMT", "0");
+		extValuesMap.put("EXT_INWARDCHQBOUNCENO", "0");
+		extValuesMap.put("EXT_OUTWARDCHQBOUNCENO", "0");
+		extValuesMap.put("EXT_EODBALAVG", "0");
+		extValuesMap.put("EXT_EODBALMAX", "0");
+		extValuesMap.put("EXT_EODBALMIN", "0");
+		extValuesMap.put("EXT_SUMOFEMI", "0");
+		extValuesMap.put("EXT_NUMBEROFTERMS", "0");
+		extValuesMap.put("EXT_CHQISSUENO", "0");
+		extValuesMap.put("EXT_OBLIGATION", "0");
+		extValuesMap.put("EXT_REPAYPROFITRATE", "0");
+		extValuesMap.put("EXT_ROUNDINGTARGET", "0");
+		extValuesMap.put("EXT_FINASSETVALUE", "0");
+		extValuesMap.put("EXT_FINAMOUNT", "0");
+		extValuesMap.put("EXT_FIRSTREPAY", "0");
+		return extValuesMap;
+	}
+	
 	private Object getRuleValue(Object value, String fieldType, String currency) {
 
 		if (value == null) {
@@ -18340,6 +18430,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public AgreementDefinitionService getAgreementDefinitionService() {
 		return this.agreementDefinitionService;
+	}
+
+	public CreditReviewSummaryData getCreditReviewSummaryData() {
+		return creditReviewSummaryData;
+	}
+
+	public void setCreditReviewSummaryData(CreditReviewSummaryData creditReviewSummaryData) {
+		this.creditReviewSummaryData = creditReviewSummaryData;
+	}
+
+	public CreditApplicationReviewService getCreditApplicationReviewService() {
+		return creditApplicationReviewService;
+	}
+
+	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
+		this.creditApplicationReviewService = creditApplicationReviewService;
 	}
 
 }

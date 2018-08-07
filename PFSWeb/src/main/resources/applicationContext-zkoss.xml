@@ -1839,6 +1839,8 @@
 		<property name="legalDetailService" ref="legalDetailService" />
 		<property name="baseRateService" ref="baseRateService" />
 		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
+		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
+		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

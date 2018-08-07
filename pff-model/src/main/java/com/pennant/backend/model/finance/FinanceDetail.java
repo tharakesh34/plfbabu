@@ -285,6 +285,7 @@ public class FinanceDetail implements java.io.Serializable {
 	 * Legal Details variables
 	 */
 	private boolean legalInitiator;
+	private Map<String, String> dataMap = new HashMap<>();
 		
 
 	public FinanceDetail() {
@@ -1104,6 +1105,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public Map<String, String> getDataMap() {
+		return dataMap;
+	}
+
+	public void setDataMap(Map<String, String> dataMap) {
+		this.dataMap = dataMap;
 	}
 	
 }

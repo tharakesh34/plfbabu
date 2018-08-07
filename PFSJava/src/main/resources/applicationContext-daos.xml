@@ -2756,6 +2756,7 @@
 	<bean id="creditReviewSummaryData"
 		class="com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryData">
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
+		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
 
 	<!--============ Customer Directors Details ============== -->
