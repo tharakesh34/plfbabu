@@ -1273,6 +1273,9 @@
 			
 			delete from ERRORDETAILS where code='CE0003';
 			Insert into ERRORDETAILS values ('CE0003','EN','E','PAN/Aadhar should be mandatory',null,'Approved',null,null,null,null,null,0,null,1000,0);
+			
+			delete from  SECGROUPRIGHTS where grpid=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR');
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 		</sql>
 	</changeSet>
 </databaseChangeLog>
