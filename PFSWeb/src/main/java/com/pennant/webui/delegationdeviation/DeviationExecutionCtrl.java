@@ -158,7 +158,7 @@ public class DeviationExecutionCtrl {
 		}
 
 		delegators = deviationHelper
-				.getRoleAndDesc(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
+				.getWorkflowRoles(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 
 
 		// Clone the object.
