@@ -7419,14 +7419,5 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="103" author="Vinay">
-		<sql>
-			delete from SMTPARAMETERS where sysparmcode='CUST_PRIMARY_ID_REQ_RETL';
-			Insert into SMTPARAMETERS values ('CUST_PRIMARY_ID_REQ_RETL','Customer Primary ID Required (Y, N)','String','0','N',1,0,null,null,'Customer Primary ID Required',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-			
-			delete from ERRORDETAILS where code='CE0003';
-			Insert into ERRORDETAILS values ('CE0003','EN','E','PAN/Aadhar should be mandatory',null,'Approved',null,null,null,null,null,0,null,1000,0);
-		</sql>
-	</changeSet>
 </databaseChangeLog>
 	
