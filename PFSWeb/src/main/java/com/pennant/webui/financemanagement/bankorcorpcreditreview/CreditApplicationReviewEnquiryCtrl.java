@@ -899,10 +899,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Entering");
 		
 		if(isEnquiry){
-			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap);
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap, listOfFinCreditRevCategory);
 		} else if(maxAuditYear != null){
 			custIds.add(custID.longValue());
-			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null);
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null, listOfFinCreditRevCategory);
 		}
 		if(this.dataMap.containsKey("lovDescCcyEditField")){
 			currFormatter = Integer.parseInt(this.dataMap.get("lovDescCcyEditField"));
