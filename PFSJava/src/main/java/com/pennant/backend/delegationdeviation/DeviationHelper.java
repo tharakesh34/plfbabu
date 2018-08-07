@@ -77,6 +77,13 @@ public class DeviationHelper {
 
 	}
 
+	public List<ValueLabel> getWorkflowRoles(long workflowid) {
+		WorkflowEngine workflow = new WorkflowEngine(WorkFlowUtil.getWorkflow(workflowid).getWorkFlowXml());
+		List<String> list = workflow.getActors(false);
+		return getRoleAndDesc(list);
+
+	}
+	
 	public void setDeviationDetails(FinanceDetail financeDetail, List<FinanceDeviations> finDeviations,
 			List<FinanceDeviations> apprFinDeviations) {
 
