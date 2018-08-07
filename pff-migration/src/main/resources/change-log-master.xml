@@ -15,4 +15,5 @@
 	<include file="change-logs/change-log-legal.xml"/>
 	<include file="change-logs/change-log-4.7.17.xml" />
 	<include file="change-logs/change-log-4.9.0.xml" />
+	<include file="change-logs/change-log-4.10.0.xml"/>
 </databaseChangeLog>
