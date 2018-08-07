@@ -72,31 +72,34 @@
 	<bean id="calculationUtil" class="com.pennant.app.util.CalculationUtil">
 		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
-
-	<!-- ====================================================== -->
-	<!-- Mail Utility Configuration -->
-	<!-- ====================================================== -->
-
-	<bean id="mailUtility" class="com.pennant.app.util.MailUtility"
-		scope="prototype">
-		<property name="outgoingHost" value="${mail.outgoingserver.host}" />
-		<property name="outgoingPort" value="${mail.outgoingserver.port}" />
-		<property name="outgoingDebug" value="${mail.outgoingserver.debug}" />
-		<property name="outgoingAuth" value="${mail.outgoingserver.auth}" />
-		<property name="outgoingUserName" value="${mail.outgoingserver.userName}" />
-		<property name="outgoingPassword" value="${mail.outgoingserver.password}" />
-		<property name="outgoingEncType" value="${mail.outgoingserver.encryptiontype}" />
-
-		<property name="incomingHost" value="${mail.incomingserver.host}" />
-		<property name="incomingPort" value="${mail.incomingserver.port}" />
-		<property name="incomingUserName" value="${mail.incomingserver.userName}" />
-		<property name="incomingPassword" value="${mail.incomingserver.password}" />
-		<property name="incomingEncType" value="${mail.incomingserver.encryptiontype}" />
-
-		<property name="incomingFolder" value="${mail.incomingserver.folder}" />
-		<property name="incomingProtocol" value="${mail.incomingserver.protocol}" />
-		<property name="fromEmail" value="${mail.outgoingserver.fromMail}" />
+	
+	<!-- ============================================================ -->
+	<!-- Required configuration to use Email Engine -->
+	<!-- ============================================================== -->
+	<bean id="outgoingMailProperties"
+		class="com.pennanttech.pennapps.engine.email.configuration.OutgoingMailProperties">
+		<property name="servreId" value="${engine.email.out.server.id}" />
+		<property name="user" value="${engine.email.out.user}" />
+		<property name="password" value="${engine.email.out.password}" />
+		<property name="host" value="${engine.email.out.host}" />
+		<property name="port" value="${engine.email.out.port}" />
+		<property name="encryptionType" value="${engine.email.out.encryptionType}" />
+		<property name="cronExpression" value="${engine.email.out.cronExpression}" />
+		<property name="from" value="${engine.email.out.from}" />
+		<property name="personal" value="${engine.email.out.personal}" />
+		<property name="returnMail" value="${engine.email.out.returnMail}" />
+		<property name="auth" value="${engine.email.out.auth}" />
+		<property name="retrycount" value="${engine.email.out.retrycount}" />
 	</bean>
+
+	<bean id="emailEngine" class="com.pennanttech.pennapps.engine.email.EmailEngine">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="outgoingMailProperties" />
+	</bean>
+	 
+	 <bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.engine.email.EmailEngineJobScheduler">
+	 	<constructor-arg ref="outgoingMailProperties"/>
+	 </bean>
 
 	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" parent="mailUtility"
 		scope="prototype">
@@ -111,6 +114,7 @@
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="emailEngine" ref="emailEngine" />
 
 	</bean>
 	
