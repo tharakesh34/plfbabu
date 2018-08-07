@@ -7405,5 +7405,18 @@ UNION ALL
 			INSERT INTO BMTAMOUNTCODES values('ADDDBSP',0,'ae_advanceEMI','Advance EMI amount',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	<changeSet id="102" author="Mangapathi">
+		<comment> Advance EMI  </comment>
+		<sql>
+			INSERT INTO SecRights VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'FinanceMainDialog_AdvEMITerms','FinanceMainDialog',0,1000,
+			CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='BFSD_ORIGINATION_MAKER'), 
+			(select RightID from SecRights WHERE RightName='FinanceMainDialog_AdvEMITerms'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='CL_ORIGINATION_MAKER'), 
+			(select RightID from SecRights WHERE RightName='FinanceMainDialog_AdvEMITerms'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecGroupRights VALUES ((select MAX(GRPRIGHTID)+1 from SecGroupRights), (select GRPID from SECGROUPS where GRPCODE='CL_ORIGINATION_WRM'), 
+			(select RightID from SecRights WHERE RightName='FinanceMainDialog_AdvEMITerms'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
