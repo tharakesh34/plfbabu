@@ -7399,5 +7399,11 @@ UNION ALL
           WHERE wiffinancemain_temp.finreference = t1.finreference))
           </createView>
 		</changeSet>
+		<changeSet id="101" author="Mangapathi">
+		<comment> Advance EMI  </comment>
+		<sql>
+			INSERT INTO BMTAMOUNTCODES values('ADDDBSP',0,'ae_advanceEMI','Advance EMI amount',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
