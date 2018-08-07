@@ -1041,7 +1041,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
 			gstActual = feeResult.multiply(gstPercentage.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
 			
-			if (!finFeeDetail.isFeeModified()) {
+			if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 				finFeeDetail.setActualAmountOriginal(feeResult);
 				finFeeDetail.setActualAmountGST(gstActual);
 				finFeeDetail.setActualAmount(gstActual.add(feeResult));
@@ -1094,7 +1094,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
 			gstActual = calPercentageFee.multiply(gstPercentage.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
 			
-			if (!finFeeDetail.isFeeModified()) {
+			if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 				finFeeDetail.setActualAmountOriginal(calPercentageFee);
 				finFeeDetail.setActualAmountGST(gstActual);
 				finFeeDetail.setActualAmount(gstActual.add(calPercentageFee));

@@ -1046,6 +1046,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 			
+			boolean feeChanges = false;
+			boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
+			if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
+				readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
+			}
 			Cloner cloner = new Cloner();
 			finFeeDetailList = cloner.deepClone(finFeeDetailList);
 			if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
@@ -1055,8 +1060,28 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					finFeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+					
+					if (!readOnly && !PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()) && finFeeDetail.isAlwModifyFee() && !feeChanges && finFeeDetail.isRcdVisible()) {
+						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
+							if (finFeeDetail.getNetAmount().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+								feeChanges = true;
+							}
+						} else {
+							if (finFeeDetail.getActualAmount().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+								feeChanges = true;
+							}
+						}
+					}
 				}
 			}
+			
+			//if we have any Difference between calculated fee amount and actual fee amount
+			if (feeChanges && MessageUtil.confirm("Difference between calculated fee amount and actual fee amount. Do you want to proceed?") == MessageUtil.NO) {
+				ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+				wve.add(new WrongValueException("Difference between calculated fee amount and actual fee amount."));
+				showErrorDetails(wve);
+			}
+			
 			aFinScheduleData.setFinFeeDetailList(finFeeDetailList);
 
 			List<FinFeeReceipt> finFeeReceipts = null;
@@ -1537,7 +1562,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		setFinFeeDetailList(finFeeDetails);
 		
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
-		if (financeMain.isQuickDisb() && readOnly) {
+		if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
 
@@ -1678,7 +1703,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				netFeeBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				
 				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
-					netFeeBox.setDisabled(readOnly);
+					netFeeBox.setDisabled(readOnly ? true : !finFeeDetail.isAlwModifyFee());
 				} else {
 					netFeeBox.setDisabled(true);
 				}
@@ -2827,7 +2852,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					if (finFeeDetail.isTaxApplicable()) {
 						this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail, branch);
 					}  else {
-						if (!finFeeDetail.isFeeModified()) {
+						if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 							finFeeDetail.setActualAmountOriginal(feeResult);
 							finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
 							finFeeDetail.setActualAmount(feeResult);
@@ -2864,7 +2889,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					if (finFeeDetail.isTaxApplicable()) {	//if GST applicable
 						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail, branch);
 					} else {
-						if (!finFeeDetail.isFeeModified()) {
+						if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 							finFeeDetail.setActualAmountOriginal(calPercentageFee);
 							finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
 							finFeeDetail.setActualAmount(calPercentageFee);
