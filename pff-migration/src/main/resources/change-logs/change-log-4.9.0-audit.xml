@@ -259,4 +259,10 @@
 		<addDefaultValue columnName="AutoGeneration" tableName="ADTBMTAggrementDef" defaultValue="0"/>
 		<addDefaultValue columnName="AutoDownload" tableName="ADTBMTAggrementDef" defaultValue="0"/>
 	</changeSet>
+	<changeSet id="22" author="Mangapathi">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="AdvanceEMI" type="decimal(18,0)" defaultValue="0"/>
+			<column name="AdvEMITerms" type="Number(3,0)" defaultValue="0"/>		
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
