@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -70,6 +71,7 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
@@ -246,6 +248,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				issueHeader.getFinReference(), TableType.TEMP_TAB.getSuffix(), false);
 		List<FinanceDisbursement> mainList = financeDisbursementDAO.getFinanceDisbursementDetails(
 				issueHeader.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+		// Covenants List
+		issueHeader.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(issueHeader.getFinReference(), "_View",false));
+		// Document details
+		issueHeader.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(issueHeader.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
 		
 		if (issueHeader.isLoanApproved()) {
 			issueHeader.setFinanceDisbursements(mainList);
@@ -556,28 +562,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		
 		
 		if (payOrderIssueHeader.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
-			List<FinCovenantType> covenantList = finCovenantTypeDAO
-					.getFinCovenantTypeByFinRef(payOrderIssueHeader.getFinReference(), "_View", false);
-			boolean isOtc = false;
-			boolean isOverdue = false;
-			String[] valParm = new String[1];
-			// validate the covenant against the disbursements
-			for (FinCovenantType covenanttype : covenantList) {
-				isOtc = covenanttype.isAlwOtc();
-				isOverdue = DateUtility.compare(covenanttype.getReceivableDate(), DateUtility.getAppDate()) < 0;
-				if(isOverdue || isOtc){
-					break;
-				}
-			}
-			if (isOverdue || isOtc) {
-				List<FinAdvancePayments> advpayments = payOrderIssueHeader.getFinAdvancePaymentsList();
-				for (FinAdvancePayments finAdvancePayments : advpayments) {
-					if (finAdvancePayments.getRecordType().equals(PennantConstants.RCD_ADD)) {
-						valParm[0] = finAdvancePayments.getPaymentType();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valParm)));
-					}
-				}
-			}
+			
+			validateOtcPayment(auditDetail,payOrderIssueHeader);
 		}
 		
 		boolean noValidation = isnoValidationUserAction(payOrderIssueHeader.getRecordStatus());
@@ -629,6 +615,64 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+	
+	
+	private void validateOtcPayment(AuditDetail auditDetail, PayOrderIssueHeader header) {
+		// ####_0.2
+		// Not allowed to approve loan with Disbursement type if it is
+		// not in the configured OTC Types
+
+		String alwrepayMethods = (String) SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
+		if (alwrepayMethods != null) {
+			String[] valueParm = new String[2];
+			boolean isFound = false;
+			boolean isOTCPayment = false;
+			boolean isDocExist = false;
+
+			String[] repaymethod = alwrepayMethods.split(",");
+			if (header.getFinAdvancePaymentsList() != null && header.getFinAdvancePaymentsList().size() > 0) {
+				for (FinAdvancePayments finAdvancePayments : header.getFinAdvancePaymentsList()) {
+					isFound = false;
+					for (String rpymethod : repaymethod) {
+						if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
+							isFound = true;
+							break;
+						}
+					}
+					if (!isFound) {
+						valueParm[0] = finAdvancePayments.getPaymentType();
+						isOTCPayment = true;
+						break;
+					}
+				}
+				if (isOTCPayment) {
+					if (header.getCovenantTypeList() != null && header.getCovenantTypeList().size() > 0) {
+						for (FinCovenantType covenantType : header.getCovenantTypeList()) {
+							isDocExist = false;
+							if (!covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+								// validate the document against the current
+								// list.
+								for (DocumentDetails documentDetails : header.getDocumentDetailsList()) {
+									if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
+											&& !documentDetails.getRecordType()
+													.equals(PennantConstants.RECORD_TYPE_CAN)) {
+										isDocExist = true;
+										break;
+									}
+								}
+								if (!isDocExist && covenantType.isAlwOtc()) {
+									valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
+									auditDetail.setErrorDetail(
+											ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**

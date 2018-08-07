@@ -5948,64 +5948,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_RESUBMITTED)
 					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED)
 					&& !financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) {
-				// ####_0.2
-				// Not allowed to approve loan with Disbursement type if it is
-				// not in the configured OTC Types
-
-				String alwrepayMethods = (String) SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
-				if (alwrepayMethods != null) {
-					String[] valueParm = new String[2];
-					boolean isFound = false;
-					boolean isOTCPayment = false;
-					boolean isDocExist = false;
-
-					String[] repaymethod = alwrepayMethods.split(",");
-					if (financeDetail.getAdvancePaymentsList() != null
-							&& financeDetail.getAdvancePaymentsList().size() > 0) {
-						for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
-							isFound = false;
-							for (String rpymethod : repaymethod) {
-								if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
-									isFound = true;
-									break;
-								}
-							}
-							if (!isFound) {
-								valueParm[0] = finAdvancePayments.getPaymentType();
-								isOTCPayment = true;
-								break;
-							}
-						}
-						if (isOTCPayment) {
-							AuditDetail detail = new AuditDetail();
-							if (financeDetail.getCovenantTypeList() != null
-									&& financeDetail.getCovenantTypeList().size() > 0) {
-								for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
-									isDocExist = false;
-									if (!covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
-										// validate the document against the current list.
-										for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
-											if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
-													&& !documentDetails.getRecordType()
-															.equals(PennantConstants.RECORD_TYPE_CAN)) {
-												isDocExist = true;
-												break;
-											}
-										}
-										if (!isDocExist && covenantType.isAlwOtc()) {
-											valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
-											detail.setErrorDetail(
-													ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
-											auditDetails.add(detail);
-											break;
-
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+				validateOtcPayment(auditDetails, financeDetail);
 			}
 			// Collateral Assignments details
 			// =======================================
@@ -6213,6 +6156,67 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
+	private void validateOtcPayment(List<AuditDetail> auditDetails, FinanceDetail financeDetail) {
+		// ####_0.2
+		// Not allowed to approve loan with Disbursement type if it is
+		// not in the configured OTC Types
+
+		String alwrepayMethods = (String) SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
+		if (alwrepayMethods != null) {
+			String[] valueParm = new String[2];
+			boolean isFound = false;
+			boolean isOTCPayment = false;
+			boolean isDocExist = false;
+
+			String[] repaymethod = alwrepayMethods.split(",");
+			if (financeDetail.getAdvancePaymentsList() != null
+					&& financeDetail.getAdvancePaymentsList().size() > 0) {
+				for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
+					isFound = false;
+					for (String rpymethod : repaymethod) {
+						if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
+							isFound = true;
+							break;
+						}
+					}
+					if (!isFound) {
+						valueParm[0] = finAdvancePayments.getPaymentType();
+						isOTCPayment = true;
+						break;
+					}
+				}
+				if (isOTCPayment) {
+					AuditDetail detail = new AuditDetail();
+					if (financeDetail.getCovenantTypeList() != null
+							&& financeDetail.getCovenantTypeList().size() > 0) {
+						for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
+							isDocExist = false;
+							if (!covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+								// validate the document against the current list.
+								for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
+									if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
+											&& !documentDetails.getRecordType()
+													.equals(PennantConstants.RECORD_TYPE_CAN)) {
+										isDocExist = true;
+										break;
+									}
+								}
+								if (!isDocExist && covenantType.isAlwOtc()) {
+									valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
+									detail.setErrorDetail(
+											ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+									auditDetails.add(detail);
+									break;
+
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// ### 22-06-2018 -End
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
@@ -6232,35 +6236,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 */
 	private List<AuditDetail> validateDisbursements(FinanceDetail financeDetail, List<AuditDetail> auditDetails) {
-		boolean isDocExist = false;
-		String[] valueParm = new String[1];
 		FinanceMain financemain = financeDetail.getFinScheduleData().getFinanceMain();
 		if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
 				&& financemain.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
-			for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
-				// validate the covenants against the document details
-				List<DocumentDetails> docList = getDocumentDetailsDAO()
-						.getDocumentDetailsByRef(covenantType.getFinReference(), FinanceConstants.MODULE_NAME, "");
-				if (docList != null && docList.size() > 0) {
-					for (DocumentDetails documentDetails : docList) {
-						if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())) {
-							isDocExist = true;
-						}
-					}
-				}
-				for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
-					if (finAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-
-						if (!isDocExist && covenantType.isAlwOtc()) {
-							valueParm[0] = finAdvancePayments.getPaymentType();
-							AuditDetail detail = new AuditDetail();
-							detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valueParm)));
-							auditDetails.add(detail);
-							break;
-						}
-					}
-				}
-			}
+			validateOtcPayment(auditDetails, financeDetail);
+			
 		}
 		return auditDetails;
 	}

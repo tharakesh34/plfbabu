@@ -11,6 +11,7 @@ import java.util.Set;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -49,7 +50,10 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private List<FinanceDisbursement>			financeDisbursements;
 	private List<FinanceDisbursement>			approvedFinanceDisbursements;
 	private DocumentDetails						documentDetails; 
-
+	
+	private List<FinCovenantType> 				covenantTypeList        = new ArrayList<FinCovenantType>();
+	private List<DocumentDetails> 				documentDetailsList		= new ArrayList<DocumentDetails>();
+		
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -281,5 +285,21 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setDocumentDetails(DocumentDetails documentDetails) {
 		this.documentDetails = documentDetails;
+	}
+
+	public List<FinCovenantType> getCovenantTypeList() {
+		return covenantTypeList;
+	}
+
+	public void setCovenantTypeList(List<FinCovenantType> covenantTypeList) {
+		this.covenantTypeList = covenantTypeList;
+	}
+
+	public List<DocumentDetails> getDocumentDetailsList() {
+		return documentDetailsList;
+	}
+
+	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
+		this.documentDetailsList = documentDetailsList;
 	}
 }
