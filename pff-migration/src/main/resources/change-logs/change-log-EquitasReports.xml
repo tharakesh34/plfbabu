@@ -998,4 +998,16 @@ UNION ALL
 			Update financechecklistref_temp set recordtype = Null;
 		</sql>
 	</changeSet>
+	<changeSet id="53" author="pasvarma">
+		<sql>
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+		   ('AGRRULE','AGRRULE','currentAssetValue','Current Asset Value','Decimal',18,'1','1','','static,calvalue','');
+	
+		   Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+		   ('AGRRULE','AGRRULE','graceTenure','Grace Tenure','Decimal',18,'1','1','','static,calvalue','');
+	
+		   Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+		   ('AGRRULE','AGRRULE','currentAssetValue','  Current Asset Value','Decimal',18,'1','1','','static,calvalue','');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
