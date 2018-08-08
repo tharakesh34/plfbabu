@@ -1268,6 +1268,7 @@
 		class="com.pennant.webui.customermasters.customeremploymentdetail.CustomerEmploymentDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="customerEmploymentDetailService" ref="customerEmploymentDetailService" />
+		<property name="masterDefService" ref="masterDefService" />
 	</bean>
 
 	<!--============ Customer Group Detail ============== -->

@@ -76,6 +76,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
+import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -152,6 +153,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	private boolean isCurrentEmp = false;
 	private boolean isFinanceProcess = false;
 	private boolean workflow = false;
+	private MasterDefService masterDefService=null;
+	private long otherEmployerId=0;
 	
 	/**
 	 * default constructor.<br>
@@ -463,25 +466,33 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custEmpName.setDescription(aCustomerEmploymentDetail.getLovDesccustEmpName());
 		}
 		this.recordStatus.setValue(aCustomerEmploymentDetail.getRecordStatus());
+		
+		try {
+			otherEmployerId = Long.parseLong(getMasterDefService().getMasterCode("CustomerEmployment", "OTHER"));
+		} catch (Exception e) {
+			otherEmployerId=0;
+		}
+		
 		logger.debug("Leaving");
 	}
 
 	public void onFulfill$custEmpName(Event event) {
-		String desc=null;
+		long employerId=0;
 		
 		Object dataObject = custEmpName.getObject();
 		if(dataObject instanceof EmployerDetail){
 			EmployerDetail details = (EmployerDetail) dataObject;
-			desc = details.getEmpName();
+			employerId =  details.getEmployerId();
 		}
 			
-		if(StringUtils.equals("OTHER", desc) && !enqiryModule){
+		if(otherEmployerId!=0 && !enqiryModule && otherEmployerId==employerId){
 			if(!isReadOnly("CustomerEmploymentDetailDialog_companyName")){
 				this.companyName.setReadonly(false);
 			}else{
 				this.companyName.setReadonly(true);
 			}
 		}else{
+			this.companyName.setValue("");
 			this.companyName.setReadonly(true);
 		}
 	}
@@ -1498,6 +1509,14 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custEmpTo.setReadonly(false);
 			this.custEmpTo.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpFrom"));
 		}
+	}
+
+	public MasterDefService getMasterDefService() {
+		return masterDefService;
+	}
+
+	public void setMasterDefService(MasterDefService masterDefService) {
+		this.masterDefService = masterDefService;
 	}
 	
 }
