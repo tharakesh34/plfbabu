@@ -59,6 +59,13 @@
 			update AdtExtendedFieldHeader set modulename='VAS' where modulename='Vas';
 		</sql>
 	</changeSet>
-	
+	<changeSet id="12" author="Jayant">
+		<sql>			
+			Update adtCUSTOMER_RETAIL_ED  set CIBILSCORE = 0 where CIBILSCORE is null or CIBILSCORE='';
+		</sql>
+	</changeSet>
+	<changeSet id="13" author="Jayant">
+		<modifyDataType tableName="ADTCUSTOMER_RETAIL_ED" columnName="CIBILSCORE" newDataType="INT"/>
+	</changeSet>
 </databaseChangeLog>
 	
