@@ -6755,6 +6755,36 @@ private String custAccount ="";
 	public void setScoringDetails(List<Score> scoringDetails) {
 		this.scoringDetails = scoringDetails;
 	}
+	
+	private String creditWorth="";
+	
+	private String maxScore="";
+	
+	private String totScore="";
+	
+	public String getCreditWorth() {
+		return creditWorth;
+	}
+
+	public void setCreditWorth(String creditWorth) {
+		this.creditWorth = creditWorth;
+	}
+	
+	public String getMaxScore() {
+		return maxScore;
+	}
+
+	public void setMaxScore(String maxScore) {
+		this.maxScore = maxScore;
+	}
+
+	public String getTotScore() {
+		return totScore;
+	}
+
+	public void setTotScore(String totScore) {
+		this.totScore = totScore;
+	}
 
 	public class Score{
 		private String scoringMetrics="";

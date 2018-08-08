@@ -1623,6 +1623,15 @@ public class AgreementGeneration implements Serializable {
 		
 		if(MapUtils.isNotEmpty(detail.getScoreDetailListMap())){
 			Map<Long, List<FinanceScoreDetail>> scoreDetailListMap=detail.getScoreDetailListMap();
+			List<FinanceScoreHeader> finScoreHeaderList = detail.getFinScoreHeaderList();
+			if(CollectionUtils.isNotEmpty(finScoreHeaderList)){
+				FinanceScoreHeader financeScoreHeader = finScoreHeaderList.get(0);
+				if(null!=financeScoreHeader){
+					agreement.setCreditWorth(StringUtils.trimToEmpty(financeScoreHeader.getCreditWorth()));
+				}
+			}
+			BigDecimal totScore=BigDecimal.ZERO;
+			BigDecimal maxScore=BigDecimal.ZERO;
 			for(long key:scoreDetailListMap.keySet()){
 				List<FinanceScoreDetail> scoreDetailList = scoreDetailListMap.get(key);
 				if(CollectionUtils.isNotEmpty(scoreDetailList)){
@@ -1631,6 +1640,8 @@ public class AgreementGeneration implements Serializable {
 							Score score=agreement.new Score();
 							score.setScoringMetrics(StringUtils.trimToEmpty(scoreDetail.getRuleCode()));
 							score.setDescription(StringUtils.trimToEmpty(scoreDetail.getRuleCodeDesc()));
+							totScore=totScore.add(scoreDetail.getExecScore());
+							maxScore=maxScore.add(scoreDetail.getMaxScore());
 							score.setMaximumScore(StringUtils.trimToEmpty(String.valueOf(scoreDetail.getMaxScore())));
 							score.setActualScore(StringUtils.trimToEmpty(String.valueOf(scoreDetail.getExecScore())));
 							agreement.getScoringDetails().add(score);
@@ -1638,6 +1649,8 @@ public class AgreementGeneration implements Serializable {
 					}
 				}
 			}
+			agreement.setTotScore(StringUtils.trimToEmpty(String.valueOf(totScore)));
+			agreement.setMaxScore(StringUtils.trimToEmpty(String.valueOf(maxScore)));
 		}
 	}
 
