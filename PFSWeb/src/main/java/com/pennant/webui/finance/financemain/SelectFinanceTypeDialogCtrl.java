@@ -1025,6 +1025,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					this.financeWorkFlow.getScreenCode(), "", financeEvent, true);
 		}
 
+		if (financeDetail.isLegalInitiator()) {
+			financeDetail.getFinScheduleData().getFinanceMain().setLegalRequired(true);
+		}
+		
 		Date finStartDate = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 		if (finStartDate != null) {
 			String finEvent = PennantApplicationUtil.getEventCode(finStartDate);
