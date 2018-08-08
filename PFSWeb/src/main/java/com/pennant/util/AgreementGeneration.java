@@ -1019,7 +1019,7 @@ public class AgreementGeneration implements Serializable {
 			
 			if (aggModuleDetails.contains(PennantConstants.AGG_DIRECDT)
 					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerDirectorList())) {
-				getDirectorDetails(agreement, detail, formatter);
+			agreement = getDirectorDetails(agreement, detail, formatter);
 			}
 			
 			if (CollectionUtils.isEmpty(agreement.getDirectorDetails())) {
@@ -1927,8 +1927,17 @@ public class AgreementGeneration implements Serializable {
 		documentDetailsList.forEach((documentDetail)->{
 			if(null!=documentDetail && StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), "Finance")){
 				Document document=agreement.new Document();
-				DocumentType documentType = documentTypeList.stream().filter(docType -> docType.getDocTypeCode().equals(StringUtils.trimToEmpty(documentDetail.getDocCategory()))).findFirst().get();
-				document.setCusDocName(StringUtils.trimToEmpty(documentDetail.getDocCategory())+"-"+StringUtils.trimToEmpty(documentType.getDocTypeDesc()));
+				Optional<DocumentType> findFirst = null;
+				if (CollectionUtils.isNotEmpty(documentTypeList)) {
+					findFirst = documentTypeList.stream().filter(docType -> docType.getDocTypeCode()
+							.equals(StringUtils.trimToEmpty(documentDetail.getDocCategory()))).findFirst();
+				}
+				if (null != findFirst && findFirst.isPresent()) {
+					document.setCusDocName(StringUtils.trimToEmpty(documentDetail.getDocCategory()) + "-"
+							+ StringUtils.trimToEmpty(findFirst.get().getDocTypeDesc()));
+				} else {
+					document.setCusDocName(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
+				}
 				document.setReceiveDate(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 				document.setDocType("LOAN");
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
@@ -2383,6 +2392,7 @@ public class AgreementGeneration implements Serializable {
 					if(null!=collateralSetup){
 						com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new FinCollaterals();
 						collateralData.setCollateralType(StringUtils.trimToEmpty(collateralSetup.getCollateralType()));
+						collateralData.setDepositorName(StringUtils.trimToEmpty(collateralSetup.getDepositorName()));
 						collateralData.setReference(StringUtils.trimToEmpty(collateralSetup.getCollateralRef()));
 						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getCollateralValue(),formatter));
 						if(null!=collateralSetup.getCollateralStructure()){

@@ -1918,6 +1918,7 @@ private String custAccount ="";
 	public class FinCollaterals {
 		private String collateralType ="";
 		private String reference ="";
+		private String depositorName="";
 		private String collateralAmt ="";
 		private String collateralBankAmt ="";
 		private String colDesc ="";
@@ -1931,6 +1932,12 @@ private String custAccount ="";
 			this.reference = reference;
 		}
 		
+		public String getDepositorName() {
+			return depositorName;
+		}
+		public void setDepositorName(String depositorName) {
+			this.depositorName = depositorName;
+		}
 		public String getCollateralType() {
 			return collateralType;
 		}
@@ -7114,8 +7121,8 @@ private String custAccount ="";
 		private String director  = "No";
 		private String sharePerc ="No";
 		private String docCategoryName ="";
-		private String designationName;
-		private String nationalityName;
+		private String designationName="";
+		private String nationalityName="";
 
 		public String getNationalityName() {
 			return nationalityName;
