@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -102,7 +103,7 @@
 	<!-- Required configuration to use Email Engine -->
 	<!-- ============================================================== -->
 	<bean id="outgoingMailProperties"
-		class="com.pennanttech.pennapps.engine.email.configuration.OutgoingMailProperties">
+		class="com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties">
 		<property name="servreId" value="${engine.email.out.server.id}" />
 		<property name="user" value="${engine.email.out.user}" />
 		<property name="password" value="${engine.email.out.password}" />
@@ -117,12 +118,12 @@
 		<property name="retrycount" value="${engine.email.out.retrycount}" />
 	</bean>
 
-	<bean id="emailEngine" class="com.pennanttech.pennapps.engine.email.EmailEngine">
+	<bean id="emailEngine" class="com.pennanttech.pennapps.notification.email.EmailEngine">
 		<constructor-arg ref="dataSource" />
 		<constructor-arg ref="outgoingMailProperties" />
 	</bean>
 	 
-	 <bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.engine.email.EmailEngineJobScheduler">
+	 <bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.notification.email.EmailEngineJobScheduler">
 	 	<constructor-arg ref="outgoingMailProperties"/>
 	 </bean>
 
