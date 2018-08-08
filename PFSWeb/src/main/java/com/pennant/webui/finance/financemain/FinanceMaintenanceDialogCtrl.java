@@ -1944,48 +1944,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					// Mail Alert Notification for Customer/Dealer/Provider...etc
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-						List<String> templateTyeList = new ArrayList<String>();
-						templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-						templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
-
-						List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
-								afinanceMain.getFinType(), moduleDefiner, getRole(), templateTyeList);
-
-						templateTyeList = null;
-						if (!referenceIdList.isEmpty()) {
-
-							boolean isCustomerNotificationExists = false;
-							List<Long> notificationIdlist = new ArrayList<Long>();
-							for (ValueLabel valueLabel : referenceIdList) {
-								notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-								if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-									isCustomerNotificationExists = true;
-								}
-							}
-
-							// Mail ID details preparation
-							Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-							// Customer Email Preparation
-							if (isCustomerNotificationExists
-									&& getFinanceDetail().getCustomerDetails().getCustomerEMailList() != null
-									&& !getFinanceDetail().getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-								List<CustomerEMail> emailList = getFinanceDetail().getCustomerDetails()
-										.getCustomerEMailList();
-								List<String> custMailIdList = new ArrayList<String>();
-								for (CustomerEMail customerEMail : emailList) {
-									custMailIdList.add(customerEMail.getCustEMail());
-								}
-								if (!custMailIdList.isEmpty()) {
-									mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-								}
-							}
-
-							getMailUtil().sendMail(notificationIdlist, getFinanceDetail(), mailIDMap, null);
-						}
-
+						getMailUtil().processNotifications(afinanceDetail, moduleDefiner);
 					}
 
 					closeDialog();

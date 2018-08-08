@@ -36,4 +36,6 @@ public interface NotificationsDAO {
 	List<MailData> getMailData(String mailName);
 	Map<String, Object> mergeFields(String query);
 	int triggerMail(String query);
+
+	List<Notifications> getNotifications(List<Long> notificationIdList, String type);
 }

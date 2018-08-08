@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.mail.MailTemplate;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 
 public interface MailTemplateService {
 	
@@ -57,5 +58,5 @@ public interface MailTemplateService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	void sendMail(List<MailTemplate> templates, String finReference);
+	void sendMail(EmailMessage emailMessage);
 }

@@ -283,6 +283,20 @@
 								</hbox>
 
 							</row>
+							
+							<row visible="false" id="row_Resend" >
+								<label
+									id="label_FinanceReferenceDetailDialog_Resend"
+									value="${c:l('label_FinanceReferenceDetailDialog_Resend.value')}" />
+								<hbox>
+									<space spacing="2px" />
+
+									<checkbox id="reSend"
+										checked="true" />
+								</hbox>
+							</row>
+							
+							
 						</rows>
 					</grid>
 				</groupbox>

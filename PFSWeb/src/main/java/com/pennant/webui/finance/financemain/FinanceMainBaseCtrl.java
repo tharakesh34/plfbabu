@@ -60,11 +60,11 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -187,12 +187,9 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
-import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -231,7 +228,6 @@ import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -278,7 +274,6 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -333,8 +328,6 @@ import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
-
-import freemarker.template.TemplateException;
 
 /**
  * Base controller for creating the controllers of the zul files with the spring framework.
@@ -730,6 +723,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected transient List<Integer> oldVar_planEMIMonths;
 	protected transient List<Date> oldVar_planEMIDates;
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	protected Vbox discrepancies;
 
@@ -6777,7 +6771,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					// notification should not stop the process. why because
 					// tranaction already commited.
 					try {
-						processNotifications(aFinanceDetail, aFinanceMain);
+						getMailUtil().processNotifications(aFinanceDetail, moduleDefiner);
 					} catch (Exception e) {
 						logger.debug(e);
 					}
@@ -6912,148 +6906,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug("Leaving");
-	}
-
-	private void processNotifications(FinanceDetail aFinanceDetail, FinanceMain aFinanceMain)
-			throws IOException, TemplateException {
-		List<String> templateTyeList = new ArrayList<String>();
-		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
-		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_SP);
-
-		String finType = aFinanceMain.getFinType();
-		String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
-		List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(finType, finEvent,
-				getRole(), templateTyeList);
-
-		templateTyeList = null;
-		if (!referenceIdList.isEmpty()) {
-
-			FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-			CustomerDetails customerDetails = aFinanceDetail.getCustomerDetails();
-			String finReference = financeMain.getFinReference();
-			List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
-			List<CustomerPhoneNumber> customerPhoneNumList = customerDetails.getCustomerPhoneNumList();
-			List<DocumentDetails> docDetailsList = aFinanceDetail.getDocumentDetailsList();
-
-			VehicleDealer vehicleDealer = null;
-			boolean isCustomerNotificationExists = false;
-			boolean isSourcingPartnerNotificationExists = false;
-			List<Long> notifyIdlist = new ArrayList<Long>();
-
-			for (ValueLabel valueLabel : referenceIdList) {
-				notifyIdlist.add(Long.valueOf(valueLabel.getValue()));
-				if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-					isCustomerNotificationExists = true;
-				} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(valueLabel.getLabel())) {
-					isSourcingPartnerNotificationExists = true;
-				}
-			}
-
-			// Mail ID details preparation
-			Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-			//Customer mobile numbers logic start
-			Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
-
-			// Customer Email Preparation
-			if (isCustomerNotificationExists) {
-
-				if (customerEMailList != null && !customerEMailList.isEmpty()) {
-					List<String> mailIdList = mailIDMap.get(NotificationConstants.TEMPLATE_FOR_CN);
-					if (mailIdList == null) {
-						mailIdList = new ArrayList<String>();
-						mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, mailIdList);
-					}
-
-					for (CustomerEMail customerEMail : customerEMailList) {
-						mailIDMap.get(NotificationConstants.TEMPLATE_FOR_CN).add(customerEMail.getCustEMail());
-					}
-				}
-				if (customerPhoneNumList != null && !customerPhoneNumList.isEmpty()) {
-					List<String> custPhoneNoList = new ArrayList<String>();
-					for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-						custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
-					}
-					if (!custPhoneNoList.isEmpty()) {
-						mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
-					}
-				}
-			}
-
-			// vehicleDealer Email Preparation
-			if (isSourcingPartnerNotificationExists) {
-				List<String> mailIdList = new ArrayList<String>();
-				List<String> dealerPhoneNoList = new ArrayList<String>();
-				long vehicleDealerid = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
-				vehicleDealer = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealerid);
-				if (vehicleDealer != null) {
-					mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
-					dealerPhoneNoList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
-				}
-				if (!mailIdList.isEmpty()) {
-					mailIDMap.put(NotificationConstants.TEMPLATE_FOR_SP, mailIdList);
-				}
-
-				if (!dealerPhoneNoList.isEmpty()) {
-					mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_SP, dealerPhoneNoList);
-				}
-
-			}
-
-			HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail, vehicleDealer);
-
-			if (isExtMailService()) {
-				try {
-					List<MailTemplate> templates = getMailUtil().getMailDetails(notifyIdlist, fieldsAndValues,
-							docDetailsList, mailIDMap);
-					// send mail to external service
-					getMailTemplateService().sendMail(templates, finReference);
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
-
-			} else {
-				try {
-					getMailUtil().sendMail(notifyIdlist, fieldsAndValues, docDetailsList, mailIDMap, null);
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
-
-			}
-
-			// Customer mobile numbers logic end						
-			if (isExtSMSService()) {
-				List<MailTemplate> smsList = getSmsUtil().getSMSContent(notifyIdlist, fieldsAndValues, mobileNoMap);
-				// send SMS to external service
-				getShortMessageService().sendMessage(smsList, finReference);
-			}
-		}
-	}
-
-	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail, VehicleDealer vehicleDealer) {
-		logger.debug("Entering");
-
-		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
-		// Role Code For Alert Notification
-		main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
-
-		// user Details
-		main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
-		main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
-		main.setFinPurpose(main.getLovDescFinPurposeName());
-		main.setFinBranch(main.getLovDescFinBranchName());
-
-		logger.debug("Leaving");
-
-		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
-		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
-		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
-		if (vehicleDealer != null) {
-			declaredFieldValues.putAll(vehicleDealer.getDeclaredFieldValues());
-		}
-
-		return declaredFieldValues;
 	}
 
 	/*

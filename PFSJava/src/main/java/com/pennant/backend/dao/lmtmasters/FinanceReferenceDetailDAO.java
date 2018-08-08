@@ -85,4 +85,6 @@ public interface FinanceReferenceDetailDAO {
 // ### 06-05-2018 - End 
 	
 	List<Long> getRefIdListByRefType(String financeType, String finEvent, String roleCode, int finRefType);
+
+	boolean resendNotification(String finType, String finEvent, String role, List<String> templateTyeList);
 }

@@ -142,6 +142,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Hbox     hboxWaiver;
 	protected Row 	   row_AlertType;
 	protected Combobox alertType;
+	protected Checkbox reSend;
 	
 	// not auto wired variables
 	private FinanceReferenceDetail financeReferenceDetail; // over handed per parameter
@@ -188,6 +189,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Row rowOverRide;
 	protected Row rowDeviation;
 	protected Row rowPostpone;
+	protected Row row_Resend;
 	
 	protected Label label_FinanceReferenceDetailDialogLink;
 	
@@ -457,6 +459,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		this.allowWaiver.setChecked(aFinanceReferenceDetail.isAllowWaiver());
 		this.allowPostpone.setChecked(aFinanceReferenceDetail.isAllowPostpone());
 		this.allowExpire.setChecked(aFinanceReferenceDetail.isAllowExpire());
+		this.reSend.setChecked(aFinanceReferenceDetail.isReSend());
 	
 
 		if (aFinanceReferenceDetail.getShowInStage() != null && 
@@ -540,6 +543,13 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			aFinanceReferenceDetail.setReSend(this.reSend.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		try {
 
 			if(this.row_AlertType.isVisible()){
@@ -794,6 +804,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COMMITMENT)){
 			this.rowDeviation.setVisible(false);
 			this.rowPostpone.setVisible(false);
+		}
+		
+		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FINANCE)) {
+			this.row_Resend.setVisible(true);
 		}
 
 		try {

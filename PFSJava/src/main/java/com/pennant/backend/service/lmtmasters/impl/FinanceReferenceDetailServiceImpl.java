@@ -585,6 +585,51 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 	
 	@Override
+	public List<Long> getNotifications(String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
+		List<Long> list = new ArrayList<>();
+		Map<Long, String> templateMap = getFinanceReferenceDetailDAO().getTemplateIdList(financeType, finEvent,
+				roleCode, lovCodeList);
+
+		if (templateMap == null) {
+			return list;
+		}
+
+		for (Long notificationId : templateMap.keySet()) {
+			list.add(notificationId);
+		}
+
+		return list;
+	}
+
+	@Override
+	public List<ValueLabel> getTemplateIdList(String financeType, String finEvent, String roleCode,
+			List<String> lovCodeList, List<FinanceReferenceDetail> finRefereceDetail) {
+
+		List<ValueLabel> valueLabelList = new ArrayList<ValueLabel>();
+
+		Map<Long, String> templateMap = getFinanceReferenceDetailDAO().getTemplateIdList(financeType, finEvent,
+				roleCode, lovCodeList);
+
+		if (templateMap == null) {
+			return valueLabelList;
+		}
+
+		ValueLabel valueLabel = null;
+		for (Long key : templateMap.keySet()) {
+			valueLabel = new ValueLabel();
+			valueLabel.setValue(String.valueOf(key));
+			valueLabel.setLabel(templateMap.get(key));
+			valueLabelList.add(valueLabel);
+		}
+		return valueLabelList;
+	}
+
+	@Override
+	public boolean resendNotification(String finType, String finEvent, String role, List<String> templateTyeList) {
+		return getFinanceReferenceDetailDAO().resendNotification(finType, finEvent, role, templateTyeList);
+	}
+
+	@Override
 	public FinanceReferenceDetail getTemplateId(String financeType, String finEvent,String roleCode, String lovCodeList) {
 		return getFinanceReferenceDetailDAO().getTemplateId(financeType, finEvent,roleCode, lovCodeList);
 	}
@@ -643,5 +688,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
 		return FinanceCheckListReferenceDAO;
 	}
+
+
+
 
 }

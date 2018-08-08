@@ -71,4 +71,11 @@ public interface FinanceReferenceDetailService {
 	List<Long> getFinTypeAccounting(String fintype, List<String> events);
 	List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId);
 	Map<String,String> getAccountingFeeCodes(List<Long> accountSetId);
+
+	boolean resendNotification(String finType, String finEvent, String role, List<String> templateTyeList);
+
+	List<ValueLabel> getTemplateIdList(String finType, String finEvent, String role, List<String> templateTyeList,
+			List<FinanceReferenceDetail> finReferenceDetail);
+
+	List<Long> getNotifications(String financeType, String finEvent, String roleCode, List<String> lovCodeList);
 }

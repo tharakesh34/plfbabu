@@ -1,11 +1,8 @@
 package com.pennanttech.pff.external;
 
-import java.util.List;
-
-import com.pennant.backend.model.mail.MailTemplate;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 
 public interface MailService {
-	
-	public void sendEmail(List<MailTemplate> templates, String finReference);
+
+	public void sendEmail(EmailMessage emailMessage);
 }
-	

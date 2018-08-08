@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -374,6 +375,39 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		return map;
 	}
 	
+	@Override
+	public boolean resendNotification(String finType, String finEvent, String role,
+			List<String> templateTyeList) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select resendReq From ");
+		sql.append("  LMTFinRefDetail_ATView ");
+		sql.append(" Where FinType =:FinType AND FinEvent =:FinEvent and IsActive = 1 ");
+
+		if (StringUtils.isNotBlank(role)) {
+			sql.append(" AND MandInputInStage LIKE '%" + role + ",%' ");
+		}
+
+		if (templateTyeList != null && !templateTyeList.isEmpty()) {
+			sql.append(" AND LovDescCodeLov IN (:CodeLovList) ");
+		}
+		logger.debug("selectSql: " + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+		source.addValue("FinEvent", finEvent);
+		source.addValue("CodeLovList", templateTyeList);
+
+		List<Integer> list = jdbcTemplate.queryForList(sql.toString(), source, Integer.class);
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			return list.get(0) == 1;
+		}
+
+		return false;
+	}
+
 	/**
 	 * 
 	 * @param financeType

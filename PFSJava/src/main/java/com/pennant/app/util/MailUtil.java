@@ -1,13 +1,17 @@
 package com.pennant.app.util;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
@@ -15,7 +19,12 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.facility.Facility;
@@ -35,15 +44,26 @@ import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.administration.SecurityUserService;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
+import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.util.FacilityConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
+import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
+import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
+import com.pennanttech.pennapps.notification.email.model.MessageAttribute;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -54,18 +74,27 @@ public class MailUtil extends MailUtility {
 	private static final long				serialVersionUID	= -2543427090845637670L;
 	private static final Logger				logger				= Logger.getLogger(MailUtil.class);
 
-	private Configuration					freemarkerMailConfiguration;
-	private MailTemplateService				mailTemplateService;
-	private NotificationsService			notificationsService;
-	private CustomerEMailService			customerEMailService;
-	private AgreementDefinitionService		agreementDefinitionService;
-	private SecurityUserOperationsService	securityUserOperationsService;
-	private RuleExecutionUtil				ruleExecutionUtil;
-	private SecurityRoleService				securityRoleService;
-	private SecurityUserService				securityUserService;
-	private WorkFlowDetailsService			workFlowDetailsService;
-	private NotesService					notesService;
-	private DocumentManagerDAO				documentManagerDAO;
+	private Configuration freemarkerMailConfiguration;
+	private MailTemplateService mailTemplateService;
+	private NotificationsService notificationsService;
+	private CustomerEMailService customerEMailService;
+	private AgreementDefinitionService agreementDefinitionService;
+	private SecurityUserOperationsService securityUserOperationsService;
+	private RuleExecutionUtil ruleExecutionUtil;
+	private SecurityRoleService securityRoleService;
+	private SecurityUserService securityUserService;
+	private WorkFlowDetailsService workFlowDetailsService;
+	private NotesService notesService;
+	private DocumentManagerDAO documentManagerDAO;
+
+	@Autowired
+	private VehicleDealerService vehicleDealerService;
+	@Autowired
+	private FinanceReferenceDetailService financeReferenceDetailService;
+	@Autowired
+	private EmailEngine emailEngine;
+
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	public MailUtil() {
 		super();
@@ -91,9 +120,10 @@ public class MailUtil extends MailUtility {
 				financeDetail.getDocumentDetailsList(), mailIdMap, bs, fileName);
 	}
 	
-	public void sendMail(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues, List<DocumentDetails> docList,
+	public void sendMail(Notifications notification, HashMap<String, Object> fieldsAndValues,
+			List<DocumentDetails> docList,
 			Map<String, List<String>> mailIdMap, byte[] bs) throws Exception {
-		processMailSending(notificationIdList, fieldsAndValues, docList, mailIdMap, bs, null);
+		processMailSending(notification, fieldsAndValues, docList, mailIdMap, bs, null);
 	}
 
 	private boolean processMailSending(List<Long> notificationIdList, FinanceMain financeMain,
@@ -112,13 +142,11 @@ public class MailUtil extends MailUtility {
 		}
 
 		List<DocumentDetails> documentslist = null;
-		MailTemplateData templateData = new MailTemplateData();
-
 		try {
 
 			// Preparation of Mail Template Data for Rule Execution To Create
 			// Template with Structured Data
-			templateData = getPreparedMailData(templateData, financeMain);
+			MailTemplateData templateData = getTemplateData(financeMain);
 			documentslist = docList;
 
 			for (Notifications notifications : notificationsList) {
@@ -133,7 +161,6 @@ public class MailUtil extends MailUtility {
 
 				MailTemplate mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId); //FIXME templateID should be long
 				if (mailTemplate != null && mailTemplate.isActive()) {
-
 					List<String> emailList = null;
 					if (NotificationConstants.TEMPLATE_FOR_AE.equals(notifications.getTemplateType())
 							|| NotificationConstants.TEMPLATE_FOR_TAT.equals(notifications.getTemplateType())
@@ -199,6 +226,14 @@ public class MailUtil extends MailUtility {
 							if (documentslist != null) {
 								for (DocumentDetails documentDetails : documentslist) {
 									if (docCtg.equals(documentDetails.getDocCategory())) {
+										byte[] docImg = documentDetails.getDocImage();
+										if (docImg == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+											DocumentManager docManager = documentManagerDAO
+													.getById(documentDetails.getDocRefId());
+											if (docManager != null) {
+												docImg = docManager.getDocImage();
+											}
+										}
 										attchment.put(documentDetails.getDocName(), documentDetails.getDocImage());
 									}
 								}
@@ -225,63 +260,78 @@ public class MailUtil extends MailUtility {
 	}
 
 	private void processMailSending(String moduleCode, Object object, Object controller) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		List<Notifications> notificationsList = getNotificationsService().getApprovedNotificationsByModule(moduleCode);
-		RuleExecutionUtil ruleExecutionUtil = new RuleExecutionUtil();
+		List<Notifications> notifications = getNotificationsService().getApprovedNotificationsByModule(moduleCode);
 		MailTemplate mailTemplate = null;
 		String[] mailId = null;
 		List<String> emailList = null;
-		FinanceDetail financeDetail = null;
-		RepayData aRepayData = null;
-		List<DocumentDetails> documentslist = null;
-		MailTemplateData templateData = new MailTemplateData();
+		List<DocumentDetails> documents = null;
+		MailTemplateData templateData = null;
+
+		String keyReference = null;
 
 		try {
+			FinanceDetail financeDetail;
+			FinanceMain financeMain;
 			if (object instanceof FinanceDetail) {
 				financeDetail = (FinanceDetail) object;
-				templateData = getPreparedMailData(templateData, financeDetail.getFinScheduleData().getFinanceMain());
-				documentslist = financeDetail.getDocumentDetailsList();
-			}
-			if (object instanceof Facility) {
-				templateData = getPrepareFacilityMailData(templateData, (Facility) object);
-				documentslist = ((Facility) object).getDocumentDetailsList();
-			}
-			if (object instanceof FinCreditReviewDetails) {
-				templateData = getPrepareCreditReviewMailData(templateData, (FinCreditReviewDetails) object);
-			}
-			if (object instanceof InvestmentFinHeader) {
-				templateData = getPrepareTreasuryInvestmentMailData(templateData, (InvestmentFinHeader) object);
-			}
-			if (object instanceof RepayData) {
-				aRepayData = (RepayData) object;
-				templateData = getPreparedMailData(templateData, aRepayData.getFinanceDetail().getFinScheduleData()
-						.getFinanceMain());
-				documentslist = aRepayData.getFinanceDetail().getDocumentDetailsList();
-			}
-			if (object instanceof FinanceWriteoffHeader) {
-				templateData = getPreparedMailData(templateData, ((FinanceWriteoffHeader) object).getFinanceDetail()
-						.getFinScheduleData().getFinanceMain());
-			}
-			if (object instanceof Provision) {
-				templateData = getPrepareProvisionMailData(templateData, (Provision) object);
-			}
-			if (object instanceof FinanceSuspHead) {
-				templateData = getPrepareManualSuspenseMailData(templateData, (FinanceSuspHead) object);
-			}
-			for (Notifications notifications : notificationsList) {
-				HashMap<String, Object> fieldsAndValues = templateData.getDeclaredFieldValues();
+				financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
+				templateData = getTemplateData(financeDetail.getFinScheduleData().getFinanceMain());
+				documents = financeDetail.getDocumentDetailsList();
+
+				keyReference = financeMain.getFinReference();
+			} else if (object instanceof Facility) {
+				Facility facility = (Facility) object;
+				templateData = getTemplateData((Facility) object);
+				documents = facility.getDocumentDetailsList();
+
+				keyReference = facility.getCAFReference();
+			} else if (object instanceof FinCreditReviewDetails) {
+				FinCreditReviewDetails finCreditReviewDetails = (FinCreditReviewDetails) object;
+
+				templateData = getTemplateData(finCreditReviewDetails);
+
+				keyReference = finCreditReviewDetails.getLovDescCustCIF();
+			} else if (object instanceof InvestmentFinHeader) {
+				templateData = getTemplateData((InvestmentFinHeader) object);
+			} else if (object instanceof RepayData) {
+				RepayData repayData = (RepayData) object;
+				financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+				templateData = getTemplateData(financeMain);
+				documents = repayData.getFinanceDetail().getDocumentDetailsList();
+				keyReference = repayData.getFinReference();
+			} else if (object instanceof FinanceWriteoffHeader) {
+				FinanceWriteoffHeader writeoffHeader = (FinanceWriteoffHeader) object;
+				financeMain = writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain();
+				templateData = getTemplateData(financeMain);
+				keyReference = writeoffHeader.getFinReference();
+			} else if (object instanceof Provision) {
+				Provision provision = (Provision) object;
+				templateData = getTemplateData(provision);
+				keyReference = provision.getFinReference();
+			} else if (object instanceof FinanceSuspHead) {
+				FinanceSuspHead suspHead = (FinanceSuspHead) object;
+				templateData = getTemplateData(suspHead);
+				keyReference = suspHead.getFinReference();
+			}
+
+			HashMap<String, Object> fieldsAndValues = templateData.getDeclaredFieldValues();
+			for (Notifications notification : notifications) {
 				// Getting Mail Template
-				Integer templateId = (Integer) ruleExecutionUtil.executeRule(notifications.getRuleTemplate(),
+				Integer templateId = (Integer) ruleExecutionUtil.executeRule(notification.getRuleTemplate(),
 						fieldsAndValues, null, RuleReturnType.INTEGER);
 				if (templateId == 0) {
 					continue;
 				}
+
 				mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId);
 				if (mailTemplate != null && mailTemplate.isActive()) {
+					//mailTemplate.setStage(financeMain.getRoleCode());
 					// Getting UserRoles
-					String ruleResString = (String) ruleExecutionUtil.executeRule(notifications.getRuleReciepent(),
+					String ruleResString = (String) ruleExecutionUtil.executeRule(notification.getRuleReciepent(),
 							fieldsAndValues, null, RuleReturnType.STRING);
 					if (StringUtils.isEmpty(ruleResString)) {
 						continue;
@@ -291,8 +341,8 @@ public class MailUtil extends MailUtility {
 					emailList = getSecurityUserOperationsService().getUsrMailsByRoleIds(ruleResString);
 
 					// Check Mail List
-					List<String> usrMailList = new ArrayList<String>();
-					if (emailList != null && !emailList.isEmpty()) {
+					List<String> usrMailList = new ArrayList<>();
+					if (CollectionUtils.isNotEmpty(emailList)) {
 						for (String usrMail : emailList) {
 							if (StringUtils.isNotBlank(usrMail)) {
 								usrMailList.add(usrMail);
@@ -300,21 +350,19 @@ public class MailUtil extends MailUtility {
 						}
 						mailId = new String[usrMailList.size()];
 						mailId = (String[]) usrMailList.toArray(mailId);
-						usrMailList = null;
 					}
 					if (mailId != null && StringUtils.isNotEmpty(StringUtils.join(mailId, ","))) {
-						// Template Fields Bean Preparation
 						mailTemplate.setLovDescMailId(mailId);
 						parseMail(mailTemplate, templateData);
 					}
 
 					// Getting the Attached Documents
-					ruleResString = (String) ruleExecutionUtil.executeRule(notifications.getRuleAttachment(),
+					ruleResString = (String) ruleExecutionUtil.executeRule(notification.getRuleAttachment(),
 							fieldsAndValues, null, RuleReturnType.STRING);
 					Map<String,byte[]> attchments= new HashMap<>();
 					if (StringUtils.isNotEmpty(ruleResString)) {
-						if (documentslist != null) {
-							for (DocumentDetails documentDetails : documentslist) {
+						if (CollectionUtils.isNotEmpty(documents)) {
+							for (DocumentDetails documentDetails : documents) {
 								if (ruleResString.equals(documentDetails.getDocCategory())) {
 									attchments.put(documentDetails.getDocName(), documentDetails.getDocImage());
 								}
@@ -326,182 +374,223 @@ public class MailUtil extends MailUtility {
 					if (mailTemplate.isEmailTemplate()
 							&& StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) {
 						sendMail(mailTemplate);
+						//mailStoring(mailTemplate);
 					}
 				}
 
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
-	
-	private boolean processMailSending(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
-			List<DocumentDetails> docList, Map<String, List<String>> mailIdMap, byte[] bs, String filename)
-					throws Exception {
-		logger.debug("Entering");
-		
-		boolean mailsend = false;
-		
-		// Fetching List of Notification using Notification ID list
-		List<Notifications> notificationsList = getNotificationsService().getApprovedNotificationsByRuleIdList(notificationIdList);
-		
-		if (notificationsList.isEmpty()) {
-			logger.debug("No Notificatin Defined...");
-			return false;
-		}
-		
-		List<DocumentDetails> documentslist = null;
-		//MailTemplateData templateData = new MailTemplateData();
-		
+
+
+	public MailTemplate getMailTemplate(Notifications notification, HashMap<String, Object> fieldsAndValues,
+			List<DocumentDetails> docList) {
+		logger.debug(Literal.ENTERING);
+		MailTemplate mailTemplate = null;
+
+		String templateRule = notification.getRuleTemplate();
+
 		try {
-			documentslist = docList;
-			
-			for (Notifications notifications : notificationsList) {
-				// Getting Mail Template
-				Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notifications.getRuleTemplate(), fieldsAndValues, null, RuleReturnType.INTEGER);
-				
-				if (templateId == 0) { //FIXME to be verified
-					continue;
-				}
-				
-				MailTemplate mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId); //FIXME templateID should be long
-				if (mailTemplate != null && mailTemplate.isActive()) {
-					List<String> emailList = null;
-					if (NotificationConstants.TEMPLATE_FOR_AE.equals(notifications.getTemplateType())
-							|| NotificationConstants.TEMPLATE_FOR_TAT.equals(notifications.getTemplateType())
-							|| NotificationConstants.TEMPLATE_FOR_QP.equals(notifications.getTemplateType())
-							|| NotificationConstants.TEMPLATE_FOR_GE.equals(notifications.getTemplateType())) {
-						// Getting UserRoles
-						String ruleResString = (String) this.ruleExecutionUtil.executeRule(
-								notifications.getRuleReciepent(), fieldsAndValues, null, RuleReturnType.STRING);
-						if (StringUtils.isEmpty(ruleResString)) { //FIXME to be verified
-							continue;
-						}
-						// Prepare Mail ID Details
-						emailList = getSecurityUserOperationsService().getUsrMailsByRoleIds(ruleResString);
-					} else {
-						// If No mail Id exists No need to continue
-						if (mailIdMap == null) {
-							continue;
-						}
-						// Other Type of Template, we need to Fetch from Map
-						// passing as parameter using Template Type in
-						// Notification
-						if (!mailIdMap.containsKey(notifications.getTemplateType())) {
-							continue;
-						}
-						emailList = mailIdMap.get(notifications.getTemplateType());
-					}
-					
-					if (emailList == null || emailList.isEmpty()) {
-						continue;
-					}
-					
-					// Check Mail ID List
-					String[] mailId = null;
-					List<String> usrMailList = new ArrayList<String>();
-					if (emailList != null && !emailList.isEmpty()) {
-						for (String usrMail : emailList) {
-							if (StringUtils.isNotBlank(usrMail)) {
-								usrMailList.add(usrMail);
-							}
-						}
-						mailId = new String[usrMailList.size()];
-						mailId = (String[]) usrMailList.toArray(mailId);
-						usrMailList = null;
-					}
-					
-					if (mailId != null && StringUtils.isNotEmpty(StringUtils.join(mailId, ","))) {
-						// Template Fields Bean Preparation
-						mailTemplate.setLovDescMailId(mailId);
-						parseMail(mailTemplate, fieldsAndValues);
-					}
-					
-					// Getting the Attached Documents
-					String ruleResString = (String) this.ruleExecutionUtil.executeRule(notifications.getRuleAttachment(), fieldsAndValues, null, RuleReturnType.STRING);
-					Map<String,byte[]> attchments= new HashMap<>();
-					if (StringUtils.isNotEmpty(ruleResString)) {
-						String[] documentCtgList = (ruleResString).split(",");
-						for (String docCtg : documentCtgList) {
-							if (documentslist != null) {
-								for (DocumentDetails documentDetails : documentslist) {
-									if (docCtg.equals(documentDetails.getDocCategory())) {
-										byte[] docImg = documentDetails.getDocImage();
-										if (docImg == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
-											DocumentManager docManager = documentManagerDAO.getById(documentDetails.getDocRefId());
-											if (docManager != null) {
-												docImg = docManager.getDocImage();
-											}
-										}
-										attchments.put(documentDetails.getDocName(), docImg);
-									}
+
+			// Getting Mail Template
+			int templateId = (Integer) this.ruleExecutionUtil.executeRule(templateRule, fieldsAndValues, null,
+					RuleReturnType.INTEGER);
+
+			if (templateId == 0) {
+				logger.warn(String.format("Template not found for the notification rule %s", templateRule));
+				return null;
+			}
+
+			mailTemplate = mailTemplateService.getApprovedMailTemplateById(templateId);
+			if (mailTemplate != null && mailTemplate.isActive() && mailTemplate.isEmailTemplate()) {
+
+				parseMail(mailTemplate, fieldsAndValues);
+
+				// Getting the Attached Documents
+				String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleAttachment(),
+						fieldsAndValues, null, RuleReturnType.STRING);
+				Map<String, byte[]> attchments = new HashMap<>();
+				if (StringUtils.isNotEmpty(ruleResString)) {
+					if (docList != null) {
+						for (DocumentDetails documentDetails : docList) {
+							byte[] docImg = documentDetails.getDocImage();
+							if (docImg == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+								DocumentManager docManager = documentManagerDAO.getById(documentDetails.getDocRefId());
+								if (docManager != null) {
+									docImg = docManager.getDocImage();
 								}
 							}
+							if (docImg != null) {
+								attchments.put(documentDetails.getDocName(), docImg);
+							}
 						}
-						mailTemplate.setAttchments(attchments);
 					}
-					
-					if (mailTemplate.isEmailTemplate()
-							&& StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) {
-						sendMail(mailTemplate);
-						mailsend = true;
-					}
+
+					mailTemplate.setAttchments(attchments);
 				}
-				
+
+				return mailTemplate;
 			}
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			mailsend = false;
 		}
-		
+
 		logger.debug("Leaving");
-		
-		return mailsend;
+
+		return mailTemplate;
+
 	}
 
-	/**
-	 * Prepare and send mail
-	 * */
-	public void sendMail(long templateId, String templateFor, Object vo) {
-		logger.debug("Entering");
+	private MailTemplate processMailSending(Notifications notification, HashMap<String, Object> fieldsAndValues,
+			List<DocumentDetails> docList, Map<String, List<String>> mailIdMap, byte[] bs, String filename)
+					throws Exception {
+		logger.debug(Literal.ENTERING);
 		MailTemplate mailTemplate = null;
+		
 		try {
+			
+			// Getting Mail Template
+			Long templateId = (Long) this.ruleExecutionUtil.executeRule(notification.getRuleTemplate(), fieldsAndValues,
+					null, RuleReturnType.INTEGER);
+
+			if (templateId == 0) {
+				logger.warn(String.format("Template not found for the notification rule %s",
+						notification.getRuleTemplate()));
+				return null;
+			}
+
 			mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId);
-			if (mailTemplate != null && mailTemplate.isActive()) {
-
-				// Template Fields Bean Preparation
-				MailTemplateData templateData = new MailTemplateData();
-				if (vo instanceof FinanceMain) {
-					templateData = getPreparedMailData(templateData, (FinanceMain) vo);
+			if (mailTemplate != null && mailTemplate.isActive() && mailTemplate.isEmailTemplate()) {
+				List<String> emailList = null;
+				if (NotificationConstants.TEMPLATE_FOR_AE.equals(notification.getTemplateType())
+						|| NotificationConstants.TEMPLATE_FOR_TAT.equals(notification.getTemplateType())
+						|| NotificationConstants.TEMPLATE_FOR_QP.equals(notification.getTemplateType())
+						|| NotificationConstants.TEMPLATE_FOR_GE.equals(notification.getTemplateType())) {
+					// Getting UserRoles
+					String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleReciepent(),
+							fieldsAndValues, null, RuleReturnType.STRING);
+					if (StringUtils.isEmpty(ruleResString)) {
+						return null;
+					}
+					// Prepare Mail ID Details
+					emailList = getSecurityUserOperationsService().getUsrMailsByRoleIds(ruleResString);
+				} else {
+					if (mailIdMap == null) {
+						return null;
+					}
+					if (!mailIdMap.containsKey(notification.getTemplateType())) {
+						return null;
+					}
+					emailList = mailIdMap.get(notification.getTemplateType());
 				}
 
-				if (vo instanceof Facility) {
-					templateData = getPrepareFacilityMailData(templateData, (Facility) vo);
+				if (emailList == null || emailList.isEmpty()) {
+					return null;
 				}
 
-				if (vo instanceof FinCreditReviewDetails) {
-					templateData = getPrepareCreditReviewMailData(templateData, (FinCreditReviewDetails) vo);
+				// Check Mail ID List
+				String[] mailId = null;
+				List<String> usrMailList = new ArrayList<String>();
+				if (emailList != null && !emailList.isEmpty()) {
+					for (String usrMail : emailList) {
+						if (StringUtils.isNotBlank(usrMail)) {
+							usrMailList.add(usrMail);
+						}
+					}
+					mailId = new String[usrMailList.size()];
+					mailId = (String[]) usrMailList.toArray(mailId);
+					usrMailList = null;
 				}
 
-				if (vo instanceof InvestmentFinHeader) {
-					templateData = getPrepareTreasuryInvestmentMailData(templateData, (InvestmentFinHeader) vo);
+				if (mailId != null && StringUtils.isNotEmpty(StringUtils.join(mailId, ","))) {
+					// Template Fields Bean Preparation
+					mailTemplate.setLovDescMailId(mailId);
+					parseMail(mailTemplate, fieldsAndValues);
 				}
 
-				parseMail(mailTemplate, templateData);
+				// Getting the Attached Documents
+				String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleAttachment(),
+						fieldsAndValues, null, RuleReturnType.STRING);
+				Map<String, byte[]> attchments = new HashMap<>();
+				if (StringUtils.isNotEmpty(ruleResString)) {
+					if (docList != null) {
+						for (DocumentDetails documentDetails : docList) {
+							byte[] docImg = documentDetails.getDocImage();
+							if (docImg == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+								DocumentManager docManager = documentManagerDAO.getById(documentDetails.getDocRefId());
+								if (docManager != null) {
+									docImg = docManager.getDocImage();
+									}
+							}
+							attchments.put(documentDetails.getDocName(), docImg);
+						}
+					}
+
+					mailTemplate.setAttchments(attchments);
+				}
+				
 				if (mailTemplate.isEmailTemplate()
 						&& StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) {
 					sendMail(mailTemplate);
 				}
-				if (mailTemplate.isSmsTemplate()) {
-					sendSMS(mailTemplate);
-				}
 			}
+
 		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+			logger.error("Exception: ", e);
 		}
+		
 		logger.debug("Leaving");
+		
+		return mailTemplate;
 	}
+
+	/*
+	 * private boolean resendingMail(EmailMessage message) { logger.debug("Entering");
+	 * 
+	 * boolean resendmail = false;
+	 * 
+	 * if(message.getStatus() == "S"){ if(message.getModule() == null){
+	 * 
+	 * }
+	 * 
+	 * 
+	 * }else{
+	 * 
+	 * }
+	 * 
+	 * logger.debug("Leaving"); return resendmail;
+	 * 
+	 * }
+	 */
+
+	/**
+	 * Prepare and send mail
+	 * */
+	/*
+	 * public void sendMail(long templateId, String templateFor, Object vo) { logger.debug("Entering"); MailTemplate
+	 * mailTemplate = null; try { mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId); if
+	 * (mailTemplate != null && mailTemplate.isActive()) {
+	 * 
+	 * // Template Fields Bean Preparation MailTemplateData templateData = new MailTemplateData(); if (vo instanceof
+	 * FinanceMain) { templateData = getPreparedMailData(templateData, (FinanceMain) vo); }
+	 * 
+	 * if (vo instanceof Facility) { templateData = getPrepareFacilityMailData(templateData, (Facility) vo); }
+	 * 
+	 * if (vo instanceof FinCreditReviewDetails) { templateData = getPrepareCreditReviewMailData(templateData,
+	 * (FinCreditReviewDetails) vo); }
+	 * 
+	 * if (vo instanceof InvestmentFinHeader) { templateData = getPrepareTreasuryInvestmentMailData(templateData,
+	 * (InvestmentFinHeader) vo); }
+	 * 
+	 * parseMail(mailTemplate, templateData); if (mailTemplate.isEmailTemplate() &&
+	 * StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) { //sendMail(mailTemplate);
+	 * mailStoring(mailTemplate); } if (mailTemplate.isSmsTemplate()) { //sendSMS(mailTemplate); //not implemented yet }
+	 * } } catch (Exception e) { logger.debug("Exception: ", e); } logger.debug("Leaving"); }
+	 */
 	
 	/**
 	 * Method for Parsing Mail Details and Send Notification To Users/Customer
@@ -519,6 +608,11 @@ public class MailUtil extends MailUtility {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("vo", templateData);
 		
+		/*
+		 * String reportSrc = PathUtil.getPath(""); File file = new File(reportSrc +"/sample_body.html"); if
+		 * (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(mailTemplate.getEmailFormat())) {
+		 * mailTemplate.setEmailContent(FileUtils.readFileToByteArray(file)); }
+		 */
 		StringTemplateLoader loader = new StringTemplateLoader();
 		loader.putTemplate("mailTemplate", new String(mailTemplate.getEmailContent(),
 				NotificationConstants.DEFAULT_CHARSET));
@@ -604,7 +698,7 @@ public class MailUtil extends MailUtility {
 					sendMail(mailTemplate);
 				}
 				if (mailTemplate.isSmsTemplate()) {
-					sendSMS(mailTemplate);
+					//sendSMS(mailTemplate);    //not implemented yet
 				}
 			}
 		} catch (TemplateException e) {
@@ -691,7 +785,8 @@ public class MailUtil extends MailUtility {
 	 * @param main
 	 * @return
 	 */
-	public MailTemplateData getPreparedMailData(MailTemplateData data, FinanceMain main) {
+	public MailTemplateData getTemplateData(FinanceMain main) {
+		MailTemplateData data = new MailTemplateData();
 		int format=CurrencyUtil.getFormat(main.getFinCcy());
 		// Finance Data Preparation For Notifications
 		data.setFinReference(main.getFinReference());
@@ -765,8 +860,8 @@ public class MailUtil extends MailUtility {
 	 * @param facility
 	 * @return
 	 */
-	public MailTemplateData getPrepareFacilityMailData(MailTemplateData data, Facility facility) {
-
+	public MailTemplateData getTemplateData(Facility facility) {
+		MailTemplateData data = new MailTemplateData();
 		// Facility Data Preparation For Notifications
 		data.setCustShrtName(facility.getCustShrtName());
 		data.setCustId(facility.getCustID());
@@ -813,9 +908,8 @@ public class MailUtil extends MailUtility {
 	 * @param FinCreditReviewDetails
 	 * @return
 	 */
-	public MailTemplateData getPrepareCreditReviewMailData(MailTemplateData data,
-			FinCreditReviewDetails finCreditReviewDetails) {
-
+	public MailTemplateData getTemplateData(FinCreditReviewDetails finCreditReviewDetails) {
+		MailTemplateData data = new MailTemplateData();
 		// Facility Data Preparation For Notifications
 		data.setCustShrtName(finCreditReviewDetails.getLovDescCustShrtName());
 		data.setCustCIF(finCreditReviewDetails.getLovDescCustCIF());
@@ -851,9 +945,8 @@ public class MailUtil extends MailUtility {
 	 * @param InvestmentFinHeader
 	 * @return
 	 */
-	public MailTemplateData getPrepareTreasuryInvestmentMailData(MailTemplateData data,
-			InvestmentFinHeader investmentFinHeader) {
-		
+	public MailTemplateData getTemplateData(InvestmentFinHeader investmentFinHeader) {
+		MailTemplateData data = new MailTemplateData();
 		int format = CurrencyUtil.getFormat(investmentFinHeader.getFinCcy());
 
 		// Facility Data Preparation For Notifications
@@ -896,7 +989,8 @@ public class MailUtil extends MailUtility {
 	 * @param Provision
 	 * @return
 	 */
-	public MailTemplateData getPrepareProvisionMailData(MailTemplateData data, Provision provision) {
+	public MailTemplateData getTemplateData(Provision provision) {
+		MailTemplateData data = new MailTemplateData();
 
 		// Provision Data Preparation For Notifications
 		data.setFinReference(provision.getFinReference());
@@ -943,8 +1037,8 @@ public class MailUtil extends MailUtility {
 	 * @param InvestmentFinHeader
 	 * @return
 	 */
-	public MailTemplateData getPrepareManualSuspenseMailData(MailTemplateData data, FinanceSuspHead financeSuspHead) {
-
+	public MailTemplateData getTemplateData(FinanceSuspHead financeSuspHead) {
+		MailTemplateData data = new MailTemplateData();
 		// Manual Suspense Data Preparation For Notifications
 		data.setFinReference(financeSuspHead.getFinReference());
 		data.setCustShrtName(financeSuspHead.getLovDescCustShrtName());
@@ -975,127 +1069,245 @@ public class MailUtil extends MailUtility {
 		return data;
 	}
 	
-	public List<MailTemplate> getMailDetails(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
-			List<DocumentDetails> docList, Map<String, List<String>> mailIdMap) throws IOException, TemplateException {
+
+
+
+	// New Methods
+
+	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
-		
-		List<MailTemplate> templates=new ArrayList<MailTemplate>();		
-		// Fetching List of Notification using Notification ID list
-		List<Notifications> notificationsList = getNotificationsService()
-				.getApprovedNotificationsByRuleIdList(notificationIdList);
-		if (notificationsList.isEmpty()) {
-			logger.debug("No Notificatin Defined...");
-			return null;
-		}
-		List<DocumentDetails> documentslist = null;
-		documentslist = docList;
-		for (Notifications notifications : notificationsList) {
-			MailTemplate mailTemplate = null;
-			// Getting Mail Template
-			Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notifications.getRuleTemplate(),
-					fieldsAndValues, null, RuleReturnType.INTEGER);
-			if (templateId > 0) {
-				mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId);
-				if (mailTemplate != null && mailTemplate.isActive() && mailTemplate.isEmailTemplate()) {
-					List<String> emailList = null;
-					String templateType = notifications.getTemplateType();
-					if (NotificationConstants.TEMPLATE_FOR_AE.equals(templateType)
-							|| NotificationConstants.TEMPLATE_FOR_TAT.equals(templateType)
-							|| NotificationConstants.TEMPLATE_FOR_QP.equals(templateType)
-							|| NotificationConstants.TEMPLATE_FOR_GE.equals(templateType)) {
-						// Getting UserRoles
-						String ruleResString = (String) this.ruleExecutionUtil.executeRule(
-								notifications.getRuleReciepent(), fieldsAndValues, null, RuleReturnType.STRING);
-						if (StringUtils.isEmpty(ruleResString)) { // FIXME
-																	// to be
-																	// verified
-							continue;
-						}
-						// Prepare Mail ID Details
-						emailList = getSecurityUserOperationsService().getUsrMailsByRoleIds(ruleResString);
-					} else {
-						// If No mail Id exists No need to continue
-						if (mailIdMap == null) {
-							continue;
-						}
-						// Other Type of Template, we need to Fetch from Map
-						// passing as parameter using Template Type in
-						// Notification
-						if (!mailIdMap.containsKey(templateType)) {
-							continue;
-						}
-						emailList = mailIdMap.get(templateType);
-					}
-					if (emailList == null || emailList.isEmpty()) {
-						continue;
-					}
-					// Check Mail ID List
-					String[] mailId = null;
-					List<String> usrMailList = new ArrayList<String>();
-					if (emailList != null && !emailList.isEmpty()) {
-						for (String usrMail : emailList) {
-							if (StringUtils.isNotBlank(usrMail)) {
-								usrMailList.add(usrMail);
-							}
-						}
-						mailId = new String[usrMailList.size()];
-						mailId = (String[]) usrMailList.toArray(mailId);
-						usrMailList = null;
-					}
 
-					if (mailId != null && StringUtils.isNotEmpty(StringUtils.join(mailId, ","))) {
-						// Template Fields Bean Preparation
-						mailTemplate.setLovDescMailId(mailId);
-						Map<String, Object> model = new HashMap<String, Object>();
-						model.put("vo", fieldsAndValues);
-						String mailContentFormatted = "";
-						String mailSubject = "";
+		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
+		// Role Code For Alert Notification
+		main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
 
-						mailContentFormatted = getMailTemplateData("mailContent", mailTemplate,
-								new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET),
-								model);
-						mailSubject = getMailTemplateData("mailSubject", mailTemplate, mailTemplate.getEmailSubject(),
-								model);
+		// user Details
+		main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
+		main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
+		main.setFinPurpose(main.getLovDescFinPurposeName());
+		main.setFinBranch(main.getLovDescFinBranchName());
 
-						mailTemplate.setLovDescFormattedContent(mailContentFormatted);
-						mailTemplate.setEmailSubject(mailSubject);
-					}
-					// Getting the Attached Documents
-					String ruleResString = (String) this.ruleExecutionUtil.executeRule(
-							notifications.getRuleAttachment(), fieldsAndValues, null, RuleReturnType.STRING);
-					Map<String,byte[]> attchments= new HashMap<>();
-					if (StringUtils.isNotEmpty(ruleResString)) {
-						String[] documentCtgList = (ruleResString).split(",");
-						for (String docCtg : documentCtgList) {
-							if (documentslist != null) {
-								for (DocumentDetails documentDetails : documentslist) {
-									if (docCtg.equals(documentDetails.getDocCategory())) {
-										attchments.put(documentDetails.getDocName(), documentDetails.getDocImage());
-									}
-								}
-							}
-						}
-					}
-
-				}
-			}
-			if(mailTemplate!=null && mailTemplate.isActive()){
-				templates.add(mailTemplate);
-			}
-			
-		}
 		logger.debug("Leaving");
-		return templates;
+
+		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
+		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
+		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
+
+		return declaredFieldValues;
 	}
 
-	private String getMailTemplateData(String templateName, MailTemplate mailTemplate, String templateSource,
-			Map<String, Object> model) throws IOException, TemplateException {
-		StringTemplateLoader loader = new StringTemplateLoader();
-		loader.putTemplate(templateName, templateSource);
-		getFreemarkerMailConfiguration().setTemplateLoader(loader);
-		Template template = getFreemarkerMailConfiguration().getTemplate(templateName);
-		String result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-		return result;
+	public void processNotifications(FinanceDetail financeDetail, String moduleDefiner)
+			throws IOException, TemplateException {
+		boolean resendNotifications = false;
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finReference = financeMain.getFinReference();
+		String finType = financeMain.getFinType();
+		String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
+		String role = financeMain.getRoleCode();
+		String module = "LOAN";
+
+		List<String> templates = new ArrayList<String>();
+		templates.add(NotificationConstants.TEMPLATE_FOR_AE);
+		templates.add(NotificationConstants.TEMPLATE_FOR_CN);
+
+		if (FinanceConstants.FINSER_EVENT_ORG.equals(finEvent)) {
+			templates.add(NotificationConstants.TEMPLATE_FOR_SP);
+		}
+
+		List<Long> notificationIds;
+		List<Notifications> notifications = null;
+
+		resendNotifications = financeReferenceDetailService.resendNotification(finType, finEvent, role, templates);
+		notificationIds = financeReferenceDetailService.getNotifications(finType, finEvent, role, templates);
+
+		if (CollectionUtils.isNotEmpty(notificationIds)) {
+			notifications = getNotificationsService().getApprovedNotificationsByRuleIdList(notificationIds);
+		}
+
+		if (CollectionUtils.isNotEmpty(notifications)) {
+			for (Notifications notification : notifications) {
+				boolean sendNotification = false;
+
+				long notificationId = notification.getRuleId();
+
+				if (resendNotifications) {
+					sendNotification = true;
+				} else {
+					// checking for mail already sent or not
+					String stageReq = SysParamUtil.getValueAsString("STAGE_REQ_FOR_MAIL_CHECK");
+					boolean mailExists = false;
+					if ("Y".equalsIgnoreCase(stageReq)) {
+						mailExists = emailEngine.isMailExist(finReference, module, finEvent, notificationId, role);
+					} else {
+						mailExists = emailEngine.isMailExist(finReference, module, finEvent, notificationId);
+					}
+
+					if (!mailExists) {
+						sendNotification = true;
+					}
+				}
+
+				MailTemplate template = null;
+				if (sendNotification) {
+					template = loadEmailTemplate(financeDetail, notification);
+
+					if (template == null) {
+						continue;
+					}
+
+					if (template.isEmailTemplate()) {
+						EmailMessage emailMessage = new EmailMessage();
+						emailMessage.setKeyReference(finReference);
+						emailMessage.setModule(module);
+						emailMessage.setSubModule(finEvent);
+						emailMessage.setNotificationId(notificationId);
+						emailMessage.setStage(role);
+						emailMessage.setSubject(template.getEmailSubject());
+						emailMessage.setContent(template.getLovDescFormattedContent().getBytes(UTF_8));
+
+						if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
+							emailMessage.setContentType(EmailBodyType.HTML.getKey());
+						} else {
+							emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
+						}
+
+						for (String mailId : template.getLovDescMailId()) {
+							MessageAddress address = new MessageAddress();
+							address.setEmailId(mailId);
+							address.setRecipientType(RecipientType.TO.getKey());
+							emailMessage.getAddressesList().add(address);
+						}
+
+						Map<String, byte[]> attachments = template.getAttchments();
+						for (Entry<String, byte[]> item : attachments.entrySet()) {
+							MessageAttachment attachment = new MessageAttachment();
+							attachment.setAttachment(item.getValue());
+							attachment.setFileName(item.getKey());
+							emailMessage.getAttachmentList().add(attachment);
+						}
+
+						MessageAttribute attribute = new MessageAttribute();
+						attribute.setAttribute("Template");
+						attribute.setValue(template.getTemplateDesc());
+						emailMessage.getAttributeList().add(attribute);
+
+						attribute = new MessageAttribute();
+						attribute.setAttribute("Template_id");
+						attribute.setValue(String.valueOf(template.getTemplateId()));
+						emailMessage.getAttributeList().add(attribute);
+
+						attribute = new MessageAttribute();
+						attribute.setAttribute("Template_For");
+						attribute.setValue(template.getTemplateFor());
+						emailMessage.getAttributeList().add(attribute);
+
+						attribute = new MessageAttribute();
+						attribute.setAttribute("Stage");
+						attribute.setValue(role);
+						emailMessage.getAttributeList().add(attribute);
+
+						sendEmailNotification(emailMessage);
+					}
+					if (template.isSmsTemplate()) {
+						sendSmsNotification(template, finReference);
+					}
+				}
+			}
+		}
+	}
+
+	private void sendEmailNotification(EmailMessage emailMessage) {
+		try {
+			mailTemplateService.sendMail(emailMessage);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+
+	private void sendSmsNotification(MailTemplate smsTemplate, String finReference) {
+		/*
+		 * try { if (isExtSMSService()) { // send mail to external service // send SMS to external service if
+		 * (smsTemplate != null) { List<MailTemplate> list = new ArrayList<>(); list.add(smsTemplate);
+		 * 
+		 * getShortMessageService().sendMessage(list, finReference); }
+		 * 
+		 * } else { //getMailUtil().sendMail(notification, fieldsAndValues, docDetailsList, mailIDMap, null);
+		 * 
+		 * }
+		 * 
+		 * } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
+		 */}
+
+	public MailTemplate loadEmailTemplate(FinanceDetail aFinanceDetail, Notifications notification) {
+		CustomerDetails customerDetails = aFinanceDetail.getCustomerDetails();
+		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
+		List<CustomerPhoneNumber> custMobiles = customerDetails.getCustomerPhoneNumList();
+		List<DocumentDetails> docDetailsList = aFinanceDetail.getDocumentDetailsList();
+		String templateType = notification.getTemplateType();
+
+		HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail);
+		Map<String, List<String>> emails = new HashMap<String, List<String>>();
+		Map<String, List<String>> mobileNumbers = new HashMap<String, List<String>>();
+
+		// Customer Email Preparation
+		if (NotificationConstants.TEMPLATE_FOR_CN.equals(templateType)) {
+			if (CollectionUtils.isNotEmpty(custEmails)) {
+				List<String> emailList = new ArrayList<>();
+				emails.put(templateType, emailList);
+
+				for (CustomerEMail customerEMail : custEmails) {
+					emailList.add(customerEMail.getCustEMail());
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(custMobiles)) {
+				List<String> mobileNoList = new ArrayList<String>();
+				mobileNumbers.put(templateType, mobileNoList);
+				for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
+					mobileNoList.add(customerPhoneNumber.getPhoneNumber());
+				}
+			}
+		} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(templateType)) {
+			List<String> emailList = new ArrayList<>();
+			List<String> mobileNoList = new ArrayList<String>();
+			long vehicleDealerid = aFinanceDetail.getCustomerDetails().getCustomer().getCustRO1();
+			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(vehicleDealerid);
+
+			if (vehicleDealer != null) {
+				emails.put(templateType, emailList);
+				mobileNumbers.put(templateType, mobileNoList);
+
+				emailList.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
+				mobileNoList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
+				fieldsAndValues.putAll(vehicleDealer.getDeclaredFieldValues());
+			}
+		} else if (NotificationConstants.TEMPLATE_FOR_AE.equals(templateType)
+				|| NotificationConstants.TEMPLATE_FOR_TAT.equals(templateType)
+				|| NotificationConstants.TEMPLATE_FOR_QP.equals(templateType)
+				|| NotificationConstants.TEMPLATE_FOR_GE.equals(templateType)) {
+			// Getting UserRoles
+			String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleReciepent(),
+					fieldsAndValues, null, RuleReturnType.STRING);
+			if (StringUtils.isEmpty(ruleResString)) {
+				List<String> emailList = securityUserOperationsService.getUsrMailsByRoleIds(ruleResString);
+
+				if (CollectionUtils.isNotEmpty(emailList)) {
+					emails.put(templateType, emailList);
+				}
+			}
+		}
+
+		MailTemplate template = getMailTemplate(notification, fieldsAndValues, docDetailsList);
+		if (template != null && template.isActive() && template.isEmailTemplate()) {
+		List<String> tempEmails = new ArrayList<>();
+		for (Entry<String, List<String>> email : emails.entrySet()) {
+			tempEmails.addAll(email.getValue());
+		}
+
+		template.setLovDescMailId(tempEmails.toArray(new String[tempEmails.size()]));
+		}
+		return template;
 	}
 
 	// ******************************************************//
@@ -1193,4 +1405,9 @@ public class MailUtil extends MailUtility {
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
+
+	public void setEmailEngine(EmailEngine emailEngine) {
+		this.emailEngine = emailEngine;
+	}
+
 }

@@ -110,6 +110,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private String alertType;
 	private boolean allowMultiple;
 	private String moduleType;
+	private boolean reSend;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -520,6 +521,14 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 
 	public void setLovDescStgRuleValue(String lovDescStgRuleValue) {
 		this.lovDescStgRuleValue = lovDescStgRuleValue;
+	}
+
+	public boolean isReSend() {
+		return reSend;
+	}
+
+	public void setReSend(boolean reSend) {
+		this.reSend = reSend;
 	}
 
 	

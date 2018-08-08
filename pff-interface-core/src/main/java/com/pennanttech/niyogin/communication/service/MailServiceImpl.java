@@ -1,18 +1,17 @@
 package com.pennanttech.niyogin.communication.service;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Email;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
@@ -31,13 +30,11 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @return
 	 */
 	@Override
-	public void sendEmail(List<MailTemplate> templates, String finReference) throws InterfaceException {
+	public void sendEmail(EmailMessage emailMessage) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		if (templates != null && !templates.isEmpty()) {
-			for (MailTemplate template : templates) {
-				send(template, finReference);
-			}
+		if (emailMessage != null) {
+			send(emailMessage);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -50,12 +47,12 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param body
 	 * @return
 	 */
-	private void send(MailTemplate template, String finReference) {
+	private void send(EmailMessage emailMessage) {
 		logger.debug(Literal.ENTERING);
 
-		String[] emailId = template.getLovDescMailId();
-		String subject = template.getEmailSubject();
-		String body = template.getLovDescFormattedContent();
+		String[] emailId = emailMessage.getAddressesList().toArray(new String[emailMessage.getAddressesList().size()]);
+		String subject = emailMessage.getSubject();
+		String body = new String(emailMessage.getContent());
 
 		if (emailId == null || StringUtils.isEmpty(body)) {
 			return;
@@ -75,12 +72,13 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 				logger.debug("ServiceURL : " + serviceUrl);
 				reuestString = client.getRequestString(emailRequest);
 				jsonResponse = client.post(serviceUrl, reuestString);
-				doInterfaceLogging(finReference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
+				doInterfaceLogging(emailMessage.getKeyReference(), reuestString, jsonResponse, errorCode, errorDesc,
+						reqSentOn);
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				errorDesc = getWriteException(e);
 				errorDesc = getTrimmedMessage(errorDesc);
-				doExceptioLogging(finReference, reuestString, jsonResponse, errorDesc, reqSentOn);
+				doExceptioLogging(emailMessage.getKeyReference(), reuestString, jsonResponse, errorDesc, reqSentOn);
 				throw new InterfaceException("9999", e.getMessage());
 			}
 		}

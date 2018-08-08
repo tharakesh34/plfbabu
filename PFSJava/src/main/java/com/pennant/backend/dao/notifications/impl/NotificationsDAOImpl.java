@@ -324,7 +324,8 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RuleIdList", notificationIdList);
 
-		StringBuilder selectSql = new StringBuilder(" Select TemplateType, RuleTemplate, RuleReciepent, RuleAttachment " );
+		StringBuilder selectSql = new StringBuilder(
+				" Select RuleId, TemplateType, RuleTemplate, RuleReciepent, RuleAttachment ");
 		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields" );
 		selectSql.append(" FROM  Notifications");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -337,6 +338,29 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		return notificationsList;
     }
 	
+	/**
+	 * Method for Fetching Notifications List using by Rule ID List
+	 */
+	@Override
+	public List<Notifications> getNotifications(List<Long> notificationIdList, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("RuleIdList", notificationIdList);
+
+		StringBuilder sql = new StringBuilder(" Select TemplateType, RuleTemplate, RuleReciepent, RuleAttachment");
+		sql.append(", TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields");
+		sql.append(" FROM  Notifications");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where RuleId IN (Select FinRefId From LMTFinRefDetail_ATView ) ");
+
+		logger.debug("selectSql: " + sql.toString());
+		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
+		List<Notifications> notificationsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return notificationsList;
+	}
+
 	/**
 	 * Method for get Template Id's List based on the TemplateType
 	 */

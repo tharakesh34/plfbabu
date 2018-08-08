@@ -69,62 +69,53 @@ public class SMSUtil {
 		this.securityUserOperationsService = securityUserOperationsService;
 	}
 
-	public List<MailTemplate> getSMSContent(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
+	public MailTemplate getSMSTemplate(Notifications notification, HashMap<String, Object> fieldsAndValues,
 			Map<String, List<String>> mobileNoMap) throws IOException, TemplateException {
 		logger.debug("Entering");
 		List<MailTemplate> smsContentList = new ArrayList<MailTemplate>();
 
-		// Fetching List of Notification using Notification ID list
-		List<Notifications> notificationsList = getNotificationsService()
-				.getApprovedNotificationsByRuleIdList(notificationIdList);
-		if (notificationsList.isEmpty()) {
-			logger.debug("No Notificatin Defined...");
-			return null;
-		}
 
-		for (Notifications notifications : notificationsList) {
+		MailTemplate smsTemplate = null;
+		// Getting Mail Template
+		Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notification.getRuleTemplate(),
+				fieldsAndValues, null, RuleReturnType.INTEGER);
+		if (templateId > 0) {
+			smsTemplate = getSmsTemplateService().getApprovedMailTemplateById(templateId);
+			if (smsTemplate != null && smsTemplate.isActive() && smsTemplate.isSmsTemplate()) {
+				List<String> mobileList = null;
 
-			MailTemplate smsTemplate = null;
-			// Getting Mail Template
-			Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notifications.getRuleTemplate(),
-					fieldsAndValues, null, RuleReturnType.INTEGER);
-			if (templateId > 0) {
-				smsTemplate = getSmsTemplateService().getApprovedMailTemplateById(templateId);
-				if (smsTemplate != null && smsTemplate.isActive() && smsTemplate.isSmsTemplate()) {
-					List<String> mobileList = null;
+				String templateType = notification.getTemplateType();
 
-					String templateType = notifications.getTemplateType();
-
-					// If No mail Id exists No need to continue
-					if (mobileNoMap == null) {
-						continue;
-					}
-					// Other Type of Template, we need to Fetch from Map
-					// passing as parameter using Template Type in
-					// Notification
-					if (!mobileNoMap.containsKey(templateType)) {
-						continue;
-					}
-					mobileList = mobileNoMap.get(templateType);
-
-					if (mobileList == null || mobileList.isEmpty()) {
-						continue;
-					}
-					smsTemplate.setLovDescMobileNumbers(mobileList);
-
-					if (mobileList != null) {
-						Map<String, Object> model = new HashMap<String, Object>();
-						model.put("vo", fieldsAndValues);
-						String smsContent = getSMSTemplateData("smsTemplate", smsTemplate, smsTemplate.getSmsContent(),
-								model);
-						smsTemplate.setLovDescSMSContent(smsContent);
-					}
-					smsContentList.add(smsTemplate);
+				// If No mail Id exists No need to continue
+				if (mobileNoMap == null) {
+					return null;
 				}
+				// Other Type of Template, we need to Fetch from Map
+				// passing as parameter using Template Type in
+				// Notification
+				if (!mobileNoMap.containsKey(templateType)) {
+					return null;
+				}
+				mobileList = mobileNoMap.get(templateType);
+
+				if (mobileList == null || mobileList.isEmpty()) {
+					return null;
+				}
+				smsTemplate.setLovDescMobileNumbers(mobileList);
+
+				if (mobileList != null) {
+					Map<String, Object> model = new HashMap<String, Object>();
+					model.put("vo", fieldsAndValues);
+					String smsContent = getSMSTemplateData("smsTemplate", smsTemplate, smsTemplate.getSmsContent(),
+							model);
+					smsTemplate.setLovDescSMSContent(smsContent);
+				}
+				smsContentList.add(smsTemplate);
 			}
 		}
+
 		logger.debug("Leaving");
-		return smsContentList;
+		return smsTemplate;
 	}
 
 	private String getSMSTemplateData(String templateName, MailTemplate smsTemplate, String templateSource,

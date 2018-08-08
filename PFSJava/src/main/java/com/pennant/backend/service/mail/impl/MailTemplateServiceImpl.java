@@ -63,6 +63,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pff.external.MailService;
 
 /**
@@ -77,7 +79,10 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	private SecurityUserDAO		securityUserDAO;
 	
 	@Autowired(required = false)
-	private MailService			mailService;
+	private MailService mailService;
+
+	@Autowired
+	private EmailEngine emailEngine;
 
 	public MailTemplateServiceImpl() {
 		super();
@@ -404,12 +409,15 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * @return
 	 */
 	@Override
-	public void sendMail(List<MailTemplate> templates, String finReference) {
+	public void sendMail(EmailMessage emailMessage) {
 		logger.debug(Literal.ENTERING);
 
 		// bugs #389 Skip the external e-Mail and SMS services if the implementation for the same is not available.
 		if (mailService != null) {
-			mailService.sendEmail(templates, finReference);
+			emailEngine.sendEmail(emailMessage);
+			mailService.sendEmail(emailMessage);
+		} else {
+
 		}
 
 		logger.debug(Literal.LEAVING);
