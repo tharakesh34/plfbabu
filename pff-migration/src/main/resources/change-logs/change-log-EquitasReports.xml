@@ -1010,4 +1010,30 @@ UNION ALL
 	   ('AGRRULE','AGRRULE','reqFinAmount','Current Loan Amount','Decimal',18,'1','1','','static,calvalue','');
 		</sql>
 	</changeSet>
+	<changeSet id="54" author="vijaykumar.L">
+		<sql>
+   DELETE FROM SECRIGHTS  WHERE rightname='menu_Item_FinDeptReports_LatePaymentReport';
+   
+   Insert into SECRIGHTS 
+   values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_FinDeptReports_LatePaymentReport','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+<changeSet id="55" author="vijaykumar.l">
+ <sql>
+	delete from REPORTFILTERFIELDS where REPORTID in (select reportid from reportconfiguration where menuitemcode='menu_Item_LatePaymentReport');
+	delete from REPORTCONFIGURATION where menuitemcode='menu_Item_LatePaymentReport';
+
+	Insert into REPORTCONFIGURATION 
+	values ((SELECT MAX(REPORTID)+1 FROM REPORTCONFIGURATION),'Excel:Late Payment Summary Report','Late Payment Summary Report',1,'LatePaymentSummaryReport','dataSource',1,'menu_Item_LatePaymentReport',2,1005,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,0,1);
+
+	Insert into REPORTFILTERFIELDS
+	values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LatePaymentReport'),1,'FinReference','LOVSEARCH','Loan Reference','fo.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+
+	Insert into REPORTFILTERFIELDS
+	values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LatePaymentReport'),2,'Date','DATERANGE','Date','fo.finodschddate',null,'---Select----',null,null,0,0,0,0,2,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+	
+ </sql>
+	</changeSet>	
+		
+		
 </databaseChangeLog>
