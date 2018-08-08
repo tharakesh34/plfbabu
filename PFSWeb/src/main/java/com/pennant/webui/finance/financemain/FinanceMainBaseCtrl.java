@@ -3118,10 +3118,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!aFinanceMain.isNewRecord()) {
 			this.connector.setValue(StringUtils.trimToEmpty((aFinanceMain.getConnectorCode())),
 					StringUtils.trimToEmpty(aFinanceMain.getConnectorDesc()));
-			if (aFinanceMain.getDsaCode() != null) {
-				this.connector.setAttribute("DealerID", aFinanceMain.getConnector());
+			if (aFinanceMain.getConnector() > 0) {
+				this.connector.setAttribute("DealerId", aFinanceMain.getConnector());
 			} else {
-				this.connector.setAttribute("DealerID", 0);
+				this.connector.setAttribute("DealerId", 0);
 			}
 		}
 

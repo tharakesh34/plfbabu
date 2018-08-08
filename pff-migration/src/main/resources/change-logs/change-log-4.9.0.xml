@@ -7419,5 +7419,11 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="103" author="Vinay">
+		<sql>
+			delete from REPORTLIST where code='CONN';
+			Insert into REPORTLIST values ('CONN','VehicleDealer','listheader_DealerName.label,listheader_Email.label,listheader_DealerTelephone.label,listheader_DealerProvince.label,listheader_DealerCity.label,listheader_Active.label','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,boolean',null,'ReportList05','Connector Details','Business Partners',1,1000,null,'Approved',null,null,null,null,null,0,'0');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

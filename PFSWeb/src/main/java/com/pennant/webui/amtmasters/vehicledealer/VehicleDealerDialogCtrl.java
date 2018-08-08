@@ -820,7 +820,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		doClearMessage();
 
 		if (!this.dealerName.isReadonly()) {
-			this.dealerName.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),PennantRegularExpressions.REGEX_NAME, true));
+			this.dealerName.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),PennantRegularExpressions.REGEX_UPPERCASENAME, true));
 		} 
 		
 		if (!this.dealerTelephone.isReadonly()) {
