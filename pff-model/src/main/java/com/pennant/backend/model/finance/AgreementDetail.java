@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -116,8 +117,13 @@ public class AgreementDetail {
 	private String otherBankAmtInArabic;
 	private String llReferenceNo;
 	private String llDate;
+	private String  coAppTotIncome="0.00";													// Co Applicant Total Income
+	private String  coAppTotExpense="0.00";													// Co Applicant Total Expense
+	private String totalIncome="0.00";
+	private String totalExpense="0.00";
 
 	
+
 	public String getCustAddrHNbr() {
 		return custAddrHNbr;
 	}
@@ -3979,6 +3985,38 @@ private String custAccount ="";
 		this.propertyloc = propertyloc;
 	}*/
 
+	public String getCoAppTotIncome() {
+		return coAppTotIncome;
+	}
+
+	public void setCoAppTotIncome(String coAppTotIncome) {
+		this.coAppTotIncome = coAppTotIncome;
+	}
+
+	public String getCoAppTotExpense() {
+		return coAppTotExpense;
+	}
+
+	public void setCoAppTotExpense(String coAppTotExpense) {
+		this.coAppTotExpense = coAppTotExpense;
+	}
+
+	public String getTotalIncome() {
+		return totalIncome;
+	}
+
+	public void setTotalIncome(String totalIncome) {
+		this.totalIncome = totalIncome;
+	}
+
+	public String getTotalExpense() {
+		return totalExpense;
+	}
+
+	public void setTotalExpense(String totalExpense) {
+		this.totalExpense = totalExpense;
+	}
+
 	public String getFinAmtPertg() {
 		return finAmtPertg;
 	}
@@ -5690,6 +5728,7 @@ private String custAccount ="";
 		private String amt="";
 		private String amtPrctConsidered="";
 		private String amtConsidered="";
+		private BigDecimal margin;
 		
 		public AppIncDetail() {
 		}
@@ -5757,6 +5796,15 @@ private String custAccount ="";
 		public void setAmtConsidered(String amtConsidered) {
 			this.amtConsidered = amtConsidered;
 		}
+
+		public BigDecimal getMargin() {
+			return margin;
+		}
+
+		public void setMargin(BigDecimal margin) {
+			this.margin = margin;
+		}
+		
 	}
 	
 	private List<AppExpDetail> appExpDetails;
@@ -5777,6 +5825,7 @@ private String custAccount ="";
 		private String amt="";
 		private String amtPrctConsidered="";
 		private String amtConsidered="";
+		private BigDecimal margin;
 		
 		public AppExpDetail() {
 		}
@@ -5835,6 +5884,14 @@ private String custAccount ="";
 
 		public void setAmtConsidered(String amtConsidered) {
 			this.amtConsidered = amtConsidered;
+		}
+
+		public BigDecimal getMargin() {
+			return margin;
+		}
+
+		public void setMargin(BigDecimal margin) {
+			this.margin = margin;
 		}
 	}
 	

@@ -248,6 +248,8 @@ public class AgreementGeneration implements Serializable {
 	private List<ValueLabel> subCategoryList=PennantStaticListUtil.getSubCategoryList();
 	private List<ValueLabel> landAreaList=PennantStaticListUtil.getLandAreaList();
 	private List<ValueLabel> sectorList=PennantStaticListUtil.getPSLSectorList();
+	BigDecimal totalIncome=BigDecimal.ZERO;
+	BigDecimal totalExpense=BigDecimal.ZERO;
 	
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
@@ -465,7 +467,10 @@ public class AgreementGeneration implements Serializable {
 		int formatter = CurrencyUtil.getFormat(detail.getFinScheduleData().getFinanceMain().getFinCcy());
 		String mMAReference = detail.getFinScheduleData().getFinanceMain().getLovDescMMAReference();
 		agreement.setLpoDate(appDate);
+		totalIncome=BigDecimal.ZERO;
+		totalExpense=BigDecimal.ZERO;
 
+		
 		try {
 
 			// ------------------ Customer Details
@@ -486,6 +491,9 @@ public class AgreementGeneration implements Serializable {
 					agreement.setCustAge(String.valueOf(DateUtility.getYearsBetween(appldate, customer.getCustDOB())));
 					agreement.setCustTotIncome(PennantApplicationUtil.amountFormate(customer.getCustTotalIncome(),
 							formatter));
+					totalIncome=customer.getCustTotalIncome();
+					totalExpense=customer.getCustTotalExpense();
+
 					agreement.setCustTotExpense(PennantApplicationUtil.amountFormate(customer.getCustTotalExpense(),
 							formatter));
 					agreement.setNoOfDependents(String.valueOf(customer.getNoOfDependents()));
@@ -807,6 +815,9 @@ public class AgreementGeneration implements Serializable {
 					}
 				}
 			}
+			
+			agreement.setTotalIncome(PennantAppUtil.amountFormate(totalIncome, formatter));
+			agreement.setTotalExpense(PennantAppUtil.amountFormate(totalExpense, formatter));
 			
 			if(aggModuleDetails.contains(PennantConstants.AGG_BANKING)){
 				if (null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerBankInfoList())) {
@@ -1809,6 +1820,9 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private void populateAppIncExpDetails(List<CustomerIncome> customerIncomeList, AgreementDetail agreement, int formatter, String applicantType) {
+		BigDecimal income= BigDecimal.ZERO;
+		BigDecimal expance= BigDecimal.ZERO;
+		
 			for(CustomerIncome customerIncome:customerIncomeList){
 				if(null!=customerIncome){
 					if(customerIncome.getIncomeExpense().equalsIgnoreCase("INCOME")){
@@ -1819,7 +1833,9 @@ public class AgreementGeneration implements Serializable {
 						appIncDetail.setIncomeCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 						appIncDetail.setIncomeType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
 						appIncDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
+						appIncDetail.setMargin(customerIncome.getMargin());
 						agreement.getAppIncDetails().add(appIncDetail);
+						income = income.add(customerIncome.getCalculatedAmount());
 					}else if(customerIncome.getIncomeExpense().equalsIgnoreCase("EXPENSE")){
 						AppExpDetail appExpDetail = agreement.new AppExpDetail();
 						appExpDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getCustShrtName()));
@@ -1827,12 +1843,19 @@ public class AgreementGeneration implements Serializable {
 						appExpDetail.setExpenseCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 						appExpDetail.setExpenseType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
 						appExpDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
+						appExpDetail.setMargin(customerIncome.getMargin());
 						agreement.getAppExpDetails().add(appExpDetail);
+						expance = expance.add(customerIncome.getCalculatedAmount());
 					}
 					
 				}
 			}
-		
+			if(StringUtils.equalsIgnoreCase("Co-Applicant", applicantType)){
+				agreement.setCoAppTotIncome(PennantAppUtil.amountFormate(income, formatter));
+				agreement.setCoAppTotExpense(PennantAppUtil.amountFormate(expance, formatter));	
+				totalIncome=totalIncome.add(income);
+				totalExpense=totalExpense.add(expance);
+			}
 	}
 
 	private void setCustomerEmpDetails(FinanceDetail detail, AgreementDetail agreement) {
@@ -2566,6 +2589,8 @@ public class AgreementGeneration implements Serializable {
 			agreement.setFinCcy(main.getFinCcy());
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
+			agreement.setFinBranchName(main.getLovDescFinBranchName());
+			
 			
 			if (StringUtils.isNotBlank(main.getFinBranch())) {
 				if (branchService != null) {
