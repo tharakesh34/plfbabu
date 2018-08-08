@@ -23,7 +23,7 @@ import com.pennant.backend.model.finance.FinanceDeviations;
  * FinanceDeviations} object.
  * </p>
  */
-public class DeviationUtil {
+public final class DeviationUtil {
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
