@@ -166,6 +166,7 @@ public class DisbursementPostings {
 					amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
 					amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 					amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
+					amountCodes.setPaymentType(finAdvancePayments.getPaymentType());
 					amountCodes.setFinType(aeEvent.getFinType());
 					aeEvent.setCustID(finMain.getCustID());
 					aeEvent.setValueDate(finAdvancePayments.getLlDate());

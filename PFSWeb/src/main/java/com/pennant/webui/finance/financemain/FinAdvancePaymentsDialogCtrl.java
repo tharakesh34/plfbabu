@@ -150,6 +150,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected ExtendedCombobox					bankCode;
 	protected Textbox							payableLoc;
 	protected Textbox							printingLoc;
+	protected Space								printLoc;
 	protected Datebox							valueDate;
 	protected ExtendedCombobox					bankBranchID;
 	protected ExtendedCombobox					partnerBankID;
@@ -1067,6 +1068,20 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		try {
+			boolean mandatory = false;
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
+				mandatory = true;
+			}
+
+			this.printingLoc.clearErrorMessage();
+
+			this.printingLoc.setErrorMessage("");
+
+			if (!this.printingLoc.isReadonly()) {
+				this.printingLoc.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, mandatory));
+			}
 			aFinAdvancePayments.setPrintingLoc(this.printingLoc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1239,11 +1254,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PayableLoc.value"),
 								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
-			if (!this.printingLoc.isReadonly()) {
+			/*if (!this.printingLoc.isReadonly()) {
 				this.printingLoc.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
-								PennantRegularExpressions.REGEX_ADDRESS, true));
-			}
+								PennantRegularExpressions.REGEX_ADDRESS, false));
+			}*/
 			if (!this.valueDate.isReadonly()) {
 				Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
 				this.valueDate.setConstraint(
@@ -1716,9 +1731,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.phoneNumber.setValue("");
 			if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_printingLoc"), this.printingLoc);
+				this.printLoc.setSclass("mandatory");
+				
 			} else {
-				this.printingLoc.setValue("");
-				readOnlyComponent(true, this.printingLoc);
+				/*this.printingLoc.setValue("");
+				readOnlyComponent(true, this.printingLoc);*/
+				this.printLoc.setSclass("");
 			}
 
 			this.btnGetCustBeneficiary.setVisible(false);

@@ -225,7 +225,7 @@
 										</hbox>
 										<label id="label_PrintingLoc" value="${c:l('label_FinAdvancePaymentsDialog_PrintingLoc.value')}" />
 										<hbox id="hbox_PrintingLoc">
-											<space spacing="2px" sclass="mandatory" />
+											<space spacing="2px" sclass="mandatory" id="printLoc"/>
 											<textbox id="printingLoc" />
 										</hbox>
 									</row>
