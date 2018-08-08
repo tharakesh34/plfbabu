@@ -3,8 +3,6 @@ package com.pennanttech.explore;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.testng.annotations.Test;
@@ -33,8 +31,7 @@ public class DateWithJackson {
 	}
 
 	@Test
-	public void serializedXmlDateToDefaultTimestamp() throws ParseException, JsonGenerationException,
-			JsonMappingException, IOException {
+	public void serializedXmlDateToDefaultTimestamp() {
 		Person person = new Person(1, "Sai");
 		try {
 			person.setDob(DateUtil.parse("1975-07-28T01:20:00", "yyyy-MM-dd'T'hh:mm:ss"));

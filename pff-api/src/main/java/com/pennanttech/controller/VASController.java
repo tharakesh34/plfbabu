@@ -29,13 +29,12 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.service.impl.VASWebServiceImpl;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class VASController {
-	private static final Logger		logger	= Logger.getLogger(VASWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VASController.class);
 	private VASRecordingService		vASRecordingService;
 	private VASConfigurationService	vASConfigurationService;
 
