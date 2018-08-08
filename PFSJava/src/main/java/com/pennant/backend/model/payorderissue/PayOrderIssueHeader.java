@@ -52,7 +52,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private DocumentDetails						documentDetails; 
 	
 	private List<FinCovenantType> 				covenantTypeList        = new ArrayList<FinCovenantType>();
-	private List<DocumentDetails> 				documentDetailsList		= new ArrayList<DocumentDetails>();
+	private List<DocumentDetails> 				documentDetailsList		= new ArrayList<DocumentDetails>(1);
 		
 	public boolean isNew() {
 		return isNewRecord();
