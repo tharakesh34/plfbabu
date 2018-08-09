@@ -5433,13 +5433,13 @@
 		<property name="bankDetailService" ref="bankDetailService"/>
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO"/>
 		<property name="feeTypeDAO" ref="feeTypeDAO"/>		
-		<property name="depositChequesDAO" ref="depositChequesDAO"/>
-		
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<!-- Cash Management (Deposit Details)  -->
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
+		<property name="depositChequesDAO" ref="depositChequesDAO"/>
+		<property name="cashManagementAccounting" ref="cashManagementAccounting" />
 		<!-- GST Invoice Report -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<!-- Stage Accounting -->

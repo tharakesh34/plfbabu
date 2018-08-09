@@ -86,6 +86,9 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	// List headers
 	protected Listheader					listheader_DepositSlipNumber;
 	protected Listheader					listheader_TransactionDate;
+	protected Listheader					listheader_BranchCode;
+	protected Listheader					listheader_PartnerBankId;
+	protected Listheader					listheader_DepositAmount;
 
 	// checkRights
 	protected Button						button_DepositMovementsList_NewDepositMovements;
@@ -149,7 +152,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		registerField("BranchCode");
 		registerField("BranchDesc");
 		registerField("PartnerBankName");
-		registerField("ReservedAmount");
+		registerField("ReservedAmount", listheader_DepositAmount, SortOrder.NONE);
 
 		// Render the page and display the data.
 		doRenderPage();

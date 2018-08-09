@@ -88,6 +88,7 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	// List headers
 	protected Listheader					listheader_DepositType;
 	protected Listheader					listheader_BranchCode;
+	protected Listheader					listheader_AvailableAmount;
 
 	// checkRights
 	protected Button						button_DepositDetailsList_NewDepositDetails;
@@ -155,9 +156,9 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		
 		registerField("depositType", listheader_DepositType, SortOrder.NONE, depositType, sortOperator_DepositType, Operators.STRING);
 		registerField("BranchCode", listheader_BranchCode, SortOrder.NONE, branchCode, sortOperator_BranchCode, Operators.STRING);
+		registerField("ActualAmount", listheader_AvailableAmount, SortOrder.NONE);
 		registerField("branchDesc");
 		registerField("DepositId");
-		registerField("ActualAmount");
 		registerField("ReservedAmount");
 		
 		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
