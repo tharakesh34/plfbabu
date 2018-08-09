@@ -11287,4 +11287,31 @@
 	</bean>
 	
 	<bean id="organizationServiceTarget" class="com.pennanttech.pff.organization.service.OrganizationServiceImpl"/>
+	
+	<!-- Income/Expense Details -->
+	<bean id="incomeExpenseHeaderDAO" class="com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseHeaderDAOImpl" parent="sequenceDao" />
+	
+	<bean id="incomeExpenseDetailDAO" class="com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseDetailDAOImpl" parent="sequenceDao" />
+	
+	<bean id="incomeExpenseDetailService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="organizationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="incomeExpenseDetailServiceTarget" class="com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailServiceImpl"/>
+	
 </beans>

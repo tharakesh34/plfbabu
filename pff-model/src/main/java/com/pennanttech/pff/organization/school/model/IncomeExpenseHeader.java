@@ -1,4 +1,4 @@
-package com.pennanttech.pff.organization.model;
+package com.pennanttech.pff.organization.school.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,55 +10,44 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
 
-public class Organization extends AbstractWorkflowEntity {
+public class IncomeExpenseHeader extends AbstractWorkflowEntity{
 	private static final long serialVersionUID = 1L;
-
-	private long organizationId;
+	
 	private long id;
+	private Long orgId;
 	private Long custId;
-	private String cif;
-	private String name;
-	private Date date_Incorporation;
-	private Integer type;
-	private String code;
+	private String custCif;
+	private int financialYear;
 	private long createdBy;
 	private Date createdOn;
-	private String custShrtName;
+	private String type;
+	private String name;
 	@XmlTransient
-	private Organization befImage;
+	private IncomeExpenseHeader befImage;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
 	private LoggedInUser userDetails;
-
-	private ExtendedFieldHeader extendedFieldHeader;
-	private ExtendedFieldRender extendedFieldRender;
-	
 	private IncomeExpenseDetail schoolIncomeExpense;
 	private List<IncomeExpenseDetail> coreIncomeList = new ArrayList<>();
 	private List<IncomeExpenseDetail> nonCoreIncomeList = new ArrayList<>();
 	private List<IncomeExpenseDetail> expenseList = new ArrayList<>();
 	
-	
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
-	public Organization() {
+	
+	public IncomeExpenseHeader() {
 		super();
 	}
-
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
-		excludeFields.add("organizationId");
-		excludeFields.add("cif");
-		excludeFields.add("custShrtName");
-		excludeFields.add("extendedFieldHeader");
-		excludeFields.add("extendedFieldRender");
+		excludeFields.add("type");
+		excludeFields.add("custId");
+		excludeFields.add("custCif");
+		excludeFields.add("name");
 		excludeFields.add("schoolIncomeExpense");
 		excludeFields.add("coreIncomeList");
 		excludeFields.add("nonCoreIncomeList");
@@ -70,12 +59,20 @@ public class Organization extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	public long getOrganizationId() {
-		return organizationId;
+	public long getId() {
+		return id;
 	}
 
-	public void setOrganizationId(long organizationId) {
-		this.organizationId = organizationId;
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
 	}
 
 	public Long getCustId() {
@@ -85,45 +82,21 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setCustId(Long custId) {
 		this.custId = custId;
 	}
-
-	public String getCif() {
-		return cif;
+	
+	public String getCustCif() {
+		return custCif;
 	}
 
-	public void setCif(String cif) {
-		this.cif = cif;
+	public void setCustCif(String custCif) {
+		this.custCif = custCif;
 	}
 
-	public String getName() {
-		return name;
+	public int getFinancialYear() {
+		return financialYear;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getDate_Incorporation() {
-		return date_Incorporation;
-	}
-
-	public void setDate_Incorporation(Date date_Incorporation) {
-		this.date_Incorporation = date_Incorporation;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
+	public void setFinancialYear(int financialYear) {
+		this.financialYear = financialYear;
 	}
 	
 	public long getCreatedBy() {
@@ -141,31 +114,31 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	
-	public String getCustShrtName() {
-		return custShrtName;
+
+	public String getType() {
+		return type;
 	}
 
-	public void setCustShrtName(String custShrtName) {
-		this.custShrtName = custShrtName;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public long getId() {
-		return organizationId;
+	public String getName() {
+		return name;
 	}
 
-	public void setId(long id) {
-		this.organizationId = id;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
-	public Organization getBefImage() {
+
+	public IncomeExpenseHeader getBefImage() {
 		return befImage;
 	}
 
-	public void setBefImage(Organization befImage) {
+	public void setBefImage(IncomeExpenseHeader befImage) {
 		this.befImage = befImage;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -173,29 +146,13 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public ExtendedFieldHeader getExtendedFieldHeader() {
-		return extendedFieldHeader;
-	}
-
-	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
-		this.extendedFieldHeader = extendedFieldHeader;
-	}
-
-	public ExtendedFieldRender getExtendedFieldRender() {
-		return extendedFieldRender;
-	}
-
-	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
-		this.extendedFieldRender = extendedFieldRender;
 	}
 
 	public IncomeExpenseDetail getSchoolIncomeExpense() {
@@ -237,5 +194,4 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-
 }

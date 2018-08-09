@@ -5425,6 +5425,14 @@
 		<!--============ Organization ============== -->
 	<bean id="organizationListCtrl" class="com.pennant.webui.organization.OrganizationListCtrl" parent="basisListCtrl" scope="prototype"/>
 	
+	<bean id="organizationDialogCtrl" class="com.pennant.webui.organization.OrganizationDialogCtrl" parent="basisCtrl" scope="prototype"/>
+	
+	<bean id="incomeExpenseListCtrl" class="com.pennant.webui.organization.school.IncomeExpenseDetailListCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	<bean id="incomeExpenseDialogCtrl" class="com.pennant.webui.organization.school.IncomeExpenseDetailDialogCtrl" parent="basisCtrl" scope="prototype"/>
+	
+	<bean id="schoolOrganizationSelectCtrl" class="com.pennant.webui.organization.school.SchoolOrganizationSelectCtrl" parent="basisCtrl" scope="prototype"/>
+	
 	<!-- Fee Waiver Detail  -->
 	<bean id="feeWaiverHeaderDialogCtrl"
 		class="com.pennant.webui.finance.financemain.FeeWaiverHeaderDialogCtrl"
@@ -5432,5 +5440,4 @@
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 	</bean>
 	
-
 </beans>

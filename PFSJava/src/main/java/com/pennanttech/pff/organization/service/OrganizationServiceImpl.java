@@ -180,8 +180,9 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		List<AuditDetail> auditDetailList = new ArrayList<>();
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Organization(), org.getExcludeFields());
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		//auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditDetailList.addAll(deleteChilds(org, "_Temp", auditHeader.getAuditTranType()));
 		organizationDAO.delete(org, TableType.TEMP_TAB);
 
@@ -190,8 +191,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
 
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeaderDAO.addAudit(auditHeader);
+		//auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);

@@ -1,4 +1,4 @@
-package com.pennant.webui.organization;
+package com.pennant.webui.organization.school;
 
 import java.util.Map;
 
@@ -9,7 +9,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -17,77 +16,63 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.webui.organization.model.OrganizationListModelItemRender;
+import com.pennant.webui.organization.school.model.IncomeExpenseDetailListModelItemRender;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.organization.OrganizationType;
-import com.pennanttech.pff.organization.model.Organization;
-import com.pennanttech.pff.organization.service.OrganizationService;
+import com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailService;
+import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
 
-public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
+public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHeader>{
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailListCtrl.class);
 
-	private static final Logger logger = Logger.getLogger(OrganizationListCtrl.class);
-
-	protected Window window_OrganizationList;
-	protected Borderlayout borderLayout_OrganizationList;
-	protected Listbox listBoxOrganization;
-	protected Paging pagingOrganizationList;
+	protected Window window_IncomeExpenseList;
+	protected Borderlayout borderLayout_IncomeExpenseList;
+	protected Listbox listBoxIncomeExpense;
+	protected Paging pagingIncomeExpenseList;
 
 	// List headers
-	protected Listheader listheader_OrgType;
 	protected Listheader listheader_CIF;
-	protected Listheader listheader_OrgCode;
 	protected Listheader listheader_Name;
-	protected Listheader listheader_DateOfInc;
-
-	// checkRights
-	protected Button button_OrganizationList_NewOrganization;
-	protected Button button_OrganizationList_OrganizationSearch;
-
+	protected Listheader listheader_FinancialYear;
+	protected Listheader listheader_Category;
+	
+	protected Button button_IncomeExpenseList_NewIncomeExpense;
+	protected Button button_IncomeExpenseList_IncomeExpenseSearch;
+	
 	// Search Fields
 	protected Listbox sortOperator_CIF;
-	protected Listbox sortOperator_OrgType;
-	protected Listbox sortOperator_OrgCode;
 	protected Listbox sortOperator_Name;
-	protected Listbox sortOperator_DateOfInc;
-
-	protected Textbox orgType;
+	protected Listbox sortOperator_FinancialYear;
+	
 	protected Textbox cif;
-	protected Textbox orgCode;
 	protected Textbox name;
-	protected Datebox dateOfInc;
-
+	protected Textbox financialYear;
+	
 	private String module = "";
-
+	
 	@Autowired
-	private transient OrganizationService organizationService;
-
-	/**
-	 * default constructor.<br>
-	 */
-	public OrganizationListCtrl() {
+	private IncomeExpenseDetailService incomeExpenseDetailService;
+	
+	public IncomeExpenseDetailListCtrl() {
 		super();
 	}
-
+	
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "Organization";
-		super.pageRightName = "OrganizationSchoolList";
-		super.tableName = "organizations_view";
-		super.queueTableName = "organizations_view";
-		super.enquiryTableName = "Organizations_view";
+		super.moduleCode = "IncomeExpenseHeader";
+		super.pageRightName = "IncomeExpenseDetailList";
+		super.tableName = "org_income_expense_header_view";
+		super.queueTableName = "org_income_expense_header_view";
+		super.enquiryTableName = "org_income_expense_header_view";
 		this.module = getArgument("module");
-		if(!OrganizationType.SCHOOL.getValue().equalsIgnoreCase(module)){
-			super.queueTableName = "organizations_Aview";	
-		}
 	}
-
-	public void onCreate$window_OrganizationList(Event event) {
+	
+	public void onCreate$window_IncomeExpenseList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if ("ENQ".equals(this.module)) {
@@ -96,20 +81,19 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 
 		doSetFieldProperties();
 		// Set the page level components.
-		setPageComponents(window_OrganizationList, borderLayout_OrganizationList, listBoxOrganization,
-				pagingOrganizationList);
-		setItemRender(new OrganizationListModelItemRender());
+		setPageComponents(window_IncomeExpenseList, borderLayout_IncomeExpenseList, listBoxIncomeExpense,
+				pagingIncomeExpenseList);
+		setItemRender(new IncomeExpenseDetailListModelItemRender());
 
 		// Register buttons and fields.
-		registerButton(button_OrganizationList_NewOrganization, "button_OrganizationSchoolList_btnNew", true);
-		registerButton(button_OrganizationList_OrganizationSearch);
+		//registerButton(button_IncomeExpenseList_NewIncomeExpense, "button_OrganizationSchoolList_btnNew", true);
+		registerButton(button_IncomeExpenseList_IncomeExpenseSearch);
 
 		registerField("id");
-		registerField("type", listheader_OrgType, SortOrder.ASC, orgType, sortOperator_OrgType, Operators.STRING);
-		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
-		registerField("code", listheader_OrgCode, SortOrder.ASC, orgCode, sortOperator_OrgCode, Operators.STRING);
-		registerField("name", listheader_Name, SortOrder.ASC, name, sortOperator_Name,Operators.STRING);
-		registerField("date_Incorporation", listheader_DateOfInc, SortOrder.ASC, dateOfInc, sortOperator_DateOfInc, Operators.STRING);
+		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
+		registerField("financialyear", listheader_FinancialYear, SortOrder.ASC, financialYear, sortOperator_FinancialYear, Operators.STRING);
+		registerField("name", listheader_Name, SortOrder.ASC, name, sortOperator_Name, Operators.STRING);
+		//registerField("category", listheader_Category, SortOrder.ASC, category, sortOperator_Category,Operators.STRING);
 		
 		// Render the page and display the data.
 		doRenderPage();
@@ -119,24 +103,9 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		
-		this.dateOfInc.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
 		logger.debug(Literal.LEAVING);
 	}
 	
-	/*@Override
-	protected void doAddFilters() { //TODO
-		super.doAddFilters();
-		if (!enqiryModule) {
-			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
-		}
-			this.searchObject.removeFiltersOnProperty("agency");
-			int id = OrganizationType.SCHOOL.getKey();
-			this.searchObject.addFilter(new Filter("type", id, Filter.OP_EQUAL));
-		
-
-	}
-*/
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -158,16 +127,16 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 		search();
 	}
 	
-	public void onClick$button_OrganizationList_NewOrganization(Event event) {
+	public void onClick$button_IncomeExpenseList_NewIncomeExpense(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.
-		Organization organization = new Organization();
-		organization.setNewRecord(true);
-		organization.setWorkflowId(getWorkFlowId());
+		IncomeExpenseHeader incExpDetail = new IncomeExpenseHeader();
+		incExpDetail.setNewRecord(true);
+		incExpDetail.setWorkflowId(getWorkFlowId());
 
 		// Display the dialog page.
-		doShowDialogPage(organization);
+		doShowDialogPage(incExpDetail);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -179,31 +148,31 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	 *            An event sent to the event handler of the component.
 	 */
 
-	public void onOrganizationItemDoubleClicked(Event event) {
+	public void onIncomeExpenseItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
-		Listitem selectedItem = this.listBoxOrganization.getSelectedItem();
+		Listitem selectedItem = this.listBoxIncomeExpense.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		Organization org = organizationService.getOrganization(id, "_View");
+		IncomeExpenseHeader incExpenseDetail = incomeExpenseDetailService.getIncomeExpense(id, "_View");
 
-		if (org == null) {
+		if (incExpenseDetail == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
 		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  AND  Id = ");
-		whereCond.append(org.getId());
+		whereCond.append(incExpenseDetail.getId());
 		whereCond.append(" AND  version=");
-		whereCond.append(org.getVersion());
+		whereCond.append(incExpenseDetail.getVersion());
 
-		if (doCheckAuthority(org, whereCond.toString())) {
+		if (doCheckAuthority(incExpenseDetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && org.getWorkflowId() == 0) {
-				org.setWorkflowId(getWorkFlowId());
+			if (isWorkFlowEnabled() && incExpenseDetail.getWorkflowId() == 0) {
+				incExpenseDetail.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(org);
+			doShowDialogPage(incExpenseDetail);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -217,24 +186,25 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	 * @param fieldinvestigation
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(Organization organization) {
+	private void doShowDialogPage(IncomeExpenseHeader incExpHeader) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("organization", organization);
-		arg.put("organizationListCtrl", this);
+		arg.put("incomeExpenseHeader", incExpHeader);
+		arg.put("incomeExpenseDetailListCtrl", this);
 		arg.put("enqiryModule", enqiryModule);
 		arg.put("module", module);
+
 		try {
-			if (OrganizationType.SCHOOL.getValue().equalsIgnoreCase(module)) {
-				Executions.createComponents("/WEB-INF/pages/Organization/OrganizationDialog.zul", null, arg);
-			}else {
+			if (incExpHeader.isNewRecord()) {
+				Executions.createComponents("/WEB-INF/pages/Organization/School/SchoolOrganizationSelect.zul", null, arg);
+			} else {
 				Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul", null, arg);
 			}
 		} catch (Exception e) {
-				logger.error("Exception:", e);
-				MessageUtil.showError(e);
-			}
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -276,5 +246,4 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-	
 }

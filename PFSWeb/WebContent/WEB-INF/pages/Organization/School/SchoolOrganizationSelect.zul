@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_SchoolOrganizationSelect"
+		title="${c:l('window_SchoolOrganizationSelect.title')}"
+		border="normal" apply="${schoolOrganizationSelectCtrl}" width="50%"
+		height="40%" sizable="false"
+		style="border:0px; padding-left:5px; padding-right:5px;"
+		closable="true">
+		<borderlayout id="borderLayout_SchoolOrganizationTypeList">
+
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px">
+					<columns>
+						<column width="100px" />
+						<column width="150px" />
+						<column />
+					</columns>
+					<rows>
+						<row id="customerRow">
+							<space />
+							<label
+								id="label_SchoolOrganizationSelect_CustomerCIF"
+								value="${c:l('label_SchoolOrganizationSelect_CustomerCIF.value')}" />
+							<hbox>
+								<extendedcombobox id="customer" />
+							</hbox>
+						</row>
+						<row id="academicYearRow">
+							<space />
+							<label
+								id="label_SchoolOrganizationSelect_academicYearRow"
+								value="${c:l('label_SchoolOrganizationSelect_academicYear.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="academicYear" width="150px" />
+							</hbox>
+						</row>
+						<row id="typeRow" visible="false">
+							<space />
+							<label
+								id="label_SchoolOrganizationSelect_type"
+								value="${c:l('label_SchoolOrganizationSelect_type.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="type" width="150px" readonly="true" />
+							</hbox>
+						</row>
+						<row id="incomeTypeRow" visible="false">
+							<space />
+							<label
+								id="label_SchoolOrganizationSelect_Incometype"
+								value="${c:l('label_SchoolOrganizationSelect_Incometype.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="incomeType" width="150px" readonly="true" />
+							</hbox>
+						</row>
+						<row id="categoryRow" visible="false">
+							<space />
+							<label
+								id="label_SchoolOrganizationSelect_category"
+								value="${c:l('label_SchoolOrganizationSelect_category.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="category" width="150px" readonly="true" />
+							</hbox>
+						</row>
+						<row>
+							<space />
+							<space />
+						<hbox>
+							<space spacing="2px" />
+							<hbox>
+								<space spacing="10px" />
+								<button id="btnProceed"
+									label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+									style="align:center"
+									tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
+								</button>
+							</hbox>
+						</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

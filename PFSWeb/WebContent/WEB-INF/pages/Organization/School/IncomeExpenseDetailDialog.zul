@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>.z-groupbox-collapsed{ height: auto !important; }</style>
+
+	<window id="window_IncomeExpenseDetailsDialog" border="normal"
+		apply="${incomeExpenseDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutOrgSchoolIncomeExpense">
+			<north id="north">
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_OrgSchoolIncomeExpenseDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false" />
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<div width="100%" height="100%">
+					<tabbox width="100%" height="100%"
+						id="tabBoxIndexCenter">
+						<tabs id="tabsIndexCenter">
+							<tab
+								label="${c:l('label_OrgSchoolIncomeExpenseDialog_OrgSchoolIncomeDetails.value')}"
+								id="OrgSchoolIncomeDetailsTab" />
+							<tab
+								label="${c:l('label_OrgSchoolIncomeExpenseDialog_OrgSchoolExpenseDetails.value')}"
+								id="OrgSchoolExpenseDetailsTab" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto"
+								ca:data-scrollable="true" id="OrgSchoolIncomeDetailsTabPanel">
+								
+								<!-- Core Income Details -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Core Income Details" />
+									<toolbar align="end">
+										<button
+											id="btnNew_SchoolCoreIncome" label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_OrgSchoolIncomeExpenseDialog_NewCoreIncome.tooltiptext')}"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+									<listbox
+										id="listBoxSchoolCoreIncomeDetails"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_CoreSchoolName"
+												label="${c:l('listheader_SchoolName.label')}" />
+											<listheader
+												id="listheader_CoreFinancialYear"
+												label="${c:l('listheader_FinancialYear.label')}" />
+											<listheader
+												id="listheader_Category"
+												label="${c:l('listheader_Category.label')}" />	
+											<listheader
+												id="listheader_NumberOfStudents"
+												label="${c:l('listheader_NumberOfStudents.label')}" />
+											<listheader
+												id="listheader_FeeCharegedPerStudent"
+												label="${c:l('listheader_FeeCharegedPerStudent.label')}" />
+											<listheader
+												id="listheader_CollectionFrequency"
+												label="${c:l('listheader_CollectionFrequency.label')}" />
+											<listheader
+												id="listheader_Multiplier"
+												label="${c:l('listheader_Multiplier.label')}" />
+											<listheader
+												id="listheader_FeeReceiptBasisFrequency"
+												label="${c:l('listheader_FeeReceiptBasisFrequency.label')}" />
+											<listheader
+												id="listheader_CoreIncomeTotal"
+												label="${c:l('listheader_OrgTotal.label')}" />
+											<listheader
+												id="listheader_CoreToBeConsidered"
+												label="${c:l('listheader_ToBeConsidered.label')}" />	
+										</listhead>
+									</listbox>
+								</groupbox>
+
+								<!-- Non-core Income Details -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Non-core Income Details" />
+									<toolbar align="end">
+										<button id="btnNew_SchoolNonCoreIncome"
+											label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_OrgSchoolIncomeExpenseDialog_NewNonCoreIncome.tooltiptext')}"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+									<listbox id="listBoxSchoolNonCoreIncomeDetails"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_NonCoreSchoolName"
+												label="${c:l('listheader_SchoolName.label')}"/>
+											<listheader
+												id="listheader_NonCoreFinancialYear"
+												label="${c:l('listheader_FinancialYear.label')}"/>
+											<listheader
+												id="listheader_ProductService"
+												label="${c:l('listheader_ProductService.label')}"/>
+											<listheader
+												id="listheader_NumberOfUnitsServed"
+												label="${c:l('listheader_NumberOfUnitsServed.label')}"/>
+											<listheader
+												id="listheader_AverageCollectionPerUnit"
+												label="${c:l('listheader_AverageCollectionPerUnit.label')}"/>
+											<listheader
+												id="listheader_NonCoreIncomeTotal"
+												label="${c:l('listheader_OrgTotal.label')}"/>
+											<listheader
+												id="listheader_NonCoreToBeConsidered"
+												label="${c:l('listheader_ToBeConsidered.label')}" />	
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							
+							<!-- Expense Tab panel -->
+							<tabpanel style="overflow:auto"
+								ca:data-scrollable="true"
+								id="OrgSchoolExpenseDetailsTabPanel">
+								<!-- Expense Details -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption
+										label="Expense Details" />
+									<toolbar align="end">
+										<button
+											id="btnNew_SchoolExpense" label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_OrgSchoolIncomeExpenseDialog_NewExpense.tooltiptext')}"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+									<listbox
+										id="listBoxSchoolExpenseDetails"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_ExpenseSchoolName"
+												label="${c:l('listheader_SchoolName.label')}" />
+											<listheader
+												id="listheader_ExpenseFinancialYear"
+												label="${c:l('listheader_FinancialYear.label')}" />
+											<listheader
+												id="listheader_ExpenseType"
+												label="${c:l('listheader_ExpenseType.label')}" />
+											<listheader
+												id="listheader_ExpenseIncurred"
+												label="${c:l('listheader_ExpenseIncurred.label')}" />
+											<listheader
+												id="listheader_ExpenseToBeConsidered"
+												label="${c:l('listheader_ToBeConsidered.label')}" />		
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

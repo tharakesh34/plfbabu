@@ -414,6 +414,8 @@ import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.organization.model.Organization;
+import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
+import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
 
 public class PennantJavaUtil {
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
@@ -1800,6 +1802,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ComLocation", new ModuleMapping("ComLocation", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
 				new String[][] { { "FieldCode", "0", "COMMLOC" } }, 300));
+		
+		ModuleUtil.register("ProductType", new ModuleMapping("ProductType", LovFieldDetail.class,
+				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
+				new String[][] { { "FieldCode", "0", "ORGSCHSER" } }, 300));
 
 		ModuleUtil.register("Authorization", new ModuleMapping("Authorization", Authorization.class, new String[] {
 				"AMTAuthorization", "AMTAuthorization_AView" }, masterWF , new String[] { "AuthUserId", "AuthName" }, null,
@@ -2404,7 +2410,13 @@ public class PennantJavaUtil {
 				new String[] { "DepositCheques", "DepositCheques_AView" }, null, new String[] { "ReceiptMode" }, null, 400));
 		// Organization
 		ModuleUtil.register("Organization", new ModuleMapping("Organization", Organization.class,
-				new String[] { "Organizations", "organizations_view" }, org_School_WF, new String[] { "id" }, null, 600));
+				new String[] { "Organizations", "organizations_view" }, org_School_WF, new String[] { "Cif", "custShrtName" }, null, 600));
+		// Income/Expense Details
+		ModuleUtil.register("IncomeExpenseHeader", new ModuleMapping("IncomeExpenseHeader", IncomeExpenseHeader.class,
+				new String[] { "org_income_expense_header", "org_income_expense_header_view" }, org_School_WF, new String[] { "id" }, null, 600));
+		// Income/Expense Details
+		ModuleUtil.register("IncomeExpenseDetail", new ModuleMapping("IncomeExpenseDetail", IncomeExpenseDetail.class,
+				new String[] { "org_income_expenses", "org_income_expenses_view" }, org_School_WF, new String[] { "id" }, null, 600));
 
 	}
 
