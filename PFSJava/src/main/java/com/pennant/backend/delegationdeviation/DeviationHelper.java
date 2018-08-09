@@ -393,8 +393,6 @@ public class DeviationHelper {
 		deviation.setDeviationCode(code);
 		deviation.setDeviationType(resultType);
 		deviation.setUserRole(role);
-		deviation.setApprovalStatus("");
-		deviation.setDeviationDate(new Timestamp(System.currentTimeMillis()));
 		deviation.setDeviationUserId(String.valueOf(userId));
 		deviation.setDeviationCategory(category);
 		deviation.setDelegationRole(approverRole);

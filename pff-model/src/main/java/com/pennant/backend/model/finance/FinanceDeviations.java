@@ -48,6 +48,9 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 
 	public FinanceDeviations() {
 		super();
+
+		this.deviationDate = new Timestamp(System.currentTimeMillis());
+		this.approvalStatus = "";
 	}
 
 	public Set<String> getExcludeFields() {
