@@ -7623,5 +7623,11 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="22" author="Akhilesh.k">
+	    <addColumn tableName="adtcollateralassignment">	
+			<column name="HostReference" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
 	
