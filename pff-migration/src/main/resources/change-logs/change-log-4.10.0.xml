@@ -143,7 +143,7 @@
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
 		
-			INSERT INTO SECRIGHTS SELECT (SEmenu_Item_DisbursmentHostReferenceReportLECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'CollateralAssignmentDetailDialog_HostReference','CollateralAssignmentDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (Select MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'CollateralAssignmentDetailDialog_HostReference','CollateralAssignmentDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
 			
 			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERALASSIGN_NEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CollateralAssignmentDetailDialog_HostReference'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 	
@@ -153,5 +153,43 @@
 		 </sql>
 	</changeSet>
 	
+	<changeSet id="05" author="Akhilesh.k">
+						<sql>
+										delete from SecOperationRoles Where oprid in (Select Oprid from SECOPERATIONS Where OPrcode = 'DISBURSEMENT_HOST_REFERENCE_REPORT_OPERATION');
+					 		delete from SECOPERATIONS Where OPrcode = 'DISBURSEMENT_HOST_REFERENCE_REPORT_OPERATION';
+					 		delete from SecRoleGroups Where Roleid in (Select Roleid from Secroles Where Rolecd = 'DISBURSEMENT_HOST_REFERENCE_REPORT');
+					        delete from Secroles Where Rolecd = 'DISBURSEMENT_HOST_REFERENCE_REPORT';
+					        delete from SECGROUPRIGHTS Where Grpid in (Select Grpid from Secgroups Where grpcode = 'DISBURSEMENT_HOST_REFERENCE_REPORT');
+					        delete from Secgroups Where grpcode = 'DISBURSEMENT_HOST_REFERENCE_REPORT';
+					        delete from SecRights Where rightname = 'menu_Item_DisbursmentHostReferenceReport';
+						  
+						 
+							UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+							UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+							UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+							UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+							UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(roleid) FROM SECROLES );	
+							UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(oprid) FROM SECOPERATIONS);	
+							UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);	
+							
+							INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_CollateralHostReferenceReport','DisbHostRefRep',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+							
+							INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COLLATERAL_HOST_REFERENCE_REPORT', 'Collateral Host Reference Detail Report', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+							INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERAL_HOST_REFERENCE_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_CollateralHostReferenceReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+							
+							INSERT INTO SECROLES SELECT (select MAX(RoleID)+1 from SecRoles),1,'COLLATERAL_HOST_REFERENCE_REPORT','Collateral Host Reference Detail Report','',0,1000,null,' ',' ',null,' ',' ',' ',0 FROM SeqSecRoles WHERE 0=0;
+							INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='COLLATERAL_HOST_REFERENCE_REPORT'), (Select  RoleID  From SecRoles Where RoleCd='COLLATERAL_HOST_REFERENCE_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+							INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'COLLATERAL_HOST_REFERENCE_REPORT_OPERATION', 'Collateral host reference report operation.', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+							INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='COLLATERAL_HOST_REFERENCE_REPORT_OPERATION'), (Select  RoleID  From SecRoles Where RoleCd='COLLATERAL_HOST_REFERENCE_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+							
+							UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+							UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+							UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+							UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+							UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(roleid) FROM SECROLES );	
+							UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(oprid) FROM SECOPERATIONS);	
+							UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+						</sql>
+					</changeSet>
 		
 	</databaseChangeLog>
