@@ -4577,7 +4577,7 @@ private String custAccount ="";
 	}
 
 	public class CoApplicant {
-		
+		private String custCIF = "";
 		private String custName ="";
 		private String panNumber ="";
 		private String Address ="";
@@ -4768,6 +4768,14 @@ private String custAccount ="";
 
 		public void setApplicantType(String applicantType) {
 			this.applicantType = applicantType;
+		}
+
+		public String getCustCIF() {
+			return custCIF;
+		}
+
+		public void setCustCIF(String custCIF) {
+			this.custCIF = custCIF;
 		}
 		
 	}
@@ -7147,9 +7155,9 @@ private String custAccount ="";
 		private String provinceName  = "";
 		private String countryName  = "";
 		private String shortName  = "";
-		private String shareholder   = "";
+		private String shareholder   = "No";
 		private String director  = "No";
-		private String sharePerc ="No";
+		private String sharePerc = "";
 		private String docCategoryName ="";
 		private String designationName="";
 		private String nationalityName="";

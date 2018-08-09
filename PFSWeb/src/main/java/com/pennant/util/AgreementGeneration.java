@@ -1010,15 +1010,14 @@ public class AgreementGeneration implements Serializable {
 			
 			
 			//TODO:: Need to check after confirmation
-			//agreement.setConnectorCode(detail.getFinScheduleData().getFinanceMain().getConnectorCode());
+			agreement.setConnectorCode(detail.getFinScheduleData().getFinanceMain().getConnectorCode());
 			
 			//Director Details
 			if (CollectionUtils.isEmpty(agreement.getDirectorDetails())) {
 				agreement.setDirectorDetails(new ArrayList<AgreementDetail.DirectorDetail>());
 			}
-			
-			if (aggModuleDetails.contains(PennantConstants.AGG_DIRECDT)
-					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerDirectorList())) {
+			//TODO: removing aggModuleDetails.contains(PennantConstants.AGG_DIRECDT) to resolve uat issue need to add this once Agreements Autogeneration issue Reslove
+			if ( CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerDirectorList())) {
 			agreement = getDirectorDetails(agreement, detail, formatter);
 			}
 			
@@ -2223,6 +2222,7 @@ public class AgreementGeneration implements Serializable {
 				Customer customer = custdetails.getCustomer();
 				coapplicant.setCustRelation(StringUtils.trimToEmpty(jointAccountDetail.getCatOfcoApplicant()));
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+				coapplicant.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 				//pan number
 				List<CustomerDocument> doclist = custdetails.getCustomerDocumentsList();
 				coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
