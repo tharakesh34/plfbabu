@@ -1289,6 +1289,13 @@
 		<modifyDataType tableName="CUSTOMER_RETAIL_ED" columnName="CIBILSCORE" newDataType="INT"/>
 		<modifyDataType tableName="CUSTOMER_RETAIL_ED_temp" columnName="CIBILSCORE" newDataType="INT"/>
 	</changeSet>
+	
+	<changeSet id="77" author="Vinay">
+		<sql>
+			delete from  SECGROUPRIGHTS where grpid=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR');
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
