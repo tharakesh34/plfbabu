@@ -1008,9 +1008,9 @@ public class AgreementGeneration implements Serializable {
 				agreement.getVasData().add(agreement.new VasDetails());
 			}
 			
-			
-			//TODO:: Need to check after confirmation
-			agreement.setConnectorCode(detail.getFinScheduleData().getFinanceMain().getConnectorCode());
+			if(null!=detail&&null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getFinanceMain()){
+				agreement.setConnectorCode(StringUtils.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getConnectorCode()));
+			}
 			
 			//Director Details
 			if (CollectionUtils.isEmpty(agreement.getDirectorDetails())) {
