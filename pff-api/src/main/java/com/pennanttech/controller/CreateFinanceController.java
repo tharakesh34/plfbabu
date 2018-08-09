@@ -95,6 +95,7 @@ import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
@@ -867,10 +868,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		//set's the default chequeHeader to the financeDetail if chequeCapture is required.
-		if (!stp && finType.isChequeCaptureReq()) {
+		if (MandateConstants.TYPE_PDC.equals(financeMain.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(financeDetail);
 		}
-
 		logger.debug("Leaving");
 	}
 
@@ -1616,20 +1616,25 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void doSetDefaultChequeHeader(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		if (financeDetail.getChequeHeader() == null) {
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			ChequeHeader ChequeHeader = new ChequeHeader();
-			ChequeHeader.setNewRecord(true);
-			ChequeHeader.setFinReference(financeMain.getFinReference());
-			ChequeHeader.setActive(true);
-			ChequeHeader.setTotalAmount(BigDecimal.ZERO);
-			ChequeHeader.setLastMntBy(financeMain.getLastMntBy());
-			ChequeHeader.setLastMntOn(financeMain.getLastMntOn());
-			ChequeHeader.setRecordStatus(financeMain.getRecordStatus());
-			ChequeHeader.setRecordType(financeMain.getRecordType());
-			ChequeHeader.setRoleCode(financeMain.getRoleCode());			
-			ChequeHeader.setVersion(financeMain.getVersion());
-			ChequeHeader.setWorkflowId(financeMain.getWorkflowId());
-			financeDetail.setChequeHeader(ChequeHeader);
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();	
+			ChequeHeader chequeHeader = new ChequeHeader();
+			chequeHeader.setNewRecord(true);
+			chequeHeader.setRoleCode(financeMain.getNextRoleCode());
+			chequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
+			chequeHeader.setTaskId(financeMain.getTaskId());
+			chequeHeader.setNextTaskId(financeMain.getNextTaskId());
+			chequeHeader.setVersion(1);
+			chequeHeader.setLastMntBy(financeMain.getLastMntBy());
+			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			chequeHeader.setRecordStatus(financeMain.getRecordStatus());
+			chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			chequeHeader.setWorkflowId(financeMain.getWorkflowId());
+
+			chequeHeader.setFinReference(financeMain.getFinReference());
+			chequeHeader.setNoOfCheques(0);
+			chequeHeader.setTotalAmount(BigDecimal.ZERO);
+			chequeHeader.setActive(true);
+			financeDetail.setChequeHeader(chequeHeader);
 		}
 		logger.debug(Literal.LEAVING);
 	}

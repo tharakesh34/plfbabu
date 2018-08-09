@@ -490,7 +490,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		}
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));//FIXME
-		getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
+		if (auditHeader.getApiHeader() == null) {
+			getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
+		}
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -709,7 +711,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		//if finance Payment Method is PDC and there is no PDC cheques.
 		String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)) {
+		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)
+				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API,
+						financeDetail.getFinScheduleData().getFinanceMain().getFinSourceID())) {
 			if (!isListContainsPDC) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + chequeHeader.getFinReference();
