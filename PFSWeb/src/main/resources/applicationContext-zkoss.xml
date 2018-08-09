@@ -5356,7 +5356,6 @@
 		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 		<property name="searchProcessor" ref="searchProcessor" />
 		<property name="eventManager" ref="eventManager" />
-		<property name="mailUtility" ref="mailUtility" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 	</bean>

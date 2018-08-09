@@ -1135,7 +1135,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				if (StringUtils.isNotBlank(aCreditReviewDetails.getNextTaskId())
 						&& !StringUtils.trimToEmpty(aCreditReviewDetails.getNextRoleCode())
 								.equals(aCreditReviewDetails.getRoleCode())) {
-					getMailUtil().sendMail(NotificationConstants.MAIL_MODULE_CREDIT, aCreditReviewDetails, this);
+					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT, aCreditReviewDetails);
 				}
 				// do Close the Dialog window
 				closeDialog();

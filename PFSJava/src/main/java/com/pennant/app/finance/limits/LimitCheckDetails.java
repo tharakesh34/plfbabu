@@ -1,5 +1,14 @@
 package com.pennant.app.finance.limits;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jaxen.JaxenException;
+
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.util.MailUtil;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -12,17 +21,11 @@ import com.pennant.backend.model.limits.LimitUtilization;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jaxen.JaxenException;
-import org.zkoss.util.resource.Labels;
+import com.pennanttech.pennapps.notification.Notification;
 
 public class LimitCheckDetails {
 
@@ -383,25 +386,26 @@ public class LimitCheckDetails {
 			if(!StringUtils.equals(limitUtilization.getReturnCode(), code)) {
 				continue;
 			} else {
-				List<Long> notificationIdlist = getNotificationsDAO().getTemplateIds("");//TODO:TemplateCode
 				String tableType = "_Temp";
 				if(StringUtils.equals(limitUtilization.getDealType(), FinanceConstants.CANCEL_UTILIZATION)) {
 					tableType = "";
 				}
 				FinanceMain financeMain = getLimitInterfaceDAO().getFinanceMainByRef(limitUtilization.getDealID(), tableType, false);
 
-				boolean isMailSent;
+				Notification notification = new Notification();
+				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+				notification.setModule("LIMITS");
+				notification.setSubModule("LIMITS");
+				notification.setKeyReference(financeMain.getFinReference());
+				notification.setStage(financeMain.getRoleCode());
+
 				try {
-					isMailSent = getMailUtil().sendMail(notificationIdlist, financeMain);
+					getMailUtil().sendNotifications(notification, financeMain, "", null); //FIXME
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					throw new InterfaceException("PTILMT1", e.getMessage());
+					logger.debug(e);
 				}
 
-				if(isMailSent) {
-					String errorMsg = Labels.getLabel("MESSAGE_MAIL_NOTIFICATION");
-					throw new InterfaceException(limitUtilization.getReturnCode(), errorMsg);
-				}
 			}
 		}
 

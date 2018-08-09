@@ -274,6 +274,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -315,6 +316,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -6768,10 +6770,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-					// notification should not stop the process. why because
-					// tranaction already commited.
+
+					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+					notification.setModule("LOAN_ORG");
+
+					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
+							: moduleDefiner;
+					notification.setSubModule(finEvent);
+					notification.setKeyReference(financeMain.getFinReference());
+					notification.setStage(financeMain.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
+
 					try {
-						getMailUtil().processNotifications(aFinanceDetail, moduleDefiner);
+						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+								financeDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(e);
 					}

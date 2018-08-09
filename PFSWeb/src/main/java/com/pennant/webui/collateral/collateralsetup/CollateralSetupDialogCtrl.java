@@ -100,7 +100,6 @@ import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -111,7 +110,6 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -147,6 +145,8 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRender
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -2014,53 +2014,24 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		// save it to database
 		try {
 			if (doProcess(aCollateralSetup, tranType)) {
-
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
-				if(!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())){
+				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE); // FIXME Check with siva
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					String moduleDefiner = "";
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(aCollateralSetup.getCollateralType(), 
-							StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner, getRole(), templateTyeList);
+					notification.setModule("COLLATERAL");
+					notification.setSubModule(aCollateralSetup.getCollateralType());
+					notification.setKeyReference(aCollateralSetup.getCollateralRef());
+					notification.setStage(aCollateralSetup.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-						// Customer Email Preparation
-						if (isCustomerNotificationExists && aCollateralSetup.getCustomerDetails().getCustomerEMailList() != null && 
-								!aCollateralSetup.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = aCollateralSetup.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-
-						//getMailUtil().sendMail(notificationIdlist, aFinanceDetail, mailIDMap, null);
-						try {
-							getMailUtil().sendMail(notificationIdlist, null, mailIDMap, null);
-						} catch (Exception e) {
-							logger.error("Exception: ", e);
-						}
+					try {
+						getMailUtil().sendNotifications(notification, aCollateralSetup.getCustomerDetails(),
+								aCollateralSetup.getCollateralType(), null);
+					} catch (Exception e) {
+						logger.error(Literal.EXCEPTION, e);
 					}
 				}
 

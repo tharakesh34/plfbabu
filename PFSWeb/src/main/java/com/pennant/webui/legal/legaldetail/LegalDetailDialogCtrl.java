@@ -45,6 +45,7 @@ package com.pennant.webui.legal.legaldetail;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +58,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.util.resource.Labels;
@@ -83,7 +85,6 @@ import org.zkoss.zul.Window;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
@@ -124,6 +125,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
+import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
+import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -137,7 +143,6 @@ import freemarker.template.TemplateException;
  * /WEB-INF/pages/Legal/LegalDetail/legalDetailDialog.zul file. <br>
  */
 public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
-
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(LegalDetailDialogCtrl.class);
 
@@ -254,7 +259,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private SearchProcessor searchProcessor;
 	private EventManager eventManager;
 	private FinCovenantTypeListCtrl finCovenantTypeListCtrl;
-	private MailUtility mailUtility;
 
 	// Module Usage
 	private List<LegalApplicantDetail> applicantDetailList = null;
@@ -265,6 +269,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private List<LegalNote> legalNotesList = null;
 	private String method = null;
 	private boolean newApplicants = false;
+
+	@Autowired
+	private EmailEngine emailEngine;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -2589,8 +2597,25 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				logger.error(Literal.EXCEPTION, e);
 				throw new Exception("Problem initializing freemarker or rendering template ", e);
 			}
-			getMailUtility().sendMail(emails, subject, result, null, null);
 			
+			EmailMessage emailMessage = new EmailMessage();
+			emailMessage.setKeyReference("");
+			emailMessage.setModule(subject);
+			emailMessage.setSubModule(subject);
+			emailMessage.setStage(aLegalDetail.getRoleCode());
+			emailMessage.setSubject(subject);
+			emailMessage.setContent(result.getBytes(Charset.forName("UTF-8")));
+			emailMessage.setContentType(EmailBodyType.HTML.getKey());
+
+			for (String mailId : emails) {
+				MessageAddress address = new MessageAddress();
+				address.setEmailId(mailId);
+				address.setRecipientType(RecipientType.TO.getKey());
+				emailMessage.getAddressesList().add(address);
+			}
+
+			emailEngine.sendEmail(emailMessage);
+
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
@@ -2743,14 +2768,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	public void setSecurityUserOperationsService(SecurityUserOperationsService securityUserOperationsService) {
 		this.securityUserOperationsService = securityUserOperationsService;
-	}
-
-	public MailUtility getMailUtility() {
-		return mailUtility;
-	}
-
-	public void setMailUtility(MailUtility mailUtility) {
-		this.mailUtility = mailUtility;
 	}
 
 	public boolean isNewApplicants() {

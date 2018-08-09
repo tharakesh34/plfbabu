@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -41,9 +40,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -64,6 +61,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
@@ -929,44 +927,22 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+					FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
-							aFinanceMain.getFinType(), moduleDefiner, getRole(), templateTyeList);
+					notification.setModule("LOAN_CANCELLATION");
+					notification.setSubModule(FinanceConstants.FINSER_EVENT_CANCELFIN);
+					notification.setKeyReference(financeMain.getFinReference());
+					notification.setStage(financeMain.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-						// Customer Email Preparation
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-
-						getMailUtil().sendMail(notificationIdlist, aFinanceDetail, mailIDMap, null);
+					try {
+						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+								aFinanceDetail.getDocumentDetailsList());
+					} catch (Exception e) {
+						logger.debug(e);
 					}
 
 				}

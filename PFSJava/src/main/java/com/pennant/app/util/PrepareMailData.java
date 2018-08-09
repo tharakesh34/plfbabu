@@ -3,21 +3,32 @@ package com.pennant.app.util;
 import java.io.File;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.model.MailData;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.notifications.NotificationsService;
+import com.pennant.backend.util.NotificationConstants;
+import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
+import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
+import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
@@ -26,11 +37,13 @@ import freemarker.template.Template;
 public class PrepareMailData implements Serializable {
 	private static final long serialVersionUID = -4293213317229057447L;
 	private static final Logger logger = Logger.getLogger(PrepareMailData.class);
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private DataSource dataSource;
-	private MailUtility mailUtility;
 	private ReportUtil reportUtil;
 	private NotificationsService notificationsService;
+	@Autowired
+	private EmailEngine emailEngine;
 
 	public void processData(String mailName,Date appDate) throws SQLException {
 		logger.debug("Entering");
@@ -41,9 +54,9 @@ public class PrepareMailData implements Serializable {
 			
 			// MAIL_BODY
 			for (MailData mailData : mailDataList) {
-				MailTemplate mailTemplate = new MailTemplate();
-				mailTemplate.setLovDescMailId(new String[] { mailData.getMailTo() });
-				mailTemplate.setEmailSubject(mailData.getMailSubject());
+				MailTemplate template = new MailTemplate();
+				template.setLovDescMailId(new String[] { mailData.getMailTo() });
+				template.setEmailSubject(mailData.getMailSubject());
 
 				// Trigger
 				int triggervalue = getNotificationsService().triggerMail(mailData.getMailTrigger());
@@ -56,10 +69,10 @@ public class PrepareMailData implements Serializable {
 					}
 
 					if (datafields != null && datafields.size() > 0) {
-						mailTemplate.setLovDescFormattedContent(mergedata(datafields, mailData.getMailBody()));
+						template.setLovDescFormattedContent(mergedata(datafields, mailData.getMailBody()));
 					} else if (mailData.getMailBody() != null) {
 						String mailText = FileUtils.readFileToString(new File(PathUtil.getPath(PathUtil.MAIL_BODY) + mailData.getMailBody()));
-						mailTemplate.setLovDescFormattedContent(mailText);
+						template.setLovDescFormattedContent(mailText);
 					}
 
 					// Mail Attachment
@@ -76,9 +89,42 @@ public class PrepareMailData implements Serializable {
 							 data = FileUtils.readFileToByteArray(attachmentPath);
 						}
 						attchments.put(mailData.getMailAttachmentName(), data);
-						mailTemplate.setAttchments(attchments);
+						template.setAttchments(attchments);
 					}
-					getMailUtility().sendMail(mailTemplate);
+
+					EmailMessage emailMessage = new EmailMessage();
+					emailMessage.setKeyReference("");
+					emailMessage.setModule(mailName);
+					emailMessage.setSubModule(mailName);
+					emailMessage.setNotificationId(template.getId());
+					emailMessage.setStage("");
+					emailMessage.setSubject(template.getEmailSubject());
+					emailMessage.setContent(template.getLovDescFormattedContent().getBytes(UTF_8));
+
+					if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
+						emailMessage.setContentType(EmailBodyType.HTML.getKey());
+					} else {
+						emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
+					}
+
+					for (String mailId : template.getLovDescMailId()) {
+						MessageAddress address = new MessageAddress();
+						address.setEmailId(mailId);
+						address.setRecipientType(RecipientType.TO.getKey());
+						emailMessage.getAddressesList().add(address);
+					}
+
+					Map<String, byte[]> attachments = template.getAttchments();
+					if (MapUtils.isNotEmpty(attachments)) {
+						for (Entry<String, byte[]> document : attachments.entrySet()) {
+							MessageAttachment attachment = new MessageAttachment();
+							attachment.setAttachment(document.getValue());
+							attachment.setFileName(document.getKey());
+							emailMessage.getAttachmentList().add(attachment);
+						}
+					}
+
+					emailEngine.sendEmail(emailMessage);
 				}
 			}
 		} catch (Exception e) {
@@ -130,14 +176,6 @@ public class PrepareMailData implements Serializable {
 
 	public void setNotificationsService(NotificationsService notificationsService) {
 		this.notificationsService = notificationsService;
-	}
-
-	public MailUtility getMailUtility() {
-		return mailUtility;
-	}
-
-	public void setMailUtility(MailUtility mailUtility) {
-		this.mailUtility = mailUtility;
 	}
 
 	public DataSource getDataSource() {

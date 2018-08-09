@@ -42,20 +42,20 @@
  */
 package com.pennant.webui.loanquery.querydetail;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -122,20 +122,22 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
+import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
+import com.pennanttech.pennapps.notification.email.model.EmailMessage;
+import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * This is the controller class for the
  * /WEB-INF/pages/LoanQuery/QueryDetail/queryDetailDialog.zul file. <br>
  */
 public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
-
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(QueryDetailDialogCtrl.class);
 
@@ -216,6 +218,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private String roleCode;
 	private Sampling sampling = null;
 	private LegalDetail legalDetail = null;
+
+	@Autowired
+	private EmailEngine emailEngine;
 
 	/**
 	 * default constructor.<br>
@@ -875,11 +880,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Mail ID details preparation
 		if (this.notifyTo.getValue() != null && !this.notifyTo.getValue().isEmpty()) {
 			String str[] = this.notifyTo.getValue().split(",");
-			List<String> mailIdList = new ArrayList<String>();
-			mailIdList = Arrays.asList(str);
 			try {
 				templatePrep(queryDetail, str);
-				getMailUtil().sendMail(NotificationConstants.MAIL_MODULE_CREDIT, queryDetail, this);
+				getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT, queryDetail);
+
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
@@ -888,7 +892,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	@SuppressWarnings("unused")
-	private void templatePrep(QueryDetail queryDetail, String mailId[]) {
+	private void templatePrep(QueryDetail queryDetail, String[] mailId) {
 		List<String> emailList = null;
 		MailTemplate mailTemplate = null;
 		MailTemplateData templateData = new MailTemplateData();
@@ -897,15 +901,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		String templateID = SysParamUtil.getValueAsString(SMTParameterConstants.QRY_MGMT_TEMPLATE);
 		mailTemplate = getMailTemplateService().getApprovedMailTemplateById(Long.valueOf(templateID));
 		if (mailTemplate != null && mailTemplate.isActive()) {
-
-			if (mailId != null && StringUtils.isNotEmpty(StringUtils.join(mailId, ","))) {
-				// Template Fields Bean Preparation
-				mailTemplate.setLovDescMailId(mailId);
-				try {
-					parseMail(mailTemplate, templateData);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			mailTemplate.setLovDescMailId(mailId);
+			try {
+				mailUtil.parseMail(mailTemplate, templateData);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			if (queryDetail.getDocumentDetailsList() != null) {
@@ -919,78 +919,38 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			if (mailTemplate.isEmailTemplate()
 					&& StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) {
 				try {
-					mailUtil.sendMail(mailTemplate);
+					EmailMessage emailMessage = new EmailMessage();
+					emailMessage.setKeyReference("");
+					emailMessage.setModule("QRY_MGMT");
+					emailMessage.setSubModule("QRY_MGMT");
+					emailMessage.setStage("");
+					emailMessage.setSubject(mailTemplate.getEmailSubject());
+					emailMessage.setContent(mailTemplate.getEmailContent());
+					emailMessage.setContentType(EmailBodyType.HTML.getKey());
+
+					for (String email : mailTemplate.getLovDescMailId()) {
+						MessageAddress address = new MessageAddress();
+						address.setEmailId(email);
+						address.setRecipientType(RecipientType.TO.getKey());
+						emailMessage.getAddressesList().add(address);
+					}
+
+					Map<String, byte[]> attachments = mailTemplate.getAttchments();
+					if (MapUtils.isNotEmpty(attachments)) {
+						for (Entry<String, byte[]> document : attachments.entrySet()) {
+							MessageAttachment attachment = new MessageAttachment();
+							attachment.setAttachment(document.getValue());
+							attachment.setFileName(document.getKey());
+							emailMessage.getAttachmentList().add(attachment);
+						}
+					}
+
+					emailEngine.sendEmail(emailMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-	}
-
-	/**
-	 * Method for Parsing Mail Details and Send Notification To Users/Customer
-	 * 
-	 * @param mailTemplate
-	 * @param templateData
-	 * @throws Exception
-	 */
-	public void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
-		logger.debug("Entering");
-
-		String subject = "";
-		String result = "";
-
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("vo", templateData);
-
-		StringTemplateLoader loader = new StringTemplateLoader();
-		loader.putTemplate("mailTemplate",
-				new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
-		getFreemarkerMailConfiguration().setTemplateLoader(loader);
-		Template template = getFreemarkerMailConfiguration().getTemplate("mailTemplate");
-
-		try {
-			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-		} catch (IOException e) {
-			throw new Exception("Unable to read or process freemarker configuration or template", e);
-		} catch (TemplateException e) {
-			throw new Exception("Problem initializing freemarker or rendering template ", e);
-		}
-		StringTemplateLoader subloader = new StringTemplateLoader();
-		subloader.putTemplate("mailSubject", mailTemplate.getEmailSubject());
-		getFreemarkerMailConfiguration().setTemplateLoader(subloader);
-		Template templateSubject = getFreemarkerMailConfiguration().getTemplate("mailSubject");
-
-		try {
-			subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, model);
-		} catch (IOException e) {
-			throw new Exception("Unable to read or process freemarker configuration or template", e);
-		} catch (TemplateException e) {
-			throw new Exception("Problem initializing freemarker or rendering template ", e);
-		}
-
-		mailTemplate.setLovDescFormattedContent(result);
-		mailTemplate.setEmailSubject(subject);
-
-		if (mailTemplate.isSmsTemplate()) {
-
-			loader = new StringTemplateLoader();
-			loader.putTemplate("smsTemplate", mailTemplate.getSmsContent());
-			getFreemarkerMailConfiguration().setTemplateLoader(loader);
-			template = getFreemarkerMailConfiguration().getTemplate("smsTemplate");
-
-			try {
-				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-			} catch (IOException e) {
-				logger.debug("Exception: ", e);
-				throw new Exception("Unable to read or process freemarker configuration or template", e);
-			} catch (TemplateException e) {
-				logger.debug("Exception: ", e);
-				throw new Exception("Problem initializing freemarker or rendering template ", e);
-			}
-		}
-
-		logger.debug("Leaving");
 	}
 
 	/**

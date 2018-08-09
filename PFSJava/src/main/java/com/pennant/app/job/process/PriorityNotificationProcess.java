@@ -48,18 +48,15 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 			referenceList.addAll(pendingRefList);
 		}
 
-		List<Long> notificationIdlist = getNotificationsDAO().getTemplateIds(NotificationConstants.TEMPLATE_FOR_QP);
-
 		try {
 			for(FinanceMain finMain : referenceList) {
-
+				boolean isMailSent;
 				//send mail
-				boolean isMailSent = getMailUtil().sendMail(notificationIdlist, finMain);
+				getMailUtil().sendNotifications(NotificationConstants.TEMPLATE_FOR_QP, finMain);
 
-				if(isMailSent){
-					MailLog mailLog = prepareMailLog(finMain);
-					getMailLogDAO().saveMailLog(mailLog);
-				}
+				/*
+				 * if(isMailSent){ MailLog mailLog = prepareMailLog(finMain); getMailLogDAO().saveMailLog(mailLog); }
+				 */
 			}
 		} catch(Exception e){
 			logger.error("Exception: ", e);

@@ -80,11 +80,9 @@ import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -102,9 +100,10 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
@@ -521,48 +520,22 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+					FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+					notification.setModule("LIABILTIY");
+					notification.setSubModule(moduleDefiner);
+					notification.setKeyReference(financeMain.getFinReference());
+					notification.setStage(financeMain.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
-							aFinanceMain.getFinType(),
-							StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner,
-							getRole(), templateTyeList);
-
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-						// Customer Email Preparation
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-
-						getMailUtil().sendMail(notificationIdlist, aFinanceDetail, mailIDMap, null);
+					try {
+						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+								aFinanceDetail.getDocumentDetailsList());
+					} catch (Exception e) {
+						logger.debug(e);
 					}
-
 				}
 
 				// User Notifications Message/Alert

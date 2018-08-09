@@ -123,10 +123,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.ShowDedupListBox;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -1563,7 +1563,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				//Mail Alert Notification for User
 				if(StringUtils.isNotBlank(aFacility.getNextTaskId()) && 
 						!StringUtils.trimToEmpty(aFacility.getNextRoleCode()).equals(aFacility.getRoleCode())){
-					getMailUtil().sendMail(NotificationConstants.MAIL_MODULE_CAF, aFacility,this);
+					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_CAF, aFacility);
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 				

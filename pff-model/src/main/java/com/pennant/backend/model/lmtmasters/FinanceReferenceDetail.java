@@ -130,6 +130,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		excludeFields.add("aggType");
 		excludeFields.add("allowMultiple");
 		excludeFields.add("moduleType");
+		excludeFields.add("reSend");
 		return excludeFields;
 	}
 

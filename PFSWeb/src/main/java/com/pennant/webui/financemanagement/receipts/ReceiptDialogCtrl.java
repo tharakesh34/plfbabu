@@ -134,7 +134,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -194,9 +193,9 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -214,6 +213,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -3255,44 +3255,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				FinanceDetail financeDetail = aReceiptData.getFinanceDetail();
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+					Notification notification = new Notification();
+					//notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE); // FIXME Check with siva
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
-							aFinanceMain.getFinType(), moduleDefiner, getRole(), templateTyeList);
+					notification.setModule("RECEIPTS");
+					notification.setSubModule(moduleDefiner);
+					notification.setKeyReference(financeMain.getFinReference());
+					notification.setStage(financeMain.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
 
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
+					try {
+						getMailUtil().sendNotifications(notification, financeDetail, financeMain.getFinType(),
+								financeDetail.getDocumentDetailsList());
+					} catch (Exception e) {
+						logger.debug(Literal.EXCEPTION, e);
 
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-						// Customer Email Preparation
-						if (isCustomerNotificationExists
-								&& financeDetail.getCustomerDetails().getCustomerEMailList() != null
-								&& !financeDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = financeDetail.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-
-						getMailUtil().sendMail(notificationIdlist, financeDetail, mailIDMap, null);
 					}
 
 				}

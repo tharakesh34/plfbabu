@@ -98,7 +98,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -106,7 +105,6 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -125,7 +123,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -150,11 +147,12 @@ import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRenderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -773,50 +771,23 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}else if (doProcess(aVASRecording, tranType)) {
 
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
-				if(!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())){
+				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+					notification.setModule("VAS");
+					notification.setSubModule("VAS");
+					notification.setKeyReference(aVASRecording.getFinReference());
+					notification.setStage(aVASRecording.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
-
-					String moduleDefiner = "";
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(aVASRecording.getProductCode(), 
-							StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner, getRole(), templateTyeList);
-
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-						List<CustomerEMail> emailList = getCustomerEMailDAO().getCustomerEmailByCustomer(aVASRecording.getVasCustomer().getCustomerId(), "");
-
-						// Customer Email Preparation
-						if (isCustomerNotificationExists && emailList != null && !emailList.isEmpty()) {
-							List<String> custMailIdList = new ArrayList<String>();
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-						//getMailUtil().sendMail(notificationIdlist, aFinanceDetail, mailIDMap, null);
-						try {
-							getMailUtil().sendMail(notificationIdlist, null, mailIDMap, null);
-						} catch (Exception e) {
-							logger.error("Exception: ", e);
-						}
+					try {
+						getMailUtil().sendNotifications(notification, aVASRecording, aVASRecording.getProductCode(),
+								null);
+					} catch (Exception e) {
+						logger.debug(e);
 					}
+
 				}
 
 				// User Notifications Message/Alert

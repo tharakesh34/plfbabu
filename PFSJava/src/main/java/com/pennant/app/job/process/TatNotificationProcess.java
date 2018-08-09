@@ -104,9 +104,6 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 					if (difftime > waitTime) {
 						tatDetail.setTriggerTime(new Timestamp(System.currentTimeMillis()));
 						getTatDetailDAO().update(tatDetail);
-						List<Long> notificationIdlist = getNotificationsDAO().getTemplateIds(
-								NotificationConstants.TEMPLATE_FOR_TAT);
-
 						FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(
 						        tatDetail.getReference(), "_Temp",false);
 
@@ -131,7 +128,7 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 							}
 						} else {
 							//Mail Sending
-							getMailUtil().sendMail(notificationIdlist, financeMain);
+							getMailUtil().sendNotifications(NotificationConstants.TEMPLATE_FOR_TAT, financeMain);
 						}
 
 						//Log Writing

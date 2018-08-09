@@ -47,17 +47,15 @@ public class GraceEndNotificationProcess extends QuartzJobBean implements Statef
 
 		//get List of References
 		List<FinanceMain> referenceList = getFinanceMainDAO().getFinGraceDetails(grcEndDate, maxAllowedDays);
-		List<Long> notificationIdlist = getNotificationsDAO().getTemplateIds(NotificationConstants.TEMPLATE_FOR_GE);
 
 		try {
 			for(FinanceMain finMain : referenceList) {
 
-				boolean isMailSent = getMailUtil().sendMail(notificationIdlist, finMain);
+				getMailUtil().sendNotifications(NotificationConstants.TEMPLATE_FOR_GE, finMain);
 
-				if(isMailSent){
-					MailLog mailLog = prepareMailLog(finMain);
-					getMailLogDAO().saveMailLog(mailLog);
-				}
+				/*
+				 * if(isMailSent){ MailLog mailLog = prepareMailLog(finMain); getMailLogDAO().saveMailLog(mailLog); }
+				 */
 			}
 		} catch(Exception e){
 			logger.error("Exception: ", e);

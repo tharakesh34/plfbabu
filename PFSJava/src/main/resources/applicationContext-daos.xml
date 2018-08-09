@@ -72,32 +72,7 @@
 	<bean id="calculationUtil" class="com.pennant.app.util.CalculationUtil">
 		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
-	
-	<!-- ====================================================== -->
-	<!-- Mail Utility Configuration -->
-	<!-- ====================================================== -->
-
-	<bean id="mailUtility" class="com.pennant.app.util.MailUtility"
-		scope="prototype">
-		<property name="outgoingHost" value="${mail.outgoingserver.host}" />
-		<property name="outgoingPort" value="${mail.outgoingserver.port}" />
-		<property name="outgoingDebug" value="${mail.outgoingserver.debug}" />
-		<property name="outgoingAuth" value="${mail.outgoingserver.auth}" />
-		<property name="outgoingUserName" value="${mail.outgoingserver.userName}" />
-		<property name="outgoingPassword" value="${mail.outgoingserver.password}" />
-		<property name="outgoingEncType" value="${mail.outgoingserver.encryptiontype}" />
-
-		<property name="incomingHost" value="${mail.incomingserver.host}" />
-		<property name="incomingPort" value="${mail.incomingserver.port}" />
-		<property name="incomingUserName" value="${mail.incomingserver.userName}" />
-		<property name="incomingPassword" value="${mail.incomingserver.password}" />
-		<property name="incomingEncType" value="${mail.incomingserver.encryptiontype}" />
-
-		<property name="incomingFolder" value="${mail.incomingserver.folder}" />
-		<property name="incomingProtocol" value="${mail.incomingserver.protocol}" />
-		<property name="fromEmail" value="${mail.outgoingserver.fromMail}" />
-	</bean>
-	
+		
 	<!-- ============================================================ -->
 	<!-- Required configuration to use Email Engine -->
 	<!-- ============================================================== -->
@@ -126,8 +101,7 @@
 	 	<constructor-arg ref="outgoingMailProperties"/>
 	 </bean>
 
-	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" parent="mailUtility"
-		scope="prototype">
+	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" scope="prototype">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="notificationsService" ref="notificationsService" />
@@ -139,7 +113,6 @@
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
-
 	</bean>
 	
 	<bean id="smsUtil" class="com.pennant.app.util.SMSUtil" scope="prototype">
@@ -154,7 +127,6 @@
 	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData"
 		scope="prototype">
 		<property name="notificationsService" ref="notificationsService" />
-		<property name="mailUtility" ref="mailUtility" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="reportUtil" ref="reportUtil" />
 	</bean>

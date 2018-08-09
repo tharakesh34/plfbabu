@@ -146,7 +146,8 @@ public class RuleExecutionUtil implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object executeRule(String rule, HashMap<String, Object> fieldsandvalues, String finccy, RuleReturnType returnType) {
+	public Object executeRule(String rule, Map<String, Object> fieldsandvalues, String finccy,
+			RuleReturnType returnType) {
 		logger.debug("Entering");
 
 		Bindings bindings = new SimpleBindings();

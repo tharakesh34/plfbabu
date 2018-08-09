@@ -1204,7 +1204,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 				//Mail Alert Notification for User
 				if(StringUtils.isNotBlank(aInvestmentFinHeader.getNextTaskId()) && 
 						!StringUtils.trimToEmpty(aInvestmentFinHeader.getNextRoleCode()).equals(aInvestmentFinHeader.getRoleCode())){
-					getMailUtil().sendMail(NotificationConstants.MAIL_MODULE_TREASURY, aInvestmentFinHeader,this);
+					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_TREASURY, aInvestmentFinHeader);
 				}
 				
 				//Customer Notification for Role Identification

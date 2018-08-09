@@ -115,7 +115,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -127,7 +126,6 @@ import com.pennant.backend.model.commitment.CommitmentRate;
 import com.pennant.backend.model.commitment.CommitmentSummary;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -169,13 +167,15 @@ import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -2655,55 +2655,26 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// save it to database
 		try {
 			if (doProcess(aCommitment, tranType)) {
-
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE); // FIXME Check with siva
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					//String moduleDefiner = "";
-					List<ValueLabel> referenceIdList = new ArrayList<ValueLabel>(); //TODO
-					/*List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(aCommitment.getCmtReference(), 
-							StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner, getRole(), templateTyeList);*/
+					notification.setModule("COMMITMENT");
+					notification.setSubModule(aCommitment.getCmtTitle());
+					notification.setKeyReference(aCommitment.getCmtReference());
+					notification.setStage(aCommitment.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
-						// Customer Email Preparation
-						if (isCustomerNotificationExists && aCommitment.getCustomerDetails().getCustomerEMailList() != null && 
-								!aCommitment.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = aCommitment.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-
-						//getMailUtil().sendMail(notificationIdlist, aFinanceDetail, mailIDMap, null);
-						try {
-							getMailUtil().sendMail(notificationIdlist, null, mailIDMap, null);
-						} catch (Exception e) {
-							logger.warn("Exception: ", e);
-						}
+					try {
+						getMailUtil().sendNotifications(notification, aCommitment,
+								aCommitment.getCmtTitle(), null);
+					} catch (Exception e) {
+						logger.error(Literal.EXCEPTION, e);
 					}
+
 				}
 
 				// User Notifications Message/Alert

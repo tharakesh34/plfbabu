@@ -660,7 +660,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		if(listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
 				&& noOfRecords == proRecordCount){
 			//Mail Alert Notification for User
-			mailUtil.sendMail(NotificationConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0),this);
+			mailUtil.sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0));
 			
 			FinCreditReviewDetails creditReviewDetails = listOfFinCreditReviewDetails.get(0);
 			String msg = getSavingStatus(creditReviewDetails.getRoleCode(), creditReviewDetails.getNextRoleCode(), creditReviewDetails.getCustomerId(),
