@@ -6341,6 +6341,11 @@ SELECT t1.finreference,
 		
 </createView>
 </changeSet>
+<changeSet id="98_Pre" author="Jayant" dbms="postgresql">
+	<sql>
+		select deps_save_and_drop_dependencies('plf','financemain_view');
+	</sql>
+</changeSet>
 	<changeSet id="98" author="Mangapathi">
 		<createView replaceIfExists="true" viewName="financemain_view">
 		SELECT t1.finreference,
@@ -6872,6 +6877,11 @@ UNION ALL
            FROM financemain_temp
           WHERE financemain_temp.finreference = t1.finreference))
 </createView>
+</changeSet>
+<changeSet id="98_Post" author="Jayant" dbms="postgresql">
+	<sql>
+		select deps_restore_dependencies('plf','financemain_view');
+	</sql>
 </changeSet>
 	<changeSet id="99" author="Mangapathi">
 		<createView replaceIfExists="true" viewName="wiffinancemain_aview">
