@@ -73,6 +73,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -216,13 +217,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		if (fromDate.getValue() != null) {
-			//String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("LLDATE", this.fromDate.getValue(), Filter.OP_GREATER_OR_EQUAL);
 			searchObject.addFilters(filters);
 		}
 		if (toDate.getValue() != null) {
-			//String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("LLDATE", this.toDate.getValue(), Filter.OP_LESS_OR_EQUAL);
 			searchObject.addFilters(filters);
@@ -241,7 +240,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		// Set the page level components.
 		setPageComponents(window_DisbursementRegistrationList, borderLayout_DisbursementList,
 				listBoxDisbursementRegistration, pagingDisbursementList);
-		
 
 		// Register buttons and fields.
 		registerButton(button_Search);
@@ -405,75 +403,72 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doFillFinAdvancePayments(List<FinAdvancePayments> finAdvancePaymentsDetailList) {
+	/**
+	 * Item renderer for listItems in the listBox.
+	 */
+	private class DisbursementListModelItemRenderer implements ListitemRenderer<FinAdvancePayments>, Serializable {
+		private static final long serialVersionUID = 1L;
 
-		this.listBoxDisbursementRegistration.getItems().clear();
+		@Override
+		public void render(Listitem item, FinAdvancePayments payments, int count) throws Exception {
 
-		if (CollectionUtils.isNotEmpty(finAdvancePaymentsDetailList)) {
-			for (FinAdvancePayments payments : finAdvancePaymentsDetailList) {
+			Listcell lc;
 
-				Listitem item = new Listitem();
-				Listcell lc;
-
-				lc = new Listcell();
-				list_CheckBox = new Checkbox();
-				list_CheckBox.setAttribute("finAdvancePayments", payments);
-				list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
-				lc.appendChild(list_CheckBox);
-				if (listHeader_CheckBox_Comp.isChecked()) {
-					list_CheckBox.setChecked(true);
-				} else {
-					list_CheckBox.setChecked(disbursementMap.containsKey(payments.getPaymentId()));
-				}
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getEntityCode());
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getPaymentType());
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getFinReference());
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getFinType());
-				lc.setParent(item);
-
-				lc = new Listcell(PennantApplicationUtil.amountFormate(
-						payments.getAmtToBeReleased().multiply(new BigDecimal(100)),
-						CurrencyUtil.getFormat(payments.getDisbCCy())));
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getCustShrtName());
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getBeneficiaryName());
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getBeneficiaryAccNo());
-				lc.setParent(item);
-
-				lc = new Listcell(payments.getBranchDesc());
-				lc.setParent(item);
-
-				lc = new Listcell(PennantStaticListUtil.getlabelDesc(payments.getChannel(), channelTypesList));
-
-				lc.setParent(item);
-
-				item.setAttribute("finAdvancePayments", payments);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onDisbursementDoubleClicked");
-				this.listBoxDisbursementRegistration.appendChild(item);
+			lc = new Listcell();
+			list_CheckBox = new Checkbox();
+			list_CheckBox.setAttribute("finAdvancePayments", payments);
+			list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
+			lc.appendChild(list_CheckBox);
+			if (listHeader_CheckBox_Comp.isChecked()) {
+				list_CheckBox.setChecked(true);
+			} else {
+				list_CheckBox.setChecked(disbursementMap.containsKey(payments.getPaymentId()));
 			}
+			lc.setParent(item);
+            
+			lc = new Listcell(payments.getEntityCode());
+			lc.setParent(item);
+			
+			lc = new Listcell(payments.getPaymentType());
+			lc.setParent(item);
+
+			lc = new Listcell(payments.getFinReference());
+			lc.setParent(item);
+
+			lc = new Listcell(payments.getFinType());
+			lc.setParent(item);
+			
+			lc = new Listcell(PennantApplicationUtil.amountFormate(payments.getAmtToBeReleased().multiply(new BigDecimal(100)),
+					CurrencyUtil.getFormat(payments.getDisbCCy())));
+			lc.setParent(item);
+
+			lc = new Listcell(payments.getCustShrtName());
+			lc.setParent(item);
+
+			lc = new Listcell(payments.getBeneficiaryName());
+			lc.setParent(item);
+
+			lc = new Listcell(payments.getBeneficiaryAccNo());
+			lc.setParent(item);
+
+			lc = new Listcell(payments.getBranchDesc());
+			lc.setParent(item);
+			
+			lc = new Listcell(PennantStaticListUtil.getlabelDesc(payments.getChannel(), channelTypesList));
+			 
+			lc.setParent(item);
+
+			item.setAttribute("finAdvancePayments", payments);
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onDisbursementDoubleClicked");
 		}
 	}
-
 	
 	/**
 	 * Getting the Disbursement List using JdbcSearchObject with search criteria..
 	 */
 	private Map<Long, FinAdvancePayments> getDisbursementDetails() {
 		
-		List<FinAdvancePayments> list = getDisbursementList();
+		List<FinAdvancePayments> list = renderDisbursements();
 
 		Map<Long, FinAdvancePayments> disbMap = new HashMap<Long, FinAdvancePayments>();
 		
@@ -489,7 +484,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	// Fetching the list from The database and filtered in any pending otc's If there any record is from Disbursement we are not adding in to resultant list.
-	private List<FinAdvancePayments> getDisbursementList() {
+	private List<FinAdvancePayments> renderDisbursements() {
 
 		JdbcSearchObject<FinAdvancePayments> searchObject = new JdbcSearchObject<FinAdvancePayments>(FinAdvancePayments.class);
 
@@ -561,6 +556,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 		}
 
+		this.listbox.setItemRenderer(new DisbursementListModelItemRenderer());
+		getPagedListWrapper().setPagedListService(pagedListService);
+		getPagedListWrapper().initList(resultantList, this.listBoxDisbursementRegistration, this.paging);
+		
 		setFinAdvancePaymentsList(resultantList);
 		return resultantList;
 	}
@@ -576,7 +575,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		doSetValidations();
 		
-		doFillFinAdvancepayments();
+		renderDisbursements();
 
 		if (listBoxDisbursementRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
@@ -585,12 +584,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
-
-	private void doFillFinAdvancepayments() {
-		List<FinAdvancePayments> finAdvancePaymentsDetailList = getDisbursementList();
-		doFillFinAdvancePayments(finAdvancePaymentsDetailList);
-	}
-
+ 
 	private void doSetValidations() {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -758,7 +752,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}  finally {
 			this.disbursementMap.clear();
 			this.listHeader_CheckBox_Comp.setChecked(false);
-			doFillFinAdvancepayments();
+			renderDisbursements();
 			btnDownload.setDisabled(false);
 			button_Search.setDisabled(false);
 			logger.debug("Leaving");

@@ -83,6 +83,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private boolean newRecord;
 	private String lovValue;
 	private CollateralAssignment befImage;
+	private  String hostReference;
 
 	//### 16-05-2018 Start Development Item 82
 	private BigDecimal			specialLTV = BigDecimal.ZERO;
@@ -246,6 +247,14 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 
 	public void setBankLTV(BigDecimal bankLTV) {
 		this.bankLTV = bankLTV;
+	}
+
+	public String getHostReference() {
+		return hostReference;
+	}
+
+	public void setHostReference(String hostReference) {
+		this.hostReference = hostReference;
 	}
 	
 	//### 16-05-2018 End Development Item 82

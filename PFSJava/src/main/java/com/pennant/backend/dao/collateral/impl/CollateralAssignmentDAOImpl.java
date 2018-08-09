@@ -154,10 +154,10 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		StringBuilder query = new StringBuilder("Insert Into CollateralAssignment");
 		query.append(StringUtils.trimToEmpty(type));
-		query.append(" (Reference, Module, CollateralRef, AssignPerc ,Active, ");
+		query.append(" (Reference, Module, CollateralRef, AssignPerc ,Active,HostReference, ");
 		query.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		query.append(" Values(:Reference, :Module, :CollateralRef, :AssignPerc,:Active,");
+		query.append(" Values(:Reference, :Module, :CollateralRef, :AssignPerc,:Active,:HostReference,");
 		query.append(
 				" :Version ,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -188,7 +188,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		StringBuilder updateSql = new StringBuilder("Update CollateralAssignment");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(
-				" Set AssignPerc = :AssignPerc, Active= :Active, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+				" Set AssignPerc = :AssignPerc, Active= :Active, HostReference= :HostReference, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -212,7 +212,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	/**
 	 * Method for Fetching List of Assigned Collateral to the Reference based on
 	 * Module
-	 */
+	 */ 
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
@@ -223,7 +223,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		collateralAssignment.setModule(moduleName);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select Module , Reference , CollateralRef , AssignPerc , Active, ");
+				"Select Module , Reference , CollateralRef , AssignPerc , Active, HostReference,");
 		if (type.contains("View")) {
 			// ### 16-05-2018 Development Item 82
 			selectSql.append(
@@ -294,7 +294,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.debug("Entering");
 
 		CollateralAssignment collAssignment = null;
-		StringBuilder selectSql = new StringBuilder(" Select Reference, Module, CollateralRef, AssignPerc, Active, ");
+		StringBuilder selectSql = new StringBuilder(" Select Reference, Module, CollateralRef, AssignPerc, Active, HostReference, ");
 		if (type.contains("View")) {
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");

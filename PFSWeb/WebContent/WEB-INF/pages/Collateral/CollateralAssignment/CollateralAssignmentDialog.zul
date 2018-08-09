@@ -126,6 +126,16 @@
 									value="${c:l('label_CollateralAssignmentDetailDialog_AvailableAssignValue.value')}" />
 								<currencyBox id="availableAssignValue" />
 							</row>
+							<row>
+								<label
+									id="label_CollateralAssignmentDetailDialog_hostReference"
+									value="${c:l('label_CollateralAssignmentDetailDialog_hostReference.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="" />
+									<textbox id="hostReference"
+										width="140px" maxlength="50" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
@@ -34,6 +35,7 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -70,6 +72,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	private List<CollateralAssignment>		collateralAssignments;
 	private CollateralSetupService 			collateralSetupService;
 	private FinanceTypeService 				financeTypeService;
+	private Textbox                         hostReference;
 	
 	private List<String> assignCollateralRef;
 
@@ -308,6 +311,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		
 		this.bankValuation.setDisabled(true);
  		this.assignValuePerc.setDisabled(isReadOnly("CollateralAssignmentDetailDialog_AssignValuePerc"));
+ 		this.hostReference.setReadonly(isReadOnly("CollateralAssignmentDetailDialog_HostReference"));
 		this.availableAssignPerc.setDisabled(true);
 		this.assignedValue.setDisabled(true);
 		this.availableAssignValue.setDisabled(true);
@@ -351,6 +355,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		this.bankValuation.setDisabled(true);
 		this.assignValuePerc.setDisabled(true);
 		this.availableAssignPerc.setDisabled(true);
+		this.hostReference.setReadonly(true);
 		this.assignedValue.setDisabled(true);
 		this.availableAssignValue.setDisabled(true);
 
@@ -445,6 +450,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		this.availableAssignPerc.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.availableAssignPerc.setScale(2);
 		
+		this.hostReference.setMaxlength(50);
 		this.assignedValue.setProperties(false, formatter);
 		this.availableAssignValue.setProperties(false, formatter);
 		
@@ -490,6 +496,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			availAssignPerc = availAssignValue.multiply(new BigDecimal(100)).divide(collateralAssignment.getBankValuation(), 2, RoundingMode.HALF_DOWN);
 		}
 		this.availableAssignPerc.setValue(availAssignPerc);
+		this.hostReference.setValue(collateralAssignment.getHostReference());
 
 		logger.debug("Leaving");
 	}
@@ -528,6 +535,13 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			collateralAssignment.setHostReference(this.hostReference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			collateralAssignment.setBankValuation(PennantApplicationUtil.unFormateAmount(this.bankValuation.getActualValue(), formatter));
 		} catch (WrongValueException we) {
@@ -590,6 +604,9 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		if(!this.assignValuePerc.isDisabled()){
 			this.assignValuePerc.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralAssignmentDetailDialog_AssignValuePerc.value"), 2, true, false, 100));
 		}
+		if(!this.hostReference.isReadonly()){
+			this.hostReference.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralAssignmentDetailDialog_hostReference.value"),PennantRegularExpressions.REGEX_ALPHANUM,false ));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -601,6 +618,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 
 		this.collateralRef.setConstraint("");
 		this.assignValuePerc.setConstraint("");
+		this.hostReference.setConstraint("");
 
 		logger.debug("Leaving");
 	}
