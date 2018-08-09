@@ -265,4 +265,10 @@
 			<column name="AdvEMITerms" type="Number(3,0)" defaultValue="0"/>		
 		</addColumn>
 	</changeSet>
+		
+	<changeSet id="23" author="Akhilesh.k">
+	    <addColumn tableName="adtcollateralassignment">	
+			<column name="HostReference" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
