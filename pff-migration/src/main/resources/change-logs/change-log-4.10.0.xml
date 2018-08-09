@@ -56,7 +56,19 @@
 			Inner JOIN 	customers T5 ON T4.custid = T5.custid
 			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
 		</createView>
-	</changeSet>
+	</changeSet>DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport');
+				DELETE FROM REPORTCONFIGURATION where menuitemcode='menu_Item_DisbursmentHostReferenceReport';
+				
+				Insert into REPORTCONFIGURATION 
+				values ((SELECT MAX(REPORTID)+1 FROM REPORTCONFIGURATION),'Excel:Collaterals Host Reference','Collaterals Host Reference',1,'CollateralsHostRefrence','dataSource',1,'menu_Item_DisbursmentHostReferenceReport',2,1005,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,0,1);
+				
+				
+				Insert into REPORTFILTERFIELDS
+				values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport'),1,'FinType','LOVSEARCH','Loan Type','FINTYPE',null,'FinanceType','getFinType','getFinType',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+				
+				Insert into REPORTFILTERFIELDS
+				values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport'),2,'Host Reference','STATICLIST','Host Reference','hostrefcase','getYesNo',null,null,null,0,0,0,0,2,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+	
 	
 	<changeSet id="2" author="Kesav">
 		<comment>View altered</comment>
@@ -99,7 +111,19 @@
 						 union all
 						 Select ReceiptId, FavourNumber, ReceivedDate, FundingAc from finreceiptdetail T
 						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptdetail_Temp  WHERE ReceiptId = T.ReceiptId)) T3 On T3.ReceiptId = T1.ReceiptId
-			Inner Join 	financemain T4 ON T2.reference = T4.finreference
+			Inner Join 	financemain T4 ON T2.reference = T4.finreferenceDELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport');
+				DELETE FROM REPORTCONFIGURATION where menuitemcode='menu_Item_DisbursmentHostReferenceReport';
+				
+				Insert into REPORTCONFIGURATION 
+				values ((SELECT MAX(REPORTID)+1 FROM REPORTCONFIGURATION),'Excel:Collaterals Host Reference','Collaterals Host Reference',1,'CollateralsHostRefrence','dataSource',1,'menu_Item_DisbursmentHostReferenceReport',2,1005,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,0,1);
+				
+				
+				Insert into REPORTFILTERFIELDS
+				values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport'),1,'FinType','LOVSEARCH','Loan Type','FINTYPE',null,'FinanceType','getFinType','getFinType',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+				
+				Insert into REPORTFILTERFIELDS
+				values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport'),2,'Host Reference','STATICLIST','Host Reference','hostrefcase','getYesNo',null,null,null,0,0,0,0,2,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+			
 			Inner JOIN 	customers T5 ON T4.custid = T5.custid
 			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
 			
@@ -191,5 +215,22 @@
 							UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);
 						</sql>
 					</changeSet>
+					
+		<changeSet id="06" author="Akhilesh.k">
+			 <sql>
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport');
+				DELETE FROM REPORTCONFIGURATION where menuitemcode='menu_Item_DisbursmentHostReferenceReport';
+				
+				Insert into REPORTCONFIGURATION 
+				values ((SELECT MAX(REPORTID)+1 FROM REPORTCONFIGURATION),'Excel:Collaterals Host Reference','Collaterals Host Reference',1,'CollateralsHostRefrence','dataSource',1,'menu_Item_DisbursmentHostReferenceReport',2,1005,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,0,1);
+				
+				
+				Insert into REPORTFILTERFIELDS
+				values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport'),1,'FinType','LOVSEARCH','Loan Type','FINTYPE',null,'FinanceType','getFinType','getFinType',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+				
+				Insert into REPORTFILTERFIELDS
+				values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport'),2,'Host Reference','STATICLIST','Host Reference','hostrefcase','getYesNo',null,null,null,0,0,0,0,2,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+			 </sql>
+		</changeSet>
 		
 	</databaseChangeLog>
