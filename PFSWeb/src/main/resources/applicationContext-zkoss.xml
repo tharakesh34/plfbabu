@@ -2883,6 +2883,7 @@
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="partnerBankService" ref="partnerBankService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

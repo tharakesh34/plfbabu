@@ -69,6 +69,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.finance.DepositDetailsService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
@@ -448,7 +449,12 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			if (saveRecord) {
 				depositChequesDAO.save(depositCheques, type);
 				if (approveRec) {
-					finReceiptHeaderDAO.updateDepositProcessByReceiptID(depositCheques.getReceiptId(), false, "_Temp");
+					String tableType = "";
+					if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(depositCheques.getReceiptpurpose())
+							|| FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(depositCheques.getReceiptpurpose())) {
+						tableType = "_Temp";
+					}
+					finReceiptHeaderDAO.updateDepositProcessByReceiptID(depositCheques.getReceiptId(), false, tableType);
 				}
 			}
 			if (updateRecord) {

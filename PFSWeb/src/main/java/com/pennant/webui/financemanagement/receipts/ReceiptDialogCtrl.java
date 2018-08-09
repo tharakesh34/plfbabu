@@ -158,6 +158,7 @@ import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.reports.ReceiptReport;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
@@ -176,6 +177,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
+import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -399,6 +401,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient AccrualService 						accrualService;
 	private transient ManualAdviseService 					manualAdviseService;
 	private transient FeeTypeService						feeTypeService;
+	private transient PartnerBankService					partnerBankService;
 
 	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl			= null;
 	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl			= null;
@@ -3056,6 +3059,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
 							Object object = this.fundingAccount.getAttribute("fundingAccID");
 							receiptDetail.setFundingAc(Long.valueOf(object.toString()));
+							
+							PartnerBank partnerBank = getPartnerBankService().getApprovedPartnerBankById(receiptDetail.getFundingAc());
+							if (partnerBank != null) {
+								receiptDetail.setPartnerBankAc(partnerBank.getAccountNo());
+								receiptDetail.setPartnerBankAcType(partnerBank.getAcType());
+							}
 						}
 					}
 				}
@@ -6349,6 +6358,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						
+						if (afinanceMain.isNew()) {
+							((FinReceiptData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail().setDirectFinalApprove(true);
+						}
+						
 						auditHeader = getReceiptService().doApprove(auditHeader);
 
 						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -7619,6 +7633,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setTaxPercMap(Map<String, BigDecimal> taxPercMap) {
 		this.taxPercMap = taxPercMap;
+	}
+
+	public PartnerBankService getPartnerBankService() {
+		return partnerBankService;
+	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
 	}
 	
 }

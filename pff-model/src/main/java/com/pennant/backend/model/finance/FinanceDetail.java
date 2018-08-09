@@ -208,6 +208,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private String userAction;
 	private BigDecimal score = BigDecimal.ZERO;
 	private Date valueDate;
+	private boolean directFinalApprove = false;	//Direct Approval
 	
 	//Additional Fields
 	//**********************************************************************
@@ -1113,6 +1114,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setDataMap(Map<String, String> dataMap) {
 		this.dataMap = dataMap;
+	}
+
+	public boolean isDirectFinalApprove() {
+		return directFinalApprove;
+	}
+
+	public void setDirectFinalApprove(boolean directFinalApprove) {
+		this.directFinalApprove = directFinalApprove;
 	}
 	
 }

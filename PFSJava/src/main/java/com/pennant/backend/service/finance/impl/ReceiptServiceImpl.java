@@ -1206,7 +1206,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
 		
-		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
+		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())  && 
+				!rceiptData.getFinanceDetail().isDirectFinalApprove()) {
 			// Save Document Details
 			if (rceiptData.getFinanceDetail().getDocumentDetailsList() != null
 					&& rceiptData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
