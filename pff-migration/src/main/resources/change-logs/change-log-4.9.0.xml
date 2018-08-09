@@ -22,7 +22,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-
+ 
 	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
@@ -948,13 +948,13 @@
 		</sql>
 	</changeSet>	
 	
-	<!-- <changeSet id="11.1" author="Vinay">
+	<changeSet id="11.1" author="Vinay">
 		<sql>
 			update financemain set eligibilitymethod=(select fieldcodeid from rmtlovfielddetail t2 where financemain.eligibilitymethod = t2.fieldcodevalue);
 			update financemain_temp set eligibilitymethod=(select fieldcodeid from rmtlovfielddetail t2 where financemain_temp.eligibilitymethod = t2.fieldcodevalue);
 		</sql>
 	</changeSet>
-	 -->
+	
 	<changeSet id="12.1" author="Vinay">
 		<sql>
 			update financemain set eligibilitymethod=0 where eligibilitymethod is null;
@@ -5721,22 +5721,212 @@ UNION ALL
 		<column name="DeviationDesc" type="varchar(500)" />
 	</addColumn>
 </changeSet>	
-<changeSet id="93" author="Umarohini">
-		<createView replaceIfExists="true" viewName="BMTAggrementDef_View">
-		SELECT T1.AggId, T1.AggCode, T1.AggName, T1.AggDesc, T1.AggReportName, T1.AggReportPath, T1.AggIsActive, T1.Aggtype, 
-		T1.AggImage, T1.AgrRule, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
-		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.RuleCodeDesc LovDescAgrRuleDesc,
-			T1.AllowMultiple,T1.ModuleType,T1.ModuleName,T1.Doctype,T1.AutoGeneration,T1.AutoDownload
-		FROM BMTAggrementDef_Temp T1 LEFT OUTER JOIN Rules T2 ON T1.AgrRule = T2.RuleCode AND T2.RuleModule ='AGRRULE'
-		UNION ALL
-		SELECT T1.AggId, T1.AggCode, T1.AggName, T1.AggDesc, T1.AggReportName, T1.AggReportPath, T1.AggIsActive, T1.Aggtype, 
-		T1.AggImage, T1.AgrRule, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
-		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.RuleCodeDesc LovDescAgrRuleDesc,
-		T1.AllowMultiple,T1.ModuleType,T1.ModuleName,T1.Doctype,T1.AutoGeneration,T1.AutoDownload
-			FROM BMTAggrementDef T1 LEFT OUTER JOIN Rules T2 ON T1.AgrRule = T2.RuleCode AND T2.RuleModule ='AGRRULE'
-		WHERE (NOT EXISTS(SELECT 1 Expr1 FROM BMTAggrementDef_Temp WHERE (AggId = T1.AggId) AND (AggCode = T1.AggCode)))		
-		</createView>   
-		</changeSet>
+<changeSet id="93" author="Akhilesh.k">
+	<addColumn tableName="collateralassignment">
+		<column name="HostReference" type="varchar(50)" />
+	</addColumn>
+</changeSet>
+
+	<changeSet id="94" author="Akhilesh.k">
+		<addColumn tableName="collateralassignment_temp">
+			<column name="HostReference" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+<changeSet id="95" author="Akhilesh.k">
+
+	<createView viewName="CollateralAssignment_View" replaceIfExists="true">
+	
+			 SELECT ca.module,
+			    ca.reference,
+			    ca.collateralref,
+			    ca.assignperc,
+			    cs.collateralccy,
+			    ca.active,
+			    ca.hostreference,
+			    cs.collateralvalue,
+			    cs.bankvaluation,
+			    t.totassignperc - ca.assignperc AS totassignperc,
+			    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+			    ca.version,
+			    ca.lastmntby,
+			    ca.lastmnton,
+			    ca.recordstatus,
+			    ca.rolecode,
+			    ca.nextrolecode,
+			    ca.taskid,
+			    ca.nexttaskid,
+			    ca.recordtype,
+			    ca.workflowid,
+			    cs.specialltv,
+			    cs.bankltv
+			   FROM collateralassignment_temp ca
+			     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+			     LEFT JOIN ( SELECT t1.collateralref,
+			            sum(t1.assignperc) AS totassignperc
+			           FROM ( SELECT collateralassignment_temp.reference,
+			                    collateralassignment_temp.collateralref,
+			                    collateralassignment_temp.assignperc
+			                   FROM collateralassignment_temp
+			                UNION
+			                 SELECT ca_1.reference,
+			                    ca_1.collateralref,
+			                    ca_1.assignperc
+			                   FROM collateralassignment ca_1
+			                  WHERE NOT (EXISTS ( SELECT 1
+			                           FROM collateralassignment_temp
+			                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+			          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+			     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
+			     LEFT JOIN commitments_temp cm ON cm.cmtreference = ca.reference
+			UNION ALL
+			 SELECT ca.module,
+			    ca.reference,
+			    ca.collateralref,
+			    ca.assignperc,
+			    cs.collateralccy,
+			    ca.active,
+			    ca.hostreference,
+			    cs.collateralvalue,
+			    cs.bankvaluation,
+			    t.totassignperc - ca.assignperc AS totassignperc,
+			    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+			    ca.version,
+			    ca.lastmntby,
+			    ca.lastmnton,
+			    ca.recordstatus,
+			    ca.rolecode,
+			    ca.nextrolecode,
+			    ca.taskid,
+			    ca.nexttaskid,
+			    ca.recordtype,
+			    ca.workflowid,
+			    cs.specialltv,
+			    cs.bankltv
+			   FROM collateralassignment ca
+			     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+			     LEFT JOIN ( SELECT t1.collateralref,
+			            sum(t1.assignperc) AS totassignperc
+			           FROM ( SELECT collateralassignment_temp.reference,
+			                    collateralassignment_temp.collateralref,
+			                    collateralassignment_temp.assignperc
+			                   FROM collateralassignment_temp
+			                UNION
+			                 SELECT ca_1.reference,
+			                    ca_1.collateralref,
+			                    ca_1.assignperc
+			                   FROM collateralassignment ca_1
+			                  WHERE NOT (EXISTS ( SELECT 1
+			                           FROM collateralassignment_temp
+			                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+			          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+			     LEFT JOIN financemain fm ON ca.reference = fm.finreference
+			     LEFT JOIN commitments cm ON cm.cmtreference = ca.reference
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM collateralassignment_temp
+			          WHERE collateralassignment_temp.collateralref = ca.collateralref AND collateralassignment_temp.module = ca.module AND collateralassignment_temp.reference = ca.reference));
+	</createView>
+</changeSet>
+
+	<changeSet id="96" author="Akhilesh.k">
+		<createView viewName="collateralassignment_tview" replaceIfExists="true">
+				
+				 SELECT ca.module,
+				    ca.reference,
+				    ca.collateralref,
+				    ca.assignperc,
+				    cs.collateralccy,
+				    ca.active,
+				    ca.hostreference,
+				    cs.collateralvalue,
+				    cs.bankvaluation,
+				    t.totassignperc - ca.assignperc AS totassignperc,
+				    fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount AS utilizedamount,
+				    ca.version,
+				    ca.lastmntby,
+				    ca.lastmnton,
+				    ca.recordstatus,
+				    ca.rolecode,
+				    ca.nextrolecode,
+				    ca.taskid,
+				    ca.nexttaskid,
+				    ca.recordtype,
+				    ca.workflowid,
+				    cs.specialltv,
+				    cs.bankltv
+				   FROM collateralassignment_temp ca
+				     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+				     LEFT JOIN ( SELECT t1.collateralref,
+				            sum(t1.assignperc) AS totassignperc
+				           FROM ( SELECT collateralassignment_temp.reference,
+				                    collateralassignment_temp.collateralref,
+				                    collateralassignment_temp.assignperc
+				                   FROM collateralassignment_temp
+				                UNION
+				                 SELECT ca_1.reference,
+				                    ca_1.collateralref,
+				                    ca_1.assignperc
+				                   FROM collateralassignment ca_1
+				                  WHERE NOT (EXISTS ( SELECT 1
+				                           FROM collateralassignment_temp
+				                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+				          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+				     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference;
+
+      </createView>
+	</changeSet>
+
+	<changeSet id="97" author="Akhilesh.k">
+		<createView viewName="collateralassignment_aview" replaceIfExists="true">
+			 SELECT ca.module,
+			    ca.reference,
+			    ca.collateralref,
+			    ca.assignperc,
+			    cs.collateralccy,
+			    ca.active,
+			    ca.hostreference,
+			    cs.collateralvalue,
+			    cs.bankvaluation,
+			    t.totassignperc - ca.assignperc AS totassignperc,
+			    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+			    ca.version,
+			    ca.lastmntby,
+			    ca.lastmnton,
+			    ca.recordstatus,
+			    ca.rolecode,
+			    ca.nextrolecode,
+			    ca.taskid,
+			    ca.nexttaskid,
+			    ca.recordtype,
+			    ca.workflowid,
+			    cs.specialltv,
+			    cs.bankltv
+			   FROM collateralassignment ca
+			     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+			     LEFT JOIN ( SELECT t1.collateralref,
+			            sum(t1.assignperc) AS totassignperc
+			           FROM ( SELECT collateralassignment_temp.reference,
+			                    collateralassignment_temp.collateralref,
+			                    collateralassignment_temp.assignperc
+			                   FROM collateralassignment_temp
+			                UNION
+			                 SELECT ca_1.reference,
+			                    ca_1.collateralref,
+			                    ca_1.assignperc
+			                   FROM collateralassignment ca_1
+			                  WHERE NOT (EXISTS ( SELECT 1
+			                           FROM collateralassignment_temp
+			                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+			          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+			     LEFT JOIN financemain fm ON ca.reference = fm.finreference
+			     LEFT JOIN commitments cm ON cm.cmtreference = ca.reference;
+	</createView>
+</changeSet>
+
+
+
+
+
 <changeSet id="94" author="Mangapathi">
 	<addColumn tableName="FinanceMain_temp">
 		<column name="AdvanceEMI" type="decimal(18,0)" defaultValue="0"/>
@@ -6401,6 +6591,7 @@ SELECT t1.finreference,
     t1.firstrepay,
     t1.lastrepay,
     t1.finstartdate,
+			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.finamount,
     t1.finamount + t1.feechargeamt - t1.downpayment AS lovdescfinancingamount,
     t1.finrepaymentamount,
@@ -6468,6 +6659,7 @@ SELECT t1.finreference,
     t1.effectiverateofreturn,
     t1.migratedfinance,
     t1.schedulemaintained,
+			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.scheduleregenerated,
     t1.finpurpose,
     t39.loanpurposedesc AS lovdescfinpurposename,
@@ -6690,6 +6882,7 @@ UNION ALL
     t1.recordstatus,
     t1.rolecode,
     t1.nextrolecode,
+			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.taskid,
     t1.nexttaskid,
     t1.recordtype,
@@ -6785,6 +6978,7 @@ UNION ALL
     t1.nextrolloverdate,
     t27.custstsdescription,
     t1.shariastatus,
+			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.initiatedate,
     t1.finpreapprovedref,
     t1.mmaid,
@@ -7429,11 +7623,5 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="103" author="Vinay">
-		<sql>
-			delete from REPORTLIST where code='CONN';
-			Insert into REPORTLIST values ('CONN','VehicleDealer','listheader_DealerName.label,listheader_Email.label,listheader_DealerTelephone.label,listheader_DealerProvince.label,listheader_DealerCity.label,listheader_Active.label','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,boolean',null,'ReportList05','Connector Details','Business Partners',1,1000,null,'Approved',null,null,null,null,null,0,'0');
-		</sql>
-	</changeSet>
 </databaseChangeLog>
 	
