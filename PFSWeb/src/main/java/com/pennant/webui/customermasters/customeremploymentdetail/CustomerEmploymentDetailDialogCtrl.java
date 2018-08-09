@@ -473,6 +473,16 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			otherEmployerId=0;
 		}
 		
+		if(otherEmployerId!=0 && !enqiryModule && otherEmployerId==aCustomerEmploymentDetail.getCustEmpName()){
+			if(!isReadOnly("CustomerEmploymentDetailDialog_companyName")){
+				this.companyName.setReadonly(false);
+			}else{
+				this.companyName.setReadonly(true);
+			}
+		}else{
+			this.companyName.setReadonly(true);
+		}
+		
 		logger.debug("Leaving");
 	}
 
