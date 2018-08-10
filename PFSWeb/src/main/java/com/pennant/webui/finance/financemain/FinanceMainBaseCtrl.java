@@ -186,6 +186,7 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
@@ -249,7 +250,9 @@ import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.commitment.CommitmentService;
+import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
@@ -959,6 +962,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient AgreementDefinitionService agreementDefinitionService;
 	private Map <String,List> autoDownloadMap = null;
 	private Map<String, String> extValuesMap = new HashMap<String, String>();
+	private CustomerBankInfoService customerBankInfoService;
+	private CustomerExtLiabilityService customerExtLiabilityService;
+	
+	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -15652,9 +15660,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Map<String,String> dataMap = new HashMap<>();
 		if(toYear > 0){
 			//set Default values for extension finance fields
-			setExtValuesMap();
+			setExtValuesMap(custIds, custId);
 			dataMap = creditReviewSummaryData.setDataMap(custId, custIds, toYear, noOfYears, customer.getCustCtgCode(), true, true, extValuesMap, 
-					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode));
+					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(detail.getCustomerDetails().getCustomer().getCustCtgCode()));
 		}
 		detail.setDataMap(dataMap);
 		
@@ -15684,42 +15692,50 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Map<String,String> dataMap = new HashMap<>();
 		if(toYear > 0){
 			//set Default values for extension finance fields
-			setExtValuesMap();
+			setExtValuesMap(custIds,custId);
 			dataMap = creditReviewSummaryData.setDataMap(custId, custIds, toYear, noOfYears, detail.getCustomerDetails().getCustomer().getCustCtgCode(), true, true, extValuesMap, 
-					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode));
+					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(detail.getCustomerDetails().getCustomer().getCustCtgCode()));
 		}
 		detail.setDataMap(dataMap);
 	}
 	
-	private Map<String, String> setExtValuesMap() {
-		extValuesMap.put("EXT_CREDITTRANNO", "0");
-		extValuesMap.put("EXT_CREDITTRANAMT", "0");
-		extValuesMap.put("EXT_CREDITTRANAVG", "0");
-		extValuesMap.put("EXT_DEBITTRANNO", "0");
-		extValuesMap.put("EXT_DEBITTRANAMT", "0");
-		extValuesMap.put("EXT_CASHDEPOSITNO", "0");
-		extValuesMap.put("EXT_CASHDEPOSITAMT", "0");
-		extValuesMap.put("EXT_CASHWITHDRAWALNO", "0");
-		extValuesMap.put("EXT_CASHWITHDRAWALAMT", "0");
-		extValuesMap.put("EXT_CHQDEPOSITNO", "0");
-		extValuesMap.put("EXT_CHQDEPOSITAMT", "0");
-		extValuesMap.put("EXT_CHQISSUEN", "0");
-		extValuesMap.put("EXT_CHQISSUEAMT", "0");
-		extValuesMap.put("EXT_INWARDCHQBOUNCENO", "0");
-		extValuesMap.put("EXT_OUTWARDCHQBOUNCENO", "0");
-		extValuesMap.put("EXT_EODBALAVG", "0");
-		extValuesMap.put("EXT_EODBALMAX", "0");
-		extValuesMap.put("EXT_EODBALMIN", "0");
-		extValuesMap.put("EXT_SUMOFEMI", "0");
-		extValuesMap.put("EXT_NUMBEROFTERMS", "0");
-		extValuesMap.put("EXT_CHQISSUENO", "0");
-		extValuesMap.put("EXT_OBLIGATION", "0");
-		extValuesMap.put("EXT_REPAYPROFITRATE", "0");
-		extValuesMap.put("EXT_ROUNDINGTARGET", "0");
-		extValuesMap.put("EXT_FINASSETVALUE", "0");
-		extValuesMap.put("EXT_FINAMOUNT", "0");
-		extValuesMap.put("EXT_FIRSTREPAY", "0");
+	private Map<String, String> setExtValuesMap(Set<Long> custIds, long custId) {
+		custIds.add(custId);
+		CustomerBankInfo customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
+		BigDecimal sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
+		custIds.remove(custId);
+		extValuesMap.put("EXT_CREDITTRANNO",String.valueOf(customerBankInfo.getCreditTranNo()));
+		extValuesMap.put("EXT_CREDITTRANAMT",customerBankInfo.getCreditTranAmt().toString());
+		extValuesMap.put("EXT_CREDITTRANAVG",customerBankInfo.getCreditTranAvg().toString());
+		extValuesMap.put("EXT_DEBITTRANNO",String.valueOf(customerBankInfo.getDebitTranNo()));
+		extValuesMap.put("EXT_DEBITTRANAMT",customerBankInfo.getDebitTranAmt().toString());
+		extValuesMap.put("EXT_CASHDEPOSITNO",String.valueOf(customerBankInfo.getCashDepositNo()));
+		extValuesMap.put("EXT_CASHDEPOSITAMT",customerBankInfo.getCashDepositAmt().toString());
+		extValuesMap.put("EXT_CASHWITHDRAWALNO",String.valueOf(customerBankInfo.getCashWithdrawalNo()));
+		extValuesMap.put("EXT_CASHWITHDRAWALAMT",customerBankInfo.getCashWithdrawalAmt().toString());
+		extValuesMap.put("EXT_CHQDEPOSITNO",String.valueOf(customerBankInfo.getChqDepositNo()));
+		extValuesMap.put("EXT_CHQDEPOSITAMT",customerBankInfo.getChqDepositAmt().toString());
+		extValuesMap.put("EXT_CHQISSUENO",String.valueOf(customerBankInfo.getChqIssueNo()));
+		extValuesMap.put("EXT_CHQISSUEAMT",customerBankInfo.getChqIssueAmt().toString());
+		extValuesMap.put("EXT_INWARDCHQBOUNCENO",String.valueOf(customerBankInfo.getInwardChqBounceNo()));
+		extValuesMap.put("EXT_OUTWARDCHQBOUNCENO",String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
+		extValuesMap.put("EXT_EODBALAVG",customerBankInfo.getEodBalAvg().toString());
+		extValuesMap.put("EXT_EODBALMAX",customerBankInfo.getEodBalMax().toString());
+		extValuesMap.put("EXT_EODBALMIN",customerBankInfo.getEodBalMin().toString());
+		
+		extValuesMap.put("EXT_OBLIGATION",unFormat(sumOfEMI == null ? BigDecimal.ZERO : sumOfEMI));
+		
+		extValuesMap.put("EXT_NUMBEROFTERMS",String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceMain().getNumberOfTerms()));
+		extValuesMap.put("EXT_REPAYPROFITRATE",getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate().toString());
+		extValuesMap.put("EXT_ROUNDINGTARGET",String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceMain().getRoundingTarget()));
+		extValuesMap.put("EXT_FINASSETVALUE",unFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue() == null ? BigDecimal.ZERO : getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue()));
+		extValuesMap.put("EXT_FINAMOUNT",unFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount() == null ? BigDecimal.ZERO : getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount()));
+		extValuesMap.put("EXT_FIRSTREPAY",unFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFirstRepay() == null ? BigDecimal.ZERO : getFinanceDetail().getFinScheduleData().getFinanceMain().getFirstRepay()));
 		return extValuesMap;
+	}
+	
+	private String unFormat(BigDecimal amount){
+		return PennantAppUtil.formateAmount(amount, finFormatter).toString();
 	}
 	
 	private Object getRuleValue(Object value, String fieldType, String currency) {
@@ -18356,6 +18372,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
+	}
+
+	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
+		this.customerBankInfoService = customerBankInfoService;
+	}
+
+	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
+		this.customerExtLiabilityService = customerExtLiabilityService;
 	}
 
 }

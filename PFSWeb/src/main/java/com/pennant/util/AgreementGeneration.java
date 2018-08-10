@@ -119,6 +119,7 @@ import com.pennant.backend.model.finance.AgreementDetail.BankingDetail;
 import com.pennant.backend.model.finance.AgreementDetail.CoApplicant;
 import com.pennant.backend.model.finance.AgreementDetail.ContactDetail;
 import com.pennant.backend.model.finance.AgreementDetail.Covenant;
+import com.pennant.backend.model.finance.AgreementDetail.CreditReviewEligibilitySummary;
 import com.pennant.backend.model.finance.AgreementDetail.CustomerFinance;
 import com.pennant.backend.model.finance.AgreementDetail.Disbursement;
 import com.pennant.backend.model.finance.AgreementDetail.Document;
@@ -156,6 +157,8 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.finance.psl.PSLDetail;
+import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
+import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
@@ -174,6 +177,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
+import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -241,6 +245,8 @@ public class AgreementGeneration implements Serializable {
 	private PSLDetailService pSLDetailService;
 	@Autowired
 	private FinSamplingService finSamplingService;
+	@Autowired
+	private CreditApplicationReviewService creditApplicationReviewService;
 	
 	private  List<DocumentType> documentTypeList;
 	
@@ -1035,11 +1041,82 @@ public class AgreementGeneration implements Serializable {
 
 
 			// -----------------Customer Credit Review Details
+			
+			if(CollectionUtils.isEmpty(agreement.getCrdRevElgSummaries())){
+				agreement.setCrdRevElgSummaries(new ArrayList<>());
+			}
+			
 			if (aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW)) {
 				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
 					agreement.setEligibilityMethod(StringUtils
 							.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getLovDescEligibilityMethod()));
 				}
+				if (null != detail.getCustomerDetails()) {
+					String maxAuditYear = creditApplicationReviewService
+							.getMaxAuditYearByCustomerId(detail.getCustomerDetails().getCustID(), "_VIEW");
+					int toYear = 0;
+					if (StringUtils.isNotBlank(maxAuditYear)) {
+						toYear = Integer.parseInt(maxAuditYear);
+					}
+					List<FinCreditRevCategory> creditRevCategories = creditApplicationReviewService
+							.getCreditRevCategoryByCreditRevCode(
+									detail.getCustomerDetails().getCustomer().getCustCtgCode());
+					long categoryId = 0;
+					if (CollectionUtils.isNotEmpty(creditRevCategories)) {
+						for (FinCreditRevCategory finCreditRevCategory : creditRevCategories) {
+							if ("Eligibility Summary".contains(finCreditRevCategory.getCategoryDesc())) {
+								categoryId = finCreditRevCategory.getCategoryId();
+								break;
+							}
+						}
+					}
+
+					List<FinCreditRevSubCategory> creditRevSubCategories = creditApplicationReviewService
+							.getFinCreditRevSubCategoryByCategoryId(categoryId);
+					if (CollectionUtils.isNotEmpty(creditRevSubCategories)) {
+						for (FinCreditRevSubCategory finCreditRevSubCategory : creditRevSubCategories) {
+							CreditReviewEligibilitySummary reviewEligibilitySummary = agreement.new CreditReviewEligibilitySummary();
+							reviewEligibilitySummary.setSubCategoryCode(finCreditRevSubCategory.getSubCategoryCode());
+							reviewEligibilitySummary.setSubCategoryDesc(finCreditRevSubCategory.getSubCategoryDesc());
+							reviewEligibilitySummary.setY0Amount("0.00");
+							reviewEligibilitySummary.setY1Amount("0.00");
+							reviewEligibilitySummary.setY2Amount("0.00");
+							agreement.getCrdRevElgSummaries().add(reviewEligibilitySummary);
+						}
+					}
+					if (toYear > 0 && MapUtils.isNotEmpty(detail.getDataMap())
+							&& CollectionUtils.isNotEmpty(agreement.getCrdRevElgSummaries())) {
+						Map<String, String> dataMap = detail.getDataMap();
+						for (FinCreditRevSubCategory finCreditRevSubCategory : creditRevSubCategories) {
+							for (String subCategory : dataMap.keySet()) {
+								if (null != finCreditRevSubCategory
+										&& subCategory.contains(finCreditRevSubCategory.getSubCategoryCode())) {
+									for (CreditReviewEligibilitySummary reviewEligibilitySummary : agreement
+											.getCrdRevElgSummaries()) {
+										if (finCreditRevSubCategory.getSubCategoryCode()
+												.equals(reviewEligibilitySummary.getSubCategoryCode())) {
+											if (subCategory.startsWith("Y0")) {
+												reviewEligibilitySummary
+														.setY0Amount(formateAmount(dataMap.get(subCategory), 2));
+											} else if (subCategory.startsWith("Y1")) {
+												reviewEligibilitySummary
+														.setY1Amount(formateAmount(dataMap.get(subCategory), 2));
+											} else if (subCategory.startsWith("Y2")) {
+												reviewEligibilitySummary
+														.setY2Amount(formateAmount(dataMap.get(subCategory), 2));
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getCrdRevElgSummaries())){
+				agreement.getCrdRevElgSummaries().add(agreement.new CreditReviewEligibilitySummary());
 			}
 
 			// -----------------Scoring Detail
@@ -1359,6 +1436,15 @@ public class AgreementGeneration implements Serializable {
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+	
+	public static String formateAmount(String amount, int dec) {
+		BigDecimal returnAmount = BigDecimal.ZERO;
+		if (amount != null) {
+			BigDecimal tempAmount = new BigDecimal(amount);
+			returnAmount = tempAmount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
+		}
+		return PennantAppUtil.formatAmount(returnAmount, dec, false);
 	}
 	
 	private AgreementDetail getDirectorDetails(AgreementDetail agreement, FinanceDetail detail, int formatter){

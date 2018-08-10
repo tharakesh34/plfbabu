@@ -1842,6 +1842,8 @@
 		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
 		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
+		<property name="customerBankInfoService" ref="customerBankInfoService" />
+		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

@@ -7547,4 +7547,63 @@ private String custAccount ="";
 	public void setSmplDetails(List<SamplingDetail> smplDetails) {
 		this.smplDetails = smplDetails;
 	}
+	
+	private List<CreditReviewEligibilitySummary> crdRevElgSummaries;
+	
+	public List<CreditReviewEligibilitySummary> getCrdRevElgSummaries() {
+		return crdRevElgSummaries;
+	}
+
+	public void setCrdRevElgSummaries(List<CreditReviewEligibilitySummary> crdRevElgSummaries) {
+		this.crdRevElgSummaries = crdRevElgSummaries;
+	}
+
+	public class CreditReviewEligibilitySummary {
+		private String subCategoryCode="";
+		private String subCategoryDesc="";
+		private String y0Amount="";
+		private String y1Amount="";
+		private String y2Amount="";
+
+		public String getSubCategoryCode() {
+			return subCategoryCode;
+		}
+
+		public void setSubCategoryCode(String subCategoryCode) {
+			this.subCategoryCode = subCategoryCode;
+		}
+
+		public String getSubCategoryDesc() {
+			return subCategoryDesc;
+		}
+
+		public void setSubCategoryDesc(String subCategoryDesc) {
+			this.subCategoryDesc = subCategoryDesc;
+		}
+
+		public String getY0Amount() {
+			return y0Amount;
+		}
+
+		public void setY0Amount(String y0Amount) {
+			this.y0Amount = y0Amount;
+		}
+
+		public String getY1Amount() {
+			return y1Amount;
+		}
+
+		public void setY1Amount(String y1Amount) {
+			this.y1Amount = y1Amount;
+		}
+
+		public String getY2Amount() {
+			return y2Amount;
+		}
+
+		public void setY2Amount(String y2Amount) {
+			this.y2Amount = y2Amount;
+		}
+
+	}
 }
