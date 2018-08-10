@@ -59,6 +59,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -162,6 +163,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.MailUtil;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -7430,6 +7432,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			autoDownloadMap = new HashMap();
 			AgreementDefinition agreementDefinition = null;
 			List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
+			String templateValidateMsg = "";
+			String accMsg="";
+			boolean isTemplateError = false;
 			for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
 				long id = financeReferenceDetail.getFinRefId();
 				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
@@ -7451,11 +7456,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (isAgrRender) {
 					if (agreementDefinition.isAutoGeneration()) {
 						try {
+							templateValidateMsg = validateTemplate(financeReferenceDetail); //If valid template 
+							if("Y".equals(templateValidateMsg)){
+							if(!isTemplateError){	
 							documentDetails = autoGenerateAgreement(financeReferenceDetail, aFinanceDetail,
 									agreementDefinition);
+							}
+							}else{								
+								accMsg = accMsg + "  " + templateValidateMsg;
+								isTemplateError = true;
+								continue;
+							}
 							agenDocList.add(documentDetails);
 							if (agreementDefinition.isAutoDownload()) {
-								autoDownloadLst.add(documentDetails);
+							autoDownloadLst.add(documentDetails);
 							}
 						} catch (Exception e) {
 							MessageUtil.showError(e.getMessage());
@@ -7464,8 +7478,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			agenDocList.addAll(aFinanceDetail.getDocumentDetailsList());
+			if(!isTemplateError){
 			aFinanceDetail.setDocumentDetailsList(agenDocList);
 			autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
+			}
+			if(isTemplateError){
+				MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
+				return false;
+			}
 		}
 		
 		if (isWorkFlowEnabled()) {
@@ -18177,6 +18197,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 	
+	//
+	private String validateTemplate(FinanceReferenceDetail frefdata ) throws Exception 
+	{		
+		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
+		String templateName = "";
+		String msg = "Y";
+		logger.debug("Template Path:" + templatePath);
+		if (StringUtils.trimToEmpty(frefdata.getLovDescAggReportName()).contains("/")) {
+			String aggRptName = StringUtils.trimToEmpty(frefdata.getLovDescAggReportName());
+			templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
+		} else {
+			templateName = frefdata.getLovDescAggReportName();
+			
+		}
+		File templateDirectory = new File(templatePath,templateName); 
+		if (!templateDirectory.exists()) {
+			msg = templateName;			
+		}
+		return msg;
+	}
+	
+			//
+	
 	// tasks #503 Auto Generation of Agreements
 	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata ,FinanceDetail financeDetail,AgreementDefinition agreementDefinition) throws Exception 
 	{
@@ -18218,7 +18261,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (financeDetail.getDocumentDetailsList().size() > 0)
 				exstDetails = getExistDocDetails(financeDetail.getDocumentDetailsList(), reportName);
 				if (exstDetails != null) {
-					exstDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					//exstDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())){
 						exstDetails.setDocImage(engine.getDocumentInByteArray(
 								templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
@@ -18237,7 +18280,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					details.setDocModule(agreementDefinition.getModuleName());
 				}
 				details.setReferenceId(finReference);
-				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())){
 					details.setDocImage(engine.getDocumentInByteArray(
 							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
@@ -18265,6 +18307,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						|| e.getMessage().equals("Template site does not exist.")
 						|| e.getMessage().equals("Template does not exist."))) {
 					AppException exception = new AppException("Template does not exists.Please configure Template.");
+					details = null;
 					MessageUtil.showError(exception);
 				} else {
 					MessageUtil.showError(e);
