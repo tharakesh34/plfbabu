@@ -852,6 +852,7 @@ public class FinanceDataDefaulting {
 		if (finMain.isAlwBPI()) {
 			if (StringUtils.isBlank(finMain.getBpiTreatment())) {
 				finMain.setBpiTreatment(financeType.getBpiTreatment());
+				finMain.setBpiRateBasis(financeType.getBpiRateBasis());
 			}
 		} else {
 			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
