@@ -57,7 +57,7 @@
 									<textbox id="cif" width="155px" maxlength="19" />
 								    <label id="label_IncomeExpenseList_AcademicYear" value="${c:l('label_IncomeExpenseList_AcademicYear.value')}" />
 									<listbox id="sortOperator_FinancialYear" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id ="financialYear" width="155px" maxlength="20" />
+									<intbox id ="financialYear" width="155px" maxlength="20" />
 								</row>
 								<row>
 								    <label id="label_IncomeExpense_Name" value="${c:l('label_IncomeExpenseList_Name.value')}" />

@@ -20,7 +20,8 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 	private long id;
 	private Long headerId;
 	private String incomeExpense;
-	private String type;
+	private String incomeExpenseCode;
+	private String incomeExpenseType;
 	private String category;
 	private int units;
 	private BigDecimal unitPrice = BigDecimal.ZERO;
@@ -34,8 +35,10 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 	private String custCif;
 	private String custShrtName;
 	private int financialYear;
-	private int incomeType;
 	private boolean coreIncome;
+	private String loockupValue;
+	private String loockupDesc;
+	private String expenseDesc;
 	
 	private String name;
 	
@@ -63,9 +66,11 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 		excludeFields.add("custId");
 		excludeFields.add("custCif");
 		excludeFields.add("custShrtName");
-		excludeFields.add("incomeType");
 		excludeFields.add("financialYear");
 		excludeFields.add("coreIncome");
+		excludeFields.add("loockupValue");
+		excludeFields.add("loockupDesc");
+		excludeFields.add("expenseDesc");
 		excludeFields.add("schoolIncomeExpense");
 		excludeFields.add("coreIncomeList");
 		excludeFields.add("nonCoreIncomeList");
@@ -117,20 +122,12 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 		this.custShrtName = custShrtName;
 	}
 
-	public String getType() {
-		return type;
+	public String getIncomeExpenseType() {
+		return incomeExpenseType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public int getIncomeType() {
-		return incomeType;
-	}
-
-	public void setIncomeType(int incomeType) {
-		this.incomeType = incomeType;
+	public void setIncomeExpenseType(String incomeExpenseType) {
+		this.incomeExpenseType = incomeExpenseType;
 	}
 
 	public int getFinancialYear() {
@@ -197,6 +194,30 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 		this.loockUpId = loockUpId;
 	}
 
+	public String getLoockupValue() {
+		return loockupValue;
+	}
+
+	public void setLoockupValue(String loockupValue) {
+		this.loockupValue = loockupValue;
+	}
+
+	public String getLoockupDesc() {
+		return loockupDesc;
+	}
+
+	public void setLoockupDesc(String loockupDesc) {
+		this.loockupDesc = loockupDesc;
+	}
+
+	public String getExpenseDesc() {
+		return expenseDesc;
+	}
+
+	public void setExpenseDesc(String expenseDesc) {
+		this.expenseDesc = expenseDesc;
+	}
+
 	public Long getHeaderId() {
 		return headerId;
 	}
@@ -227,6 +248,14 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 
 	public void setIncomeExpense(String incomeExpense) {
 		this.incomeExpense = incomeExpense;
+	}
+	
+	public String getIncomeExpenseCode() {
+		return incomeExpenseCode;
+	}
+
+	public void setIncomeExpenseCode(String incomeExpenseCode) {
+		this.incomeExpenseCode = incomeExpenseCode;
 	}
 
 	public String getName() {

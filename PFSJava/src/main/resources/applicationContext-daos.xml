@@ -11266,7 +11266,7 @@
 			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="organizationServiceTarget" />
+			<ref bean="incomeExpenseDetailServiceTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>

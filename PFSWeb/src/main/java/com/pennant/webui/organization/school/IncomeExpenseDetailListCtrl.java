@@ -9,6 +9,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -51,7 +52,7 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 	
 	protected Textbox cif;
 	protected Textbox name;
-	protected Textbox financialYear;
+	protected Intbox financialYear;
 	
 	private String module = "";
 	
@@ -124,6 +125,10 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
+		search();
+	}
+	
+	public void onClick$button_IncomeExpenseList_IncomeExpenseSearch(Event event) {
 		search();
 	}
 	

@@ -32,11 +32,11 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into org_income_expenses");
 		sql.append(type);
-		sql.append(" (id, headerid, incomeexpense, type, category, units, unitprice, frequency, consider, createdby, createdon,");
+		sql.append(" (id, headerid, incomeexpense, incomeexpensecode, incomeexpensetype, category, units, unitprice, frequency, loockupid, consider, createdby, createdon,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
-		sql.append(" values(:id, :headerId, :incomeExpense, :type, :category, :units, :unitPrice,");
-		sql.append(" :frequency, :consider, :createdBy, :createdOn,");
+		sql.append(" values(:id, :headerId, :incomeExpense, :incomeExpenseCode, :incomeExpenseType, :category, :units, :unitPrice,");
+		sql.append(" :frequency, :loockUpId, :consider, :createdBy, :createdOn,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode, :taskId, :nextTaskId, :recordType, :workflowId)");
 		logger.trace(Literal.SQL + sql.toString());
@@ -55,8 +55,8 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		StringBuilder query = new StringBuilder();
 		query.append(" update org_income_expenses");
 		query.append(StringUtils.trimToEmpty(tableType));
-		query.append(" set units = :units, unitprice = :unitPrice,");
-		query.append(" frequency =:frequency,");
+		query.append(" set incomeexpensecode = :incomeExpenseCode, category = :category, units = :units, unitprice = :unitPrice,");
+		query.append(" frequency = :frequency, consider = :consider,");
 		query.append(" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
 		query.append(" nextrolecode = :nextRoleCode, taskid = :taskId, nexttaskid = :nextTaskId, recordtype = :recordType, workflowid = :WorkflowId");
 		query.append(" where id = :id ");
@@ -101,9 +101,10 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select * from org_income_expenses_view");
+		sql.append("select * from org_income_expenses");
+		sql.append(type);
 		sql.append(" where headerid = :id and ");
-		sql.append(" type = :type ");
+		sql.append(" incomeexpensetype = :type ");
 
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
@@ -131,12 +132,12 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from org_income_expenses_view");
-		sql.append(" where orgid = :orgid and ");
-		sql.append(" type = :type ");
+		sql.append(" where headerid = :id and ");
+		sql.append(" incomeexpensetype = :type ");
 
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("orgid", id);
+		paramSource.addValue("id", id);
 		paramSource.addValue("type", incomeType);
 
 		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);
@@ -160,12 +161,12 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from org_income_expenses_view");
-		sql.append(" where orgid = :orgid and ");
-		sql.append(" type = :type ");
+		sql.append(" where headerid = :id and ");
+		sql.append(" incomeexpensetype = :type ");
 
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("orgid", id);
+		paramSource.addValue("id", id);
 		paramSource.addValue("type", incomeType);
 
 		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);

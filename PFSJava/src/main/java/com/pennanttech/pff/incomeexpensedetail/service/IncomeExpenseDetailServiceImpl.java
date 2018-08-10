@@ -60,10 +60,24 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		} else {
 			incomeExpenseHeaderDAO.update(incomeExpenseHeader, tableType);
 		}
-
-		// Customer Income Details
+		
+		// School Core_Income Details
 		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getCoreIncomeList())) {
 			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
+			details = processingCoreIncomeDetails(details, incomeExpenseHeader, tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+		
+		// School NonCore_Income Details
+		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getNonCoreIncomeList())) {
+			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
+			details = processingCoreIncomeDetails(details, incomeExpenseHeader, tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+		
+		// School Expense Details
+		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
+			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
 			details = processingCoreIncomeDetails(details, incomeExpenseHeader, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
@@ -167,9 +181,9 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.info(Literal.ENTERING);
 		IncomeExpenseHeader incomeExpenseHeader = incomeExpenseHeaderDAO.getIncomeExpenseHeader(id, type);
 		if(incomeExpenseHeader!=null){
-			incomeExpenseHeader.setCoreIncomeList(incomeExpenseDetailDAO.getCoreIncomeList(id, "Income", type));
-			incomeExpenseHeader.setNonCoreIncomeList(incomeExpenseDetailDAO.getNonCoreIncomeList(id, "NonCore", type));
-			incomeExpenseHeader.setExpenseList(incomeExpenseDetailDAO.getCoreIncomeList(id, "Expense", type));
+			incomeExpenseHeader.setCoreIncomeList(incomeExpenseDetailDAO.getCoreIncomeList(id, "CORE_INCOME", type));
+			incomeExpenseHeader.setNonCoreIncomeList(incomeExpenseDetailDAO.getNonCoreIncomeList(id, "NONCORE_INCOME", type));
+			incomeExpenseHeader.setExpenseList(incomeExpenseDetailDAO.getExpenseList(id, "EXPENSE", type));
 		}
 		logger.info(Literal.LEAVING);
 		return incomeExpenseHeader;
@@ -185,8 +199,6 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		getAuditDetails(auditHeader, method);
-		IncomeExpenseHeader incomeExpenseHeader = (IncomeExpenseHeader) auditDetail.getModelData();
-		String usrLanguage = incomeExpenseHeader.getUserDetails().getLanguage();
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
@@ -215,11 +227,29 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		}
 		
 		// Core Income Details
+		int sequence =0;
 		if (incomeExpenseHeader.getCoreIncomeList() != null && incomeExpenseHeader.getCoreIncomeList().size() > 0) {
-			auditDetailMap.put("CoreIncome", setCoreIncomeAuditData(incomeExpenseHeader, auditTranType, method));
+			auditDetailMap.put("CoreIncome", setCoreIncomeAuditData(incomeExpenseHeader,
+					incomeExpenseHeader.getCoreIncomeList(), sequence, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("CoreIncome"));
 		}
-
+		// NonCore Income Details
+		sequence = incomeExpenseHeader.getCoreIncomeList().size();
+		if (incomeExpenseHeader.getNonCoreIncomeList() != null && incomeExpenseHeader.getNonCoreIncomeList().size() > 0) {
+			auditDetailMap.put("NonCoreIncome", setCoreIncomeAuditData(incomeExpenseHeader,
+					incomeExpenseHeader.getNonCoreIncomeList(), sequence, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("NonCoreIncome"));
+		}
+		
+		// Expense Details
+		sequence = incomeExpenseHeader.getCoreIncomeList().size()+incomeExpenseHeader.getNonCoreIncomeList().size();
+		if (incomeExpenseHeader.getExpenseList() != null
+				&& incomeExpenseHeader.getExpenseList().size() > 0) {
+			auditDetailMap.put("Expense", setCoreIncomeAuditData(incomeExpenseHeader,
+					incomeExpenseHeader.getExpenseList(), sequence, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("Expense"));
+		}
+		
 		incomeExpenseHeader.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(incomeExpenseHeader);
 		auditHeader.setAuditDetails(auditDetails);
@@ -228,16 +258,16 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		return auditHeader;
 	}
 
-	private List<AuditDetail> setCoreIncomeAuditData(IncomeExpenseHeader incomeExpenseHeader, String auditTranType,
-			String method) {
+	private List<AuditDetail> setCoreIncomeAuditData(IncomeExpenseHeader incomeExpenseHeader,
+			List<IncomeExpenseDetail> incomeExpenseDetails, int sequence, String auditTranType, String method) {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		IncomeExpenseDetail incomeExpenseDetail = new IncomeExpenseDetail();
 
 		String[] fields = PennantJavaUtil.getFieldDetails(incomeExpenseDetail, incomeExpenseDetail.getExcludeFields());
 
-		for (int i = 0; i < incomeExpenseHeader.getCoreIncomeList().size(); i++) {
-			IncomeExpenseDetail coreIncome = incomeExpenseHeader.getCoreIncomeList().get(i);
+		for (int i = 0; i < incomeExpenseDetails.size(); i++) {
+			IncomeExpenseDetail coreIncome = incomeExpenseDetails.get(i);
 			coreIncome.setWorkflowId(incomeExpenseHeader.getWorkflowId());
 
 			if (StringUtils.isEmpty(coreIncome.getRecordType())) {
@@ -278,7 +308,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 			coreIncome.setLastMntOn(incomeExpenseHeader.getLastMntOn());
 
 			if (StringUtils.isNotEmpty(coreIncome.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+				auditDetails.add(new AuditDetail(auditTranType, ++sequence, fields[0], fields[1],
 						coreIncome.getBefImage(), coreIncome));
 			}
 		}
@@ -355,9 +385,23 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 			}
 
 		}
-		// Customer Income Details
+		// Core Income Details
 		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getCoreIncomeList())) {
 			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
+			details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
+			auditDetails.addAll(details);
+		}
+		
+		// Non Core Income Details
+		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getNonCoreIncomeList())) {
+			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
+			details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
+			auditDetails.addAll(details);
+		}
+		
+		//Expense Details
+		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
+			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
 			details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
 			auditDetails.addAll(details);
 		}
@@ -371,11 +415,6 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				incomeExpenseHeader.getBefImage(), incomeExpenseHeader));
-
-		int auditSeq = 1;
-		for (AuditDetail auditDetail : auditDetailList) {
-			auditDetail.setAuditSeq(auditSeq++);
-		}
 
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -431,14 +470,43 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 
 		List<AuditDetail> auditList = new ArrayList<>();
 
-		// Customer Income Details.
+		// Delete School Core_Income Details.
 		List<AuditDetail> coreIncomeDetails = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
+		int sequence=0;
 		if (coreIncomeDetails != null && !coreIncomeDetails.isEmpty()) {
 			IncomeExpenseDetail coreIncome = new IncomeExpenseDetail();
 			String[] fields = PennantJavaUtil.getFieldDetails(coreIncome, coreIncome.getExcludeFields());
 			for (int i = 0; i < coreIncomeDetails.size(); i++) {
 				coreIncome = (IncomeExpenseDetail) coreIncomeDetails.get(i).getModelData();
-				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], coreIncome.getBefImage(),
+				auditList.add(new AuditDetail(auditTranType, ++sequence, fields[0], fields[1], coreIncome.getBefImage(),
+						coreIncome));
+				incomeExpenseDetailDAO.delete(coreIncome.getId(), tableType);
+			}
+		}
+		
+		// Delete School NonCore_Income Details.
+		List<AuditDetail> nonCoreIncomeDetails = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
+		sequence = incomeExpenseHeader.getCoreIncomeList().size();
+		if (nonCoreIncomeDetails != null && !nonCoreIncomeDetails.isEmpty()) {
+			IncomeExpenseDetail coreIncome = new IncomeExpenseDetail();
+			String[] fields = PennantJavaUtil.getFieldDetails(coreIncome, coreIncome.getExcludeFields());
+			for (int i = 0; i < nonCoreIncomeDetails.size(); i++) {
+				coreIncome = (IncomeExpenseDetail) nonCoreIncomeDetails.get(i).getModelData();
+				auditList.add(new AuditDetail(auditTranType, ++sequence, fields[0], fields[1], coreIncome.getBefImage(),
+						coreIncome));
+				incomeExpenseDetailDAO.delete(coreIncome.getId(), tableType);
+			}
+		}
+		
+		// Delete School Expense Details.
+		List<AuditDetail> expenseDetailsList = incomeExpenseHeader.getAuditDetailMap().get("Expense");
+		sequence = incomeExpenseHeader.getCoreIncomeList().size()+incomeExpenseHeader.getNonCoreIncomeList().size();
+		if (expenseDetailsList != null && !expenseDetailsList.isEmpty()) {
+			IncomeExpenseDetail coreIncome = new IncomeExpenseDetail();
+			String[] fields = PennantJavaUtil.getFieldDetails(coreIncome, coreIncome.getExcludeFields());
+			for (int i = 0; i < expenseDetailsList.size(); i++) {
+				coreIncome = (IncomeExpenseDetail) expenseDetailsList.get(i).getModelData();
+				auditList.add(new AuditDetail(auditTranType, ++sequence, fields[0], fields[1], coreIncome.getBefImage(),
 						coreIncome));
 				incomeExpenseDetailDAO.delete(coreIncome.getId(), tableType);
 			}
