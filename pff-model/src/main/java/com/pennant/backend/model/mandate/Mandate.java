@@ -158,7 +158,6 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 
 	// API validation purpose only
-	@SuppressWarnings("unused")
 	private Mandate				validateMandate		= this;
 	@XmlElement
 	private WSReturnStatus		returnStatus;

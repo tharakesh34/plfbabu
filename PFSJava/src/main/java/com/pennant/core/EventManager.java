@@ -23,6 +23,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.messages.MessagesService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class EventManager implements ServletContextListener {
@@ -30,6 +31,7 @@ public class EventManager implements ServletContextListener {
 	private static ServletContext			servletContext;
 	private SecurityUserOperationsService	securityUserOperationsService;
 	private MessagesService					messagesService;
+	private static final String DEFAULT_FROM = "SYSTEM";
 
 	public enum Notify {
 		USER, ROLE
@@ -54,15 +56,14 @@ public class EventManager implements ServletContextListener {
 	 *            <li>Notify.USER: Login user names of the users
 	 *            <li>Notify.ROLE: Codes of the roles
 	 *            </ul>
-	 * @throws Exception
 	 */
-	public void publish(String message, String from, Notify notify, String[] to) throws Exception {
+	public void publish(String message, String from, Notify notify, String[] to) {
 		if (to.length == 0) {
-			throw new Exception("There must be at least one user or role in the distribution list.");
+			throw new AppException("There must be at least one user or role in the distribution list.");
 		}
 
 		if (StringUtils.isEmpty(from)) {
-			from = "SYSTEM";
+			from = DEFAULT_FROM;
 		}
 
 		// Prepare the message text
@@ -140,28 +141,39 @@ public class EventManager implements ServletContextListener {
 	}
 
 	/**
-	 * Publishes the message on behalf of the System
+	 * Publishes the message on behalf of the System.
 	 * 
 	 * @param message
-	 *            The message that need to be published and will be formatted to include sender information
+	 *            The message that need to be published and will be formatted to include sender information.
 	 * @param notify
-	 *            Type of recipients
+	 *            Type of recipients.
 	 * @param to
-	 *            List of recipients in the distribution list
+	 *            List of recipients in the distribution list.
 	 *            <ul>
 	 *            <li>Notify.USER: Login user names of the users
 	 *            <li>Notify.ROLE: Codes of the roles
 	 *            </ul>
-	 * @throws Exception
 	 */
-	public void publish(String message, Notify notify, String[] to) throws Exception {
-		publish(message, "SYSTEM", notify, to);
+	public void publish(String message, Notify notify, String[] to) {
+		publish(message, DEFAULT_FROM, notify, to);
 	}
 
-	public void publish(String message, String[] toRoles, String division, String branch) throws Exception {
+	/**
+	 * Publishes the message on behalf of the System.
+	 * 
+	 * @param message
+	 *            The message that need to be published and will be formatted to include sender information.
+	 * @param toRoles
+	 *            List of role codes of the recipients.
+	 * @param division
+	 *            Division of the recipients.
+	 * @param branch
+	 *            Branch of the recipients.
+	 */
+	public void publish(String message, String[] toRoles, String division, String branch) {
 		List<String> userLogins = securityUserOperationsService.getUsersByRoles(toRoles, division, branch);
 
-		publish(message, "SYSTEM", Notify.USER, userLogins.toArray(new String[0]));
+		publish(message, DEFAULT_FROM, Notify.USER, userLogins.toArray(new String[userLogins.size()]));
 	}
 
 	/**
