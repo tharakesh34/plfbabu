@@ -5441,4 +5441,11 @@
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 	</bean>
 	
+	<!-- Interest Certificate  -->
+	<bean id="interestCertificateGenerationDialogCtrl"
+	     class="com.pennant.webui.reports.InterestCertificateGenerationDialogCtrl"
+	     parent="basisCtrl" scope="prototype">
+	   <property name="interestCertificateService" ref="interestCertificateService" />
+   </bean>
+
 </beans>

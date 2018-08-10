@@ -83,6 +83,7 @@ public class PathUtil {
 	public static final String	MAIL_ATTACHMENT_AGGREMENT	= "/Downloads/Mail/MailAttachments/Aggrements/";
 	public static final String	MAIL_ATTACHMENT_REPORT		= "/Downloads/Mail/Attachments/Reports/";
 	public static final String	MAIL_BODY					= "/Downloads/Mail/body/";
+	public static final String	FINANCE_INTERESTCERTIFICATE	= "/Agreements/InterestCertificate";
 
 	/**
 	 * Method for Set Environment Variable to Root Path Location

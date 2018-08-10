@@ -68,6 +68,7 @@ public class SMTParameterConstants {
 	public static final String	NUMBEROF_PDC_CHEQUES	= "NUMBEROF_PDC_CHEQUES";
 	public static final String	QRY_MGMT_TEMPLATE	= "QRY_MGMT_TEMPLATE";
 	public static final String  DISB_ALLOW_WITH_OTC_UNDER_COVENANT_FULLFILL="COVENANT DETAILS REQUIRED";
+	public static final String  BAJAJFINANCE_STARTDATE ="1/1/2017";
 	
 	/**
 	 * NO_ADJ 		  = No Adjustment, leave the Profit Fraction
