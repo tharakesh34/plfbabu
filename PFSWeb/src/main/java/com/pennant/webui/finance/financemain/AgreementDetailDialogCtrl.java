@@ -394,7 +394,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			//Calling Credit Review Details
 			if (null != convFinanceMainDialogCtrl && null != detail) {
 				try {
-					convFinanceMainDialogCtrl.setCreditRevDetails(financeDetail);
+					convFinanceMainDialogCtrl.setCreditRevDetails(detail);
 				} catch (Exception e) {
 					if (e.getCause().getClass().equals(WrongValuesException.class)) {
 						throw e;
