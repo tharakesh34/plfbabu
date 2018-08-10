@@ -645,6 +645,14 @@ public class AccrualService extends ServiceHelper {
 
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, finEODEvent.getFinanceScheduleDetails(), eventCode, custEODEvent.getEodValueDate(),
 				custEODEvent.getEodValueDate());
+		
+		// Y - Accrual Effective Date will be Value Date, N - Accrual Effective Date will be APP Date
+		String acc_eff_valDate = SysParamUtil.getValueAsString(SMTParameterConstants.ACC_EFF_VALDATE);
+		
+		if(StringUtils.equals(acc_eff_valDate, "N")){
+			aeEvent.setValueDate(DateUtility.getPostDate());
+		}
+		
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());

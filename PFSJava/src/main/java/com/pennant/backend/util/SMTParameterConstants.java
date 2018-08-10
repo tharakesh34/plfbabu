@@ -47,6 +47,7 @@ public class SMTParameterConstants {
 	public static final String	IGNORING_BUCKET		= "IGNORING_BUCKET";
 	public static final String	EOD_CHUNK_SIZE		= "EOD_CHUNK_SIZE";
 	public static final String	ACCRUAL_CAL_ON		= "ACCRUAL_CAL_ON";//0-eod, 1-sod
+	public static final String	ACC_EFF_VALDATE		= "ACC_EFF_VALDATE";// Y - Accrual Effective Date will be Value Date, N - Accrual Effective Date will be APP Date
 	public static final String	ROUND_LASTSCHD		= "ROUND_LASTSCHD";
 	public static final String	KYC_PRIORITY		= "DEFAULT_KYC_PRIORITY";
 	public static final String	ID_PANCARD			= "PAN_DOC_TYPE";
