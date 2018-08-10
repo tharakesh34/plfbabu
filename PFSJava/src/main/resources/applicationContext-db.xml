@@ -28,7 +28,6 @@
 		<property name="locations">
 		<list>
 			<value>file:${PFF_HOME}/config/pff.properties</value>
-			<value>file:${PFF_HOME}/config/mail.properties</value>
 		</list>
 	</property>
 	 </bean>
