@@ -8023,7 +8023,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						"");
 			}
 			this.row_BpiTreatment.setVisible(true);
-			this.row_BpiRateBasis.setVisible(true);
+			this.row_BpiRateBasis.setVisible(false);
 		} else {
 			this.alwBpiTreatment.setDisabled(isReadOnly("FinanceMainDialog_DftBpiTreatment"));
 			this.dftBpiTreatment.setDisabled(true);
