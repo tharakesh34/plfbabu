@@ -2912,5 +2912,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="25" author="Kesav">
+		<comment>Stage Accounting Rule Print Button Query</comment>
+		<sql>
+			DELETE FROM REPORTLIST WHERE CODE = 'StageAccountingRule';
+			Insert Into REPORTLIST values ('StageAccountingRule','Rule','listheader_RuleEvent.label,label_RuleCode,listheader_RuleCodeDesc.label','ruleEvent,ruleCode,ruleCodeDesc','String,String,String',' ','ReportList03','Stage Accounting Rule','Rules Factory',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>
+	</changeSet>
 	
 	</databaseChangeLog>
