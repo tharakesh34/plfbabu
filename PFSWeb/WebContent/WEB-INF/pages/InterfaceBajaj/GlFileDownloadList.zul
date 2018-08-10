@@ -51,7 +51,7 @@
 								</hbox>
 							</row>
 							
-							<row>
+							<row id = "row_entity" visible="false">
 								<label id="label_EntityCode"
 									value="${c:l('label_MandateDialog_EntityCode.value')}" />
 								<extendedcombobox id="entityCode" />

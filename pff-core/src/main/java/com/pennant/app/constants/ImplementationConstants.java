@@ -127,5 +127,6 @@ public class ImplementationConstants {
 	public static final boolean	CIBIL_BUTTON_REQ				= false;	
 	
 	// Deposit Process 
-	public static final boolean	DEPOSIT_PROC_REQ				= true;	
+	public static final boolean	DEPOSIT_PROC_REQ				= true;
+	public static final boolean	ENTITY_REQ_TRAIL_BAL				= false;
 }

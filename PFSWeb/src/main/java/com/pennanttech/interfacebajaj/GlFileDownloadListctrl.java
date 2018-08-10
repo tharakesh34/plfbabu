@@ -75,9 +75,11 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -118,6 +120,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Button btnexecute;
 	protected Combobox dimention;
 	protected Combobox months;
+	protected Row row_entity;
 	protected ExtendedCombobox entityCode;
 	private List<ValueLabel> dimentionsList = new ArrayList<>();
 	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds(DateUtility.getAppDate());
@@ -211,11 +214,15 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setTextBoxWidth(135);
-		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+		
+		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
+			row_entity.setVisible(true);
+			this.entityCode.setMandatoryStyle(true);
+		}
 	}
 
 	/**
@@ -247,7 +254,9 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		
 		try {
 			if (!this.entityCode.isReadonly())
-				this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true,true));
+				this.entityCode
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"),
+								null, ImplementationConstants.ENTITY_REQ_TRAIL_BAL, true));
 			this.entityCode.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -328,6 +337,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		logger.debug("Entering ");
 		this.dimention.setConstraint("");
 		this.months.setConstraint("");
+		this.entityCode.setConstraint("");
 
 		logger.debug("Leaving ");
 	}
