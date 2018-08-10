@@ -23,10 +23,10 @@ import com.pennant.app.model.MailData;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.util.NotificationConstants;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 
@@ -92,7 +92,7 @@ public class PrepareMailData implements Serializable {
 						template.setAttchments(attchments);
 					}
 
-					EmailMessage emailMessage = new EmailMessage();
+					Notification emailMessage = new Notification();
 					emailMessage.setKeyReference("");
 					emailMessage.setModule(mailName);
 					emailMessage.setSubModule(mailName);

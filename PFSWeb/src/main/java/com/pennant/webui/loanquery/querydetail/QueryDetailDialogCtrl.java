@@ -44,6 +44,7 @@ package com.pennant.webui.loanquery.querydetail;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,6 @@ import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -122,10 +122,10 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
@@ -882,7 +882,22 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			String str[] = this.notifyTo.getValue().split(",");
 			try {
 				templatePrep(queryDetail, str);
-				getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT, queryDetail);
+				Notification notification = new Notification();
+				notification.setKeyReference(queryDetail.getFinReference());
+				notification.setModule("LOAN");
+				notification.setSubModule("QRY_MGMT");
+				notification.setTemplateCode(SMTParameterConstants.QRY_MGMT_TEMPLATE);
+				List<String> emails = Arrays.asList(str);
+				notification.setEmails(emails);
+
+				List<DocumentDetails> documents = queryDetail.getDocumentDetailsList();
+				Map<String, byte[]> map = new HashMap<String, byte[]>();
+				for (DocumentDetails documentDetail : documents) {
+					map.put(documentDetail.getDocName(), documentDetail.getDocImage());
+				}
+
+				notification.setAttachments(map);
+				getMailUtil().sendNotification(notification, queryDetail);
 
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
@@ -919,7 +934,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			if (mailTemplate.isEmailTemplate()
 					&& StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) {
 				try {
-					EmailMessage emailMessage = new EmailMessage();
+					Notification emailMessage = new Notification();
 					emailMessage.setKeyReference("");
 					emailMessage.setModule("QRY_MGMT");
 					emailMessage.setSubModule("QRY_MGMT");

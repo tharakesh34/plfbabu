@@ -11,7 +11,7 @@ import com.pennanttech.niyogin.communication.model.Email;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
@@ -30,7 +30,7 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @return
 	 */
 	@Override
-	public void sendEmail(EmailMessage emailMessage) throws InterfaceException {
+	public void sendEmail(Notification emailMessage) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		if (emailMessage != null) {
@@ -47,7 +47,7 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param body
 	 * @return
 	 */
-	private void send(EmailMessage emailMessage) {
+	private void send(Notification emailMessage) {
 		logger.debug(Literal.ENTERING);
 
 		String[] emailId = emailMessage.getAddressesList().toArray(new String[emailMessage.getAddressesList().size()]);

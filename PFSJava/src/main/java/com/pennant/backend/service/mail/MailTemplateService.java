@@ -47,16 +47,25 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.mail.MailTemplate;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
+import com.pennanttech.pennapps.notification.Notification;
 
 public interface MailTemplateService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	MailTemplate getMailTemplateById(long id);
+
+	MailTemplate getMailTemplateByCode(String code);
+
 	MailTemplate getApprovedMailTemplateById(long id);
+
 	List<MailTemplate> getMailTemplates();
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	void sendMail(EmailMessage emailMessage);
+
+	void sendMail(Notification emailMessage);
 }

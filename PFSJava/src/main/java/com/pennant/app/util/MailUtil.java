@@ -12,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -39,6 +40,7 @@ import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.model.rulefactory.Notifications;
@@ -64,7 +66,6 @@ import com.pennanttech.pennapps.notification.NotificationAttribute;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 
@@ -98,6 +99,49 @@ public class MailUtil {
 
 	public MailUtil() {
 		super();
+	}
+
+	public void sendNotification(Notification notification, Object object) throws Exception {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> data = null;
+
+		QueryDetail queryDetail;
+		if (object instanceof QueryDetail) {
+			queryDetail = (QueryDetail) object;
+			data = getTemplateData(queryDetail);
+		}
+		
+		Map<String, byte[]> attachements = notification.getAttachments();
+		
+		MailTemplate template = getMailTemplateService().getMailTemplateByCode(notification.getTemplateCode());
+		
+		if (template != null && template.isActive()) {
+			try {
+				parseMail(template, data);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				template = null;
+			}
+		}
+
+		if (template == null) {
+			return;
+		}
+		
+		if (MapUtils.isNotEmpty(attachements)) {
+			template.setAttchments(attachements);
+		}
+		
+		Notification message = prepareNotification(notification, 0, template);
+
+		if (template.isEmailTemplate()) {
+			sendEmailNotification(message);
+		} else if (template.isSmsTemplate()) {
+			sendSmsNotification(template, message.getKeyReference());
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	public void sendNotifications(String moduleCode, Object object) throws Exception {
@@ -149,6 +193,11 @@ public class MailUtil {
 				FinanceSuspHead suspHead = (FinanceSuspHead) object;
 				keyReference = suspHead.getFinReference();
 				role = suspHead.getRoleCode();
+			} else if (object instanceof QueryDetail) {
+				QueryDetail queryDetail = (QueryDetail) object;
+				documents = queryDetail.getDocumentDetailsList();
+				keyReference = queryDetail.getFinReference();
+				role = queryDetail.getRoleCode();
 			}
 
 			notification.setKeyReference(keyReference);
@@ -198,6 +247,7 @@ public class MailUtil {
 		CustomerDetails customerDetails = null;
 		Commitment commitment = null;
 		VASRecording vasRecording;
+		QueryDetail queryDetail = null;
 
 		if (object instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) object;
@@ -214,6 +264,8 @@ public class MailUtil {
 			customerDetails = commitment.getCustomerDetails();
 		} else if (object instanceof VASRecording) {
 			// FIXME
+		} else if (object instanceof QueryDetail) {
+			queryDetail = (QueryDetail) object;
 		}
 
 		for (Notifications item : notifications) {
@@ -262,66 +314,71 @@ public class MailUtil {
 					setAttachements(template, item.getRuleAttachment(), data, documents);
 				}
 
+				Notification emailMessage = prepareNotification(notification, notificationId, template);
+
 				if (template.isEmailTemplate()) {
-					EmailMessage emailMessage = new EmailMessage();
-					emailMessage.setKeyReference(finReference);
-					emailMessage.setModule(module);
-					emailMessage.setSubModule(finEvent);
-					emailMessage.setNotificationId(notificationId);
-					emailMessage.setStage(role);
-					emailMessage.setSubject(template.getEmailSubject());
-					emailMessage.setContent(template.getLovDescFormattedContent().getBytes(Charset.forName("UTF-8")));
-
-					if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
-						emailMessage.setContentType(EmailBodyType.HTML.getKey());
-					} else {
-						emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
-					}
-
-					for (String mailId : template.getLovDescMailId()) {
-						MessageAddress address = new MessageAddress();
-						address.setEmailId(mailId);
-						address.setRecipientType(RecipientType.TO.getKey());
-						emailMessage.getAddressesList().add(address);
-					}
-
-					Map<String, byte[]> attachments = template.getAttchments();
-					if (MapUtils.isNotEmpty(attachments)) {
-						for (Entry<String, byte[]> document : attachments.entrySet()) {
-							MessageAttachment attachment = new MessageAttachment();
-							attachment.setAttachment(document.getValue());
-							attachment.setFileName(document.getKey());
-							emailMessage.getAttachmentList().add(attachment);
-						}
-					}
-
-					NotificationAttribute attribute = new NotificationAttribute();
-					attribute.setAttribute("Template");
-					attribute.setValue(template.getTemplateDesc());
-					emailMessage.getAttributeList().add(attribute);
-
-					attribute = new NotificationAttribute();
-					attribute.setAttribute("Template_id");
-					attribute.setValue(String.valueOf(template.getTemplateId()));
-					emailMessage.getAttributeList().add(attribute);
-
-					attribute = new NotificationAttribute();
-					attribute.setAttribute("Template_For");
-					attribute.setValue(template.getTemplateFor());
-					emailMessage.getAttributeList().add(attribute);
-
-					attribute = new NotificationAttribute();
-					attribute.setAttribute("Stage");
-					attribute.setValue(role);
-					emailMessage.getAttributeList().add(attribute);
-
 					sendEmailNotification(emailMessage);
 				}
+
 				if (template.isSmsTemplate()) {
 					sendSmsNotification(template, finReference);
 				}
 			}
 		}
+	}
+
+	private Notification prepareNotification(Notification notification, long notificationId, MailTemplate template) {
+		Notification emailMessage = new Notification();
+		BeanUtils.copyProperties(emailMessage, notification);
+
+		emailMessage.setNotificationId(notificationId);
+		emailMessage.setSubject(template.getEmailSubject());
+		emailMessage.setContent(template.getLovDescFormattedContent().getBytes(Charset.forName("UTF-8")));
+
+		if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
+			emailMessage.setContentType(EmailBodyType.HTML.getKey());
+		} else {
+			emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
+		}
+
+		for (String mailId : template.getLovDescMailId()) {
+			MessageAddress address = new MessageAddress();
+			address.setEmailId(mailId);
+			address.setRecipientType(RecipientType.TO.getKey());
+			emailMessage.getAddressesList().add(address);
+		}
+
+		Map<String, byte[]> attachments = template.getAttchments();
+		if (MapUtils.isNotEmpty(attachments)) {
+			for (Entry<String, byte[]> document : attachments.entrySet()) {
+				MessageAttachment attachment = new MessageAttachment();
+				attachment.setAttachment(document.getValue());
+				attachment.setFileName(document.getKey());
+				emailMessage.getAttachmentList().add(attachment);
+			}
+		}
+
+		NotificationAttribute attribute = new NotificationAttribute();
+		attribute.setAttribute("Template");
+		attribute.setValue(template.getTemplateDesc());
+		emailMessage.getAttributes().add(attribute);
+
+		attribute = new NotificationAttribute();
+		attribute.setAttribute("Template_id");
+		attribute.setValue(String.valueOf(template.getTemplateId()));
+		emailMessage.getAttributes().add(attribute);
+
+		attribute = new NotificationAttribute();
+		attribute.setAttribute("Template_For");
+		attribute.setValue(template.getTemplateFor());
+		emailMessage.getAttributes().add(attribute);
+
+		attribute = new NotificationAttribute();
+		attribute.setAttribute("Stage");
+		attribute.setValue(emailMessage.getStage());
+		emailMessage.getAttributes().add(attribute);
+
+		return emailMessage;
 	}
 
 	/**
@@ -421,7 +478,7 @@ public class MailUtil {
 				if (template.isEmailTemplate()
 						&& StringUtils.isNotEmpty(StringUtils.join(template.getLovDescMailId(), ","))) {
 
-					EmailMessage emailMessage = new EmailMessage();
+					Notification emailMessage = new Notification();
 					emailMessage.setKeyReference(templateData.getFinReference());
 					emailMessage.setModule("SYS_NOTIFICATION");
 					emailMessage.setSubModule("SYS_NOTIFICATION");
@@ -454,6 +511,14 @@ public class MailUtil {
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
+
+	}
+
+	public Map<String, Object> getTemplateData(QueryDetail detail) {
+		MailTemplateData data = new MailTemplateData();
+		data.setFinReference(detail.getFinReference());
+		data.setCustShrtName(detail.getUserDetails().getUserName());
+		return data.getDeclaredFieldValues();
 
 	}
 
@@ -763,7 +828,7 @@ public class MailUtil {
 		return declaredFieldValues;
 	}
 
-	private void sendEmailNotification(EmailMessage emailMessage) {
+	private void sendEmailNotification(Notification emailMessage) {
 		try {
 			mailTemplateService.sendMail(emailMessage);
 		} catch (Exception e) {

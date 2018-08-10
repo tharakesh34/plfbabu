@@ -113,13 +113,53 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	
 	
 	/**
-	 * This method Deletes the Record from the Templates or Templates_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Mail Template by key TemplateCode
+	 * Fetch the Record Mail Template details by key field
 	 * 
-	 * @param Mail Template (mailTemplate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return MailTemplate
+	 */
+	@Override
+	public MailTemplate getMailTemplateByCode(String code, String type) {
+		logger.debug("Entering");
+		MailTemplate mailTemplate = new MailTemplate();
+
+		mailTemplate.setTemplateCode(code);
+
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, ");
+		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
+		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From Templates");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where TemplateCode =:code");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
+		RowMapper<MailTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailTemplate.class);
+
+		try {
+			mailTemplate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			mailTemplate = null;
+		}
+
+		logger.debug("Leaving");
+		return mailTemplate;
+	}
+
+	/**
+	 * This method Deletes the Record from the Templates or Templates_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Mail Template by key TemplateCode
+	 * 
+	 * @param Mail
+	 *            Template (mailTemplate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

@@ -63,8 +63,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pff.external.MailService;
 
 /**
@@ -195,6 +195,20 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	}
 
 	/**
+	 * getMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return MailTemplate
+	 */
+	@Override
+	public MailTemplate getMailTemplateByCode(String code) {
+		return getMailTemplateDAO().getMailTemplateByCode(code, "_View");
+	}
+
+	/**
 	 * getApprovedMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method .
 	 * with parameter id and type as blank. it fetches the approved records from the Templates.
 	 * @param id (String)
@@ -202,6 +216,18 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 */
 	public MailTemplate getApprovedMailTemplateById(long id) {
 		return getMailTemplateDAO().getMailTemplateById(id, "_AView");
+	}
+
+	/**
+	 * getApprovedMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method . with
+	 * parameter id and type as blank. it fetches the approved records from the Templates.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @return MailTemplate
+	 */
+	public MailTemplate getApprovedMailTemplateById(String tempCode) {
+		return getMailTemplateDAO().getMailTemplateByCode(tempCode, "_AView");
 	}
 
 	/**
@@ -409,7 +435,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * @return
 	 */
 	@Override
-	public void sendMail(EmailMessage emailMessage) {
+	public void sendMail(Notification emailMessage) {
 		logger.debug(Literal.ENTERING);
 
 		// bugs #389 Skip the external e-Mail and SMS services if the implementation for the same is not available.

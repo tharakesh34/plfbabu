@@ -125,10 +125,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
-import com.pennanttech.pennapps.notification.email.model.EmailMessage;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -2598,7 +2598,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				throw new Exception("Problem initializing freemarker or rendering template ", e);
 			}
 			
-			EmailMessage emailMessage = new EmailMessage();
+			Notification emailMessage = new Notification();
 			emailMessage.setKeyReference("");
 			emailMessage.setModule(subject);
 			emailMessage.setSubModule(subject);
