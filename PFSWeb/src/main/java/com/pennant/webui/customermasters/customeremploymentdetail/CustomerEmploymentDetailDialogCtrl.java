@@ -774,7 +774,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}*/
 		if(!this.companyName.isReadonly()){
-			this.companyName.setConstraint(	new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CompanyName.value"),PennantRegularExpressions.REGEX_COMPANY_NAME,true,true));
+			this.companyName.setConstraint(	new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CompanyName.value"),PennantRegularExpressions.REGEX_COMPANY_NAME,false,false));
 		}
 		
 		logger.debug("Leaving");
@@ -791,6 +791,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.custEmpName.setConstraint("");
 		this.custEmpFrom.setConstraint("");
 		this.custEmpTo.setConstraint("");
+		this.companyName.setConstraint("");
 		
 		logger.debug("Leaving");
 	}
@@ -835,6 +836,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.custEmpDesg.setErrorMessage("");
 		this.custEmpDept.setErrorMessage("");
 		this.custEmpType.setErrorMessage("");
+		this.companyName.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
