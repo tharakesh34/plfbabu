@@ -6591,7 +6591,6 @@ SELECT t1.finreference,
     t1.firstrepay,
     t1.lastrepay,
     t1.finstartdate,
-			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.finamount,
     t1.finamount + t1.feechargeamt - t1.downpayment AS lovdescfinancingamount,
     t1.finrepaymentamount,
@@ -6659,7 +6658,6 @@ SELECT t1.finreference,
     t1.effectiverateofreturn,
     t1.migratedfinance,
     t1.schedulemaintained,
-			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.scheduleregenerated,
     t1.finpurpose,
     t39.loanpurposedesc AS lovdescfinpurposename,
@@ -6882,7 +6880,6 @@ UNION ALL
     t1.recordstatus,
     t1.rolecode,
     t1.nextrolecode,
-			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.taskid,
     t1.nexttaskid,
     t1.recordtype,
@@ -6978,7 +6975,6 @@ UNION ALL
     t1.nextrolloverdate,
     t27.custstsdescription,
     t1.shariastatus,
-			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
     t1.initiatedate,
     t1.finpreapprovedref,
     t1.mmaid,
@@ -7622,12 +7618,5 @@ UNION ALL
 			(select RightID from SecRights WHERE RightName='FinanceMainDialog_AdvEMITerms'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);;
 		</sql>
 	</changeSet>
-	
-	<changeSet id="22" author="Akhilesh.k">
-	    <addColumn tableName="adtcollateralassignment">	
-			<column name="HostReference" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
 </databaseChangeLog>
 	
