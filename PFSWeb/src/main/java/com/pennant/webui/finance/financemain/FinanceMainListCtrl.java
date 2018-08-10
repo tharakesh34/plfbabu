@@ -391,6 +391,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("InitiateDate");
 		this.searchObj.addField("RcdMaintainSts");
 		this.searchObj.addField("FinCurrAssetValue");
+		this.searchObj.addField("AdvEMITerms");
 
 		// FIXME: DELETE BELOW CODE AFTER TESTING
 		/*

@@ -21,6 +21,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
@@ -46,7 +47,8 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		List<FinanceScheduleDetail> schDetailList = finScheduleData.getFinanceScheduleDetails();
 		for (FinanceScheduleDetail curSchd : schDetailList) {
 			if (curSchd.getSchDate().compareTo(financeMain.getEventFromDate()) >= 0
-					&& curSchd.getSchDate().compareTo(financeMain.getEventToDate()) < 0) {
+					&& curSchd.getSchDate().compareTo(financeMain.getEventToDate()) < 0 &&
+					!curSchd.getBpiOrHoliday().equals(FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(finServiceInst.getPftDaysBasis());
 			}
 		}

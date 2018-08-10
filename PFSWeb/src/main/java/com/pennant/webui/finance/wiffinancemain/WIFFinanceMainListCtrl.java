@@ -496,6 +496,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("InsuranceAmt");
 		this.searchObj.addField("recordStatus");
 		this.searchObj.addField("recordType");
+		this.searchObj.addField("AdvEMITerms");
 		this.searchObj.clearFilters();
 		// Workflow
 		if (isWorkFlowEnabled()) {

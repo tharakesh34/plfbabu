@@ -141,6 +141,7 @@ public class BeanFactory {
 
 		//BPI Methods
 		fm.setAlwBPI(true);
+		fm.setBpiRateBasis(fm.getProfitDaysBasis());
 		cellStrValue = Dataset.getString(cells, 11);
 		if (cellStrValue.equals("NB")) {
 			fm.setAlwBPI(false);

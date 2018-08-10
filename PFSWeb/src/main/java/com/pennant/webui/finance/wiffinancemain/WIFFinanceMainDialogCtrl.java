@@ -329,6 +329,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox									alwBpiTreatment;
 	protected Space										space_DftBpiTreatment;
 	protected Combobox									dftBpiTreatment;
+	protected Row										row_BpiRateBasis;
+	protected Space										space_BpiRateBasis;
+	protected Combobox									cbBpiRateBasis;
 	protected Space										space_PftDueSchdOn;
 	protected Checkbox									alwPlannedEmiHoliday;
 	protected Hbox										hbox_planEmiMethod;
@@ -462,6 +465,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient BigDecimal						oldVar_increasedCost;
 	protected transient boolean							oldVar_alwBpiTreatment;
 	protected transient int								oldVar_dftBpiTreatment;
+	protected transient int								oldVar_bpiRateBasis;
 
 	protected transient int								oldVar_tenureInMonths;
 	
@@ -1346,6 +1350,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
 		fillComboBox(this.dftBpiTreatment, aFinanceMain.getBpiTreatment(), PennantStaticListUtil.getDftBpiTreatment(),
+				"");
+		fillComboBox(this.cbBpiRateBasis, aFinanceMain.getBpiRateBasis(), PennantStaticListUtil.getProfitDaysBasis(),
 				"");
 		oncheckalwBpiTreatment(false);
 		this.alwPlannedEmiHoliday.setChecked(aFinanceMain.isPlanEMIHAlw());
@@ -2486,6 +2492,18 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if (alwBpiTreatment.isChecked() && isValidComboValue(this.dftBpiTreatment,
+					Labels.getLabel("label_FinanceMainDialog_DftBpiTreatment.value")) 
+					&& !getComboboxValue(this.dftBpiTreatment).equals(FinanceConstants.BPI_NO)
+					&& isValidComboValue(this.cbBpiRateBasis,
+					Labels.getLabel("label_FinanceMainDialog_BpiRateBasis.value"))) {
+				aFinanceMain.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
+			} 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			aFinanceMain.setPlanEMIHAlw(this.alwPlannedEmiHoliday.isChecked());
@@ -3097,6 +3115,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.oldVar_alwBpiTreatment = this.alwBpiTreatment.isChecked();
 		this.oldVar_dftBpiTreatment = this.dftBpiTreatment.getSelectedIndex();
+		this.oldVar_bpiRateBasis = this.cbBpiRateBasis.getSelectedIndex();
 
 		this.oldVar_rpyAdvBaseRate = this.rpyAdvBaseRate.getValue();
 		this.oldVar_rpyAdvMargin = this.rpyAdvMargin.getValue();
@@ -3428,6 +3447,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		if (this.oldVar_dftBpiTreatment != this.dftBpiTreatment.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_bpiRateBasis != this.cbBpiRateBasis.getSelectedIndex()) {
 			return true;
 		}
 		if (this.oldVar_repayBaseRate != this.repayRate.getBaseValue()) {
@@ -4105,6 +4127,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		readOnlyComponent(isReadOnly("WIFFinanceMainDialog_AlwBpiTreatment"), this.alwBpiTreatment);
 		readOnlyComponent(isReadOnly("WIFFinanceMainDialog_DftBpiTreatment"), this.dftBpiTreatment);
+		readOnlyComponent(isReadOnly("WIFFinanceMainDialog_BpiRateBasis"), this.cbBpiRateBasis);
 		readOnlyComponent(isReadOnly("WIFFinanceMainDialog_AlwPlannedEmiHoliday"), this.alwPlannedEmiHoliday);
 		readOnlyComponent(isReadOnly("WIFFinanceMainDialog_PlanEmiMethod"), this.planEmiMethod);
 		readOnlyComponent(isReadOnly("WIFFinanceMainDialog_MaxPlanEmiPerAnnum"), this.maxPlanEmiPerAnnum);
@@ -5713,25 +5736,40 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.alwBpiTreatment.isChecked()) {
 			this.space_DftBpiTreatment.setSclass(PennantConstants.mandateSclass);
 			this.dftBpiTreatment.setDisabled(isReadOnly("FinanceMainDialog_DftBpiTreatment"));
+			this.space_BpiRateBasis.setSclass(PennantConstants.mandateSclass);
+			this.cbBpiRateBasis.setDisabled(isReadOnly("FinanceMainDialog_BpiRateBasis"));
+			
 			if (isAction) {
-				this.dftBpiTreatment.setSelectedIndex(1);
+				fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_NO, PennantStaticListUtil.getDftBpiTreatment(),
+						"");
+				fillComboBox(this.cbBpiRateBasis, PennantConstants.List_Select, PennantStaticListUtil.getProfitDaysBasis(),
+						"");
 			}
 			this.row_BpiTreatment.setVisible(true);
+			this.row_BpiRateBasis.setVisible(true);
 		} else {
+			this.alwBpiTreatment.setDisabled(isReadOnly("FinanceMainDialog_DftBpiTreatment"));
+			this.dftBpiTreatment.setDisabled(true);
 			this.space_DftBpiTreatment.setSclass("");
 			this.dftBpiTreatment.setConstraint("");
 			this.dftBpiTreatment.setErrorMessage("");
-			if (this.dftBpiTreatment.getSelectedIndex() <= 0) {
-				this.dftBpiTreatment.setDisabled(true);
-				this.dftBpiTreatment.setSelectedIndex(1);
-			}
+			
+			this.cbBpiRateBasis.setDisabled(isReadOnly("FinanceMainDialog_BpiRateBasis"));
+			this.cbBpiRateBasis.setDisabled(true);
+			this.space_BpiRateBasis.setSclass("");
+			this.cbBpiRateBasis.setConstraint("");
+			this.cbBpiRateBasis.setErrorMessage("");
+			
+			fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_NO, PennantStaticListUtil.getDftBpiTreatment(), "");
+			fillComboBox(this.cbBpiRateBasis, PennantConstants.List_Select, PennantStaticListUtil.getProfitDaysBasis(),
+					"");
 			if (!isAction) {
 				this.row_BpiTreatment.setVisible(false);
+				this.row_BpiRateBasis.setVisible(false);
 			}
 		}
 
 		logger.debug("Leaving");
-
 	}
 
 	/**

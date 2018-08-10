@@ -318,6 +318,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox alwBpiTreatment;
 	protected Space space_DftBpiTreatment;
 	protected Combobox dftBpiTreatment;
+	protected Space space_bpiRateBasis;
+	protected Combobox cbBpiRateBasis;
 	protected Space space_PftDueSchdOn;
 	protected Combobox pftDueSchOn;
 	protected Checkbox alwPlannedEmiHoliday;
@@ -904,8 +906,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
 			fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_NO, PennantStaticListUtil.getDftBpiTreatment(), "");
+			fillComboBox(this.cbBpiRateBasis, FinanceConstants.BPI_NO, PennantStaticListUtil.getProfitDaysBasis(), "");
 		} else {
 			fillComboBox(this.dftBpiTreatment, null, new ArrayList<ValueLabel>(), "");
+			fillComboBox(this.cbBpiRateBasis, null, new ArrayList<ValueLabel>(), "");
 		}
 
 		this.gb_ProfitOnPastDue.setVisible(ImplementationConstants.INTERESTON_PASTDUE_PRINCIPAL);
@@ -1350,12 +1354,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (aFinanceType.isNewRecord()) {
 				bpiType = FinanceConstants.BPI_NO;
 			}
-			oncheckalwBpiTreatment(bpiType);
+			oncheckalwBpiTreatment(bpiType,aFinanceType.getBpiRateBasis());
 		} else {
 			this.dftBpiTreatment.setDisabled(true);
 			this.space_DftBpiTreatment.setSclass("");
 			this.dftBpiTreatment.setConstraint("");
 			this.dftBpiTreatment.setErrorMessage("");
+			
+			this.cbBpiRateBasis.setDisabled(true);
+			this.space_bpiRateBasis.setSclass("");
+			this.cbBpiRateBasis.setConstraint("");
+			this.cbBpiRateBasis.setErrorMessage("");
 		}
 
 		fillComboBox(this.pftDueSchOn, aFinanceType.getPftDueSchOn(), PennantStaticListUtil.getpftDueSchOn(), "");
@@ -2825,6 +2834,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if (alwBpiTreatment.isChecked()
+					&& isValidComboValue(this.cbBpiRateBasis,
+							Labels.getLabel("label_FinanceTypeDialog_BpiRateBasis.value"))) {
+				aFinanceType.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
+			} 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			aFinanceType.setPftDueSchOn(getComboboxValue(this.pftDueSchOn));
@@ -2962,20 +2981,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			int finTerms =  this.finDftTerms.intValue();
-			int advEMIMin =  this.advEMIMinTerms.intValue();
+			int minTerms = this.finMinTerm.intValue();
+			int maxTerms = this.finMaxTerm.intValue();
 			int advEMIMax = this.advEMIMaxTerms.intValue();
 			boolean validationRequired = true;
 
-			if (finTerms == 0 && advEMIMin == 0) {
+			if (advEMIMax == 0) {
 				validationRequired = false;
 			}
 			
 			if (validationRequired) {
-				if (advEMIMax < advEMIMin || advEMIMax > finTerms) {
+				if (advEMIMax < minTerms || advEMIMax > maxTerms) {
 					throw new WrongValueException(this.advEMIMaxTerms, Labels.getLabel("NUMBER_RANGE_EQ", new String[] {
-							Labels.getLabel("label_FinanceTypeDialog_AdvEMIMaxTerms.value"), String.valueOf(advEMIMin),
-							String.valueOf(finTerms) }));
+							Labels.getLabel("label_FinanceTypeDialog_AdvEMIMaxTerms.value"), String.valueOf(minTerms),
+							String.valueOf(maxTerms) }));
 				}
 			}
 			aFinanceType.setAdvEMIMaxTerms(this.advEMIMaxTerms.intValue());
@@ -3698,6 +3717,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.pftDueSchOn.setConstraint("");
 		this.planEmiHLockPeriod.setConstraint("");
 		this.dftBpiTreatment.setConstraint("");
+		this.cbBpiRateBasis.setConstraint("");
 		this.planEmiMethod.setConstraint("");
 		this.maxPlanEmiPerAnnum.setConstraint("");
 		this.maxPlanEmi.setConstraint("");
@@ -4008,6 +4028,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.droplineOD.setDisabled(isTrue);
 		this.alwBpiTreatment.setDisabled(isTrue);
 		this.dftBpiTreatment.setDisabled(isTrue);
+		this.cbBpiRateBasis.setDisabled(isTrue);
 		this.pftDueSchOn.setDisabled(isTrue);
 		this.alwPlannedEmiHoliday.setDisabled(isTrue);
 		this.planEmiMethod.setDisabled(isTrue);
@@ -4095,6 +4116,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setReadonly(isTrue);
 		this.rpyHierarchy.setDisabled(isTrue);
 		this.dftBpiTreatment.setDisabled(isTrue);
+		this.cbBpiRateBasis.setDisabled(isTrue);
 		this.btnSearchRpyMethod.setDisabled(isTrue);
 		this.btnFrequencyRate.setDisabled(isTrue);
 		this.alwUnPlannedEmiHoliday.setDisabled(isTrue);
@@ -4345,6 +4367,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.pftDueSchOn.setSelectedIndex(0);
 		this.planEmiHLockPeriod.setValue(0);
 		this.dftBpiTreatment.setSelectedIndex(0);
+		this.cbBpiRateBasis.setSelectedIndex(0);
 		this.alwBpiTreatment.setChecked(false);
 		this.alwPlannedEmiHoliday.setChecked(false);
 		onCheckPlannedEmiholiday(null);
@@ -5914,11 +5937,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onCheck$alwBpiTreatment(Event event) {
 		logger.debug("Entering");
-		oncheckalwBpiTreatment(null);
+		oncheckalwBpiTreatment(null,null);
 		logger.debug("Leaving");
 	}
 
-	private void oncheckalwBpiTreatment(String bpiType) {
+	private void oncheckalwBpiTreatment(String bpiType, String bpiRateBasis) {
 		logger.debug("Entering");
 		if (this.alwBpiTreatment.isChecked()) {
 			this.space_DftBpiTreatment.setSclass(PennantConstants.mandateSclass);
@@ -5928,12 +5951,27 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				setComboboxSelectedItem(this.dftBpiTreatment, bpiType);
 			}
+			
+			this.space_bpiRateBasis.setSclass(PennantConstants.mandateSclass);
+			this.cbBpiRateBasis.setDisabled(isCompReadonly);
+			if (bpiRateBasis == null) {
+				setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
+			} else {
+				setComboboxSelectedItem(this.cbBpiRateBasis, bpiRateBasis);
+			}
+			
 		} else {
 			this.dftBpiTreatment.setDisabled(true);
 			this.space_DftBpiTreatment.setSclass("");
 			this.dftBpiTreatment.setConstraint("");
 			this.dftBpiTreatment.setErrorMessage("");
 			setComboboxSelectedItem(this.dftBpiTreatment, FinanceConstants.BPI_NO);
+			
+			this.cbBpiRateBasis.setDisabled(true);
+			this.space_bpiRateBasis.setSclass("");
+			this.cbBpiRateBasis.setConstraint("");
+			this.cbBpiRateBasis.setErrorMessage("");
+			setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
 		}
 		logger.debug("Leaving");
 

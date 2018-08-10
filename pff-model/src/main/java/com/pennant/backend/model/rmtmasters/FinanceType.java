@@ -163,6 +163,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// EMI Holiday Fields & BPI & Freezing Period
 	private boolean alwBPI;
 	private String	bpiTreatment;
+	private String	bpiRateBasis;
 	private String 	pftDueSchOn;
 	private boolean	planEMIHAlw;
 	private String	planEMIHMethod;
@@ -2056,4 +2057,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.advEMISchdMthd = advEMISchdMthd;
 	}
 
+	public String getBpiRateBasis() {
+		return bpiRateBasis;
+	}
+
+	public void setBpiRateBasis(String bpiRateBasis) {
+		this.bpiRateBasis = bpiRateBasis;
+	}
 }

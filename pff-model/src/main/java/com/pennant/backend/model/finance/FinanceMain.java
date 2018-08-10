@@ -82,7 +82,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"rpyAdvMargin", "supplementRent", "increasedCost", "rolloverFrq", "nextRolloverDate", "finContractDate",
 		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
 		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod",
-		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "planEMIHAlw",
+		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiRateBasis", "planEMIHAlw",
 		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate","stage","status"})
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -354,7 +354,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean alwBPI = false;
 	@XmlElement(name="dftBpiTreatment")
 	private String bpiTreatment;
-	
+	@XmlElement(name="bpiRateBasis")
+	private String bpiRateBasis;	
+
 	// ===========================================
 	// =========Planned EMI Holidays & Deferments
 	// ===========================================
@@ -3846,6 +3848,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setAdjustClosingBal(boolean isAdjustClosingBal) {
 		this.isAdjustClosingBal = isAdjustClosingBal;
+	}
+	
+	public String getBpiRateBasis() {
+		return bpiRateBasis;
+	}
+
+	public void setBpiRateBasis(String bpiRateBasis) {
+		this.bpiRateBasis = bpiRateBasis;
 	}
 
 }

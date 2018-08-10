@@ -1211,6 +1211,18 @@
 											</row>
 											<row visible="true">
 												<label
+													id="label_FinanceTypeDialog_BpiRateBasis"
+													value="${c:l('label_FinanceTypeDialog_BpiRateBasis.value')}" />
+												<hbox>
+													<space
+														id="space_bpiRateBasis" spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="cbBpiRateBasis" width="275px" readonly="true" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
 													id="label_FinanceTypeDialog_PftDueSchOn"
 													value="${c:l('label_FinanceTypeDialog_PftDueSchOn.value')}" />
 												<hbox>

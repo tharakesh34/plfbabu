@@ -3674,7 +3674,7 @@ public class ScheduleCalculator {
 
 		/* Calculate interest and set interest payment details */
 		BigDecimal calint = CalculationUtil.calInterest(prvSchd.getSchDate(), curSchd.getSchDate(),
-				curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+				curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 		calint = calint.add(prvPftFraction);
 		BigDecimal calIntRounded = BigDecimal.ZERO;
@@ -3830,7 +3830,7 @@ public class ScheduleCalculator {
 				}
 				
 				calInt = CalculationUtil.calInterest(prvSchDate, curSchDate, curSchd.getBalanceForPftCal(),
-						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						curSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
 				BigDecimal calIntRounded = BigDecimal.ZERO;
@@ -4930,7 +4930,7 @@ public class ScheduleCalculator {
 		sd.setMrgRate(openSchd.getMrgRate());
 		sd.setActRate(openSchd.getActRate());
 		sd.setCalculatedRate(openSchd.getCalculatedRate());
-		sd.setPftDaysBasis(openSchd.getPftDaysBasis());
+		sd.setPftDaysBasis(finMain.getBpiRateBasis());
 		sd.setAdvBaseRate(openSchd.getAdvBaseRate());
 		sd.setAdvMargin(openSchd.getAdvMargin());
 		sd.setAdvPftRate(openSchd.getAdvPftRate());
@@ -6156,7 +6156,7 @@ public class ScheduleCalculator {
 				// Advised profit amount calculation
 				if (curSchd.getBalanceForPftCal().compareTo(BigDecimal.ZERO) > 0) {
 					calInt = CalculationUtil.calInterest(prvSchd.getSchDate(), curSchd.getSchDate(),
-							curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getAdvCalRate());
+							curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(), prvSchd.getAdvCalRate());
 
 					calInt = calInt.add(calIntFraction);
 					calIntFraction = calInt.subtract(round(calInt));
