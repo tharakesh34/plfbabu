@@ -42,7 +42,7 @@
 				<entry key="financeMainDAO" value-ref="financeMainDAO" />
 				<entry key="notificationsDAO" value-ref="notificationsDAO" />
 				<entry key="mailLogDAO" value-ref="mailLogDAO" />
-				<entry key="mailUtil" value-ref="mailUtil" />
+				<entry key="notificationService" value-ref="notificationService" />
 			</map>
 		</property>
 	</bean>
@@ -54,7 +54,7 @@
 				<entry key="financeMainDAO" value-ref="financeMainDAO" />
 				<entry key="notificationsDAO" value-ref="notificationsDAO" />
 				<entry key="mailLogDAO" value-ref="mailLogDAO" />
-				<entry key="mailUtil" value-ref="mailUtil" />
+				<entry key="notificationService" value-ref="notificationService" />
 			</map>
 		</property>
 	</bean>
@@ -66,7 +66,7 @@
 				<entry key="financeMainDAO" value-ref="financeMainDAO" />
 				<entry key="notificationsDAO" value-ref="notificationsDAO" />
 				<entry key="mailLogDAO" value-ref="mailLogDAO" />
-				<entry key="mailUtil" value-ref="mailUtil" />
+				<entry key="notificationService" value-ref="notificationService" />
 				<entry key="tatDetailDAO" value-ref="tatDetailDAO" />
 				<entry key="DedupParmDAO" value-ref="dedupParmDAO" />
 				<entry key="securityUserDAO" value-ref="securityUserDAO" />

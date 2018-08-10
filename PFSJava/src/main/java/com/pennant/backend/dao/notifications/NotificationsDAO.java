@@ -25,16 +25,26 @@ import com.pennant.backend.model.rulefactory.Notifications;
  */
 public interface NotificationsDAO {
 
-	Notifications getNotificationsById(String ruleCode,String type);
-	void update(Notifications notifications,String type);
-	void delete(Notifications notifications,String type);
-	long save(Notifications notifications,String type);
-	Notifications getNotifications(String notificationsLevel, String notificationsDecipline,String type);
-	List<Notifications> getNotificationsByModule(String ruleModule,String type);
+	Notifications getNotificationsById(String ruleCode, String type);
+
+	void update(Notifications notifications, String type);
+
+	void delete(Notifications notifications, String type);
+
+	long save(Notifications notifications, String type);
+
+	Notifications getNotifications(String notificationsLevel, String notificationsDecipline, String type);
+
+	List<Notifications> getNotificationsByModule(String ruleModule, String type);
+
 	List<Notifications> getNotificationsByRuleIdList(List<Long> notificationIdList, String type);
+
 	List<Long> getTemplateIds(String templateType);
+
 	List<MailData> getMailData(String mailName);
+
 	Map<String, Object> mergeFields(String query);
+
 	int triggerMail(String query);
 
 	List<Notifications> getNotifications(List<Long> notificationIdList, String type);

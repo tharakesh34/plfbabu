@@ -76,7 +76,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.QueryBuilder;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Query;
 import com.pennant.backend.model.applicationmaster.SysNotification;
@@ -89,8 +88,9 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.SysNotificationDialogModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 import freemarker.template.TemplateException;
 
@@ -149,7 +149,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	protected Label label_Wintitle;
 
 	private PagedListWrapper<SysNotificationDetails> custListWrapper;
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	
 	private String sendNotification;
 
@@ -458,7 +458,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 				// Mail Send
 				if (StringUtils.isNotEmpty(mailID)) {
 					try {
-						getMailUtil().sendMailtoCustomer(templateId, mailID, details);
+						notificationService.sendMailtoCustomer(templateId, mailID, details);
 					} catch (TemplateException e) {
 						logger.error("Exception: ", e);
 						success = false;
@@ -701,11 +701,9 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 		this.sysNotificationService = sysNotificationService;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
-	}
+
 }

@@ -15,7 +15,6 @@ import org.quartz.StatefulJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
@@ -33,6 +32,7 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class TatNotificationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = -336577018042634131L;
@@ -46,7 +46,7 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 	private transient NotificationsDAO notificationsDAO;
 	private transient DedupParmDAO dedupParmDAO;
 	private transient MailLogDAO mailLogDAO;
-	private transient MailUtil mailUtil;
+	private transient NotificationService notificationService;
 	private transient TATDetailDAO tatDetailDAO;
 	private transient SecurityUserDAO securityUserDAO;
 	private boolean newRecord;
@@ -128,7 +128,7 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 							}
 						} else {
 							//Mail Sending
-							getMailUtil().sendNotifications(NotificationConstants.TEMPLATE_FOR_TAT, financeMain);
+							notificationService.sendNotifications(NotificationConstants.TEMPLATE_FOR_TAT, financeMain);
 						}
 
 						//Log Writing
@@ -215,12 +215,8 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 		this.mailLogDAO = mailLogDAO;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public TATDetailDAO getTatDetailDAO() {

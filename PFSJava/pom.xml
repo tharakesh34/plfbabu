@@ -37,10 +37,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		
-		<dependency>
-		<groupId>com.pennanttech.pennapps</groupId>
-		<artifactId>notification-engine</artifactId>
-		</dependency>
 		<!-- Aspose -->
 		<dependency>
 			<groupId>com.pennant.aspose</groupId>

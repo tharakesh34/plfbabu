@@ -53,24 +53,39 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinanceReferenceDetailService {
-	
+
 	FinanceReferenceDetail getFinanceReferenceDetail();
+
 	FinanceReferenceDetail getNewFinanceReferenceDetail();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceReferenceDetail getFinanceReferenceDetailById(long id);
+
 	FinanceReferenceDetail getApprovedFinanceReferenceDetailById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	FinanceReference getFinanceReference(String finType, String finEvent, String moduleName);
+
 	List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String finEvent,
-			String mandInputInStage, String type);	
-	List<ValueLabel> getTemplateIdList(String financeType,String finEvent, String roleCode, List<String> lovCodeList);
-	FinanceReferenceDetail getTemplateId(String financeType,String finEvent, String roleCode, String lovCodeList);
+			String mandInputInStage, String type);
+
+	List<ValueLabel> getTemplateIdList(String financeType, String finEvent, String roleCode, List<String> lovCodeList);
+
+	FinanceReferenceDetail getTemplateId(String financeType, String finEvent, String roleCode, String lovCodeList);
+
 	List<Long> getRefIdListByFinType(final String financeType, String finEvent, String roleCode, String type);
+
 	List<Long> getFinTypeAccounting(String fintype, List<String> events);
+
 	List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId);
-	Map<String,String> getAccountingFeeCodes(List<Long> accountSetId);
+
+	Map<String, String> getAccountingFeeCodes(List<Long> accountSetId);
 
 	boolean resendNotification(String finType, String finEvent, String role, List<String> templateTyeList);
 

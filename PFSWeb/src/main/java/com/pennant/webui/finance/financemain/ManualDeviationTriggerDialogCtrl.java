@@ -62,7 +62,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
@@ -619,17 +618,20 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 		if (this.status.isVisible()) {
 			try {
-				aFinanceDeviations.setApprovalStatus(this.status.getSelectedItem().getValue());
-				long userId = getUserWorkspace().getLoggedInUser().getUserId();
-				if (StringUtils.isBlank(aFinanceDeviations.getDelegatedUserId())) {
-					aFinanceDeviations.setDelegatedUserId(String.valueOf(userId));
+				String status = this.status.getSelectedItem().getValue();
+				aFinanceDeviations.setApprovalStatus(status);
+				if (StringUtils.equals("Approved", status) || StringUtils.equals("Rejected", status)) {
+					long userId = getUserWorkspace().getLoggedInUser().getUserId();
+					if (StringUtils.isBlank(aFinanceDeviations.getDelegatedUserId())) {
+						aFinanceDeviations.setDelegatedUserId(String.valueOf(userId));
+					}
 				}
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
 		}
 		// ### 01-05-2018 - End
-		aFinanceDeviations.setDeviationDate(new Timestamp(DateUtility.getAppDate().getTime()));
+		aFinanceDeviations.setDeviationDate(new Timestamp(System.currentTimeMillis()));
 		aFinanceDeviations.setRemarks(this.remarks.getValue());
 
 		doRemoveValidation();

@@ -110,7 +110,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -172,6 +171,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -584,7 +584,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private AccountEngineExecution							engineExecution;
 	private CustomerService									customerService;
 	private CommitmentService								commitmentService;
-	private MailUtil										mailUtil;
+	protected NotificationService notificationService;
 	private StepPolicyService								stepPolicyService;
 	private LimitCheckDetails								limitCheckDetails;
 	private FinanceMainExtService							financeMainExtService;
@@ -7860,12 +7860,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentService = commitmentService;
 	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
-	}
-
-	public MailUtil getMailUtil() {
-		return mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public Window getMainWindow() {
@@ -8091,4 +8087,5 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	public void setPdfExtTabPanelId(String pdfExtTabPanelId) {
 		this.pdfExtTabPanelId = pdfExtTabPanelId;
 	}
+
 }

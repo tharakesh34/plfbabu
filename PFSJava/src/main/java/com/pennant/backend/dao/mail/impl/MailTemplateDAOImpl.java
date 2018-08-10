@@ -70,7 +70,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	public MailTemplateDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Mail Template details by key field
 	 * 
@@ -84,25 +84,25 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	public MailTemplate getMailTemplateById(final long id, String type) {
 		logger.debug("Entering");
 		MailTemplate mailTemplate = new MailTemplate();
-		
+
 		mailTemplate.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, " );
-		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, " );
+
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, ");
+		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
 		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From Templates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where TemplateId =:TemplateId ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		RowMapper<MailTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailTemplate.class);
-		
-		try{
-			mailTemplate = this.jdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			mailTemplate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mailTemplate = null;
 		}
@@ -110,8 +110,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		logger.debug("Leaving");
 		return mailTemplate;
 	}
-	
-	
+
 	/**
 	 * Fetch the Record Mail Template details by key field
 	 * 
@@ -165,133 +164,140 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	 * 
 	 */
 	@Override
-	public void delete(MailTemplate mailTemplate,String type) {
+	public void delete(MailTemplate mailTemplate, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From Templates");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where TemplateId =:TemplateId ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into Templates or Templates_Temp.
 	 *
-	 * save Mail Template 
+	 * save Mail Template
 	 * 
-	 * @param Mail Template (mailTemplate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Mail
+	 *            Template (mailTemplate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public long save(MailTemplate mailTemplate,String type) {
+	public long save(MailTemplate mailTemplate, String type) {
 		logger.debug("Entering");
 		if (mailTemplate.getId() == Long.MIN_VALUE) {
 			mailTemplate.setId(getNextId("SeqMailTemplate"));
 			logger.debug("get NextID:" + mailTemplate.getId());
 		}
-		
-		StringBuilder insertSql =new StringBuilder(" Insert Into Templates");
+
+		StringBuilder insertSql = new StringBuilder(" Insert Into Templates");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (TemplateId,  TemplateFor, Module, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, " );
-		insertSql.append(" EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:TemplateId, :TemplateFor, :Module, :TemplateCode, :TemplateDesc, :SmsTemplate, :SmsContent, " );
-		insertSql.append(" :EmailTemplate, :EmailContent, :EmailFormat, :EmailSubject, :EmailSendTo, :TurnAroundTime, :Repeat, :Active,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(" (TemplateId,  TemplateFor, Module, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, ");
+		insertSql.append(
+				" EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:TemplateId, :TemplateFor, :Module, :TemplateCode, :TemplateDesc, :SmsTemplate, :SmsContent, ");
+		insertSql.append(
+				" :EmailTemplate, :EmailContent, :EmailFormat, :EmailSubject, :EmailSendTo, :TurnAroundTime, :Repeat, :Active,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return mailTemplate.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record Templates or Templates_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Mail Template by key TemplateCode and Version
+	 * This method updates the Record Templates or Templates_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Mail Template by key TemplateCode and Version
 	 * 
-	 * @param Mail Template (mailTemplate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Mail
+	 *            Template (mailTemplate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(MailTemplate mailTemplate,String type) {
+	public void update(MailTemplate mailTemplate, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update Templates");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, " );
+		StringBuilder updateSql = new StringBuilder("Update Templates");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, ");
 		updateSql.append(" TemplateDesc = :TemplateDesc, SmsTemplate = :SmsTemplate, SmsContent = :SmsContent, ");
-		updateSql.append(" EmailTemplate = :EmailTemplate, EmailContent = :EmailContent, EmailFormat = :EmailFormat, " );
-		updateSql.append(" EmailSubject = :EmailSubject, EmailSendTo= :EmailSendTo,TurnAroundTime=:TurnAroundTime, " );
+		updateSql.append(" EmailTemplate = :EmailTemplate, EmailContent = :EmailContent, EmailFormat = :EmailFormat, ");
+		updateSql.append(" EmailSubject = :EmailSubject, EmailSendTo= :EmailSendTo,TurnAroundTime=:TurnAroundTime, ");
 		updateSql.append(" Repeat = :Repeat, Active = :Active ,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, " );
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where TemplateId =:TemplateId ");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	// TODO: Need to be checked whether this is required or not
-	public List<MailTemplate> getMailTemplates(){
+	public List<MailTemplate> getMailTemplates() {
 		List<MailTemplate> mailTemplateList = new ArrayList<MailTemplate>();
 		MailTemplate mailTemplate = new MailTemplate();
-		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, " );
-		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, " );
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, ");
+		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
 		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From Templates");
 		selectSql.append(" Where EmailTemplate = 1 ");
-		
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		RowMapper<MailTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailTemplate.class);
-		
-		try{
-			mailTemplateList = this.jdbcTemplate.query(selectSql.toString(), 
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			mailTemplateList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 		logger.debug("Leaving");
 		return mailTemplateList;
 	}
-	
+
 	@Override
 	public int getMailTemplateByCode(String templateCode, long id, String type) {
 		MailTemplate mailTemplate = new MailTemplate();

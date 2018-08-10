@@ -110,7 +110,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private String alertType;
 	private boolean allowMultiple;
 	private String moduleType;
-	private boolean reSend;
+	private boolean resendReq;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -130,7 +130,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		excludeFields.add("aggType");
 		excludeFields.add("allowMultiple");
 		excludeFields.add("moduleType");
-		excludeFields.add("reSend");
+		excludeFields.add("resendReq");
 		return excludeFields;
 	}
 
@@ -158,8 +158,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 
 	}		
 
-
-
 	public String getFinType() {
 		return finType;
 	}
@@ -168,8 +166,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		this.finType = finType;
 
 	}		
-
-
 
 	public boolean isOverRide() {
 		return overRide;
@@ -524,12 +520,12 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		this.lovDescStgRuleValue = lovDescStgRuleValue;
 	}
 
-	public boolean isReSend() {
-		return reSend;
+	public boolean isResendReq() {
+		return resendReq;
 	}
 
-	public void setReSend(boolean reSend) {
-		this.reSend = reSend;
+	public void setResendReq(boolean resendReq) {
+		this.resendReq = resendReq;
 	}
 
 	

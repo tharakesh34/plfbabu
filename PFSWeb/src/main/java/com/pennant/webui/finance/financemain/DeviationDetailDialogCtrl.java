@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -324,7 +325,10 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	public void onClick$btnNew_ManualDeviation(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
+		if (StringUtils.isEmpty(financeMain.getFinReference())) {
+			MessageUtil.showMessage(Labels.getLabel("label_Finance_GenSchedule"));
+			return;
+		}
 		final FinanceDeviations aFinanceDeviations = new FinanceDeviations();
 		aFinanceDeviations.setFinReference(financeMain.getFinReference());
 		aFinanceDeviations.setNewRecord(true);

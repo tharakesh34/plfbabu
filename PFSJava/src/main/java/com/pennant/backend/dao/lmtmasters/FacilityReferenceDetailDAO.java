@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.lmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
@@ -49,14 +50,23 @@ import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
 public interface FacilityReferenceDetailDAO {
 
 	FacilityReferenceDetail getFacilityReferenceDetail();
+
 	FacilityReferenceDetail getNewFacilityReferenceDetail();
-	FacilityReferenceDetail getFacilityReferenceDetailById(long id,String type);
-	void update(FacilityReferenceDetail facilityReferenceDetail,String type);
-	void delete(FacilityReferenceDetail facilityReferenceDetail,String type);
-	long save(FacilityReferenceDetail facilityReferenceDetail,String type);
-	List<FacilityReferenceDetail> getFacilityReferenceDetail(String financeType,String roleCode, String type);
-	List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
-			String mandInputInStage, List<String> groupIds, String type);
+
+	FacilityReferenceDetail getFacilityReferenceDetailById(long id, String type);
+
+	void update(FacilityReferenceDetail facilityReferenceDetail, String type);
+
+	void delete(FacilityReferenceDetail facilityReferenceDetail, String type);
+
+	long save(FacilityReferenceDetail facilityReferenceDetail, String type);
+
+	List<FacilityReferenceDetail> getFacilityReferenceDetail(String financeType, String roleCode, String type);
+
+	List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(String financeType, String mandInputInStage,
+			List<String> groupIds, String type);
+
 	void deleteByFinType(String finType, String type);
+
 	List<FacilityReferenceDetail> getFacilityReferenceDetailById(String finType);
 }

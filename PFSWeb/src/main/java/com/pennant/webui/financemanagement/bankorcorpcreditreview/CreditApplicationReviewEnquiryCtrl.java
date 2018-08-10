@@ -63,7 +63,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
@@ -102,6 +101,7 @@ import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
@@ -164,7 +164,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private FinCreditReviewDetails            finCreditReviewDetails = null;
 	private transient WorkFlowDetails	      workFlowDetails	= null;
 	public  List<Notes>     notesList = new ArrayList<Notes>();
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	private CreditApplicationReviewListCtrl creditApplicationReviewListCtrl = null;
 
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
@@ -660,7 +660,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		if(listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
 				&& noOfRecords == proRecordCount){
 			//Mail Alert Notification for User
-			mailUtil.sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0));
+			notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT,
+					listOfFinCreditReviewDetails.get(0));
 			
 			FinCreditReviewDetails creditReviewDetails = listOfFinCreditReviewDetails.get(0);
 			String msg = getSavingStatus(creditReviewDetails.getRoleCode(), creditReviewDetails.getNextRoleCode(), creditReviewDetails.getCustomerId(),
@@ -1739,8 +1740,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		this.finCreditReviewDetails = finCreditReviewDetails;
 	}
 	
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {

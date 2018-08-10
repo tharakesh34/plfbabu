@@ -81,7 +81,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -115,6 +114,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/provisionDialog.zul file.
@@ -164,7 +164,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 	private HashMap<String, ArrayList<ErrorDetail>>	overideMap			= new HashMap<String, ArrayList<ErrorDetail>>();
 
-	private MailUtil									mailUtil;
+	private NotificationService notificationService;
 
 	/**
 	 * default constructor.<br>
@@ -952,7 +952,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
 								aFinanceDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(e);
@@ -1600,12 +1600,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		return overideMap;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {

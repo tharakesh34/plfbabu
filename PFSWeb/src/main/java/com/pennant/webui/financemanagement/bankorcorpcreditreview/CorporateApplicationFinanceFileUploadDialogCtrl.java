@@ -91,7 +91,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -120,6 +119,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 3257569537441008225L;
@@ -195,7 +195,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	int currentYear = DateUtility.getYear(DateUtility.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	CreditReviewMainCtgDetails creditReviewMainCtgDetails = new CreditReviewMainCtgDetails();
 	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
@@ -1335,12 +1335,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		return finCreditRevSubCategoryService;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public CreditApplicationReviewListCtrl getCreditApplicationReviewListCtrl() {

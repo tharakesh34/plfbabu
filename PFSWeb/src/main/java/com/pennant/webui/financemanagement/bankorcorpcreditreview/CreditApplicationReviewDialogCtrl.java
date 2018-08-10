@@ -67,7 +67,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -108,6 +107,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditReviewSummary> {
 	private static final long							serialVersionUID					= 8602015982512929710L;
@@ -221,7 +221,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	protected Textbox									lovDescFinCcyName;																	// autowire
 	protected ExtendedCombobox							currencyType;																		// autowire
 
-	private MailUtil									mailUtil;
+	private NotificationService notificationService;
 
 	/**
 	 * default constructor.<br>
@@ -1135,7 +1135,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				if (StringUtils.isNotBlank(aCreditReviewDetails.getNextTaskId())
 						&& !StringUtils.trimToEmpty(aCreditReviewDetails.getNextRoleCode())
 								.equals(aCreditReviewDetails.getRoleCode())) {
-					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT, aCreditReviewDetails);
+					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT,
+							aCreditReviewDetails);
 				}
 				// do Close the Dialog window
 				closeDialog();
@@ -3750,12 +3751,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return StringUtils.trimToEmpty(category).replace(" ", "") + AUDITUNAUDIT_LISTHEADER;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	/*

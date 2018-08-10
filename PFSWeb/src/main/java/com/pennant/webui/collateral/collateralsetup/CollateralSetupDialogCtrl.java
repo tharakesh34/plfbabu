@@ -96,7 +96,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -150,6 +149,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/collateral/CollateralSetup/collateralSetupDialog.zul file. <br>
@@ -233,7 +233,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private transient CollateralSetupService				collateralSetupService;
 	private transient RuleExecutionUtil						ruleExecutionUtil;
 	private EventManager 									eventManager;
-	private MailUtil 										mailUtil;
+	private NotificationService notificationService;
 	private FinanceReferenceDetailService					financeReferenceDetailService;					
 
 	private transient CustomerDialogCtrl					customerDialogCtrl;
@@ -2028,7 +2028,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aCollateralSetup.getCustomerDetails(),
+						notificationService.sendNotifications(notification, aCollateralSetup.getCustomerDetails(),
 								aCollateralSetup.getCollateralType(), null);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -2959,11 +2959,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.eventManager = eventManager;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {

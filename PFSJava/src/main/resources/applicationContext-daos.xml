@@ -113,7 +113,7 @@
 	 	<constructor-arg ref="smsEngine"/>
 	</bean>
 
-	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" scope="prototype">
+	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="notificationsService" ref="notificationsService" />
@@ -127,15 +127,6 @@
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
 	
-	<bean id="smsUtil" class="com.pennant.app.util.SMSUtil" scope="prototype">
-		<property name="freemarkerSMSConfiguration" ref="freemarkerMailConfiguration" />
-		<property name="smsTemplateService" ref="mailTemplateService" />
-		<property name="notificationsService" ref="notificationsService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
-
-	</bean>
-
 	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData"
 		scope="prototype">
 		<property name="notificationsService" ref="notificationsService" />
@@ -7020,7 +7011,7 @@
 		<property name="dedupParmService" ref="dedupParmService" />
 		<property name="customerLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="notificationsDAO" ref="notificationsDAO" />
 	</bean>
 

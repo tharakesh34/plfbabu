@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.mail;
+
 import java.util.List;
 
 import com.pennant.backend.model.mail.MailTemplate;
@@ -49,10 +50,15 @@ import com.pennant.backend.model.mail.MailTemplate;
 public interface MailTemplateDAO {
 
 	MailTemplate getMailTemplateById(long id, String type);
-	void update(MailTemplate mailTemplate,String type);
-	void delete(MailTemplate mailTemplate,String type);
-	long save(MailTemplate mailTemplate,String type);
+
+	void update(MailTemplate mailTemplate, String type);
+
+	void delete(MailTemplate mailTemplate, String type);
+
+	long save(MailTemplate mailTemplate, String type);
+
 	List<MailTemplate> getMailTemplates();
+
 	int getMailTemplateByCode(String templateCode, long id, String type);
 
 	MailTemplate getMailTemplateByCode(String tempCode, String string);

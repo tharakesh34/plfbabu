@@ -92,7 +92,6 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
@@ -154,6 +153,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/configuration/VASRecording/vASRecordingDialog.zul file. <br>
@@ -230,7 +230,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	
 	private FinanceReferenceDetailService					financeReferenceDetailService;			
 	private CustomerEMailDAO 								customerEMailDAO;		
-	private MailUtil 										mailUtil;
+	private NotificationService notificationService;
 	private EventManager 									eventManager;
 	
 	private boolean 										financeVas = false;
@@ -782,7 +782,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aVASRecording, aVASRecording.getProductCode(),
+						notificationService.sendNotifications(notification, aVASRecording,
+								aVASRecording.getProductCode(),
 								null);
 					} catch (Exception e) {
 						logger.debug(e);
@@ -2777,12 +2778,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
 		this.customerEMailDAO = customerEMailDAO;
 	}
-	
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public EventManager getEventManager() {

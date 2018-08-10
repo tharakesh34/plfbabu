@@ -459,7 +459,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		this.allowWaiver.setChecked(aFinanceReferenceDetail.isAllowWaiver());
 		this.allowPostpone.setChecked(aFinanceReferenceDetail.isAllowPostpone());
 		this.allowExpire.setChecked(aFinanceReferenceDetail.isAllowExpire());
-		this.reSend.setChecked(aFinanceReferenceDetail.isReSend());
+		this.reSend.setChecked(aFinanceReferenceDetail.isResendReq());
 	
 
 		if (aFinanceReferenceDetail.getShowInStage() != null && 
@@ -545,7 +545,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 
 		try {
-			aFinanceReferenceDetail.setReSend(this.reSend.isChecked());
+			aFinanceReferenceDetail.setResendReq(this.reSend.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

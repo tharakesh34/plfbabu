@@ -688,8 +688,4 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
 		return FinanceCheckListReferenceDAO;
 	}
-
-
-
-
 }

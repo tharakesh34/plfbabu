@@ -32,5 +32,4 @@ public class NotificationConstants {
 
 	// TAT Alert Notification related
 	public static final String TAT_ALT_CNT = "TAT_ALERT_COUNT";
-
 }

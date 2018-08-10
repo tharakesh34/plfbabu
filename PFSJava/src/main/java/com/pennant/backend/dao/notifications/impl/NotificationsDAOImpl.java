@@ -69,13 +69,13 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class NotificationsDAOImpl extends SequenceDao<Notifications> implements NotificationsDAO {
-   private static Logger logger = Logger.getLogger(NotificationsDAOImpl.class);
+	private static Logger logger = Logger.getLogger(NotificationsDAOImpl.class);
 
-	
+
 	public NotificationsDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Notifications Details details by key field
 	 * 
@@ -91,14 +91,16 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		Notifications notifications = new Notifications();
 		notifications.setRuleCode(ruleCode);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select RuleId, RuleCode, RuleModule,TemplateType, RuleCodeDesc,RuleTemplate, ActualBlockTemplate," );
-		selectSql.append("  RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
-		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields" );
+
+		selectSql.append(
+				" Select RuleId, RuleCode, RuleModule,TemplateType, RuleCodeDesc,RuleTemplate, ActualBlockTemplate,");
+		selectSql.append("  RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields");
 		selectSql.append(" FROM  Notifications");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where RuleCode =:RuleCode") ;
+		selectSql.append(" Where RuleCode =:RuleCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
@@ -131,13 +133,15 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		notifications.setRuleModule(ruleModule);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select RuleId, RuleCode, RuleModule,TemplateType, RuleCodeDesc, RuleTemplate, ActualBlockTemplate," );
-		selectSql.append(" RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
-		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields" );
+		selectSql.append(
+				" Select RuleId, RuleCode, RuleModule,TemplateType, RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
+		selectSql.append(" RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields");
 		selectSql.append(" FROM  Notifications");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where RuleCode =:RuleCode AND  RuleModule=:RuleModule") ;
+		selectSql.append(" Where RuleCode =:RuleCode AND  RuleModule=:RuleModule");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
@@ -155,9 +159,8 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTNotificationss or
-	 * BMTNotificationss_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Notifications Details by key RuleCode
+	 * This method Deletes the Record from the BMTNotificationss or BMTNotificationss_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Notifications Details by key RuleCode
 	 * 
 	 * @param Notifications
 	 *            Details (notifications)
@@ -172,16 +175,16 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		logger.debug("Entering");
 		int recordCount = 0;
 
-		StringBuilder deleteSql =new StringBuilder();
+		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From Notifications");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where  RuleCode =:RuleCode ");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -208,26 +211,29 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 	@Override
 	public long save(Notifications notifications, String type) {
 		logger.debug("Entering");
-		
+
 		if (notifications.getId() == Long.MIN_VALUE) {
 			notifications.setId(getNextId("SeqNotifications"));
 			logger.debug("get NextID:" + notifications.getId());
 		}
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into Notifications");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (RuleId, RuleCode, RuleModule, TemplateType,RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
-		insertSql.append(" RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(
+				" (RuleId, RuleCode, RuleModule, TemplateType,RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
+		insertSql.append(" RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId,");
 		insertSql.append(" TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields)");
-		insertSql.append(" Values(:RuleId, :RuleCode, :RuleModule, :TemplateType, :RuleCodeDesc, :RuleTemplate, :ActualBlockTemplate," );
-		insertSql.append(" :RuleReciepent, :ActualBlockReciepent, :RuleAttachment, :ActualBlockAtachment," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" Values(:RuleId, :RuleCode, :RuleModule, :TemplateType, :RuleCodeDesc, :RuleTemplate, :ActualBlockTemplate,");
+		insertSql.append(" :RuleReciepent, :ActualBlockReciepent, :RuleAttachment, :ActualBlockAtachment,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId, ");
 		insertSql.append(" :TemplateTypeFields , :RuleReciepentFields, :RuleAttachmentFields)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -236,9 +242,8 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 	}
 
 	/**
-	 * This method updates the Record Notifications or Notifications_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Notifications Details by key RuleCode and Version
+	 * This method updates the Record Notifications or Notifications_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Notifications Details by key RuleCode and Version
 	 * 
 	 * @param Notifications
 	 *            Details (notifications)
@@ -256,19 +261,23 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 
 		updateSql.append("Update Notifications");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RuleId=:RuleId," );
-		updateSql.append(" RuleModule = :RuleModule,TemplateType=:TemplateType, RuleCodeDesc = :RuleCodeDesc , RuleTemplate = :RuleTemplate, ActualBlockTemplate = :ActualBlockTemplate," );
-		updateSql.append(" RuleReciepent = :RuleReciepent , ActualBlockReciepent = :ActualBlockReciepent, RuleAttachment = :RuleAttachment, ActualBlockAtachment = :ActualBlockAtachment, " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId," );
-		updateSql.append(" TemplateTypeFields = :TemplateTypeFields, RuleReciepentFields = :RuleReciepentFields, RuleAttachmentFields = :RuleAttachmentFields" );
+		updateSql.append(" Set RuleId=:RuleId,");
+		updateSql.append(
+				" RuleModule = :RuleModule,TemplateType=:TemplateType, RuleCodeDesc = :RuleCodeDesc , RuleTemplate = :RuleTemplate, ActualBlockTemplate = :ActualBlockTemplate,");
+		updateSql.append(
+				" RuleReciepent = :RuleReciepent , ActualBlockReciepent = :ActualBlockReciepent, RuleAttachment = :RuleAttachment, ActualBlockAtachment = :ActualBlockAtachment, ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,");
+		updateSql.append(
+				" TemplateTypeFields = :TemplateTypeFields, RuleReciepentFields = :RuleReciepentFields, RuleAttachmentFields = :RuleAttachmentFields");
 		updateSql.append("  Where RuleCode =:RuleCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -277,11 +286,10 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method updates the Record Notifications or Notifications_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Notifications Details by key RuleCode and Version
+	 * This method updates the Record Notifications or Notifications_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Notifications Details by key RuleCode and Version
 	 * 
 	 * @param Notifications
 	 *            Details (notifications)
@@ -298,17 +306,17 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		Notifications notifications = new Notifications();
 		notifications.setRuleModule(module);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select TemplateType, RuleTemplate, RuleReciepent, RuleAttachment " );
-		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields" );
+
+		selectSql.append(" Select TemplateType, RuleTemplate, RuleReciepent, RuleAttachment ");
+		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields");
 		selectSql.append(" FROM  Notifications");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where RuleModule =:RuleModule") ;
+		selectSql.append(" Where RuleModule =:RuleModule");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
 		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
-		List<Notifications> notificationsList =  this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<Notifications> notificationsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		logger.debug("Leaving");
 		return notificationsList;
@@ -318,26 +326,26 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 	 * Method for Fetching Notifications List using by Rule ID List
 	 */
 	@Override
-    public List<Notifications> getNotificationsByRuleIdList(List<Long> notificationIdList, String type) {
+	public List<Notifications> getNotificationsByRuleIdList(List<Long> notificationIdList, String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RuleIdList", notificationIdList);
 
 		StringBuilder selectSql = new StringBuilder(
 				" Select RuleId, TemplateType, RuleTemplate, RuleReciepent, RuleAttachment ");
-		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields" );
+		selectSql.append(" , TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields");
 		selectSql.append(" FROM  Notifications");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where RuleId IN (:RuleIdList) ") ;
+		selectSql.append(" Where RuleId IN (:RuleIdList) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
-		List<Notifications> notificationsList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<Notifications> notificationsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return notificationsList;
-    }
-	
+	}
+
 	/**
 	 * Method for Fetching Notifications List using by Rule ID List
 	 */
@@ -365,38 +373,38 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 	 * Method for get Template Id's List based on the TemplateType
 	 */
 	@Override
-    public List<Long> getTemplateIds(String templateType) {
+	public List<Long> getTemplateIds(String templateType) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TemplateType", templateType);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select RuleId ");
 		selectSql.append(" From Notifications ");
 		selectSql.append(" Where TemplateType =:TemplateType ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
-    }
+	}
 
-	
+
 	@Override
 	public List<MailData> getMailData(String mailName) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
-	
-		StringBuilder selectSql = new StringBuilder(" Select Id, MailName, MailTrigger, MailTo, MailSubject, " );
+
+		StringBuilder selectSql = new StringBuilder(" Select Id, MailName, MailTrigger, MailTo, MailSubject, ");
 		selectSql.append(" MailBody, MailAttachment, MailAttachmentName, MailData ");
-		selectSql.append(" FROM  MailConfiguration where MailName = '"+ mailName +"'");
+		selectSql.append(" FROM  MailConfiguration where MailName = '" + mailName + "'");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<MailData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailData.class);
-		List<MailData> mailData =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<MailData> mailData = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return mailData;
-		
+
 	}
 
 	@Override
@@ -405,7 +413,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		Map<String, Object> mergeData = new HashMap<String, Object>();
 		Map<String, String> paramMap = new HashMap<String, String>();
 		try {
-			mergeData = this.jdbcTemplate.queryForMap(query ,paramMap);
+			mergeData = this.jdbcTemplate.queryForMap(query, paramMap);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -426,5 +434,4 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		logger.debug("Leaving");
 		return value;
 	}
-
 }

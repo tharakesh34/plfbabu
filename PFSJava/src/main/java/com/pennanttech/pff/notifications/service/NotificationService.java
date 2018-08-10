@@ -1,4 +1,4 @@
-package com.pennant.app.util;
+package com.pennanttech.pff.notifications.service;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,6 +16,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -68,14 +72,16 @@ import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
+import com.pennanttech.pennapps.notification.sms.SmsEngine;
+import com.pennanttech.pff.external.MailService;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class MailUtil {
-	private static final Logger logger = Logger.getLogger(MailUtil.class);
+public class NotificationService {
+	private static final Logger logger = Logger.getLogger(NotificationService.class);
 
 	private Configuration freemarkerMailConfiguration;
 	private MailTemplateService mailTemplateService;
@@ -97,7 +103,13 @@ public class MailUtil {
 	@Autowired
 	private EmailEngine emailEngine;
 
-	public MailUtil() {
+	@Autowired(required = false)
+	private SmsEngine smsEngine;
+
+	@Autowired(required = false)
+	private MailService mailService;
+
+	public NotificationService() {
 		super();
 	}
 
@@ -110,11 +122,11 @@ public class MailUtil {
 			queryDetail = (QueryDetail) object;
 			data = getTemplateData(queryDetail);
 		}
-		
+
 		Map<String, byte[]> attachements = notification.getAttachments();
-		
+
 		MailTemplate template = getMailTemplateService().getMailTemplateByCode(notification.getTemplateCode());
-		
+
 		if (template != null && template.isActive()) {
 			try {
 				parseMail(template, data);
@@ -127,17 +139,17 @@ public class MailUtil {
 		if (template == null) {
 			return;
 		}
-		
+
 		if (MapUtils.isNotEmpty(attachements)) {
 			template.setAttchments(attachements);
 		}
-		
+
 		Notification message = prepareNotification(notification, 0, template);
 
 		if (template.isEmailTemplate()) {
 			sendEmailNotification(message);
 		} else if (template.isSmsTemplate()) {
-			sendSmsNotification(template, message.getKeyReference());
+			sendSmsNotification(message);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -255,6 +267,7 @@ public class MailUtil {
 			if ("LOAN_ORG".equals(module)) {
 				data = getTemplateData(financeDetail);
 				module = "LOAN";
+				notification.setModule(module);
 			} else {
 				data = getTemplateData(financeMain);
 			}
@@ -270,7 +283,8 @@ public class MailUtil {
 
 		for (Notifications item : notifications) {
 			boolean sendNotification = false;
-
+			boolean resenEmail = false;
+			boolean resenSms = false;
 			long notificationId = item.getRuleId();
 
 			if (resendNotifications) {
@@ -278,14 +292,17 @@ public class MailUtil {
 			} else {
 				// checking for mail already sent or not
 				String stageReq = SysParamUtil.getValueAsString("STAGE_REQ_FOR_MAIL_CHECK");
-				boolean mailExists = false;
+
 				if ("Y".equalsIgnoreCase(stageReq)) {
-					mailExists = emailEngine.isMailExist(finReference, module, finEvent, notificationId, role);
+					resenEmail = emailEngine.isMailExist(finReference, module, finEvent, notificationId, role);
+					resenSms = smsEngine.isSmsExist(finReference, module, finEvent, notificationId, role);
+
 				} else {
-					mailExists = emailEngine.isMailExist(finReference, module, finEvent, notificationId);
+					resenEmail = emailEngine.isMailExist(finReference, module, finEvent, notificationId);
+					//resenEmail = smsEngine.isSmsExist(finReference, module, finEvent, notificationId);
 				}
 
-				if (!mailExists) {
+				if (!resenEmail || !resenSms) {
 					sendNotification = true;
 				}
 			}
@@ -293,6 +310,14 @@ public class MailUtil {
 			MailTemplate template = null;
 			if (sendNotification) {
 				emailAndMobiles = getEmailsAndMobile(customerDetails, item, data);
+
+				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("EMAILS"))) {
+					notification.getEmails().addAll(emailAndMobiles.get("EMAILS"));
+				}
+
+				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("MOBILES"))) {
+					notification.getMobileNumbers().addAll(emailAndMobiles.get("MOBILES"));
+				}
 
 				template = getMailTemplate(item.getRuleTemplate(), data);
 				if (template != null && template.isActive()) {
@@ -302,6 +327,8 @@ public class MailUtil {
 						logger.error(Literal.EXCEPTION, e);
 						template = null;
 					}
+				} else {
+					template = null;
 				}
 
 				if (template == null) {
@@ -309,19 +336,24 @@ public class MailUtil {
 				}
 
 				if (template != null && template.isEmailTemplate()) {
-					List<String> emails = emailAndMobiles.get("EMAILS");
-					template.setLovDescMailId(emails.toArray(new String[emails.size()]));
+					/*
+					 * List<String> emails = emailAndMobiles.get("EMAILS"); template.setLovDescMailId(emails.toArray(new
+					 * String[emails.size()]));
+					 */
 					setAttachements(template, item.getRuleAttachment(), data, documents);
 				}
 
-				Notification emailMessage = prepareNotification(notification, notificationId, template);
+				Notification emailMessage = null;
+				if (template.isActive()) {
+					emailMessage = prepareNotification(notification, notificationId, template);
 
-				if (template.isEmailTemplate()) {
-					sendEmailNotification(emailMessage);
-				}
+					if (template.isEmailTemplate() && sendNotification) {
+						sendEmailNotification(emailMessage);
+					}
 
-				if (template.isSmsTemplate()) {
-					sendSmsNotification(template, finReference);
+					if (template.isSmsTemplate() && sendNotification) {
+						sendSmsNotification(emailMessage);
+					}
 				}
 			}
 		}
@@ -329,7 +361,7 @@ public class MailUtil {
 
 	private Notification prepareNotification(Notification notification, long notificationId, MailTemplate template) {
 		Notification emailMessage = new Notification();
-		BeanUtils.copyProperties(emailMessage, notification);
+		BeanUtils.copyProperties(notification, emailMessage);
 
 		emailMessage.setNotificationId(notificationId);
 		emailMessage.setSubject(template.getEmailSubject());
@@ -341,7 +373,7 @@ public class MailUtil {
 			emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
 		}
 
-		for (String mailId : template.getLovDescMailId()) {
+		for (String mailId : emailMessage.getEmails()) {
 			MessageAddress address = new MessageAddress();
 			address.setEmailId(mailId);
 			address.setRecipientType(RecipientType.TO.getKey());
@@ -358,9 +390,16 @@ public class MailUtil {
 			}
 		}
 
+		emailMessage.setMessage(template.getLovDescFormattedContent());
+
 		NotificationAttribute attribute = new NotificationAttribute();
-		attribute.setAttribute("Template");
+		attribute.setAttribute("Notification_Desc");
 		attribute.setValue(template.getTemplateDesc());
+		emailMessage.getAttributes().add(attribute);
+
+		attribute = new NotificationAttribute();
+		attribute.setAttribute("Notification_Code");
+		attribute.setValue(template.getTemplateCode());
 		emailMessage.getAttributes().add(attribute);
 
 		attribute = new NotificationAttribute();
@@ -824,31 +863,34 @@ public class MailUtil {
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
+		declaredFieldValues.putAll(getTemplateData(main));
 
 		return declaredFieldValues;
 	}
 
 	private void sendEmailNotification(Notification emailMessage) {
 		try {
-			mailTemplateService.sendMail(emailMessage);
+			if (mailService != null) {
+				mailService.sendEmail(emailMessage);
+			} else {
+				emailEngine.sendEmail(emailMessage);
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
-	private void sendSmsNotification(MailTemplate smsTemplate, String finReference) {
-		/*
-		 * try { if (isExtSMSService()) { // send mail to external service // send SMS to external service if
-		 * (smsTemplate != null) { List<MailTemplate> list = new ArrayList<>(); list.add(smsTemplate);
-		 * 
-		 * getShortMessageService().sendMessage(list, finReference); }
-		 * 
-		 * } else { //getMailUtil().sendMail(notification, fieldsAndValues, docDetailsList, mailIDMap, null);
-		 * 
-		 * }
-		 * 
-		 * } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
-		 */}
+	private void sendSmsNotification(Notification smsNotification) {
+
+		for (String mobilenumber : smsNotification.getMobileNumbers()) {
+			smsNotification.setMobileNumber(mobilenumber);
+			try {
+				smsEngine.sendSms(smsNotification);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
 
 	private MailTemplate getMailTemplate(String rule, Map<String, Object> fieldsAndValues) {
 		MailTemplate template = null;

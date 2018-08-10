@@ -560,7 +560,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		String[] lovFields = getModuleMapping().getLovFields();
 		if (lovFields != null && lovFields.length > 0) {
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
-			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
+			//this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 		}
 
 		if (this.filters!=null){

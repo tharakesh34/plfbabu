@@ -939,7 +939,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
 								aFinanceDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(e);

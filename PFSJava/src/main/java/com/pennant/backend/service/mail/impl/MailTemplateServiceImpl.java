@@ -440,10 +440,9 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 
 		// bugs #389 Skip the external e-Mail and SMS services if the implementation for the same is not available.
 		if (mailService != null) {
-			emailEngine.sendEmail(emailMessage);
 			mailService.sendEmail(emailMessage);
 		} else {
-
+			emailEngine.sendEmail(emailMessage);
 		}
 
 		logger.debug(Literal.LEAVING);

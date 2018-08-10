@@ -48,14 +48,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -87,8 +84,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -100,8 +95,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.loanquery.QueryDetail;
-import com.pennant.backend.model.mail.MailTemplate;
-import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
@@ -123,13 +116,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
-import com.pennanttech.pennapps.notification.email.EmailEngine;
-import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
-import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
-import com.pennanttech.pennapps.notification.email.model.MessageAddress;
-import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 import freemarker.template.Configuration;
 
@@ -211,16 +200,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private transient QueryDetailService queryDetailService;
 	private MailTemplateService mailTemplateService;
 	private DocumentManagerDAO documentManagerDAO;
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	private Configuration freemarkerMailConfiguration;
 	private SecurityUserOperationsService securityUserOperationsService;
 	List<String> emailList = null;
 	private String roleCode;
 	private Sampling sampling = null;
 	private LegalDetail legalDetail = null;
-
-	@Autowired
-	private EmailEngine emailEngine;
 
 	/**
 	 * default constructor.<br>
@@ -881,7 +867,6 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		if (this.notifyTo.getValue() != null && !this.notifyTo.getValue().isEmpty()) {
 			String str[] = this.notifyTo.getValue().split(",");
 			try {
-				templatePrep(queryDetail, str);
 				Notification notification = new Notification();
 				notification.setKeyReference(queryDetail.getFinReference());
 				notification.setModule("LOAN");
@@ -897,75 +882,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				}
 
 				notification.setAttachments(map);
-				getMailUtil().sendNotification(notification, queryDetail);
+				notificationService.sendNotification(notification, queryDetail);
 
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
 		}
 		logger.debug("Leaving  ");
-	}
-
-	@SuppressWarnings("unused")
-	private void templatePrep(QueryDetail queryDetail, String[] mailId) {
-		List<String> emailList = null;
-		MailTemplate mailTemplate = null;
-		MailTemplateData templateData = new MailTemplateData();
-		templateData.setFinReference(queryDetail.getFinReference());
-		templateData.setCustShrtName(getUserWorkspace().getUserDetails().getUsername());
-		String templateID = SysParamUtil.getValueAsString(SMTParameterConstants.QRY_MGMT_TEMPLATE);
-		mailTemplate = getMailTemplateService().getApprovedMailTemplateById(Long.valueOf(templateID));
-		if (mailTemplate != null && mailTemplate.isActive()) {
-			mailTemplate.setLovDescMailId(mailId);
-			try {
-				mailUtil.parseMail(mailTemplate, templateData);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			if (queryDetail.getDocumentDetailsList() != null) {
-				Map<String,byte[]> attchments= new HashMap<>();
-				for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
-					attchments.put(documentDetails.getDocName(), documentDetails.getDocImage());
-				}
-				mailTemplate.setAttchments(attchments);
-			}
-
-			if (mailTemplate.isEmailTemplate()
-					&& StringUtils.isNotEmpty(StringUtils.join(mailTemplate.getLovDescMailId(), ","))) {
-				try {
-					Notification emailMessage = new Notification();
-					emailMessage.setKeyReference("");
-					emailMessage.setModule("QRY_MGMT");
-					emailMessage.setSubModule("QRY_MGMT");
-					emailMessage.setStage("");
-					emailMessage.setSubject(mailTemplate.getEmailSubject());
-					emailMessage.setContent(mailTemplate.getEmailContent());
-					emailMessage.setContentType(EmailBodyType.HTML.getKey());
-
-					for (String email : mailTemplate.getLovDescMailId()) {
-						MessageAddress address = new MessageAddress();
-						address.setEmailId(email);
-						address.setRecipientType(RecipientType.TO.getKey());
-						emailMessage.getAddressesList().add(address);
-					}
-
-					Map<String, byte[]> attachments = mailTemplate.getAttchments();
-					if (MapUtils.isNotEmpty(attachments)) {
-						for (Entry<String, byte[]> document : attachments.entrySet()) {
-							MessageAttachment attachment = new MessageAttachment();
-							attachment.setAttachment(document.getValue());
-							attachment.setFileName(document.getKey());
-							emailMessage.getAttachmentList().add(attachment);
-						}
-					}
-
-					emailEngine.sendEmail(emailMessage);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	/**
@@ -1836,12 +1759,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.documentManagerDAO = documentManagerDAO;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public MailTemplateService getMailTemplateService() {

@@ -85,7 +85,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -118,6 +117,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SusoenseDialog.zul file.
@@ -163,7 +163,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	private FinanceReferenceDetailService				financeReferenceDetailService;
 	private CustomerDetailsService						customerDetailsService;
 	private FinanceWorkFlowService						financeWorkFlowService;
-	private MailUtil									mailUtil;
+	private NotificationService notificationService;
 	private FinanceMain									financeMain;
 
 	/**
@@ -953,7 +953,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
 								aFinanceDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(e);
@@ -1486,12 +1486,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		return overideMap;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {

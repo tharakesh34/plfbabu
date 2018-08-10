@@ -91,7 +91,6 @@ import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -128,6 +127,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -289,7 +289,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private FacilityDetailListCtrl facilityDetailListCtrl;
 	private FacilityAgreementDetailDialogCtrl facilityAgreementDetailDialogCtrl; 
 	
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	List<CustomerCollateral> collateralsFromEquation = null;
 	
 	private boolean recommendEntered = false;
@@ -1563,8 +1563,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				//Mail Alert Notification for User
 				if(StringUtils.isNotBlank(aFacility.getNextTaskId()) && 
 						!StringUtils.trimToEmpty(aFacility.getNextRoleCode()).equals(aFacility.getRoleCode())){
-					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_CAF, aFacility);
-					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
+					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CAF, aFacility);
 				}
 				
 				deAllocateChildWindowRights();
@@ -2459,17 +2458,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.facilityAgreementDetailDialogCtrl = facilityAgreementDetailDialogCtrl;
 	}
 	
-	
 	public String getReference(){
 		return this.cAFReference.getValue();
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public boolean isRecommeandEntered() {

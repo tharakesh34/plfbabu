@@ -106,7 +106,6 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -175,6 +174,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -346,7 +346,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private final List<ValueLabel>							payApprtnList						= PennantStaticListUtil
 																										.getPaymentApportionment();
 
-	private MailUtil										mailUtil;
+	private NotificationService notificationService;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	/**
 	 * default constructor.<br>
@@ -1841,7 +1841,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, financeDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
 								financeDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(e);
@@ -3591,12 +3591,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.agreementDetailDialogCtrl = agreementDetailDialogCtrl;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {

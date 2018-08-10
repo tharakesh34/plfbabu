@@ -12,13 +12,13 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailLog;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.maillog.MailLogDAO;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.NotificationConstants;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PriorityNotificationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = 4480912264156310688L;
@@ -31,7 +31,7 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 	private FinanceMainDAO 		financeMainDAO;
 	private NotificationsDAO 	notificationsDAO;
 	private MailLogDAO 			mailLogDAO;
-	private MailUtil 			mailUtil;
+	private NotificationService notificationService;
 
 	Date appDate = DateUtility.getAppDate();
 
@@ -52,7 +52,7 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 			for(FinanceMain finMain : referenceList) {
 				boolean isMailSent;
 				//send mail
-				getMailUtil().sendNotifications(NotificationConstants.TEMPLATE_FOR_QP, finMain);
+				notificationService.sendNotifications(NotificationConstants.TEMPLATE_FOR_QP, finMain);
 
 				/*
 				 * if(isMailSent){ MailLog mailLog = prepareMailLog(finMain); getMailLogDAO().saveMailLog(mailLog); }
@@ -88,16 +88,16 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
-	}
+
 
 	public NotificationsDAO getNotificationsDAO() {
 		return notificationsDAO;
 	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
+
 	public void setNotificationsDAO(NotificationsDAO notificationsDAO) {
 		this.notificationsDAO = notificationsDAO;
 	}

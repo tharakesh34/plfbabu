@@ -72,7 +72,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -89,6 +88,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * This is the controller class for the
@@ -132,7 +132,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	private String suspTrigger = "";
 
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	
 	/**
 	 * default constructor.<br>
@@ -647,7 +647,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 				//Mail Alert Notification for User
 				if(StringUtils.isNotBlank(aCustomer.getNextTaskId()) && 
 						!StringUtils.trimToEmpty(aCustomer.getNextRoleCode()).equals(aCustomer.getRoleCode())){
-					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_MANUALSUSPENSE, aCustomer);
+					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_MANUALSUSPENSE, aCustomer);
 				}
 
 				closeDialog();
@@ -1038,11 +1038,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		return overideMap;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 }

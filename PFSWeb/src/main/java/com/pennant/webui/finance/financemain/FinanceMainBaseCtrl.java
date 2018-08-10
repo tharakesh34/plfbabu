@@ -161,12 +161,10 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.app.util.SMSUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -326,6 +324,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.webui.sampling.FinSamplingDialogCtrl;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
@@ -856,8 +855,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private AccountEngineExecution engineExecution;
 	private CustomerService customerService;
 	private CommitmentService commitmentService;
-	private MailUtil mailUtil;
-	private SMSUtil smsUtil;
+	protected NotificationService notificationService;
 	private boolean extMailService;
 	private boolean extSMSService;
 	private StepPolicyService stepPolicyService;
@@ -6770,8 +6768,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 										ldocDetails.getDocImage()));
 
 							} else {
-								Filedownload.save(new AMedia(ldocDetails.getDocName(), "msword", "application/msword",
-										ldocDetails.getDocImage()));
+								/*
+								 * Filedownload.save(new AMedia(ldocDetails.getDocName(), "msword",
+								 * "application/msword", ldocDetails.getDocImage()));
+								 */
 							}
 
 						}
@@ -6799,7 +6799,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
 								financeDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(e);
@@ -17313,20 +17313,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentService = commitmentService;
 	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
-	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-
-	public SMSUtil getSmsUtil() {
-		return smsUtil;
-	}
-
-	public void setSmsUtil(SMSUtil smsUtil) {
-		this.smsUtil = smsUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public boolean isExtMailService() {

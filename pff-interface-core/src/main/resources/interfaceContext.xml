@@ -37,11 +37,11 @@
 		class="com.pennanttech.niyogin.hunter.service.BlacklistCheckService" parent="niyoginService">
 		<property name="serviceUrl" value="${experian.hunter.url}" />
 	</bean>
- 	<bean id="mailService"
+ 	<!-- <bean id="mailService"
 		class="com.pennanttech.niyogin.communication.service.MailServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.email.url}" />
 		<property name="client" ref="jsonClient" />
-	</bean>
+	</bean> -->
  	<bean id="sMSService"
 		class="com.pennanttech.niyogin.communication.service.SMSServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.sms.url}" />

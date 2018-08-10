@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.app.util.MailUtil;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -26,34 +25,33 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LimitCheckDetails {
 
 	private static final Logger logger = Logger.getLogger(LimitCheckDetails.class);
 
-	private DedupParmService 				dedupParmService;
-	private CustomerLimitIntefaceService 	customerLimitIntefaceService;
-	private LimitInterfaceDAO 				limitInterfaceDAO;
-	private MailUtil 						mailUtil;
-	private NotificationsDAO 				notificationsDAO;
-	
+	private DedupParmService dedupParmService;
+	private CustomerLimitIntefaceService customerLimitIntefaceService;
+	private LimitInterfaceDAO limitInterfaceDAO;
+	private NotificationService notificationService;
+	private NotificationsDAO notificationsDAO;
+
 	public static final String SUCCESS_CODE = "0000"; // FIXME
 
 	public LimitCheckDetails() {
 		super();
 	}
 
-	private String[] errorCodes = {"9999"};
-	
-	
+	private String[] errorCodes = { "9999" };
+
 	/**
-	 * send DealOnlineRequest to ACP interface
-	 * from the response of "DealOnlineRequest" we do the following operations
-	 * 1. GO --- send "doReserveUtilization" Request to ACP interface
-	 * 2. NOGO-- send "doOverrideAndReserveUtil" Request to ACP interface
+	 * send DealOnlineRequest to ACP interface from the response of "DealOnlineRequest" we do the following operations
+	 * 1. GO --- send "doReserveUtilization" Request to ACP interface 2. NOGO-- send "doOverrideAndReserveUtil" Request
+	 * to ACP interface
 	 * 
 	 */
-	public boolean limitServiceProcess(FinanceDetail aFinanceDetail) throws InterfaceException, InterruptedException{
+	public boolean limitServiceProcess(FinanceDetail aFinanceDetail) throws InterfaceException, InterruptedException {
 
 		LimitUtilization limitUtilReply = null;
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -66,7 +64,8 @@ public class LimitCheckDetails {
 
 			limitUtilReply = doPredealCheck(aFinanceDetail, limitUtilReq);
 
-			if(limitUtilReply != null && StringUtils.equals(limitUtilReply.getReturnCode(), PennantConstants.RES_TYPE_SUCCESS)) {
+			if (limitUtilReply != null
+					&& StringUtils.equals(limitUtilReply.getReturnCode(), PennantConstants.RES_TYPE_SUCCESS)) {
 				return true;
 			} else {
 				return false;
@@ -77,9 +76,8 @@ public class LimitCheckDetails {
 
 	}
 
-
 	/**
-	 * Method for checking the Limit Details 
+	 * Method for checking the Limit Details
 	 * 
 	 * @param role
 	 * @param finType
@@ -91,9 +89,10 @@ public class LimitCheckDetails {
 		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
 		financeRefDetail.setMandInputInStage(role + ",");
 		financeRefDetail.setFinType(finType);
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmService().getQueryCodeList(financeRefDetail,"_ALDView");
+		List<FinanceReferenceDetail> queryCodeList = getDedupParmService().getQueryCodeList(financeRefDetail,
+				"_ALDView");
 
-		if(queryCodeList == null || queryCodeList.isEmpty()) {
+		if (queryCodeList == null || queryCodeList.isEmpty()) {
 			return new ArrayList<FinanceReferenceDetail>();
 		}
 
@@ -107,7 +106,7 @@ public class LimitCheckDetails {
 	 * 
 	 * @param limitRef
 	 * @param branchCode
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
 	public LimitDetail getLimitDetails(String limitRef, String branchCode) throws InterfaceException {
 		logger.debug("Entering");
@@ -117,20 +116,21 @@ public class LimitCheckDetails {
 
 	/**
 	 * Method for sending Deal Online Request to ACP Interface
-	 * @param aFinanceDetail 
+	 * 
+	 * @param aFinanceDetail
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 * @throws InterruptedException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
-	public LimitUtilization doPredealCheck(FinanceDetail aFinanceDetail, LimitUtilization limitUtilReq) 
+	public LimitUtilization doPredealCheck(FinanceDetail aFinanceDetail, LimitUtilization limitUtilReq)
 			throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 
 		// checking for whether Predeal check Request already sent or not 
 		LimitUtilization limitUtil = doValidation(limitUtilReq);
-		
+
 		if (limitUtil != null) {
 			// checking for financeAmount is changed or not
 			BigDecimal prevDealAmt = PennantApplicationUtil.unFormateAmount(limitUtil.getDealAmount(), 0);
@@ -138,13 +138,15 @@ public class LimitCheckDetails {
 
 			if (prevDealAmt.compareTo(currentDealAmt) != 0) {
 				// Send predeal check request
-				limitUtil = doLimitProcess(aFinanceDetail.getFinScheduleData().getFinanceMain(), FinanceConstants.PREDEAL_CHECK);
+				limitUtil = doLimitProcess(aFinanceDetail.getFinScheduleData().getFinanceMain(),
+						FinanceConstants.PREDEAL_CHECK);
 			} else {
 				limitUtilReq.setNewRecord(false);
 				limitUtil = doReserveProcess(aFinanceDetail.getFinScheduleData().getFinanceMain(), limitUtil);
 			}
 		} else {
-			limitUtil = doLimitProcess(aFinanceDetail.getFinScheduleData().getFinanceMain(), FinanceConstants.PREDEAL_CHECK);
+			limitUtil = doLimitProcess(aFinanceDetail.getFinScheduleData().getFinanceMain(),
+					FinanceConstants.PREDEAL_CHECK);
 		}
 
 		logger.debug("Leaving");
@@ -153,41 +155,43 @@ public class LimitCheckDetails {
 
 	/**
 	 * Method for send Reserve or Override_Reserve Request to ACP Interface
-	 * @param aFinanceDetail 
+	 * 
+	 * @param aFinanceDetail
 	 * 
 	 * @param limitUtilReq
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private LimitUtilization doReserveProcess(FinanceMain financeMain, LimitUtilization limitUtilReq) throws InterfaceException {
+	private LimitUtilization doReserveProcess(FinanceMain financeMain, LimitUtilization limitUtilReq)
+			throws InterfaceException {
 		logger.debug("Entering");
 
-		if(financeMain == null) {
+		if (financeMain == null) {
 			return null;
 		}
 
 		LimitUtilization limitUtilRply;
 		limitUtilRply = null;
 		try {
-			if(StringUtils.equals(limitUtilReq.getReturnText(), FinanceConstants.LIMIT_GO)) {
-				
+			if (StringUtils.equals(limitUtilReq.getReturnText(), FinanceConstants.LIMIT_GO)) {
+
 				limitUtilReq = prepareLimitUtilReq(financeMain, FinanceConstants.RESERVE);
 				limitUtilRply = doReserveUtilization(limitUtilReq);
 
-				if(limitUtilRply == null) {
+				if (limitUtilRply == null) {
 					return null;
 				}
 
 				limitUtilRply.setDealType(FinanceConstants.RESERVE);
 				limitUtilRply.setNewRecord(limitUtilReq.isNewRecord());
-				
+
 				// save the Reserve or OverrideReserve response
-				if(limitUtilRply.isNewRecord()) {
+				if (limitUtilRply.isNewRecord()) {
 					getCustomerLimitIntefaceService().saveFinLimitUtil(getFinanceLimitProcess(limitUtilRply));
 				}
-				
-			} else if(StringUtils.equals(limitUtilReq.getReturnText(), FinanceConstants.LIMIT_NOGO)) {
-				
+
+			} else if (StringUtils.equals(limitUtilReq.getReturnText(), FinanceConstants.LIMIT_NOGO)) {
+
 				// Sent mail to RM
 				sendMailNotification(limitUtilReq);
 			}
@@ -229,20 +233,17 @@ public class LimitCheckDetails {
 	 * Method for process limits based on interface constant<br>
 	 * 
 	 * Interface constants<br>
-	 * 1. RESERVE
-	 * 2. CONFIRM
-	 * 3. CANCEL_RESERVE
-	 * 4. CANCEL_UTILIZATION
-	 * 5. AMENDEMENT
+	 * 1. RESERVE 2. CONFIRM 3. CANCEL_RESERVE 4. CANCEL_UTILIZATION 5. AMENDEMENT
 	 * 
 	 * @param financeMain
 	 * @param lmtActionType
-	 * @param intLimitType(Interface limit process constant)
-	 * @throws InterfaceException 
+	 * @param intLimitType(Interface
+	 *            limit process constant)
+	 * @throws InterfaceException
 	 */
 	public void doProcessLimits(FinanceMain financeMain, String intLimitType) throws InterfaceException {
 		logger.debug("Entering");
-		if(!StringUtils.isBlank(financeMain.getFinLimitRef())) {
+		if (!StringUtils.isBlank(financeMain.getFinLimitRef())) {
 			doLimitProcess(financeMain, intLimitType);
 		}
 		logger.debug("Leaving");
@@ -260,13 +261,13 @@ public class LimitCheckDetails {
 
 		LimitUtilization limitUtilRply = null;
 		try {
-			if(StringUtils.equals(intLimitType, FinanceConstants.PREDEAL_CHECK)) {// Predeal check
+			if (StringUtils.equals(intLimitType, FinanceConstants.PREDEAL_CHECK)) {// Predeal check
 
 				LimitUtilization limitUtilReq = prepareLimitUtilReq(financeMain, FinanceConstants.PREDEAL_CHECK);
 
 				limitUtilRply = doPredealCheck(limitUtilReq);
 
-				if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
+				if (!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 					sendMailNotification(limitUtilRply);
 				}
 
@@ -276,13 +277,13 @@ public class LimitCheckDetails {
 
 				limitUtilRply = doReserveProcess(financeMain, limitUtilRply);
 
-			} else if(StringUtils.equals(intLimitType, FinanceConstants.CONFIRM)) {// Confirm Reservation
+			} else if (StringUtils.equals(intLimitType, FinanceConstants.CONFIRM)) {// Confirm Reservation
 
 				LimitUtilization limitUtilReq = validateLimitUtilReq(financeMain, FinanceConstants.CONFIRM);
-				if(limitUtilReq != null) {
+				if (limitUtilReq != null) {
 					limitUtilRply = doConfirmReservation(limitUtilReq);
 
-					if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
+					if (!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 						sendMailNotification(limitUtilRply);
 					}
 
@@ -291,40 +292,40 @@ public class LimitCheckDetails {
 
 				}
 
-			} else if(StringUtils.equals(intLimitType, FinanceConstants.CANCEL_RESERVE)){
+			} else if (StringUtils.equals(intLimitType, FinanceConstants.CANCEL_RESERVE)) {
 
 				LimitUtilization limitUtilReq = validateLimitUtilReq(financeMain, FinanceConstants.CANCEL_RESERVE);
 
-				if(limitUtilReq != null) {
+				if (limitUtilReq != null) {
 					limitUtilRply = doCancelReservation(limitUtilReq);
 
-					if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
+					if (!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 						sendMailNotification(limitUtilRply);
 					}
 
 					limitUtilRply.setDealType(FinanceConstants.CANCEL_RESERVE);
 					getLimitInterfaceDAO().saveFinLimitUtil(getFinanceLimitProcess(limitUtilRply));
 				}
-			} else if(StringUtils.equals(intLimitType, FinanceConstants.CANCEL_UTILIZATION)){
+			} else if (StringUtils.equals(intLimitType, FinanceConstants.CANCEL_UTILIZATION)) {
 
 				LimitUtilization limitUtilReq = validateLimitUtilReq(financeMain, FinanceConstants.CANCEL_UTILIZATION);
 
-				if(limitUtilReq != null) {
+				if (limitUtilReq != null) {
 					limitUtilRply = doCancelUtilization(limitUtilReq);
 					limitUtilRply.setDealType(FinanceConstants.CANCEL_UTILIZATION);
 
-					if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
+					if (!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 						sendMailNotification(limitUtilRply);
 					}
 
 					getLimitInterfaceDAO().saveFinLimitUtil(getFinanceLimitProcess(limitUtilRply));
 
 				}
-			} else if(StringUtils.equals(intLimitType, FinanceConstants.AMENDEMENT)){
+			} else if (StringUtils.equals(intLimitType, FinanceConstants.AMENDEMENT)) {
 
 				LimitUtilization limitUtilReq = validateLimitUtilReq(financeMain, FinanceConstants.AMENDEMENT);
 
-				if(limitUtilReq != null) {
+				if (limitUtilReq != null) {
 					limitUtilRply = doLimitAmendment(limitUtilReq);
 
 					limitUtilRply.setDealType(FinanceConstants.AMENDEMENT);
@@ -332,7 +333,7 @@ public class LimitCheckDetails {
 
 				}
 			}
-		} catch(InterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			throw pfe;
 		}
 		logger.debug("Leaving");
@@ -343,33 +344,33 @@ public class LimitCheckDetails {
 	 * Method for sending Reserve Utilization Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
 	public LimitUtilization doReserveUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		LimitUtilization limitUtilization = doValidation(limitUtilReq);
 
-		if(limitUtilization != null) {
+		if (limitUtilization != null) {
 			limitUtilization.setNewRecord(false);
 			return limitUtilization;
 		}
 
 		try {
 			limitUtilization = getCustomerLimitIntefaceService().doReserveUtilization(limitUtilReq);
-			
-			if(!StringUtils.equals(limitUtilization.getReturnCode(), SUCCESS_CODE)) {
+
+			if (!StringUtils.equals(limitUtilization.getReturnCode(), SUCCESS_CODE)) {
 				sendMailNotification(limitUtilization);
 			}
-			
-		} catch(InterfaceException pfe) {
+
+		} catch (InterfaceException pfe) {
 			throw pfe;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return limitUtilization;
 	}
 
@@ -382,15 +383,16 @@ public class LimitCheckDetails {
 	private void sendMailNotification(LimitUtilization limitUtilization) throws InterfaceException {
 		logger.debug("Entering");
 
-		for(String code: errorCodes) {
-			if(!StringUtils.equals(limitUtilization.getReturnCode(), code)) {
+		for (String code : errorCodes) {
+			if (!StringUtils.equals(limitUtilization.getReturnCode(), code)) {
 				continue;
 			} else {
 				String tableType = "_Temp";
-				if(StringUtils.equals(limitUtilization.getDealType(), FinanceConstants.CANCEL_UTILIZATION)) {
+				if (StringUtils.equals(limitUtilization.getDealType(), FinanceConstants.CANCEL_UTILIZATION)) {
 					tableType = "";
 				}
-				FinanceMain financeMain = getLimitInterfaceDAO().getFinanceMainByRef(limitUtilization.getDealID(), tableType, false);
+				FinanceMain financeMain = getLimitInterfaceDAO().getFinanceMainByRef(limitUtilization.getDealID(),
+						tableType, false);
 
 				Notification notification = new Notification();
 				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
@@ -401,7 +403,7 @@ public class LimitCheckDetails {
 				notification.setStage(financeMain.getRoleCode());
 
 				try {
-					getMailUtil().sendNotifications(notification, financeMain, "", null); //FIXME
+					notificationService.sendNotifications(notification, financeMain, "", null); //FIXME
 				} catch (Exception e) {
 					logger.debug(e);
 				}
@@ -412,26 +414,25 @@ public class LimitCheckDetails {
 		logger.debug("Leaving");
 	}
 
-	
 	public LimitUtilization doPredealCheck(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().doPredealCheck(limitUtilReq);
 	}
-	
+
 	/**
 	 * Method for sending Override AND Reserve Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
 	public LimitUtilization doOverrideAndReserveUtil(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		LimitUtilization limitUtilization = doValidation(limitUtilReq);
 
-		if(limitUtilization != null) {
+		if (limitUtilization != null) {
 			limitUtilization.setNewRecord(false);
 			return limitUtilization;
 		}
@@ -444,8 +445,8 @@ public class LimitCheckDetails {
 	 * Method for sending Confirm Reservation Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
 	public LimitUtilization doConfirmReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
@@ -457,8 +458,8 @@ public class LimitCheckDetails {
 	 * Method for sending Cancel Reservation Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
 	public LimitUtilization doCancelReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
@@ -470,8 +471,8 @@ public class LimitCheckDetails {
 	 * Method for sending Cancel Utilization Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
 	public LimitUtilization doCancelUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
@@ -483,8 +484,8 @@ public class LimitCheckDetails {
 	 * Method for sending Limit Amendment Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
 	public LimitUtilization doLimitAmendment(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
@@ -517,14 +518,14 @@ public class LimitCheckDetails {
 		logger.debug("Leaving");
 	}
 
-	private LimitUtilization doValidation(LimitUtilization limitUtilReq) { 
+	private LimitUtilization doValidation(LimitUtilization limitUtilReq) {
 		logger.debug("Entering");
 
 		//check ReserveUtilization request already sent or not
-		FinanceLimitProcess limitProcess = getCustomerLimitIntefaceService().getLimitUtilDetails(
-				getFinanceLimitProcess(limitUtilReq));
+		FinanceLimitProcess limitProcess = getCustomerLimitIntefaceService()
+				.getLimitUtilDetails(getFinanceLimitProcess(limitUtilReq));
 
-		if(limitProcess == null) {
+		if (limitProcess == null) {
 			return null;
 		}
 		LimitUtilization limitUtilization = new LimitUtilization();
@@ -548,7 +549,7 @@ public class LimitCheckDetails {
 	 * Method for fetching limit process details
 	 * 
 	 */
-	public static FinanceLimitProcess getFinanceLimitProcess(LimitUtilization limitUtilRply) { 
+	public static FinanceLimitProcess getFinanceLimitProcess(LimitUtilization limitUtilRply) {
 		logger.debug("Entering");
 
 		FinanceLimitProcess finLimitProcess = new FinanceLimitProcess();
@@ -557,7 +558,7 @@ public class LimitCheckDetails {
 		finLimitProcess.setReferenceNum(limitUtilRply.getReferenceNum());
 		finLimitProcess.setCustCIF(limitUtilRply.getCustomerReference());
 		finLimitProcess.setLimitRef(limitUtilRply.getLimitRef());
-		if(StringUtils.equals(limitUtilRply.getDealType(), FinanceConstants.PREDEAL_CHECK)) {
+		if (StringUtils.equals(limitUtilRply.getDealType(), FinanceConstants.PREDEAL_CHECK)) {
 			finLimitProcess.setResStatus(limitUtilRply.getReturnText());
 			finLimitProcess.setResMessage(limitUtilRply.getMsgBreach());
 		} else {
@@ -595,8 +596,8 @@ public class LimitCheckDetails {
 		logger.debug("Entering");
 
 		String reqType = FinanceConstants.RESERVE;
-		if(StringUtils.equals(lmtActType, FinanceConstants.CANCEL_UTILIZATION) ||
-				StringUtils.equals(lmtActType, FinanceConstants.AMENDEMENT)) {
+		if (StringUtils.equals(lmtActType, FinanceConstants.CANCEL_UTILIZATION)
+				|| StringUtils.equals(lmtActType, FinanceConstants.AMENDEMENT)) {
 			reqType = FinanceConstants.CONFIRM;
 		}
 
@@ -607,8 +608,9 @@ public class LimitCheckDetails {
 
 		LimitUtilization limitUtilReq = null;
 		finLimitProcess = getCustomerLimitIntefaceService().getLimitUtilDetails(finLimitProcess);
-		
-		if(finLimitProcess != null && StringUtils.equals(finLimitProcess.getResStatus(), PennantConstants.RES_TYPE_SUCCESS)) {
+
+		if (finLimitProcess != null
+				&& StringUtils.equals(finLimitProcess.getResStatus(), PennantConstants.RES_TYPE_SUCCESS)) {
 
 			limitUtilReq = prepareLimitUtilReq(financeMain, lmtActType);
 		}
@@ -617,8 +619,6 @@ public class LimitCheckDetails {
 
 		return limitUtilReq;
 	}
-
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -647,12 +647,9 @@ public class LimitCheckDetails {
 	public void setLimitInterfaceDAO(LimitInterfaceDAO limitInterfaceDAO) {
 		this.limitInterfaceDAO = limitInterfaceDAO;
 	}
-	
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public NotificationsDAO getNotificationsDAO() {

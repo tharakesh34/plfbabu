@@ -86,7 +86,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -110,6 +109,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -181,7 +181,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	private BigDecimal avgPftRateRt = BigDecimal.ZERO;
 	private String defaultPftDaysBasis = "A/A_360";
 
-	private MailUtil mailUtil;
+	private NotificationService notificationService;
 	/**
 	 * default constructor.<br>
 	 */
@@ -1204,7 +1204,8 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 				//Mail Alert Notification for User
 				if(StringUtils.isNotBlank(aInvestmentFinHeader.getNextTaskId()) && 
 						!StringUtils.trimToEmpty(aInvestmentFinHeader.getNextRoleCode()).equals(aInvestmentFinHeader.getRoleCode())){
-					getMailUtil().sendNotifications(NotificationConstants.MAIL_MODULE_TREASURY, aInvestmentFinHeader);
+					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_TREASURY,
+							aInvestmentFinHeader);
 				}
 				
 				//Customer Notification for Role Identification
@@ -1491,12 +1492,10 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		this.financeDetail = financeDetail;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
-	}
+
 
 }

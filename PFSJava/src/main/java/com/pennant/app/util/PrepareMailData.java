@@ -45,13 +45,13 @@ public class PrepareMailData implements Serializable {
 	@Autowired
 	private EmailEngine emailEngine;
 
-	public void processData(String mailName,Date appDate) throws SQLException {
+	public void processData(String mailName, Date appDate) throws SQLException {
 		logger.debug("Entering");
 		File attachmentPath = null;
 		Connection connection = null;
 		try {
 			List<MailData> mailDataList = getNotificationsService().getMailData(mailName);
-			
+
 			// MAIL_BODY
 			for (MailData mailData : mailDataList) {
 				MailTemplate template = new MailTemplate();
@@ -71,22 +71,23 @@ public class PrepareMailData implements Serializable {
 					if (datafields != null && datafields.size() > 0) {
 						template.setLovDescFormattedContent(mergedata(datafields, mailData.getMailBody()));
 					} else if (mailData.getMailBody() != null) {
-						String mailText = FileUtils.readFileToString(new File(PathUtil.getPath(PathUtil.MAIL_BODY) + mailData.getMailBody()));
+						String mailText = FileUtils.readFileToString(
+								new File(PathUtil.getPath(PathUtil.MAIL_BODY) + mailData.getMailBody()));
 						template.setLovDescFormattedContent(mailText);
 					}
 
 					// Mail Attachment
 					if (mailData.getMailAttachmentName() != null) {
-						Map<String,byte[]> attchments= new HashMap<>();
+						Map<String, byte[]> attchments = new HashMap<>();
 
-						
 						connection = getDataSource().getConnection();
-						boolean attachment =  getReportUtil().generateExcelReport(PathUtil.MAIL_ATTACHMENT_REPORT, mailData.getMailAttachmentName(), "",
-								false, "", connection,appDate);
+						boolean attachment = getReportUtil().generateExcelReport(PathUtil.MAIL_ATTACHMENT_REPORT,
+								mailData.getMailAttachmentName(), "", false, "", connection, appDate);
 						byte[] data = null;
 						if (attachment) {
-							attachmentPath = new File(PathUtil.getPath(PathUtil.MAIL_ATTACHMENT_REPORT) + mailData.getMailAttachmentName());
-							 data = FileUtils.readFileToByteArray(attachmentPath);
+							attachmentPath = new File(PathUtil.getPath(PathUtil.MAIL_ATTACHMENT_REPORT)
+									+ mailData.getMailAttachmentName());
+							data = FileUtils.readFileToByteArray(attachmentPath);
 						}
 						attchments.put(mailData.getMailAttachmentName(), data);
 						template.setAttchments(attchments);
@@ -129,8 +130,8 @@ public class PrepareMailData implements Serializable {
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		}finally{
-			if (connection!=null) {
+		} finally {
+			if (connection != null) {
 				connection.close();
 			}
 		}
@@ -163,8 +164,6 @@ public class PrepareMailData implements Serializable {
 		return null;
 
 	}
-
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -112,7 +112,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -177,6 +176,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -381,7 +381,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	protected JdbcSearchObject<Customer>					custCIFSearchObject;
 	private EventManager 									eventManager;
-	private MailUtil 										mailUtil;
+	private NotificationService notificationService;
 	private LimitDetails									limitDetails;
 
 	protected String										selectMethodName		 = "onSelectTab";
@@ -2669,7 +2669,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						getMailUtil().sendNotifications(notification, aCommitment,
+						notificationService.sendNotifications(notification, aCommitment,
 								aCommitment.getCmtTitle(), null);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -4149,12 +4149,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtFlagsDetailList = cmtFlagsDetailList;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public EventManager getEventManager() {

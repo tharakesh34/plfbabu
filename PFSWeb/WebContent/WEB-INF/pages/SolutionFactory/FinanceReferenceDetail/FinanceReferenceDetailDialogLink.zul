@@ -295,8 +295,6 @@
 										checked="true" />
 								</hbox>
 							</row>
-							
-							
 						</rows>
 					</grid>
 				</groupbox>

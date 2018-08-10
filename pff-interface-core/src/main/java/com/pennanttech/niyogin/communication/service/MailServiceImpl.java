@@ -17,10 +17,10 @@ import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class MailServiceImpl extends NiyoginService implements MailService {
-	private static final Logger	logger	= Logger.getLogger(MailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MailServiceImpl.class);
 
-	private JSONClient			client;
-	private String				serviceUrl;
+	private JSONClient client;
+	private String serviceUrl;
 
 	/**
 	 * Method to send the email for the given list of toAddress.
@@ -122,7 +122,7 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
-	 * @param reqSentOn 
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
 			String errorDesc, Timestamp reqSentOn) {
@@ -155,7 +155,7 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
-	 * @param reqSentOn 
+	 * @param reqSentOn
 	 */
 	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
 			Timestamp reqSentOn) {

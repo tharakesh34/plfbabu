@@ -513,10 +513,12 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinRefDetailId, FinType, FinEvent, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage,OverRide,OverRideValue, ");
 		insertSql.append(" AllowDeviation, AllowWaiver, AllowPostpone, AllowExpire, AlertType,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ResendReq)");
 		insertSql.append(" Values(:FinRefDetailId, :FinType, :FinEvent, :FinRefType, :FinRefId, :IsActive, :ShowInStage, :MandInputInStage, :AllowInputInStage,:OverRide,:OverRideValue,");
 		insertSql.append(" :AllowDeviation, :AllowWaiver, :AllowPostpone, :AllowExpire, :AlertType, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ResendReq)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -552,7 +554,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		updateSql.append(" AllowDeviation = :AllowDeviation, AllowWaiver = :AllowWaiver, AllowPostpone = :AllowPostpone,  AllowExpire = :AllowExpire, AlertType = :AlertType, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ResendReq = :ResendReq");
 		updateSql.append(" Where FinRefDetailId =:FinRefDetailId");
 
 		if (!type.endsWith("_Temp")) {

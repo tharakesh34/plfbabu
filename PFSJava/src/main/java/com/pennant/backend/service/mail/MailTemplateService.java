@@ -50,7 +50,6 @@ import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.pennapps.notification.Notification;
 
 public interface MailTemplateService {
-
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	MailTemplate getMailTemplateById(long id);

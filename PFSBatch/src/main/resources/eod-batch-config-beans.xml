@@ -368,7 +368,7 @@
 	</bean>
 	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl" parent="sequenceDao"/>
 	
-	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" scope="prototype">
+	<bean id="notificationService"" class="com.pennanttech.pff.notifications.service.NotificationService">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="notificationsService" ref="notificationsService" />
@@ -381,6 +381,7 @@
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
+	
 	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
 	</bean>

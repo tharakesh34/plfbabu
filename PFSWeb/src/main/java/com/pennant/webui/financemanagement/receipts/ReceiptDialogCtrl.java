@@ -117,7 +117,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -218,6 +217,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -422,7 +422,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
  
 	private LinkedHashMap<String, RepayScheduleDetail>		refundMap;
 	private Map<String, BigDecimal> 						taxPercMap = null;
-	private MailUtil										mailUtil;
+	private NotificationService notificationService;
 
 	private Map<String, BigDecimal> waivedAllocationMap = new HashMap<>();
 	private Map<String, BigDecimal> paidAllocationMap = new HashMap<>();
@@ -3277,7 +3277,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 
 					try {
-						getMailUtil().sendNotifications(notification, financeDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
 								financeDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(Literal.EXCEPTION, e);
@@ -7475,11 +7475,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.agreementDetailDialogCtrl = agreementDetailDialogCtrl;
 	}
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {

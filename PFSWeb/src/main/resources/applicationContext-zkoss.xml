@@ -1121,7 +1121,7 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="accountsService" ref="accountsService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="eventManager" ref="eventManager" />
 	</bean>
 
@@ -1141,7 +1141,7 @@
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<bean id="creditApplicationRevSelectCategoryCtrl"
@@ -1788,7 +1788,7 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="financeMainExtService" ref="financeMainExtService" />
@@ -1805,8 +1805,7 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
-		<property name="mailUtil" ref="mailUtil" />
-		<property name="smsUtil" ref="smsUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="extMailService" value="${commn.mail.isExtService:false}"  />
 		<property name="extSMSService" value="${commn.sms.isExtService:false}"  />
 		<property name="stepPolicyService" ref="stepPolicyService" />
@@ -2853,7 +2852,7 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="repayCalculator" ref="repayCalculator" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
 
@@ -2879,7 +2878,7 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="manualAdviseService" ref="manualAdviseService" />
@@ -2953,7 +2952,7 @@
 		class="com.pennant.webui.financemanagement.payments.FinanceWriteoffDialogCtrl"
 		parent="financeBaseCtrl" scope="prototype">
 		<property name="financeWriteoffService" ref="financeWriteoffService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="accrualService" ref="accrualService" />
 	</bean>
@@ -3065,7 +3064,7 @@
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<bean id="provisionSearchCtrl"
@@ -3085,7 +3084,7 @@
 		class="com.pennant.webui.financemanagement.suspense.SuspenseDialogCtrl"
 		parent="financeBaseCtrl" scope="prototype">
 		<property name="suspenseService" ref="suspenseService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
@@ -3105,7 +3104,7 @@
 		class="com.pennant.webui.financemanagement.suspense.CustSuspenseDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="customerService" ref="customerService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<!--============ JV Posting Details ============== -->
@@ -3486,7 +3485,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
 		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 		<property name="creditApplicationReviewDAO" ref="creditApplicationReviewDAO" />
 		<property name="customerBankInfoService" ref="customerBankInfoService" />
@@ -3658,7 +3657,7 @@
 		class="com.pennant.webui.finance.treasuaryfinance.TreasuaryFinHeaderDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="treasuaryFinanceService" ref="treasuaryFinanceService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 
@@ -3704,7 +3703,7 @@
 		<property name="facilityService" ref="facilityService" />
 		<property name="customerLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="customerDataProcess" ref="customerDataProcess" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<bean id="selectFacilityTypeDialogCtrl"
@@ -4130,7 +4129,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="sysNotificationService" ref="sysNotificationService" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 
@@ -4327,7 +4326,7 @@
 		<property name="scriptValidationService" ref="scriptValidationService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="customerEMailDAO" ref="customerEMailDAO" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="eventManager" ref="eventManager" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="financeDetailService" ref="financeDetailService" />
@@ -4372,7 +4371,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="eventManager" ref="eventManager" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
@@ -5334,7 +5333,7 @@
 	<bean id="queryDetailDialogCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDetailDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="queryDetailService" ref="queryDetailService"/>
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
-		<property name="mailUtil" ref="mailUtil" />
+		<property name="notificationService" ref="notificationService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />

@@ -139,8 +139,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalDetail/legalDetailDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalDetail/legalDetailDialog.zul file. <br>
  */
 public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private static final long serialVersionUID = 1L;
@@ -205,7 +204,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	protected Label label_LDCollateralRef;
 	protected Label label_LDLoanBranch;
 	protected Label label_LDDate;
-	
+
 	protected Label label_DocLoanReference;
 	protected Label label_DocCollateralRef;
 	protected Label label_DocLoanBranch;
@@ -245,14 +244,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	// Legal Decision
 	protected Combobox legalDecision;
 	protected Textbox legalRemarks;
-	
+
 	// Legal Documnets
 	protected Listbox listBoxGenaratedDocuments;
 
 	private LegalDetail legalDetail;
 	private transient LegalDetailListCtrl legalDetailListCtrl;
 	private transient LegalDetailService legalDetailService;
-	private transient SecurityUserOperationsService  securityUserOperationsService;
+	private transient SecurityUserOperationsService securityUserOperationsService;
 	private transient Configuration freemarkerMailConfiguration;
 
 	private FinanceWorkFlowDAO financeWorkFlowDAO;
@@ -293,8 +292,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -424,8 +422,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -437,8 +434,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -593,7 +589,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			}
 		}
 		doFillDocumentDetails(aLegalDetail.getDocumentList());
-		
+
 		if (enqiryModule) {
 			this.legalDocumentsTab.setVisible(true);
 			doFillGenaratedDocuments(aLegalDetail);
@@ -620,7 +616,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -988,8 +984,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 						|| "LEGAL_APPROVAL_BRANCH_MANAGER".equals(getRole())
 						|| "LEGAL_APPROVAL_AREA_MANAGER".equals(getRole())
 						|| "LEGAL_APPROVAL_REGIONAL_MANAGER".equals(getRole())
-						|| "LEGAL_APPROVAL_HEAD".equals(getRole())
-						|| "LEGAL_APPROVAL_MAKER".equals(getRole())) {
+						|| "LEGAL_APPROVAL_HEAD".equals(getRole()) || "LEGAL_APPROVAL_MAKER".equals(getRole())) {
 					if (PennantConstants.List_Select.equals(document.getDocumentTypeApprove())
 							|| Labels.getLabel("Combo.Select").equals(document.getDocumentTypeApprove())) {
 						this.documentDetailTab.setSelected(true);
@@ -1024,7 +1019,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		try {
 			if (doProcess(aLegalDetail, tranType)) {
-				
+
 				// User Notifications Message/Alert
 				try {
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -1051,14 +1046,15 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
-				
+
 				//Mail Alert Notification
-				if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("ESFB_LEGAL_DETAIL_ALERT_NOTIFICATION"))) {
-					if(!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())){
+				if (PennantConstants.YES
+						.equals(SysParamUtil.getValueAsString("ESFB_LEGAL_DETAIL_ALERT_NOTIFICATION"))) {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 						sendMailNotificationAlert(aLegalDetail);
 					}
 				}
-				
+
 				// List Detail Refreshment
 				refreshList();
 
@@ -1072,12 +1068,12 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("ESFB_LEGAL_DETAIL_DOCUMENT_DOWNLOAD"))) {
 					fileNmae = downloadDocuments(aLegalDetail);
 				}
-				
+
 				if (fileNmae != null) {
 					msg = msg.concat("  ".concat(fileNmae).concat(" document downloaded successfully."));
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
-				
+
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
@@ -1086,7 +1082,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the workFlow Details List to Object
@@ -1267,7 +1262,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
-		
+
 		setMethod(method);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1333,8 +1328,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_ApplicantDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_ApplicantDetails button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -1429,24 +1423,24 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		setApplicantDetailList(applicantDetailList);
 		List<LegalApplicantDetail> detailList = new ArrayList<>();
-		
+
 		if (CollectionUtils.isNotEmpty(applicantDetailList)) {
 			detailList.addAll(applicantDetailList);
 		}
-		if ( !enqiryModule && (CollectionUtils.isEmpty(applicantDetailList)  || isNewApplicants())) {
+		if (!enqiryModule && (CollectionUtils.isEmpty(applicantDetailList) || isNewApplicants())) {
 			List<Customer> customerList = getLegalDetail().getCustomerList();
 			if (CollectionUtils.isNotEmpty(customerList)) {
 				setNewApplicants(true);
 				getReqApplicantsList(detailList, customerList);
 			}
-		} 
+		}
 		doFillApplicantDetail(detailList);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void getReqApplicantsList(List<LegalApplicantDetail> detailList, List<Customer> customerList) {
-		
+
 		for (Customer customer : customerList) {
 			boolean idAdd = false;
 			if (CollectionUtils.isNotEmpty(detailList)) {
@@ -1467,11 +1461,11 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				detailList.add(applicantDetail);
 			}
 		}
-		
+
 	}
 
 	private void doFillApplicantDetail(List<LegalApplicantDetail> applicantDetailList) {
-		
+
 		if (applicantDetailList != null && !applicantDetailList.isEmpty()) {
 
 			for (LegalApplicantDetail applicantDetail : applicantDetailList) {
@@ -1514,14 +1508,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		return years;
 	}
+
 	/**
 	 ********************************************************************************************
 	 * Property Details *
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_PropertyDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_PropertyDetails button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -1882,8 +1876,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_PropertyTitleDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_PropertyTitleDetails button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -1997,8 +1990,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_ECTitleDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_ECTitleDetails button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -2106,8 +2098,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_NotesDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_NotesDetails button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -2267,8 +2258,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 	}
 
-	
-	
 	/**
 	 ********************************************************************************************
 	 * Document downloads *
@@ -2289,36 +2278,36 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 */
 	private void doFillGenaratedDocuments(List<DocumentDetails> detailsList) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.listBoxGenaratedDocuments.getItems().clear();
 		List<ValueLabel> list = PennantAppUtil.getDocumentTypes();
 		Listitem listitem = null;
 		Listcell lc = null;
 		for (DocumentDetails doc : detailsList) {
-			
+
 			listitem = new Listitem();
 			lc = new Listcell(String.valueOf(doc.getDocId()));
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell(PennantAppUtil.getlabelDesc(doc.getDocCategory(), list));
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell(doc.getDoctype());
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell(doc.getDocName());
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell();
 			Button viewBtn = new Button("View");
 			if (StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
 				viewBtn.setLabel("Download");
 			}
-			viewBtn.addForward("onClick",window_LegalDetailDialog,"onDocViewButtonClicked",doc.getDocId());
+			viewBtn.addForward("onClick", window_LegalDetailDialog, "onDocViewButtonClicked", doc.getDocId());
 			lc.appendChild(viewBtn);
 			viewBtn.setStyle("font-weight:bold;");
 			listitem.appendChild(lc);
-			
+
 			this.listBoxGenaratedDocuments.appendChild(listitem);
 		}
 		logger.debug(Literal.LEAVING);
@@ -2352,8 +2341,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * Setting the window title based on the role
 	 */
@@ -2424,7 +2412,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		this.label_LDCollateralRef.setValue(aLegalDetail.getCollateralReference());
 		this.label_LDLoanBranch.setValue(aLegalDetail.getBranchDesc());
 		this.label_LDDate.setValue(legalDate);
-		
+
 		this.label_DocLoanReference.setValue(aLegalDetail.getLoanReference());
 		this.label_DocCollateralRef.setValue(aLegalDetail.getCollateralReference());
 		this.label_DocLoanBranch.setValue(aLegalDetail.getBranchDesc());
@@ -2507,7 +2495,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		try {
 			if ("LEGAL_PRELIMINARY_MAKER".equals(getRole())) {
 				// Legal Preliminary Document
-				return	downloadDocument(legalDetail, "PRELIMINARY Draft", true);
+				return downloadDocument(legalDetail, "PRELIMINARY Draft", true);
 			} else if (("LEGAL_APPROVAL_OFFICER".equals(getRole()) || "LEGAL_APPROVAL_BRANCH_MANAGER".equals(getRole())
 					|| "LEGAL_APPROVAL_AREA_MANAGER".equals(getRole())
 					|| "LEGAL_APPROVAL_REGIONAL_MANAGER".equals(getRole()) || "LEGAL_APPROVAL_HEAD".equals(getRole()))
@@ -2535,7 +2523,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		engine.showDocument(legalDetailListCtrl.window_LegalDetailList, fileName, SaveFormat.PDF);
 
 		// Will save the data in one table for another menu option download
-		legalDetail.setDocImage(engine.getDocumentInByteArray(template.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+		legalDetail.setDocImage(
+				engine.getDocumentInByteArray(template.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
 
 		DocumentDetails details = new DocumentDetails();
 		details.setDocModule(CollateralConstants.LEGAL_MODULE);
@@ -2553,10 +2542,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		details.setDocImage(legalDetail.getDocImage());
 		details.setReferenceId(legalDetail.getLegalReference());
 		legalDetailService.saveDocumentDetails(details);
-		
+
 		engine.close();
 		logger.debug(Literal.LEAVING);
-		
+
 		return fileName;
 	}
 
@@ -2587,7 +2576,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			getFreemarkerMailConfiguration().setTemplateLoader(loader);
 			Template template = getFreemarkerMailConfiguration().getTemplate("legalTemplate");
 			String result = "";
-			
+
 			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 			} catch (IOException e) {
@@ -2597,7 +2586,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				logger.error(Literal.EXCEPTION, e);
 				throw new Exception("Problem initializing freemarker or rendering template ", e);
 			}
-			
+
 			Notification emailMessage = new Notification();
 			emailMessage.setKeyReference("");
 			emailMessage.setModule(subject);
@@ -2621,18 +2610,19 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private byte[] getContent() throws Exception {
 		byte[] emailContent = null;
 		try {
-			emailContent = FileUtils.readFileToByteArray( new File(PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS) + "/Legal/LegalNotification.html"));
+			emailContent = FileUtils.readFileToByteArray(
+					new File(PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS) + "/Legal/LegalNotification.html"));
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			throw e;
 		}
 		return emailContent;
 	}
-	
+
 	private String[] getUserEmails(LegalDetail aLegalDetail) {
 		List<String> emails = null;
 		if (PennantConstants.method_doApprove.equals(getMethod())) {
@@ -2659,7 +2649,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		return null;
 	}
-	
 
 	// Getters and setters
 	public void setLegalDetailService(LegalDetailService legalDetailService) {
@@ -2730,7 +2719,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		this.eventManager = eventManager;
 	}
 
- 
 	public FinCovenantTypeListCtrl getFinCovenantTypeListCtrl() {
 		return finCovenantTypeListCtrl;
 	}
@@ -2762,6 +2750,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
+
 	public SecurityUserOperationsService getSecurityUserOperationsService() {
 		return securityUserOperationsService;
 	}

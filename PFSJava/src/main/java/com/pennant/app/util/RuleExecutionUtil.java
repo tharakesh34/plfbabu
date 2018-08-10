@@ -134,7 +134,7 @@ public class RuleExecutionUtil implements Serializable {
 		logger.debug("Leaving");
 		return result.getBuffer().toString();
 	}
-	
+
 	/**
 	 * To Execute the Script Rule with object data
 	 * 
@@ -151,11 +151,11 @@ public class RuleExecutionUtil implements Serializable {
 		logger.debug("Entering");
 
 		Bindings bindings = new SimpleBindings();
-		
+
 		if (fieldsandvalues != null && !fieldsandvalues.isEmpty()) {
 			bindings.putAll(fieldsandvalues);
 		}
-		
+
 		rule = replaceCurrencyCode(rule, finccy);
 		rule = StringUtils.replace(rule, "{BLANK}", "");
 		Object result = null;
@@ -179,7 +179,7 @@ public class RuleExecutionUtil implements Serializable {
 	 *            Contains data in the form of key and value pairs
 	 * @param returnType
 	 * @return
-	 * @throws DatatypeConfigurationException 
+	 * @throws DatatypeConfigurationException
 	 */
 	private Object processEngineRule(String rule, Bindings bindings, RuleReturnType returnType)
 			throws DatatypeConfigurationException {
@@ -197,13 +197,13 @@ public class RuleExecutionUtil implements Serializable {
 		// get Script engine object
 		ScriptEngine engine = this.scriptEngine;
 		RuleResult ruleResult = null;
-		
+
 		if (returnType == RuleReturnType.OBJECT) {
 			ruleResult = new RuleResult();
 			bindings.put("result", ruleResult);
 		}
 
-		if(rule != null) {
+		if (rule != null) {
 			scriptRule = "var Result; function Pennant(){" + rule
 					+ "}Pennant(); function pennantExec() { return Result; } pennantExec();";
 			try {
@@ -320,7 +320,7 @@ public class RuleExecutionUtil implements Serializable {
 			map.put(field, value);
 		}
 	}
-	
+
 	private Map<String, Object> getBeanMap(List<Object> objects) {
 		Map<String, Object> objectsMap = new HashMap<String, Object>();
 		if (objects != null) {
@@ -343,25 +343,24 @@ public class RuleExecutionUtil implements Serializable {
 		}
 		return objectsMap;
 	}
-	
+
 	private Object fetchBeanValue(String field, Object object) {
 		if (field.split("_").length > 1) {
 			String suffix = field.split("_")[1];
 			String methodName = "get" + suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
 			try {
 				return object.getClass().getMethod(methodName).invoke(object);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
 		}
 		return null;
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setScriptEngine(ScriptEngine scriptEngine) {
 		this.scriptEngine = scriptEngine;
 	}

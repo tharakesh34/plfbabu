@@ -12,13 +12,13 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailLog;
-import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.maillog.MailLogDAO;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.NotificationConstants;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class GraceEndNotificationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 
@@ -32,7 +32,7 @@ public class GraceEndNotificationProcess extends QuartzJobBean implements Statef
 	private transient FinanceMainDAO financeMainDAO;
 	private transient NotificationsDAO notificationsDAO;
 	private transient MailLogDAO mailLogDAO;
-	private transient MailUtil mailUtil;
+	private transient NotificationService notificationService;
 
 	Date appDate = DateUtility.getAppDate();
 
@@ -51,7 +51,7 @@ public class GraceEndNotificationProcess extends QuartzJobBean implements Statef
 		try {
 			for(FinanceMain finMain : referenceList) {
 
-				getMailUtil().sendNotifications(NotificationConstants.TEMPLATE_FOR_GE, finMain);
+				notificationService.sendNotifications(NotificationConstants.TEMPLATE_FOR_GE, finMain);
 
 				/*
 				 * if(isMailSent){ MailLog mailLog = prepareMailLog(finMain); getMailLogDAO().saveMailLog(mailLog); }
@@ -89,16 +89,14 @@ public class GraceEndNotificationProcess extends QuartzJobBean implements Statef
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
 
-	public void setMailUtil(MailUtil mailUtil) {
-		this.mailUtil = mailUtil;
-	}
 
 	public NotificationsDAO getNotificationsDAO() {
 		return notificationsDAO;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 	public void setNotificationsDAO(NotificationsDAO notificationsDAO) {
