@@ -534,9 +534,9 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				item = new Listitem();
 				Listcell lc = new Listcell();
 				if (AccountConstants.TRANTYPE_CREDIT.equals(returnDataSet.getDrOrCr())) {
-					lc = new Listcell(Labels.getLabel("common.Debit"));
-				} else if (AccountConstants.TRANTYPE_DEBIT.equals(returnDataSet.getDrOrCr())) {
 					lc = new Listcell(Labels.getLabel("common.Credit"));
+				} else if (AccountConstants.TRANTYPE_DEBIT.equals(returnDataSet.getDrOrCr())) {
+					lc = new Listcell(Labels.getLabel("common.Debit"));
 				}
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getTranDesc());
