@@ -688,7 +688,7 @@ public class AgreementGeneration implements Serializable {
 						}
 						externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
 						externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
-						externalLiabilityDetail.setFinBranchName(extLiability.getLoanBankName());
+						externalLiabilityDetail.setFinBranchName(StringUtils.trimToEmpty(extLiability.getLoanBankName()));
 						externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
 						externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
@@ -809,6 +809,7 @@ public class AgreementGeneration implements Serializable {
 									externalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 									externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 								}
+								externalLiabilityDetail.setFinBranchName(StringUtils.trimToEmpty(extLiability.getLoanBankName()));
 								externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
 								externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
 								externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
@@ -862,9 +863,11 @@ public class AgreementGeneration implements Serializable {
 					SourcingDetail sourcingDetail=agreement.new SourcingDetail();
 					FinanceMain financeMain2=detail.getFinScheduleData().getFinanceMain();
 					sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
+					sourcingDetail.setDsaNameDesc((StringUtils.trimToEmpty(financeMain2.getDsaCodeDesc())));
 					sourcingDetail.setDmaCodeDesc(StringUtils.trimToEmpty(financeMain2.getDmaCodeDesc()));
 					sourcingDetail.setSourceChannel(StringUtils.trimToEmpty(financeMain2.getSalesDepartmentDesc()));
 					sourcingDetail.setSalesManager(StringUtils.trimToEmpty(financeMain2.getReferralId()));
+					sourcingDetail.setSalesManagerDesc(StringUtils.trimToEmpty(financeMain2.getReferralIdDesc()));
 					agreement.getSourcingDetails().add(sourcingDetail);
 				}
 			}
@@ -2339,6 +2342,7 @@ public class AgreementGeneration implements Serializable {
 					CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(guarantorDetail.getCustID(), true, "_AView");
 					Customer customer = customerDetails.getCustomer();
 					coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+					coapplicant.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 					//pan number
 					List<CustomerDocument> doclist = customerDetails.getCustomerDocumentsList();
 					coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
@@ -2358,7 +2362,8 @@ public class AgreementGeneration implements Serializable {
 						setCoapplicantEMailId(coapplicant, eMailList);
 					}
 				}else{
-					coapplicant.setCustName(StringUtils.trimToEmpty(guarantorDetail.getCustShrtName()));
+					coapplicant.setCustName(StringUtils.trimToEmpty(guarantorDetail.getGuarantorCIFName()));
+					coapplicant.setCustCIF((StringUtils.trimToEmpty(guarantorDetail.getGuarantorIDNumber())));
 					CustomerAddres customerAddres =new CustomerAddres();
 					customerAddres.setCustAddrHNbr(StringUtils.trimToEmpty(guarantorDetail.getAddrHNbr()));
 					customerAddres.setCustFlatNbr(StringUtils.trimToEmpty(guarantorDetail.getFlatNbr()));

@@ -6564,12 +6564,30 @@ private String custAccount ="";
 		private String sourceChannel="";
 		private String salesPerson="";
 		private String dsaName="";
+		private String dsaNameDesc="";
 		private String salesManager ="";
+		private String salesManagerDesc ="";
 		private String dmaCodeDesc = "";
 		
 		public SourcingDetail() {
 		}
 		
+		public String getDsaNameDesc() {
+			return dsaNameDesc;
+		}
+
+		public void setDsaNameDesc(String dsaNameDesc) {
+			this.dsaNameDesc = dsaNameDesc;
+		}
+
+		public String getSalesManagerDesc() {
+			return salesManagerDesc;
+		}
+
+		public void setSalesManagerDesc(String salesManagerDesc) {
+			this.salesManagerDesc = salesManagerDesc;
+		}
+
 		public String getDmaCodeDesc() {
 			return dmaCodeDesc;
 		}
