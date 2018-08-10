@@ -10071,24 +10071,7 @@
 		<property name="ddaControllerService" ref="ddaControllerService" />
 		<property name="serviceTaskDAO" ref="serviceTaskDAO" />
 	</bean>
-	<!-- custom service tasks -->
-	<bean id="shortMessageService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="shortMessageServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="shortMessageServiceTarget"
-		class="com.pennant.backend.service.sms.impl.ShortMessageServiceImpl" />
-
+	
 	<bean id="serviceTaskDAO" class="com.pennant.backend.dao.servicetasklog.impl.ServiceTaskDAOImpl" parent="sequenceDao">
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>

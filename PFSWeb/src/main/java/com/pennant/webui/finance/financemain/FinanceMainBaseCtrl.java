@@ -65,7 +65,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -271,7 +270,6 @@ import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.service.sms.ShortMessageService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DeviationConstants;
@@ -734,7 +732,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected transient List<Integer> oldVar_planEMIMonths;
 	protected transient List<Date> oldVar_planEMIDates;
-	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	protected Vbox discrepancies;
 
@@ -872,7 +869,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DedupValidation dedupValidation;
 	private DisbursementPostings disbursementPostings;
 	private InstallmentDueService installmentDueService;
-	private ShortMessageService shortMessageService;
 	private MailTemplateService mailTemplateService;
 	private LegalDetailService legalDetailService;
 	private BaseRateService baseRateService;
@@ -962,7 +958,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<DocumentDetails> documentDetailsList;
 	protected Window window_documentDetailDialog;
 	private transient AgreementDefinitionService agreementDefinitionService;
-	private Map <String,List> autoDownloadMap = null;
+	private Map <String, List> autoDownloadMap = null;
 	private Map<String, String> extValuesMap = new HashMap<String, String>();
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
@@ -17812,14 +17808,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
-	}
-
-	public ShortMessageService getShortMessageService() {
-		return shortMessageService;
-	}
-
-	public void setShortMessageService(ShortMessageService shortMessageService) {
-		this.shortMessageService = shortMessageService;
 	}
 
 	public MailTemplateService getMailTemplateService() {

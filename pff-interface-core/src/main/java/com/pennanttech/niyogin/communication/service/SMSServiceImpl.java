@@ -1,50 +1,24 @@
 package com.pennanttech.niyogin.communication.service;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Sms;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pennapps.notification.sms.SmsNotificationService;
 import com.pennanttech.pff.InterfaceConstants;
-import com.pennanttech.pff.external.SMSService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
-public class SMSServiceImpl extends NiyoginService implements SMSService {
-	private static final Logger	logger	= Logger.getLogger(SMSServiceImpl.class);
+public class SMSServiceImpl extends NiyoginService implements SmsNotificationService {
+	private static final Logger logger = Logger.getLogger(SMSServiceImpl.class);
 
-	private JSONClient			client;
-	private String				serviceUrl;
-
-	/**
-	 * Method to send the sms for the given mobile numbers.
-	 * 
-	 * @param custPhoneNos
-	 * @param smsContent
-	 * 
-	 */
-	@Override
-	public void sendSms(List<MailTemplate> smsList, String finReference) throws InterfaceException {
-		logger.debug(Literal.ENTERING);
-
-		if (smsList != null && !smsList.isEmpty()) {
-			for (MailTemplate mailTemplate : smsList) {
-				List<String> listnumbers = mailTemplate.getLovDescMobileNumbers();
-				if (listnumbers != null && !listnumbers.isEmpty()) {
-					for (String string : listnumbers) {
-						send(string, mailTemplate.getLovDescSMSContent(), finReference);
-					}
-				}
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
+	private JSONClient client;
+	private String serviceUrl;
 
 	/**
 	 * Method for send the SMS.
@@ -52,9 +26,10 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	 * @param mobileNo
 	 * @param content
 	 */
-	private void send(String mobileNo, String content, String finReference) {
+	@Override
+	public String sendNotification(Notification notification) {
 		logger.debug(Literal.ENTERING);
-		Sms smsRequest = prepareRequest(mobileNo, content);
+		Sms smsRequest = prepareRequest(notification.getMobileNumber(), notification.getMessage());
 		// logging fields Data
 		// logging fields Data
 		String errorCode = null;
@@ -66,15 +41,18 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 			logger.debug("ServiceURL : " + serviceUrl);
 			reuestString = client.getRequestString(smsRequest);
 			jsonResponse = client.post(serviceUrl, reuestString);
-			doInterfaceLogging(finReference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
+			doInterfaceLogging(notification.getKeyReference(), reuestString, jsonResponse, errorCode, errorDesc,
+					reqSentOn);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(finReference, reuestString, jsonResponse, errorDesc, reqSentOn);
+			doExceptioLogging(notification.getKeyReference(), reuestString, jsonResponse, errorDesc, reqSentOn);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+
 		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**

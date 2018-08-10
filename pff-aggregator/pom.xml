@@ -74,9 +74,9 @@
 				<version>1.0.0.9</version>
 			</dependency>
 			<dependency>
-  				<groupId>com.pennanttech.pennapps</groupId>
-  				<artifactId>document-generator</artifactId>
-  				<version>2.1.0</version>
+				<groupId>com.pennanttech.pennapps</groupId>
+				<artifactId>document-generator</artifactId>
+				<version>2.1.0</version>
 			</dependency>
 			<!-- Data-Engine -->
 			<dependency>
@@ -84,13 +84,13 @@
 				<artifactId>data-engine</artifactId>
 				<version>3.2.3</version>
 			</dependency>
-			
+
 			<dependency>
-		<groupId>com.pennanttech.pennapps</groupId>
-		<artifactId>notification-engine</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+				<groupId>com.pennanttech.pennapps</groupId>
+				<artifactId>notification-engine</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
-			
+
 			<!-- Logging Framework -->
 			<dependency>
 				<groupId>log4j</groupId>
