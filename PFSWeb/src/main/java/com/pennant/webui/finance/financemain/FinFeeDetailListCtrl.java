@@ -1067,7 +1067,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 								feeChanges = true;
 							}
 						} else {
-							if (finFeeDetail.getActualAmount().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+							if (finFeeDetail.getActualAmountOriginal().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
 								feeChanges = true;
 							}
 						}
