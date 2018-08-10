@@ -1336,20 +1336,32 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setNetTGST(netTGST);
 				
 				//Actual Amounts
-				//BigDecimal actualOriginal = netFeeOriginal.add(finFeeDetail.getWaivedAmount());
-				BigDecimal actualGst = calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), tgstPercentage, financeMain);
-				actualGst = CalculationUtil.roundAmount(actualGst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
-				
-				//finFeeDetail.setActualAmountOriginal(actualOriginal);
-				finFeeDetail.setActualAmountOriginal(totalNetFee.subtract(netTGST));
-				finFeeDetail.setActualAmountGST(actualGst);
-				finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
-				
-				finTaxDetails.setActualCGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), cgstPercentage, financeMain));
-				finTaxDetails.setActualIGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), igstPercentage, financeMain));
-				finTaxDetails.setActualSGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), sgstPercentage, financeMain));
-				finTaxDetails.setActualUGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), ugstPercentage, financeMain));
-				finTaxDetails.setActualTGST(actualGst);
+				if (BigDecimal.ZERO.compareTo(finFeeDetail.getWaivedAmount()) == 0) {
+					finFeeDetail.setActualAmountOriginal(finFeeDetail.getNetAmountOriginal());
+					finFeeDetail.setActualAmountGST(finFeeDetail.getNetAmountGST());
+					finFeeDetail.setActualAmount(finFeeDetail.getNetAmount());
+					
+					finTaxDetails.setActualCGST(finTaxDetails.getNetCGST());
+					finTaxDetails.setActualIGST(finTaxDetails.getNetIGST());
+					finTaxDetails.setActualSGST(finTaxDetails.getNetSGST());
+					finTaxDetails.setActualUGST(finTaxDetails.getNetUGST());
+					finTaxDetails.setActualTGST(finTaxDetails.getNetTGST());
+				} else {
+					//BigDecimal actualOriginal = netFeeOriginal.add(finFeeDetail.getWaivedAmount());
+					BigDecimal actualGst = calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), tgstPercentage, financeMain);
+					actualGst = CalculationUtil.roundAmount(actualGst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+					
+					//finFeeDetail.setActualAmountOriginal(actualOriginal);
+					finFeeDetail.setActualAmountOriginal(totalNetFee.subtract(netTGST));
+					finFeeDetail.setActualAmountGST(actualGst);
+					finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+					
+					finTaxDetails.setActualCGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), cgstPercentage, financeMain));
+					finTaxDetails.setActualIGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), igstPercentage, financeMain));
+					finTaxDetails.setActualSGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), sgstPercentage, financeMain));
+					finTaxDetails.setActualUGST(calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), ugstPercentage, financeMain));
+					finTaxDetails.setActualTGST(actualGst);
+				}
 			
 				//Paid Amounts
 				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount();
