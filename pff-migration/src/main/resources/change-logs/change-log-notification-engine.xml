@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="" dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="1.0" author="poonam.t">
+		<createTable tableName="email_messages">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="mailServerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="module" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="subModule" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="keyReference" type="varchar(200)">
+			<constraints nullable="false" />
+			</column>
+			<column name="notificationId" type="bigint" />
+			<column name="stage" type="varchar(100)" />
+			<column name="fromAddress" type="varchar(200)" />
+			<column name="fromName" type="nvarchar(100)" />
+			<column name="subject" type="nvarchar(500)" />
+			<column name="content" type="varbinary(max)" />
+			<column name="contentType" type="int" />
+			<column name="status" type="char(1)" />
+			<column name="receivedOn" type="datetime" />
+			<column name="receivedBy" type="bigint" />
+			<column name="attemptNum" type="int" />
+			<column name="sentOn" type="datetime" />
+			<column name="hostReference" type="varchar(200)" />
+			<column name="processingFlag" type="smallint" />
+			<column name="errorCode" type="varchar(8)" />
+			<column name="errorDesc" type="varchar(200)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.1" author="poonam.t">
+		<createTable tableName="email_message_addresses">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="messageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="recipientType" type="int" />
+			<column name="emailId" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="1.2" author="poonam.t">
+		<createTable tableName="email_message_attachments">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="messageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="fileName" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="attachment" type="varbinary(max)">
+				<constraints nullable="false" />
+			</column>
+			<column name="attachmentType" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="1.3" author="poonam.t">
+		<createTable tableName="email_message_attributes">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="messageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="attribute" type="varchar(100)" />
+			<column name="value" type="varchar(500)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.4" author="poonam.t">
+		<createTable tableName="email_message_status">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="messageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="status" type="char(1)" />
+			<column name="hostReference" type="varchar(200)" />
+			<column name="errorCode" type="varchar(8)" />
+			<column name="errorDesc" type="varchar(200)" />
+			<column name="sentOn" type="datetime" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.5" author="poonam.t">
+		<addForeignKeyConstraint constraintName="fk_email_message_addr_msgid"
+			baseColumnNames="messageId" baseTableName="email_message_addresses"
+			referencedTableName="email_messages" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="1.6" author="poonam.t">
+		<addForeignKeyConstraint constraintName="fk_email_msg_att_msgid_mid"
+			baseColumnNames="messageId" baseTableName="email_message_attachments"
+			referencedTableName="email_messages" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="1.7" author="poonam.t">
+		<addForeignKeyConstraint constraintName="fk_email_msg_attr_msgid_mid"
+			baseColumnNames="messageId" baseTableName="email_message_attributes"
+			referencedTableName="email_messages" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="1.8" author="poonam.t">
+		<addForeignKeyConstraint constraintName="fk_email_msg_status_msgid"
+			baseColumnNames="messageId" baseTableName="email_message_status"
+			referencedTableName="email_messages" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="1.9" author="poonam.t" dbms="postgresql">
+		<addDefaultValue columnName="attemptNum" tableName="email_messages"
+			defaultValue="0" />
+		<addDefaultValue columnName="processingFlag"
+			tableName="email_messages" defaultValue="0" />
+	</changeSet>
+	<changeSet id="1.9" author="poonam.t" dbms="oracle">
+		<addDefaultValue columnName="attemptNum" tableName="email_messages"
+			defaultValue="0" />
+		<addDefaultValue columnName="processingFlag"
+			tableName="email_messages" defaultValue="0" />
+	</changeSet>
+	<changeSet id="1.9" author="poonam.t" dbms="mssql">
+		<sql>
+			alter table email_messages add constraint
+			df_email_messages_attemptnum
+			default 0 for attemptNum;
+			
+			alter table
+			email_messages add constraint
+			df_email_messages_processflag default 0
+			for processingFlag;
+		</sql>
+	</changeSet>
+	<changeSet id="1.10" author="poonam.t">
+		<createIndex tableName="email_messages" indexName="idx_msid_procFlag_attemptNum">
+			<column name="mailServerId"/>
+			<column name="processingFlag"/>
+			<column name="attemptNum"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="1.11" author="poonam.t">
+		<createIndex tableName="email_message_addresses" indexName="idx_email_message_addr_msgid">
+			<column name="messageId" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="1.12" author="poonam.t">
+		<createIndex tableName="email_message_attachments" indexName="idx_email_message_att_msgid">
+			<column name="messageId" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="1.13" author="poonam.t">
+		<createIndex tableName="email_message_attributes" indexName="idx_email_message_attr_msgid">
+			<column name="messageId" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="2.0" author="poonam.t">
+		<createTable tableName="sms_messages">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="module" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="subModule" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="keyReference" type="varchar(200)">
+			<constraints nullable="false" />
+			</column>
+			<column name="notificationId" type="bigint" />
+			<column name="stage" type="varchar(100)" />
+			<column name="mobileNumber" type="varchar(20)" />
+			<column name="message" type="nvarchar(1000)" />
+			<column name="status" type="char(1)" />
+			<column name="receivedOn" type="datetime" />
+			<column name="receivedBy" type="bigint" />
+			<column name="attemptNum" type="int" />
+			<column name="sentOn" type="datetime" />
+			<column name="hostReference" type="varchar(200)" />
+			<column name="processingFlag" type="smallint" />
+			<column name="errorCode" type="varchar(8)" />
+			<column name="errorDesc" type="varchar(200)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.1" author="poonam.t">
+		<createTable tableName="sms_message_attributes">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="messageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="attribute" type="varchar(100)" />
+			<column name="value" type="varchar(500)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.2" author="poonam.t">
+		<createTable tableName="sms_message_status">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="messageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="status" type="char(1)" />
+			<column name="hostReference" type="varchar(200)" />
+			<column name="errorCode" type="varchar(8)" />
+			<column name="errorDesc" type="varchar(200)" />
+			<column name="sentOn" type="datetime" />
+		</createTable>
+	</changeSet>	
+	<changeSet id="2.3" author="poonam.t">
+		<addForeignKeyConstraint constraintName="fk_sms_message_attr_msgid"
+			baseColumnNames="messageId" baseTableName="sms_message_attributes"
+			referencedTableName="sms_messages" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="2.4" author="poonam.t">
+		<addForeignKeyConstraint constraintName="fk_sms_message_status_msgid"
+			baseColumnNames="messageId" baseTableName="sms_message_status"
+			referencedTableName="sms_messages" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="2.5" author="poonam.t" dbms="postgresql">
+		<addDefaultValue columnName="attemptNum" tableName="sms_messages"
+			defaultValue="0" />
+		<addDefaultValue columnName="processingFlag"
+			tableName="sms_messages" defaultValue="0" />
+	</changeSet>
+	<changeSet id="2.6" author="poonam.t" dbms="oracle">
+		<addDefaultValue columnName="attemptNum" tableName="sms_messages"
+			defaultValue="0" />
+		<addDefaultValue columnName="processingFlag"
+			tableName="sms_messages" defaultValue="0" />
+	</changeSet>
+	<changeSet id="2.7" author="poonam.t" dbms="mssql">
+		<sql>
+			alter table sms_messages add constraint
+			df_sms_messages_attemptnum
+			default 0 for attemptNum;
+			
+			alter table
+			sms_messages add constraint
+			df_sms_messages_processflag default 0
+			for processingFlag;
+		</sql>
+	</changeSet>
+	<changeSet id="2.8" author="poonam.t">
+		<createIndex tableName="sms_messages" indexName="idx_sms_messages_pf_an">
+			<column name="processingFlag"/>
+			<column name="attemptNum"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="2.9" author="poonam.t">
+		<createIndex tableName="sms_message_attributes" indexName="idx_sms_message_attr_msgid">
+			<column name="messageId" />
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>
