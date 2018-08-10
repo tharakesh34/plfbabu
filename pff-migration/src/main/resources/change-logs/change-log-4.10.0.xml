@@ -301,7 +301,8 @@
      JOIN bmtproduct t4 ON t3.fincategory = t4.productcode
 		</createView>
 		</changeSet>
-	<changeSet id="11.1" author="Mangapathi">
+	<changeSet id="11.2" author="Mangapathi">
+		<comment> Added property for MSSQL</comment>
 		<createView replaceIfExists="true" viewName="financemaintenance_view">
 			 SELECT t1.finreference,
     t1.finbranch,
@@ -355,7 +356,7 @@
     t3.findivision AS lovdescfindivision,
     t3.fincategory AS lovdescproductcodename,
     t4.productcategory,
-    COALESCE(t5.roledesc, fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
+    COALESCE(t5.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     COALESCE(t9.noinst, 0) AS noinst,
     t1.samplingrequired,
 	t1.advemiterms
