@@ -419,7 +419,7 @@ UNION ALL
     t3.findivision AS lovdescfindivision,
     t3.fincategory AS lovdescproductcodename,
     t4.productcategory,
-    COALESCE(t5.roledesc, fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
+    COALESCE(t5.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     COALESCE(t9.noinst, 0) AS noinst,
     t1.samplingrequired,
 	t1.advemiterms
@@ -1519,7 +1519,7 @@ UNION ALL
      LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
 	</createView>
 </changeSet>
-	<changeSet id="18.1" author="Mangapathi">
+	<changeSet id="18.2" author="Mangapathi">
 		<createView replaceIfExists="true" viewName="financemain_lview">
 SELECT t1.finreference,
     t1.investmentref,
@@ -1561,7 +1561,7 @@ SELECT t1.finreference,
     t3.findivision AS lovdescfindivision,
     t3.product AS lovdescfinproduct,
     t3.fintypedesc AS lovdescfintypename,
-    COALESCE(t4.roledesc, fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
+    COALESCE(t4.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     t1.samplingrequired,
      t1.AdvanceEMI, 
     t1.AdvEMITerms, t1.BpiRateBasis
