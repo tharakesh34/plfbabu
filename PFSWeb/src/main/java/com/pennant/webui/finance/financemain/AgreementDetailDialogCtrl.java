@@ -47,6 +47,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -124,6 +125,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private List<FinanceReferenceDetail> agreementList = null;
 	boolean isFinanceProcess = false;
 	private String							moduleName;
+	@Autowired
+	private ConvFinanceMainDialogCtrl convFinanceMainDialogCtrl;
 	
 	/**
 	 * default constructor.<br>
@@ -386,6 +389,18 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				if (e.getCause().getClass().equals(WrongValuesException.class)) {
 					throw e;
 				}
+			}
+			
+			//Calling Credit Review Details
+			if (null != convFinanceMainDialogCtrl && null != detail) {
+				try {
+					convFinanceMainDialogCtrl.setCreditRevDetails(financeDetail);
+				} catch (Exception e) {
+					if (e.getCause().getClass().equals(WrongValuesException.class)) {
+						throw e;
+					}
+				}
+
 			}
 			
 			try {

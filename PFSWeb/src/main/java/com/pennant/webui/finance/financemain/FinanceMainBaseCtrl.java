@@ -4403,9 +4403,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
 			}
 			
-			//Prepare credit review details for agreements
-			setCreditRevDetails(getFinanceDetail());
-			
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -15675,7 +15672,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Prepare credit review details map for agreements
 	 * @param detail
 	 */
-	private void setCreditRevDetails(FinanceDetail detail){
+	public void setCreditRevDetails(FinanceDetail detail){
+		setFinanceDetail(detail);
 		//Corporate Financial Input Data to set Eligibility Rules
 		Set<Long> custIds = new HashSet<>();
 		if(!detail.getJountAccountDetailList().isEmpty()){
