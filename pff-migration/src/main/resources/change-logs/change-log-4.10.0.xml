@@ -96,7 +96,7 @@
 						 union all
 						 Select ReceiptId, FavourNumber, ReceivedDate, FundingAc from finreceiptdetail T
 						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptdetail_Temp  WHERE ReceiptId = T.ReceiptId)) T3 On T3.ReceiptId = T1.ReceiptId
-			Inner Join 	financemain T4 ON T2.reference = T4.finreferenceDELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration where menuitemcode='menu_Item_DisbursmentHostReferenceReport');
+			Inner Join 	financemain T4 ON T2.reference = T4.finreference
 			Inner JOIN 	customers T5 ON T4.custid = T5.custid
 			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
 			
