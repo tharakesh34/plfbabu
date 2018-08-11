@@ -98,7 +98,7 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 			SessionUserDetails.getLogiedInUser();
 			Sessions.getCurrent().invalidate();
 		} catch (Exception e) {
-			// No session available.
+			logger.trace("No session available.", e);
 		}
 
 		this.txtbox_Username.focus();
@@ -170,6 +170,14 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 		}
 
 	}
-	
-	
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
 }
