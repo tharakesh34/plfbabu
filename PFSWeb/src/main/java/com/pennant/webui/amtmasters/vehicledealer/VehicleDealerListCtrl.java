@@ -66,7 +66,6 @@ import com.pennant.webui.amtmasters.vehicledealer.model.VehicleDealerListModelIt
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;

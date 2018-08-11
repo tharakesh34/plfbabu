@@ -5,28 +5,20 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.CurrencyUtil;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.payment.PaymentHeader;
-import com.pennant.webui.payment.paymentheader.PaymentHeaderListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.model.dms.DMSDocumentDetails;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-@SuppressWarnings("unused")
 public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails> {
 	private static final long serialVersionUID = 1153958690214979057L;
 	private static final Logger	logger = Logger.getLogger(DmsDocumentDetailsDialogCtrl.class);
