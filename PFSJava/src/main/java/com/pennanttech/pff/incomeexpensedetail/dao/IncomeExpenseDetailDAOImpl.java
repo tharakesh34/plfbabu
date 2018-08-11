@@ -17,6 +17,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
 import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
 
 public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>  implements IncomeExpenseDetailDAO {
@@ -32,11 +33,11 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into org_income_expenses");
 		sql.append(type);
-		sql.append(" (id, headerid, incomeexpense, incomeexpensecode, incomeexpensetype, category, units, unitprice, frequency, loockupid, consider, createdby, createdon,");
+		sql.append(" (id, headerid, incomeexpense, incomeexpensecode, incomeexpensetype, category, units, unitprice, frequency, loockupid, total, consider, createdby, createdon,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
 		sql.append(" values(:id, :headerId, :incomeExpense, :incomeExpenseCode, :incomeExpenseType, :category, :units, :unitPrice,");
-		sql.append(" :frequency, :loockUpId, :consider, :createdBy, :createdOn,");
+		sql.append(" :frequency, :loockUpId, :total, :consider, :createdBy, :createdOn,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode, :taskId, :nextTaskId, :recordType, :workflowId)");
 		logger.trace(Literal.SQL + sql.toString());
@@ -56,7 +57,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		query.append(" update org_income_expenses");
 		query.append(StringUtils.trimToEmpty(tableType));
 		query.append(" set incomeexpensecode = :incomeExpenseCode, category = :category, units = :units, unitprice = :unitPrice,");
-		query.append(" frequency = :frequency, consider = :consider,");
+		query.append(" frequency = :frequency, total = :total, consider = :consider,");
 		query.append(" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
 		query.append(" nextrolecode = :nextRoleCode, taskid = :taskId, nexttaskid = :nextTaskId, recordtype = :recordType, workflowid = :WorkflowId");
 		query.append(" where id = :id ");
@@ -81,18 +82,15 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		query.append(" where Id = :id ");
 		logger.trace(Literal.SQL + query.toString());
 
-		int recordCount = 0;
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("id", id);
 
 		try {
-			recordCount = this.jdbcTemplate.update(query.toString(), parameterSource);
+			this.jdbcTemplate.update(query.toString(), parameterSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -183,5 +181,42 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		return new ArrayList<>();
 
 	}
+	
+	private Long getHeaderId(String cif,long financialYear){
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select id from org_income_expense_header_view");
+		sql.append(" where custcif=:custcif and financialyear =:financialYear");
 
+		long headerId = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custcif", cif);
+		source.addValue("financialYear", financialYear);
+		try {
+			headerId = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return headerId;
+	}
+	
+	private Long getTotalIncome(String headerId,String incomeExpenseType){
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select sum(total) from org_income_expenses_view");
+		sql.append(" where headerid=:headerId and incomeexpensetype =:incomeExpenseType");
+
+		long totalCoreIncome = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("headerId", headerId);
+		source.addValue("incomeExpenseType", incomeExpenseType);
+		try {
+			totalCoreIncome = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return totalCoreIncome;
+	}
 }

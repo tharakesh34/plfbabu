@@ -129,7 +129,9 @@
 												label="${c:l('listheader_OrgTotal.label')}" />
 											<listheader
 												id="listheader_CoreToBeConsidered"
-												label="${c:l('listheader_ToBeConsidered.label')}" />	
+												label="${c:l('listheader_ToBeConsidered.label')}" />
+											<listheader
+												id="listheader_CoreIncomeDeleteButton" />
 										</listhead>
 									</listbox>
 								</groupbox>
@@ -170,7 +172,9 @@
 												label="${c:l('listheader_OrgTotal.label')}"/>
 											<listheader
 												id="listheader_NonCoreToBeConsidered"
-												label="${c:l('listheader_ToBeConsidered.label')}" />	
+												label="${c:l('listheader_ToBeConsidered.label')}" />
+											<listheader
+												id="listheader_NonCoreIncomeDeleteButton" />
 										</listhead>
 									</listbox>
 								</groupbox>
@@ -212,7 +216,9 @@
 												label="${c:l('listheader_ExpenseIncurred.label')}" />
 											<listheader
 												id="listheader_ExpenseToBeConsidered"
-												label="${c:l('listheader_ToBeConsidered.label')}" />		
+												label="${c:l('listheader_ToBeConsidered.label')}" />
+											<listheader
+												id="listheader_ExpenseDeleteButton" />
 										</listhead>
 									</listbox>
 								</groupbox>

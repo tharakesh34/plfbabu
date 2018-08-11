@@ -367,6 +367,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		if (incomeExpenseHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(deleteChilds(incomeExpenseHeader, "", tranType));
+			incomeExpenseHeaderDAO.delete(incomeExpenseHeader, TableType.MAIN_TAB);
 		} else {
 			incomeExpenseHeader.setRoleCode("");
 			incomeExpenseHeader.setNextRoleCode("");
@@ -383,29 +384,29 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 				incomeExpenseHeader.setRecordType("");
 				incomeExpenseHeaderDAO.update(incomeExpenseHeader, TableType.MAIN_TAB);
 			}
+			
+			// Core Income Details
+			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getCoreIncomeList())) {
+				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
+				details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
+				auditDetails.addAll(details);
+			}
+			
+			// Non Core Income Details
+			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getNonCoreIncomeList())) {
+				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
+				details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
+				auditDetails.addAll(details);
+			}
+			
+			//Expense Details
+			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
+				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
+				details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
+				auditDetails.addAll(details);
+			}
 
 		}
-		// Core Income Details
-		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getCoreIncomeList())) {
-			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
-			details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
-			auditDetails.addAll(details);
-		}
-		
-		// Non Core Income Details
-		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getNonCoreIncomeList())) {
-			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
-			details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
-			auditDetails.addAll(details);
-		}
-		
-		//Expense Details
-		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
-			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
-			details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
-			auditDetails.addAll(details);
-		}
-
 
 		List<AuditDetail> auditDetailList = new ArrayList<>();
 		auditDetailList.addAll(deleteChilds(incomeExpenseHeader, "_Temp", auditHeader.getAuditTranType()));

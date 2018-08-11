@@ -27,6 +27,7 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 	private BigDecimal unitPrice = BigDecimal.ZERO;
 	private int frequency;
 	private Long loockUpId;
+	private BigDecimal total = BigDecimal.ZERO;
 	private boolean consider;
 	private long createdBy;
 	private Date createdOn;
@@ -208,6 +209,14 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity{
 
 	public void setLoockupDesc(String loockupDesc) {
 		this.loockupDesc = loockupDesc;
+	}
+	
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
 	}
 
 	public String getExpenseDesc() {
