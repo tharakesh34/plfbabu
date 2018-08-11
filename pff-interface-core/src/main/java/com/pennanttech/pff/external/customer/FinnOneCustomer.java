@@ -30,7 +30,6 @@ import com.pennanttech.bajaj.services.BajajService;
 import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.Crm;
 
 public class FinnOneCustomer extends BajajService implements Crm {

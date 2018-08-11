@@ -18,7 +18,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennanttech.gcd.GcdCustomer;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.customer.CustomerProcedure;
 
