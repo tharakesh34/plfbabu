@@ -17,6 +17,7 @@ public class MailTemplateData {
 	private String feeAmount;
 	private String insAmount;
 	private String finType;
+	private String nextRepayDate;
 
 	private String usrName;
 	private String usrRole;
@@ -569,6 +570,14 @@ public class MailTemplateData {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public String getNextRepayDate() {
+		return nextRepayDate;
+	}
+
+	public void setNextRepayDate(String nextRepayDate) {
+		this.nextRepayDate = nextRepayDate;
 	}
 
 	public String getInsAmount() {

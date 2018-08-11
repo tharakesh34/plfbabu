@@ -65,6 +65,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.NotificationAttribute;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
@@ -299,7 +301,7 @@ public class NotificationService {
 
 				} else {
 					resenEmail = emailEngine.isMailExist(finReference, module, finEvent, notificationId);
-					//resenEmail = smsEngine.isSmsExist(finReference, module, finEvent, notificationId);
+					resenSms = smsEngine.isSmsExist(finReference, module, finEvent, notificationId);
 				}
 
 				if (!resenEmail || !resenSms) {
@@ -336,10 +338,6 @@ public class NotificationService {
 				}
 
 				if (template != null && template.isEmailTemplate()) {
-					/*
-					 * List<String> emails = emailAndMobiles.get("EMAILS"); template.setLovDescMailId(emails.toArray(new
-					 * String[emails.size()]));
-					 */
 					setAttachements(template, item.getRuleAttachment(), data, documents);
 				}
 
@@ -365,7 +363,7 @@ public class NotificationService {
 
 		emailMessage.setNotificationId(notificationId);
 		emailMessage.setSubject(template.getEmailSubject());
-		emailMessage.setContent(template.getLovDescFormattedContent().getBytes(Charset.forName("UTF-8")));
+		emailMessage.setContent(template.getEmailMessage().getBytes(Charset.forName("UTF-8")));
 
 		if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
 			emailMessage.setContentType(EmailBodyType.HTML.getKey());
@@ -390,7 +388,7 @@ public class NotificationService {
 			}
 		}
 
-		emailMessage.setMessage(template.getLovDescFormattedContent());
+		emailMessage.setMessage(template.getSmsMessage());
 
 		NotificationAttribute attribute = new NotificationAttribute();
 		attribute.setAttribute("Notification_Desc");
@@ -462,7 +460,7 @@ public class NotificationService {
 			throw new Exception("Problem initializing freemarker or rendering template ", e);
 		}
 
-		mailTemplate.setLovDescFormattedContent(result);
+		mailTemplate.setEmailMessage(result);
 		mailTemplate.setEmailSubject(subject);
 
 		if (mailTemplate.isSmsTemplate()) {
@@ -473,6 +471,7 @@ public class NotificationService {
 
 			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+				mailTemplate.setSmsMessage(result);
 			} catch (IOException e) {
 				logger.error(Literal.EXCEPTION, e);
 				throw new Exception("Unable to read or process freemarker configuration or template", e);
@@ -485,14 +484,14 @@ public class NotificationService {
 		logger.debug("Leaving");
 	}
 
-	public void sendMailtoCustomer(long templateId, String mailID, Object vo) throws TemplateException, Exception {
+	public void sendMailtoCustomer(long templateId, String mailId, Object vo) throws TemplateException, Exception {
 		logger.debug(Literal.ENTERING);
 		MailTemplate template = null;
 		try {
 			template = getMailTemplateService().getApprovedMailTemplateById(templateId);
 			if (template != null && template.isActive()) {
 
-				template.setLovDescMailId(new String[] { mailID });
+				template.getEmailIds().add(mailId);
 				// Template Fields Bean Preparation
 				MailTemplateData templateData = new MailTemplateData();
 				if (vo instanceof SysNotificationDetails) {
@@ -510,12 +509,10 @@ public class NotificationService {
 					// user Details
 					SecurityUser secUser = getSecurityUserService().getSecurityUserById(notification.getLastMntBy());
 					templateData.setUsrName(secUser.getUsrFName());
-
 				}
 
 				parseMail(template, templateData.getDeclaredFieldValues());
-				if (template.isEmailTemplate()
-						&& StringUtils.isNotEmpty(StringUtils.join(template.getLovDescMailId(), ","))) {
+				if (template.isEmailTemplate() && CollectionUtils.isNotEmpty(template.getEmailIds())) {
 
 					Notification emailMessage = new Notification();
 					emailMessage.setKeyReference(templateData.getFinReference());
@@ -524,7 +521,7 @@ public class NotificationService {
 					emailMessage.setNotificationId(templateId);
 					emailMessage.setStage("");
 					emailMessage.setSubject(template.getEmailSubject());
-					emailMessage.setContent(template.getLovDescFormattedContent().getBytes(Charset.forName("UTF-8")));
+					emailMessage.setContent(template.getEmailMessage().getBytes(Charset.forName("UTF-8")));
 
 					if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
 						emailMessage.setContentType(EmailBodyType.HTML.getKey());
@@ -532,9 +529,9 @@ public class NotificationService {
 						emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
 					}
 
-					for (String mailId : template.getLovDescMailId()) {
+					for (String emailId : template.getEmailIds()) {
 						MessageAddress address = new MessageAddress();
-						address.setEmailId(mailId);
+						address.setEmailId(emailId);
 						address.setRecipientType(RecipientType.TO.getKey());
 						emailMessage.getAddressesList().add(address);
 					}
@@ -591,7 +588,10 @@ public class NotificationService {
 		data.setCustId(main.getCustID());
 		data.setCustCIF(main.getLovDescCustCIF());
 		data.setFinType(main.getFinType());
+		data.setNextRepayDate(
+				DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
 		data.setPriority(main.getPriority());
+
 
 		// Role Code For Alert Notification
 		List<SecurityRole> securityRoles = getSecurityRoleService().getSecRoleCodeDesc(main.getRoleCode());
@@ -864,6 +864,7 @@ public class NotificationService {
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
 		declaredFieldValues.putAll(getTemplateData(main));
+
 
 		return declaredFieldValues;
 	}

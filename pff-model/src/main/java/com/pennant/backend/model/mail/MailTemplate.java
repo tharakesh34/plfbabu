@@ -43,11 +43,13 @@
 
 package com.pennant.backend.model.mail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -55,8 +57,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>MailTemplate table</b>.<br>
  *
  */
-public class MailTemplate extends AbstractWorkflowEntity implements Entity {
-
+public class MailTemplate extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -7999948592404630380L;
 
 	private long templateId = Long.MIN_VALUE;
@@ -68,12 +69,9 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	private String smsContent;
 	private boolean emailTemplate;
 	private byte[] emailContent;
-	private byte[] lovDescEmailAttachment;
-	private String lovDescAttachmentName;
 	private String emailFormat;
 	private String emailSendTo;
-	private String lovDescEmailSendTo;
-	private String lovDescEmailFormatName;
+	private String emailFormatName;
 	private String emailSubject;
 	private int turnAroundTime;
 	private boolean repeat;
@@ -83,15 +81,14 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	private MailTemplate befImage;
 	private LoggedInUser userDetails;
 
-	private String lovDescFormattedContent = "";
-	private String[] lovDescMailId;
-	private String lovDescSMSContent;
-	private List<String> lovDescMobileNumbers;
-	private Map<String, byte[]> attchments = new HashMap<>();
+	private String emailMessage = "";
+	private String smsMessage = "";
+	private byte[] emailAttachment;
+	private String emailAttachmentName;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
+	private List<String> emailIds = new ArrayList<>();
+	private List<String> mobileNumbers = new ArrayList<>();
+	private Map<String, byte[]> attchments = new HashMap<>();
 
 	public MailTemplate() {
 		super();
@@ -102,9 +99,24 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+
+		excludeFields.add("emailMessage");
+		excludeFields.add("smsMessage");
+		excludeFields.add("emailAttachment");
+		excludeFields.add("emailAttachmentName");
+		excludeFields.add("emailIds");
+		excludeFields.add("mobileNumbers");
+		excludeFields.add("attchments");
+		excludeFields.add("emailFormatName");
+
+		return excludeFields;
+	}
+
+	public boolean isNew() {
+		return isNewRecord();
+	}
 
 	public long getId() {
 		return templateId;
@@ -202,20 +214,12 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 		this.emailSendTo = emailSendTo;
 	}
 
-	public String getLovDescEmailSendTo() {
-		return lovDescEmailSendTo;
+	public String getEmailFormatName() {
+		return emailFormatName;
 	}
 
-	public void setLovDescEmailSendTo(String lovDescEmailSendTo) {
-		this.lovDescEmailSendTo = lovDescEmailSendTo;
-	}
-
-	public String getLovDescEmailFormatName() {
-		return this.lovDescEmailFormatName;
-	}
-
-	public void setLovDescEmailFormatName(String lovDescEmailFormatName) {
-		this.lovDescEmailFormatName = lovDescEmailFormatName;
+	public void setEmailFormatName(String emailFormatName) {
+		this.emailFormatName = emailFormatName;
 	}
 
 	public String getEmailSubject() {
@@ -267,11 +271,11 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public MailTemplate getBefImage() {
-		return this.befImage;
+		return befImage;
 	}
 
-	public void setBefImage(MailTemplate beforeImage) {
-		this.befImage = beforeImage;
+	public void setBefImage(MailTemplate befImage) {
+		this.befImage = befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -282,36 +286,52 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
-	public String getLovDescFormattedContent() {
-		return lovDescFormattedContent;
+	public String getEmailMessage() {
+		return emailMessage;
 	}
 
-	public void setLovDescFormattedContent(String lovDescFormattedContent) {
-		this.lovDescFormattedContent = lovDescFormattedContent;
+	public void setEmailMessage(String emailMessage) {
+		this.emailMessage = emailMessage;
 	}
 
-	public String[] getLovDescMailId() {
-		return lovDescMailId;
+	public String getSmsMessage() {
+		return smsMessage;
 	}
 
-	public void setLovDescMailId(String[] lovDescMailId) {
-		this.lovDescMailId = lovDescMailId;
+	public void setSmsMessage(String smsMessage) {
+		this.smsMessage = smsMessage;
 	}
 
-	public String getLovDescSMSContent() {
-		return lovDescSMSContent;
+	public byte[] getEmailAttachment() {
+		return emailAttachment;
 	}
 
-	public void setLovDescSMSContent(String lovDescSMSContent) {
-		this.lovDescSMSContent = lovDescSMSContent;
+	public void setEmailAttachment(byte[] emailAttachment) {
+		this.emailAttachment = emailAttachment;
 	}
 
-	public List<String> getLovDescMobileNumbers() {
-		return lovDescMobileNumbers;
+	public String getEmailAttachmentName() {
+		return emailAttachmentName;
 	}
 
-	public void setLovDescMobileNumbers(List<String> lovDescMobileNumbers) {
-		this.lovDescMobileNumbers = lovDescMobileNumbers;
+	public void setEmailAttachmentName(String emailAttachmentName) {
+		this.emailAttachmentName = emailAttachmentName;
+	}
+
+	public List<String> getEmailIds() {
+		return emailIds;
+	}
+
+	public void setEmailIds(List<String> emailIds) {
+		this.emailIds = emailIds;
+	}
+
+	public List<String> getMobileNumbers() {
+		return mobileNumbers;
+	}
+
+	public void setMobileNumbers(List<String> mobileNumbers) {
+		this.mobileNumbers = mobileNumbers;
 	}
 
 	public Map<String, byte[]> getAttchments() {
@@ -321,5 +341,4 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	public void setAttchments(Map<String, byte[]> attchments) {
 		this.attchments = attchments;
 	}
-
 }

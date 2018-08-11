@@ -55,7 +55,8 @@ public class PrepareMailData implements Serializable {
 			// MAIL_BODY
 			for (MailData mailData : mailDataList) {
 				MailTemplate template = new MailTemplate();
-				template.setLovDescMailId(new String[] { mailData.getMailTo() });
+				
+				template.getEmailIds().add( mailData.getMailTo());
 				template.setEmailSubject(mailData.getMailSubject());
 
 				// Trigger
@@ -69,11 +70,11 @@ public class PrepareMailData implements Serializable {
 					}
 
 					if (datafields != null && datafields.size() > 0) {
-						template.setLovDescFormattedContent(mergedata(datafields, mailData.getMailBody()));
+						template.setEmailMessage(mergedata(datafields, mailData.getMailBody()));
 					} else if (mailData.getMailBody() != null) {
 						String mailText = FileUtils.readFileToString(
 								new File(PathUtil.getPath(PathUtil.MAIL_BODY) + mailData.getMailBody()));
-						template.setLovDescFormattedContent(mailText);
+						template.setEmailMessage(mailText);
 					}
 
 					// Mail Attachment
@@ -100,7 +101,7 @@ public class PrepareMailData implements Serializable {
 					emailMessage.setNotificationId(template.getId());
 					emailMessage.setStage("");
 					emailMessage.setSubject(template.getEmailSubject());
-					emailMessage.setContent(template.getLovDescFormattedContent().getBytes(UTF_8));
+					emailMessage.setContent(template.getEmailMessage().getBytes(UTF_8));
 
 					if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
 						emailMessage.setContentType(EmailBodyType.HTML.getKey());
@@ -108,7 +109,7 @@ public class PrepareMailData implements Serializable {
 						emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
 					}
 
-					for (String mailId : template.getLovDescMailId()) {
+					for (String mailId : template.getEmailIds()) {
 						MessageAddress address = new MessageAddress();
 						address.setEmailId(mailId);
 						address.setRecipientType(RecipientType.TO.getKey());
