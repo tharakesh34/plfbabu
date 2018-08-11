@@ -54,7 +54,6 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class CompleteEOD implements JobExecutionDecider {
