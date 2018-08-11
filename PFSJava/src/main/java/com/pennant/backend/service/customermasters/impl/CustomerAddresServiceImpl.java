@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.List;
@@ -59,7 +58,6 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;

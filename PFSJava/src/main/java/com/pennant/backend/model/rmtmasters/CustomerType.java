@@ -40,10 +40,8 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.model.rmtmasters;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;

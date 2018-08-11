@@ -64,7 +64,7 @@ public class ErrorUtil implements Serializable {
 	}
 
 	private ErrorUtil(List<ErrorDetail> errorDetails, String errorLanguage) {
-		if (errorDetails != null && errorDetails.size() != 0) {
+		if (errorDetails != null && !errorDetails.isEmpty()) {
 			HashMap<String, ErrorDetail> hashMap = getErrorsByErrorCodes(errorLanguage, errorDetails);
 
 			this.errorDetails = new ArrayList<>();

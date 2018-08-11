@@ -59,7 +59,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.rits.cloning.Cloner;
 
 public class DesiredProfitCalculation {
-	private static final Logger logger = Logger.getLogger(ScheduleCalculator.class);
+	private static final Logger logger = Logger.getLogger(DesiredProfitCalculation.class);
 	
 	private BigDecimal totDesiredProfit = BigDecimal.ZERO;
 	

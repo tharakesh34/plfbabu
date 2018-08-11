@@ -357,7 +357,9 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select alertType, lovDescNamelov, OverRide,lovDescRefDesc from LMTFinRefDetail");
 		selectSql.append(tableType);
-		selectSql.append(" Where MandInputInStage LIKE('%"+financeRefDetail.getMandInputInStage()+"%') AND FinType = :FinType AND IsActive = 1 ");
+		selectSql.append(" Where MandInputInStage LIKE('%");
+		selectSql.append(financeRefDetail.getMandInputInStage());
+		selectSql.append("%') AND FinType = :FinType AND IsActive = 1 ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRefDetail);

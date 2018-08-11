@@ -1,10 +1,6 @@
 package com.pennant.app.util;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +12,6 @@ import org.zkoss.zul.Filedownload;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.BulkProcessHeader;
-import com.pennanttech.pennapps.core.resource.Literal;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
