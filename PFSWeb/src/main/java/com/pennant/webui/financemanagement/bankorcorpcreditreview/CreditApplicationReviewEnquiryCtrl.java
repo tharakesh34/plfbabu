@@ -170,7 +170,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
 	private int noOfYears = SysParamUtil.getValueAsInt("NO_OF_YEARS_TOSHOW");
 	private int currFormatter;
-	private Map<String,String> dataMap = null;
+	private Map<String,String> dataMap = new HashMap<>();
 	private List<Filter> filterList = null;
 	private int year;
 	private boolean ratioFlag= true;
@@ -291,28 +291,28 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				
 				if(customerBankInfo != null){
-					extendedDataMap.put("EXT_CREDITTRANNO",String.valueOf(customerBankInfo.getCreditTranNo()));
-					extendedDataMap.put("EXT_CREDITTRANAMT",customerBankInfo.getCreditTranAmt().toString());
-					extendedDataMap.put("EXT_CREDITTRANAVG",customerBankInfo.getCreditTranAvg().toString());
-					extendedDataMap.put("EXT_DEBITTRANNO",String.valueOf(customerBankInfo.getDebitTranNo()));
-					extendedDataMap.put("EXT_DEBITTRANAMT",customerBankInfo.getDebitTranAmt().toString());
-					extendedDataMap.put("EXT_CASHDEPOSITNO",String.valueOf(customerBankInfo.getCashDepositNo()));
-					extendedDataMap.put("EXT_CASHDEPOSITAMT",customerBankInfo.getCashDepositAmt().toString());
-					extendedDataMap.put("EXT_CASHWITHDRAWALNO",String.valueOf(customerBankInfo.getCashWithdrawalNo()));
-					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",customerBankInfo.getCashWithdrawalAmt().toString());
-					extendedDataMap.put("EXT_CHQDEPOSITNO",String.valueOf(customerBankInfo.getChqDepositNo()));
-					extendedDataMap.put("EXT_CHQDEPOSITAMT",customerBankInfo.getChqDepositAmt().toString());
-					extendedDataMap.put("EXT_CHQISSUENO",String.valueOf(customerBankInfo.getChqIssueNo()));
-					extendedDataMap.put("EXT_CHQISSUEAMT",customerBankInfo.getChqIssueAmt().toString());
-					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",String.valueOf(customerBankInfo.getInwardChqBounceNo()));
-					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
-					extendedDataMap.put("EXT_EODBALAVG",customerBankInfo.getEodBalAvg().toString());
-					extendedDataMap.put("EXT_EODBALMAX",customerBankInfo.getEodBalMax().toString());
-					extendedDataMap.put("EXT_EODBALMIN",customerBankInfo.getEodBalMin().toString());
+					extendedDataMap.put("EXT_CREDITTRANNO",unFormat(String.valueOf(customerBankInfo.getCreditTranNo())));
+					extendedDataMap.put("EXT_CREDITTRANAMT",unFormat(customerBankInfo.getCreditTranAmt().toString()));
+					extendedDataMap.put("EXT_CREDITTRANAVG",unFormat(customerBankInfo.getCreditTranAvg().toString()));
+					extendedDataMap.put("EXT_DEBITTRANNO",unFormat(String.valueOf(customerBankInfo.getDebitTranNo())));
+					extendedDataMap.put("EXT_DEBITTRANAMT",unFormat(customerBankInfo.getDebitTranAmt().toString()));
+					extendedDataMap.put("EXT_CASHDEPOSITNO",unFormat(String.valueOf(customerBankInfo.getCashDepositNo())));
+					extendedDataMap.put("EXT_CASHDEPOSITAMT",unFormat(customerBankInfo.getCashDepositAmt().toString()));
+					extendedDataMap.put("EXT_CASHWITHDRAWALNO",unFormat(String.valueOf(customerBankInfo.getCashWithdrawalNo())));
+					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",unFormat(customerBankInfo.getCashWithdrawalAmt().toString()));
+					extendedDataMap.put("EXT_CHQDEPOSITNO",unFormat(String.valueOf(customerBankInfo.getChqDepositNo())));
+					extendedDataMap.put("EXT_CHQDEPOSITAMT",unFormat(customerBankInfo.getChqDepositAmt().toString()));
+					extendedDataMap.put("EXT_CHQISSUENO",unFormat(String.valueOf(customerBankInfo.getChqIssueNo())));
+					extendedDataMap.put("EXT_CHQISSUEAMT",unFormat(customerBankInfo.getChqIssueAmt().toString()));
+					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",unFormat(String.valueOf(customerBankInfo.getInwardChqBounceNo())));
+					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",unFormat(String.valueOf(customerBankInfo.getOutwardChqBounceNo())));
+					extendedDataMap.put("EXT_EODBALAVG",unFormat(customerBankInfo.getEodBalAvg().toString()));
+					extendedDataMap.put("EXT_EODBALMAX",unFormat(customerBankInfo.getEodBalMax().toString()));
+					extendedDataMap.put("EXT_EODBALMIN",unFormat(customerBankInfo.getEodBalMin().toString()));
 					
 				}
 				
-				extendedDataMap.put("EXT_OBLIGATION",unFormat(sumOfEMI == null ? "0" : sumOfEMI.toString()));
+				extendedDataMap.put("EXT_OBLIGATION",unFormat(sumOfEMI.toString()));
 				if(arguments.containsKey("numberOfTerms")) {
 					numberOfTerms = (int)arguments.get("numberOfTerms");
 					extendedDataMap.put("EXT_NUMBEROFTERMS",String.valueOf(numberOfTerms));
@@ -327,18 +327,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("finAssetValue")) {
 					finAssetValue = (BigDecimal)arguments.get("finAssetValue");
-					extendedDataMap.put("EXT_FINASSETVALUE",unFormat(finAssetValue == null ? "0" : finAssetValue.toString()));
+					extendedDataMap.put("EXT_FINASSETVALUE",unFormat(finAssetValue.toString()));
 				}
 				if(arguments.containsKey("finAmount")) {
 					finAmount = (BigDecimal)arguments.get("finAmount");
-					extendedDataMap.put("EXT_FINAMOUNT",unFormat(finAmount == null ? "0" : finAmount.toString()));
+					extendedDataMap.put("EXT_FINAMOUNT",unFormat(finAmount.toString()));
 				}
 				if(arguments.containsKey("firstRepay")) {
 					firstRepay = (BigDecimal)arguments.get("firstRepay");
-					extendedDataMap.put("EXT_FIRSTREPAY",unFormat(firstRepay == null ? "0" : firstRepay.toString()));
+					extendedDataMap.put("EXT_FIRSTREPAY",unFormat(firstRepay.toString()));
 				}
+				
+				//School Funding Extended fields data setting
+				extendedDataMap.put("EXT_TOT_TUT_FEE","60000000");
+				extendedDataMap.put("EXT_TOT_NON_COR_INC","7000000");
+				
 				setTabs(isEnquiry);
-				getBorderLayoutHeight();
+				
 				this.div_CmdBtntoolbar.setVisible(false);
 				this.div_SearchBtntoolbar.setVisible(false);
 				this.gb_basicDetails.setVisible(false);
@@ -909,9 +914,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			currFormatter = Integer.parseInt(this.dataMap.get("lovDescCcyEditField"));
 		}
 		for(FinCreditRevCategory fcrc:listOfFinCreditRevCategory){
+			long categoryId = fcrc.getCategoryId();
+			String categoryDesc = fcrc.getCategoryDesc();
 			CreditReviewSubCtgDetails creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
 			creditReviewSubCtgDetails.setMainGroup("T");
-			creditReviewSubCtgDetails.setMainGroupDesc(fcrc.getCategoryDesc());
+			creditReviewSubCtgDetails.setMainGroupDesc(categoryDesc);
 			creditReviewSubtgDetailsList.add(creditReviewSubCtgDetails);
 			
 			if(FacilityConstants.CREDITREVIEW_REMARKS.equals(fcrc.getRemarks())){
@@ -920,13 +927,13 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				this.ratioFlag = true;
 			}
 			Tab tab = new Tab();
-			tab.setId("tab_"+fcrc.getCategoryId());
-			tab.setLabel(fcrc.getCategoryDesc());
+			tab.setId("tab_"+categoryId);
+			tab.setLabel(categoryDesc);
 			tab.setParent(this.tabsIndexCenter);
 			Tabpanel tabPanel = new Tabpanel();	
-			tabPanel.setId("tabPanel_"+fcrc.getCategoryId());
+			tabPanel.setId("tabPanel_"+categoryId);
 			tabPanel.setParent(this.tabpanelsBoxIndexCenter);
-			render(fcrc,setListToTab("tabPanel_"+fcrc.getCategoryId(), tabPanel, fcrc));
+			render(fcrc,setListToTab("tabPanel_"+categoryId, tabPanel, fcrc));
 		}
 		logger.debug("Leaving");
 	}
@@ -955,7 +962,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			} else if(PennantConstants.PFF_CUSTCTG_CORP.startsWith(finCreditReviewDetails.getCreditRevCode())){
 				totAsst = FacilityConstants.CREDITREVIEW_CORP_TOTASST;
 				totLibNetWorth = FacilityConstants.CREDITREVIEW_CORP_TOTLIBNETWRTH; 	
-			}
+			} 
 		}
 		
 		List<FinCreditRevSubCategory>  listOfFinCreditRevSubCategory= this.creditApplicationReviewService.
@@ -963,14 +970,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		for(int i =0 ;i<listOfFinCreditRevSubCategory.size();i++){
 			
 			FinCreditRevSubCategory finCreditRevSubCategory =listOfFinCreditRevSubCategory.get(i);
-			if(finCreditRevSubCategory.getSubCategoryCode().equals("TOT_OPR_INM_RTO") || 
-					finCreditRevSubCategory.getSubCategoryCode().equals("GRS_PRFT_TOI_PER_RTO")){
-				System.out.println("TOT_OPR_INM_RTO");
-			}
+			String subCategoryCode = finCreditRevSubCategory.getSubCategoryCode();
+			String subCategoryItemType = finCreditRevSubCategory.getSubCategoryItemType();
 			item = new Listitem();
 			item.setStyle("background: none repeat scroll 0 0 #FFFFFF; font-size: 12px;");
 
-			item.setId(String.valueOf("li"+finCreditRevSubCategory.getSubCategoryCode()));
+			item.setId(String.valueOf("li"+subCategoryCode));
 
 			CreditReviewSubCtgDetails creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
 			
@@ -991,7 +996,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			lc.setStyle("border: 1px inset snow; font-size: 12px;");
 			Label label1  = new Label();
 			label1.setStyle("font-weight:bold; font-size: 12px;");
-			if("Calc".equals(finCreditRevSubCategory.getSubCategoryItemType()) && this.ratioFlag){
+			if("Calc".equals(subCategoryItemType) && this.ratioFlag){
 				creditReviewSubCtgDetails.setCalC("C");
 				label1.setStyle("font-weight:bold; color:#000000; font-size: 12px;");
 			}
@@ -1004,13 +1009,14 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			}
 			label1.setParent(lc);
 			lc.setParent(item);
+			int noOfYears = finCreditRevCategory.getNoOfyears();
 			for(int j=noOfYears;j>=1;j--){				
 				lc = new Listcell();
 				lc.setStyle("text-align:right;border: 1px inset snow; font-size: 11px;");
-				lc.setId("lcdb"+finCreditRevSubCategory.getSubCategoryCode()+String.valueOf(year-j));
+				lc.setId("lcdb"+subCategoryCode+String.valueOf(year-j));
 				Label valueLabel= new Label();
 				valueLabel.setStyle("font-size: 11px;");
-				if("Calc".equals(finCreditRevSubCategory.getSubCategoryItemType()) && this.ratioFlag){
+				if("Calc".equals(subCategoryItemType) && this.ratioFlag){
 					valueLabel.setStyle("font-weight:bold; color:#000000; font-size: 11px;");
 					if(finCreditRevSubCategory.isGrand()){
 						item.setStyle("background-color: #CCFF99; font-size: 11px;");
@@ -1018,29 +1024,34 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						item.setStyle("background-color: #ADD8E6; font-size: 11px;");
 					}
 				}
-				valueLabel.setId("db"+finCreditRevSubCategory.getSubCategoryCode()+String.valueOf(year-j));
+				valueLabel.setId("db"+subCategoryCode+String.valueOf(year-j));
 				
 				int yearCount = noOfYears-j;
-				if(finCreditRevSubCategory.getSubCategoryCode().equals(totAsst)){
+				if(subCategoryCode.equals(totAsst)){
 					switch(yearCount){
-					case 0 : totAsstValue0 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+					case 0 : totAsstValue0 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
 					break;
-					case 1 : totAsstValue1 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+					case 1 : totAsstValue1 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
 					break;
-					case 2 : totAsstValue2 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+					case 2 : totAsstValue2 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
 					break;
 					}
-				} else if(finCreditRevSubCategory.getSubCategoryCode().equals(totLibNetWorth)){
+				} else if(subCategoryCode.equals(totLibNetWorth)){
 					switch(yearCount){
-					case 0 : totLibNetWorthValue0 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+					case 0 : totLibNetWorthValue0 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
 					break;
-					case 1 : totLibNetWorthValue1 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+					case 1 : totLibNetWorthValue1 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
 					break;
-					case 2 : totLibNetWorthValue2 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+					case 2 : totLibNetWorthValue2 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
 					break;
 					}
 				}
-				String value = this.dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode());
+				String value = "0";
+				if(noOfYears == 3){
+					value = this.dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode);
+				}else{
+					value = this.dataMap.get("Y"+(2)+"_"+subCategoryCode);
+				}
 				
 				BigDecimal convrsnPrice = BigDecimal.ZERO;
 				BigDecimal tempValue = new BigDecimal(value == null ? "0" : value);
@@ -1095,16 +1106,16 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				lc = new Listcell();
 				lc.setStyle("text-align:right;border: 1px inset snow; font-size: 11px;");
-				lc.setId("lcra"+finCreditRevSubCategory.getSubCategoryCode()+String.valueOf(year-j));
+				lc.setId("lcra"+subCategoryCode+String.valueOf(year-j));
 				Label rLabel = new Label(); 
 				rLabel.setStyle("font-size: 11px;");
-				if("Calc".equals(finCreditRevSubCategory.getSubCategoryItemType()) && this.ratioFlag){
+				if("Calc".equals(subCategoryItemType) && this.ratioFlag){
 					creditReviewSubCtgDetails.setCalC("C");
 					rLabel.setStyle("font-weight:bold; color:#000000; font-size: 11px;");
 				}
-				rLabel.setId("rLabel"+finCreditRevSubCategory.getSubCategoryCode()+String.valueOf(year-j));
+				rLabel.setId("rLabel"+subCategoryCode+String.valueOf(year-j));
 				if(this.ratioFlag){
-					value = this.dataMap.get("RY"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode());
+					value = this.dataMap.get("RY"+(noOfYears-j)+"_"+subCategoryCode);
 					if("--".equals(value) || value == null) {
 						value = "--";
 					}else {
@@ -1135,15 +1146,15 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				if(j != noOfYears){
 					lc = new Listcell();
 					lc.setStyle("text-align:right;border: 1px inset snow; font-size: 11px;");
-					lc.setId("lcdiff"+finCreditRevSubCategory.getSubCategoryCode()+String.valueOf(year-j));
+					lc.setId("lcdiff"+subCategoryCode+String.valueOf(year-j));
 					Label diffLabel = new Label(); 
 					diffLabel.setStyle("font-size: 10px;");
-					if("Calc".equals(finCreditRevSubCategory.getSubCategoryItemType()) && this.ratioFlag){
+					if("Calc".equals(subCategoryItemType) && this.ratioFlag){
 						creditReviewSubCtgDetails.setCalC("C");
 						diffLabel.setStyle("font-weight:bold;color:#000000; font-size: 11px;");
 					}
-					diffLabel.setId("diffLabel"+finCreditRevSubCategory.getSubCategoryCode()+String.valueOf(year-j));
-					value = this.dataMap.get("CY"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode());
+					diffLabel.setId("diffLabel"+subCategoryCode+String.valueOf(year-j));
+					value = this.dataMap.get("CY"+(noOfYears-j)+"_"+subCategoryCode);
 					if("--".equals(value) || value == null) {
 						value = "--";
 						if(j==2){
@@ -1218,16 +1229,18 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 */	
 	public Listbox setListToTab(String tabId,Tabpanel tabPanel,FinCreditRevCategory fcrc){
 		logger.debug("Entering");
+		long categoryId = fcrc.getCategoryId();
+		String borderLayoutHt = getBorderLayoutHeight();
 		Div div = new Div();
-		div.setId("div_"+fcrc.getCategoryId());
-		div.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 100 - 40-20 + "px");
+		div.setId("div_"+categoryId);
+		div.setHeight(Integer.parseInt(borderLayoutHt.substring(0,borderLayoutHt.indexOf("px"))) - 100 - 40-20 + "px");
 		Listbox listbox = new Listbox();
 		listbox.setSpan(true);
-		listbox.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 100 - 40-20 + "px");
-		listbox.setId("lb_"+fcrc.getCategoryId());
+		listbox.setHeight(Integer.parseInt(borderLayoutHt.substring(0,borderLayoutHt.indexOf("px"))) - 100 - 40-20 + "px");
+		listbox.setId("lb_"+categoryId);
 		
 		Auxhead auxHead = new Auxhead();
-		auxHead.setId("auxHead_"+fcrc.getCategoryId());
+		auxHead.setId("auxHead_"+categoryId);
 		auxHead.setDraggable("true");
 		
 		Auxheader auxHeader_bankName = new Auxheader("");
@@ -1237,7 +1250,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		auxHeader_bankName.setAlign("center");
 		
 		Listhead listHead = new Listhead();
-		listHead.setId("listHead_"+fcrc.getCategoryId());
+		listHead.setId("listHead_"+categoryId);
 		listHead.setStyle("background:#447294;color:white;");
 		listHead.setSizable(true);
 		
@@ -1248,7 +1261,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		listheader_bankName.setParent(listHead);
 
 		CreditReviewSubCtgDetails creditReviewSubCtgDetailsHeader = new CreditReviewSubCtgDetails();
-
+		int noOfYears = fcrc.getNoOfyears();
 		for(int j=noOfYears;j>=1;j--){
 			int prevAuditPeriod =getCreditApplicationReviewService().getCreditReviewAuditPeriodByAuditYear(this.custID.longValue(), 
 					String.valueOf(year-j+1), 0, true, "_VIew");
@@ -1262,7 +1275,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				auxHeader_audYearAndPeriod.setColspan(3);
 			}
 
-			if(fcrc.getCategoryId() == 3 || fcrc.getCategoryId() == 4 || fcrc.getCategoryId() == 7){
+			if(categoryId == 3 || categoryId == 4 || categoryId == 7){
 				if(j == noOfYears){
 					auxHeader_audYearAndPeriod.setColspan(1);
 				} else {

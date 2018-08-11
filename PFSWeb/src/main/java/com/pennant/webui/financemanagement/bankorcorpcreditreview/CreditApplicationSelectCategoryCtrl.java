@@ -216,10 +216,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		filterList = new ArrayList<Filter>();
 
 		if (StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_COMMERCIAL)) {
-
 			filterList.add(new Filter("CustCtgCode", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL));
-		} else if (StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_CORPORATE)) {
-			filterList.add(new Filter("CustCtgCode", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_NOT_EQUAL));
 		}
 
 		return filterList;

@@ -15740,7 +15740,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		extValuesMap.put("EXT_OBLIGATION",unFormat(sumOfEMI == null ? BigDecimal.ZERO : sumOfEMI));
 		
 		extValuesMap.put("EXT_NUMBEROFTERMS",String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceMain().getNumberOfTerms()));
-		extValuesMap.put("EXT_REPAYPROFITRATE",getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate().toString());
+		if(!getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().isEmpty()){
+			extValuesMap.put("EXT_REPAYPROFITRATE",getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate().toString());
+		}else{
+			extValuesMap.put("EXT_REPAYPROFITRATE","0");
+		}
 		extValuesMap.put("EXT_ROUNDINGTARGET",String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceMain().getRoundingTarget()));
 		extValuesMap.put("EXT_FINASSETVALUE",unFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue() == null ? BigDecimal.ZERO : getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue()));
 		extValuesMap.put("EXT_FINAMOUNT",unFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount() == null ? BigDecimal.ZERO : getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount()));

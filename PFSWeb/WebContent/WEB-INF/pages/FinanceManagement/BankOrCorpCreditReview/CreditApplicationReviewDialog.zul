@@ -106,8 +106,7 @@
 										id="label_CreditApplicationReviewDialog_Auditors"
 										value="${c:l('label_CreditApplicationReviewDialog_Auditors.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px"/>
 										<textbox id="auditors" />
 									</hbox>
 									<label
@@ -128,8 +127,7 @@
 										id="label_CreditApplicationReviewDialog_Location"
 										value="${c:l('label_CreditApplicationReviewDialog_Location.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px"/>
 										<textbox id="location" />
 									</hbox>
 									<label
@@ -194,20 +192,20 @@
 										<space spacing="2px"  />
 										<longbox id="noOfShares" />
 									</hbox>
-									<label
+									<label visible="false"
 										id="label_CreditApplicationReviewDialog_MarketPrice"
 										value="${c:l('label_CreditApplicationReviewDialog_MarketPrice.value')}" />
-									<currencyBox id="marketPrice" />
+									<currencyBox id="marketPrice" visible="false"/>
 								</row>
 								<row>
 									<label
 										id="label_CreditApplicationReviewDialog_FinCcy"
 										value="${c:l('labelCreditApplicationReviewDialog_FinCcy.value')}" />
 										<extendedcombobox id="currencyType" />
-									<label
+									<label visible="false"
 										id="label_CreditApplicationReviewDialog_ConversionRate"
 										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
-									<hbox>
+									<hbox visible="false">
 									<space spacing="2px" sclass="mandatory"  />
 										<decimalbox id="conversionRate" />
 									</hbox>

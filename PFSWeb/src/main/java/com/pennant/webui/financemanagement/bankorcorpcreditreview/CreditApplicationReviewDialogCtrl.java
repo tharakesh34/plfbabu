@@ -576,7 +576,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				: aCreditReviewDetails.getMarketPrice());
 
 		if (aCreditReviewDetails.getAuditPeriod() != 0) {
-			fillComboBox(this.auditPeriod, String.valueOf(aCreditReviewDetails.getAuditPeriod()),
+			fillComboBox(this.auditPeriod, "12",
 					PennantStaticListUtil.getPeriodList(), "");
 		}
 
@@ -588,7 +588,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		} else {
 			this.qualifiedUnQualified.setSelectedIndex(1);
 		}
-		this.auditPeriod.setReadonly(true);
+		this.auditPeriod.setDisabled(true);
 		setFinCreditReviewSummaryList(aCreditReviewDetails.getCreditReviewSummaryEntries());
 		this.recordStatus.setValue(aCreditReviewDetails.getRecordStatus());
 		logger.debug("Leaving");
@@ -674,6 +674,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 
 		try {
+			//Default conversion rate 
+			this.conversionRate.setValue(new BigDecimal(1));
+			
 			if (this.conversionRate.getValue().compareTo(BigDecimal.ZERO) == 0) {
 				throw new WrongValueException(this.conversionRate, Labels.getLabel("FIELD_NO_NEGATIVE",
 						new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_ConversionRate.value") }));
@@ -770,9 +773,12 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			if (customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_SME)) {
 				listOfFinCreditRevSubCategory = this.creditApplicationReviewService
 						.getFinCreditRevSubCategoryByMainCategory(PennantConstants.PFF_CUSTCTG_SME);
-			} else {
+			} else if(customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_CORP)){
 				listOfFinCreditRevSubCategory = this.creditApplicationReviewService
 						.getFinCreditRevSubCategoryByMainCategory(PennantConstants.PFF_CUSTCTG_CORP);
+			} else{
+				listOfFinCreditRevSubCategory = this.creditApplicationReviewService
+						.getFinCreditRevSubCategoryByMainCategory(PennantConstants.PFF_CUSTCTG_INDIV);
 			}
 		}
 
@@ -834,7 +840,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 		if (!this.location.isReadonly()) {
 			this.location.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_Location.value"), null, true));
+					Labels.getLabel("label_CreditApplicationReviewDialog_Location.value"), null, false));
 		}
 		if (!this.bankName.isReadonly()) {
 			this.bankName.setConstraint(new PTStringValidator(
@@ -850,7 +856,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 		if (!this.auditors.isReadonly()) {
 			this.auditors.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_Auditors.value"), null, true));
+					Labels.getLabel("label_CreditApplicationReviewDialog_Auditors.value"), null, false));
 		}
 		if (!this.auditedDate.isReadonly()) {
 			this.auditedDate.setConstraint(new PTDateValidator(
@@ -1964,7 +1970,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		audQualLabel.setStyle("font-weight:bold");
 
 		Auxheader auxHeader_curYear = new Auxheader();
-		auxHeader_curYear.setColspan(3);
+		auxHeader_curYear.setColspan(2);
 		auxHeader_curYear.setLabel(auxHeaderCurYerLabel);
 		auxHeader_curYear.setAlign("center");
 		auxHeader_curYear.setParent(auxHead);
@@ -1977,12 +1983,13 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		audQualLabel.setParent(listheader_audAmt);
 		listheader_audAmt.setParent(listHead);
 
-		/*
-		 * Listheader listheader_curUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
-		 * listheader_curUSConvrtn.setHflex("85px"); listheader_curUSConvrtn.setAlign("center");
-		 * listheader_curUSConvrtn.setId("curCnvrtn"+getId(fcrc.getCategoryDesc()));
-		 * listheader_curUSConvrtn.setParent(listHead);
-		 */
+		
+		Listheader listheader_curUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
+		listheader_curUSConvrtn.setHflex("85px"); listheader_curUSConvrtn.setAlign("center");
+		listheader_curUSConvrtn.setId("curCnvrtn"+getId(fcrc.getCategoryDesc()));
+		listheader_curUSConvrtn.setParent(listHead);
+		listheader_curUSConvrtn.setVisible(false);
+		 
 
 		Listheader listheader_breakDown = new Listheader(Labels.getLabel("listheader_breakDowns.value", ""));
 		creditReviewSubCtgDetailsHeaders.setCurYearBreakDownHeader(Labels.getLabel("listheader_breakDowns.value", "")
@@ -2041,14 +2048,14 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		listheader_previousAudAmt.setHflex("min");
 		listheader_previousAudAmt.setAlign("center");
 		listheader_previousAudAmt.setParent(listHead);
+		listheader_previousAudAmt.setVisible(false);
 
-		/*
-		 * Listheader listheader_prevcurUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
-		 * listheader_prevcurUSConvrtn.setHflex("85px"); listheader_prevcurUSConvrtn.setAlign("center");
-		 * listheader_prevcurUSConvrtn.setId("prevCnvrtn"+getId(fcrc.getCategoryDesc()));
-		 * listheader_prevcurUSConvrtn.setParent(listHead);
-		 */
-
+		Listheader listheader_prevcurUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
+		listheader_prevcurUSConvrtn.setHflex("85px"); listheader_prevcurUSConvrtn.setAlign("center");
+		listheader_prevcurUSConvrtn.setId("prevCnvrtn"+getId(fcrc.getCategoryDesc()));
+		listheader_prevcurUSConvrtn.setParent(listHead);
+		listheader_prevcurUSConvrtn.setVisible(false);
+		 
 		int currentAuditYear = Integer.parseInt(this.creditReviewDetails.getAuditYear());
 
 		Listheader listheader_previousBreakDown = new Listheader(Labels.getLabel("listheader_breakDowns.value"));
@@ -2066,7 +2073,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		listheader_percentChange.setHflex("min");
 		listheader_percentChange.setAlign("center");
 		listheader_percentChange.setParent(listHead);
-
+		listheader_percentChange.setVisible(false);
+		
 		auxHead.setParent(listbox);
 		listHead.setParent(listbox);
 		listbox.setParent(div);
@@ -2170,8 +2178,10 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 		if (aCustomer.getCustCtgCode().equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_SME)) {
 			category = PennantConstants.PFF_CUSTCTG_SME;
-		} else {
+		} else if(aCustomer.getCustCtgCode().equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_CORP)){
 			category = PennantConstants.PFF_CUSTCTG_CORP;
+		} else{
+			category = PennantConstants.PFF_CUSTCTG_INDIV;
 		}
 		if (this.tabpanelsBoxIndexCenter.getChildren().size() > 0) {
 			this.tabpanelsBoxIndexCenter.getChildren().clear();
@@ -2660,7 +2670,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		String totAsst = "";
 		String totLibNetWorth = "";
 
-		if (customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_SME)) {
+		if (customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_SME) || 
+				customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
 			totAsst = FacilityConstants.CREDITREVIEW_BANK_TOTASST;
 			totLibNetWorth = FacilityConstants.CREDITREVIEW_BANK_TOTLIBNETWRTH;
 		} else if (customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_CORP)) {
@@ -2945,7 +2956,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			lcImage = new Image("/images/icons/Old/add_button.png");
 			lcImage.setParent(lc);
 			lcImage.setVisible(getUserWorkspace().isAllowed("btn_CreditApplicationReviewDialog_newSubCategory"));
-			ComponentsCtrl.applyForward(lcImage, "onClick=onClick$addNewRecord");
+			//ComponentsCtrl.applyForward(lcImage, "onClick=onClick$addNewRecord");
 		}
 
 		// Adding Deleting Option For Newly Added Record
@@ -3696,7 +3707,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	private List<Filter> getFilterList() {
 		filterList = new ArrayList<Filter>();
 		filterList.add(new Filter("lovDescCustCtgType",
-				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME }, Filter.OP_IN));
+				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME, PennantConstants.PFF_CUSTCTG_INDIV}, Filter.OP_IN));
 		return filterList;
 	}
 
