@@ -178,6 +178,6 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj);
+		return this == obj;
 	}
 }
