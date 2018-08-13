@@ -306,7 +306,7 @@
 				rightName="menuItem_SystemMaster_VehicleDealer" />
 			<menuItem id="menu_Item_IRRCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/IRRCode/IRRCodeList.zul" 
 				rightName="menuItem_applicationmaster_IRRCode"/>
-		</menu>
+</menu>
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
@@ -815,19 +815,8 @@
 				rightName="menuItem_Enquiry_CustomerEnquiry" />
 		</menu>
 		<menu id="menu_Category_LimitEnquiry">
-			<!-- <menuItem id="menu_Item_InstitutionLimitEnquiryCheckFilter" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleList.zul?enqiryModule=Y" 
-				rightName="menuItem_Limit_LimitItemEnquiry" /> -->
-			<!-- <menuItem id="menu_Item_LimitEnquiryInstitutionalRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionInstitutional.zul?enqiryModule=Y" 
-				rightName="menuItem_Limit_LimitItemEnquiry" /> -->
-			<!-- <menuItem id="menu_Item_LimitEnquiryCustomerRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionList.zul?enqiryModule=Y" 
-				rightName="menuItem_Limit_LimitItemEnquiry" /> -->
-			<!-- <menuItem id="menu_Item_LimitGroupInstitutionEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitGroup/LimitGroupList.zul?enqiryModule=Y" 
-				rightName="menuItem_Limit_LimitGroupEnquiry" /> -->
-			<!-- <menuItem id="menu_Item_LimitStructureInstitutionEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul?enqiryModule=Y" 
-				rightName="menuItem_Limit_LimitStructureDetailEnquiry" /> -->
-			<!-- <menuItem id="menu_Item_LimitStructureCustomerEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul?enqiryModule=Y" 
-				rightName="menuItem_Limit_LimitStructureDetailEnquiry" /> -->
 		</menu>
+		
 		<menu id="menu_Category_LoanEnquiry">
 			<menuItem id="menu_Item_PayOrderIssueEnquiry"
 				zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul?enqiryModule=Y"
@@ -880,6 +869,11 @@
 			<menuItem id="menu_Item_CovenantsInquiry"
 				zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantInquiryList.zul"
 				rightName="menuItem_Enquiry_Covenants" />
+		
+			<menuItem id="menu_Item_NotificationLogDetails"
+			zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/NotificationLogEnquiryList.zul"
+			rightName="menuItem_Enquiry_NotificationLog" />
+				
 			<menuItem id="menu_Item_JVPostingEnquiry"
 				zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingEnquiryList.zul?enqiryModule=Y"
 				rightName="menuItem_others_JVPostingEnquiry" />
@@ -927,7 +921,7 @@
 				zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul?module=ENQ"
 				rightName="menuItem_Verification_RiskContainmentUnit_Enquiry" /> 
 		</menu>
-		//Sampling Enquiry
+	<!-- 	//Sampling Enquiry -->
 		<menuItem id="menu_Item_Sampling_Enquiry"
 				zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul?enqiryModule=Y" rightName="menuItem_Sampling_Enquiry" /> 
 				
