@@ -65,6 +65,8 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.systemmasters.ApplicantDetail;
+import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.dataengine.model.EventProperties;
 
@@ -98,4 +100,7 @@ public interface SOAReportGenerationDAO {
 	List<FinFeeScheduleDetail> getFinFeeScheduleDetailsList(String finReference);
 	EventProperties getEventPropertiesList(String configName);
 	List<String> getSOAFinTypes();
+	List<ApplicantDetail> getApplicantDetails(String finReference);
+	List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference);
+	
 }

@@ -59,7 +59,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.util.ReportGenerationUtil;
@@ -172,6 +174,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		List<Object> list = new ArrayList<Object>();
 		list.add(this.statementOfAccount.getSoaSummaryReports());
 		list.add(this.statementOfAccount.getTransactionReports());
+		list.add(this.statementOfAccount.getApplicantDetails());
+		list.add(this.statementOfAccount.getOtherFinanceDetails());
 		try {
 				ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, true, 1,
 						getUserWorkspace().getLoggedInUser().getFullName(), null);
@@ -182,6 +186,29 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		}
 		this.window_SOAReportGenerationDialogCtrl.setVisible(true);
 		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onFulfill$finReference(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = finReference.getObject();
+
+		if (dataObject instanceof String) {
+			this.finReference.setValue(dataObject.toString());
+		} else {
+			FinanceMain details = (FinanceMain) dataObject;
+			if (details != null) {
+				this.finReference.setValue(details.getFinReference());
+				this.startDate.setValue(details.getFinStartDate());
+				this.endDate.setValue(DateUtility.getAppDate());
+			}else{
+				this.finReference.setValue("");
+				this.startDate.setValue(null);
+				this.endDate.setValue(null);
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	

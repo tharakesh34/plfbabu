@@ -27,7 +27,7 @@
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnClose" label="${c:l('label_Close')}"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnClose"
+								autodisable="btnGenereate,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -35,11 +35,12 @@
 				</north>
 
 				<center border="none" autoscroll="true">
-					<groupbox id="gb_basicDetails" sclass="gb-dialog" height="97%">
+					<groupbox id="gb_basicDetails" sclass="gb-dialog" height="97%" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
-							<column width="35px"/>
-							<column width="150px" />
+							<column width="15%" />
+							<column width="20%" />
+							<column width="35%" />
 							<column />
 						</columns>
 						<rows>
@@ -68,15 +69,16 @@
 									<datebox id="endDate" width="100px"/>
 								</hbox>
 							</row>
-							<row height="10px"/>
-							<row valign="middle">
+							<row spans="2"> <separator/> </row>
+							<row visible="true" spans="1,1">
 								<space />
 								<space/>
 								<hbox align="start">
 									<button id="btnGenereate"
+										style="float:left;"
 										height="20" label="${c:l('btnGenerate.label')}"
 										tooltiptext="${c:l('btnGenerate.tooltiptext')}"
-										sclass="z-toolbarbutton" autodisable="btnGenereate" />
+										sclass="z-toolbarbutton" autodisable="btnGenereate,btnClose" />
 								</hbox>
 							</row>
 						</rows>

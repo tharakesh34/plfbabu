@@ -80,6 +80,8 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.systemmasters.ApplicantDetail;
+import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.App;
@@ -528,7 +530,8 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("  Select CustId,FinStartDate,LinkedFinRef,ClosedlinkedFinRef,FinBranch,FinType,FinPurpose,");
-		selectSql.append("  MaturityDate,NoPAIDINST,TotalPFTPAID,TotalPRIPAID,TotalPRIBAL,TotalPFTBAL,NOInst FROM  FinPftDetails");
+		selectSql.append("  MaturityDate,NoPAIDINST,TotalPFTPAID,TotalPRIPAID,TotalPRIBAL,TotalPFTBAL,NOInst, ");
+		selectSql.append("  NSchdDate,NSchdPri,NSchdPft FROM  FinPftDetails");
 		selectSql.append("  Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -767,7 +770,8 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		List<PresentmentDetail> presentmentDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Distinct PRD.ReceiptId,SchDate,BR.REASON BounceReason, Status FROM PRESENTMENTDETAILS PRD ");
+		sql.append(" SELECT Distinct PRD.ReceiptId,SchDate,BR.REASON BounceReason, PRD.Status, M.MandateType, M.MandateRef, ");
+		sql.append(" EMIno FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
 		sql.append(" Left join BOUNCEREASONS BR ON PRD.BOUNCEID  = BR.BOUNCEID ");
 		sql.append(" Where PRD.RECEIPTID != 0 and FinReference = :FinReference");
 
@@ -944,6 +948,86 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		}
 
 		return list;
+	}
+
+	@Override
+	public List<ApplicantDetail> getApplicantDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		List<ApplicantDetail> applicantDetails = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select JA.custcif CustCIF, Cust.CustShrtName CustName, PN.Phonenumber PhoneNum, 'Co-Applicant' ApplicantType");
+		sql.append(" from Financemain FM Inner Join FinJointAccountDetails JA ON FM.Finreference = JA.Finreference");
+		sql.append(" Inner Join Customers Cust ON Cust.CustCIF =  JA.Custcif ");
+		sql.append(" Inner join CustomerPhonenumbers PN ON PN.Phonecustid = Cust.CustID And PN.PhoneTypePriority = 5  ");
+		sql.append(" where FM.Finreference = :FinReference");
+		sql.append(" Union All");
+		sql.append(" Select GR.guarantorcif CustCIF,Cust.CustShrtName CustName,PN.phonenumber PhoneNum, 'Borrower' ApplicantType");
+		sql.append(" from Financemain FM Inner Join finguarantorsdetails GR ON FM.finreference = GR.finreference");
+		sql.append(" Inner Join Customers Cust ON Cust.CustCIF =  GR.guarantorcif  ");
+		sql.append(" Inner Join CustomerPhonenumbers PN ON PN.PhoneCustid = Cust.custID And PN.PhoneTypePriority = 5");
+		sql.append(" where FM.Finreference = :FinReference");
+		
+		 		
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<ApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ApplicantDetail.class);
+
+		try {
+			applicantDetails = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (DataAccessException e) {
+			applicantDetails = new ArrayList<ApplicantDetail>();
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+		return applicantDetails;
+	}
+
+	@Override
+	public List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("CustID", custID);
+
+		List<OtherFinanceDetail> otherFinanceDetails = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select finReference, FinType, 'Primary Customer' ApplicantType from FinanceMain ");
+		sql.append(" Where CustId = :CustID And Finreference != :FinReference Union All ");
+		
+		sql.append(" Select FM.finreference, FM.fintype, 'Co-Applicant' ApplicantType from");
+		sql.append(" FinJointAccountDetails JA Inner Join FinanceMain FM  ON FM.finreference = JA.finreference");
+		sql.append(" where FM.CustID = :CustID Union All ");
+		
+		sql.append(" Select FM.Finreference, FM.Fintype, 'Borrower' ApplicantType");
+		sql.append(" from FinGuarantorsDetails GR Inner Join FinanceMain FM ON FM.finreference = GR.finreference ");
+		sql.append(" where FM.CustID = :CustID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<OtherFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(OtherFinanceDetail.class);
+
+		try {
+			otherFinanceDetails = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (DataAccessException e) {
+			otherFinanceDetails = new ArrayList<OtherFinanceDetail>();
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+		return otherFinanceDetails;
 	}
 	
 }

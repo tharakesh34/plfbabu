@@ -101,7 +101,7 @@ public class StatementOfAccount {
 	private int ccyEditField;
 	private Date                currentDate;
 	private Date				maturityDate;
-	private int					NOPaidInst			= 0;
+	private int					noPaidInst			= 0;
 	private int					noOfOutStandInst	= 0;
 	private BigDecimal			totalPriPaid		= BigDecimal.ZERO;
 	private BigDecimal			totalPriBal			= BigDecimal.ZERO;
@@ -110,7 +110,9 @@ public class StatementOfAccount {
 	private BigDecimal 			paidTotal			= BigDecimal.ZERO;;
 	private BigDecimal 			totalOutStanding 	= BigDecimal.ZERO;
 	private BigDecimal          finCurrAssetValue 	= BigDecimal.ZERO;
-
+	private BigDecimal          nextRpyPri 			= BigDecimal.ZERO;
+	private BigDecimal          nextRpyPft 			= BigDecimal.ZERO;
+	private Date		        nextRpyDate;
 	
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,6 +187,16 @@ public class StatementOfAccount {
 	
 	//Transaction Reports List
 	private List<SOATransactionReport> transactionReports = new ArrayList<SOATransactionReport>();
+	
+	//Next Installment Amount 
+	@SuppressWarnings("unused")
+	private BigDecimal nextInstAmount = BigDecimal.ZERO;
+	
+	//Other Finance Details
+	private List<OtherFinanceDetail> otherFinanceDetails = new ArrayList<OtherFinanceDetail>();
+	
+	//Co-Applicant And Borrower Details
+	private List<ApplicantDetail> applicantDetails = new ArrayList<ApplicantDetail>();
 
 	/**
 	 * Default Constructor
@@ -903,12 +915,12 @@ public class StatementOfAccount {
 		this.maturityDate = maturityDate;
 	}
 
-	public int getNOPaidInst() {
-		return NOPaidInst;
+	public int getNoPaidInst() {
+		return noPaidInst;
 	}
 
-	public void setNOPaidInst(int nOPaidInst) {
-		NOPaidInst = nOPaidInst;
+	public void setNoPaidInst(int noPaidInst) {
+		this.noPaidInst = noPaidInst;
 	}
 
 	public BigDecimal getTotalPriPaid() {
@@ -974,4 +986,56 @@ public class StatementOfAccount {
 	public void setNoOfOutStandInst(int noOfOutStandInst) {
 		this.noOfOutStandInst = noOfOutStandInst;
 	}
+
+	public Date getNextRpyDate() {
+		return nextRpyDate;
+	}
+
+	public void setNextRpyDate(Date nextRpyDate) {
+		this.nextRpyDate = nextRpyDate;
+	}
+
+	public BigDecimal getNextRpyPri() {
+		return nextRpyPri;
+	}
+
+	public void setNextRpyPri(BigDecimal nextRpyPri) {
+	
+		if (nextRpyPri == null) {
+			nextRpyPri = BigDecimal.ZERO;
+		}
+		this.nextRpyPri = nextRpyPri;
+	}
+
+	public BigDecimal getNextRpyPft() {
+		return nextRpyPft;
+	}
+
+	public void setNextRpyPft(BigDecimal nextRpyPft) {
+		if (nextRpyPft == null) {
+			nextRpyPft = BigDecimal.ZERO;
+		}
+		this.nextRpyPft = nextRpyPft;
+	}
+
+	public BigDecimal getNextInstAmount() {
+		return this.nextRpyPri.add(this.nextRpyPft);
+	}
+
+	public List<OtherFinanceDetail> getOtherFinanceDetails() {
+		return otherFinanceDetails;
+	}
+
+	public void setOtherFinanceDetails(List<OtherFinanceDetail> otherFinanceDetails) {
+		this.otherFinanceDetails = otherFinanceDetails;
+	}
+
+	public List<ApplicantDetail> getApplicantDetails() {
+		return applicantDetails;
+	}
+
+	public void setApplicantDetails(List<ApplicantDetail> applicantDetails) {
+		this.applicantDetails = applicantDetails;
+	}
+	
 }
