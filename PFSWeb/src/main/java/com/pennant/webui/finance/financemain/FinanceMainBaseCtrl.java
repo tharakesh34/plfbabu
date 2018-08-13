@@ -11256,7 +11256,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int loanTerms = this.numberOfTerms_two.intValue();
 				boolean validationRequired = true;
 
-				if (minTerms == 0 && maxTerms == 0) {
+				if (minTerms == 0 && maxTerms == 0 && advEMITerms >=0) {
 					validationRequired = false;
 				}
 

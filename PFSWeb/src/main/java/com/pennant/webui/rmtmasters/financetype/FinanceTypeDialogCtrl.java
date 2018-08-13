@@ -2975,6 +2975,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		
 		try {
+			if (this.alwAdvEMI.isChecked() && this.advEMIMinTerms.intValue() < 0) {
+				throw new WrongValueException(this.advEMIMinTerms, Labels.getLabel("FIELD_IS_GREATER", new String[] {
+						Labels.getLabel("label_FinanceTypeDialog_AdvEMIMinTerms.value"), "0" }));
+			}
+			
 			aFinanceType.setAdvEMIMinTerms(this.advEMIMinTerms.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2988,6 +2993,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			if (advEMIMax == 0) {
 				validationRequired = false;
+			}else if (this.alwAdvEMI.isChecked() && this.advEMIMaxTerms.intValue() < 0) {
+				throw new WrongValueException(this.advEMIMaxTerms, Labels.getLabel("FIELD_IS_GREATER", new String[] {
+						Labels.getLabel("label_FinanceTypeDialog_AdvEMIMaxTerms.value"), "0" }));
 			}
 			
 			if (validationRequired) {
@@ -3009,7 +3017,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			int dftTerms = this.advEMIDftTerms.intValue();
 			boolean validationRequired = true;
 
-			if (minTerms == 0 && maxTerms == 0) {
+			if (minTerms == 0 && maxTerms == 0 && dftTerms >= 0) {
 				validationRequired = false;
 			}
 

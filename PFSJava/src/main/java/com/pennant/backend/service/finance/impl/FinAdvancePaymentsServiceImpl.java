@@ -611,7 +611,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
 
-		BigDecimal netFinAmount = totDisb.getDisbAmount();
+		BigDecimal netFinAmount = totDisb.getDisbAmount().subtract(financeMain.getAdvanceEMI());
 		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		boolean checkMode = true;
 
@@ -683,6 +683,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
 					}
+					singletDisbursment = singletDisbursment.subtract(financeMain.getAdvanceEMI());
 				}
 				int key = disbursement.getDisbSeq();
 
