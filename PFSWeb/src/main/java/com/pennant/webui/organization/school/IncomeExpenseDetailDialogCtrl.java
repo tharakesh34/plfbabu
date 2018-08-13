@@ -97,7 +97,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "IncomeExpenseDetailDialog";
+		super.pageRightName = "OrganizationIncomeExpenseDialog";
 	}
 
 	public void onCreate$window_IncomeExpenseDetailsDialog(Event event) throws Exception {
@@ -161,10 +161,13 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 
-		/*this.btnNew.setVisible(getUserWorkspace().isAllowed("button_IncomeExpenseDetailList_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_IncomeExpenseDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_IncomeExpenseDetailDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_IncomeExpenseDetailDialog_btnSave"));*/
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseList_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnSave"));
+		this.btnNew_SchoolCoreIncome.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnNewCoreIncome"));
+		this.btnNew_SchoolNonCoreIncome.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnNewNonCoreIncome"));
+		this.btnNew_SchoolExpense.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnNewExpense"));
 
 		this.btnCancel.setVisible(false);
 
@@ -221,11 +224,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			this.btnCancel.setVisible(true);
 			}
 
-		/*readOnlyComponent(isReadOnly("OrganizationSchoolDialog_CIF"), this.cif);
-		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Name"), this.name);
-		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Code"), this.dateOfInc);
-		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_DateOfIncorporation"), this.dateOfInc);*/
-
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -253,7 +251,9 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		final IncomeExpenseHeader incomeExpenseHeader = new IncomeExpenseHeader();
 		BeanUtils.copyProperties(this.incomeExpenseHeader, incomeExpenseHeader);
 		boolean isNew = false;
-		doWriteComponentsToBean(incomeExpenseHeader);
+		if(!doWriteComponentsToBean(incomeExpenseHeader)){
+			return;
+		}
 		
 		isNew = incomeExpenseHeader.isNew();
 		String tranType = "";
@@ -438,7 +438,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		return processCompleted;
 	}
 	
-	public void doWriteComponentsToBean(IncomeExpenseHeader incomeExpenseHeader) throws InterruptedException{
+	public boolean doWriteComponentsToBean(IncomeExpenseHeader incomeExpenseHeader) throws InterruptedException{
 		
 		incomeExpenseHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		incomeExpenseHeader.setCreatedOn(DateUtility.getAppDate());
@@ -521,7 +521,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				AuditHeader auditHeader = newCoreIncomeProcess(aSchoolCoreIncome, tranType);
 				if(auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0){
 					auditHeader = ErrorControl.showErrorDetails(this.window_IncomeExpenseDetailsDialog, auditHeader);
-					closeDialog();
+					return false;
 				}
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -601,7 +601,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				AuditHeader auditHeader = newNonCoreIncomeProcess(aSchoolNonCoreIncome, tranType);
 				if(auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0){
 					auditHeader = ErrorControl.showErrorDetails(this.window_IncomeExpenseDetailsDialog, auditHeader);
-					closeDialog();
+					return false;
 				}
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -672,7 +672,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				AuditHeader auditHeader = newSchoolExpenseProcess(aSchoolExpense, tranType);
 				if(auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0){
 					auditHeader = ErrorControl.showErrorDetails(this.window_IncomeExpenseDetailsDialog, auditHeader);
-					closeDialog();
+					return false;
 				}
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -687,6 +687,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		incomeExpenseHeader.setCoreIncomeList(this.coreIncomeDetailList);
 		incomeExpenseHeader.setNonCoreIncomeList(this.nonCoreIncomeDetailList);
 		incomeExpenseHeader.setExpenseList(this.expenseDetailList);
+		return true;
 	}
 	
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
@@ -734,7 +735,9 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			for (int i = 0; i < incomeExpenseList.size(); i++) {
 				IncomeExpenseDetail incomeExpenseDetail = incomeExpenseList.get(i);
 
-				if ((incomeExpenseDetail.getCategory()) == aSchoolExpense.getCategory()){ // Both Current and Existing list rating same
+				if ((incomeExpenseDetail.getCategory()).equals(aSchoolExpense.getCategory())
+						&& incomeExpenseDetail.getIncomeExpense().equals(aSchoolExpense.getIncomeExpense())
+						&& incomeExpenseDetail.getIncomeExpenseCode().equals(aSchoolExpense.getIncomeExpenseCode())){ // Both Current and Existing list rating same
 
 					if(aSchoolExpense.isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
@@ -800,7 +803,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			for (int i = 0; i < incomeExpenseList.size(); i++) {
 				IncomeExpenseDetail incomeExpenseDetail = incomeExpenseList.get(i);
 
-				if ((incomeExpenseDetail.getCategory()) == aincomeExpenseDetail.getCategory()){ // Both Current and Existing list rating same
+				if ((incomeExpenseDetail.getCategory()).equals(aincomeExpenseDetail.getCategory())){ 
 
 					if(aincomeExpenseDetail.isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
@@ -1014,7 +1017,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				if ((incomeExpenseDetail.getCategory()).equals(aincomeExpenseDetail.getCategory())){ 
 
 					if(aincomeExpenseDetail.isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008","E","",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1161,6 +1164,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			Intbox noOfStudents = new Intbox();
 			noOfStudents.addForward("onChange", self, "onChangeCalculateFeeReceiptFrq", item);
 			noOfStudents.setValue(schIncome.getUnits());
+			noOfStudents.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_Units"));
 			hbox.appendChild(space);
 			hbox.appendChild(noOfStudents);
 			listCell.appendChild(hbox);
@@ -1176,6 +1180,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			Decimalbox feeCharged = new Decimalbox();
 			feeCharged.addForward("onChange", self, "onChangeCalculateFeeReceiptFrq", item);
 			feeCharged.setValue(schIncome.getUnitPrice());
+			feeCharged.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_UnitPrice"));
 			hbox.appendChild(space);
 			hbox.appendChild(feeCharged);
 			listCell.appendChild(hbox);
@@ -1191,6 +1196,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			Combobox frqOfCollection = new Combobox();
 			fillComboBox(frqOfCollection, String.valueOf(schIncome.getFrequency()), frqOfCollectionList, "");
 			frqOfCollection.addForward("onChange", self, "onChangeFrqOfCollection", item);
+			frqOfCollection.setDisabled(isReadOnly("OrganizationIncomeExpenseDialog_CollectionFrequency"));
 			hbox.appendChild(space);
 			hbox.appendChild(frqOfCollection);
 			listCell.appendChild(hbox);
@@ -1429,6 +1435,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			prodService.setValidateColumns(new String[] { "FieldCode" });
 			
 			prodService.addForward("onFulfill", self, "onFullFillProdService", prodService);
+			prodService.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ProductService"));
 			if (!schNonCoreIncome.isNewRecord()) {
 				this.prodService.setValue(StringUtils.trimToEmpty(schNonCoreIncome.getLoockupValue()),
 						StringUtils.trimToEmpty(schNonCoreIncome.getLoockupDesc()));
@@ -1451,6 +1458,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			Intbox noOfUnitsServed = new Intbox();
 			noOfUnitsServed.setValue(schNonCoreIncome.getUnits());
 			noOfUnitsServed.addForward("onChange", self, "onChangeCalculateNonCoreTotal", item);
+			noOfUnitsServed.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_NoOfUnits"));
 			hbox.appendChild(space);
 			hbox.appendChild(noOfUnitsServed);
 			listCell.appendChild(hbox);
@@ -1466,6 +1474,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			Decimalbox avgCollectionPerUnit = new Decimalbox();
 			avgCollectionPerUnit.setValue(schNonCoreIncome.getUnitPrice());
 			avgCollectionPerUnit.addForward("onChange", self, "onChangeCalculateNonCoreTotal", item);
+			avgCollectionPerUnit.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_AvgCollection"));
 			hbox.appendChild(space);
 			hbox.appendChild(avgCollectionPerUnit);
 			listCell.appendChild(hbox);
@@ -1615,7 +1624,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			Filter expenseTypeFilter[] = new Filter[1];
 			expenseTypeFilter[0] = new Filter("IncomeExpense", PennantConstants.EXPENSE, Filter.OP_EQUAL);
 			expenseType.setFilters(expenseTypeFilter);
-			
+			expenseType.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ExpenseType"));
 			if (!schExpense.isNewRecord()) {
 				expenseType.setValue(StringUtils.trimToEmpty(schExpense.getIncomeExpenseCode()),
 						StringUtils.trimToEmpty(schExpense.getExpenseDesc()));
@@ -1639,6 +1648,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			listCell.setId("expenseIncurred".concat(String.valueOf(expenseCount)));
 			Decimalbox expenseIncurred = new Decimalbox();
 			expenseIncurred.setValue(schExpense.getUnitPrice());
+			expenseIncurred.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ExpenseIncurred"));
 			hbox.appendChild(space);
 			hbox.appendChild(expenseIncurred);
 			listCell.appendChild(hbox);

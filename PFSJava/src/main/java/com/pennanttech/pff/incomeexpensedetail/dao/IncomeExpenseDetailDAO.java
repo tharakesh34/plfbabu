@@ -1,6 +1,7 @@
 package com.pennanttech.pff.incomeexpensedetail.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
 
@@ -17,5 +18,7 @@ public interface IncomeExpenseDetailDAO {
 	List<IncomeExpenseDetail> getNonCoreIncomeList(Long id, String incomeType, String type);
 	
 	List<IncomeExpenseDetail> getExpenseList(Long id, String incomeType, String type);
+	
+	List<Map<String, Object>> getTotal(Long custId, Long financialYear);
 
 }

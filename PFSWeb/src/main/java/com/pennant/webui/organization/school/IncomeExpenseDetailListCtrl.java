@@ -66,7 +66,7 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "IncomeExpenseHeader";
-		super.pageRightName = "IncomeExpenseDetailList";
+		super.pageRightName = "OrganizationIncomeExpenseList";
 		super.tableName = "org_income_expense_header_view";
 		super.queueTableName = "org_income_expense_header_view";
 		super.enquiryTableName = "org_income_expense_header_view";
@@ -87,7 +87,7 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 		setItemRender(new IncomeExpenseDetailListModelItemRender());
 
 		// Register buttons and fields.
-		//registerButton(button_IncomeExpenseList_NewIncomeExpense, "button_OrganizationSchoolList_btnNew", true);
+		registerButton(button_IncomeExpenseList_NewIncomeExpense, "button_OrganizationIncomeExpenseList_btnNew", true);
 		registerButton(button_IncomeExpenseList_IncomeExpenseSearch);
 
 		registerField("id");

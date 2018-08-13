@@ -2,6 +2,7 @@ package com.pennanttech.pff.incomeexpensedetail.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -17,7 +18,6 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
 import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
 
 public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>  implements IncomeExpenseDetailDAO {
@@ -182,41 +182,24 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 	}
 	
-	private Long getHeaderId(String cif,long financialYear){
+	@Override
+	public List<Map<String, Object>> getTotal(Long custId,Long financialYear){
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
-		sql.append("select id from org_income_expense_header_view");
-		sql.append(" where custcif=:custcif and financialyear =:financialYear");
-
-		long headerId = 0;
+		sql.append("select sum(total),incomeexpensetype from (");
+		sql.append(" select total,incomeexpensetype,custid,financialyear from organizations  org");
+		sql.append(" inner join org_income_expense_header h on h.orgid =  org.id");
+		sql.append(" INNER join org_income_expenses ie on ie.headerid = h.id ");
+		sql.append(" where custid = :custId and financialyear = :financialYear)t  group by incomeexpensetype");
+		List<Map<String, Object>> total = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("custcif", cif);
+		source.addValue("custId", custId);
 		source.addValue("financialYear", financialYear);
 		try {
-			headerId = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
+			total = jdbcTemplate.queryForList(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		return headerId;
-	}
-	
-	private Long getTotalIncome(String headerId,String incomeExpenseType){
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append("select sum(total) from org_income_expenses_view");
-		sql.append(" where headerid=:headerId and incomeexpensetype =:incomeExpenseType");
-
-		long totalCoreIncome = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("headerId", headerId);
-		source.addValue("incomeExpenseType", incomeExpenseType);
-		try {
-			totalCoreIncome = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return totalCoreIncome;
+		return total;
 	}
 }
