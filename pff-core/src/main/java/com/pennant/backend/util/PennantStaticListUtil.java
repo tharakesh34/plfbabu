@@ -74,7 +74,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> overDueCalOnList;
 	private static ArrayList<ValueLabel> overDueForList;
 	private static ArrayList<ValueLabel> enquiryTypes;
-	private static ArrayList<ValueLabel> templateFormats;NT
+	private static ArrayList<ValueLabel> templateFormats;
 	private static ArrayList<ValueLabel> ruleReturnTypes;
 	private static ArrayList<ValueLabel> fieldTypes;
 	private static ArrayList<ValueLabel> empAlocList;
