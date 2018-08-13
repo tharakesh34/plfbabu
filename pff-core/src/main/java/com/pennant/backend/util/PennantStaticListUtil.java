@@ -74,7 +74,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> overDueCalOnList;
 	private static ArrayList<ValueLabel> overDueForList;
 	private static ArrayList<ValueLabel> enquiryTypes;
-	private static ArrayList<ValueLabel> templateFormats;
+	private static ArrayList<ValueLabel> templateFormats;NT
 	private static ArrayList<ValueLabel> ruleReturnTypes;
 	private static ArrayList<ValueLabel> fieldTypes;
 	private static ArrayList<ValueLabel> empAlocList;
@@ -967,6 +967,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("EXPENQ", Labels.getLabel("label_ExpenseEnquiry")));
 			enquiryTypes.add(new ValueLabel("SAMENQ", Labels.getLabel("label_SamplingEnquiry")));
 			enquiryTypes.add(new ValueLabel("VERENQ", Labels.getLabel("label_VerificationEnquiry")));
+			enquiryTypes.add(new ValueLabel("NTFLENQ",Labels.getLabel("label_NotificationEnquiry")));
 			
 			if (ImplementationConstants.DDA_ALLOWED) {
 				enquiryTypes.add(new ValueLabel("DDAENQ", Labels.getLabel("label_DDAEnquiry")));
