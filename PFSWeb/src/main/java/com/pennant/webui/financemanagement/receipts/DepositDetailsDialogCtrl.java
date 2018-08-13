@@ -217,7 +217,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 
 		//Available Amount
-		this.availableAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
+		this.availableAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.availableAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.availableAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.availableAmount.setScale(PennantConstants.defaultCCYDecPos);

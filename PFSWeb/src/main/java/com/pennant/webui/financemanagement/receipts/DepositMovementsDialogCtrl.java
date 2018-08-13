@@ -52,7 +52,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zkmax.zul.Tablechildren;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
@@ -60,11 +62,14 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CashDenomination;
@@ -105,6 +110,10 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	protected Tablechildren						tablechildren_CashDenominations;
 	protected Groupbox							groupBox_Cheque;
 	protected Listbox							listBoxChequeOrDD;
+	protected Tabpanel 							tabpanel_BasicDetails;
+	protected Tabpanel 							tabpanel_Postings;
+	protected Tab 								receiptDetailsTab;
+	protected Tab 								postingDetailsTab;
 
 	private DepositMovements					depositMovements;
 
@@ -178,6 +187,14 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			MessageUtil.showError(e);
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onSelect$receiptDetailsTab(Event event) {
+		logger.debug(Literal.ENTERING);
+		
+		doShowDialog(this.depositMovements);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -483,6 +500,8 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	private void doFillChequeDetails(List<DepositCheques> depositChequesList) {
 		logger.debug("Entering");
 
+		this.listBoxChequeOrDD.getItems().clear();
+		
 		if (CollectionUtils.isNotEmpty(depositChequesList)) {
 			Listitem item;
 			for (DepositCheques depositCheque : depositChequesList) {
@@ -513,10 +532,40 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());
 				lc.setParent(item);
+				
+				//Postings
+				Button postings = new Button("Postings");
+				lc = new Listcell();
+				lc.appendChild(postings);
+				if (CashManagementConstants.DEPOSIT_CHEQUE_STATUS_REVERSE.equals(depositCheque.getStatus())) {
+					readOnlyComponent(true, postings);
+				} else {
+					readOnlyComponent(false, postings);
+				}
+				postings.addForward("onClick", window_DepositMovementsDialog, "onClickPostings", depositCheque);
+				lc.setParent(item);
 
 				this.listBoxChequeOrDD.appendChild(item);
 			}
 		}
+		logger.debug("Leaving");
+	}
+	
+	public void onClickPostings(ForwardEvent event) throws InterruptedException {
+		logger.debug("Entering");
+		
+		DepositCheques depositCheque = (DepositCheques) event.getData();
+		
+		if (depositCheque.getLinkedTranId() <= 0) {
+			MessageUtil.showError("Postings not available.");
+			return;
+		}
+		
+		List<ReturnDataSet> postings = this.depositDetailsService.getPostingsByLinkTransId(depositCheque.getLinkedTranId());
+		doFillPostings(postings);
+		this.postingDetailsTab.setSelected(true);
+		this.listBoxPosting.setHeight(getListBoxHeight(6));
+		
 		logger.debug("Leaving");
 	}
 
@@ -529,6 +578,8 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		logger.debug("Entering");
 
 		if (CollectionUtils.isNotEmpty(postingList)) {
+			this.listBoxPosting.getItems().clear();
+			
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
 				item = new Listitem();

@@ -55,7 +55,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CurrencyUtil;
@@ -113,7 +112,6 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -163,7 +161,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	//GST Invoice Report
 	private FinanceDetailService 		financeDetailService;
 	private GSTInvoiceTxnService		gstInvoiceTxnService;
-	private CashManagementAccounting	cashManagementAccounting;
 	private DepositChequesDAO			depositChequesDAO;
 	private DepositDetailsDAO			depositDetailsDAO;
 
@@ -1269,12 +1266,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							movement.getBranchCode(), movement.getBranchCode(), movement.getReservedAmount(),
 							movement.getPartnerBankId(), movement.getMovementId(), null);*/
 					
-					if(reqAmount.compareTo(BigDecimal.ZERO) > 0){
+					if (reqAmount.compareTo(BigDecimal.ZERO) > 0) {
 						// DECRESE Available amount in Deposit Details
 						getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
 
 						// Movement update by Transaction Type to Reversal
-						getDepositDetailsDAO().reverseMovementTranType(movement.getDepositId());
+						getDepositDetailsDAO().reverseMovementTranType(movement.getMovementId());
 					}
 				}
 			}
@@ -1286,19 +1283,17 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// Verify Cheque or DD Details exists in Deposited Cheques 
 				DepositCheques depositCheque = getDepositChequesDAO().getDepositChequeByReceiptID(receiptHeader.getReceiptID());
 				
-				if(depositCheque != null){
-					DepositMovements movement = getDepositDetailsDAO().getDepositMovementsById(depositCheque.getMovementId(), "_AView");
-					if(movement != null){
-						AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CHEQUETOBANK_REVERSAL,
-								movement.getBranchCode(), movement.getBranchCode(), depositCheque.getAmount(),
-								movement.getPartnerBankId(), movement.getMovementId(), null);
-						
+				if (depositCheque != null) {
+					if (depositCheque.getLinkedTranId() > 0) {
+						//Postings Reversal
+						getPostingsPreparationUtil().postReversalsByLinkedTranID(depositCheque.getLinkedTranId());
 						// Make Deposit Cheque to Reversal Status
-						if(aeEvent.isPostingSucess()){
-							getDepositChequesDAO().reverseChequeStatus(movement.getMovementId(), receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
-						}
+						getDepositChequesDAO().reverseChequeStatus(depositCheque.getMovementId(), receiptHeader.getReceiptID(), depositCheque.getLinkedTranId());
+					} else {
+						logger.info("Postings Id is not available in deposit cheques");
+						throw new InterfaceException("CHQ001", "Issue with deposit details postings prepartion.");
 					}
-				}else{
+				} else {
 					// Available Decrease 
 					DepositMovements movement = getDepositDetailsDAO().getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
 					if (movement != null) {
@@ -1691,14 +1686,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public CashManagementAccounting getCashManagementAccounting() {
-		return cashManagementAccounting;
-	}
-
-	public void setCashManagementAccounting(CashManagementAccounting cashManagementAccounting) {
-		this.cashManagementAccounting = cashManagementAccounting;
 	}
 
 	public DepositChequesDAO getDepositChequesDAO() {

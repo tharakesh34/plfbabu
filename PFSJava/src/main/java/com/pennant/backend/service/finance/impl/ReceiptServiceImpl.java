@@ -57,7 +57,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -121,7 +120,6 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
-import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -161,7 +159,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private LatePayMarkingService			latePayMarkingService;
 	private BankDetailService				bankDetailService;
 	private DepositDetailsDAO				depositDetailsDAO;
-	private CashManagementAccounting		cashManagementAccounting;
 	private DepositChequesDAO				depositChequesDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
@@ -1159,9 +1156,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				getFinODDetailsDAO().updateODDetails(overdueList);
 			}
 		}
-		
-		//Save Deposit Details
-		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove);
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
@@ -1185,6 +1179,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// save Receipt Details
 		repayProcessUtil.doSaveReceipts(receiptHeader, scheduleData.getFinFeeDetailList(), true);
 		long receiptID = receiptHeader.getReceiptID();
+		
+		//Save Deposit Details
+		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove);
 
 		// Update Status Details and Profit Details
 		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, overdueList, receiptHeader.getReceiptPurpose());
@@ -1559,19 +1556,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			// Verify Cheque or DD Details exists in Deposited Cheques 
 			DepositCheques depositCheque = getDepositChequesDAO().getDepositChequeByReceiptID(receiptHeader.getReceiptID());
-
-			if(depositCheque != null){
-				DepositMovements movement = getDepositDetailsDAO().getDepositMovementsById(depositCheque.getMovementId(), "_AView");
-				if(movement != null){
-					AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CHEQUETOBANK_REVERSAL,
-							movement.getBranchCode(), movement.getBranchCode(), depositCheque.getAmount(),
-							movement.getPartnerBankId(), movement.getMovementId(), null);
-
+			if (depositCheque != null) {
+				if (depositCheque.getLinkedTranId() > 0) {
+					//Postings Reversal
+					getPostingsPreparationUtil().postReversalsByLinkedTranID(depositCheque.getLinkedTranId());
 					// Make Deposit Cheque to Reversal Status
-					if(aeEvent.isPostingSucess()){
-						getDepositChequesDAO().reverseChequeStatus(movement.getMovementId(), 
-								receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
-					}
+					getDepositChequesDAO().reverseChequeStatus(depositCheque.getMovementId(), receiptHeader.getReceiptID(), depositCheque.getLinkedTranId());
+				} else {
+					logger.info("Postings Id is not available in deposit cheques");
+					throw new InterfaceException("CHQ001", "Issue with deposit details postings prepartion.");
 				}
 			}
 		}
@@ -3102,13 +3095,4 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
 		this.depositChequesDAO = depositChequesDAO;
 	}
-	
-	public CashManagementAccounting getCashManagementAccounting() {
-		return cashManagementAccounting;
-	}
-
-	public void setCashManagementAccounting(CashManagementAccounting cashManagementAccounting) {
-		this.cashManagementAccounting = cashManagementAccounting;
-	}
-
 }

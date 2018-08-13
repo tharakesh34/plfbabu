@@ -57,12 +57,7 @@ public class CashManagementConstants {
 	public static final String	DEPOSIT_CHEQUE_STATUS_APPROVE			= "A";
 	public static final String	DEPOSIT_CHEQUE_STATUS_REVERSE			= "R";
 
-	//Deposit Amount Editable
-	public static final String	DEPOSIT_AMOUNT_EDIT						= "Y";
-
 	//Deposit Details Events
 	public static final String	ACCEVENT_DEPOSIT_TYPE_CASH				= "CASH";
 	public static final String	ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD			= "CHQDD";
-	public static final String	ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD_REVERSE	= "CHQDDR";
-
 }

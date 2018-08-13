@@ -47,9 +47,9 @@ public class CashManagementAccounting {
 		aeEvent.setAeAmountCodes(new AEAmountCodes());
 		aeEvent.setBranch(postingBranch);
 		aeEvent.setCcy(SysParamUtil.getAppCurrency());
-		if(StringUtils.isEmpty(finReference)){
+		if (StringUtils.isEmpty(finReference)) {
 			aeEvent.setFinReference(StringUtils.left(buffer.toString(), 20));
-		}else{
+		} else {
 			aeEvent.setFinReference(finReference);
 		}
 		aeEvent.setPostingUserBranch(postingBranch);

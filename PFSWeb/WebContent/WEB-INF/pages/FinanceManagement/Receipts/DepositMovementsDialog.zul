@@ -70,7 +70,7 @@
 						<tab id="postingDetailsTab" label="${c:l('label_DepositMovementsDialog_PostingDetails')}" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
-						<tabpanel style="overflow:auto"
+						<tabpanel id="tabpanel_BasicDetails" style="overflow:auto"
 							ca:data-scrollable="true">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
 					<tablelayout columns="2" width="100%">
@@ -158,12 +158,13 @@
 							<listheader id="listheader_DepositDetails_Amount" label="${c:l('listheader_DepositDetails_Amount.label')}" sort="false" hflex="min" align="right"/>
 							<listheader id="listheader_DepositDetails_ReceiptPurpose" label="${c:l('listheader_DepositDetails_ReceiptPurpose.label')}" sort="false" hflex="min" />
 							<listheader id="listheader_DepositDetails_Remarks" label="${c:l('listheader_DepositDetails_Remarks.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_Postings" label="${c:l('listheader_DepositDetails_Postings.label')}" sort="false" hflex="min" />
 						</listhead>
 					</listbox>
 				</groupbox>
 				</groupbox>
 				</tabpanel>
-						<tabpanel style="overflow:auto">
+						<tabpanel id="tabpanel_Postings" style="overflow:auto">
 							<groupbox>
 								<listbox id="listBoxPosting"
 									fixedLayout="true" sizedByContent="true" span="true"

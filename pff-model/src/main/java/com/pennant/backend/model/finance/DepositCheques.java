@@ -21,7 +21,7 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 	private String				receiptMode;
 	private BigDecimal			amount				= BigDecimal.ZERO;
 	private String				status				= "A";
-	private long				revLinkedTranId		= 0;
+	private long				linkedTranId		= 0;
 	
 	private boolean				newRecord			= false;
 	private DepositCheques		befImage;
@@ -240,19 +240,19 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 		this.status = status;
 	}
 
-	public long getRevLinkedTranId() {
-		return revLinkedTranId;
-	}
-
-	public void setRevLinkedTranId(long revLinkedTranId) {
-		this.revLinkedTranId = revLinkedTranId;
-	}
-
 	public String getBranchCode() {
 		return branchCode;
 	}
 
 	public void setBranchCode(String branchCode) {
 		this.branchCode = branchCode;
+	}
+
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 }
