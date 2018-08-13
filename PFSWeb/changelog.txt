@@ -1,3 +1,13 @@
+pff 4.10.2, 2018-08-13
+--------------------------------
+- story #515 E-mail Gateway Integration.
+- story #564 Merge mail.properties to pff.properties file.
+- story #541 SMS Gateway Integration.
+- story #550 Control on Re-sending the Notifications
+- story #566 Fixed SMS message does not contain HTML tags
+- story #563 Fixed the order of actors as per the process flow in work-flow engine.
+- story #562 Merged Interest certificate and prov.Certificate from Bajaj.
+
 pff 4.7.14, 2018-03-18
 ----------------------
 - upgrade pennapps-core from 0.7.5 to 0.7.6.1 to use framework jdbc module
