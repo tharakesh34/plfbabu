@@ -46,7 +46,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailService;
@@ -69,9 +68,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	protected Listbox listBoxSchoolNonCoreIncomeDetails;
 	protected Listbox listBoxSchoolExpenseDetails;
 	
-	protected ExtendedCombobox prodService;
-	protected ExtendedCombobox  expenseType;
-	
 	private List<IncomeExpenseDetail> coreIncomeDetailList = new ArrayList<>();
 	private List<IncomeExpenseDetail> schoolCoreIncomes;
 	private List<IncomeExpenseDetail> nonCoreIncomeDetailList = new ArrayList<>();
@@ -84,8 +80,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	@Autowired
 	protected IncomeExpenseDetailService incomeExpenseDetailService;
-	
-	List<ValueLabel> years = new ArrayList<>();
 	
 	private int coreIncomeCount =0;
 	private int nonCoreIncomeCount =0;
@@ -148,13 +142,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		int currentYear = DateUtil.getYear(DateUtility.getAppDate());
-		for(int i=0; i<=10;i++){
-			int year=currentYear;
-			currentYear = year-1;
-			//years.add(new ValueLabel(String.valueOf(year),String.valueOf(currentYear+"-").concat(String.valueOf(year))));
-			years.add(new ValueLabel(String.valueOf(year),String.valueOf(year)));
-		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -481,7 +469,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			}
 			
 			showErrorDetails(wve, this.OrgSchoolIncomeDetailsTab);
-			
 			IncomeExpenseDetail aSchoolCoreIncome = (IncomeExpenseDetail) listitem.getAttribute("data");
 			aSchoolCoreIncome.setIncomeExpense("INCOME");
 			aSchoolCoreIncome.setIncomeExpenseCode("INCOME");
@@ -521,6 +508,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				AuditHeader auditHeader = newCoreIncomeProcess(aSchoolCoreIncome, tranType);
 				if(auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0){
 					auditHeader = ErrorControl.showErrorDetails(this.window_IncomeExpenseDetailsDialog, auditHeader);
+					coreIncomeDetailList.clear();
+					setCoreIncomeDetailList(incomeExpenseHeader.getCoreIncomeList());
 					return false;
 				}
 				int retValue = auditHeader.getProcessStatus();
@@ -601,6 +590,10 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				AuditHeader auditHeader = newNonCoreIncomeProcess(aSchoolNonCoreIncome, tranType);
 				if(auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0){
 					auditHeader = ErrorControl.showErrorDetails(this.window_IncomeExpenseDetailsDialog, auditHeader);
+					coreIncomeDetailList.clear();
+					nonCoreIncomeDetailList.clear();
+					setCoreIncomeDetailList(incomeExpenseHeader.getCoreIncomeList());
+					setNonCoreIncomeDetailList(incomeExpenseHeader.getNonCoreIncomeList());
 					return false;
 				}
 				int retValue = auditHeader.getProcessStatus();
@@ -672,6 +665,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				AuditHeader auditHeader = newSchoolExpenseProcess(aSchoolExpense, tranType);
 				if(auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0){
 					auditHeader = ErrorControl.showErrorDetails(this.window_IncomeExpenseDetailsDialog, auditHeader);
+					coreIncomeDetailList.clear();
+					nonCoreIncomeDetailList.clear();
+					expenseDetailList.clear();
+					setCoreIncomeDetailList(incomeExpenseHeader.getCoreIncomeList());
+					setNonCoreIncomeDetailList(incomeExpenseHeader.getNonCoreIncomeList());
+					setExpenseDetailList(incomeExpenseHeader.getExpenseList());
 					return false;
 				}
 				int retValue = auditHeader.getProcessStatus();
@@ -694,6 +693,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		logger.debug(Literal.ENTERING);
 
 		if (wve.size() > 0) {
+			coreIncomeDetailList.clear();
+			nonCoreIncomeDetailList.clear();
+			expenseDetailList.clear();
+			setCoreIncomeDetailList(incomeExpenseHeader.getCoreIncomeList());
+			setNonCoreIncomeDetailList(incomeExpenseHeader.getNonCoreIncomeList());
+			setExpenseDetailList(incomeExpenseHeader.getExpenseList());
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			tab.setSelected(true);
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -714,15 +719,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	private AuditHeader newSchoolExpenseProcess(IncomeExpenseDetail aSchoolExpense, String tranType) {
 		boolean recordAdded = false;
-
 		AuditHeader auditHeader= getAuditHeader(aSchoolExpense, tranType);
-		//coreIncomeDetailList = new ArrayList<>();
 		schoolExpenses = new ArrayList<>();
 		String[] valueParm = new String[4];
 		String[] errParm = new String[4];
 
 		valueParm[0] = String.valueOf(aSchoolExpense.getCategory());
-		
 		errParm[0] = "Category" + ":"+ valueParm[0];
 		
 		List<IncomeExpenseDetail> incomeExpenseList = null;
@@ -949,8 +951,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				throw new WrongValueException(extCombobox1,
 						Labels.getLabel("STATIC_INVALID", new String[] { "ExpenseType" }));
 			}
-			incomeExpenseDetail.setIncomeExpense(this.expenseType.getAttribute("IncomeExpense").toString());
-			incomeExpenseDetail.setCategory(this.expenseType.getAttribute("Category").toString());
+			incomeExpenseDetail.setIncomeExpense(extCombobox1.getAttribute("IncomeExpense").toString());
+			incomeExpenseDetail.setCategory(extCombobox1.getAttribute("Category").toString());
 			incomeExpenseDetail.setIncomeExpenseCode(extCombobox1.getValue());
 			break;
 		case "expenseIncurred":
@@ -1013,11 +1015,9 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		if (CollectionUtils.isNotEmpty(incomeExpenseList)){
 			for (int i = 0; i < incomeExpenseList.size(); i++) {
 				IncomeExpenseDetail incomeExpenseDetail = incomeExpenseList.get(i);
-
 				if ((incomeExpenseDetail.getCategory()).equals(aincomeExpenseDetail.getCategory())){ 
-
 					if(aincomeExpenseDetail.isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008","E","",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1130,7 +1130,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			listCell = new Listcell();
 			listCell.setId("finYear".concat(String.valueOf(coreIncomeCount)));
 			Intbox finYear = new Intbox();
-			// fillComboBox(finYear, String.valueOf(schIncome.getFinancialYear()), years, "");
 			finYear.setValue(incomeExpenseHeader.getFinancialYear());
 			finYear.setReadonly(true);
 			listCell.appendChild(finYear);
@@ -1144,7 +1143,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			space.setSclass("mandatory");
 			listCell.setId("category".concat(String.valueOf(coreIncomeCount)));
 			Combobox category = new Combobox();
-			//category.addForward("onChange", self, "onChangeCategory", category);
 			fillComboBox(category, schIncome.getCategory(), categories, "");
 			if(!schIncome.isNewRecord()){
 				category.setDisabled(true);
@@ -1415,7 +1413,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			listCell = new Listcell();
 			listCell.setId("nonCorefinYear".concat(String.valueOf(nonCoreIncomeCount)));
 			Intbox finYear = new Intbox();
-			// fillComboBox(finYear, String.valueOf(schNonCoreIncome.getFinancialYear()), years, "");
 			finYear.setReadonly(true);
 			finYear.setValue(incomeExpenseHeader.getFinancialYear());
 			listCell.appendChild(finYear);
@@ -1424,7 +1421,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			// Product/Service
 			listCell = new Listcell();
 			listCell.setId("prodService".concat(String.valueOf(nonCoreIncomeCount)));
-			prodService = new ExtendedCombobox();
+			ExtendedCombobox prodService = new ExtendedCombobox();
 			
 			prodService.setMaxlength(8);
 			prodService.getTextbox().setMaxlength(50);
@@ -1437,12 +1434,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			prodService.addForward("onFulfill", self, "onFullFillProdService", prodService);
 			prodService.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ProductService"));
 			if (!schNonCoreIncome.isNewRecord()) {
-				this.prodService.setValue(StringUtils.trimToEmpty(schNonCoreIncome.getLoockupValue()),
+				prodService.setValue(StringUtils.trimToEmpty(schNonCoreIncome.getLoockupValue()),
 						StringUtils.trimToEmpty(schNonCoreIncome.getLoockupDesc()));
 				if (schNonCoreIncome.getLoockUpId() != null) {
-					this.prodService.setAttribute("FieldCodeId", schNonCoreIncome.getLoockUpId());
+					prodService.setAttribute("FieldCodeId", schNonCoreIncome.getLoockUpId());
 				} else {
-					this.prodService.setAttribute("FieldCodeId", null);
+					prodService.setAttribute("FieldCodeId", null);
 				}
 			}
 			listCell.appendChild(prodService);
@@ -1526,28 +1523,30 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	public void onFullFillProdService(Event event) {
 		logger.debug(Literal.ENTERING);
+		ExtendedCombobox prodService = (ExtendedCombobox) event.getData();
 		Object dataObject = prodService.getObject();
 		if (dataObject instanceof String || dataObject == null) {
-			this.prodService.setValue("");
-			this.prodService.setDescription("");
-			this.prodService.setAttribute("FieldCodeId", null);
+			prodService.setValue("");
+			prodService.setDescription("");
+			prodService.setAttribute("FieldCodeId", null);
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
-				this.prodService.setAttribute("FieldCodeId", details.getFieldCodeId());
+			prodService.setAttribute("FieldCodeId", details.getFieldCodeId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
 	
 	public void onFullFillExpenseType(Event event) {
 		logger.debug(Literal.ENTERING);
-		Object dataObject = this.expenseType.getObject();
+		ExtendedCombobox expenseType=(ExtendedCombobox)event.getData();
+		Object dataObject = expenseType.getObject();
 		if (dataObject instanceof String || dataObject == null) {
-			this.expenseType.setValue("");
-			this.expenseType.setDescription("");
+			expenseType.setValue("");
+			expenseType.setDescription("");
 		} else {
 			IncomeType details = (IncomeType) dataObject;
-				this.expenseType.setAttribute("IncomeExpense", details.getIncomeExpense());
-				this.expenseType.setAttribute("Category", details.getCategory());
+				expenseType.setAttribute("IncomeExpense", details.getIncomeExpense());
+				expenseType.setAttribute("Category", details.getCategory());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -1574,6 +1573,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 
 		int size = 0;
 		if (incomeExpenseHeader.getExpenseList().size() > 0 && incomeExpenseHeader.getSchoolIncomeExpense() == null) {
+			setExpenseDetailList(incomeExpenseHeader.getExpenseList());
 			size = incomeExpenseHeader.getExpenseList().size();
 		} else if (incomeExpenseHeader.getSchoolIncomeExpense() != null) {
 			size = 1;
@@ -1613,10 +1613,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			// Expense Type
 			listCell = new Listcell();
 			listCell.setId("expenseType".concat(String.valueOf(expenseCount)));
-		    expenseType = new ExtendedCombobox();
+			ExtendedCombobox expenseType = new ExtendedCombobox();
 			expenseType.setMaxlength(8);
 			expenseType.setMandatoryStyle(true);
 			expenseType.setModuleName("IncomeExpense");
+			expenseType.setValueColumn("IncomeExpense");
 			expenseType.setValueColumn("IncomeTypeCode");
 			expenseType.setDescColumn("IncomeTypeDesc");
 			expenseType.setValidateColumns(new String[] { "IncomeExpense","IncomeTypeCode","Category" });
@@ -1629,11 +1630,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				expenseType.setValue(StringUtils.trimToEmpty(schExpense.getIncomeExpenseCode()),
 						StringUtils.trimToEmpty(schExpense.getExpenseDesc()));
 				if (schExpense.getIncomeExpenseCode() != null) {
-					this.expenseType.setAttribute("IncomeExpense", schExpense.getIncomeExpense());
-					this.expenseType.setAttribute("Category", schExpense.getCategory());
+					expenseType.setAttribute("IncomeExpense", schExpense.getIncomeExpense());
+					expenseType.setAttribute("Category", schExpense.getCategory());
 				} else {
-					this.expenseType.setAttribute("IncomeExpense", null);
-					this.expenseType.setAttribute("Category", null);
+					expenseType.setAttribute("IncomeExpense", null);
+					expenseType.setAttribute("Category", null);
 				}
 			}
 			listCell.appendChild(expenseType);

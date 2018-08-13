@@ -38,20 +38,16 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 
 	// List headers
 	protected Listheader listheader_CIF;
-	protected Listheader listheader_Name;
 	protected Listheader listheader_FinancialYear;
-	protected Listheader listheader_Category;
 	
 	protected Button button_IncomeExpenseList_NewIncomeExpense;
 	protected Button button_IncomeExpenseList_IncomeExpenseSearch;
 	
 	// Search Fields
 	protected Listbox sortOperator_CIF;
-	protected Listbox sortOperator_Name;
 	protected Listbox sortOperator_FinancialYear;
 	
 	protected Textbox cif;
-	protected Textbox name;
 	protected Intbox financialYear;
 	
 	private String module = "";
@@ -92,9 +88,7 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 
 		registerField("id");
 		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
-		registerField("financialyear", listheader_FinancialYear, SortOrder.ASC, financialYear, sortOperator_FinancialYear, Operators.STRING);
-		registerField("name", listheader_Name, SortOrder.ASC, name, sortOperator_Name, Operators.STRING);
-		//registerField("category", listheader_Category, SortOrder.ASC, category, sortOperator_Category,Operators.STRING);
+		registerField("financialYear", listheader_FinancialYear, SortOrder.ASC, financialYear, sortOperator_FinancialYear, Operators.STRING);
 		
 		// Render the page and display the data.
 		doRenderPage();

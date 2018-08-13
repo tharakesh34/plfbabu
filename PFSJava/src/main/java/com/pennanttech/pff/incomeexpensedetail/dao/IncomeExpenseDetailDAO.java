@@ -19,6 +19,6 @@ public interface IncomeExpenseDetailDAO {
 	
 	List<IncomeExpenseDetail> getExpenseList(Long id, String incomeType, String type);
 	
-	List<Map<String, Object>> getTotal(Long custId, Long financialYear);
+	List<Map<String, Object>> getTotal(Long custId, Integer financialYear);
 
 }

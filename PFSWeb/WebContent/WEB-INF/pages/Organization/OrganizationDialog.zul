@@ -90,12 +90,14 @@
 													id="label_CIF"
 													value="${c:l('label_OrganizationDialog_CIF.value')}" />
 												<hbox>
+													<space/>
 													<extendedcombobox id="cif" />
 												</hbox>
 												<label
 													id="label_Name"
 													value="${c:l('label_OrganizationDialog_Name.value')}" />
 												<hbox>
+													<space spacing="3px" />
 													<space
 														id="space_Name" spacing="2px" sclass="mandatory"/>
 													<textbox
@@ -107,6 +109,7 @@
 													id="label_Code"
 													value="${c:l('label_OrganizationDialog_Code.value')}" />
 												<hbox>
+													<space/>
 													<space
 														id="space_Code" spacing="2px" sclass="mandatory"/>
 													<uppercasebox
@@ -116,6 +119,7 @@
 													id="label_DateOfInc"
 													value="${c:l('label_OrganizationDialog_DateOfInc.value')}" />
 												<hbox>
+													<space spacing="3px"/>
 													<space
 														id="space_DateOfInc" spacing="2px" sclass="mandatory"/>
 													<datebox

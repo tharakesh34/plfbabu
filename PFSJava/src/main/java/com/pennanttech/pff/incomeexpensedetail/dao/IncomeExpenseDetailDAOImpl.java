@@ -183,14 +183,14 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 	}
 	
 	@Override
-	public List<Map<String, Object>> getTotal(Long custId,Long financialYear){
+	public List<Map<String, Object>> getTotal(Long custId,Integer financialYear){
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
 		sql.append("select sum(total),incomeexpensetype from (");
 		sql.append(" select total,incomeexpensetype,custid,financialyear from organizations  org");
 		sql.append(" inner join org_income_expense_header h on h.orgid =  org.id");
 		sql.append(" INNER join org_income_expenses ie on ie.headerid = h.id ");
-		sql.append(" where custid = :custId and financialyear = :financialYear)t  group by incomeexpensetype");
+		sql.append(" where custid = :custId and financialyear = :financialYear  and consider=1)t  group by incomeexpensetype");
 		List<Map<String, Object>> total = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custId", custId);

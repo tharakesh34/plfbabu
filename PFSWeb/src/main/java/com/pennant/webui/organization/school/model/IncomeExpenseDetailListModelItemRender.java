@@ -25,8 +25,6 @@ public class IncomeExpenseDetailListModelItemRender implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(incExpHeader.getFinancialYear()));
 		lc.setParent(item);
-		lc = new Listcell(incExpHeader.getName());
-		lc.setParent(item);
 		lc = new Listcell(incExpHeader.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(incExpHeader.getRecordType()));

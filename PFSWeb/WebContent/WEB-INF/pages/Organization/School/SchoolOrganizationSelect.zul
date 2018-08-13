@@ -8,12 +8,11 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_SchoolOrganizationSelect"
 		title="${c:l('window_SchoolOrganizationSelect.title')}"
-		border="normal" apply="${schoolOrganizationSelectCtrl}" width="50%"
-		height="40%" sizable="false"
+		border="normal" apply="${schoolOrganizationSelectCtrl}" width="40%"
+		height="30%" sizable="false"
 		style="border:0px; padding-left:5px; padding-right:5px;"
 		closable="true">
 		<borderlayout id="borderLayout_SchoolOrganizationTypeList">
-
 			<center border="none" autoscroll="true">
 				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 					style="border:0px">
