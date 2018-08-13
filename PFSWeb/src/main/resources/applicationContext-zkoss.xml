@@ -1600,6 +1600,8 @@
 		<property name="productService" ref="productService" />
 
 	</bean>
+	
+	
 
 	<bean id="selectFinanceTypeDialogCtrl"
 		class="com.pennant.webui.finance.financemain.SelectFinanceTypeDialogCtrl"
@@ -2697,6 +2699,12 @@
 	</bean>
 	
 
+			<!-- <Notification Log Details> -->
+
+	<bean id="notificationLogDetailsDialogCtrl"
+		class="com.pennant.webui.finance.enquiry.NotificationLogDetailsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 
 	<!--============ Payment Order Issue Details ============== -->
 
@@ -3287,6 +3295,7 @@
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="uploadHeaderService" ref="uploadHeaderService" />
+		<property name="notificationLogDetailsService" ref="notificationLogDetailsService"/>
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl"
@@ -4236,9 +4245,9 @@
 	<bean id="cibilFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.CIBILFileDownloadListCtrl"
 		parent="basisListCtrl" scope="prototype" />
 			
-	<bean id="retailCibilReport" class="com.pennanttech.pff.external.cibil.RetailCibilReport">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<!-- <bean id="cibilReport" class="com.pennanttech.pff.reports.cibil.CIBILReport">
+	<property name="dataSource" ref="dataSource" />
+		  	</bean> -->
 	
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"
@@ -5233,10 +5242,10 @@
 	<!--  ProcessView PopUp Details Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="processViewCtrl" class="com.pennant.webui.util.ProcessViewCtrl"
+	<!-- <bean id="processViewCtrl" class="com.pennant.webui.util.ProcessViewCtrl"
 		scope="prototype">
 		<property name="designerUrl" value="${process.designer.url}" />
-	</bean>
+	</bean> -->
 	
 	<!-- ====================================================== -->
 	<!-- ActivityLog Details Configuration -->
@@ -5288,8 +5297,8 @@
 	
 	
 	
-	<bean id="cibilReportViewCtrl" class="com.pennant.webui.cibil.reports.CibilReportViewCtrl"
-		scope="prototype" parent="basisCtrl" />
+	<!-- <bean id="cibilReportViewCtrl" class="com.pennant.webui.cibil.reports.CibilReportViewCtrl"
+		scope="prototype" parent="basisCtrl" /> -->
 
 	
 	<!--============ Legal Verification Module ============== -->
