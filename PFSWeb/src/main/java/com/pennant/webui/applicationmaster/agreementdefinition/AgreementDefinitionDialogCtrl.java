@@ -142,6 +142,7 @@ public class AgreementDefinitionDialogCtrl extends
 																				// per
 																				// parameter
 	 private org.zkoss.zul.Label label_AgreementDefinitionDialog_autoDownload;
+	 private  org.zkoss.zul.Label label_AgreementDefinitionDialog_doc_Type;
 
 	private transient boolean validationOn;
 
@@ -483,12 +484,19 @@ public class AgreementDefinitionDialogCtrl extends
 			fillComboBox(this.moduleName, aAgreementDefinition.getModuleName(),
 					PennantStaticListUtil.getWorkFlowModules(), "");
 		}
-		
+		if(aAgreementDefinition.isAutoGeneration())
+		{
 		this.autoGeneration.setChecked(aAgreementDefinition.isAutoGeneration());
+		this.autoDownload.setVisible(true);
+		this.autoDownload.setChecked(aAgreementDefinition.isAutoDownload());
+		this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
 		this.docType.setValue(agreementDefinition.getDocType());
 		this.docType.setDescription(agreementDefinition.getLovDescDocumentType());
-		this.autoDownload.setChecked(aAgreementDefinition.isAutoDownload());
-				
+		}		
+		else{
+			this.autoDownload.setVisible(false);
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
+		}
 		if (aAgreementDefinition.isNew()
 				|| (aAgreementDefinition.getRecordType() != null ? aAgreementDefinition
 						.getRecordType() : "")
@@ -544,11 +552,6 @@ public class AgreementDefinitionDialogCtrl extends
 		logger.debug("Leaving");
 	}
 
-	private void fillComboBox(ExtendedCombobox docType2, String docType3, ArrayList<ValueLabel> documentTypes,
-			String excludeFields) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/**
 	 * Writes the components values to the bean.<br>
@@ -1018,6 +1021,10 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggCheck_SelectAll
 				.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		this.moduleName.setDisabled(isReadOnly("AgreementDefinitionDialog_moduleName"));
+		this.autoGeneration.setDisabled(isReadOnly("AgreementDefinitionDialog_autoGenerate"));
+		this.autoDownload.setDisabled(isReadOnly("AgreementDefinitionDialog_autoDownload"));
+		this.docType.setReadonly(isReadOnly("AgreementDefinitionDialog_docType"));
+		
 		
 	
 		doDisable(isReadOnly("AgreementDefinitionDialog_aggDesc"));
