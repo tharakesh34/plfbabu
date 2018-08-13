@@ -49,7 +49,10 @@
 	<changeSet id="2" author="somasekhar">
 	 <sql>
 	 
-	  
+	  Delete from secgrouprights where rightid in (Select rightid from SecRights where rightname in ('menuItem_CustomerTemplates_Prov_Certificate','menuItem_CustomerTemplates_InterestCertificate'));
+	  Delete from secgrouprights where grpid in (Select grpid from Secgroups where grpcode in ('InterestCertificate_MAKER','InterestCertificate_APPROVER'));
+	  Delete from SecRights where rightname in ('menuItem_CustomerTemplates_Prov_Certificate','menuItem_CustomerTemplates_InterestCertificate');
+	  Delete from Secgroups where grpcode in ('InterestCertificate_MAKER','InterestCertificate_APPROVER');
 	  insert into SecRights values((select max(rightid) from secrights)+1,0,'menuItem_CustomerTemplates_Prov_Certificate','MENU',1,1000,CURRENT_timestamp,'','','','','','',0);
 	  insert into SecRights values((select max(rightid) from secrights)+1,0,'menuItem_CustomerTemplates_InterestCertificate','MENU',1,1000,CURRENT_timestamp,'','','','','','',0);
 	  
