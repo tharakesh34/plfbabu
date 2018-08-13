@@ -2888,12 +2888,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		Customer customer = customerDetails.getCustomer();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditDetails
+		.addAll(getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType())));
+
 		getCustomerDAO().delete(customer, "_Temp");
 		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), customer.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
-		auditDetails
-				.addAll(getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType())));
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
