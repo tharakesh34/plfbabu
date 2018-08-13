@@ -1913,7 +1913,7 @@ public class PennantJavaUtil {
 						"AcTypeDesc" }, new Object[][] { { "CustSysAc", "0", 1 } }, 300));
 
 		ModuleUtil.register("DocumentDetails", new ModuleMapping("DocumentDetails", DocumentDetails.class,
-				new String[] { "DocumentDetails" }, masterWF , new String[] { "DocModule", "DocCategory" }, null, 300));
+				new String[] { "DocumentDetails" }, masterWF , new String[] { "DocModule", "DocCategory", "DocType"}, null, 300));
 
 		ModuleUtil.register("DashboardConfiguration", new ModuleMapping("DashboardConfiguration",
 				DashboardConfiguration.class,

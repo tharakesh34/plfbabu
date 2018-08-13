@@ -114,6 +114,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.NotificationLogDetailsService;
 import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
@@ -126,6 +127,7 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -206,6 +208,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DocumentDetailsDAO				documentDetailsDAO;
 	@Autowired
 	private CollateralAssignmentDAO			collateralAssignmentDAO;
+		
+	private NotificationLogDetailsService notificationLogDetailsService;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -444,6 +449,19 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("scoringList", scoreDetails);
 			map.put("custTypeCtg", enquiry.getCustTypeCtg());
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScoringEnquiryDialog.zul";
+			
+		
+		} else if ("NTFLENQ".equals(this.enquiryType)) {
+
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_NotificationLogListEnquiry.value"));
+			List<Notification> notificationDetails = getNotificationDetailsService().getNotificationLogDetailList(this.finReference);
+			System.out.println("Notification Size"+notificationDetails.size());
+			List<Notification> notificationDetailsSms = getNotificationDetailsService().getNotificationLogDetailSmsList(this.finReference);
+			map.put("smsList", notificationDetailsSms);
+			map.put("list", notificationDetails);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/NotificationDetailsLogDialog.zul";
+				
+			
 
 		} else if ("PFTENQ".equals(this.enquiryType)) {
 
@@ -971,5 +989,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {
 		this.uploadHeaderService = uploadHeaderService;
 	}
-
+	
+	public NotificationLogDetailsService getNotificationDetailsService() {
+		return notificationLogDetailsService;
+	}
+	public void setNotificationLogDetailsService(NotificationLogDetailsService notificationLogDetailsService) {
+		this.notificationLogDetailsService = notificationLogDetailsService;
+	}
 }

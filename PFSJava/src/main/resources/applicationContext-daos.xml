@@ -2824,7 +2824,7 @@
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="documentTypeService" ref="documentTypeService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="documentManagerDAO"ref="documentManagerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="masterDefService" ref="masterDefService" />
 	</bean>
@@ -10384,6 +10384,11 @@
 		class="com.pennant.backend.service.mandate.impl.UploadSecondaryMandateServiceImpl">
 		<property name="uploadSecondaryMandateDAO" ref="uploadSecondaryMandateDAO" />
 	</bean>
+	
+	
+	<bean name="notificationLogDetailsService"
+		class="com.pennant.backend.service.finance.impl.NotificationLogDetailsServiceImpl">
+		</bean>
 	
 	<!-- UploadHeader -->
 	<bean id="uploadHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
