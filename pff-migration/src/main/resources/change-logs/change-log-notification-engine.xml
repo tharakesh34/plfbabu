@@ -42,7 +42,7 @@
 			<column name="fromAddress" type="varchar(200)" />
 			<column name="fromName" type="nvarchar(100)" />
 			<column name="subject" type="nvarchar(500)" />
-			<column name="content" type="varbinary(max)" />
+			<column name="content" type="blob" />
 			<column name="contentType" type="int" />
 			<column name="status" type="char(1)" />
 			<column name="receivedOn" type="datetime" />
@@ -80,7 +80,7 @@
 			<column name="fileName" type="varchar(200)">
 				<constraints nullable="false" />
 			</column>
-			<column name="attachment" type="varbinary(max)">
+			<column name="attachment" type="blob">
 				<constraints nullable="false" />
 			</column>
 			<column name="attachmentType" type="int">
