@@ -6763,15 +6763,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					List<DocumentDetails> downLoaddocLst = autoDownloadMap.get("autoDownLoadDocs");
 					if (downLoaddocLst != null && downLoaddocLst.size() > 0) {
 						for (DocumentDetails ldocDetails : downLoaddocLst) {
-							if (PennantConstants.DOC_TYPE_PDF.equals(ldocDetails.getDocName())) {
+							if (PennantConstants.DOC_TYPE_PDF.equals(ldocDetails.getDoctype())) {
 								Filedownload.save(new AMedia(ldocDetails.getDocName(), "pdf", "application/pdf",
 										ldocDetails.getDocImage()));
 
 							} else {
-								/*
-								 * Filedownload.save(new AMedia(ldocDetails.getDocName(), "msword",
-								 * "application/msword", ldocDetails.getDocImage()));
-								 */
+								
+								 Filedownload.save(new AMedia(ldocDetails.getDocName(), "msword",
+								 "application/msword", ldocDetails.getDocImage()));
+								 
 							}
 
 						}
@@ -18269,8 +18269,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					details.setDocImage(engine.getDocumentInByteArray(
 							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
 				}
-				details.setDoctype(agreementDefinition.getDocType());
-				//details.setDoctype(agreementDefinition.getAggtype());
+				details.setDoctype(agreementDefinition.getAggtype());
 				details.setDocName(reportName);
 				details.setDocReceivedDate(frefdata.getLastMntOn());
 				details.setVersion(1);
