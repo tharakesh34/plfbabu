@@ -321,6 +321,8 @@ public class PennantConstants {
 	public static final String AGG_SMPMODL = "SMPMODL";
 
 	// Workflow definition Constants
+	
+	public static final String WORFLOW_MODULE_LOAN = "LOAN";
 	public static final String WORFLOW_MODULE_FINANCE = "FINANCE";
 	public static final String WORFLOW_MODULE_PROMOTION = "PROMOTION";
 	public static final String WORFLOW_MODULE_FACILITY = "FACILITY";
