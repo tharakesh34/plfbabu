@@ -6,7 +6,7 @@ pff 4.10.2, 2018-08-13
 - story #550 Control on Re-sending the Notifications
 - story #566 Fixed SMS message does not contain HTML tags
 - story #563 Fixed the order of actors as per the process flow in work-flow engine.
-- story #562 Merged Interest certificate and prov.Certificate from Bajaj.
+- story #574 Added Interest Certificate and Provisional Certificate
 
 pff 4.7.14, 2018-03-18
 ----------------------
