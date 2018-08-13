@@ -4016,7 +4016,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="32.5" author="Vinay">
+	<changeSet id="32.6" author="Vinay">
 		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			SELECT t1.fintype,
 			    t1.fincategory,
@@ -4179,7 +4179,7 @@ UNION ALL
 			     LEFT JOIN rules t6 ON t1.grcpricingmethod = t6.ruleid
 			     LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
 			     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
-			     LEFT JOIN rmtlovfielddetail t9 ON t1.eligibilitymethod = t9.fieldcodeid and t9.fieldcode='ELGMETHOD'
+			      LEFT JOIN rmtlovfielddetail t9 ON t1.eligibilitymethod = t9.fieldcodeid and t9.fieldcode='ELGMETHOD'
 		</createView>
 	</changeSet>
 	</databaseChangeLog>
