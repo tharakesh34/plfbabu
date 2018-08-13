@@ -3392,6 +3392,12 @@ UNION ALL
 		<addDefaultValue columnName="eligibilitymethod" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="eligibilitymethod" tableName="RMTFinanceTypes_temp" defaultValue="0" />
 	</changeSet>
+	
+	<!--<changeSet id="32.SD" author="Prasad">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
+		</sql>
+	</changeSet>-->
 
 	<changeSet id="32.3" author="Vinay">
 		<createView viewName="RMTFinanceTypes_AView" replaceIfExists="true">
@@ -3609,6 +3615,13 @@ UNION ALL
 			LEFT JOIN rmtlovfielddetail t70 ON t1.eligibilitymethod = t70.fieldcodeid and t70.fieldcode='ELGMETHOD'
 		</createView>
 	</changeSet>
+	
+	<!-- <changeSet id="32.DR" author="Prasad">
+		<sql>
+			select deps_restore_dependencies('plf','rmtfinancetypes_aview');
+		</sql>
+	</changeSet> -->
+	
 	<changeSet id="32.4" author="Vinay">
 		<createView viewName="RMTFinanceTypes_View" replaceIfExists="true">
 			SELECT t1.fintype,
