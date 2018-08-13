@@ -3038,4 +3038,123 @@ UNION ALL
 		INSERT INTO SMTPARAMETERS VALUES ('STAGE_REQ_FOR_MAIL_CHECK', 'Stage to be considered or not for MailResend', 'String', 1,  'N', '1', 0, NULL, NULL, 'Stage to be considered or not for MailResend', 1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="32">
+		<addForeignKeyConstraint constraintName="FK_DepMov_DepositId" baseTableName="DepositMovements" baseColumnNames="DepositId" referencedColumnNames="DepositId" referencedTableName="DepositDetails"/>
+		<addForeignKeyConstraint constraintName="FK_DepMov_Temp_DepositId" baseTableName="DepositMovements_Temp" baseColumnNames="DepositId" referencedColumnNames="DepositId" referencedTableName="DepositDetails_Temp"/>	
+		<addForeignKeyConstraint constraintName="FK_DepChq_MovementId" baseTableName="DepositCheques" baseColumnNames="MovementId" referencedColumnNames="MovementId" referencedTableName="DepositMovements"/>
+		<addForeignKeyConstraint constraintName="FK_DepChq_Temp_MovementId" baseTableName="DepositCheques_Temp" baseColumnNames="MovementId" referencedColumnNames="MovementId" referencedTableName="DepositMovements_Temp"/>
+		<addForeignKeyConstraint constraintName="FK_Cash_MovementId" baseTableName="CashDenominations" baseColumnNames="MovementId" referencedColumnNames="MovementId" referencedTableName="DepositMovements"/>
+		<addForeignKeyConstraint constraintName="FK_Cash_Temp_MovementId" baseTableName="CashDenominations_Temp" baseColumnNames="MovementId" referencedColumnNames="MovementId" referencedTableName="DepositMovements_Temp"/>
+	</changeSet>
+	
+	<changeSet id="33" author="Kesav">
+		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
+		<renameColumn tableName="DepositCheques" oldColumnName="RevLinkedTranId" newColumnName="LinkedTranId"/>
+	</changeSet>
+	
+	<changeSet id="34" author="Kesav">
+		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
+		<renameColumn tableName="DepositCheques_Temp" oldColumnName="RevLinkedTranId" newColumnName="LinkedTranId"/>
+	</changeSet>
+	
+	<changeSet id="35" author="Kesav">
+		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
+		<createView viewName="DepositCheques_TView" replaceIfExists="true">
+			Select	 	T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount, T1.LinkedTranId, T1.Status,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.ReceiptPurpose, T2.Remarks, 
+						T3.FavourNumber, T3.ReceivedDate, T3.FundingAc,
+						T4.FinReference, 
+						T5.CustShrtName,
+						T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques_Temp T1	
+			Inner Join 	(select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader_temp T
+						 union all
+						 select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptheader_temp  WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId
+			Inner Join 	(select ReceiptId,FavourNumber, ReceivedDate, FundingAc from finreceiptdetail_Temp T
+						 union all
+						 select ReceiptId, FavourNumber, ReceivedDate, FundingAc from finreceiptdetail T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptdetail_Temp  WHERE ReceiptId = T.ReceiptId)) T3 On T3.ReceiptId = T1.ReceiptId
+			Inner Join 	financemain T4 ON T2.reference = T4.finreference
+			Inner JOIN 	customers T5 ON T4.custid = T5.custid
+			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+		</createView>
+	</changeSet>
+	
+	<changeSet id="36" author="Kesav">
+		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
+		<createView viewName="DepositCheques_AView" replaceIfExists="true">
+			Select	 	T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount, T1.LinkedTranId, T1.Status,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.ReceiptPurpose, T2.Remarks, 
+						T3.FavourNumber, T3.ReceivedDate, T3.FundingAc,
+						T4.FinReference, 
+						T5.CustShrtName,
+						T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques T1	
+			Inner Join 	(select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader_temp T
+						 union all
+						 select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptheader_temp  WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId
+			Inner Join 	(select ReceiptId,FavourNumber, ReceivedDate, FundingAc from finreceiptdetail_Temp T
+						 union all
+						 select ReceiptId, FavourNumber, ReceivedDate, FundingAc from finreceiptdetail T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptdetail_Temp  WHERE ReceiptId = T.ReceiptId)) T3 On T3.ReceiptId = T1.ReceiptId
+			Inner Join 	financemain T4 ON T2.reference = T4.finreference
+			Inner JOIN 	customers T5 ON T4.custid = T5.custid
+			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+		</createView>
+	</changeSet>
+	
+	<changeSet id="37" author="Kesav">
+		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
+		<createView viewName="DepositCheques_View" replaceIfExists="true">		
+			Select	 	T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount, T1.LinkedTranId, T1.Status,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.ReceiptPurpose, T2.Remarks, 
+						T3.FavourNumber, T3.ReceivedDate, T3.FundingAc,
+						T4.FinReference, 
+						T5.CustShrtName,
+						T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques_Temp T1	
+			Inner Join 	(select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader_temp T
+						 union all
+						 select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptheader_temp  WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId
+			Inner Join 	(select ReceiptId,FavourNumber, ReceivedDate, FundingAc from finreceiptdetail_Temp T
+						 union all
+						 select ReceiptId, FavourNumber, ReceivedDate, FundingAc from finreceiptdetail T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptdetail_Temp  WHERE ReceiptId = T.ReceiptId)) T3 On T3.ReceiptId = T1.ReceiptId
+			Inner Join 	financemain T4 ON T2.reference = T4.finreference
+			Inner JOIN 	customers T5 ON T4.custid = T5.custid
+			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+			
+			Union All
+			
+			Select	 	T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount, T1.LinkedTranId, T1.Status,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.ReceiptPurpose, T2.Remarks, 
+						T3.FavourNumber, T3.ReceivedDate, T3.FundingAc,
+						T4.FinReference, 
+						T5.CustShrtName,
+						T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques T1	
+			Inner Join 	(Select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader_temp T
+						 union all
+						 Select Reference, ReceiptId, ReceiptPurpose, Remarks from finreceiptheader T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptheader_temp  WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId
+			Inner Join 	(Select ReceiptId,FavourNumber, ReceivedDate, FundingAc from finreceiptdetail_Temp T
+						 union all
+						 Select ReceiptId, FavourNumber, ReceivedDate, FundingAc from finreceiptdetail T
+						 WHERE  NOT EXISTS (SELECT 1 FROM finreceiptdetail_Temp  WHERE ReceiptId = T.ReceiptId)) T3 On T3.ReceiptId = T1.ReceiptId
+			Inner Join 	financemain T4 ON T2.reference = T4.finreference
+			Inner JOIN 	customers T5 ON T4.custid = T5.custid
+			Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+			
+			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositCheques_Temp WHERE DepositCheques_Temp.Id = T1.Id))		
+		</createView>
+	</changeSet>
+	
 	</databaseChangeLog>

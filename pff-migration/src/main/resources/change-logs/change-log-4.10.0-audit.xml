@@ -49,4 +49,9 @@
 				<column name="BpiRateBasis" type="Varchar(8)"/>
 			</addColumn>
 	</changeSet>
+	
+	<changeSet id="3" author="Kesav">
+		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
+		<renameColumn tableName="AdtDepositCheques" oldColumnName="RevLinkedTranId" newColumnName="LinkedTranId"/>
+	</changeSet>
 	</databaseChangeLog>
