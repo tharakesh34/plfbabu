@@ -319,13 +319,14 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.custIncomeType.setMaxlength(8);
+		this.custIncomeType.setMaxlength(20);
+		this.custIncomeType.getTextbox().setMaxlength(50);
 		this.custIncomeType.setMandatoryStyle(true);
 		this.custIncomeType.setTextBoxWidth(110);
 		this.custIncomeType.setModuleName("IncomeExpense");
-		this.custIncomeType.setValueColumn("IncomeTypeCode");
+		this.custIncomeType.setValueColumn("IncomeExpenseCode");
 		this.custIncomeType.setDescColumn("IncomeTypeDesc");
-		this.custIncomeType.setValidateColumns(new String[] { "IncomeTypeCode" });
+		this.custIncomeType.setValidateColumns(new String[] { "IncomeExpenseCode" });
 		
 		if (this.samplingDialogCtrl != null) {
 			Filter incomeTypeFilter[] = new Filter[1];

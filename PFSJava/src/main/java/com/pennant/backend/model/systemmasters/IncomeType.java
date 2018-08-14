@@ -45,6 +45,8 @@ package com.pennant.backend.model.systemmasters;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -64,6 +66,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	private String incomeTypeDesc;
 	private BigDecimal margin;
 	private boolean incomeTypeIsActive;
+	private String incomeExpenseCode;
 	private boolean newRecord;
 	private String lovValue;
 	private IncomeType befImage;
@@ -80,6 +83,12 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public IncomeType(String id) {
 		super();
 		this.setId(id);
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("incomeExpenseCode");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -112,6 +121,14 @@ public class IncomeType extends AbstractWorkflowEntity {
 	}
 	public void setIncomeTypeIsActive(boolean incomeTypeIsActive) {
 		this.incomeTypeIsActive = incomeTypeIsActive;
+	}
+
+	public String getIncomeExpenseCode() {
+		return incomeExpenseCode;
+	}
+
+	public void setIncomeExpenseCode(String incomeExpenseCode) {
+		this.incomeExpenseCode = incomeExpenseCode;
 	}
 
 	public boolean isNewRecord() {
