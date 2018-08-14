@@ -1,7 +1,7 @@
 package com.pennanttech.pff.incomeexpensedetail.service;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public interface IncomeExpenseDetailService {
 	

@@ -70,7 +70,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 			tableName.append(org.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_ED");
 			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) details.get(0).getModelData();
-			if (Long.parseLong(extendedFieldRender.getReference()) == 0){
+			if (Long.parseLong(extendedFieldRender.getReference()) == 0) {
 				extendedFieldRender.setReference(String.valueOf(org.getId()));
 			}
 			details.get(0).setModelData(extendedFieldRender);
@@ -180,7 +180,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		List<AuditDetail> auditDetailList = new ArrayList<>();
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Organization(), org.getExcludeFields());
-		//auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		// auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditDetailList.addAll(deleteChilds(org, "_Temp", auditHeader.getAuditTranType()));
@@ -191,7 +191,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
 
-		//auditHeaderDAO.addAudit(auditHeader);
+		// auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -303,7 +303,8 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 				&& organizationDAO.isDuplicateKey(organization.getCustId(), organization.getCode(),
 						organization.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_CIF.value") + ": " + organization.getCif();
+			parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_CIF.value") + ": "
+					+ organization.getCif();
 			parameters[1] = PennantJavaUtil.getLabel("label_OrganizationDialog_Code.value") + ": "
 					+ organization.getCode();
 
@@ -311,7 +312,6 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;

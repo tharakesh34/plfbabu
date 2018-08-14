@@ -50,8 +50,9 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailService;
 import com.pennanttech.pff.organization.IncomeExpenseType;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
+import com.pennanttech.pff.organization.OrganizationUtil;
+import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHeader>{
 	private static final long serialVersionUID = 1L;
@@ -82,6 +83,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	@Autowired
 	private IncomeExpenseDetailService incomeExpenseDetailService;
 	
+	private List<ValueLabel> categories = OrganizationUtil.getSchoolClassName();
+	List<ValueLabel> frqOfCollectionList = OrganizationUtil.getCollectionFrequencyList();
 	private int coreIncomeCount =0;
 	private int nonCoreIncomeCount =0;
 	private int expenseCount = 0;
@@ -157,7 +160,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		this.btnNew_SchoolCoreIncome.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnNewCoreIncome"));
 		this.btnNew_SchoolNonCoreIncome.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnNewNonCoreIncome"));
 		this.btnNew_SchoolExpense.setVisible(getUserWorkspace().isAllowed("button_OrganizationIncomeExpenseDialog_btnNewExpense"));
-
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -866,19 +868,26 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			incomeExpenseDetail.setCategory(category);
 			break;
 		case "noOfStudents":
+			int noOfStudents = 0;
 			Hbox hbox2 = (Hbox) getComponent(listitem, "noOfStudents");
 			Intbox intbox1 = (Intbox) hbox2.getLastChild();
-			int noOfStudents = intbox1.getValue();
+			
+			if(intbox1.getValue() != null) {
+				noOfStudents = intbox1.getValue();
+			}
+			
 			if (!intbox1.isReadonly() && noOfStudents <= 0 ) {
-				throw new WrongValueException(intbox1, Labels.getLabel("STATIC_INVALID",
-						new String[] { "No Of Students" }));
+				throw new WrongValueException(intbox1, Labels.getLabel("STATIC_INVALID", new String[] { "No Of Students" }));
 			}
 			incomeExpenseDetail.setUnits(noOfStudents);
 			break;
 		case "feeCharged":
+			BigDecimal feeCharged = BigDecimal.ZERO;
 			Hbox hbox3 = (Hbox) getComponent(listitem, "feeCharged");
 			Decimalbox textBox1 = (Decimalbox) hbox3.getLastChild();
-			BigDecimal feeCharged = textBox1.getValue();
+			if(textBox1.getValue()!=null){
+				feeCharged = textBox1.getValue();
+			}
 			if (!(textBox1.isReadonly())  && (feeCharged.intValue() <= 0)) {
 				throw new WrongValueException(textBox1, Labels.getLabel("FIELD_RANGE", new Object[] {
 						"Fee Charged" , 1, 10000 }));
@@ -896,8 +905,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			incomeExpenseDetail.setFrequency(Integer.parseInt(frqOfCollection));
 			break;
 		case "totalCore":
+			BigDecimal totalCore = BigDecimal.ZERO;
 			Decimalbox decimalbox = (Decimalbox) getComponent(listitem, "totalCore");
-			BigDecimal totalCore = decimalbox.getValue();
+			if(decimalbox.getValue()!=null){
+				totalCore = decimalbox.getValue();
+			}
 			incomeExpenseDetail.setTotal(totalCore);
 			break;
 		case "considered":
@@ -920,9 +932,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			}
 			break;
 		case "noOfUnitsServed":
+			int noOfUnitsServed = 0;
 			Hbox hbox5 = (Hbox) getComponent(listitem, "noOfUnitsServed");
 			Intbox inybox1 = (Intbox) hbox5.getLastChild();
-			int noOfUnitsServed = inybox1.getValue();
+			if (inybox1.getValue() != null) {
+				noOfUnitsServed = inybox1.getValue();
+			}
 			if (!inybox1.isReadonly() && noOfUnitsServed <= 0 ) {
 				throw new WrongValueException(inybox1, Labels.getLabel("STATIC_INVALID",
 						new String[] { "No Of Students" }));
@@ -930,9 +945,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			incomeExpenseDetail.setUnits(noOfUnitsServed);
 			break;
 		case "avgCollectionPerUnit":
+			BigDecimal avgCollPerUnit = BigDecimal.ZERO;
 			Hbox hbox6 = (Hbox) getComponent(listitem, "avgCollectionPerUnit");
 			Decimalbox decimalbox1 = (Decimalbox) hbox6.getLastChild();
-			BigDecimal avgCollPerUnit = decimalbox1.getValue();
+			if (decimalbox1.getValue() != null) {
+				avgCollPerUnit = decimalbox1.getValue();
+			}
 			if (!(decimalbox1.isReadonly())  && (avgCollPerUnit.intValue() <= 0)) {
 				throw new WrongValueException(decimalbox1, Labels.getLabel("FIELD_RANGE", new Object[] {
 						"Fee Charged" , 1, 10000 }));
@@ -952,16 +970,17 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				throw new WrongValueException(extCombobox1,
 						Labels.getLabel("STATIC_INVALID", new String[] { "ExpenseType" }));
 			}
-			
-			String[] incomeExpense = extCombobox1.getAttribute("IncomeExpense").toString().split("_@#");
-			incomeExpenseDetail.setIncomeExpenseCode(incomeExpense[0]);
-			incomeExpenseDetail.setIncomeExpense(incomeExpense[1]);
-			incomeExpenseDetail.setCategory(incomeExpense[2]);
+			incomeExpenseDetail.setIncomeExpense(extCombobox1.getAttribute("IncomeExpense").toString());
+			incomeExpenseDetail.setCategory(extCombobox1.getAttribute("Category").toString());
+			incomeExpenseDetail.setIncomeExpenseCode(extCombobox1.getValue());
 			break;
 		case "expenseIncurred":
+			BigDecimal expenseIncurred =BigDecimal.ZERO;
 			Hbox hbox7 = (Hbox) getComponent(listitem, "expenseIncurred");
 			Decimalbox decimalbox2 = (Decimalbox) hbox7.getLastChild();
-			BigDecimal expenseIncurred = decimalbox2.getValue();
+			if (decimalbox2.getValue() != null) {
+				expenseIncurred = decimalbox2.getValue();
+			}
 			if (!(decimalbox2.isReadonly())  && (expenseIncurred.intValue() <= 0)) {
 				throw new WrongValueException(decimalbox2, Labels.getLabel("FIELD_RANGE", new Object[] {
 						"Expense Incurred" , 1, 10000 }));
@@ -1087,18 +1106,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	}
 
 	public void renderCoreIncomeDetails(IncomeExpenseHeader incomeExpenseHeader) {
-
-		List<ValueLabel> frqOfCollectionList = new ArrayList<>();
-		frqOfCollectionList.add(new ValueLabel("1", "Yearly"));
-		frqOfCollectionList.add(new ValueLabel("2", "Half-Yearly"));
-		frqOfCollectionList.add(new ValueLabel("4", "Quarterly"));
-		frqOfCollectionList.add(new ValueLabel("12", "Monthly"));
-		
-		List<ValueLabel> categories = new ArrayList<>();
-		categories.add(new ValueLabel("LKG", "LKG"));
-		categories.add(new ValueLabel("UKG", "UKG"));
-		categories.add(new ValueLabel("FIRST", "FIRST"));
-		categories.add(new ValueLabel("SECOND", "SECOND"));
 		int size = 0;
 		if (incomeExpenseHeader.getCoreIncomeList().size() > 0 && incomeExpenseHeader.getSchoolIncomeExpense() == null ) {
 			setCoreIncomeDetailList(incomeExpenseHeader.getCoreIncomeList());
@@ -1307,16 +1314,24 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		Decimalbox feeRecBasisFrq = (Decimalbox)getComponent(item, "feeRecBasisFrq");
 		Decimalbox totalCore = (Decimalbox)getComponent(item, "totalCore");
 		
-		if(feeCharged.getValue().intValue()!=0 && multiplier.getValue()!=null && multiplier.getValue().intValue()!=0){
-			feeRecBasisFrq.setValue(BigDecimal.valueOf(feeCharged.getValue().intValue()/multiplier.getValue().intValue()));
-		}else{
-			feeRecBasisFrq.setValue(BigDecimal.ZERO);
+		int mult = 0;
+		BigDecimal fee = BigDecimal.ZERO;
+		int students=0;
+		
+		if (feeCharged.getValue() != null) {
+			fee = feeCharged.getValue();
 		}
-		if(noOfStudents.getValue()!=null && feeCharged.getValue()!=null){
-			totalCore.setValue(BigDecimal.valueOf(noOfStudents.getValue()*feeCharged.getValue().intValue()));
-		}else{
-			totalCore.setValue(BigDecimal.ZERO);
+
+		if (noOfStudents.getValue() != null) {
+			students = noOfStudents.getValue();
 		}
+
+		if (multiplier.getValue() != null) {
+			mult = multiplier.getValue();
+		}
+
+		feeRecBasisFrq.setValue(fee.divide(new BigDecimal(mult), BigDecimal.ROUND_HALF_DOWN));
+		totalCore.setValue(fee.multiply(new BigDecimal(students)));
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -1369,7 +1384,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		schNonCoreIncome.setOrgId(incomeExpenseHeader.getOrgId());
 		schNonCoreIncome.setWorkflowId(0);
 		schNonCoreIncome.setName(incomeExpenseHeader.getName());
-		schNonCoreIncome.setIncomeExpenseType("NONCORE_INCOME");
+		schNonCoreIncome.setIncomeExpenseType(IncomeExpenseType.NON_CORE_INCOME.name());
 		schNonCoreIncome.setCoreIncome(false);
 		
 		incomeExpenseHeader.setSchoolIncomeExpense(schNonCoreIncome);
@@ -1429,10 +1444,10 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			prodService.setMaxlength(8);
 			prodService.getTextbox().setMaxlength(50);
 			prodService.setMandatoryStyle(true);
-			prodService.setModuleName("ProductType");
-			prodService.setValueColumn("FieldCode");
+			prodService.setModuleName("ORG_SCHOOL_PRODUCT_TYPES");
+			prodService.setValueColumn("FieldCodeValue");
 			prodService.setDescColumn("ValueDesc");
-			prodService.setValidateColumns(new String[] { "FieldCode" });
+			prodService.setValidateColumns(new String[] {"FieldCodeValue" });
 			
 			prodService.addForward("onFulfill", self, "onFullFillProdService", prodService);
 			prodService.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ProductService"));
@@ -1548,14 +1563,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			expenseType.setDescription("");
 		} else {
 			IncomeType details = (IncomeType) dataObject;
-			StringBuilder code = new StringBuilder();
-			code.append(details.getIncomeTypeCode());
-			code.append("_@#");
-			code.append(details.getIncomeExpense());
-			code.append("_@#");
-			code.append(details.getCategory());
-			
-			expenseType.setAttribute("IncomeExpense", code.toString());
+				expenseType.setAttribute("IncomeExpense", details.getIncomeExpense());
+				expenseType.setAttribute("Category", details.getCategory());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -1568,7 +1577,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		schExpense.setOrgId(incomeExpenseHeader.getOrgId());
 		schExpense.setWorkflowId(0);
 		schExpense.setName(incomeExpenseHeader.getName());
-		schExpense.setIncomeExpenseType("EXPENSE");
+		schExpense.setIncomeExpenseType(IncomeExpenseType.EXPENSE.name());
 		schExpense.setCoreIncome(false);
 		
 		incomeExpenseHeader.setSchoolIncomeExpense(schExpense);
@@ -1626,7 +1635,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			expenseType.setMaxlength(8);
 			expenseType.setMandatoryStyle(true);
 			expenseType.setModuleName("IncomeExpense");
-			expenseType.setValueColumn("IncomeExpense");
 			expenseType.setValueColumn("IncomeTypeCode");
 			expenseType.setDescColumn("IncomeTypeDesc");
 			expenseType.setValidateColumns(new String[] { "IncomeExpense","IncomeTypeCode", "Category" });
@@ -1635,21 +1643,15 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			expenseTypeFilter[0] = new Filter("IncomeExpense", PennantConstants.EXPENSE, Filter.OP_EQUAL);
 			expenseType.setFilters(expenseTypeFilter);
 			expenseType.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ExpenseType"));
-			
 			if (!schExpense.isNewRecord()) {
 				expenseType.setValue(StringUtils.trimToEmpty(schExpense.getIncomeExpenseCode()),
 						StringUtils.trimToEmpty(schExpense.getExpenseDesc()));
 				if (schExpense.getIncomeExpenseCode() != null) {
-					StringBuilder code = new StringBuilder();
-					code.append(schExpense.getIncomeExpenseCode());
-					code.append("_@#");
-					code.append(schExpense.getIncomeExpense());
-					code.append("_@#");
-					code.append(schExpense.getCategory());
-					
-					expenseType.setAttribute("IncomeExpense", code.toString());
+					expenseType.setAttribute("IncomeExpense", schExpense.getIncomeExpense());
+					expenseType.setAttribute("Category", schExpense.getCategory());
 				} else {
 					expenseType.setAttribute("IncomeExpense", null);
+					expenseType.setAttribute("Category", null);
 				}
 			}
 			listCell.appendChild(expenseType);

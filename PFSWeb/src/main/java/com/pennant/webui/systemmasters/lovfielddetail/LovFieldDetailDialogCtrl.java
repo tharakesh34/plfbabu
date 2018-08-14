@@ -65,6 +65,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -86,7 +87,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 */
 	protected Window            window_LovFieldDetailDialog;
 	protected ExtendedCombobox           fieldCode;                	
-	protected Textbox           fieldCodeValue;             
+	protected Uppercasebox           fieldCodeValue;             
 	protected Textbox           valueDesc;            		
 	protected Checkbox          isActive;                   
 	protected Checkbox          systemDefault;               
@@ -183,7 +184,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
-		this.fieldCode.setMaxlength(10);
+		this.fieldCode.setMaxlength(50);
 		this.fieldCodeValue.setMaxlength(50);
 		this.valueDesc.setMaxlength(50);
 

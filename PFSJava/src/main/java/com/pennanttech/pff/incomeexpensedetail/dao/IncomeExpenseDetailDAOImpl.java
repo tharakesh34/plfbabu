@@ -19,7 +19,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
+import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 
 public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>  implements IncomeExpenseDetailDAO {
 	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailDAOImpl.class);
@@ -96,7 +96,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 	}
 
 	@Override
-	public List<IncomeExpenseDetail> getCoreIncomeList(Long id, String incomeType, String type) {
+	public List<IncomeExpenseDetail> getIncomeExpenseList(Long id, String incomeType, String type) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -125,63 +125,6 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 	}
 
-	@Override
-	public List<IncomeExpenseDetail> getNonCoreIncomeList(Long id, String incomeType, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select * from org_income_expenses_view");
-		sql.append(" where headerid = :id and ");
-		sql.append(" incomeexpensetype = :type ");
-
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("id", id);
-		paramSource.addValue("type", incomeType);
-
-		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);
-
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			return new ArrayList<>();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
-	}
-
-	@Override
-	public List<IncomeExpenseDetail> getExpenseList(Long id, String incomeType, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select * from org_income_expenses_view");
-		sql.append(" where headerid = :id and ");
-		sql.append(" incomeexpensetype = :type ");
-
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("id", id);
-		paramSource.addValue("type", incomeType);
-
-		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);
-
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
-	}
 	
 	@Override
 	public Map<String, Object> getTotal(Long custId, Integer financialYear) {

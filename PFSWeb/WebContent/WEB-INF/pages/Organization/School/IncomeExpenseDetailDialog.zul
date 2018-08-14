@@ -82,11 +82,12 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto"
 								ca:data-scrollable="true" id="OrgSchoolIncomeDetailsTabPanel">
-								
+
 								<!-- Core Income Details -->
 								<groupbox
 									contentStyle="overflow:auto;">
-									<caption label="Core Income Details" />
+									<caption
+										label="Core Income Details" />
 									<toolbar align="end">
 										<button
 											id="btnNew_SchoolCoreIncome" label="${c:l('label_New')}"
@@ -108,7 +109,7 @@
 												label="${c:l('listheader_FinancialYear.label')}" />
 											<listheader
 												id="listheader_Category"
-												label="${c:l('listheader_Category.label')}" />	
+												label="${c:l('listheader_Category.label')}" />
 											<listheader
 												id="listheader_NumberOfStudents"
 												label="${c:l('listheader_NumberOfStudents.label')}" />
@@ -139,14 +140,16 @@
 								<!-- Non-core Income Details -->
 								<groupbox
 									contentStyle="overflow:auto;">
-									<caption label="Non-core Income Details" />
+									<caption
+										label="Non-core Income Details" />
 									<toolbar align="end">
-										<button id="btnNew_SchoolNonCoreIncome"
-											label="${c:l('label_New')}"
+										<button
+											id="btnNew_SchoolNonCoreIncome" label="${c:l('label_New')}"
 											tooltiptext="${c:l('button_OrgSchoolIncomeExpenseDialog_NewNonCoreIncome.tooltiptext')}"
 											sclass="z-toolbarbutton" />
 									</toolbar>
-									<listbox id="listBoxSchoolNonCoreIncomeDetails"
+									<listbox
+										id="listBoxSchoolNonCoreIncomeDetails"
 										emptyMessage="${c:l('listbox.emptyMessage')}"
 										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 										height="100%" multiple="false" sizedByContent="true"
@@ -154,22 +157,22 @@
 										<listhead sizable="true">
 											<listheader
 												id="listheader_NonCoreSchoolName"
-												label="${c:l('listheader_SchoolName.label')}"/>
+												label="${c:l('listheader_SchoolName.label')}" />
 											<listheader
 												id="listheader_NonCoreFinancialYear"
-												label="${c:l('listheader_FinancialYear.label')}"/>
+												label="${c:l('listheader_FinancialYear.label')}" />
 											<listheader
 												id="listheader_ProductService"
-												label="${c:l('listheader_ProductService.label')}"/>
+												label="${c:l('listheader_ProductService.label')}" />
 											<listheader
 												id="listheader_NumberOfUnitsServed"
-												label="${c:l('listheader_NumberOfUnitsServed.label')}"/>
+												label="${c:l('listheader_NumberOfUnitsServed.label')}" />
 											<listheader
 												id="listheader_AverageCollectionPerUnit"
-												label="${c:l('listheader_AverageCollectionPerUnit.label')}"/>
+												label="${c:l('listheader_AverageCollectionPerUnit.label')}" />
 											<listheader
 												id="listheader_NonCoreIncomeTotal"
-												label="${c:l('listheader_OrgTotal.label')}"/>
+												label="${c:l('listheader_OrgTotal.label')}" />
 											<listheader
 												id="listheader_NonCoreToBeConsidered"
 												label="${c:l('listheader_ToBeConsidered.label')}" />
@@ -179,7 +182,7 @@
 									</listbox>
 								</groupbox>
 							</tabpanel>
-							
+
 							<!-- Expense Tab panel -->
 							<tabpanel style="overflow:auto"
 								ca:data-scrollable="true"
@@ -187,8 +190,7 @@
 								<!-- Expense Details -->
 								<groupbox
 									contentStyle="overflow:auto;">
-									<caption
-										label="Expense Details" />
+									<caption label="Expense Details" />
 									<toolbar align="end">
 										<button
 											id="btnNew_SchoolExpense" label="${c:l('label_New')}"

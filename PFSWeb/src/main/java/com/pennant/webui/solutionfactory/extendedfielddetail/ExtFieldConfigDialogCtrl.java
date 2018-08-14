@@ -103,7 +103,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
- 
 public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ExtFieldConfigDialogCtrl.class);
@@ -159,13 +158,13 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	private List<String> fieldNames = new ArrayList<String>();
 	protected boolean preScriptValidated = false;
 	protected boolean postScriptValidated = false;
-	
-	private List<ValueLabel>   configList = PennantStaticListUtil.getConfigTypes();
-	private List<ValueLabel>   custCtgList = PennantAppUtil.getcustCtgCodeList();
-	private List<FinServicingEvent>				events				= PennantStaticListUtil.getFinEvents(true);
-	private List<ValueLabel>   verificatinList = PennantStaticListUtil.getVerificatinTypes();
-	private List<ValueLabel>   orgnizationList = PennantStaticListUtil.getOrganizationTypes();
-	
+
+	private List<ValueLabel> configList = PennantStaticListUtil.getConfigTypes();
+	private List<ValueLabel> custCtgList = PennantAppUtil.getcustCtgCodeList();
+	private List<FinServicingEvent> events = PennantStaticListUtil.getFinEvents(true);
+	private List<ValueLabel> verificatinList = PennantStaticListUtil.getVerificatinTypes();
+	private List<ValueLabel> orgnizationList = PennantStaticListUtil.getOrganizationTypes();
+
 	private String subModuleVal;
 
 	public ExtFieldConfigDialogCtrl() {
@@ -179,8 +178,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -203,17 +201,18 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 
 			// Store the before image.
 			ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
-			BeanUtils.copyProperties(this.extendedFieldHeader,extendedFieldHeader);
+			BeanUtils.copyProperties(this.extendedFieldHeader, extendedFieldHeader);
 			this.extendedFieldHeader.setBefImage(extendedFieldHeader);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.extendedFieldHeader.isWorkflow(), this.extendedFieldHeader.getWorkflowId(),this.extendedFieldHeader.getNextTaskId());
+			doLoadWorkFlow(this.extendedFieldHeader.isWorkflow(), this.extendedFieldHeader.getWorkflowId(),
+					this.extendedFieldHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),this.pageRightName);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.extendedFieldHeader);
@@ -246,7 +245,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			map.put("newRecord", extendedFieldHeader.isNew());
 			map.put("moduleName", this.module.getSelectedItem().getValue());
 
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul", extendedFieldTabpanel, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul",
+					extendedFieldTabpanel, map);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -260,7 +260,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 
 		fillComboBox(module, "", configList, "");
 		fillComboBox(subModule, "", custCtgList, "");
-		
+
 		// Finance Type
 		this.product.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.product.setMandatoryStyle(true);
@@ -268,9 +268,9 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.product.setValueColumn("ProductCode");
 		this.product.setDescColumn("ProductDesc");
 		this.product.setValidateColumns(new String[] { "ProductCode" });
-		
+
 		this.tabHeading.setMaxlength(20);
-			
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -295,7 +295,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			this.space_event.setVisible(false);
 			this.finEvent.setVisible(false);
 			fillComboBox(subModule, subModuleVal, custCtgList, "");
-		}  else if (moduleVal.equals(ExtendedFieldConstants.MODULE_LOAN)) {
+		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_LOAN)) {
 			this.subModule.setVisible(false);
 			this.space_subModule.setVisible(false);
 			this.label_Event.setVisible(true);
@@ -334,6 +334,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			fillComboBox(subModule, "", custCtgList, "");
 		}
 	}
+
 	/**
 	 * Method for setting Basic Details on Selecting Extended Details Tab
 	 * 
@@ -344,7 +345,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		if (subModuleVal.equals(Labels.getLabel("Combo.Select"))) {
 			subModuleVal = this.product.getValue();
 		}
-		getExtendedFieldDialogCtrl().doSetBasicDetail(this.module.getSelectedItem().getValue(),subModuleVal, null);
+		getExtendedFieldDialogCtrl().doSetBasicDetail(this.module.getSelectedItem().getValue(), subModuleVal, null);
 	}
 
 	/**
@@ -360,12 +361,13 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.moduleDesc.setValue(this.module.getSelectedItem().getValue());
 		this.subModuleDesc.setValue(this.subModule.getSelectedItem().getValue());
 		if (StringUtils.isNotEmpty(this.subModule.getSelectedItem().getValue())) {
-			this.subModuleDesc.setValue(this.module.getSelectedItem().getValue() + " - " 	+ subModuleVal);
+			this.subModuleDesc.setValue(this.module.getSelectedItem().getValue() + " - " + subModuleVal);
 		}
 	}
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$preValidationTab(Event event) {
@@ -374,17 +376,18 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		if (subModuleVal.equals(Labels.getLabel("Combo.Select"))) {
 			subModuleVal = this.product.getValue();
 		}
-		
+
 		this.preModuleDesc.setValue(this.module.getSelectedItem().getValue());
 		this.preSubModuleDesc.setValue(subModuleVal);
 		this.prevalidationListbox.getItems().clear();
 		renderScriptFields(prevalidationListbox);
-		
+
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$postValidationTab(Event event) {
@@ -393,28 +396,29 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		if (subModuleVal.equals(Labels.getLabel("Combo.Select"))) {
 			subModuleVal = this.product.getValue();
 		}
-		
+
 		this.postModuleDesc.setValue(this.module.getSelectedItem().getValue());
 		this.postSubModuleDesc.setValue(subModuleVal);
 		this.postValidationListbox.getItems().clear();
 		renderScriptFields(postValidationListbox);
-		
+
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+
 	/**
 	 * Method for rendering Field Details from Extended fields for Validations & Simulation
+	 * 
 	 * @param listbox
 	 */
-	private void renderScriptFields(Listbox listbox){
+	private void renderScriptFields(Listbox listbox) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (getExtendedFieldDialogCtrl() != null) {
-			List<ExtendedFieldDetail>  extFieldList= getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+			List<ExtendedFieldDetail> extFieldList = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 			if (extFieldList != null && !extFieldList.isEmpty()) {
 				for (ExtendedFieldDetail details : extFieldList) {
-					if (!StringUtils.equals(details.getRecordType(),PennantConstants.RECORD_TYPE_DEL) && 
-							!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+							&& !StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 						Listitem item = new Listitem();
 						Listcell lc = new Listcell(details.getFieldName());
 						lc.setParent(item);
@@ -425,10 +429,10 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -438,10 +442,10 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	public void onUser$btnPreValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 		Clients.clearWrongValue(this.preValidation);
-		if (validate(event , false, false)) {
+		if (validate(event, false, false)) {
 			preScriptValidated = true;
-			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.preValidation.getValue().trim())){
+			// check if code mirror is empty or not
+			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.preValidation.getValue());
@@ -450,7 +454,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -460,10 +464,10 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	public void onUser$btnPostValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 		Clients.clearWrongValue(this.postValidation);
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.postValidation.getValue().trim())){
+			// check if code mirror is empty or not
+			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.postValidation.getValue());
@@ -472,6 +476,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -480,6 +485,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		postScriptValidated = false;
 		Clients.clearWrongValue(this.postValidation);
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -488,7 +494,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		preScriptValidated = false;
 		Clients.clearWrongValue(this.preValidation);
 	}
-	
+
 	/**
 	 * CALL THE RESULT ZUL FILE
 	 * 
@@ -500,16 +506,17 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("variables", jsonArray);
 		map.put("scriptRule", scriptRule);
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS
 	 * 
@@ -517,7 +524,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations) throws InterruptedException {
+	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations)
+			throws InterruptedException {
 		boolean noerrors = true;
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
@@ -565,36 +573,39 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 
 	/**
 	 * Method for Checking script has Error Details information or not.
+	 * 
 	 * @param isPostValidation
 	 * @return
 	 * @throws InterruptedException
 	 */
 	private boolean validateResult(boolean isPostValidation, boolean bothValidations) throws InterruptedException {
 
-		if(!bothValidations){
-			if(isPostValidation){
+		if (!bothValidations) {
+			if (isPostValidation) {
 				if (!this.postValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
-			}else{
+			} else {
 				if (!this.preValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}
-		}else{
-			if (StringUtils.isNotEmpty(this.preValidation.getValue()) && !this.preValidation.getValue().contains("errors")) {
+		} else {
+			if (StringUtils.isNotEmpty(this.preValidation.getValue())
+					&& !this.preValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Pre Validations.");
 				return false;
-			}else if(StringUtils.isNotEmpty(this.postValidation.getValue()) && !this.postValidation.getValue().contains("errors")){
+			} else if (StringUtils.isNotEmpty(this.postValidation.getValue())
+					&& !this.postValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Post Validations.");
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -603,13 +614,13 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 */
 	public void onUser$btnPreSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
-		if (validate(event , false , false)) {
+		if (validate(event, false, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.preValidation.getValue());
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -618,30 +629,28 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 */
 	public void onUser$btnPostSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.postValidation.getValue());
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-		
+
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ExtendedFieldConfigDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ExtendedFieldConfigDialog_btnEdit"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ExtendedFieldConfigDialog_btnSave"));
 		this.btnDelete.setVisible(false);
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	 
 
 	/**
 	 * The framework calls this event handler when user clicks the save button.
@@ -652,16 +661,20 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
-		
+
 		// Pre Validation Checking for Validated or not
-		if(this.preValidationReq.isChecked() &&  StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated){
-			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck", new String[] { Labels.getLabel("Tab_PreValidation") }));
+		if (this.preValidationReq.isChecked() && StringUtils.isNotEmpty(this.preValidation.getValue().trim())
+				&& !preScriptValidated) {
+			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
+					new String[] { Labels.getLabel("Tab_PreValidation") }));
 			return;
 		}
 
 		// Post Validation Checking for Validated or not
-		if(this.postValidationReq.isChecked() &&  StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated){
-			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck", new String[] { Labels.getLabel("Tab_PostValidation") }));
+		if (this.postValidationReq.isChecked() && StringUtils.isNotEmpty(this.postValidation.getValue().trim())
+				&& !postScriptValidated) {
+			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
+					new String[] { Labels.getLabel("Tab_PostValidation") }));
 			return;
 		}
 
@@ -692,8 +705,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -703,8 +715,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -759,20 +770,20 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.tabHeading.setValue(extendedFieldHeader.getTabHeading());
 
 		if (extendedFieldHeader.isNewRecord()) {
-			visibleComponent(ExtendedFieldConstants.MODULE_CUSTOMER,"");
+			visibleComponent(ExtendedFieldConstants.MODULE_CUSTOMER, "");
 			fillComboBox(module, ExtendedFieldConstants.MODULE_CUSTOMER, configList, "");
 		} else {
 			visibleComponent(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
 			fillComboBox(module, extendedFieldHeader.getModuleName(), configList, "");
 		}
-		
+
 		// Default Values Setting for Script Validations
 		postScriptValidated = true;
 		preScriptValidated = true;
-		
+
 		// Extended Field Details tab
 		appendExtendedFieldsTab();
-		
+
 		this.recordStatus.setValue(extendedFieldHeader.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
@@ -783,7 +794,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * @param aAcademic
 	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(ExtendedFieldHeader extendedFieldHeader, boolean validationReq) throws Exception {
+	public void doWriteComponentsToBean(ExtendedFieldHeader extendedFieldHeader, boolean validationReq)
+			throws Exception {
 		logger.debug(Literal.ENTERING);
 		doSetLOVValidation();
 
@@ -807,14 +819,15 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		if (this.product.isVisible()) {
 			try {
 				if (StringUtils.trimToNull(this.product.getValue()) == null) {
-					throw new WrongValueException(this.product, Labels.getLabel("CHECK_NO_EMPTY", new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value") }));
+					throw new WrongValueException(this.product, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value") }));
 				}
 				extendedFieldHeader.setSubModuleName(this.product.getValue());
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
 		}
-		
+
 		try {
 
 			if (!this.finEvent.isDisabled() && this.finEvent.isVisible() && (this.finEvent.getSelectedItem() == null
@@ -835,17 +848,18 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		extendedFieldHeader.setPreValidationReq(this.preValidationReq.isChecked());
 		extendedFieldHeader.setPostValidationReq(this.postValidationReq.isChecked());
-		 
+
 		showErrorDetails(wve, basicDetailsTab);
-		
+
 		// Extended Field Details
 		if (getExtendedFieldDialogCtrl() != null) {
-		ExtendedFieldHeader	extendedFieldHeader1 = getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
-		extendedFieldHeader.setNumberOfColumns(extendedFieldHeader1.getNumberOfColumns());
-		extendedFieldHeader.setExtendedFieldDetails(extendedFieldHeader1.getExtendedFieldDetails());
+			ExtendedFieldHeader extendedFieldHeader1 = getExtendedFieldDialogCtrl()
+					.doSave_ExtendedFields(extendedDetailsTab);
+			extendedFieldHeader.setNumberOfColumns(extendedFieldHeader1.getNumberOfColumns());
+			extendedFieldHeader.setExtendedFieldDetails(extendedFieldHeader1.getExtendedFieldDetails());
 		}
 
 		// Pre Valiadtion
@@ -935,12 +949,12 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.btnDelete.setVisible(false);
 		// fill the components with the data
 		doWriteBeanToComponents(extendedFieldHeader);
-		
-		int height = getContentAreaHeight() ;
-		this.preValidationGrid.setHeight(height-150+"px");
-		this.postValidationGrid.setHeight(height-150+"px");
-		this.preValidation.setHeight(height-160+"px");
-		this.postValidation.setHeight(height-160+"px");
+
+		int height = getContentAreaHeight();
+		this.preValidationGrid.setHeight(height - 150 + "px");
+		this.postValidationGrid.setHeight(height - 150 + "px");
+		this.preValidation.setHeight(height - 160 + "px");
+		this.postValidation.setHeight(height - 160 + "px");
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
@@ -952,30 +966,35 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
-		
+
 		String module = this.module.getSelectedItem().getValue();
-		
+
 		if (!this.module.isDisabled()) {
-			this.module.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_Module.value"), configList, true));
+			this.module.setConstraint(
+					new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_Module.value"), configList, true));
 		}
-		
+
 		if (!this.subModule.isDisabled() && this.subModule.isVisible()) {
 			if (ExtendedFieldConstants.MODULE_VERIFICATION.equals(module)) {
-				this.subModule.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), verificatinList, true));
+				this.subModule.setConstraint(new PTListValidator(
+						Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), verificatinList, true));
 			} else if (ExtendedFieldConstants.MODULE_CUSTOMER.equals(module)) {
-				this.subModule.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), custCtgList, true));
+				this.subModule.setConstraint(new PTListValidator(
+						Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), custCtgList, true));
 			}
 		}
-		 
+
 		if (!this.tabHeading.isDisabled()) {
-			this.tabHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldConfig_TabHeading.value"),PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.tabHeading
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldConfig_TabHeading.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		if (!this.finEvent.isDisabled() && this.finEvent.isVisible()) {
 			this.finEvent.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value"), null, true));
-		}	
- 	
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1008,8 +1027,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1020,7 +1038,6 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.product.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Method for Checking postValidationReq ot not
@@ -1061,8 +1078,9 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> " + Labels.getLabel("label_AcademicDialog_AcademicLevel.value") + " : " + extendedFieldHeader.getSubModuleName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_AcademicDialog_AcademicLevel.value") + " : "
+				+ extendedFieldHeader.getSubModuleName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(extendedFieldHeader.getRecordType())) {
 				extendedFieldHeader.setVersion(extendedFieldHeader.getVersion() + 1);
@@ -1179,23 +1197,23 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		// force validation, if on, than execute by component.getValue()
 		// ************************************************************
 		boolean validationReq = true;
-		if (this.userAction.getSelectedItem() != null){
-			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-					this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
-					this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+		if (this.userAction.getSelectedItem() != null) {
+			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
 				validationReq = false;
 			}
 		}
-		
+
 		// Validation Not required Cases excluding
-		if(validationReq){
+		if (validationReq) {
 			doClearMessage();
 			doSetValidation();
 		}
-		
+
 		// fill the Academic object with the components data
-		 doWriteComponentsToBean(extendedFieldHeader, validationReq);
+		doWriteComponentsToBean(extendedFieldHeader, validationReq);
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
@@ -1384,8 +1402,9 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(this.window_ExtFieldConfigDialog,auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ExtFieldConfigDialog, auditHeader);
 						return processCompleted;
 					}
 				}
@@ -1425,8 +1444,9 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(ExtendedFieldHeader extendedFieldHeader, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,extendedFieldHeader.getBefImage(), extendedFieldHeader);
-		return new AuditHeader(getReference(), null, null, null, auditDetail,extendedFieldHeader.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, extendedFieldHeader.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -1451,7 +1471,6 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		return String.valueOf(this.extendedFieldHeader.getSubModuleName());
 	}
 
-	 
 	/**
 	 * @return the extFieldConfigService
 	 */
@@ -1460,7 +1479,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	}
 
 	/**
-	 * @param extFieldConfigService the extFieldConfigService to set
+	 * @param extFieldConfigService
+	 *            the extFieldConfigService to set
 	 */
 	public void setExtFieldConfigService(ExtFieldConfigService extFieldConfigService) {
 		this.extFieldConfigService = extFieldConfigService;
@@ -1477,8 +1497,9 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	public List<String> getFieldNames() {
 		return fieldNames;
 	}
+
 	public void setFieldNames(List<String> fieldNames) {
 		this.fieldNames = fieldNames;
 	}
-	
+
 }

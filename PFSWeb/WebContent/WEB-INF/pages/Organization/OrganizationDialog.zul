@@ -76,71 +76,68 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto"
 								ca:data-scrollable="true">
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="15%" />
-											<column width="35%" />
-											<column width="15%" />
-											<column width="35%" />
-										</columns>
-										<rows>
-											<row id="row0">
-												<label
-													id="label_CIF"
-													value="${c:l('label_OrganizationDialog_CIF.value')}" />
-												<hbox>
-													<space/>
-													<extendedcombobox id="cif" />
-												</hbox>
-												<label
-													id="label_Name"
-													value="${c:l('label_OrganizationDialog_Name.value')}" />
-												<hbox>
-													<space spacing="3px" />
-													<space
-														id="space_Name" spacing="2px" sclass="mandatory"/>
-													<textbox
-														id="name" width="155px" />
-												</hbox>
-											</row>
-											<row id="row1">
-											    <label
-													id="label_Code"
-													value="${c:l('label_OrganizationDialog_Code.value')}" />
-												<hbox>
-													<space/>
-													<space
-														id="space_Code" spacing="2px" sclass="mandatory"/>
-													<uppercasebox
-														id="code" width="155px" />
-												</hbox>
-												<label
-													id="label_DateOfInc"
-													value="${c:l('label_OrganizationDialog_DateOfInc.value')}" />
-												<hbox>
-													<space spacing="3px"/>
-													<space
-														id="space_DateOfInc" spacing="2px" sclass="mandatory"/>
-													<datebox
-														id="dateOfInc" width="155px" readonly="true" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="15%" />
+										<column width="35%" />
+										<column width="15%" />
+										<column width="35%" />
+									</columns>
+									<rows>
+										<row id="row0">
+											<label id="label_CIF"
+												value="${c:l('label_OrganizationDialog_CIF.value')}" />
+											<hbox>
+												<space />
+												<extendedcombobox
+													id="cif" />
+											</hbox>
+											<label id="label_Name"
+												value="${c:l('label_OrganizationDialog_Name.value')}" />
+											<hbox>
+												<space spacing="3px" />
+												<space id="space_Name"
+													spacing="2px" sclass="mandatory" />
+												<textbox id="name"
+													width="155px" />
+											</hbox>
+										</row>
+										<row id="row1">
+											<label id="label_Code"
+												value="${c:l('label_OrganizationDialog_Code.value')}" />
+											<hbox>
+												<space />
+												<space id="space_Code"
+													spacing="2px" sclass="mandatory" />
+												<uppercasebox id="code"
+													width="155px" />
+											</hbox>
+											<label id="label_DateOfInc"
+												value="${c:l('label_OrganizationDialog_DateOfInc.value')}" />
+											<hbox>
+												<space spacing="3px" />
+												<space
+													id="space_DateOfInc" spacing="2px" sclass="mandatory" />
+												<datebox id="dateOfInc"
+													width="155px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
 
 								<!-- Observations -->
-									<tabbox width="100%">
-										<tabs
-											style="width:0px;height:0px;border:none;">
-											<tab
-												style="background:none;padding:0px;height:0px;" />
-										</tabs>
-										<tabpanels>
-											<tabpanel
-												id="observationsFieldTabPanel" style="overflow:auto" />
-										</tabpanels>
-									</tabbox>
+								<tabbox width="100%">
+									<tabs
+										style="width:0px;height:0px;border:none;">
+										<tab
+											style="background:none;padding:0px;height:0px;" />
+									</tabs>
+									<tabpanels>
+										<tabpanel
+											id="observationsFieldTabPanel" style="overflow:auto" />
+									</tabpanels>
+								</tabbox>
 							</tabpanel>
 						</tabpanels>
 					</tabbox>

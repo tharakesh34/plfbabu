@@ -117,7 +117,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	protected Listbox sortOperator_PreValidationReq;
 	protected Listbox sortOperator_PostValidationReq;
 	private transient ExtFieldConfigService extFieldConfigService;
-	
+
 	List<ValueLabel> listLtvType = PennantStaticListUtil.getListLtvTypes();
 
 	/**
@@ -146,29 +146,36 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		moduleNames.add(ExtendedFieldConstants.MODULE_ORGANIZATION);
 		this.searchObject.addFilterIn("MODULENAME", moduleNames);
 	}
+
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event An event sent to the event handler of the component.
+	 * @param event
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ExtFieldConfigList(Event event) throws Exception {
 		// Set the page level components.
-		setPageComponents(window_ExtFieldConfigList, borderLayout_ExtFieldConfigList, listBoxExtFieldConfig, pagingExtFieldConfigList);
+		setPageComponents(window_ExtFieldConfigList, borderLayout_ExtFieldConfigList, listBoxExtFieldConfig,
+				pagingExtFieldConfigList);
 		setItemRender(new ExtFieldConfigListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_ExtendedFieldHeaderList_NewExtendedFieldHeader, "button_ExtendedFieldConfigList_NewExtendedFieldConfig", true);
+		registerButton(button_ExtendedFieldHeaderList_NewExtendedFieldHeader,
+				"button_ExtendedFieldConfigList_NewExtendedFieldConfig", true);
 		registerButton(button_ExtendedFieldHeaderList_ExtendedFieldHeaderSearchDialog);
 
-		registerField("ModuleName", listheader_ModuleName, SortOrder.ASC, moduleName, sortOperator_ModuleName,Operators.STRING);
-		registerField("SubModuleName", listheader_SubModuleName, SortOrder.ASC, subModuleName, sortOperator_SubModuleName,Operators.STRING);
-		registerField("TabHeading", listheader_TabHeading, SortOrder.NONE, tabHeading, sortOperator_TabHeading, Operators.STRING);
-		registerField("preValidationReq", listheader_PreValidationReq, SortOrder.ASC, preValidationReq, sortOperator_PreValidationReq, Operators.BOOLEAN);
-		registerField("postValidationReq", listheader_PostValidationReq, SortOrder.ASC, postValidationReq, sortOperator_PostValidationReq, Operators.BOOLEAN);
-		registerField("event", listheader_Event, SortOrder.NONE, finEvent, sortOperator_event,
+		registerField("ModuleName", listheader_ModuleName, SortOrder.ASC, moduleName, sortOperator_ModuleName,
 				Operators.STRING);
-		
+		registerField("SubModuleName", listheader_SubModuleName, SortOrder.ASC, subModuleName,
+				sortOperator_SubModuleName, Operators.STRING);
+		registerField("TabHeading", listheader_TabHeading, SortOrder.NONE, tabHeading, sortOperator_TabHeading,
+				Operators.STRING);
+		registerField("preValidationReq", listheader_PreValidationReq, SortOrder.ASC, preValidationReq,
+				sortOperator_PreValidationReq, Operators.BOOLEAN);
+		registerField("postValidationReq", listheader_PostValidationReq, SortOrder.ASC, postValidationReq,
+				sortOperator_PostValidationReq, Operators.BOOLEAN);
+		registerField("event", listheader_Event, SortOrder.NONE, finEvent, sortOperator_event, Operators.STRING);
+
 		List<FinServicingEvent> events = PennantStaticListUtil.getFinEvents(true);
 		fillComboBox(finEvent, null, PennantStaticListUtil.getValueLabels(events), "");
 
@@ -178,8 +185,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -189,8 +195,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -201,15 +206,15 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$button_ExtendedFieldHeaderList_NewExtendedFieldHeader(Event event) throws IllegalAccessException, InvocationTargetException {
+	public void onClick$button_ExtendedFieldHeaderList_NewExtendedFieldHeader(Event event)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.
@@ -223,8 +228,8 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -233,12 +238,12 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
-		//Listitem selectedItem = this.listBoxCollateralStructure.getSelectedItem();
+		// Listitem selectedItem = this.listBoxCollateralStructure.getSelectedItem();
 		Listitem selectedItem = (Listitem) event.getOrigin().getTarget();
 
 		// Get the selected entity.
 		ExtendedFieldHeader object = (ExtendedFieldHeader) selectedItem.getAttribute("Object");
-	
+
 		ExtendedFieldHeader extendedFieldHeader = getExtFieldConfigService()
 				.getExtendedFieldHeaderByModule(object.getModuleName(), object.getSubModuleName(), object.getEvent());
 		if (extendedFieldHeader == null) {
@@ -247,7 +252,8 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND Modulename='" + extendedFieldHeader.getModuleName()+ "' AND version=" + extendedFieldHeader.getVersion() + " ";
+		String whereCond = " AND Modulename='" + extendedFieldHeader.getModuleName() + "' AND version="
+				+ extendedFieldHeader.getVersion() + " ";
 
 		if (doCheckAuthority(extendedFieldHeader, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -274,8 +280,9 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("ExtendedFieldHeader", extendedFieldHeader);
 		arg.put("ConfigListCtrl", this);
-		try { 
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtFieldConfigDialog.zul", null, arg);
+		try {
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtFieldConfigDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -283,7 +290,6 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	public class ExtFieldConfigListModelItemRenderer implements ListitemRenderer<ExtendedFieldHeader>, Serializable {
 
 		private static final long serialVersionUID = 1L;
@@ -295,16 +301,16 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 
 			lc = new Listcell(ext.getModuleName());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(ext.getSubModuleName());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(ext.getEvent());
 			lc.setParent(item);
 
 			lc = new Listcell(ext.getTabHeading());
 			lc.setParent(item);
-			
+
 			lc = new Listcell();
 			final Checkbox cbPreValidationReq = new Checkbox();
 			cbPreValidationReq.setDisabled(true);
@@ -319,7 +325,6 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 			lc.appendChild(cbPostValidationReq);
 			lc.setParent(item);
 
-
 			lc = new Listcell(ext.getRecordStatus());
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(ext.getRecordType()));
@@ -330,9 +335,9 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerExteItemDoubleClicked");
 		}
 	}
+
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -377,11 +382,11 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	}
 
 	/**
-	 * @param extFieldConfigService the extFieldConfigService to set
+	 * @param extFieldConfigService
+	 *            the extFieldConfigService to set
 	 */
 	public void setExtFieldConfigService(ExtFieldConfigService extFieldConfigService) {
 		this.extFieldConfigService = extFieldConfigService;
 	}
 
-	 
 }

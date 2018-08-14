@@ -20,8 +20,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseDetailDAO;
 import com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseHeaderDAO;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
+import com.pennanttech.pff.organization.IncomeExpenseType;
+import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpenseDetail> implements IncomeExpenseDetailService {
 	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailServiceImpl.class);
@@ -181,9 +182,9 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.info(Literal.ENTERING);
 		IncomeExpenseHeader incomeExpenseHeader = incomeExpenseHeaderDAO.getIncomeExpenseHeader(id, type);
 		if(incomeExpenseHeader!=null){
-			incomeExpenseHeader.setCoreIncomeList(incomeExpenseDetailDAO.getCoreIncomeList(id, "CORE_INCOME", type));
-			incomeExpenseHeader.setNonCoreIncomeList(incomeExpenseDetailDAO.getNonCoreIncomeList(id, "NONCORE_INCOME", type));
-			incomeExpenseHeader.setExpenseList(incomeExpenseDetailDAO.getExpenseList(id, "EXPENSE", type));
+			incomeExpenseHeader.setCoreIncomeList(incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.CORE_INCOME.name(), type));
+			incomeExpenseHeader.setNonCoreIncomeList(incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.NON_CORE_INCOME.name(), type));
+			incomeExpenseHeader.setExpenseList(incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.EXPENSE.name(), type));
 		}
 		logger.info(Literal.LEAVING);
 		return incomeExpenseHeader;

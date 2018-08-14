@@ -15,23 +15,20 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Radio;
-import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailService;
+import com.pennanttech.pff.organization.OrganizationUtil;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
 
 public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeader> {
 	private static final long serialVersionUID = 3473801015405406986L;
@@ -40,48 +37,24 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 	protected Window window_SchoolOrganizationSelect;
 	protected Borderlayout borderLayout_SchoolOrganizationTypeList;
 
-	protected Radiogroup custType;
-	protected Radio custType_Existing;
-	protected Radio custType_Prospect;
-
 	protected Row customerRow;
 	protected ExtendedCombobox customer;
-	protected Row typeRow;
-	protected Combobox type;
-	protected Row incomeTypeRow;
-	protected Combobox incomeType;
-	protected Row categoryRow;
-	protected Combobox category;
-
-	protected Row academicYearRow;
-	protected Combobox academicYear;
-
-	List<ValueLabel> types = new ArrayList<>();
-	List<ValueLabel> years = new ArrayList<>();
-	List<ValueLabel> categories = new ArrayList<>();
+	protected Row financialYearRow;
+	protected Combobox financialYear;
 
 	protected IncomeExpenseDetailListCtrl incomeExpenseDetailListCtrl;
 	private IncomeExpenseHeader incomeExpenseHeader;
-	
+
 	@Autowired
 	private IncomeExpenseDetailService incomeExpenseDetailService;
 
-	/**
-	 * default constructor.<br>
-	 */
+	private List<ValueLabel> years = OrganizationUtil.getFinancialYears();
+
+	
 	public SchoolOrganizationSelectCtrl() {
 		super();
 	}
 
-	// Component Events
-
-	/**
-	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
-	 * selected FinanceType object in a Map.
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
 	public void onCreate$window_SchoolOrganizationSelect(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -118,29 +91,8 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		this.customer.setValueColumn("Cif");
 		this.customer.setDescColumn("CustShrtName");
 		this.customer.setValidateColumns(new String[] { "Cif" });
-		
-		types.add(new ValueLabel("1", "Income"));
-		types.add(new ValueLabel("2", "Expense"));
-		fillComboBox(this.type, "", types, "");
-		List<ValueLabel> incomeTypes = new ArrayList<>();
 
-		int currentYear = DateUtil.getYear(DateUtility.getAppDate());
-		for (int i = 0; i <= 10; i++) {
-			int year = currentYear;
-			currentYear = year - 1;
-			//years.add(new ValueLabel(String.valueOf(year),String.valueOf(currentYear+"-").concat(String.valueOf(year))));
-			years.add(new ValueLabel(String.valueOf(year), String.valueOf(year)));
-		}
-		fillComboBox(this.academicYear, "", years, "");
-
-		categories.add(new ValueLabel("LKG", "LKG"));
-		categories.add(new ValueLabel("UKG", "UKG"));
-		fillComboBox(this.category, "", categories, "");
-
-		incomeTypes.add(new ValueLabel("1", "CoreIncome"));
-		incomeTypes.add(new ValueLabel("2", "NonCoreIncome"));
-		
-		fillComboBox(this.incomeType, "", incomeTypes, "");
+		fillComboBox(this.financialYear, "", years, "");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -158,27 +110,6 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 			this.customer.setAttribute("OrgId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	public void onChange$type(Event event) {
-		logger.debug(Literal.ENTERING);
-		String type = this.type.getSelectedItem().getValue();
-		
-		if ("#".equals(type)) {
-			this.incomeTypeRow.setVisible(true);
-		} else {
-			visibleComponents(Integer.parseInt(type));
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void visibleComponents(Integer type) {
-		if (type == 2) {
-			this.incomeTypeRow.setVisible(false);
-		} else {
-			this.incomeTypeRow.setVisible(true);
-		}
 	}
 
 	/**
@@ -200,7 +131,7 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		logger.debug(Literal.ENTERING);
 		final IncomeExpenseHeader incomeExpenseHeader = new IncomeExpenseHeader();
 		BeanUtils.copyProperties(this.incomeExpenseHeader, incomeExpenseHeader);
-		
+
 		doSetValidation();
 		doWriteComponentsToBean(incomeExpenseHeader);
 		boolean isExist = incomeExpenseDetailService.isExist(incomeExpenseHeader.getCustCif(),
@@ -241,18 +172,11 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 			this.customer.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_SchoolOrganizationSelect_CustomerCIF.value"), null, true, true));
 		}
-		if (!this.academicYear.isDisabled()) {
-			this.academicYear.setConstraint(new PTListValidator(
-					Labels.getLabel("label_SchoolOrganizationSelect_academicYear.value"), years, true));
+		if (!this.financialYear.isDisabled()) {
+			this.financialYear.setConstraint(new PTListValidator(
+					Labels.getLabel("label_SchoolOrganizationSelect_financialYear.value"), years, true));
 		}
-		/*
-		 * if (!this.type.isDisabled()) { this.type.setConstraint(new PTListValidator(
-		 * Labels.getLabel("label_SchoolOrganizationSelect_type.value"), types, true)); } if
-		 * (this.incomeTypeRow.isVisible() && !this.incomeType.isDisabled()) { this.type.setConstraint(new
-		 * PTListValidator( Labels.getLabel("label_SchoolOrganizationSelect_Incometype.value"), types, true)); } if
-		 * (!this.category.isDisabled()) { this.category.setConstraint(new PTListValidator(
-		 * Labels.getLabel("label_SchoolOrganizationSelect_category.value"), categories, true)); }
-		 */
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -276,8 +200,8 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		}
 
 		try {
-			if (!"#".equals(getComboboxValue(this.academicYear))) {
-				incomeExpenseHeader.setFinancialYear(Integer.parseInt(getComboboxValue(this.academicYear)));
+			if (!"#".equals(getComboboxValue(this.financialYear))) {
+				incomeExpenseHeader.setFinancialYear(Integer.parseInt(getComboboxValue(this.financialYear)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

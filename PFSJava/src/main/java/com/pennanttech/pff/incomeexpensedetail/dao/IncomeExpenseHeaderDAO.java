@@ -1,7 +1,7 @@
 package com.pennanttech.pff.incomeexpensedetail.dao;
 
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public interface IncomeExpenseHeaderDAO {
 

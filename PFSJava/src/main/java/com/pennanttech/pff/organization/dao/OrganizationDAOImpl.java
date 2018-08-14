@@ -149,5 +149,4 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-
 }

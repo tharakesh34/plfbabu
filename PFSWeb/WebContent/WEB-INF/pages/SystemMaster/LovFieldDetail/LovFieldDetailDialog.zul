@@ -81,7 +81,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="fieldCodeValue"
+									<uppercasebox id="fieldCodeValue"
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>

@@ -11306,5 +11306,4 @@
 		class="com.pennant.backend.service.systemmasters.impl.InterestCertificateServiceImpl">
 		<property name="interestCertificateDAO" ref="interestCertificateDAO" />
 	</bean>
-	
 </beans>

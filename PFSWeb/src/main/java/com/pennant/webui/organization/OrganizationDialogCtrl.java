@@ -62,7 +62,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	private Organization organization;
 	private transient OrganizationListCtrl organizationListCtrl;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
-	
+
 	@Autowired
 	private OrganizationService organizationService;
 
@@ -92,7 +92,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 			if (arguments.get("enqiryModule") != null) {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
-			
+
 			if (arguments.get("module") != null) {
 				module = (String) arguments.get("module");
 			}
@@ -134,11 +134,11 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		this.cif.setValueColumn("CustCIF");
 		this.cif.setDescColumn("CustShrtName");
 		this.cif.setValidateColumns(new String[] { "CustCIF" });
-		
+
 		this.code.setMaxlength(15);
 		this.name.setMaxlength(50);
 		this.dateOfInc.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -199,11 +199,13 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 			this.cif.setReadonly(true);
 			this.name.setReadonly(true);
 			this.code.setReadonly(true);
-			}
+		}
 
-		/*readOnlyComponent(isReadOnly("OrganizationSchoolDialog_CIF"), this.cif);
-		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Name"), this.name);
-		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Code"), this.dateOfInc);*/
+		/*
+		 * readOnlyComponent(isReadOnly("OrganizationSchoolDialog_CIF"), this.cif);
+		 * readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Name"), this.name);
+		 * readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Code"), this.dateOfInc);
+		 */
 		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_DateOfIncorporation"), this.dateOfInc);
 
 		if (isWorkFlowEnabled()) {
@@ -247,7 +249,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		logger.debug(Literal.ENTERING);
 
 		if (!org.isNewRecord()) {
-			this.cif.setValue(StringUtils.trimToEmpty(org.getCif()),StringUtils.trimToEmpty(org.getCustShrtName()));
+			this.cif.setValue(StringUtils.trimToEmpty(org.getCif()), StringUtils.trimToEmpty(org.getCustShrtName()));
 			if (org.getCif() != null) {
 				this.cif.setAttribute("CustId", org.getCustId());
 			} else {
@@ -308,8 +310,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 			extendedFieldCtrl.setReadOnly(isReadOnly("OrganizationSchoolDialog_OrganizationSchoolExtFields"));
 			extendedFieldCtrl.setWindow(this.window_OrganizationDialog);
 			extendedFieldCtrl.render();
-			this.organizationDetails
-					.setLabel(Labels.getLabel("label_OrganizationDialog_OrganizationDetails.value"));
+			this.organizationDetails.setLabel(Labels.getLabel("label_OrganizationDialog_OrganizationDetails.value"));
 			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
 		} catch (Exception e) {
 			closeDialog();
@@ -317,31 +318,29 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.cif.isReadonly()) {
-			this.cif.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_OrganizationDialog_CIF.value"), null, true, true));
+			this.cif.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_OrganizationDialog_CIF.value"), null, true, true));
 		}
 		if (!this.name.isReadonly()) {
-			this.name.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_OrganizationDialog_Name.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_OrganizationDialog_Name.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
-		
+
 		if (!this.code.isReadonly()) {
-			this.code.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_OrganizationDialog_Code.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_OrganizationDialog_Code.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		
+
 		if (this.dateOfInc.isVisible() && !this.dateOfInc.isDisabled()) {
-		this.dateOfInc.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_OrganizationDialog_DateOfInc.value"), true, null,
-							DateUtil.getDatePart(DateUtility.getAppDate()), true));
-	}
+			this.dateOfInc
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_OrganizationDialog_DateOfInc.value"),
+							true, null, DateUtil.getDatePart(DateUtility.getAppDate()), true));
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -360,7 +359,6 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	public void doWriteComponentsToBean(Organization org) {
 		logger.debug(Literal.ENTERING);
 
@@ -379,13 +377,13 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			org.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (OrganizationType.SCHOOL.getValue().equalsIgnoreCase(module)) {
 				org.setType(OrganizationType.SCHOOL.getKey());
@@ -393,33 +391,33 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			org.setName(this.name.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			org.setDate_Incorporation(this.dateOfInc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			org.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			org.setCreatedOn(DateUtility.getAppDate());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
-		
+
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -427,7 +425,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		// Extended Field validations
 		if (org.getExtendedFieldHeader() != null) {
 			try {
@@ -439,7 +437,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
@@ -533,7 +531,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		organizationListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Cancel the actual operation and Resets to the original status
 	 */
@@ -557,11 +555,11 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 			this.cif.setAttribute("CustId", null);
 		} else {
 			Customer details = (Customer) dataObject;
-				this.cif.setAttribute("CustId", details.getId());
+			this.cif.setAttribute("CustId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
 		final Organization org = new Organization();
@@ -606,7 +604,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private boolean doProcess(Organization organization, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
@@ -716,7 +714,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		return new AuditHeader(getReference(), null, null, null, auditDetail, organization.getUserDetails(),
 				getOverideMap());
 	}
-	
+
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
@@ -784,7 +782,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
-	
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
@@ -823,7 +821,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.organization.getId());

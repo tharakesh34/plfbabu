@@ -4,7 +4,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pff.organization.model.Organization;
 
 public interface OrganizationService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	Organization getOrganization(long id, String type);

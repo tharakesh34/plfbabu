@@ -14,7 +14,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
 
 public class Organization extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -39,13 +38,12 @@ public class Organization extends AbstractWorkflowEntity {
 
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
-	
+
 	private IncomeExpenseDetail schoolIncomeExpense;
 	private List<IncomeExpenseDetail> coreIncomeList = new ArrayList<>();
 	private List<IncomeExpenseDetail> nonCoreIncomeList = new ArrayList<>();
 	private List<IncomeExpenseDetail> expenseList = new ArrayList<>();
-	
-	
+
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public Organization() {
@@ -65,7 +63,7 @@ public class Organization extends AbstractWorkflowEntity {
 		excludeFields.add("expenseList");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -125,7 +123,7 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public long getCreatedBy() {
 		return createdBy;
 	}
@@ -141,7 +139,7 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	
+
 	public String getCustShrtName() {
 		return custShrtName;
 	}
@@ -157,7 +155,7 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setId(long id) {
 		this.organizationId = id;
 	}
-	
+
 	public Organization getBefImage() {
 		return befImage;
 	}
@@ -165,7 +163,7 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setBefImage(Organization befImage) {
 		this.befImage = befImage;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -173,7 +171,7 @@ public class Organization extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}

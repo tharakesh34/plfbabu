@@ -13,7 +13,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader> implements IncomeExpenseHeaderDAO {
 	private static Logger logger = Logger.getLogger(IncomeExpenseHeaderDAOImpl.class);

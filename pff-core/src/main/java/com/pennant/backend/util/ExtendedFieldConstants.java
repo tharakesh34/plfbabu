@@ -65,5 +65,4 @@ public class ExtendedFieldConstants {
 	// Organization Types
 	public static final String ORGANIZATION_SCHOOL = "SCHOOL";
 	public static final String ORGANIZATION_INDUSTRY = "INDUSTRY";
-
 }

@@ -2283,7 +2283,6 @@ public class PennantAppUtil {
 		return collateralTypes;
 	}
 	
-	
 	/**
 	 * To get list of Collateral Types which are active from CollateralStructure table
 	 * @return

@@ -8,7 +8,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
+import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseDetailListModelItemRender implements ListitemRenderer<IncomeExpenseHeader>, Serializable  {
 	private static final long serialVersionUID = 1L;

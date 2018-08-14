@@ -3,7 +3,7 @@ package com.pennanttech.pff.incomeexpensedetail.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
+import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 
 public interface IncomeExpenseDetailDAO {
 
@@ -13,11 +13,7 @@ public interface IncomeExpenseDetailDAO {
 
 	void delete(Long id, String tableType);
 
-	List<IncomeExpenseDetail> getCoreIncomeList(Long id, String incomeType, String type);
-
-	List<IncomeExpenseDetail> getNonCoreIncomeList(Long id, String incomeType, String type);
-
-	List<IncomeExpenseDetail> getExpenseList(Long id, String incomeType, String type);
+	List<IncomeExpenseDetail> getIncomeExpenseList(Long id, String incomeType, String type);
 
 	Map<String, Object> getTotal(Long custId, Integer financialYear);
 

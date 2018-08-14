@@ -8,10 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.backend.model.ValueLabel;
 
 public enum IncomeExpenseType {
-
-	CORE_INCOME("CORE_INCOME", "CORE_INCOME"),
-	NON_CORE_INCOME("NON_CORE_INCOME", "NON_CORE_INCOME"),
-	EXPENSE("EXPENSE", "EXPENSE");
+	CORE_INCOME("CORE_INCOME", "CORE_INCOME"), NON_CORE_INCOME("NON_CORE_INCOME", "NON_CORE_INCOME"), EXPENSE("EXPENSE",
+			"EXPENSE");
 
 	private final String key;
 	private final String value;

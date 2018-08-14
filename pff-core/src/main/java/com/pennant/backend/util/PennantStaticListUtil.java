@@ -3510,8 +3510,6 @@ public class PennantStaticListUtil {
 		return decisionsList;
 	}
 
-
-	
 	public static List<ValueLabel> getLandAreaList() {
 		if (landAreaList == null) {
 			landAreaList = new ArrayList<ValueLabel>(2);

@@ -5454,5 +5454,4 @@
 	     parent="basisCtrl" scope="prototype">
 	   <property name="interestCertificateService" ref="interestCertificateService" />
    </bean>
-
 </beans>

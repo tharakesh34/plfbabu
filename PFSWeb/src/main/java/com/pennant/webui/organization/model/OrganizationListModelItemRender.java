@@ -18,11 +18,11 @@ public class OrganizationListModelItemRender implements ListitemRenderer<Organiz
 	public OrganizationListModelItemRender() {
 		super();
 	}
-	
+
 	@Override
 	public void render(Listitem item, Organization org, int index) throws Exception {
 		Listcell lc;
-		
+
 		if (OrganizationType.SCHOOL.getKey() == org.getType()) {
 			lc = new Listcell(OrganizationType.SCHOOL.getValue());
 			lc.setParent(item);

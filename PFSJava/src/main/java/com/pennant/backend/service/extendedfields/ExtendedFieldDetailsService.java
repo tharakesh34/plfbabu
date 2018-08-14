@@ -1992,5 +1992,4 @@ public class ExtendedFieldDetailsService {
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
 }

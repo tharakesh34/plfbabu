@@ -82,8 +82,8 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 		super.queueTableName = "organizations_view";
 		super.enquiryTableName = "Organizations_view";
 		this.module = getArgument("module");
-		if(!OrganizationType.SCHOOL.getValue().equalsIgnoreCase(module)){
-			super.queueTableName = "organizations_Aview";	
+		if (!OrganizationType.SCHOOL.getValue().equalsIgnoreCase(module)) {
+			super.queueTableName = "organizations_Aview";
 		}
 	}
 
@@ -108,35 +108,32 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 		registerField("type", listheader_OrgType, SortOrder.ASC, orgType, sortOperator_OrgType, Operators.STRING);
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
 		registerField("code", listheader_OrgCode, SortOrder.ASC, orgCode, sortOperator_OrgCode, Operators.STRING);
-		registerField("name", listheader_Name, SortOrder.ASC, name, sortOperator_Name,Operators.STRING);
-		registerField("date_Incorporation", listheader_DateOfInc, SortOrder.ASC, dateOfInc, sortOperator_DateOfInc, Operators.STRING);
-		
+		registerField("name", listheader_Name, SortOrder.ASC, name, sortOperator_Name, Operators.STRING);
+		registerField("date_Incorporation", listheader_DateOfInc, SortOrder.ASC, dateOfInc, sortOperator_DateOfInc,
+				Operators.STRING);
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.dateOfInc.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	/*@Override
-	protected void doAddFilters() { //TODO
-		super.doAddFilters();
-		if (!enqiryModule) {
-			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
-		}
-			this.searchObject.removeFiltersOnProperty("agency");
-			int id = OrganizationType.SCHOOL.getKey();
-			this.searchObject.addFilter(new Filter("type", id, Filter.OP_EQUAL));
-		
 
-	}
-*/
+	/*
+	 * @Override protected void doAddFilters() { //TODO super.doAddFilters(); if (!enqiryModule) {
+	 * this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL)); }
+	 * this.searchObject.removeFiltersOnProperty("agency"); int id = OrganizationType.SCHOOL.getKey();
+	 * this.searchObject.addFilter(new Filter("type", id, Filter.OP_EQUAL));
+	 * 
+	 * 
+	 * }
+	 */
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -157,7 +154,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 		doReset();
 		search();
 	}
-	
+
 	public void onClick$button_OrganizationList_NewOrganization(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -171,6 +168,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -228,13 +226,14 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 		try {
 			if (OrganizationType.SCHOOL.getValue().equalsIgnoreCase(module)) {
 				Executions.createComponents("/WEB-INF/pages/Organization/OrganizationDialog.zul", null, arg);
-			}else {
-				Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul", null, arg);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul", null,
+						arg);
 			}
 		} catch (Exception e) {
-				logger.error("Exception:", e);
-				MessageUtil.showError(e);
-			}
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -276,5 +275,5 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-	
+
 }

@@ -31,60 +31,31 @@
 								<extendedcombobox id="customer" />
 							</hbox>
 						</row>
-						<row id="academicYearRow">
+						<row id="financialYearRow">
 							<space />
 							<label
-								id="label_SchoolOrganizationSelect_academicYearRow"
-								value="${c:l('label_SchoolOrganizationSelect_academicYear.value')}" />
+								id="label_SchoolOrganizationSelect_financialYearRow"
+								value="${c:l('label_SchoolOrganizationSelect_financialYear.value')}" />
 							<hbox>
 								<space spacing="2px" sclass="mandatory" />
-								<combobox id="academicYear" width="150px" />
-							</hbox>
-						</row>
-						<row id="typeRow" visible="false">
-							<space />
-							<label
-								id="label_SchoolOrganizationSelect_type"
-								value="${c:l('label_SchoolOrganizationSelect_type.value')}" />
-							<hbox>
-								<space spacing="2px" sclass="mandatory" />
-								<combobox id="type" width="150px" readonly="true" />
-							</hbox>
-						</row>
-						<row id="incomeTypeRow" visible="false">
-							<space />
-							<label
-								id="label_SchoolOrganizationSelect_Incometype"
-								value="${c:l('label_SchoolOrganizationSelect_Incometype.value')}" />
-							<hbox>
-								<space spacing="2px" sclass="mandatory" />
-								<combobox id="incomeType" width="150px" readonly="true" />
-							</hbox>
-						</row>
-						<row id="categoryRow" visible="false">
-							<space />
-							<label
-								id="label_SchoolOrganizationSelect_category"
-								value="${c:l('label_SchoolOrganizationSelect_category.value')}" />
-							<hbox>
-								<space spacing="2px" sclass="mandatory" />
-								<combobox id="category" width="150px" readonly="true" />
+								<combobox id="financialYear"
+									width="150px" />
 							</hbox>
 						</row>
 						<row>
 							<space />
 							<space />
-						<hbox>
-							<space spacing="2px" />
 							<hbox>
-								<space spacing="10px" />
-								<button id="btnProceed"
-									label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
-									style="align:center"
-									tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
-								</button>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed"
+										label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+										style="align:center"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
+									</button>
+								</hbox>
 							</hbox>
-						</hbox>
 						</row>
 					</rows>
 				</grid>
