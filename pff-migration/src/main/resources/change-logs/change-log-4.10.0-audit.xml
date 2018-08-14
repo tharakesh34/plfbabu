@@ -39,7 +39,7 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	<!-- <changeSet id="1" author="Mangapathi">
+	<changeSet id="1" author="Mangapathi">
 		<addColumn tableName="AdtFinanceMain">
 			<column name="BpiRateBasis" type="Varchar(8)"/>		
 		</addColumn>
@@ -48,11 +48,6 @@
 			<addColumn tableName="ADTRMTFINANCETYPES">
 				<column name="BpiRateBasis" type="Varchar(8)"/>
 			</addColumn>
-	</changeSet>
-	
-	<changeSet id="3" author="Kesav">
-		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
-		<renameColumn tableName="AdtDepositCheques" oldColumnName="RevLinkedTranId" newColumnName="LinkedTranId"/>
 	</changeSet>
 	
 	<changeSet id="3" author="Kesav">
@@ -74,7 +69,7 @@
 		<sql>
 			update AdtRMTFinanceTypes set eligibilitymethod=0;
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="3.3" author="Vinay">
 		<sql>
