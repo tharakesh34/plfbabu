@@ -35,7 +35,7 @@ public class CashManagementAccounting {
 	} 
 	
 	public AEEvent generateAccounting(String eventCode, String userBranch, String postingBranch, 
-			BigDecimal transactionAmount, long partnerBankId,long requestId, String finReference){
+			BigDecimal transactionAmount, long partnerBankId,long requestId, String finReference, long receiptId){
 		
 		//Reference
 		StringBuffer buffer= new StringBuffer("CM_");
@@ -43,7 +43,11 @@ public class CashManagementAccounting {
 		buffer.append(postingBranch);
 		buffer.append(StringUtils.leftPad(String.valueOf(requestId), 10, "0"));
 		
+		
 		AEEvent aeEvent = new AEEvent();
+		if (receiptId > 0) {	// Avance Requirement
+			aeEvent.setPostingId(receiptId);
+		}
 		aeEvent.setAeAmountCodes(new AEAmountCodes());
 		aeEvent.setBranch(postingBranch);
 		aeEvent.setCcy(SysParamUtil.getAppCurrency());

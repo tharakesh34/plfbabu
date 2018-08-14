@@ -810,7 +810,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 					depositDetails.getReservedAmount(),
 					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), 
-					depositDetails.getDepositMovementsList().get(0).getMovementId(), null);
+					depositDetails.getDepositMovementsList().get(0).getMovementId(), null, 0);
 		} else if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD.equals(depositDetails.getDepositType())) {
 			List<AuditDetail> depositChequesAuditDetails = depositDetails.getAuditDetailMap().get("DepositCheques");
 			if (CollectionUtils.isNotEmpty(depositChequesAuditDetails)) {
@@ -820,7 +820,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 							depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 							depositCheques.getAmount(),
 							depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), 
-							depositDetails.getDepositMovementsList().get(0).getMovementId(), null);
+							depositDetails.getDepositMovementsList().get(0).getMovementId(), null, depositCheques.getReceiptId());
 					if (aeEvent != null && aeEvent.getLinkedTranId() > 0) {
 						depositCheques.setLinkedTranId(aeEvent.getLinkedTranId());
 					}

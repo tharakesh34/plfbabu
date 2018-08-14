@@ -80,6 +80,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.DepositDetailsService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -528,7 +529,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				//Receipt Purpose
-				lc = new Listcell(depositCheque.getReceiptpurpose());
+				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(), PennantStaticListUtil.getReceiptPurpose()));
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());
 				lc.setParent(item);
