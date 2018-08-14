@@ -55,34 +55,4 @@
 		<renameColumn tableName="AdtDepositCheques" oldColumnName="RevLinkedTranId" newColumnName="LinkedTranId"/>
 	</changeSet>
 	
-	<changeSet id="3.0" author="Vinay">
-		<addColumn tableName="AdtRMTFinanceTypes">
-			<column name="EligibilityMethod" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="3.1" author="Vinay">
-		<addDefaultValue columnName="eligibilitymethod" tableName="AdtRMTFinanceTypes" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="3.2" author="Vinay">
-		<sql>
-			update AdtRMTFinanceTypes set eligibilitymethod=0;
-		</sql>
-	</changeSet>
-	
-	<changeSet id="3.3" author="Vinay">
-		<sql>
-			update AdtRMTFinanceTypes set eligibilitymethod=null;
-		</sql>
-	</changeSet>
-	
-	<changeSet id="3.4" author="Vinay">
-		<modifyDataType tableName="AdtRMTFinanceTypes" columnName="eligibilitymethod" newDataType="varchar(100)"/>
-	</changeSet>
-	
-	<changeSet id="3.5" author="Vinay">
-		<renameColumn tableName="AdtRMTFinanceTypes" oldColumnName="eligibilitymethod" newColumnName="eligibilitymethods"/>
-	</changeSet>
-	
 	</databaseChangeLog>
