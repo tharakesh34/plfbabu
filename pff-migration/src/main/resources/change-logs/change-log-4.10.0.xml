@@ -4285,4 +4285,12 @@ UNION ALL
 	
 	</sql>
 	</changeSet>
+	
+	<changeSet id="43" author="Ganesh.p">
+	<comment>Change the error code 65034 to 65038 it is overrive with error related to receipts</comment>
+	<sql>
+		Delete from ErrorDetails where Code='65038';
+		INSERT INTO ErrorDetails VALUES('65038','EN','W','Partner bank and Disbusement bank are same but the Payment Type is {0}. Do you want to proceed ?','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+</changeSet>
 	</databaseChangeLog>

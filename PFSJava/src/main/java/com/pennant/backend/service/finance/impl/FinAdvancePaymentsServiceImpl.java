@@ -452,7 +452,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				String[] errParam = new String[1];
 				errParam[0]=finAdvancePay.getPaymentType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParam, valueParm), usrLanguage));
+						new ErrorDetail(PennantConstants.KEY_FIELD, "65038", errParam, valueParm), usrLanguage));
 			}
 
 		}
