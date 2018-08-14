@@ -205,7 +205,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			//selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");     ////////////////////Stage Accounting with Stage Accounting Rules change///////////
 			selectSql.append(" , lovDescStgRuleValue, lovDescCodelov, lovDescNamelov ");	
 		} else if ("_ATView".equals(StringUtils.trimToEmpty(type)) || "_TTView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(" ,lovDescRefDesc , lovDescNamelov, lovDescCodelov ");
+			selectSql.append(" ,lovDescRefDesc , lovDescNamelov, lovDescCodelov, ResendReq ");
 		} else if ("_AFDView".equals(StringUtils.trimToEmpty(type)) || "_TFDView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
 		} else if ("_ACDView".equals(StringUtils.trimToEmpty(type)) || "_TCDView".equals(StringUtils.trimToEmpty(type))) {

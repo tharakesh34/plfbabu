@@ -4293,4 +4293,85 @@ UNION ALL
 		INSERT INTO ErrorDetails VALUES('65038','EN','W','Partner bank and Disbusement bank are same but the Payment Type is {0}. Do you want to proceed ?','','Approved','','','','','',0,current_timestamp,1000,0);
 	</sql>
 </changeSet>
+
+<changeSet id="44" author="Manoj">
+	<createView viewName="lmtfinrefdetail_ttview" replaceIfExists="true">
+		 SELECT t1.finrefdetailid,
+    t1.fintype,
+    t1.finreftype,
+    t1.finrefid,
+    t1.isactive,
+    t1.showinstage,
+    t1.mandinputinstage,
+    t1.allowinputinstage,
+    t1.allowdeviation,
+    t1.allowwaiver,
+    t1.allowpostpone,
+    t1.allowexpire,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+    t1.override,
+    t1.overridevalue,
+    t3.rulecodedesc AS lovdescrefdesc,
+    t3.rulecode AS lovdescnamelov,
+    t3.templatetype AS lovdesccodelov,
+    t1.finevent,
+    t1.alerttype,
+    t1.resendreq
+   FROM lmtfinrefdetail_temp t1
+     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+     JOIN notifications t3 ON t1.finrefid = t3.ruleid AND t1.finreftype = 6
+UNION ALL
+ SELECT t1.finrefdetailid,
+    t1.fintype,
+    t1.finreftype,
+    t1.finrefid,
+    t1.isactive,
+    t1.showinstage,
+    t1.mandinputinstage,
+    t1.allowinputinstage,
+    t1.allowdeviation,
+    t1.allowwaiver,
+    t1.allowpostpone,
+    t1.allowexpire,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+    t1.override,
+    t1.overridevalue,
+    t3.rulecodedesc AS lovdescrefdesc,
+    t3.rulecode AS lovdescnamelov,
+    t3.templatetype AS lovdesccodelov,
+    t1.finevent,
+    t1.alerttype,
+    t1.resendreq
+   FROM lmtfinrefdetail t1
+     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+     JOIN notifications t3 ON t1.finrefid = t3.ruleid AND t1.finreftype = 6
+  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM lmtfinrefdetail_temp
+          WHERE lmtfinrefdetail_temp.finrefdetailid = t1.finrefdetailid))
+	</createView>
+</changeSet>
 	</databaseChangeLog>
