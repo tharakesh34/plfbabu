@@ -39,7 +39,7 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	<changeSet id="1" author="Mangapathi">
+	<!-- <changeSet id="1" author="Mangapathi">
 		<addColumn tableName="AdtFinanceMain">
 			<column name="BpiRateBasis" type="Varchar(8)"/>		
 		</addColumn>
@@ -74,5 +74,20 @@
 		<sql>
 			update AdtRMTFinanceTypes set eligibilitymethod=0;
 		</sql>
+	</changeSet> -->
+	
+	<changeSet id="3.3" author="Vinay">
+		<sql>
+			update AdtRMTFinanceTypes set eligibilitymethod=null;
+		</sql>
 	</changeSet>
+	
+	<changeSet id="3.4" author="Vinay">
+		<modifyDataType tableName="AdtRMTFinanceTypes" columnName="eligibilitymethod" newDataType="varchar(100)"/>
+	</changeSet>
+	
+	<changeSet id="3.5" author="Vinay">
+		<renameColumn tableName="AdtRMTFinanceTypes" oldColumnName="eligibilitymethod" newColumnName="eligibilitymethods"/>
+	</changeSet>
+	
 	</databaseChangeLog>
