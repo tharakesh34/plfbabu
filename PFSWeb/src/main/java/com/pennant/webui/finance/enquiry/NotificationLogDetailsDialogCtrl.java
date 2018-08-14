@@ -19,8 +19,7 @@ import org.zkoss.zul.Window;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.NotificationAttribute;
-
-
+import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLogDetails> {
@@ -32,7 +31,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	
+
 	protected Window window_NotificationLogEnquiryDialog;
 	protected Listbox listBoxNotificationLogEmail;
 	protected Listbox listBoxNotificationLogSms;
@@ -47,7 +46,8 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<Notification> notificationList;
 	private List<Notification> notificationListSms;
-		/**
+
+	/**
 	 * default constructor.<br>
 	 */
 	public NotificationLogDetailsDialogCtrl() {
@@ -76,7 +76,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 		} else {
 			this.notificationList = null;
 		}
-		
+
 		if (arguments.containsKey("smsList")) {
 			this.notificationListSms = (List<Notification>) arguments.get("smsList");
 		} else {
@@ -127,7 +127,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving...");
 	}
 
 	public void doFillNotificationEmail(List<Notification> notifications) {
@@ -135,54 +135,53 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 
 		if (notifications != null) {
 			for (Notification notification : notifications) {
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(notification.getFromAddress());
-				lc.setParent(item);
-				lc = new Listcell(notification.getSubject());
-				lc.setParent(item);
-				lc = new Listcell(notification.getSubModule());
-				lc.setParent(item);
-				lc = new Listcell(notification.getStage());
-				lc.setParent(item);
-				
-				String notificationCode = null;
-				if(CollectionUtils.isNotEmpty(notification.getAttributes())) {
-					for (NotificationAttribute attribute : notification.getAttributes()) {
-						if("Notification_Code".equals(attribute.getAttribute())) {
-							notificationCode = attribute.getValue();
-							break;
-							
-						}
-					}
-					
-					if(notification != null) {
+				for (MessageAddress messageAddress : notification.getAddressesList()) {
+
+					Listitem item = new Listitem();
+					Listcell lc;
+					lc = new Listcell(messageAddress.getEmailId());
+					lc.setParent(item);
+					lc = new Listcell(notification.getSubject());
+					lc.setParent(item);
+					lc = new Listcell(notification.getSubModule());
+					lc.setParent(item);
+					lc = new Listcell(notification.getStage());
+					lc.setParent(item);
+
+					String notificationCode = null;
+					if (CollectionUtils.isNotEmpty(notification.getAttributes())) {
 						for (NotificationAttribute attribute : notification.getAttributes()) {
-							if("Notification_Desc".equals(attribute.getAttribute())) {
-								notificationCode=notificationCode.concat(" ").concat(attribute.getValue());
+							if ("Notification_Code".equals(attribute.getAttribute())) {
+								notificationCode = attribute.getValue();
 								break;
+
+							}
+						}
+						if (notification != null) {
+							for (NotificationAttribute attribute : notification.getAttributes()) {
+								if ("Notification_Desc".equals(attribute.getAttribute())) {
+									notificationCode = notificationCode.concat(" ").concat(attribute.getValue());
+									break;
+								}
 							}
 						}
 					}
-				}
-				
-				lc = new Listcell(notificationCode);
-				lc.setParent(item);
-				
-				this.listBoxNotificationLogEmail.appendChild(item);
+					lc = new Listcell(notificationCode);
+					lc.setParent(item);
 
+					this.listBoxNotificationLogEmail.appendChild(item);
+
+				}
 			}
 		}
+
 	}
-	
 	public void doFillNotificationSms(List<Notification> notifications) {
 		this.listBoxNotificationLogSms.getItems().clear();
 
 		if (notifications != null) {
 			for (Notification notification : notifications) {
-				String smsMessage = notification.getMessage();
-				
-				
+
 				System.out.println("Subject..." + notification.getSubject());
 				Listitem item = new Listitem();
 				Listcell lc;
@@ -195,33 +194,30 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 				lc.setParent(item);
 				lc = new Listcell(notification.getStage());
 				lc.setParent(item);
-				
-				
+
 				String notificationCode = null;
-				if(CollectionUtils.isNotEmpty(notification.getAttributes())) {
+				if (CollectionUtils.isNotEmpty(notification.getAttributes())) {
 					for (NotificationAttribute attribute : notification.getAttributes()) {
-						if("Notification Code".equals(attribute.getAttribute())) {
+						if ("Notification Code".equals(attribute.getAttribute())) {
 							notificationCode = attribute.getValue();
 							break;
 						}
 					}
-					if(notification != null) {
+					if (notification != null) {
 						for (NotificationAttribute attribute : notification.getAttributes()) {
-							if("Notification_Desc".equals(attribute.getAttribute())) {
-								if(notificationCode!=null);
+							if ("Notification_Desc".equals(attribute.getAttribute())) {
+								if (notificationCode != null)
+									;
+							}
 						}
 					}
-				}
-				lc = new Listcell(notificationCode);
-				lc.setParent(item);
-				
-				
+					lc = new Listcell(notificationCode);
+					lc.setParent(item);
 
-				this.listBoxNotificationLogSms.appendChild(item);
-				
-				
+					this.listBoxNotificationLogSms.appendChild(item);
+
+				}
+			}
+		}
 	}
-	}			
-	}
-	}
-	}
+}
