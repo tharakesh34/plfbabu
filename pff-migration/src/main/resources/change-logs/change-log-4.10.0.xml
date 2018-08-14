@@ -149,28 +149,6 @@
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
 		 </sql>
 	</changeSet>
-	
-	
-	<changeSet id="5.6" author="UmaRohini">
-	<sql>
-			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
-			((Select MAX(RightID)+1 From SecRights), 3, 'AgreementDefinitionDialog_autoGeneration', 'AgreementDefinitionDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
-			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
-			((Select MAX(RightID)+1 From SecRights), 3, 'AgreementDefinitionDialog_autoDownload', 'AgreementDefinitionDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
-			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
-			((Select MAX(RightID)+1 From SecRights), 3, 'AgreementDefinitionDialog_docType', 'AgreementDefinitionDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_docType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_autoDownload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_autoGeneration'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-	
-			update seqsecrights set seqno=(SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
-			update seqsecgrouprights set seqno=(SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS);
-	
-	</sql>
-	</changeSet>
-	
-	
 	<changeSet id="05" author="Akhilesh.k">
 						<sql>
 										delete from SecOperationRoles Where oprid in (Select Oprid from SECOPERATIONS Where OPrcode = 'DISBURSEMENT_HOST_REFERENCE_REPORT_OPERATION');
@@ -4277,5 +4255,34 @@ UNION ALL
 		   JOIN bmtincomecategory t2 ON t1.category = t2.incomecategory
 		</createView>
 	</changeSet>
+	<changeSet id="42" author="UmaRohini">
+	<sql>
+			Delete from Secgrouprights where rightid in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_docType')
+			and grpid in (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER');
+			Delete from Secgrouprights where rightid in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_autoGeneration')
+			and grpid in (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER');
+			Delete from Secgrouprights where rightid in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_autoDownload')
+			and grpid in (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER');
+			
+			Delete from secrights where rightname in ('AgreementDefinitionDialog_autoGeneration','AgreementDefinitionDialog_autoDownload','AgreementDefinitionDialog_docType');
+			
+			update seqsecrights set seqno=(SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
+			update seqsecgrouprights set seqno=(SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS);
+			
+			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
+			((Select MAX(RightID)+1 From SecRights), 3, 'AgreementDefinitionDialog_autoGenerate', 'AgreementDefinitionDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
+			((Select MAX(RightID)+1 From SecRights), 3, 'AgreementDefinitionDialog_autoDownload', 'AgreementDefinitionDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
+			((Select MAX(RightID)+1 From SecRights), 3, 'AgreementDefinitionDialog_docType', 'AgreementDefinitionDialog', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_docType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_autoDownload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AgreementDefinitionDialog_autoGenerate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 	
+			update seqsecrights set seqno=(SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
+			update seqsecgrouprights set seqno=(SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS);
+	
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
