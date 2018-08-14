@@ -1081,6 +1081,7 @@ public class AgreementGeneration implements Serializable {
 							CreditReviewEligibilitySummary reviewEligibilitySummary = agreement.new CreditReviewEligibilitySummary();
 							reviewEligibilitySummary.setSubCategoryCode(finCreditRevSubCategory.getSubCategoryCode());
 							reviewEligibilitySummary.setSubCategoryDesc(finCreditRevSubCategory.getSubCategoryDesc());
+							reviewEligibilitySummary.setFormat(finCreditRevSubCategory.isFormat());
 							reviewEligibilitySummary.setY0Amount("0.00");
 							reviewEligibilitySummary.setY1Amount("0.00");
 							reviewEligibilitySummary.setY2Amount("0.00");
@@ -1099,14 +1100,27 @@ public class AgreementGeneration implements Serializable {
 										if (finCreditRevSubCategory.getSubCategoryCode()
 												.equals(reviewEligibilitySummary.getSubCategoryCode())) {
 											if (subCategory.startsWith("Y0")) {
-												reviewEligibilitySummary
-														.setY0Amount(formateAmount(dataMap.get(subCategory), 2));
+												if (finCreditRevSubCategory.isFormat()) {
+													reviewEligibilitySummary
+															.setY0Amount(formateAmount(dataMap.get(subCategory), 2));
+												} else {
+													reviewEligibilitySummary.setY0Amount(dataMap.get(subCategory));
+												}
 											} else if (subCategory.startsWith("Y1")) {
-												reviewEligibilitySummary
-														.setY1Amount(formateAmount(dataMap.get(subCategory), 2));
+												if (finCreditRevSubCategory.isFormat()) {
+													reviewEligibilitySummary
+															.setY1Amount(formateAmount(dataMap.get(subCategory), 2));
+												} else {
+													reviewEligibilitySummary.setY1Amount(dataMap.get(subCategory));
+												}
+
 											} else if (subCategory.startsWith("Y2")) {
-												reviewEligibilitySummary
-														.setY2Amount(formateAmount(dataMap.get(subCategory), 2));
+												if (finCreditRevSubCategory.isFormat()) {
+													reviewEligibilitySummary
+															.setY2Amount(formateAmount(dataMap.get(subCategory), 2));
+												} else {
+													reviewEligibilitySummary.setY2Amount(dataMap.get(subCategory));
+												}
 											}
 										}
 									}

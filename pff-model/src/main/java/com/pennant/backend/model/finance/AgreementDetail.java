@@ -7582,6 +7582,7 @@ private String custAccount ="";
 		private String y0Amount="";
 		private String y1Amount="";
 		private String y2Amount="";
+		private boolean format=false;
 
 		public String getSubCategoryCode() {
 			return subCategoryCode;
@@ -7623,5 +7624,12 @@ private String custAccount ="";
 			this.y2Amount = y2Amount;
 		}
 
+		public boolean isFormat() {
+			return format;
+		}
+
+		public void setFormat(boolean format) {
+			this.format = format;
+		}
 	}
 }
