@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailService;
+import com.pennanttech.pff.organization.IncomeExpenseType;
 import com.pennanttech.pff.organization.school.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
 
@@ -79,7 +80,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	private transient IncomeExpenseDetailListCtrl incomeExpenseDetailListCtrl;
 	
 	@Autowired
-	protected IncomeExpenseDetailService incomeExpenseDetailService;
+	private IncomeExpenseDetailService incomeExpenseDetailService;
 	
 	private int coreIncomeCount =0;
 	private int nonCoreIncomeCount =0;
@@ -951,9 +952,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				throw new WrongValueException(extCombobox1,
 						Labels.getLabel("STATIC_INVALID", new String[] { "ExpenseType" }));
 			}
-			incomeExpenseDetail.setIncomeExpense(extCombobox1.getAttribute("IncomeExpense").toString());
-			incomeExpenseDetail.setCategory(extCombobox1.getAttribute("Category").toString());
-			incomeExpenseDetail.setIncomeExpenseCode(extCombobox1.getValue());
+			
+			String[] incomeExpense = extCombobox1.getAttribute("IncomeExpense").toString().split("_@#");
+			incomeExpenseDetail.setIncomeExpenseCode(incomeExpense[0]);
+			incomeExpenseDetail.setIncomeExpense(incomeExpense[1]);
+			incomeExpenseDetail.setCategory(incomeExpense[2]);
 			break;
 		case "expenseIncurred":
 			Hbox hbox7 = (Hbox) getComponent(listitem, "expenseIncurred");
@@ -1074,7 +1077,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		schCoreIncome.setNewRecord(true);
 		schCoreIncome.setWorkflowId(0);
 		schCoreIncome.setName(incomeExpenseHeader.getName());
-		schCoreIncome.setIncomeExpenseType("CORE_INCOME"); 
+		schCoreIncome.setIncomeExpenseType(IncomeExpenseType.CORE_INCOME.name()); 
 		schCoreIncome.setCoreIncome(true);
 		
 		incomeExpenseHeader.setSchoolIncomeExpense(schCoreIncome);
@@ -1538,15 +1541,21 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	public void onFullFillExpenseType(Event event) {
 		logger.debug(Literal.ENTERING);
-		ExtendedCombobox expenseType=(ExtendedCombobox)event.getData();
+		ExtendedCombobox expenseType = (ExtendedCombobox) event.getData();
 		Object dataObject = expenseType.getObject();
 		if (dataObject instanceof String || dataObject == null) {
 			expenseType.setValue("");
 			expenseType.setDescription("");
 		} else {
 			IncomeType details = (IncomeType) dataObject;
-				expenseType.setAttribute("IncomeExpense", details.getIncomeExpense());
-				expenseType.setAttribute("Category", details.getCategory());
+			StringBuilder code = new StringBuilder();
+			code.append(details.getIncomeTypeCode());
+			code.append("_@#");
+			code.append(details.getIncomeExpense());
+			code.append("_@#");
+			code.append(details.getCategory());
+			
+			expenseType.setAttribute("IncomeExpense", code.toString());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -1620,21 +1629,27 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			expenseType.setValueColumn("IncomeExpense");
 			expenseType.setValueColumn("IncomeTypeCode");
 			expenseType.setDescColumn("IncomeTypeDesc");
-			expenseType.setValidateColumns(new String[] { "IncomeExpense","IncomeTypeCode","Category" });
+			expenseType.setValidateColumns(new String[] { "IncomeExpense","IncomeTypeCode", "Category" });
 			expenseType.addForward("onFulfill", self, "onFullFillExpenseType", expenseType);
 			Filter expenseTypeFilter[] = new Filter[1];
 			expenseTypeFilter[0] = new Filter("IncomeExpense", PennantConstants.EXPENSE, Filter.OP_EQUAL);
 			expenseType.setFilters(expenseTypeFilter);
 			expenseType.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ExpenseType"));
+			
 			if (!schExpense.isNewRecord()) {
 				expenseType.setValue(StringUtils.trimToEmpty(schExpense.getIncomeExpenseCode()),
 						StringUtils.trimToEmpty(schExpense.getExpenseDesc()));
 				if (schExpense.getIncomeExpenseCode() != null) {
-					expenseType.setAttribute("IncomeExpense", schExpense.getIncomeExpense());
-					expenseType.setAttribute("Category", schExpense.getCategory());
+					StringBuilder code = new StringBuilder();
+					code.append(schExpense.getIncomeExpenseCode());
+					code.append("_@#");
+					code.append(schExpense.getIncomeExpense());
+					code.append("_@#");
+					code.append(schExpense.getCategory());
+					
+					expenseType.setAttribute("IncomeExpense", code.toString());
 				} else {
 					expenseType.setAttribute("IncomeExpense", null);
-					expenseType.setAttribute("Category", null);
 				}
 			}
 			listCell.appendChild(expenseType);

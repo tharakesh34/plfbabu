@@ -35,41 +35,36 @@ import com.pennanttech.pff.organization.school.model.IncomeExpenseHeader;
 
 public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeader> {
 	private static final long serialVersionUID = 3473801015405406986L;
-
 	private static final Logger logger = Logger.getLogger(SchoolOrganizationSelectCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window window_SchoolOrganizationSelect; 				// autoWired
-	protected Borderlayout borderLayout_SchoolOrganizationTypeList; 	// autoWired
-		
+	protected Window window_SchoolOrganizationSelect;
+	protected Borderlayout borderLayout_SchoolOrganizationTypeList;
+
 	protected Radiogroup custType;
 	protected Radio custType_Existing;
 	protected Radio custType_Prospect;
-	
+
 	protected Row customerRow;
 	protected ExtendedCombobox customer;
 	protected Row typeRow;
 	protected Combobox type;
-	protected Row       incomeTypeRow;
+	protected Row incomeTypeRow;
 	protected Combobox incomeType;
 	protected Row categoryRow;
 	protected Combobox category;
-	
-	protected Row       academicYearRow;
-	protected Combobox    academicYear;
-	
+
+	protected Row academicYearRow;
+	protected Combobox academicYear;
+
 	List<ValueLabel> types = new ArrayList<>();
 	List<ValueLabel> years = new ArrayList<>();
 	List<ValueLabel> categories = new ArrayList<>();
-	
+
 	protected IncomeExpenseDetailListCtrl incomeExpenseDetailListCtrl;
 	private IncomeExpenseHeader incomeExpenseHeader;
+	
 	@Autowired
-	protected IncomeExpenseDetailService incomeExpenseDetailService;
+	private IncomeExpenseDetailService incomeExpenseDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -81,22 +76,22 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceType object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_SchoolOrganizationSelect(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.incomeExpenseHeader = (IncomeExpenseHeader) arguments.get("incomeExpenseHeader");
-		
+
 		if (arguments.containsKey("incomeExpenseDetailListCtrl")) {
-			this.incomeExpenseDetailListCtrl = (IncomeExpenseDetailListCtrl) arguments.get("incomeExpenseDetailListCtrl");
-		} 
-		
+			this.incomeExpenseDetailListCtrl = (IncomeExpenseDetailListCtrl) arguments
+					.get("incomeExpenseDetailListCtrl");
+		}
+
 		// Store the before image.
 		IncomeExpenseHeader incomeExpenseHeader = new IncomeExpenseHeader();
 		BeanUtils.copyProperties(this.incomeExpenseHeader, incomeExpenseHeader);
@@ -106,17 +101,12 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		doLoadWorkFlow(this.incomeExpenseHeader.isWorkflow(), this.incomeExpenseHeader.getWorkflowId(),
 				this.incomeExpenseHeader.getNextTaskId());
 
-		/*if (isWorkFlowEnabled() && !enqiryModule) {
-			this.userAction = setListRecordStatus(this.userAction);
-			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-		}*/
 		doSetFieldProperties();
 		this.window_SchoolOrganizationSelect.doModal();
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
@@ -128,35 +118,32 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		this.customer.setValueColumn("Cif");
 		this.customer.setDescColumn("CustShrtName");
 		this.customer.setValidateColumns(new String[] { "Cif" });
-		/*Filter[] custCifFilter = new Filter[1];
-		List<Long> custid = organizationService.getCustomerId();
-		custCifFilter[0] = new Filter("custid",custid, Filter.OP_IN);
-		customer.setFilters(custCifFilter);*/
 		
 		types.add(new ValueLabel("1", "Income"));
 		types.add(new ValueLabel("2", "Expense"));
-		fillComboBox(this.type, "", types,"");
+		fillComboBox(this.type, "", types, "");
 		List<ValueLabel> incomeTypes = new ArrayList<>();
-		
+
 		int currentYear = DateUtil.getYear(DateUtility.getAppDate());
-		for(int i=0; i<=10;i++){
-			int year=currentYear;
-			currentYear = year-1;
+		for (int i = 0; i <= 10; i++) {
+			int year = currentYear;
+			currentYear = year - 1;
 			//years.add(new ValueLabel(String.valueOf(year),String.valueOf(currentYear+"-").concat(String.valueOf(year))));
-			years.add(new ValueLabel(String.valueOf(year),String.valueOf(year)));
+			years.add(new ValueLabel(String.valueOf(year), String.valueOf(year)));
 		}
-		fillComboBox(this.academicYear, "", years,"");
-		
+		fillComboBox(this.academicYear, "", years, "");
+
 		categories.add(new ValueLabel("LKG", "LKG"));
 		categories.add(new ValueLabel("UKG", "UKG"));
-		fillComboBox(this.category, "", categories,"");
-		
+		fillComboBox(this.category, "", categories, "");
+
 		incomeTypes.add(new ValueLabel("1", "CoreIncome"));
 		incomeTypes.add(new ValueLabel("2", "NonCoreIncome"));
-		fillComboBox(this.incomeType, "", incomeTypes,"");
+		
+		fillComboBox(this.incomeType, "", incomeTypes, "");
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$customer(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = customer.getObject();
@@ -166,24 +153,26 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 			this.customer.setAttribute("CustId", null);
 		} else {
 			Organization details = (Organization) dataObject;
-				this.customer.setAttribute("CustId", details.getCustId());
-				this.customer.setAttribute("Name", details.getName());
-				this.customer.setAttribute("OrgId", details.getId());
+			this.customer.setAttribute("CustId", details.getCustId());
+			this.customer.setAttribute("Name", details.getName());
+			this.customer.setAttribute("OrgId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onChange$type(Event event) {
 		logger.debug(Literal.ENTERING);
 		String type = this.type.getSelectedItem().getValue();
+		
 		if ("#".equals(type)) {
 			this.incomeTypeRow.setVisible(true);
 		} else {
 			visibleComponents(Integer.parseInt(type));
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void visibleComponents(Integer type) {
 		if (type == 2) {
 			this.incomeTypeRow.setVisible(false);
@@ -191,6 +180,7 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 			this.incomeTypeRow.setVisible(true);
 		}
 	}
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -200,7 +190,6 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
-	
 
 	/**
 	 * when the "close" button is clicked. <br>
@@ -211,11 +200,12 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		logger.debug(Literal.ENTERING);
 		final IncomeExpenseHeader incomeExpenseHeader = new IncomeExpenseHeader();
 		BeanUtils.copyProperties(this.incomeExpenseHeader, incomeExpenseHeader);
-		boolean isNew = false;
+		
 		doSetValidation();
 		doWriteComponentsToBean(incomeExpenseHeader);
-		boolean isExist = incomeExpenseDetailService.isExist(incomeExpenseHeader.getCustCif(), incomeExpenseHeader.getFinancialYear());
-		if(isExist){
+		boolean isExist = incomeExpenseDetailService.isExist(incomeExpenseHeader.getCustCif(),
+				incomeExpenseHeader.getFinancialYear());
+		if (isExist) {
 			StringBuilder errorMsg = new StringBuilder();
 			errorMsg.append("CustCif:");
 			errorMsg.append(incomeExpenseHeader.getCustCif());
@@ -228,17 +218,15 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		doShowDialog(incomeExpenseHeader);
 		this.window_SchoolOrganizationSelect.onClose();
 		logger.debug(Literal.LEAVING);
-	}    
-	
-	
+	}
+
 	private void doShowDialog(IncomeExpenseHeader incomeExpenseHeader) {
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("incomeExpenseHeader", incomeExpenseHeader);
 		arg.put("incomeExpenseDetailListCtrl", this.incomeExpenseDetailListCtrl);
 		arg.put("enqiryModule", enqiryModule);
 		try {
-			Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul",
-					null, arg);
+			Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -257,21 +245,17 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 			this.academicYear.setConstraint(new PTListValidator(
 					Labels.getLabel("label_SchoolOrganizationSelect_academicYear.value"), years, true));
 		}
-		/*if (!this.type.isDisabled()) {
-			this.type.setConstraint(new PTListValidator(
-					Labels.getLabel("label_SchoolOrganizationSelect_type.value"), types, true));
-		}
-		if (this.incomeTypeRow.isVisible() && !this.incomeType.isDisabled()) {
-			this.type.setConstraint(new PTListValidator(
-					Labels.getLabel("label_SchoolOrganizationSelect_Incometype.value"), types, true));
-		}
-		if (!this.category.isDisabled()) {
-			this.category.setConstraint(new PTListValidator(
-					Labels.getLabel("label_SchoolOrganizationSelect_category.value"), categories, true));
-		}*/
+		/*
+		 * if (!this.type.isDisabled()) { this.type.setConstraint(new PTListValidator(
+		 * Labels.getLabel("label_SchoolOrganizationSelect_type.value"), types, true)); } if
+		 * (this.incomeTypeRow.isVisible() && !this.incomeType.isDisabled()) { this.type.setConstraint(new
+		 * PTListValidator( Labels.getLabel("label_SchoolOrganizationSelect_Incometype.value"), types, true)); } if
+		 * (!this.category.isDisabled()) { this.category.setConstraint(new PTListValidator(
+		 * Labels.getLabel("label_SchoolOrganizationSelect_category.value"), categories, true)); }
+		 */
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void doWriteComponentsToBean(IncomeExpenseHeader incomeExpenseHeader) {
 		logger.debug(Literal.ENTERING);
 		List<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -309,5 +293,5 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 }

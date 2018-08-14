@@ -1,6 +1,7 @@
 package com.pennanttech.pff.incomeexpensedetail.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 	public void delete(Long id, String type) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder query = new StringBuilder();
-		query.append(" delete from org_income_expenses");
+		query.append("delete from org_income_expenses");
 		query.append(StringUtils.trimToEmpty(type));
 		query.append(" where Id = :id ");
 		logger.trace(Literal.SQL + query.toString());
@@ -172,7 +173,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			return new ArrayList<>();
+			logger.error(Literal.EXCEPTION, e);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -183,23 +184,25 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 	}
 	
 	@Override
-	public List<Map<String, Object>> getTotal(Long custId,Integer financialYear){
+	public Map<String, Object> getTotal(Long custId, Integer financialYear) {
 		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
-		sql.append("select sum(total),incomeexpensetype from (");
+		sql.append("select incomeexpensetype, sum(total) from (");
 		sql.append(" select total,incomeexpensetype,custid,financialyear from organizations  org");
 		sql.append(" inner join org_income_expense_header h on h.orgid =  org.id");
 		sql.append(" INNER join org_income_expenses ie on ie.headerid = h.id ");
-		sql.append(" where custid = :custId and financialyear = :financialYear  and consider=1)t  group by incomeexpensetype");
-		List<Map<String, Object>> total = null;
+		sql.append(" where custid = :custId and financialyear = :financialYear  and consider=1)t");
+		sql.append(" group by incomeexpensetype");
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custId", custId);
 		source.addValue("financialYear", financialYear);
 		try {
-			total = jdbcTemplate.queryForList(sql.toString(), source);
+			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		return total;
+		return new HashMap<String, Object>();
 	}
 }

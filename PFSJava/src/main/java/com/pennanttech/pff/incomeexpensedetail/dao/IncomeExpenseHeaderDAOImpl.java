@@ -127,6 +127,7 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 
 		Integer count = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
 		boolean exists = false;
+		
 		if (count > 0) {
 			exists = true;
 		}
@@ -134,5 +135,4 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-
 }
