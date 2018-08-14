@@ -4250,6 +4250,30 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-	
+	<changeSet id="41" author="Murthy.y">
+		<comment>bugs #592 Wrong Income Type master selection</comment>
+		<createView viewName="BMTIncomeTypes_AView" replaceIfExists="true">
+			SELECT t1.incometypecode,
+		    t1.incomeexpense,
+		    t1.category,
+		    t1.incometypedesc,
+		    t1.incometypeisactive,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.margin,
+		    t2.categorydesc AS lovdesccategoryname,
+		    t1.Incometypecode ${call.concatenate} ' - ' ${call.concatenate} t1.incomeexpense ${call.concatenate} ' - ' ${call.concatenate} t1.Category incomeexpensecode
+		   FROM bmtincometypes t1
+		   JOIN bmtincomecategory t2 ON t1.category = t2.incomecategory
+		</createView>
+	</changeSet>
 	
 	</databaseChangeLog>
