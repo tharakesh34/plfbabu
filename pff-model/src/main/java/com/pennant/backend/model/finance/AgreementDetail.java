@@ -5743,7 +5743,7 @@ private String custAccount ="";
 		private String amt="";
 		private String amtPrctConsidered="";
 		private String amtConsidered="";
-		private BigDecimal margin;
+		private String margin;
 		
 		public AppIncDetail() {
 		}
@@ -5812,11 +5812,11 @@ private String custAccount ="";
 			this.amtConsidered = amtConsidered;
 		}
 
-		public BigDecimal getMargin() {
+		public String getMargin() {
 			return margin;
 		}
 
-		public void setMargin(BigDecimal margin) {
+		public void setMargin(String margin) {
 			this.margin = margin;
 		}
 		
@@ -5840,7 +5840,7 @@ private String custAccount ="";
 		private String amt="";
 		private String amtPrctConsidered="";
 		private String amtConsidered="";
-		private BigDecimal margin;
+		private String margin;
 		
 		public AppExpDetail() {
 		}
@@ -5901,11 +5901,11 @@ private String custAccount ="";
 			this.amtConsidered = amtConsidered;
 		}
 
-		public BigDecimal getMargin() {
+		public String getMargin() {
 			return margin;
 		}
 
-		public void setMargin(BigDecimal margin) {
+		public void setMargin(String margin) {
 			this.margin = margin;
 		}
 	}

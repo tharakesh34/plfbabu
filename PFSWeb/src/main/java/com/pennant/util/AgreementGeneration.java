@@ -1934,7 +1934,7 @@ public class AgreementGeneration implements Serializable {
 						appIncDetail.setIncomeCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 						appIncDetail.setIncomeType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
 						appIncDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
-						appIncDetail.setMargin(PennantAppUtil.formateAmount(customerIncome.getMargin(), 2));
+						appIncDetail.setMargin(PennantApplicationUtil.amountFormate(customerIncome.getMargin(),formatter));
 						agreement.getAppIncDetails().add(appIncDetail);
 						income = income.add(customerIncome.getCalculatedAmount());
 					}else if(customerIncome.getIncomeExpense().equalsIgnoreCase("EXPENSE")){
@@ -1944,7 +1944,7 @@ public class AgreementGeneration implements Serializable {
 						appExpDetail.setExpenseCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 						appExpDetail.setExpenseType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
 						appExpDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
-						appExpDetail.setMargin(PennantAppUtil.formateAmount(customerIncome.getMargin(), 2));
+						appExpDetail.setMargin(PennantApplicationUtil.amountFormate(customerIncome.getMargin(),formatter));
 						agreement.getAppExpDetails().add(appExpDetail);
 						expance = expance.add(customerIncome.getCalculatedAmount());
 					}
