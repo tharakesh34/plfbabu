@@ -2991,7 +2991,6 @@
 		<property name="ddaControllerService" ref="ddaControllerService" />
 		<property name="ddaProcessService" ref="ddaProcessService" />
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
-		<property name="notificationsService" ref="notificationsService" />
 	</bean>
 
 	<!--============ Finance Liability Letter Request Details ============== -->
