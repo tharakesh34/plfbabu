@@ -1034,6 +1034,10 @@ UNION ALL
 	
  </sql>
 	</changeSet>	
-		
+<changeSet id="56" author="vijaykumar.l">
+  <sql>
+   update reportconfiguration set alwmultiformat=1 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment');
+  </sql>
+</changeSet>			
 		
 </databaseChangeLog>
