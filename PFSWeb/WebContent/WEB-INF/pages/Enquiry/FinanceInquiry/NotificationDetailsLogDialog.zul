@@ -25,24 +25,38 @@
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel style="overflow:auto">
-									<listbox id="listBoxNotificationLogEmail" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
+									<listbox id="listBoxNotificationLogEmail" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
 										<listhead>
-											<listheader  id="emailTo" label="${c:l('listheader_Notification.Emailto.label')}" sort="false" hflex="min"/>
-											<listheader  id="emailSubject"  label="${c:l('listheader_Notification.EmailSubject.label')}" sort="false" hflex="min" />
-											<listheader label="${c:l('listheader_Notification.EmailSubModule.label')}" sort="false" hflex="min"/>
-											<listheader label="${c:l('listheader_Notification.EmailStage.label')}" sort="false" hflex="min"/>
-											<listheader label="${c:l('listheader_Notification.EmailCodeorDesc.label')}" sort="false" hflex="min"/>
+											<listheader  id="emailTo" label="${c:l('listheader_Notification.Emailto.label')}" sort="false" width="12%" />
+											<listheader  id="emailSubject"  label="${c:l('listheader_Notification.EmailSubject.label')}" sort="false" width="35%" />
+											<listheader label="${c:l('listheader_Notification.EmailSubModule.label')}" sort="false" width="5%"/>
+											<listheader label="${c:l('listheader_Notification.EmailStage.label')}" sort="false" width="5%" />
+											<listheader label="${c:l('listheader_Notification.EmailCodeorDesc.label')}" sort="false" width="10%" />
 										</listhead>
 									</listbox>
 								</tabpanel>
 								<tabpanel style="overflow:auto">
-									<listbox id="listBoxNotificationLogSms" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
-										<listhead>
-											<listheader label="${c:l('listheader_Notification.SMSto.label')}" sort="false" hflex="min"/>
-											<listheader label="${c:l('listheader_Notification.SMSMessage.label')}" sort="false" hflex="min"/>
-											<listheader label="${c:l('listheader_Notification.SMSSubModule.label')}" sort="false" hflex="min"/>
-											<listheader label="${c:l('listheader_Notification.SMSStage.label')}" sort="false" hflex="min" />
-											<listheader label="${c:l('listheader_Notification.SMSCodeorDesc.label')}" sort="false" hflex="min" />
+									<listbox
+										id="listBoxNotificationLogSms" fixedLayout="true" span="true"
+										style="overflow:auto"
+										emptyMessage="${c:l('listbox.emptyMessage')} "
+										multiple="false">
+										<listhead sizable="false">
+											<listheader
+												label="${c:l('listheader_Notification.SMSto.label')}"
+												sort="false" width="6%" />
+											<listheader
+												label="${c:l('listheader_Notification.SMSMessage.label')}"
+												width="45%" />
+											<listheader
+												label="${c:l('listheader_Notification.SMSSubModule.label')}"
+												width="5%" />
+											<listheader
+												label="${c:l('listheader_Notification.SMSStage.label')}"
+												width="5%" />
+											<listheader
+												label="${c:l('listheader_Notification.SMSCodeorDesc.label')}"
+												width="10%" />
 										</listhead>
 									</listbox>
 								</tabpanel>
