@@ -184,7 +184,8 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
-		this.fieldCode.setMaxlength(50);
+		this.fieldCode.setMaxlength(10);
+		this.fieldCode.getTextbox().setMaxlength(50);
 		this.fieldCodeValue.setMaxlength(50);
 		this.valueDesc.setMaxlength(50);
 

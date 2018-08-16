@@ -72,7 +72,7 @@
 									<listbox id="sortOperator_CIF"
 										width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="cif" width="155px"
+									<textbox id="cif" width="100px"
 										maxlength="19" />
 									<label
 										id="label_IncomeExpenseList_AcademicYear"
@@ -114,7 +114,7 @@
 									label="${c:l('listheader_CIF.label')}" sort="auto" hflex="min" />
 								<listheader
 									id="listheader_FinancialYear"
-									label="${c:l('listheader_AcdemicYear.label')}" sort="auto"
+									label="${c:l('listheader_FinancialYear.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />

@@ -22,7 +22,6 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
@@ -33,6 +32,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -41,8 +41,10 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -84,7 +86,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	private IncomeExpenseDetailService incomeExpenseDetailService;
 	
 	private List<ValueLabel> categories = OrganizationUtil.getSchoolClassName();
-	List<ValueLabel> frqOfCollectionList = OrganizationUtil.getCollectionFrequencyList();
+	private List<ValueLabel> frqOfCollectionList = OrganizationUtil.getCollectionFrequencyList();
 	private int coreIncomeCount =0;
 	private int nonCoreIncomeCount =0;
 	private int expenseCount = 0;
@@ -789,7 +791,6 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader= getAuditHeader(aincomeExpenseDetail, tranType);
-		//coreIncomeDetailList = new ArrayList<>();
 		schoolNonCoreIncomes = new ArrayList<>();
 		String[] valueParm = new String[4];
 		String[] errParm = new String[4];
@@ -884,15 +885,15 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		case "feeCharged":
 			BigDecimal feeCharged = BigDecimal.ZERO;
 			Hbox hbox3 = (Hbox) getComponent(listitem, "feeCharged");
-			Decimalbox textBox1 = (Decimalbox) hbox3.getLastChild();
-			if(textBox1.getValue()!=null){
-				feeCharged = textBox1.getValue();
+			CurrencyBox textBox1 = (CurrencyBox) hbox3.getLastChild();
+			if(textBox1.getValidateValue()!=null){
+				feeCharged = textBox1.getValidateValue();
 			}
 			if (!(textBox1.isReadonly())  && (feeCharged.intValue() <= 0)) {
 				throw new WrongValueException(textBox1, Labels.getLabel("FIELD_RANGE", new Object[] {
 						"Fee Charged" , 1, 10000 }));
 			}
-			incomeExpenseDetail.setUnitPrice(feeCharged);
+			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(feeCharged,2));
 			break;
 		case "frqOfCollection":
 			Hbox hbox4 = (Hbox) getComponent(listitem, "frqOfCollection");
@@ -906,11 +907,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			break;
 		case "totalCore":
 			BigDecimal totalCore = BigDecimal.ZERO;
-			Decimalbox decimalbox = (Decimalbox) getComponent(listitem, "totalCore");
-			if(decimalbox.getValue()!=null){
-				totalCore = decimalbox.getValue();
+			CurrencyBox decimalbox = (CurrencyBox) getComponent(listitem, "totalCore");
+			if(decimalbox.getValidateValue()!=null){
+				totalCore = decimalbox.getValidateValue();
 			}
-			incomeExpenseDetail.setTotal(totalCore);
+			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(totalCore,2));
 			break;
 		case "considered":
 			Checkbox checkbox = (Checkbox) getComponent(listitem, "considered");
@@ -947,19 +948,19 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		case "avgCollectionPerUnit":
 			BigDecimal avgCollPerUnit = BigDecimal.ZERO;
 			Hbox hbox6 = (Hbox) getComponent(listitem, "avgCollectionPerUnit");
-			Decimalbox decimalbox1 = (Decimalbox) hbox6.getLastChild();
-			if (decimalbox1.getValue() != null) {
-				avgCollPerUnit = decimalbox1.getValue();
+			CurrencyBox decimalbox1 = (CurrencyBox) hbox6.getLastChild();
+			if (decimalbox1.getValidateValue() != null) {
+				avgCollPerUnit = decimalbox1.getValidateValue();
 			}
 			if (!(decimalbox1.isReadonly())  && (avgCollPerUnit.intValue() <= 0)) {
 				throw new WrongValueException(decimalbox1, Labels.getLabel("FIELD_RANGE", new Object[] {
 						"Fee Charged" , 1, 10000 }));
 			}
-			incomeExpenseDetail.setUnitPrice(avgCollPerUnit);
+			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(avgCollPerUnit,2));
 		case "totalNonCore":
-			Decimalbox decimalbox3 = (Decimalbox) getComponent(listitem, "totalNonCore");
-			BigDecimal totalNonCore = decimalbox3.getValue();
-			incomeExpenseDetail.setTotal(totalNonCore);
+			CurrencyBox decimalbox3 = (CurrencyBox) getComponent(listitem, "totalNonCore");
+			BigDecimal totalNonCore = decimalbox3.getValidateValue();
+			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(totalNonCore,2));
 		case "nonCoreconsidered":
 			Checkbox checkbox1 = (Checkbox) getComponent(listitem, "nonCoreconsidered");
 			incomeExpenseDetail.setConsider(checkbox1.isChecked());
@@ -977,16 +978,16 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		case "expenseIncurred":
 			BigDecimal expenseIncurred =BigDecimal.ZERO;
 			Hbox hbox7 = (Hbox) getComponent(listitem, "expenseIncurred");
-			Decimalbox decimalbox2 = (Decimalbox) hbox7.getLastChild();
-			if (decimalbox2.getValue() != null) {
-				expenseIncurred = decimalbox2.getValue();
+			CurrencyBox decimalbox2 = (CurrencyBox) hbox7.getLastChild();
+			if (decimalbox2.getValidateValue() != null) {
+				expenseIncurred = decimalbox2.getValidateValue();
 			}
 			if (!(decimalbox2.isReadonly())  && (expenseIncurred.intValue() <= 0)) {
 				throw new WrongValueException(decimalbox2, Labels.getLabel("FIELD_RANGE", new Object[] {
 						"Expense Incurred" , 1, 10000 }));
 			}
-			incomeExpenseDetail.setUnitPrice(expenseIncurred);
-			incomeExpenseDetail.setTotal(expenseIncurred);
+			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(expenseIncurred,2));
+			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(expenseIncurred,2));
 			break;
 		case "expenseConsidered":
 			Checkbox checkbox2 = (Checkbox) getComponent(listitem, "expenseConsidered");
@@ -1185,9 +1186,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			space.setSpacing("2px");
 			space.setSclass("mandatory");
 			listCell.setId("feeCharged".concat(String.valueOf(coreIncomeCount)));
-			Decimalbox feeCharged = new Decimalbox();
-			feeCharged.addForward("onChange", self, "onChangeCalculateFeeReceiptFrq", item);
-			feeCharged.setValue(schIncome.getUnitPrice());
+			CurrencyBox feeCharged = new CurrencyBox();
+			feeCharged.getNextSibling();
+			feeCharged.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			feeCharged.setScale(2);
+			feeCharged.addForward("onValueChange", self, "onChangeCalculateFeeReceiptFrq", item);
+			feeCharged.setValue(PennantAppUtil.formateAmount(schIncome.getUnitPrice(),2));
 			feeCharged.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_UnitPrice"));
 			hbox.appendChild(space);
 			hbox.appendChild(feeCharged);
@@ -1225,10 +1229,16 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			// Fee Receipt Basis Frequency
 			listCell = new Listcell();
 			listCell.setId("feeRecBasisFrq".concat(String.valueOf(coreIncomeCount)));
-			Decimalbox feeRecBasisFrq = new Decimalbox();
+			CurrencyBox feeRecBasisFrq = new CurrencyBox();
+			feeRecBasisFrq.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			feeRecBasisFrq.setScale(2);
 			feeRecBasisFrq.setReadonly(true);
-			if(feeCharged.getValue().intValue()!=0 && multiplier.getValue()!=null && multiplier.getValue().intValue()!=0){
-				feeRecBasisFrq.setValue(BigDecimal.valueOf(feeCharged.getValue().intValue()/multiplier.getValue().intValue()));
+			BigDecimal feeCharge = BigDecimal.ZERO;
+			int multiply = 0;
+			if(feeCharged.getValidateValue().intValue()!=0 && multiplier.getValue()!=null && multiplier.getValue().intValue()!=0){
+				feeCharge = PennantAppUtil.unFormateAmount(feeCharged.getValidateValue(),2);
+				multiply = multiplier.getValue();
+				feeRecBasisFrq.setValue(PennantAppUtil.formateAmount(feeCharge.divide(new BigDecimal(multiply)),2));
 			}
 			listCell.appendChild(feeRecBasisFrq);
 			listCell.setParent(item);
@@ -1236,11 +1246,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			// Total Core
 			listCell = new Listcell();
 			listCell.setId("totalCore".concat(String.valueOf(coreIncomeCount)));
-			Decimalbox totalCore = new Decimalbox();
+			CurrencyBox totalCore = new CurrencyBox();
+			totalCore.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			totalCore.setScale(2);
 			totalCore.setReadonly(true);
-			if(noOfStudents.getValue()!=null && feeCharged.getValue()!=null){
-				totalCore.setValue(BigDecimal.valueOf(noOfStudents.getValue()*feeCharged.getValue().intValue()));
-			}
+			totalCore.setValue(PennantAppUtil.formateAmount(schIncome.getTotal(),2));
 			listCell.appendChild(totalCore);
 			listCell.setParent(item);
 
@@ -1309,17 +1319,17 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		Hbox hbox1 = (Hbox) getComponent(item, "noOfStudents");
 		Intbox noOfStudents = (Intbox)hbox1.getLastChild();
 		Hbox hbox2 = (Hbox) getComponent(item, "feeCharged");
-		Decimalbox feeCharged = (Decimalbox)hbox2.getLastChild();
+		CurrencyBox feeCharged = (CurrencyBox)hbox2.getLastChild();
 		Intbox multiplier = (Intbox)getComponent(item, "multiplier");
-		Decimalbox feeRecBasisFrq = (Decimalbox)getComponent(item, "feeRecBasisFrq");
-		Decimalbox totalCore = (Decimalbox)getComponent(item, "totalCore");
+		CurrencyBox feeRecBasisFrq = (CurrencyBox)getComponent(item, "feeRecBasisFrq");
+		CurrencyBox totalCore = (CurrencyBox)getComponent(item, "totalCore");
 		
 		int mult = 0;
 		BigDecimal fee = BigDecimal.ZERO;
 		int students=0;
 		
-		if (feeCharged.getValue() != null) {
-			fee = feeCharged.getValue();
+		if (feeCharged.getValidateValue() != null) {
+			fee = feeCharged.getValidateValue();
 		}
 
 		if (noOfStudents.getValue() != null) {
@@ -1333,8 +1343,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		if (mult != 0) {
 			feeRecBasisFrq.setValue(fee.divide(new BigDecimal(mult), BigDecimal.ROUND_HALF_DOWN));
 		}
-		
-		totalCore.setValue(fee.multiply(new BigDecimal(students)));
+ 		totalCore.setValue(fee.multiply(new BigDecimal(students)));
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -1347,35 +1356,39 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		Hbox hbox1 =(Hbox)getComponent(item, "frqOfCollection");
 		Combobox frqCollection =(Combobox)hbox1.getLastChild();
 		Intbox multiplier =(Intbox)getComponent(item, "multiplier");
+		CurrencyBox feeRecBasisFrq = (CurrencyBox)getComponent(item, "feeRecBasisFrq");
 		String frqValue = getComboboxValue(frqCollection);
 		if (!"#".equals(frqValue)) {
 			multiplier.setValue(Integer.parseInt(frqValue));
 			onChangeCalculateFeeReceiptFrq(event);
 		} else {
 			multiplier.setValue(0);
+			feeRecBasisFrq.setValue(BigDecimal.ZERO);
 		}
 		logger.debug(Literal.LEAVING);
 	}
 	
-	public void onChangeCalculateNonCoreTotal(ForwardEvent event){
+	public void onChangeCalculateNonCoreTotal(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		Listitem item = null;
 		if (event != null) {
 			item = (Listitem) event.getData();
 		}
-		Hbox hbox1 = (Hbox)getComponent(item, "noOfUnitsServed");
+		Hbox hbox1 = (Hbox) getComponent(item, "noOfUnitsServed");
 		Intbox noOfUnitsServed = (Intbox) hbox1.getLastChild();
-		
-		Hbox hbox2 = (Hbox)getComponent(item, "avgCollectionPerUnit");
-		Decimalbox avgCollectionPerUnit = (Decimalbox)hbox2.getLastChild();
-		
-		Decimalbox totalNonCore = (Decimalbox)getComponent(item, "totalNonCore");
-		if(noOfUnitsServed.getValue()!=null && avgCollectionPerUnit.getValue()!=null){
-			totalNonCore.setValue(BigDecimal.valueOf(noOfUnitsServed.getValue()*avgCollectionPerUnit.getValue().intValue()));
-		}else{
-			totalNonCore.setValue(BigDecimal.ZERO);
+
+		Hbox hbox2 = (Hbox) getComponent(item, "avgCollectionPerUnit");
+		CurrencyBox avgCollectionPerUnit = (CurrencyBox) hbox2.getLastChild();
+
+		CurrencyBox totalNonCore = (CurrencyBox) getComponent(item, "totalNonCore");
+		int noOfUnits = 0;
+		BigDecimal avgCollection = BigDecimal.ZERO;
+		if (noOfUnitsServed.getValue() != null && avgCollectionPerUnit.getValidateValue() != null) {
+			noOfUnits = noOfUnitsServed.getValue();
+			avgCollection = avgCollectionPerUnit.getValidateValue();
 		}
-		
+		totalNonCore.setValue(avgCollection.multiply(new BigDecimal(noOfUnits)));
+
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -1489,9 +1502,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			space.setSpacing("2px");
 			space.setSclass("mandatory");
 			listCell.setId("avgCollectionPerUnit".concat(String.valueOf(nonCoreIncomeCount)));
-			Decimalbox avgCollectionPerUnit = new Decimalbox();
-			avgCollectionPerUnit.setValue(schNonCoreIncome.getUnitPrice());
-			avgCollectionPerUnit.addForward("onChange", self, "onChangeCalculateNonCoreTotal", item);
+			CurrencyBox avgCollectionPerUnit = new CurrencyBox();
+			avgCollectionPerUnit.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			avgCollectionPerUnit.setScale(2);
+			avgCollectionPerUnit.setValue(PennantAppUtil.formateAmount(schNonCoreIncome.getUnitPrice(),2));
+			avgCollectionPerUnit.addForward("onValueChange", self, "onChangeCalculateNonCoreTotal", item);
 			avgCollectionPerUnit.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_AvgCollection"));
 			hbox.appendChild(space);
 			hbox.appendChild(avgCollectionPerUnit);
@@ -1501,11 +1516,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			// Total NonCore
 			listCell = new Listcell();
 			listCell.setId("totalNonCore".concat(String.valueOf(nonCoreIncomeCount)));
-			Decimalbox totalNonCore = new Decimalbox();
+			CurrencyBox totalNonCore = new CurrencyBox();
+			totalNonCore.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			totalNonCore.setScale(2);
 			totalNonCore.setReadonly(true);
-			if(noOfUnitsServed.getValue()!=null && avgCollectionPerUnit.getValue()!=null){
-				totalNonCore.setValue(BigDecimal.valueOf(noOfUnitsServed.getValue()*avgCollectionPerUnit.getValue().intValue()));
-			}
+			totalNonCore.setValue(PennantAppUtil.formateAmount(schNonCoreIncome.getTotal(),2));
 			listCell.appendChild(totalNonCore);
 			listCell.setParent(item);
 
@@ -1667,8 +1682,10 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			space.setSpacing("2px");
 			space.setSclass("mandatory");
 			listCell.setId("expenseIncurred".concat(String.valueOf(expenseCount)));
-			Decimalbox expenseIncurred = new Decimalbox();
-			expenseIncurred.setValue(schExpense.getUnitPrice());
+			CurrencyBox expenseIncurred = new CurrencyBox();
+			expenseIncurred.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			expenseIncurred.setScale(2);
+			expenseIncurred.setValue(PennantAppUtil.formateAmount(schExpense.getUnitPrice(),2));
 			expenseIncurred.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ExpenseIncurred"));
 			hbox.appendChild(space);
 			hbox.appendChild(expenseIncurred);

@@ -201,11 +201,6 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 			this.code.setReadonly(true);
 		}
 
-		/*
-		 * readOnlyComponent(isReadOnly("OrganizationSchoolDialog_CIF"), this.cif);
-		 * readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Name"), this.name);
-		 * readOnlyComponent(isReadOnly("OrganizationSchoolDialog_Code"), this.dateOfInc);
-		 */
 		readOnlyComponent(isReadOnly("OrganizationSchoolDialog_DateOfIncorporation"), this.dateOfInc);
 
 		if (isWorkFlowEnabled()) {
