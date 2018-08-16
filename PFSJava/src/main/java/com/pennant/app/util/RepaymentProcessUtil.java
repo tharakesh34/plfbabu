@@ -413,6 +413,10 @@ public class RepaymentProcessUtil {
 		logger.debug("Entering");
 
 		BigDecimal uAmz = BigDecimal.ZERO;
+		BigDecimal uLpi = BigDecimal.ZERO;
+		BigDecimal uGstLpi = BigDecimal.ZERO;
+		BigDecimal uLpp = BigDecimal.ZERO;
+		BigDecimal uGstLpp = BigDecimal.ZERO;
 		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
 
 		// Find out Is there any schedule payment done or not, If exists Log will be captured
@@ -791,6 +795,18 @@ public class RepaymentProcessUtil {
 				uAmz = uAmz.add((BigDecimal) returnList.get(3));
 				repayHeader.setRealizeUnAmz(uAmz);
 				
+				// Unrealized LPI Amount
+				uLpi = uLpi.add((BigDecimal) returnList.get(4));
+				repayHeader.setRealizeUnLPI(uLpi);
+				uGstLpi = uGstLpi.add((BigDecimal) returnList.get(5));
+				repayHeader.setRealizeUnLPIGst(uGstLpi);
+				
+				// Unrealized LPP Amount
+				uLpp = uLpp.add((BigDecimal) returnList.get(6));
+				repayHeader.setRealizeUnLPP(uLpp);
+				uGstLpp = uGstLpp.add((BigDecimal) returnList.get(7));
+				repayHeader.setRealizeUnLPPGst(uGstLpp);
+				
 				repaySchdList = null;
 			}
 			
@@ -814,6 +830,10 @@ public class RepaymentProcessUtil {
 		List<Object> returnList = new ArrayList<>();
 		returnList.add(scheduleDetails);
 		returnList.add(uAmz);
+		returnList.add(uLpi);
+		returnList.add(uGstLpi);
+		returnList.add(uLpp);
+		returnList.add(uGstLpp);
 		
 		logger.debug("Leaving");
 

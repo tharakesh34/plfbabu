@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
@@ -83,9 +82,11 @@ public interface FinFeeDetailService {
 	BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap);
 	BigDecimal getFeeResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy);
 	void calculateGSTFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap);
-	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, FinanceMain financeMain);
+	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode, int taxRoundingTarget);
 	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail, String branchCode);
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap);
-	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, CustomerDetails customerDetails,
-			FinanceTaxDetail taxDetail, String branchCode);
+	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState, 
+			String highPriorityCountry,	FinanceTaxDetail taxDetail, String branchCode);
+
+	
 }

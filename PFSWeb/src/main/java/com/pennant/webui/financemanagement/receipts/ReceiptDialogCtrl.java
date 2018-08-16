@@ -2497,9 +2497,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		String roundingMode = aFinScheduleData.getFinanceMain().getCalRoundingMode();
-		int roundingTarget = aFinScheduleData.getFinanceMain().getRoundingTarget();
-
+		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+		
 		// Payable Advise Receipt Modes 
 		List<Listitem> payableItems = this.listBoxExcess.getItems();
 		for (int i = 0; i < payableItems.size(); i++) {
@@ -2554,25 +2554,25 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 							if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal cgst =  (payableBal.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								cgst = CalculationUtil.roundAmount(cgst, roundingMode,roundingTarget);
+								cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
 								taxDetail.setPaidCGST(cgst);
 								gstAmount = gstAmount.add(cgst);
 							}
 							if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal sgst =  (payableBal.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								sgst = CalculationUtil.roundAmount(sgst, roundingMode,roundingTarget);
+								sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
 								taxDetail.setPaidSGST(sgst);
 								gstAmount = gstAmount.add(sgst);
 							}
 							if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal ugst =  (payableBal.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								ugst = CalculationUtil.roundAmount(ugst, roundingMode,roundingTarget);
+								ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
 								taxDetail.setPaidUGST(ugst);
 								gstAmount = gstAmount.add(ugst);
 							}
 							if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal igst =  (payableBal.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								igst = CalculationUtil.roundAmount(igst, roundingMode,roundingTarget);
+								igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
 								taxDetail.setPaidIGST(igst);
 								gstAmount = gstAmount.add(igst);
 							}
@@ -2581,30 +2581,30 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 							BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 							BigDecimal actualAmt = payableBal.divide(percentage, 9, RoundingMode.HALF_DOWN);
-							actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
+							actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
 							BigDecimal actTaxAmount = payableBal.subtract(actualAmt);
 
 							if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-								cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
+								cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
 								taxDetail.setPaidCGST(cgst);
 								gstAmount = gstAmount.add(cgst);
 							}
 							if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-								sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
+								sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
 								taxDetail.setPaidSGST(sgst);
 								gstAmount = gstAmount.add(sgst);
 							}
 							if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-								ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
+								ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
 								taxDetail.setPaidUGST(ugst);
 								gstAmount = gstAmount.add(ugst);
 							}
 							if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-								igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
+								igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
 								taxDetail.setPaidIGST(igst);
 								gstAmount = gstAmount.add(igst);
 							}
@@ -3709,8 +3709,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		BigDecimal payableBal = BigDecimal.ZERO;
-		String roundingMode = getFinanceDetail().getFinScheduleData().getFinanceMain().getCalRoundingMode();
-		int roundingTarget = getFinanceDetail().getFinScheduleData().getFinanceMain().getRoundingTarget();
+		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 		
 		Listitem item = null;
 		Listcell lc = null;
@@ -3755,22 +3755,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal cgst =  (payableBal.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, roundingMode,roundingTarget);
+						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(cgst);
 					}
 					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal sgst =  (payableBal.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, roundingMode,roundingTarget);
+						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(sgst);
 					}
 					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal ugst =  (payableBal.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, roundingMode,roundingTarget);
+						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(ugst);
 					}
 					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal igst =  (payableBal.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, roundingMode,roundingTarget);
+						igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(igst);
 					}
 
@@ -3778,27 +3778,27 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 					BigDecimal actualAmt = payableBal.divide(percentage, 9, RoundingMode.HALF_DOWN);
-					actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
+					actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode,taxRoundingTarget);
 					BigDecimal actTaxAmount = payableBal.subtract(actualAmt);
 
 					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
+						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(cgst);
 					}
 					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
+						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(sgst);
 					}
 					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
+						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(ugst);
 					}
 					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
+						igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
 						gstAmount = gstAmount.add(igst);
 					}
 					
@@ -4401,6 +4401,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				taxType = getFeeTypeService().getTaxCompByCode(RepayConstants.ALLOCATION_ODC);
 			}
 			
+			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+			
 			if(StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, taxType)){
 				
 				if(taxPercMap == null){
@@ -4410,12 +4413,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				totalGSTPerc = taxPercMap.get("TOTALGST");
 				BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 				BigDecimal actualAmt = pastdueAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
-				pastdueAmt = CalculationUtil.roundAmount(actualAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+				pastdueAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
 				
 				balamount = pastdueAmt.subtract(waivedAllocateAmt);
 				
 				BigDecimal gstAmount = (balamount.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-				gstAmount = CalculationUtil.roundAmount(gstAmount, getFinanceMain().getCalRoundingMode(),getFinanceMain().getRoundingTarget());
+				gstAmount = CalculationUtil.roundAmount(gstAmount, taxRoundMode, taxRoundingTarget);
 				balamount = balamount.add(gstAmount);
 			}
 		}
@@ -4585,6 +4588,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}else if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_ODC)){
 				taxType = getFeeTypeService().getTaxCompByCode(RepayConstants.ALLOCATION_ODC);
 			}
+			
+			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
 			if(StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, taxType)){
 
@@ -4597,11 +4603,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				// Calculate Actual Due amount without GST on only Exclusive case, because In exclusive GST amount is adding
 				BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 				BigDecimal actualAmt = pastdueAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
-				pastdueAmt = CalculationUtil.roundAmount(actualAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+				pastdueAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
 				
 				// Calculate Actual Paid amount without GST on only Exclusive case, because In exclusive GST amount is adding
 				BigDecimal actualPaidAmt = paidAllocateAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
-				paidAllocateAmt = CalculationUtil.roundAmount(actualPaidAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+				paidAllocateAmt = CalculationUtil.roundAmount(actualPaidAmt, taxRoundMode, taxRoundingTarget);
 
 				// Calculate total Amount without GST is can be done for Waiver
 				balamount = pastdueAmt.subtract(paidAllocateAmt);
@@ -5488,6 +5494,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
+				BigDecimal penaltyCGSTPaid = BigDecimal.ZERO;
+				BigDecimal penaltySGSTPaid = BigDecimal.ZERO;
+				BigDecimal penaltyIGSTPaid = BigDecimal.ZERO;
+				BigDecimal penaltyUGSTPaid = BigDecimal.ZERO;
 				for (RepayScheduleDetail rsd : repaySchdList) {
 
 					//Set Repay Amount Codes
@@ -5500,6 +5510,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					// Penalties
 					amountCodes.setPenaltyPaid(amountCodes.getPenaltyPaid().add(rsd.getPenaltyPayNow()));
 					amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt()));
+					penaltyCGSTPaid = penaltyCGSTPaid.add(rsd.getPaidPenaltyCGST());
+					penaltySGSTPaid = penaltySGSTPaid.add(rsd.getPaidPenaltySGST());
+					penaltyIGSTPaid = penaltyIGSTPaid.add(rsd.getPaidPenaltyIGST());
+					penaltyUGSTPaid = penaltyUGSTPaid.add(rsd.getPaidPenaltyUGST());
 
 					// Fee Details
 					amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
@@ -5821,7 +5835,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				if(amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
 						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
-
+					
 					aeEvent.getAcSetIDList().clear();
 					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
@@ -5833,6 +5847,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 					aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+					
+					// LPP GST Amount setting
+					aeEvent.getDataMap().put("LPP_CGST_P", penaltyCGSTPaid);
+					aeEvent.getDataMap().put("LPP_SGST_P", penaltySGSTPaid);
+					aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
+					aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
+
 					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 					returnSetEntries.addAll(aeEvent.getReturnDataSet());
 				}

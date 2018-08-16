@@ -55,8 +55,10 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
+import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -123,6 +125,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -796,6 +799,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 		
 		BigDecimal unRealizeAmz = BigDecimal.ZERO;
+		BigDecimal unRealizeLpi = BigDecimal.ZERO;
+		BigDecimal unRealizeLpiGst = BigDecimal.ZERO;
+		BigDecimal unRealizeLpp = BigDecimal.ZERO;
+		BigDecimal unRealizeLppGst = BigDecimal.ZERO;
 		if (receiptDetails != null && !receiptDetails.isEmpty()) {
 			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
 
@@ -878,6 +885,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					
 					// Update Profit Details for UnRealized Income
 					unRealizeAmz = unRealizeAmz.add(rpyHeader.getRealizeUnAmz());
+					
+					// Update Profit Details for UnRealized LPI
+					unRealizeLpi = unRealizeLpi.add(rpyHeader.getRealizeUnLPI());
+					unRealizeLpiGst = unRealizeLpiGst.add(rpyHeader.getRealizeUnLPIGst());
+					
+					// Update Profit Details for UnRealized LPP
+					unRealizeLpp = unRealizeLpp.add(rpyHeader.getRealizeUnLPP());
+					unRealizeLppGst = unRealizeLppGst.add(rpyHeader.getRealizeUnLPPGst());
 
 				}
 
@@ -1142,8 +1157,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					scheduleData.setFinanceScheduleDetails(new ArrayList<>(schdMap.values()));
 				}
 				
-				// Update Profit Details for UnRealized Income & Capitalization Difference
+				pftDetail.setLpiAmount(receiptHeader.getLpiAmount());
+				pftDetail.setLppAmount(receiptHeader.getLppAmount());
+				pftDetail.setGstLpiAmount(receiptHeader.getGstLpiAmount());
+				pftDetail.setGstLppAmount(receiptHeader.getGstLppAmount());
+				
+				// Update Profit Details for UnRealized Income & Late Payment Difference
 				pftDetail.setAmzTillLBD(pftDetail.getAmzTillLBD().subtract(unRealizeAmz));
+				pftDetail.setLpiTillLBD(pftDetail.getLpiTillLBD().subtract(unRealizeLpi));
+				pftDetail.setGstLpiTillLBD(pftDetail.getGstLpiTillLBD().subtract(unRealizeLpiGst));
+				pftDetail.setLppTillLBD(pftDetail.getLppTillLBD().subtract(unRealizeLpp));
+				pftDetail.setGstLppTillLBD(pftDetail.getGstLppTillLBD().subtract(unRealizeLppGst));
+				
+				// Profit Details Recalculation Process
+				pftDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), pftDetail, DateUtility.getAppDate());
+				pftDetail = postReceiptCanAdjust(scheduleData, pftDetail);
 
 				// Check Current Finance Max Status For updation
 				// ============================================
@@ -1318,6 +1346,52 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Method for Posting Capitalization Differences
+	 * @param scheduleData
+	 * @param profitDetail
+	 * @param postBranch
+	 * @return
+	 * @throws Exception
+	 */
+	private FinanceProfitDetail postReceiptCanAdjust(FinScheduleData scheduleData, FinanceProfitDetail profitDetail) throws Exception {
+
+		FinanceMain financeMain = scheduleData.getFinanceMain();
+		// Accrual Difference Postings
+		long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_AMZ, FinanceConstants.MODULEID_FINTYPE);
+
+		Date derivedAppDate = DateUtility.getAppDate();
+		if (accountingID != Long.MIN_VALUE) {
+
+			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, scheduleData.getFinanceScheduleDetails(),
+					AccountEventConstants.ACCEVENT_AMZ, derivedAppDate, derivedAppDate);
+
+			BigDecimal unAmz = aeEvent.getAeAmountCodes().getdAmz();
+			BigDecimal unLPIAmz = aeEvent.getAeAmountCodes().getdLPIAmz();
+			BigDecimal unLPPAmz = aeEvent.getAeAmountCodes().getdLPPAmz();
+			BigDecimal unGstLPIAmz = aeEvent.getAeAmountCodes().getdGSTLPIAmz();
+			BigDecimal unGstLPPAmz = aeEvent.getAeAmountCodes().getdGSTLPPAmz();
+			
+			if (unAmz.compareTo(BigDecimal.ZERO) != 0 || unLPIAmz.compareTo(BigDecimal.ZERO) != 0) {
+				aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+				aeEvent.getAcSetIDList().add(accountingID);
+
+				// Amortization Difference Postings
+				getPostingsPreparationUtil().postAccounting(aeEvent);
+				
+				// Unadjusted Posting amount addition
+				profitDetail.setAmzTillLBD(profitDetail.getAmzTillLBD().add(unAmz));
+				profitDetail.setLpiTillLBD(profitDetail.getLpiTillLBD().add(unLPIAmz));
+				profitDetail.setGstLpiTillLBD(profitDetail.getGstLpiTillLBD().add(unGstLPIAmz));
+				profitDetail.setLppTillLBD(profitDetail.getLppTillLBD().add(unLPPAmz));
+				profitDetail.setGstLppTillLBD(profitDetail.getGstLppTillLBD().add(unGstLPPAmz));
+			}
+		}
+
+		return profitDetail;
 	}
 	
 	/**

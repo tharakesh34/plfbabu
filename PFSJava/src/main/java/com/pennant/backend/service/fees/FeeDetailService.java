@@ -22,6 +22,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -69,7 +70,26 @@ public class FeeDetailService {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		String branchCode = userDetails.getBranchCode();
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+		
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+			
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+		
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 				financeDetail.getFinanceTaxDetails(), branchCode);
 		
 		// set FinType fees details
@@ -323,7 +343,26 @@ public class FeeDetailService {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		String branchCode = userDetails.getBranchCode();
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+		
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+			
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+		
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 				financeDetail.getFinanceTaxDetails(), branchCode);
 		
 		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
@@ -668,7 +707,26 @@ public class FeeDetailService {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			String branchCode = userDetails.getBranchCode();
 			String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+			
+			String custDftBranch = null;
+			String highPriorityState = null;
+			String highPriorityCountry = null;
+			if(financeDetail.getCustomerDetails() != null){
+				custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+				
+				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+				if (CollectionUtils.isNotEmpty(addressList)) {
+					for (CustomerAddres customerAddres : addressList) {
+						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							highPriorityState = customerAddres.getCustAddrProvince();
+							highPriorityCountry = customerAddres.getCustAddrCountry();
+							break;
+						}
+					}
+				}
+			}
+			
+			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 					financeDetail.getFinanceTaxDetails(), branchCode);
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finFeeDetail = new FinFeeDetail();

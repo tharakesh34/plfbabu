@@ -5206,9 +5206,9 @@
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="finTaxDetailsDAO" ref="finTaxDetailsDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="ruleService" ref="ruleService" />
-		<property name="branchService" ref="branchService" />
-		<property name="provinceService" ref="provinceService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->
@@ -9159,6 +9159,16 @@
 		parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<!-- GST Invoice Changes -->
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService"
@@ -10902,6 +10912,7 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="customerService" ref="customerService" />
    </bean>
    
    <!-- Finance IRR Details -->
@@ -11306,4 +11317,8 @@
 		class="com.pennant.backend.service.systemmasters.impl.InterestCertificateServiceImpl">
 		<property name="interestCertificateDAO" ref="interestCertificateDAO" />
 	</bean>
+	
+	<!-- Finance Overdue Amortization Tax Details -->
+	<bean id="finODAmzTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinODAmzTaxDetailDAOImpl" parent="sequenceDao" />
+	
 </beans>

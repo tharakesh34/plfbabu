@@ -85,7 +85,18 @@
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<!-- GST Invoice Changes -->
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
+	
 	<!-- Finance Status movements -->
 	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper">
 	</bean>
@@ -169,5 +180,5 @@
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
-	
+   
 </beans>

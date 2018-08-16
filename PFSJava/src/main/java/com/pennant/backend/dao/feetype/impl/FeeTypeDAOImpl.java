@@ -353,8 +353,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		FeeType feeType = new FeeType();
 		feeType.setFeeTypeCode(feeTypeCode);
 
-		StringBuilder selectSql = new StringBuilder(" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId ");
-		selectSql.append(" From FeeTypes Where FeeTypeCode =:FeeTypeCode");
+		StringBuilder selectSql = new StringBuilder(" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId, FeeTypeCode, FeeTypeDesc");
+		selectSql.append(" From FeeTypes Where FeeTypeCode = :FeeTypeCode");
 
 		logger.debug("sql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);

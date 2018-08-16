@@ -1609,7 +1609,26 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 		
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+		
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+			
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+		
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 				financeDetail.getFinanceTaxDetails(), financeMain.getFinBranch());
 		
 		if (gstExecutionMap != null) {
@@ -2668,8 +2687,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setFinType(finMain.getFinType());
 
-		String roundingMode = finMain.getCalRoundingMode();
-		int roundingTarget = finMain.getRoundingTarget();
+		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
@@ -2693,22 +2712,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal cgst =  (dueAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, roundingMode,roundingTarget);
+						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
 						dataMap.put("bounceCharge_CGST", cgst);
 					}
 					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal sgst =  (dueAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, roundingMode,roundingTarget);
+						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
 						dataMap.put("bounceCharge_SGST", sgst);
 					}
 					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal ugst =  (dueAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, roundingMode,roundingTarget);
+						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
 						dataMap.put("bounceCharge_UGST", ugst);
 					}
 					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal igst =  (dueAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, roundingMode,roundingTarget);
+						igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
 						dataMap.put("bounceCharge_IGST", igst);
 					}
 
@@ -2716,27 +2735,27 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 					BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 					BigDecimal actualAmt = dueAmount.divide(percentage, 9, RoundingMode.HALF_DOWN);
-					actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
+					actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
 					BigDecimal actTaxAmount = dueAmount.subtract(actualAmt);
 
 					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
+						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
 						dataMap.put("bounceCharge_CGST", cgst);
 					}
 					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
+						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
 						dataMap.put("bounceCharge_SGST", sgst);
 					}
 					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
+						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
 						dataMap.put("bounceCharge_UGST", ugst);
 					}
 					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
 						BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
+						igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
 						dataMap.put("bounceCharge_IGST", igst);
 					}
 				}

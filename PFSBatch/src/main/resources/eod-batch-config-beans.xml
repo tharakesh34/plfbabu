@@ -116,6 +116,38 @@
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
 		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
+	
+	<bean name="finFeeDetailService"
+		class="com.pennant.backend.service.finance.impl.FinFeeDetailServiceImpl">
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
+	</bean>
+	
+	<bean id="provinceDAO"
+		class="com.pennant.backend.dao.systemmasters.impl.ProvinceDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="branchDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	
+	<bean id="financeTaxDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FinanceTaxDetailDAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="customerAddresDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerAddresDAOImpl" parent="sequenceDao"/>
+	
+	<!-- FeeType -->
+	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao"/>
+
+	<bean id="finODAmzTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinODAmzTaxDetailDAOImpl" parent="sequenceDao" />
+		
 	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl" parent="sequenceDao"/>
 		
 	<bean id="financeReferenceDetailDAO" class="com.pennant.backend.dao.lmtmasters.impl.FinanceReferenceDetailDAOImpl" parent="sequenceDao"/>
@@ -571,5 +603,138 @@
 	   <property name="snapShotDataSource" ref="snapShotDatasource" />
    </bean> -->
 	
+	<!-- GST Invoice -->
+	<bean id="gstInvoiceTxnDAO" class="com.pennant.backend.dao.finance.impl.GSTInvoiceTxnDAOImpl" parent="sequenceDao"/>
+		
+	<bean id="gstInvoiceTxnService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="gstInvoiceTxnServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+ 	<bean name="gstInvoiceTxnServiceTarget" class="com.pennant.backend.service.finance.impl.GSTInvoiceTxnServiceImpl">
+       <property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
+       <property name="entityService" ref="entityService" />
+       <property name="provinceService" ref="provinceService" />
+       <!-- GST Invoice Changes -->
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+   </bean>
+   
+   <bean id="entityService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="entityServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+<!-- Entity -->
+	<bean id="entityDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.EntityDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean name="entityServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.EntityServiceImpl">
+		<property name="entityDAO" ref="entityDAO" />
+	</bean>
+	
+	<bean id="provinceService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="provinceServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="provinceServiceTarget"
+		class="com.pennant.backend.service.systemmasters.impl.ProvinceServiceImpl">
+		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="taxDetailDAO" ref="taxDetailDAO" />
+		<property name="taxDetailService" ref="taxDetailService" />
+	</bean>
+	
+	<!-- TaxDetail -->
+	<bean id="taxDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.TaxDetailDAOImpl" parent="sequenceDao"/>
+		
+	<bean id="taxDetailService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="taxDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="taxDetailServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.TaxDetailServiceImpl">
+		<property name="taxDetailDAO" ref="taxDetailDAO" />
+	</bean>
+	
+	<!-- Finance Tax Detail -->
+	<bean id="financeTaxDetailService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="financeTaxDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="financeTaxDetailServiceTarget"
+		class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+	</bean>
 	
 </beans>

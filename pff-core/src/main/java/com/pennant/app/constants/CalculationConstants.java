@@ -148,6 +148,10 @@ public class CalculationConstants {
 	public static final String	TDS_ROUNDINGMODE					= "TDS_ROUNDINGMODE";
 	public static final String	TDS_ROUNDINGTARGET					= "TDS_ROUNDINGTARGET";
 	
+	// Tax/GST Rounding Parameters
+	public static final String	TAX_ROUNDINGMODE					= "TAX_ROUNDINGMODE";
+	public static final String	TAX_ROUNDINGTARGET					= "TAX_ROUNDINGTARGET";
+	
 	// PROFIT FRACTION ROUNDING METHODS
 	public static final String	PFTFRACTION_NO_ADJ					= "NO_ADJ";
 	public static final String	PFTFRACTION_ADJ_LAST_INST			= "ADJ_LAST_INST";

@@ -54,6 +54,8 @@ public class AEEvent {
 	private int						transOrder = 0;
 	
 	private boolean					uAmzExists = false;
+	private boolean					uLpiExists = false;
+	private boolean					uLppExists = false;
 	
 	private String                  entityCode;
 	
@@ -378,6 +380,22 @@ public class AEEvent {
 
 	public void setPostingType(String postingType) {
 		this.postingType = postingType;
+	}
+
+	public boolean isuLpiExists() {
+		return uLpiExists;
+	}
+
+	public void setuLpiExists(boolean uLpiExists) {
+		this.uLpiExists = uLpiExists;
+	}
+
+	public boolean isuLppExists() {
+		return uLppExists;
+	}
+
+	public void setuLppExists(boolean uLppExists) {
+		this.uLppExists = uLppExists;
 	}
 
 

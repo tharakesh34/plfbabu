@@ -294,7 +294,6 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	/**
 	 * Internal Method for Grouping List items
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void findSearchObject() {
 		logger.debug("Entering");
 		

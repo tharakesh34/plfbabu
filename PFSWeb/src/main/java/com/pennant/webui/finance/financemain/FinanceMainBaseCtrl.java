@@ -7425,7 +7425,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if ("Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 			List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
 			DocumentDetails documentDetails = null;
-			autoDownloadMap = new HashMap();
+			autoDownloadMap = new HashMap<>();
 			AgreementDefinition agreementDefinition = null;
 			List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
 			String templateValidateMsg = "";

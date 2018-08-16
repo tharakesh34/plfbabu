@@ -116,6 +116,26 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pftDetail.getAmzTillLBD()));
 		
+		// LPI Amortization calculation
+		if(pftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0){
+			amountCodes.setdLPIAmz(pftDetail.getLpiAmount().subtract(pftDetail.getLpiTillLBD()));	
+			
+			// Calculate GST Amount on LPI Amount 
+			if(pftDetail.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0){
+				amountCodes.setdGSTLPIAmz(pftDetail.getGstLpiAmount().subtract(pftDetail.getGstLpiTillLBD()));	
+			}
+		}
+		
+		// LPP Amortization calculation
+		if(pftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0){
+			amountCodes.setdLPPAmz(pftDetail.getLppAmount().subtract(pftDetail.getLppTillLBD()));	
+			
+			// Calculate GST Amount on LPP Amount 
+			if(pftDetail.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0){
+				amountCodes.setdGSTLPPAmz(pftDetail.getGstLppAmount().subtract(pftDetail.getGstLppTillLBD()));
+			}
+		}
+		
 		//-----------------------------------------------------------------------
 		//FIXME: PV 23MAR18
 		BigDecimal accruedIncome = BigDecimal.ZERO;
@@ -134,6 +154,7 @@ public class AEAmounts implements Serializable {
 		}
 
 		amountCodes.setuAmz(unRealizedIncome);
+		
 		//-----------------------------------------------------------------------
 
 		//OD Details

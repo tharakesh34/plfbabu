@@ -276,6 +276,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 *            (String)
 	 * @return Customer
 	 */
+	@Override
 	public Customer getApprovedCustomerById(long id) {
 		return getCustomerDAO().getCustomerByID(id, "_AView");
 	}

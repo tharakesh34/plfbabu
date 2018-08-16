@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerAddresDAO.java                                                   * 	  
+ * FileName    		:  FinFeeReceiptDAO.java                                                * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  06-05-2011    														*
+ * Creation Date    :  1-06-2017    														*
  *                                                                  						*
- * Modified Date    :  06-05-2011    														*
+ * Modified Date    :  1-06-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
+ * 1-06-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,26 +40,11 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-package com.pennant.backend.dao.customermasters;
-import java.util.List;
-
-import com.pennant.backend.model.customermasters.CustomerAddres;
-
-/**
- * DAO methods declaration for the <b>CustomerAddres model</b> class.<br>
- */
-public interface CustomerAddresDAO {
+package com.pennant.backend.dao.finance;
+import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 
 
-	 CustomerAddres getCustomerAddresById(long id,String addType,String type);
-	 List<CustomerAddres> getCustomerAddresByCustomer(final long id,String type);
-	 void update(CustomerAddres customerAddres,String type);
-	 void delete(CustomerAddres customerAddres,String type);
-	 long save(CustomerAddres customerAddres,String type);
-	 void deleteByCustomer(final long id,String type);
-	 int getAddrTypeCount(String addType);
-	 int getVersion(long id, String addrType);
-	 int getcustAddressCount(String addrType);
-	boolean isServiceable(String pinCode);
-	CustomerAddres getHighPriorityCustAddr(long id, String type);
+public interface FinODAmzTaxDetailDAO {
+
+	long save(FinODAmzTaxDetail amzTaxDetail);
 }

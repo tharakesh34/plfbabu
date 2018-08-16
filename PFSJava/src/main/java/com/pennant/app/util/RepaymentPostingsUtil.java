@@ -190,8 +190,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				.add(rpyQueueHeader.getLatePftWaived()).add(rpyQueueHeader.getFeeWaived()).add(rpyQueueHeader.getInsWaived())
 				.add(rpyQueueHeader.getSuplRentWaived()).add(rpyQueueHeader.getIncrCostWaived());
 
-
-
 		if ((totalPayAmount.add(totalWaivedAmount)).compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doSchedulePostings(rpyQueueHeader, valuedate,postDate, financeMain, scheduleDetails,
 					finFeeDetailList,financeProfitDetail, eventCode, aeEvent);
@@ -217,7 +215,15 @@ public class RepaymentPostingsUtil implements Serializable {
 			actReturnList.add(aeEvent.getLinkedTranId());// Linked Transaction ID
 			actReturnList.add(scheduleDetails); // Schedule Details
 			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized Amount
-
+			if(aeEvent.isuLpiExists()){
+				actReturnList.add(aeEvent.getAeAmountCodes().getdLPIAmz()); 
+				actReturnList.add(aeEvent.getAeAmountCodes().getdGSTLPIAmz()); 
+			}else{
+				actReturnList.add(BigDecimal.ZERO);
+				actReturnList.add(BigDecimal.ZERO);
+			}
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount GST
 		} else {
 			if (actReturnList == null) {
 				actReturnList = new ArrayList<Object>();
@@ -231,6 +237,10 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 			actReturnList.add(scheduleDetails); // Schedule Details
 			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized Amount
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPI Amount
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPI Amount GST
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount GST
 		}
 
 		logger.debug("Leaving");
@@ -320,6 +330,22 @@ public class RepaymentPostingsUtil implements Serializable {
 		if(aeEvent.isuAmzExists()){
 			actReturnList.add(aeEvent.getAeAmountCodes().getuAmz()); 
 		}else{
+			actReturnList.add(BigDecimal.ZERO);
+		}
+		
+		if(aeEvent.isuLpiExists()){
+			actReturnList.add(aeEvent.getAeAmountCodes().getdLPIAmz()); 
+			actReturnList.add(aeEvent.getAeAmountCodes().getdGSTLPIAmz()); 
+		}else{
+			actReturnList.add(BigDecimal.ZERO);
+			actReturnList.add(BigDecimal.ZERO);
+		}
+		
+		if(aeEvent.isuLppExists()){
+			actReturnList.add(aeEvent.getAeAmountCodes().getdLPPAmz()); 
+			actReturnList.add(aeEvent.getAeAmountCodes().getdGSTLPPAmz()); 
+		}else{
+			actReturnList.add(BigDecimal.ZERO);
 			actReturnList.add(BigDecimal.ZERO);
 		}
 
@@ -655,6 +681,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setRpTot(rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getLateProfit()));
 		amountCodes.setRpPft(rpyQueueHeader.getProfit().add(rpyQueueHeader.getLateProfit()));
 		amountCodes.setRpPri(rpyQueueHeader.getPrincipal());
+		amountCodes.setLpiPaid(rpyQueueHeader.getLateProfit());
 		amountCodes.setRpTds(rpyQueueHeader.getTds());
 
 		// Fee Details
@@ -666,6 +693,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Waived Amounts
 		amountCodes.setPriWaived(rpyQueueHeader.getPriWaived());
 		amountCodes.setPftWaived(rpyQueueHeader.getPftWaived().add(rpyQueueHeader.getLatePftWaived()));
+		amountCodes.setLpiWaived(rpyQueueHeader.getLatePftWaived());
 		amountCodes.setFeeWaived(rpyQueueHeader.getFeeWaived());
 		amountCodes.setInsWaived(rpyQueueHeader.getInsWaived());
 

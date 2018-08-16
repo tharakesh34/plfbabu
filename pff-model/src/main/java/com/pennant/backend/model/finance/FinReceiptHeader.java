@@ -50,6 +50,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Date		bounceDate;
 	private String		rcdMaintainSts;
 	
+	private BigDecimal lpiAmount = BigDecimal.ZERO;
+	private BigDecimal lppAmount = BigDecimal.ZERO;
+	private BigDecimal gstLpiAmount = BigDecimal.ZERO;
+	private BigDecimal gstLppAmount = BigDecimal.ZERO;
+	
 	private String	remarks;
 	private boolean depositProcess = false;	// added for Cash Management 
 	private String	depositBranch;	// added for Cash Management 
@@ -480,6 +485,38 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setDepositBranch(String depositBranch) {
 		this.depositBranch = depositBranch;
+	}
+
+	public BigDecimal getLpiAmount() {
+		return lpiAmount;
+	}
+
+	public void setLpiAmount(BigDecimal lpiAmount) {
+		this.lpiAmount = lpiAmount;
+	}
+
+	public BigDecimal getLppAmount() {
+		return lppAmount;
+	}
+
+	public void setLppAmount(BigDecimal lppAmount) {
+		this.lppAmount = lppAmount;
+	}
+
+	public BigDecimal getGstLpiAmount() {
+		return gstLpiAmount;
+	}
+
+	public void setGstLpiAmount(BigDecimal gstLpiAmount) {
+		this.gstLpiAmount = gstLpiAmount;
+	}
+
+	public BigDecimal getGstLppAmount() {
+		return gstLppAmount;
+	}
+
+	public void setGstLppAmount(BigDecimal gstLppAmount) {
+		this.gstLppAmount = gstLppAmount;
 	}
 
 }

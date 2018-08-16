@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -77,6 +78,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinTaxDetails;
@@ -482,7 +484,26 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				financeDetail.setFinanceTaxDetails(financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-				HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				
+				String custDftBranch = null;
+				String highPriorityState = null;
+				String highPriorityCountry = null;
+				if(financeDetail.getCustomerDetails() != null){
+					custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+					
+					List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+					if (CollectionUtils.isNotEmpty(addressList)) {
+						for (CustomerAddres customerAddres : addressList) {
+							if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+								highPriorityState = customerAddres.getCustAddrProvince();
+								highPriorityCountry = customerAddres.getCustAddrCountry();
+								break;
+							}
+						}
+					}
+				}
+				
+				HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 						financeDetail.getFinanceTaxDetails(), financeMain.getFinBranch());
 				
 				if (this.adviseAmount.getActualValue() != null) {

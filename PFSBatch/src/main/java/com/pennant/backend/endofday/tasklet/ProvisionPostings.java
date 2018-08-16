@@ -147,6 +147,10 @@ public class ProvisionPostings implements Tasklet {
 					pftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
 					pftDetail.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
 					pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
+					pftDetail.setLpiTillLBD(resultSet.getBigDecimal("LpiTillLBD"));
+					pftDetail.setLppTillLBD(resultSet.getBigDecimal("LppTillLBD"));
+					pftDetail.setGstLpiTillLBD(resultSet.getBigDecimal("GstLpiTillLBD"));
+					pftDetail.setGstLppTillLBD(resultSet.getBigDecimal("GstLppTillLBD"));
 
 					Date dueFromDate = resultSet.getDate("DueFromDate");
 					AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
@@ -249,7 +253,8 @@ public class ProvisionPostings implements Tasklet {
 
 		StringBuilder selQuery = new StringBuilder(
 				" SELECT T1.FinReference,T1.ProvMovementDate,T1.ProvMovementSeq , T1.DueFromDate, ");
-		selQuery.append(" T1.ProvisionedAmt, T1.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, T4.AmzTillLBD ");
+		selQuery.append(" T1.ProvisionedAmt, T1.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, ");
+		selQuery.append(" T4.AmzTillLBD, T4.LPITillLBD, T4.LPPTillLBD, T4.GstLpiTillLBD, T4.GstLppTillLBD ");
 		selQuery.append(" FROM FinProvMovements AS T1 ");
 		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference ");
 		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference ");

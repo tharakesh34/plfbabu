@@ -1092,6 +1092,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		//=====================================
 		profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
+		profitDetail.setLpiAmount(receiptHeader.getLpiAmount());
+		profitDetail.setGstLpiAmount(receiptHeader.getGstLpiAmount());
+		profitDetail.setLppAmount(receiptHeader.getLppAmount());
+		profitDetail.setGstLppAmount(receiptHeader.getGstLppAmount());
 
 		// Postings Process
 		List<Object> returnList = getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
@@ -1115,6 +1119,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// UnRealized Income Amount Resetting 
 		profitDetail.setAmzTillLBD(profitDetail.getAmzTillLBD().add((BigDecimal)returnList.get(1)));
+		profitDetail.setLpiTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal)returnList.get(3)));
+		profitDetail.setGstLpiTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal)returnList.get(4)));
+		profitDetail.setLppTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal)returnList.get(5)));
+		profitDetail.setGstLppTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal)returnList.get(6)));
 		
 		if(schdList == null){
 			schdList = scheduleData.getFinanceScheduleDetails();

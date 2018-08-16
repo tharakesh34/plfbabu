@@ -40,6 +40,10 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			tdSchdPriBal		= BigDecimal.ZERO;
 	//After posting
 	private BigDecimal			amzTillLBD			= BigDecimal.ZERO;
+	private BigDecimal			lpiTillLBD			= BigDecimal.ZERO;
+	private BigDecimal			gstLpiTillLBD		= BigDecimal.ZERO;
+	private BigDecimal			lppTillLBD			= BigDecimal.ZERO;
+	private BigDecimal			gstLppTillLBD		= BigDecimal.ZERO;
 	private BigDecimal			amzTillLBDNormal	= BigDecimal.ZERO;		//new
 	private BigDecimal			amzTillLBDPD		= BigDecimal.ZERO;		//new
 	private BigDecimal			amzTillLBDPIS		= BigDecimal.ZERO;		//new
@@ -165,6 +169,12 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			emiInAdvanceBal		= BigDecimal.ZERO;
 	private BigDecimal			receivableAdviseBal	= BigDecimal.ZERO;
 	private BigDecimal			payableAdviseBal	= BigDecimal.ZERO;
+	
+	// External Fields For Amortization Purpose
+	private BigDecimal 			lpiAmount			= BigDecimal.ZERO;
+	private BigDecimal 			gstLpiAmount		= BigDecimal.ZERO;
+	private BigDecimal 			lppAmount			= BigDecimal.ZERO;
+	private BigDecimal 			gstLppAmount		= BigDecimal.ZERO;
 
 	public FinanceProfitDetail() {
 
@@ -1300,6 +1310,70 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setActualODDays(int actualODDays) {
 		this.actualODDays = actualODDays;
+	}
+
+	public BigDecimal getLpiTillLBD() {
+		return lpiTillLBD;
+	}
+
+	public void setLpiTillLBD(BigDecimal lpiTillLBD) {
+		this.lpiTillLBD = lpiTillLBD;
+	}
+
+	public BigDecimal getLppTillLBD() {
+		return lppTillLBD;
+	}
+
+	public void setLppTillLBD(BigDecimal lppTillLBD) {
+		this.lppTillLBD = lppTillLBD;
+	}
+
+	public BigDecimal getLpiAmount() {
+		return lpiAmount;
+	}
+
+	public void setLpiAmount(BigDecimal lpiAmount) {
+		this.lpiAmount = lpiAmount;
+	}
+
+	public BigDecimal getLppAmount() {
+		return lppAmount;
+	}
+
+	public void setLppAmount(BigDecimal lppAmount) {
+		this.lppAmount = lppAmount;
+	}
+
+	public BigDecimal getGstLpiTillLBD() {
+		return gstLpiTillLBD;
+	}
+
+	public void setGstLpiTillLBD(BigDecimal gstLpiTillLBD) {
+		this.gstLpiTillLBD = gstLpiTillLBD;
+	}
+
+	public BigDecimal getGstLppTillLBD() {
+		return gstLppTillLBD;
+	}
+
+	public void setGstLppTillLBD(BigDecimal gstLppTillLBD) {
+		this.gstLppTillLBD = gstLppTillLBD;
+	}
+
+	public BigDecimal getGstLpiAmount() {
+		return gstLpiAmount;
+	}
+
+	public void setGstLpiAmount(BigDecimal gstLpiAmount) {
+		this.gstLpiAmount = gstLpiAmount;
+	}
+
+	public BigDecimal getGstLppAmount() {
+		return gstLppAmount;
+	}
+
+	public void setGstLppAmount(BigDecimal gstLppAmount) {
+		this.gstLppAmount = gstLppAmount;
 	}
 
 	public BigDecimal getAdvanceEMI() {

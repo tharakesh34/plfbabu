@@ -126,6 +126,18 @@ public class AEAmountCodes {
 	//For Disbursement Instructions used in SUBHEAD
 	private String		partnerBankAcType;
 	private String		partnerBankAc;
+	
+	// Late Payment Interest Fields
+	private BigDecimal	lpi					= BigDecimal.ZERO;
+	private BigDecimal	lpiDue				= BigDecimal.ZERO;
+	private BigDecimal	lpiPaid				= BigDecimal.ZERO;
+	private BigDecimal	lpiWaived			= BigDecimal.ZERO;
+	private BigDecimal	dLPIAmz				= BigDecimal.ZERO;
+	private BigDecimal	dGSTLPIAmz			= BigDecimal.ZERO;
+	
+	// Late Payment Penalty Fields
+	private BigDecimal	dLPPAmz				= BigDecimal.ZERO;
+	private BigDecimal	dGSTLPPAmz				= BigDecimal.ZERO;
 
 	//Commitment
 	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
@@ -1107,6 +1119,70 @@ public class AEAmountCodes {
 		this.paymentType = paymentType;
 	}
 
+	public BigDecimal getLpi() {
+		return lpi;
+	}
+
+	public void setLpi(BigDecimal lpi) {
+		this.lpi = lpi;
+	}
+
+	public BigDecimal getLpiDue() {
+		return lpiDue;
+	}
+
+	public void setLpiDue(BigDecimal lpiDue) {
+		this.lpiDue = lpiDue;
+	}
+
+	public BigDecimal getLpiPaid() {
+		return lpiPaid;
+	}
+
+	public void setLpiPaid(BigDecimal lpiPaid) {
+		this.lpiPaid = lpiPaid;
+	}
+
+	public BigDecimal getLpiWaived() {
+		return lpiWaived;
+	}
+
+	public void setLpiWaived(BigDecimal lpiWaived) {
+		this.lpiWaived = lpiWaived;
+	}
+
+	public BigDecimal getdLPIAmz() {
+		return dLPIAmz;
+	}
+
+	public void setdLPIAmz(BigDecimal dLPIAmz) {
+		this.dLPIAmz = dLPIAmz;
+	}
+
+	public BigDecimal getdLPPAmz() {
+		return dLPPAmz;
+	}
+
+	public void setdLPPAmz(BigDecimal dLPPAmz) {
+		this.dLPPAmz = dLPPAmz;
+	}
+
+	public BigDecimal getdGSTLPIAmz() {
+		return dGSTLPIAmz;
+	}
+
+	public void setdGSTLPIAmz(BigDecimal dGSTLPIAmz) {
+		this.dGSTLPIAmz = dGSTLPIAmz;
+	}
+
+	public BigDecimal getdGSTLPPAmz() {
+		return dGSTLPPAmz;
+	}
+
+	public void setdGSTLPPAmz(BigDecimal dGSTLPPAmz) {
+		this.dGSTLPPAmz = dGSTLPPAmz;
+	}
+
 	public BigDecimal getAdvanceEMI() {
 		return advanceEMI;
 	}
@@ -1114,5 +1190,6 @@ public class AEAmountCodes {
 	public void setAdvanceEMI(BigDecimal advanceEMI) {
 		this.advanceEMI = advanceEMI;
 	}
+
 	
 }

@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerAddresDAO.java                                                   * 	  
+ * FileName    		:  FinFeeReceiptDAOImpl.java                                            * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  06-05-2011    														*
+ * Creation Date    :  1-06-2017    														*
  *                                                                  						*
- * Modified Date    :  06-05-2011    														*
+ * Modified Date    :  1-06-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
+ * 1-06-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,27 +39,63 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.dao.customermasters;
-import java.util.List;
+ */
 
-import com.pennant.backend.model.customermasters.CustomerAddres;
+package com.pennant.backend.dao.finance.impl;
+
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+
+import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.model.finance.FinODAmzTaxDetail;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
- * DAO methods declaration for the <b>CustomerAddres model</b> class.<br>
+ * DAO methods implementation for the <b>FinFeeReceipt model</b> class.<br>
+ * 
  */
-public interface CustomerAddresDAO {
+public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> implements FinODAmzTaxDetailDAO {
+	private static Logger logger = Logger.getLogger(FinODAmzTaxDetailDAOImpl.class);
 
+	public FinODAmzTaxDetailDAOImpl() {
+		super();
+	}
 
-	 CustomerAddres getCustomerAddresById(long id,String addType,String type);
-	 List<CustomerAddres> getCustomerAddresByCustomer(final long id,String type);
-	 void update(CustomerAddres customerAddres,String type);
-	 void delete(CustomerAddres customerAddres,String type);
-	 long save(CustomerAddres customerAddres,String type);
-	 void deleteByCustomer(final long id,String type);
-	 int getAddrTypeCount(String addType);
-	 int getVersion(long id, String addrType);
-	 int getcustAddressCount(String addrType);
-	boolean isServiceable(String pinCode);
-	CustomerAddres getHighPriorityCustAddr(long id, String type);
+	/**
+	 * This method insert new Records into FinODAmzTaxDetail or FinODAmzTaxDetail_Temp.
+	 * 
+	 * save Goods Details
+	 * 
+	 * @param Goods
+	 *            Details (FinODAmzTaxDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public long save(FinODAmzTaxDetail finODAmzTaxDetail) {
+		logger.debug("Entering");
+
+		if (finODAmzTaxDetail.getTaxSeqId() == Long.MIN_VALUE || finODAmzTaxDetail.getTaxSeqId() == 0) {
+			finODAmzTaxDetail.setTaxSeqId(getNextValue("SeqFinODAmzTaxDetail"));
+			logger.debug("get NextID:" + finODAmzTaxDetail.getTaxSeqId());
+		}
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into FinODAmzTaxDetail");
+		insertSql.append(" (TaxSeqId , FinReference, ValueDate , TaxFor, Amount, TaxType , CGST , SGST , UGST , IGST , TotalGST)");
+		insertSql.append(" Values( :TaxSeqId , :FinReference, :ValueDate , :TaxFor, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :TotalGST)");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+		return finODAmzTaxDetail.getTaxSeqId();
+	}
+
 }

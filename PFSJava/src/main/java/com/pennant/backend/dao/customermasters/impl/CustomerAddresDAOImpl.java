@@ -56,6 +56,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -421,5 +422,42 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
+	}
+	
+	/**
+	 * Fetch the Record Customer Address details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return CustomerAddres
+	 */
+	@Override
+	public CustomerAddres getHighPriorityCustAddr(final long id, String type) {
+		logger.debug("Entering");
+		
+		CustomerAddres customerAddres = new CustomerAddres();
+		customerAddres.setId(id);
+		customerAddres.setCustAddrPriority(Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT CustAddrCountry, CustAddrProvince, CustAddrPriority ");
+		selectSql.append(" FROM CustomerAddresses");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID = :CustID AND CustAddrPriority = :CustAddrPriority");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
+		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+
+		try {
+			customerAddres = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			customerAddres = null;
+		}
+		logger.debug("Leaving");
+		return customerAddres;
 	}
 }

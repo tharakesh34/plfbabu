@@ -679,6 +679,16 @@ public class AccountEngineExecution implements Serializable {
 			if(StringUtils.contains(transactionEntry.getAmountRule(), "dAmz")){
 				aeEvent.setuAmzExists(true);
 			}
+			
+			// Un Realized Amortization LPI Field Exists
+			if(StringUtils.contains(transactionEntry.getAmountRule(), "dLPIAmz")){
+				aeEvent.setuLpiExists(true);
+			}
+			
+			// Un Realized Amortization LPP Field Exists
+			if(StringUtils.contains(transactionEntry.getAmountRule(), "dLPPAmz")){
+				aeEvent.setuLppExists(true);
+			}
 
 			returnDataSet.setTranOrderId(acc.getTransOrder());
 			returnDataSet.setAccount(acc.getAccountId());

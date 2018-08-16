@@ -41,6 +41,8 @@ public class EodFinProfitDetail implements Serializable {
 	private BigDecimal amzTillNBD = BigDecimal.ZERO;
 	private BigDecimal amzTillLBD = BigDecimal.ZERO;
 	private BigDecimal amzTodayToNBD = BigDecimal.ZERO;
+	private BigDecimal lpiTillLBD = BigDecimal.ZERO;
+	private BigDecimal lppTillLBD = BigDecimal.ZERO;
 	
 	private String     RepayFrq;
 	private String     CustCIF;
@@ -839,5 +841,17 @@ public class EodFinProfitDetail implements Serializable {
 	}
 	public void setCRBODProfit(BigDecimal cRBODProfit) {
 		CRBODProfit = cRBODProfit;
+	}
+	public BigDecimal getLpiTillLBD() {
+		return lpiTillLBD;
+	}
+	public void setLpiTillLBD(BigDecimal lpiTillLBD) {
+		this.lpiTillLBD = lpiTillLBD;
+	}
+	public BigDecimal getLppTillLBD() {
+		return lppTillLBD;
+	}
+	public void setLppTillLBD(BigDecimal lppTillLBD) {
+		this.lppTillLBD = lppTillLBD;
 	}
 }

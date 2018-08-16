@@ -30,6 +30,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
@@ -47,8 +48,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	private ProvinceService provinceService;
 
 	// GST Invoice preparation
-	
 	private transient CustomerDetailsService customerDetailsService;
+	private transient CustomerService customerService;
 	private transient FinanceTaxDetailService financeTaxDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private RuleDAO ruleDAO;
@@ -176,7 +177,14 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						country = customerAddres.getCustAddrCountry();
 						province = customerAddres.getCustAddrProvince();
 
-						Customer cust =  financeDetail.getCustomerDetails().getCustomer();
+						Customer cust = financeDetail.getCustomerDetails().getCustomer();
+						if (cust == null) {
+							cust = this.customerService.getApprovedCustomerById(financeMain.getCustID());
+						}
+
+						if (cust == null) {
+							return; //FIXME check this case
+						}
 						gstInvoiceTxn.setCustomerID(cust.getCustCIF()); 
 						gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
 
@@ -330,7 +338,26 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+		
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+			
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+		
+		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 				financeDetail.getFinanceTaxDetails(), null);
 
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
@@ -408,5 +435,13 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	public CustomerService getCustomerService() {
+		return customerService;
+	}
+
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
 	}
 }
