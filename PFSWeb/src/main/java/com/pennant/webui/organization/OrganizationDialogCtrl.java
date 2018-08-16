@@ -133,7 +133,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		this.cif.setModuleName("Customer");
 		this.cif.setValueColumn("CustCIF");
 		this.cif.setDescColumn("CustShrtName");
-		this.cif.setValidateColumns(new String[] { "CustCIF" });
+		this.cif.setValidateColumns(new String[] { "CustCIF" });	
 
 		this.code.setMaxlength(15);
 		this.name.setMaxlength(50);
@@ -328,7 +328,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		}
 		if (!this.name.isReadonly()) {
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_OrganizationDialog_Name.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+					PennantRegularExpressions.REGEX_UPPER_ALPHANUM_SPACE, true));
 		}
 
 		if (!this.code.isReadonly()) {

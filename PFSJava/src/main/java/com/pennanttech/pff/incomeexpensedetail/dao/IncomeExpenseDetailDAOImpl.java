@@ -127,7 +127,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 	
 	@Override
-	public Map<String, Object> getTotal(Long custId, Integer financialYear) {
+	public List<Map<String, Object>> getTotal(Long custId, Integer financialYear) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -142,10 +142,10 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		source.addValue("custId", custId);
 		source.addValue("financialYear", financialYear);
 		try {
-			return jdbcTemplate.queryForMap(sql.toString(), source);
+			return jdbcTemplate.queryForList(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		return new HashMap<String, Object>();
+		return new ArrayList<Map<String, Object>>();
 	}
 }

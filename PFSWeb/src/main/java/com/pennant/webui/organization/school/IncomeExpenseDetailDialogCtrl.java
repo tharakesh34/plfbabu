@@ -1329,8 +1329,11 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		if (multiplier.getValue() != null) {
 			mult = multiplier.getValue();
 		}
-
-		feeRecBasisFrq.setValue(fee.divide(new BigDecimal(mult), BigDecimal.ROUND_HALF_DOWN));
+		
+		if (mult != 0) {
+			feeRecBasisFrq.setValue(fee.divide(new BigDecimal(mult), BigDecimal.ROUND_HALF_DOWN));
+		}
+		
 		totalCore.setValue(fee.multiply(new BigDecimal(students)));
 		logger.debug(Literal.LEAVING);
 	}
