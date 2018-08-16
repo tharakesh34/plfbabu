@@ -199,6 +199,13 @@
 		    	inner join customers c on c.custid = o.custid;
 		</createView>
 	</changeSet>
+	<changeSet id="4.0_Pre" author="Jayant">
+		<comment> delete script for child tables of Secroles</comment>
+		<sql>
+			delete from secoperationroles where roleid in (select roleid from secroles where rolecd ='ORGANIZATION_SCHOOL_MAKER');
+			delete from secoperationroles where roleid in (select roleid from secroles where rolecd ='ORGANIZATION_SCHOOL_APPROVER');
+		</sql>
+	</changeSet>
 	<changeSet id="4.0" author="murthy.y">
 		<sql>
 			<![CDATA[
