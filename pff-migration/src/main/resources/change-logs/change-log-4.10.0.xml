@@ -3535,4 +3535,13 @@ UNION ALL
           WHERE lmtfinrefdetail_temp.finrefdetailid = t1.finrefdetailid))
 	</createView>
 </changeSet>
+<changeSet id="45" author="UmaRohini">
+	<sql>
+		update BMTAggrementDef_Temp set AutoGeneration = 0 where AutoGeneration is NULL;
+		update BMTAggrementDef_Temp set AutoDownload = 0 where AutoDownload is NULL;
+		
+		update BMTAggrementDef set AutoGeneration = 0 where AutoGeneration is NULL;
+		update BMTAggrementDef set AutoDownload = 0 where AutoDownload is NULL;
+	</sql>
+</changeSet>
 	</databaseChangeLog>

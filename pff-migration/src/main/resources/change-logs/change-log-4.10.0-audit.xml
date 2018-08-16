@@ -54,5 +54,10 @@
 		<comment>Column name changed from RevLinkedTranId to LinkedTranId</comment>
 		<renameColumn tableName="AdtDepositCheques" oldColumnName="RevLinkedTranId" newColumnName="LinkedTranId"/>
 	</changeSet>
-	
+	<changeSet id="4" author="UmaRohini">
+	<sql>
+		update AdtBMTAggrementDef set AutoGeneration = 0 where AutoGeneration is NULL;
+		update AdtBMTAggrementDef set AutoDownload = 0 where AutoDownload is NULL;
+	</sql>
+</changeSet>
 	</databaseChangeLog>
