@@ -17,15 +17,15 @@ public class NotificationLogDetailsServiceImpl implements NotificationLogDetails
 	
 	
 	@Override
-	public List<Notification> getNotificationLogDetailList(String finReference) {
+	public List<Notification> getNotificationLogDetailList(String finReference,String module) {
 		List<Notification> emailMessageLst=null; 
-		emailMessageLst =emailEngine.getNotifications(finReference);
+		emailMessageLst =emailEngine.getNotifications(finReference, module);
 		
 		return emailMessageLst;
 	}
 	
 	@Override
-	public List<Notification> getNotificationLogDetailSmsList(String finReference) {
+	public List<Notification> getNotificationLogDetailSmsList(String finReference,String module) {
 		List<Notification> smsMessageLst=null;
 		smsMessageLst =smsEngine.getNotifications(finReference);
 
