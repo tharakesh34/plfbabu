@@ -1,3 +1,9 @@
+pff 4.10.3, 2018-08-16
+--------------------------------
+- story  #581  Deposit Cheques Accounting.
+- Bug    #592  Wrong Income Type master selection..
+- story  #524  School Funding.
+
 pff 4.10.2, 2018-08-13
 --------------------------------
 - story #515 E-mail Gateway Integration.
