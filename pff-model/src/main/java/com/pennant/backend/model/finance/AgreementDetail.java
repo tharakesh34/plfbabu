@@ -5743,7 +5743,7 @@ private String custAccount ="";
 		private String amt="";
 		private String amtPrctConsidered="";
 		private String amtConsidered="";
-		private String margin;
+		private String margin ="";
 		
 		public AppIncDetail() {
 		}
@@ -5840,7 +5840,7 @@ private String custAccount ="";
 		private String amt="";
 		private String amtPrctConsidered="";
 		private String amtConsidered="";
-		private String margin;
+		private String margin ="";
 		
 		public AppExpDetail() {
 		}
