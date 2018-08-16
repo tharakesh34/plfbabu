@@ -4,18 +4,22 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.apache.xml.resolver.helpers.Debug;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Html;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.service.finance.NotificationLogDetailsService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.NotificationAttribute;
@@ -42,10 +46,19 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 	protected Grid grid_NotificationLogDetail;
 	protected Paging pagingNotificationLog;
 	private Tabpanel tabPanel_dialogWindow;
+
+	protected Textbox finReference_header;
 	private Tabpanel tabPanel_dialogWindowSms;
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<Notification> notificationList;
-	private List<Notification> notificationListSms;
+	@Autowired
+	protected NotificationLogDetailsService notificationLogDetailsService;
+	
+
+	protected String module = "";
+	protected String finReference = "";
+
+	private transient FinanceEnquiry financeEnquiry;
 
 	/**
 	 * default constructor.<br>
@@ -76,13 +89,6 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 		} else {
 			this.notificationList = null;
 		}
-
-		if (arguments.containsKey("smsList")) {
-			this.notificationListSms = (List<Notification>) arguments.get("smsList");
-		} else {
-			this.notificationList = null;
-		}
-
 		if (arguments.containsKey("ccyformat")) {
 
 		}
@@ -100,11 +106,12 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
+
 		try {
 
 			// fill the components with the data
 			doFillNotificationEmail(this.notificationList);
-			doFillNotificationSms(this.notificationListSms);
+			// doFillNotificationSms(this.notificationListSms);
 
 			if (tabPanel_dialogWindow != null) {
 
@@ -123,11 +130,41 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 				this.listBoxNotificationLogSms.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
 				this.window_NotificationLogEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 				tabPanel_dialogWindowSms.appendChild(this.window_NotificationLogEnquiryDialog);
+
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving...");
+	}
+
+	public void onClick$smsLogTab() {
+	
+		logger.debug("Entering..");
+		String finReference=(String) arguments.get("finReference");
+		String module=(String) arguments.get("module");
+		arguments.get("finReference");
+		arguments.get("module");
+		List<Notification> notificationDetailsSms = getNotificationDetailsService().getNotificationLogDetailSmsList(finReference, module);
+		doFillNotificationSms(notificationDetailsSms);
+		logger.debug("Leaving...");
+		}
+	
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public FinanceEnquiry getFinanceEnquiry() {
+		return financeEnquiry;
+	}
+
+	public void setFinanceEnquiry(FinanceEnquiry financeEnquiry) {
+		this.financeEnquiry = financeEnquiry;
 	}
 
 	public void doFillNotificationEmail(List<Notification> notifications) {
@@ -141,10 +178,15 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 					Listcell lc;
 					lc = new Listcell(messageAddress.getEmailId());
 					lc.setParent(item);
+					
 					lc = new Listcell(notification.getSubject());
+					lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+					lc.setTooltiptext(notification.getSubject());
 					lc.setParent(item);
+					
 					lc = new Listcell(notification.getSubModule());
 					lc.setParent(item);
+					
 					lc = new Listcell(notification.getStage());
 					lc.setParent(item);
 
@@ -169,29 +211,32 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 					lc = new Listcell(notificationCode);
 					lc.setParent(item);
 
-					this.listBoxNotificationLogEmail.appendChild(item);
-
+					listBoxNotificationLogEmail.appendChild(item);
 				}
 			}
 		}
 
 	}
+
 	public void doFillNotificationSms(List<Notification> notifications) {
 		this.listBoxNotificationLogSms.getItems().clear();
 
 		if (notifications != null) {
 			for (Notification notification : notifications) {
 
-				System.out.println("Subject..." + notification.getSubject());
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(notification.getMobileNumber());
 				lc.setParent(item);
-				Html html = new Html(notification.getMessage());
-				lc = new Listcell(html.getContent());
+				
+				lc = new Listcell(notification.getMessage());
+				lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+				lc.setTooltiptext(notification.getMessage());
 				lc.setParent(item);
+
 				lc = new Listcell(notification.getSubModule());
 				lc.setParent(item);
+
 				lc = new Listcell(notification.getStage());
 				lc.setParent(item);
 
@@ -206,18 +251,26 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 					if (notification != null) {
 						for (NotificationAttribute attribute : notification.getAttributes()) {
 							if ("Notification_Desc".equals(attribute.getAttribute())) {
-								if (notificationCode != null)
-									;
+								notificationCode = notificationCode.concat(" ").concat(attribute.getValue());
+								break;
 							}
 						}
 					}
 					lc = new Listcell(notificationCode);
 					lc.setParent(item);
 
-					this.listBoxNotificationLogSms.appendChild(item);
+					listBoxNotificationLogSms.appendChild(item);
 
 				}
 			}
 		}
+	}
+
+	public NotificationLogDetailsService getNotificationDetailsService() {
+		return notificationLogDetailsService;
+	}
+
+	public void setNotificationLogDetailsService(NotificationLogDetailsService notificationLogDetailsService) {
+		this.notificationLogDetailsService = notificationLogDetailsService;
 	}
 }
