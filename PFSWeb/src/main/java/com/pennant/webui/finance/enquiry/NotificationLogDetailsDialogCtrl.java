@@ -198,7 +198,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 				String notificationCode = null;
 				if (CollectionUtils.isNotEmpty(notification.getAttributes())) {
 					for (NotificationAttribute attribute : notification.getAttributes()) {
-						if ("Notification Code".equals(attribute.getAttribute())) {
+						if ("Notification_Code".equals(attribute.getAttribute())) {
 							notificationCode = attribute.getValue();
 							break;
 						}
