@@ -3544,4 +3544,70 @@ UNION ALL
 		update BMTAggrementDef set AutoDownload = 0 where AutoDownload is NULL;
 	</sql>
 </changeSet>
+<changeSet id="46" author="Umarohini">
+	<createView viewName="BMTAggrementdef_view" replaceIfExists="true">
+		SELECT t1.aggid,
+    t1.aggcode,
+    t1.aggname,
+    t1.aggdesc,
+    t1.aggreportname,
+    t1.aggreportpath,
+    t1.aggisactive,
+    t1.aggtype,
+    t1.aggimage,
+    t1.agrrule,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.rulecodedesc AS lovdescagrruledesc,
+    t1.allowmultiple,
+    t1.moduletype,
+    t1.modulename,
+    t1.doctype,
+    t1.autogeneration,
+    t1.autodownload
+   FROM bmtaggrementdef_temp t1
+     LEFT JOIN rules t2 ON t1.agrrule = t2.rulecode AND t2.rulemodule = 'AGRRULE'
+UNION ALL
+ SELECT t1.aggid,
+    t1.aggcode,
+    t1.aggname,
+    t1.aggdesc,
+    t1.aggreportname,
+    t1.aggreportpath,
+    t1.aggisactive,
+    t1.aggtype,
+    t1.aggimage,
+    t1.agrrule,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.rulecodedesc AS lovdescagrruledesc,
+    t1.allowmultiple,
+    t1.moduletype,
+    t1.modulename,
+    t1.doctype,
+    t1.autogeneration,
+    t1.autodownload
+   FROM bmtaggrementdef t1
+     LEFT JOIN rules t2 ON t1.agrrule = t2.rulecode AND t2.rulemodule = 'AGRRULE'
+  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM bmtaggrementdef_temp
+          WHERE bmtaggrementdef_temp.aggid = t1.aggid AND bmtaggrementdef_temp.aggcode = t1.aggcode))
+	</createView>
+</changeSet>
 	</databaseChangeLog>
