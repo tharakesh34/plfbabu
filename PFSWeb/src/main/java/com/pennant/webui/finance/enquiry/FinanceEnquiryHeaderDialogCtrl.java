@@ -131,6 +131,8 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
+import bsh.This;
+
 /**
  * This is the controller class for the
  * /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
@@ -171,6 +173,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	protected String	                 enquiryType	        = "";
 	protected String	                 finReference	        = "";
+	protected String	                 module	     		    = "";
+
 
 	// not auto wired variables
 	private FinanceDetailService			financeDetailService;
@@ -187,7 +191,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinFeeDetailService				finFeeDetailService;
 	private UploadHeaderService				uploadHeaderService;
 	@Autowired
-	private FinSamplingService 				finSamplingService;
+	private FinSamplingService 			finSamplingService;
 
 	private List<ValueLabel>	         enquiryList	        = PennantStaticListUtil.getEnquiryTypes();
 	private List<ValueLabel>	         mandateList	        = PennantStaticListUtil.getMandateTypeList();
@@ -285,6 +289,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceEnquiry enquiry = getFinanceEnquiry();
 
 		this.finReference_header.setValue(enquiry.getFinReference());
+		
+		this.setModule("LOAN");
 		this.finStatus_header.setValue(enquiry.getFinStatus());
 
 		if (enquiry.isFinIsActive()) {
@@ -454,15 +460,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("NTFLENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_NotificationLogListEnquiry.value"));
-			List<Notification> notificationDetails = getNotificationDetailsService().getNotificationLogDetailList(this.finReference);
-			System.out.println("Notification Size"+notificationDetails.size());
-			List<Notification> notificationDetailsSms = getNotificationDetailsService().getNotificationLogDetailSmsList(this.finReference);
-			map.put("smsList", notificationDetailsSms);
-			map.put("list", notificationDetails);
-			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/NotificationDetailsLogDialog.zul";
-				
+			List<Notification> notificationDetails = getNotificationDetailsService().getNotificationLogDetailList(this.finReference,this.module);
 			
-
+			map.put("list", notificationDetails);
+			map.put("finReference", finReference);
+			map.put("module", module);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/NotificationDetailsLogDialog.zul";
+	
 		} else if ("PFTENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ProfitListEnquiry.value"));
@@ -652,6 +656,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 		}
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
 
 	/**
 	 * 
