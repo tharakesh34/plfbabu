@@ -8061,7 +8061,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.row_BpiTreatment.setVisible(true);
 					}
 					if (!isReadOnly("FinanceMainDialog_BpiRateBasis")) {
-						this.row_BpiRateBasis.setVisible(true);
+						this.row_BpiRateBasis.setVisible(false);
 					}
 				}
 			}
