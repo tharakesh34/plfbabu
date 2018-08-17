@@ -7347,7 +7347,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setCustSector(custSector);
 		detail.getCustomerEligibilityCheck().setCustCtgCode(custCtgCode);
 		detail.getCustomerEligibilityCheck().setGraceTenure(
-				DateUtility.getYearsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
+				DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
 
 		detail.getCustomerEligibilityCheck().setReqFinCcy(financeMain.getFinCcy());
 		detail.getCustomerEligibilityCheck().setNoOfTerms(financeMain.getNumberOfTerms());
