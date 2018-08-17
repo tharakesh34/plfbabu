@@ -807,7 +807,7 @@
 				zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitList.zul"
 				rightName="menuItem_CustomerEnquiry_CustomerLimitEnq" />
 			<menuItem id="menu_Item_CollateralEnquiry"
-				zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E"
+				zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E&amp;enqiryModule=Y"
 				rightName="menuItem_Enquiry_CollateralSetup" />
 			<menuItem id="menu_Item_VASEnquiry"
 				zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E&amp;enqiryModule=Y"
