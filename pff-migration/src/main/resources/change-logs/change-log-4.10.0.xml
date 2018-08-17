@@ -3624,4 +3624,11 @@ UNION ALL
 			update FinServiceInstruction_Temp set PftChg = 0 where PftChg is null;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="48" author="Srinivasa Varma">
+		<sql>
+			Insert into PLF.RBFIELDDETAILS values ('AGRRULE','AGRRULE','disbOnGrace','Is Disbursement on Grace?','nchar',1,'0','1',' ','static,global',' ');
+		</sql>
+	</changeSet>
+	
 	</databaseChangeLog>

@@ -15678,7 +15678,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(detail.getCustomerDetails().getCustomer().getCustCtgCode()));
 		}
 		detail.setDataMap(dataMap);
-		
+		// Grace period Disbursement exists or not
+		detail.getCustomerEligibilityCheck().setDisbOnGrace(false);
+		if(financeMain.isNewRecord() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+			detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
+		}else{
+			List<FinanceDisbursement> tempDisbList = detail.getFinScheduleData().getDisbursementDetails();
+			List<FinanceDisbursement> aprdDisbList = getFinanceDetailService().getFinanceDisbursements(financeMain.getFinReference(), "", false);
+			for (FinanceDisbursement curDisb : tempDisbList) {
+				boolean isRcdFound = false;
+				for (FinanceDisbursement aprdDisb : aprdDisbList) {
+					if(aprdDisb.getDisbSeq() == curDisb.getDisbSeq()){
+						isRcdFound = true;
+						break;
+					}
+				}
+				if(!isRcdFound){
+					if(DateUtility.compare(curDisb.getDisbDate(), financeMain.getGrcPeriodEndDate()) <= 0){
+						detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
+					}
+				}
+			}
+		}
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();

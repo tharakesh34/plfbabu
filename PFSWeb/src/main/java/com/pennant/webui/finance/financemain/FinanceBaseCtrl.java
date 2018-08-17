@@ -7363,6 +7363,36 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setReqFinPurpose(financeMain.getFinPurpose());
 		detail.getCustomerEligibilityCheck().setRefundAmount(financeMain.getRefundAmount());
 		financeMain.setCustDSR(detail.getCustomerEligibilityCheck().getDSCR());
+		
+		if(BigDecimal.ZERO.compareTo(financeMain.getFinAssetValue())==0){
+			detail.getCustomerEligibilityCheck().setCurrentAssetValue(this.finAmount.getActualValue());
+		}else{
+			detail.getCustomerEligibilityCheck().setCurrentAssetValue(financeMain.getFinAssetValue());	
+		}
+		
+		// Grace period Disbursement exists or not
+		detail.getCustomerEligibilityCheck().setDisbOnGrace(false);
+		if(financeMain.isNewRecord() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+			detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
+		}else{
+			List<FinanceDisbursement> tempDisbList = detail.getFinScheduleData().getDisbursementDetails();
+			List<FinanceDisbursement> aprdDisbList = getFinanceDetailService().getFinanceDisbursements(financeMain.getFinReference(), "", false);
+			for (FinanceDisbursement curDisb : tempDisbList) {
+				boolean isRcdFound = false;
+				for (FinanceDisbursement aprdDisb : aprdDisbList) {
+					if(aprdDisb.getDisbSeq() == curDisb.getDisbSeq()){
+						isRcdFound = true;
+						break;
+					}
+				}
+				if(!isRcdFound){
+					if(DateUtility.compare(curDisb.getDisbDate(), financeMain.getGrcPeriodEndDate()) <= 0){
+						detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
+					}
+				}
+			}
+		}
+				
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 		setFinanceDetail(detail);
 		logger.debug("Leaving");

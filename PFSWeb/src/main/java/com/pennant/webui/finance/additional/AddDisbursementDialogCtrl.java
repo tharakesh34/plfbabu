@@ -1017,6 +1017,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			
 			List<FinanceScheduleDetail> financeScheduleDetails = scheduleData
 					.getFinanceScheduleDetails();
+			Date appDate = DateUtility.getAppDate();
+			int allowedDays = SysParamUtil.getValueAsInt("FutureNotAllowedDays_Disb");
 			
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
@@ -1056,8 +1058,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						&& curSchd.getSchDate().compareTo(this.fromDate.getValue()) <= 0) {
 					continue;
 				}
-				Date appDate = DateUtility.getAppDate();
-				int allowedDays = SysParamUtil.getValueAsInt("FutureNotAllowedDays_Disb");
 
 				if (allowedDays > 0) {
 					Date minValidDate = DateUtility.addDays(appDate, allowedDays);

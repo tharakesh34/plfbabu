@@ -101,6 +101,8 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal ltv = BigDecimal.ZERO;
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 	private String eligibilityMethod;
+	private boolean disbOnGrace = false;
+	
 	/*private String custCIF;	
 	private String custSubSector = "";
 	private String custCOB = "";
@@ -778,6 +780,15 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public Object getExtendedValue(String fieldName) {
 		return this.extendedFields.get(fieldName);
+	}
+
+	public boolean isDisbOnGrace() {
+		return disbOnGrace;
+	}
+
+
+	public void setDisbOnGrace(boolean disbOnGrace) {
+		this.disbOnGrace = disbOnGrace;
 	}
 	
 }
