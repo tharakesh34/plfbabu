@@ -138,83 +138,82 @@ import bsh.This;
  * /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
  */
 public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
-	private static final long	         serialVersionUID	    = -6646226859133636932L;
-	private static final Logger	         logger	                = Logger.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
+	private static final long serialVersionUID = -6646226859133636932L;
+	private static final Logger logger = Logger.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window	                 window_FinEnqHeaderDialog;	                                                  // autoWired
-	protected Borderlayout	             borderlayoutFinEnqHeader;	                                                      // autoWired
-	public Grid	                         grid_BasicDetails;	                                                          // autoWired
-	protected Tabpanel	                 tabPanel_dialogWindow;	                                                      // autoWired
+	protected Window window_FinEnqHeaderDialog; // autoWired
+	protected Borderlayout borderlayoutFinEnqHeader; // autoWired
+	public Grid grid_BasicDetails; // autoWired
+	protected Tabpanel tabPanel_dialogWindow; // autoWired
 
-	protected Textbox	                 finReference_header;	                                                          // autoWired
-	protected Textbox	                 finStatus_Reason;	  
-	protected Textbox	                 finStatus_header;	                                                              // autoWired
-	protected Textbox	                 finType_header;	                                                              // autoWired
-	protected Textbox	                 finCcy_header;	                                                              // autoWired
-	protected Textbox	                 scheduleMethod_header;	                                                      // autoWired
-	protected Textbox	                 profitDaysBasis_header;	                                                      // autoWired
-	protected Textbox	                 finBranch_header;	                                                              // autoWired
-	protected Textbox	                 custCIF_header;	                                                              // autoWired
-	protected Label 					 custShrtName; 		                                                              // autoWired
-	protected Label                      label_window_FinEnqHeaderDialog;   											// autoWired
-	
-	protected Label	                     label_FinEnqHeader_Filter;	                                                  // autoWired
-	protected Space	                     space_menubar;	                                                              // autoWired
-	protected Menu	                     menu_filter;	                                                                  // autoWired
-	protected Menupopup	                 menupopup_filter;	                                                              // autoWired
-	protected Button	                 btnPrint;	                                                                      // autoWired
-	protected Component	                 childWindow;
-    protected Menubar                    menubar;
-	
-	protected String	                 enquiryType	        = "";
-	protected String	                 finReference	        = "";
-	protected String	                 module	     		    = "";
+	protected Textbox finReference_header; // autoWired
+	protected Textbox finStatus_Reason;
+	protected Textbox finStatus_header; // autoWired
+	protected Textbox finType_header; // autoWired
+	protected Textbox finCcy_header; // autoWired
+	protected Textbox scheduleMethod_header; // autoWired
+	protected Textbox profitDaysBasis_header; // autoWired
+	protected Textbox finBranch_header; // autoWired
+	protected Textbox custCIF_header; // autoWired
+	protected Label custShrtName; // autoWired
+	protected Label label_window_FinEnqHeaderDialog; // autoWired
 
+	protected Label label_FinEnqHeader_Filter; // autoWired
+	protected Space space_menubar; // autoWired
+	protected Menu menu_filter; // autoWired
+	protected Menupopup menupopup_filter; // autoWired
+	protected Button btnPrint; // autoWired
+	protected Component childWindow;
+	protected Menubar menubar;
+
+	protected String enquiryType = "";
+	protected String finReference = "";
+	protected String module = "";
 
 	// not auto wired variables
-	private FinanceDetailService			financeDetailService;
-	private EligibilityDetailService		eligibilityDetailService;
-	private AgreementDetailService			agreementDetailService;
-	private ScoringDetailService			scoringDetailService;
-	private CheckListDetailService			checkListDetailService;
-	private FinCovenantTypeService			finCovenantTypeService;
+	private FinanceDetailService financeDetailService;
+	private EligibilityDetailService eligibilityDetailService;
+	private AgreementDetailService agreementDetailService;
+	private ScoringDetailService scoringDetailService;
+	private CheckListDetailService checkListDetailService;
+	private FinCovenantTypeService finCovenantTypeService;
 
-	private ManualPaymentService			manualPaymentService;
-	private OverdueChargeRecoveryService	overdueChargeRecoveryService;
-	private SuspenseService					suspenseService;
-	private FinanceDeviationsService		deviationDetailsService;
-	private FinFeeDetailService				finFeeDetailService;
-	private UploadHeaderService				uploadHeaderService;
+	private ManualPaymentService manualPaymentService;
+	private OverdueChargeRecoveryService overdueChargeRecoveryService;
+	private SuspenseService suspenseService;
+	private FinanceDeviationsService deviationDetailsService;
+	private FinFeeDetailService finFeeDetailService;
+	private UploadHeaderService uploadHeaderService;
 	@Autowired
-	private FinSamplingService 			finSamplingService;
+	private FinSamplingService finSamplingService;
 
-	private List<ValueLabel>	         enquiryList	        = PennantStaticListUtil.getEnquiryTypes();
-	private List<ValueLabel>	         mandateList	        = PennantStaticListUtil.getMandateTypeList();
-	private FinanceEnquiryListCtrl	     financeEnquiryListCtrl	= null;
-	private VASRecordingDialogCtrl	     vASRecordingDialogCtrl	= null;
-	private FinScheduleData	             finScheduleData;
-	private FinanceEnquiry	             financeEnquiry;
-	private FinanceSummary 				 financeSummary;
+	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryTypes();
+	private List<ValueLabel> mandateList = PennantStaticListUtil.getMandateTypeList();
+	private FinanceEnquiryListCtrl financeEnquiryListCtrl = null;
+	private VASRecordingDialogCtrl vASRecordingDialogCtrl = null;
+	private FinScheduleData finScheduleData;
+	private FinanceEnquiry financeEnquiry;
+	private FinanceSummary financeSummary;
 
-	int	                                 listRows;
-    private String assetCode = "";
-	private transient Object 			 childWindowDialogCtrl = null;
+	int listRows;
+	private String assetCode = "";
+	private transient Object childWindowDialogCtrl = null;
 	private boolean fromApproved;
 	private boolean childDialog;
 	@Autowired
-	private CustomerDetailsService			customerDetailsService;
+	private CustomerDetailsService customerDetailsService;
 	@Autowired
-	private DocumentDetailsDAO				documentDetailsDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
 	@Autowired
-	private CollateralAssignmentDAO			collateralAssignmentDAO;
-		
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+
 	private NotificationLogDetailsService notificationLogDetailsService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -244,7 +243,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		setPageComponents(window_FinEnqHeaderDialog);
 
 		try {
-			
+
 			if (arguments.containsKey("enquiryType")) {
 				this.enquiryType = (String) arguments.get("enquiryType");
 			}
@@ -255,19 +254,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.childDialog = (Boolean) arguments.get("childDialog");
 			}
 			if (arguments.containsKey("financeEnquiry")) {
-				this.setFinanceEnquiry((FinanceEnquiry) arguments
-						.get("financeEnquiry"));
+				this.setFinanceEnquiry((FinanceEnquiry) arguments.get("financeEnquiry"));
 				this.finReference = getFinanceEnquiry().getFinReference();
 			}
 
 			if (arguments.containsKey("financeEnquiryListCtrl")) {
-				this.setFinanceEnquiryListCtrl((FinanceEnquiryListCtrl) arguments
-						.get("financeEnquiryListCtrl"));
+				this.setFinanceEnquiryListCtrl((FinanceEnquiryListCtrl) arguments.get("financeEnquiryListCtrl"));
 			}
-			
+
 			if (arguments.containsKey("VASRecordingDialog")) {
-				this.setvASRecordingDialogCtrl((VASRecordingDialogCtrl) arguments
-						.get("VASRecordingDialog"));
+				this.setvASRecordingDialogCtrl((VASRecordingDialogCtrl) arguments.get("VASRecordingDialog"));
 			}
 			// Method for recall Enquiries
 			doFillDialogWindow();
@@ -281,6 +277,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for appending Child window on selection of Menu Enquiry
+	 * 
 	 * @throws InterruptedException
 	 */
 	public void doFillDialogWindow() throws InterruptedException {
@@ -289,7 +286,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceEnquiry enquiry = getFinanceEnquiry();
 
 		this.finReference_header.setValue(enquiry.getFinReference());
-		
+
 		this.setModule("LOAN");
 		this.finStatus_header.setValue(enquiry.getFinStatus());
 
@@ -298,7 +295,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.finStatus_header.setValue("Matured");
 		}
-		
+
 		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Normal");
@@ -306,18 +303,18 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finStatus_Reason.setValue("Cancelled");
 		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Written-Off");
-		}else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Settled");
 		}
-		
-		
+
 		this.custCIF_header.setValue(enquiry.getLovDescCustCIF());
 		this.custShrtName.setValue(enquiry.getLovDescCustShrtName());
 		this.finType_header.setValue(enquiry.getFinType() + "-" + enquiry.getLovDescFinTypeName());
 		this.finCcy_header.setValue(enquiry.getFinCcy());
 		this.scheduleMethod_header.setValue(enquiry.getScheduleMethod());
 		this.profitDaysBasis_header.setValue(enquiry.getProfitDaysBasis());
-		this.finBranch_header.setValue(enquiry.getFinBranch() == null ? "" : enquiry.getFinBranch() + "-" + enquiry.getLovDescFinBranchName());
+		this.finBranch_header.setValue(
+				enquiry.getFinBranch() == null ? "" : enquiry.getFinBranch() + "-" + enquiry.getLovDescFinBranchName());
 
 		if (childWindow != null) {
 			tabPanel_dialogWindow.getChildren().clear();
@@ -334,31 +331,35 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinanceEnquiry.value"));
 			this.grid_BasicDetails.setVisible(false);
-			if(fromApproved){
+			if (fromApproved) {
 				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_AView", true);
 				if (finScheduleData.getFinanceMain() == null) {
 					Clients.showNotification("Finance Reference Is Not Valid Create New Finance Reference");
 					this.window_FinEnqHeaderDialog.onClose();
 				}
 				FinanceSummary summary = finScheduleData.getFinanceSummary();
-				List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "");
+				List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false,
+						"");
 				calculateFeeChargeDetails(feeDetails, summary);
-			}else{
-				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_View",true);
-				if(finScheduleData != null) {
+			} else {
+				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_View", true);
+				if (finScheduleData != null) {
 					FinanceSummary summary = finScheduleData.getFinanceSummary();
-					List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "_View");
+					List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference,
+							false, "_View");
 					calculateFeeChargeDetails(feeDetails, summary);
 				}
 			}
-			if(finScheduleData.getFinanceMain()!=null){
-				FinContributorHeader contributorHeader = getFinanceDetailService().getFinContributorHeaderById(this.finReference);
+			if (finScheduleData.getFinanceMain() != null) {
+				FinContributorHeader contributorHeader = getFinanceDetailService()
+						.getFinContributorHeaderById(this.finReference);
 				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
 				map.put("financeSummary", financeSummary);
 
 				// finance Contract Asset Details
 				List<ContractorAssetDetail> assetDetails = null;
-				if(FinanceConstants.PRODUCT_ISTISNA.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())){
+				if (FinanceConstants.PRODUCT_ISTISNA
+						.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())) {
 					assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
 				}
 
@@ -372,10 +373,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("SCHENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ScheduleEnquiry.value"));
-			if(fromApproved){
-				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView",0);
-			}else{
-				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_View",0);
+			if (fromApproved) {
+				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView", 0);
+			} else {
+				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_View", 0);
 			}
 			map.put("finScheduleData", finScheduleData);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScheduleDetailsEnquiryDialog.zul";
@@ -408,7 +409,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("RPYENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RepaymentEnuiry.value"));
-			List<FinanceRepayments> financeRepayments = getManualPaymentService().getFinRepayListByFinRef(this.finReference, false,"");
+			List<FinanceRepayments> financeRepayments = getManualPaymentService()
+					.getFinRepayListByFinRef(this.finReference, false, "");
 			map.put("financeRepayments", financeRepayments);
 			map.put("finAmountformatter", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryDialog.zul";
@@ -423,7 +425,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("SUSENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_SuspenseEnquiry.value"));
-			FinanceSuspHead suspHead = getSuspenseService().getFinanceSuspHeadById(this.finReference, true, "","");
+			FinanceSuspHead suspHead = getSuspenseService().getFinanceSuspHeadById(this.finReference, true, "", "");
 			map.put("suspHead", suspHead);
 			path = "/WEB-INF/pages/Enquiry/SuspInquiry/SuspDetailEnquiryDialog.zul";
 
@@ -431,19 +433,22 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CheckListEnquiry.value"));
 			List<FinanceCheckListReference> financeCheckListReference;
-			if(fromApproved){
-				 financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference, "_AView");
-			}else{
-				 financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference, "_View");
+			if (fromApproved) {
+				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference,
+						"_AView");
+			} else {
+				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference,
+						"_View");
 			}
-			
+
 			map.put("FinanceCheckListReference", financeCheckListReference);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CheckListEnquiry.zul";
 
 		} else if ("ELGENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_EligibilityListEnquiry.value"));
-			List<FinanceEligibilityDetail> eligibilityDetails = getEligibilityDetailService().getFinElgDetailList(this.finReference);
+			List<FinanceEligibilityDetail> eligibilityDetails = getEligibilityDetailService()
+					.getFinElgDetailList(this.finReference);
 			map.put("eligibilityList", eligibilityDetails);
 			map.put("finAmountformatter", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityEnquiryDialog.zul";
@@ -455,18 +460,17 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("scoringList", scoreDetails);
 			map.put("custTypeCtg", enquiry.getCustTypeCtg());
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScoringEnquiryDialog.zul";
-			
-		
-		} else if ("NTFLENQ".equals(this.enquiryType)) {
 
+		} else if ("NTFLENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_NotificationLogListEnquiry.value"));
-			List<Notification> notificationDetails = getNotificationDetailsService().getNotificationLogDetailList(this.finReference,this.module);
-			
+			List<Notification> notificationDetails = getNotificationDetailsService()
+					.getNotificationLogDetailList(this.finReference, this.module);
+
 			map.put("list", notificationDetails);
 			map.put("finReference", finReference);
 			map.put("module", module);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/NotificationDetailsLogDialog.zul";
-	
+
 		} else if ("PFTENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ProfitListEnquiry.value"));
@@ -476,16 +480,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} else if ("CHQPRNT".equals(this.enquiryType)) {
 
-			//this.window_FinEnqHeaderDialog.setTitle(Labels.getLabel("label_ChequePrintingDialog_Title.value"));
+			// this.window_FinEnqHeaderDialog.setTitle(Labels.getLabel("label_ChequePrintingDialog_Title.value"));
 			this.btnPrint.setVisible(false);
 			this.menubar.setVisible(false);
 			this.space_menubar.setWidth("240px");
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ChequePrintingDialog.value"));
 			this.label_FinEnqHeader_Filter.setVisible(false);
-			
-			if(fromApproved){
+
+			if (fromApproved) {
 				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView", 0);
-			}else{
+			} else {
 				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_View", 0);
 			}
 			map.put("finScheduleData", finScheduleData);
@@ -498,65 +502,67 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("enquiry", true);
 			map.put("isFinanceNotes", true);
 			path = "/WEB-INF/pages/notes/notes.zul";
-			
+
 		} else if ("DEVENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DeviationEnquiry"));
-			List<FinanceDeviations> approvalLoanEnqList = getDeviationDetailsService().getApprovedFinanceDeviations(this.finReference);
-			List<FinanceDeviations> inprocessLoanEnqList = getDeviationDetailsService().getFinanceDeviations(this.finReference);
-			map.put("loanEnquiry", "");			
-			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);			
+			List<FinanceDeviations> approvalLoanEnqList = getDeviationDetailsService()
+					.getApprovedFinanceDeviations(this.finReference);
+			List<FinanceDeviations> inprocessLoanEnqList = getDeviationDetailsService()
+					.getFinanceDeviations(this.finReference);
+			map.put("loanEnquiry", "");
+			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			map.put("approvalLoanEnqList", approvalLoanEnqList);
 			map.put("inprocessLoanEnqList", inprocessLoanEnqList);
 			path = "/WEB-INF/pages/Finance/FinanceMain/DeviationDetailDialog.zul";
 
-		}else if ("DDAENQ".equals(this.enquiryType)) {
+		} else if ("DDAENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DDAEnquiry"));
-			
-			JdbcSearchObject<DDAProcessData> jdbcSearchObject=new JdbcSearchObject<DDAProcessData>();
+
+			JdbcSearchObject<DDAProcessData> jdbcSearchObject = new JdbcSearchObject<DDAProcessData>();
 			jdbcSearchObject.addTabelName("DDAReferenceLog");
 			jdbcSearchObject.addFilterEqual("FinRefence", this.finReference);
 			jdbcSearchObject.setSearchClass(DDAProcessData.class);
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<DDAProcessData> list = pagedListService.getBySearchObject(jdbcSearchObject);
-			
-			map.put("approvalEnquiry", "");			
-			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);			
+
+			map.put("approvalEnquiry", "");
+			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			map.put("list", list);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryDialog.zul";
-		}else if ("FINMANDENQ".equals(this.enquiryType)) {
+		} else if ("FINMANDENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinMandateEnquiry"));
-			
-			JdbcSearchObject<Mandate> jdbcSearchObject=new JdbcSearchObject<Mandate>();
+
+			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
 			jdbcSearchObject.addTabelName("Mandates_View");
 			jdbcSearchObject.addFilterEqual("MandateID", enquiry.getMandateID());
 			jdbcSearchObject.setSearchClass(Mandate.class);
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<Mandate> list = pagedListService.getBySearchObject(jdbcSearchObject);
-			if(!list.isEmpty()){
+			if (!list.isEmpty()) {
 				map.put("mandate", list.get(0));
-				map.put("fromLoanEnquiry", true);		
-				map.put("tabPaneldialogWindow", tabPanel_dialogWindow);			
+				map.put("fromLoanEnquiry", true);
+				map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
 			}
-		}else if ("ODENQ".equals(this.enquiryType)) {
-            this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueEnquiry"));
-			
-			JdbcSearchObject<FinODDetails> jdbcSearchObject=new JdbcSearchObject<FinODDetails>();
+		} else if ("ODENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueEnquiry"));
+
+			JdbcSearchObject<FinODDetails> jdbcSearchObject = new JdbcSearchObject<FinODDetails>();
 			jdbcSearchObject.addTabelName("FinODDetails");
 			jdbcSearchObject.addFilterEqual("FinReference", this.finReference);
 			jdbcSearchObject.setSearchClass(FinODDetails.class);
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<FinODDetails> list = pagedListService.getBySearchObject(jdbcSearchObject);
-			
-			map.put("approvalEnquiry", "");			
-			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);			
+
+			map.put("approvalEnquiry", "");
+			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			map.put("list", list);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/OverdueEnquiryDialog.zul";
 
-		}  else if ("LTPPENQ".equals(this.enquiryType)) {
+		} else if ("LTPPENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_LatepayProfitRecovery"));
 			map.put("finReference", this.finReference);
@@ -564,13 +570,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			path = "/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitRecoveryList.zul";
 
 		} else if ("COVENQ".equals(this.enquiryType)) {
-			
+
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CovenantEnquiry.value"));
 			List<FinCovenantType> finCovenants;
-			if(fromApproved){
-				 finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EAView",true);
-			}else{
-				 finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EView",true);
+			if (fromApproved) {
+				finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EAView", true);
+			} else {
+				finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EView", true);
 			}
 			map.put("finCovenants", finCovenants);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";
@@ -591,7 +597,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExpenseEnquiry.value"));
 			List<FinExpenseDetails> finExpenseDetails;
-			
+
 			finExpenseDetails = getUploadHeaderService().getFinExpenseDetailById(this.finReference);
 
 			map.put("finExpenseDetails", finExpenseDetails);
@@ -600,12 +606,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExpenseEnquiryDialog.zul";
 		} else if ("LOANEXTDET".equals(this.enquiryType)) {
 			logger.debug("Entering");
-			
+
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExtendedFieldsEnquiry"));
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			map.put("finaceEnquiry", getFinanceEnquiry());
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExtendedFieldsEnquiryDialog.zul";
-			
+
 			logger.debug("Leaving");
 		} else if ("SAMENQ".equals(this.enquiryType)) {
 
@@ -624,7 +630,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinReference(this.finReference);
 			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
-				financeDetail.setCustomerDetails(customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));
+				financeDetail.setCustomerDetails(
+						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));
 			}
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(this.finReference,
 					FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_TView");
@@ -641,21 +648,21 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (StringUtils.isNotEmpty(path)) {
 
-			//Child Window Calling
+			// Child Window Calling
 			childWindow = Executions.createComponents(path, tabPanel_dialogWindow, map);
-		
+
 			doFillFilterList();
-			
-			if(childDialog){
+
+			if (childDialog) {
 				this.window_FinEnqHeaderDialog.setHeight("80%");
 				this.window_FinEnqHeaderDialog.setWidth("90%");
 				setDialog(DialogType.MODAL);
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
 		}
 		logger.debug("Leaving");
-		}
+	}
 
 	public String getModule() {
 		return module;
@@ -677,7 +684,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				summary.setTotalFees(summary.getTotalFees().add(feeDetail.getActualAmount()));
 				summary.setTotalWaiverFee(summary.getTotalWaiverFee().add(feeDetail.getWaivedAmount()));
 				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
-						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 					totPaidFee = totPaidFee.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
 				} else {
 					totPaidFee = totPaidFee.add(feeDetail.getPaidAmount());
@@ -693,26 +701,26 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		notes.setReference(this.finReference);
 		return notes;
 	}
-	
+
 	private void doFillFilterList() {
 		logger.debug("Entering");
 		this.menupopup_filter.getChildren().clear();
 		Menuitem menuitem = null;
-		
-		boolean mandate=isMandate(StringUtils.trimToEmpty(getFinanceEnquiry().getFinRepayMethod()),mandateList);
-		
+
+		boolean mandate = isMandate(StringUtils.trimToEmpty(getFinanceEnquiry().getFinRepayMethod()), mandateList);
+
 		if (enquiryList != null && enquiryList.size() > 0) {
 			for (ValueLabel enquiry : enquiryList) {
 				String value = enquiry.getValue();
-				if(this.finReference.endsWith("_DP") && 
-						("ASSENQ".equals(value) || "ELGENQ".equals(value) ||
-								"SCRENQ".equals(value) || "CHKENQ".equals(value))){
+				if (this.finReference.endsWith("_DP") && ("ASSENQ".equals(value) || "ELGENQ".equals(value)
+						|| "SCRENQ".equals(value) || "CHKENQ".equals(value))) {
 					continue;
 				}
 				if ("FINMANDENQ".equals(value) && !mandate) {
 					continue;
 				}
-				if(!("ASSENQ".equalsIgnoreCase(value) && "NOTAPP".equalsIgnoreCase(StringUtils.trimToEmpty(assetCode)))){
+				if (!("ASSENQ".equalsIgnoreCase(value)
+						&& "NOTAPP".equalsIgnoreCase(StringUtils.trimToEmpty(assetCode)))) {
 					menuitem = new Menuitem();
 					menuitem.setImage("/images/icons/Old/arrow_blue_right_16x16.gif");
 					String label = enquiry.getLabel();
@@ -739,10 +747,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		return false;
 	}
+
 	/**
-	 * Method for OnClick Event on Menu Item Enqiries 
+	 * Method for OnClick Event on Menu Item Enqiries
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onFilterMenuItem(ForwardEvent event) throws InterruptedException {
 		if (event.getData() != null) {
@@ -757,8 +767,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * When user clicks on button "button_Print" button
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onClick$btnPrint(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
@@ -771,10 +782,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
-				
+
 				FinMainReportData reportData = new FinMainReportData();
-				reportData = reportData.getFinMainReportData(finScheduleData,financeSummary);
-				
+				reportData = reportData.getFinMainReportData(finScheduleData, financeSummary);
+
 				ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
 						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 			}
@@ -784,73 +795,77 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			List<Object> list = new ArrayList<Object>();
 			FinScheduleListItemRenderer finRender;
 			if (finScheduleData != null) {
-				
+
 				// Find Out Fee charge Details on Schedule
 				Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
-				if(finScheduleData.getFeeRules() != null && finScheduleData.getFeeRules().size() > 0){
+				if (finScheduleData.getFeeRules() != null && finScheduleData.getFeeRules().size() > 0) {
 					feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
 
 					for (FeeRule fee : finScheduleData.getFeeRules()) {
-						if(feeChargesMap.containsKey(fee.getSchDate())){
+						if (feeChargesMap.containsKey(fee.getSchDate())) {
 							ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
 							feeChargeList.add(fee);
 							feeChargesMap.put(fee.getSchDate(), feeChargeList);
-						}else{
+						} else {
 							ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
 							feeChargeList.add(fee);
 							feeChargesMap.put(fee.getSchDate(), feeChargeList);
 						}
 					}
 				}
-				
-				// Find Out Finance Repayment Details & Penalty Details on Schedule
+
+				// Find Out Finance Repayment Details & Penalty Details on
+				// Schedule
 				Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
 				Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap = null;
-				if(finScheduleData.getRepayDetails() != null && finScheduleData.getRepayDetails().size() > 0){
+				if (finScheduleData.getRepayDetails() != null && finScheduleData.getRepayDetails().size() > 0) {
 					rpyDetailsMap = new HashMap<Date, ArrayList<FinanceRepayments>>();
 					penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
 
-					//Repayment Details
+					// Repayment Details
 					for (FinanceRepayments rpyDetail : finScheduleData.getRepayDetails()) {
-						if(rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())){
+						if (rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())) {
 							ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
 							rpyDetailList.add(rpyDetail);
 							rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
-						}else{
+						} else {
 							ArrayList<FinanceRepayments> rpyDetailList = new ArrayList<FinanceRepayments>();
 							rpyDetailList.add(rpyDetail);
 							rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
 						}
 					}
-					
+
 					// Penalty Details
 					for (OverdueChargeRecovery penaltyDetail : finScheduleData.getPenaltyDetails()) {
-						if(penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())){
-							ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap.get(penaltyDetail.getFinODSchdDate());
+						if (penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())) {
+							ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap
+									.get(penaltyDetail.getFinODSchdDate());
 							penaltyDetailList.add(penaltyDetail);
 							penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
-						}else{
+						} else {
 							ArrayList<OverdueChargeRecovery> penaltyDetailList = new ArrayList<OverdueChargeRecovery>();
 							penaltyDetailList.add(penaltyDetail);
 							penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
 						}
 					}
 				}
-				
+
 				// Customer CIF Setting
 				finScheduleData.getFinanceMain().setLovDescCustCIF(this.custCIF_header.getValue());
-				
+
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
-				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData,rpyDetailsMap, penaltyDetailsMap, true);
+				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
+						penaltyDetailsMap, true);
 				list.add(subList);
 				String reportName = "FINENQ_ScheduleDetail";
-				 if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,finScheduleData.getFinanceMain().getProductCategory())) {
+				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+						finScheduleData.getFinanceMain().getProductCategory())) {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
-				ReportGenerationUtil.generateReport(reportName, finScheduleData.getFinanceMain(), list,
-						true, 1, getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+				ReportGenerationUtil.generateReport(reportName, finScheduleData.getFinanceMain(), list, true, 1,
+						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 			}
 		}
 
@@ -866,10 +881,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		try {
-			
-			if(childDialog){
+
+			if (childDialog) {
 				closeDialog();
-			}else{
+			} else {
 				this.tabPanel_dialogWindow.getChildren().clear();
 				closeDialog();
 			}
@@ -886,6 +901,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinanceEnquiryListCtrl(FinanceEnquiryListCtrl financeEnquiryListCtrl) {
 		this.financeEnquiryListCtrl = financeEnquiryListCtrl;
 	}
+
 	public FinanceEnquiryListCtrl getFinanceEnquiryListCtrl() {
 		return financeEnquiryListCtrl;
 	}
@@ -893,6 +909,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setSuspenseService(SuspenseService suspenseService) {
 		this.suspenseService = suspenseService;
 	}
+
 	public SuspenseService getSuspenseService() {
 		return suspenseService;
 	}
@@ -900,6 +917,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setOverdueChargeRecoveryService(OverdueChargeRecoveryService overdueChargeRecoveryService) {
 		this.overdueChargeRecoveryService = overdueChargeRecoveryService;
 	}
+
 	public OverdueChargeRecoveryService getOverdueChargeRecoveryService() {
 		return overdueChargeRecoveryService;
 	}
@@ -907,29 +925,31 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
-	
+
 	public EligibilityDetailService getEligibilityDetailService() {
 		return eligibilityDetailService;
 	}
-	public void setEligibilityDetailService(
-			EligibilityDetailService eligibilityDetailService) {
+
+	public void setEligibilityDetailService(EligibilityDetailService eligibilityDetailService) {
 		this.eligibilityDetailService = eligibilityDetailService;
 	}
-	
+
 	public AgreementDetailService getAgreementDetailService() {
 		return agreementDetailService;
 	}
-	public void setAgreementDetailService(
-			AgreementDetailService agreementDetailService) {
+
+	public void setAgreementDetailService(AgreementDetailService agreementDetailService) {
 		this.agreementDetailService = agreementDetailService;
 	}
 
 	public ScoringDetailService getScoringDetailService() {
 		return scoringDetailService;
 	}
+
 	public void setScoringDetailService(ScoringDetailService scoringDetailService) {
 		this.scoringDetailService = scoringDetailService;
 	}
@@ -937,6 +957,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
 	}
+
 	public ManualPaymentService getManualPaymentService() {
 		return manualPaymentService;
 	}
@@ -944,6 +965,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinanceEnquiry(FinanceEnquiry financeEnquiry) {
 		this.financeEnquiry = financeEnquiry;
 	}
+
 	public FinanceEnquiry getFinanceEnquiry() {
 		return financeEnquiry;
 	}
@@ -951,6 +973,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
 		this.checkListDetailService = checkListDetailService;
 	}
+
 	public CheckListDetailService getCheckListDetailService() {
 		return checkListDetailService;
 	}
@@ -958,6 +981,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setChildWindowDialogCtrl(Object childWindowDialogCtrl) {
 		this.childWindowDialogCtrl = childWindowDialogCtrl;
 	}
+
 	public Object getChildWindowDialogCtrl() {
 		return childWindowDialogCtrl;
 	}
@@ -985,7 +1009,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
 		this.finCovenantTypeService = finCovenantTypeService;
 	}
-	
+
 	public FinFeeDetailService getFinFeeDetailService() {
 		return finFeeDetailService;
 	}
@@ -1001,10 +1025,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {
 		this.uploadHeaderService = uploadHeaderService;
 	}
-	
+
 	public NotificationLogDetailsService getNotificationDetailsService() {
 		return notificationLogDetailsService;
 	}
+
 	public void setNotificationLogDetailsService(NotificationLogDetailsService notificationLogDetailsService) {
 		this.notificationLogDetailsService = notificationLogDetailsService;
 	}

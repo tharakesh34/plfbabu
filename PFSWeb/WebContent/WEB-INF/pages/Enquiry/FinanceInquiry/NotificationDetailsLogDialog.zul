@@ -20,8 +20,8 @@
 						</grid>
 						<tabbox width="99%" height="100%" id="tabBoxIndexCenter">
 							<tabs id="tabsIndexCenter">
-								<tab id="emailLogTab" label="E-mail Log" visible="true" />
-								<tab id="smsLogTab" label="SMS Log" visible="true" />
+								<tab id="emailLogTab" label="${c:l('notificationTabEmail')}" visible="true" />
+								<tab id="smsLogTab" label="${c:l('notificationTabSMS')}" visible="true" />
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel style="overflow:auto">
@@ -33,10 +33,10 @@
 										<listhead sizable="false">
 											<listheader
 												label="${c:l('listheader_Notification.Emailto.label')}"
-												sort="false" width="20%"/>
+												sort="false" width="15%"/>
 											<listheader
 												label="${c:l('listheader_Notification.EmailSubject.label')}"
-												width="25%" />
+												width="20%" />
 											<listheader
 												label="${c:l('listheader_Notification.EmailSubModule.label')}"
 												width="5%" />
@@ -45,7 +45,7 @@
 												width="5%" />
 											<listheader
 												label="${c:l('listheader_Notification.EmailCodeorDesc.label')}"
-												width="10%" />
+												width="15%" />
 										</listhead>
 									</listbox>
 								</tabpanel>
@@ -58,10 +58,10 @@
 										<listhead sizable="false">
 											<listheader
 												label="${c:l('listheader_Notification.SMSto.label')}"
-												sort="false" width="6%"/>
+												sort="false" width="10%"/>
 											<listheader
 												label="${c:l('listheader_Notification.SMSMessage.label')}"
-												width="45%" />
+												width="20%" />
 											<listheader
 												label="${c:l('listheader_Notification.SMSSubModule.label')}"
 												width="5%" />
@@ -70,7 +70,7 @@
 												width="5%" />
 											<listheader
 												label="${c:l('listheader_Notification.SMSCodeorDesc.label')}"
-												width="10%" />
+												width="15%" />
 										</listhead>
 									</listbox>
 								</tabpanel>

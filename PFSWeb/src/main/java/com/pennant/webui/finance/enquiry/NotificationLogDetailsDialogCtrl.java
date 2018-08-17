@@ -53,7 +53,6 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 	private List<Notification> notificationList;
 	@Autowired
 	protected NotificationLogDetailsService notificationLogDetailsService;
-	
 
 	protected String module = "";
 	protected String finReference = "";
@@ -111,7 +110,6 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 
 			// fill the components with the data
 			doFillNotificationEmail(this.notificationList);
-			// doFillNotificationSms(this.notificationListSms);
 
 			if (tabPanel_dialogWindow != null) {
 
@@ -139,17 +137,17 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 	}
 
 	public void onClick$smsLogTab() {
-	
+
 		logger.debug("Entering..");
-		String finReference=(String) arguments.get("finReference");
-		String module=(String) arguments.get("module");
+		String finReference = (String) arguments.get("finReference");
+		String module = (String) arguments.get("module");
 		arguments.get("finReference");
 		arguments.get("module");
-		List<Notification> notificationDetailsSms = getNotificationDetailsService().getNotificationLogDetailSmsList(finReference, module);
+		List<Notification> notificationDetailsSms = getNotificationDetailsService()
+				.getNotificationLogDetailSmsList(finReference, module);
 		doFillNotificationSms(notificationDetailsSms);
-		logger.debug("Leaving...");
-		}
-	
+		logger.debug(finReference+ "Leaving...");
+	}
 
 	public String getModule() {
 		return module;
@@ -169,57 +167,59 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 
 	public void doFillNotificationEmail(List<Notification> notifications) {
 		this.listBoxNotificationLogEmail.getItems().clear();
-		String emailId = "" ;
-	
+		String emailId = "";
+
 		if (notifications != null) {
 			for (Notification notification : notifications) {
 				for (MessageAddress messageAddress : notification.getAddressesList()) {
-					emailId =emailId+ messageAddress.getEmailId()+", ";
-					
+					emailId = emailId + messageAddress.getEmailId() + ", ";
+
 				}
-					Listitem item = new Listitem();
-					Listcell lc;
-					lc = new Listcell(emailId);
-					lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
-					lc.setTooltiptext(emailId);
-					lc.setParent(item);
-					
-					lc = new Listcell(notification.getSubject());
-					lc.setTooltiptext(notification.getSubject());
-					lc.setParent(item);
-					
-					lc = new Listcell(notification.getSubModule());
-					lc.setParent(item);
-					
-					lc = new Listcell(notification.getStage());
-					lc.setParent(item);
-	
-					String notificationCode = null;
-					if (CollectionUtils.isNotEmpty(notification.getAttributes())) {
-						for (NotificationAttribute attribute : notification.getAttributes()) {
-							if ("Notification_Code".equals(attribute.getAttribute())) {
-								notificationCode = attribute.getValue();
-								break;
-	
-							}
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(emailId);
+				lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+				lc.setTooltiptext(emailId);
+				lc.setParent(item);
+
+				lc = new Listcell(notification.getSubject());
+				lc.setTooltiptext(notification.getSubject());
+				lc.setParent(item);
+
+				lc = new Listcell(notification.getSubModule());
+				lc.setParent(item);
+
+				lc = new Listcell(notification.getStage());
+				lc.setParent(item);
+
+				String notificationCode = null;
+				if (CollectionUtils.isNotEmpty(notification.getAttributes())) {
+					for (NotificationAttribute attribute : notification.getAttributes()) {
+						if ("Notification_Code".equals(attribute.getAttribute())) {
+							notificationCode = attribute.getValue();
+							break;
+
 						}
-						if (notification != null) {
-							for (NotificationAttribute attribute : notification.getAttributes()) {
-								if ("Notification_Desc".equals(attribute.getAttribute())) {
-									notificationCode = notificationCode.concat(" ").concat(attribute.getValue());
-									break;
-								}
+					}
+					if (notification != null) {
+						for (NotificationAttribute attribute : notification.getAttributes()) {
+							if ("Notification_Desc".equals(attribute.getAttribute())) {
+								notificationCode = notificationCode.concat(" ").concat(attribute.getValue());
+								break;
 							}
 						}
 					}
-					lc = new Listcell(notificationCode);
-					lc.setParent(item);
-	
-					listBoxNotificationLogEmail.appendChild(item);
-				
+				}
+				lc = new Listcell(notificationCode);
+				lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+				lc.setTooltiptext(notificationCode);
+				lc.setParent(item);
+
+				listBoxNotificationLogEmail.appendChild(item);
+
 			}
 		}
-	
+
 	}
 
 	public void doFillNotificationSms(List<Notification> notifications) {
@@ -232,7 +232,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 				Listcell lc;
 				lc = new Listcell(notification.getMobileNumber());
 				lc.setParent(item);
-				
+
 				lc = new Listcell(notification.getMessage());
 				lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
 				lc.setTooltiptext(notification.getMessage());
@@ -261,6 +261,8 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 						}
 					}
 					lc = new Listcell(notificationCode);
+					lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+					lc.setTooltiptext(notificationCode);
 					lc.setParent(item);
 
 					listBoxNotificationLogSms.appendChild(item);
