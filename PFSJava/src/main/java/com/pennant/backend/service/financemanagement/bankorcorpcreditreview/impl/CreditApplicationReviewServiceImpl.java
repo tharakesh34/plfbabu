@@ -663,7 +663,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					isRcdType = true;
 				} else if (creditReviewSummaryEntry.getRecordType()
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD) && !creditReviewDetails.isNew()) {
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					creditReviewSummaryEntry.setNewRecord(false);
 					isRcdType = false;
@@ -1483,6 +1483,12 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCode(String creditRevCode) {
 
 		return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCode(creditRevCode);
+	}
+	
+	@Override
+	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode, List<Long> eligibilityIds) {
+		
+		return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(creditRevCode, eligibilityIds);
 	}
 
 	@Override
