@@ -143,6 +143,7 @@ public class AgreementDefinitionDialogCtrl extends
 																				// parameter
 	 private org.zkoss.zul.Label label_AgreementDefinitionDialog_autoDownload;
 	 private  org.zkoss.zul.Label label_AgreementDefinitionDialog_doc_Type;
+	 private  org.zkoss.zul.Label  label_AgreementDefinitionDialog_AutoGeneration;
 
 	private transient boolean validationOn;
 
@@ -494,6 +495,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.docType.setDescription(agreementDefinition.getLovDescDocumentType());
 		}		
 		else{
+		
 			this.autoDownload.setVisible(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 		}
@@ -708,22 +710,26 @@ public class AgreementDefinitionDialogCtrl extends
 			Filter[] filtersDoc = new Filter[1];
 			filtersDoc[0] = new Filter("categorycode", PennantConstants.WORFLOW_MODULE_FINANCE, Filter.OP_EQUAL);
 			this.docType.setFilters(filtersDoc);
-
 		}
 
 		if ((PennantConstants.WORFLOW_MODULE_FACILITY.equals(modulename))
+				|| (PennantConstants.WORFLOW_MODULE_PROMOTION.equals(modulename))
 				|| (PennantConstants.WORFLOW_MODULE_COLLATERAL.equals(modulename))
 				|| (PennantConstants.WORFLOW_MODULE_VAS.equals(modulename))
 				|| (PennantConstants.WORFLOW_MODULE_COMMITMENT.equals(modulename))) {
 			this.agrRule_row.setVisible(false);
 			this.allowMultiple_row.setVisible(false);
-			this.auto_check.setVisible(false);
-			this.docType.setValue("");
-
+			this.autoGeneration.setVisible(false);
+			this.label_AgreementDefinitionDialog_AutoGeneration.setVisible(false);
+			this.docType.setVisible(false);
+			this.label_AgreementDefinitionDialog_doc_Type.setVisible(false);
 		} else {
 			this.agrRule_row.setVisible(true);
 			this.allowMultiple_row.setVisible(true);
-			this.auto_check.setVisible(true);
+			this.autoGeneration.setVisible(true);
+			this.label_AgreementDefinitionDialog_AutoGeneration.setVisible(true);
+			this.docType.setVisible(true);
+			this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
 			
 		}
 
