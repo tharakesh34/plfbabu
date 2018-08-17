@@ -60,4 +60,8 @@
 		update AdtBMTAggrementDef set AutoDownload = 0 where AutoDownload is NULL;
 	</sql>
 </changeSet>
+<changeSet id="5" author="MadhuBabu">
+	<renameTable newTableName="ADTFEEWAIVERDETAILS"
+		oldTableName="ADTFEEWAIVERDETAIL" />
+</changeSet>
 	</databaseChangeLog>
