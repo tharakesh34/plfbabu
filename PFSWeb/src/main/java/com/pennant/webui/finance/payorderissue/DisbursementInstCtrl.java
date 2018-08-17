@@ -527,7 +527,8 @@ public class DisbursementInstCtrl {
 				date = financeDisbursement.getDisbDate();
 
 				//check is first disbursement
-				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()) {
+				if (DateUtility.compare(date, main.getFinStartDate()) == 0 && 
+						financeDisbursement.getDisbSeq() == 1) {
 
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
