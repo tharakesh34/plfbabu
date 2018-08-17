@@ -3609,5 +3609,19 @@ UNION ALL
            FROM bmtaggrementdef_temp
           WHERE bmtaggrementdef_temp.aggid = t1.aggid AND bmtaggrementdef_temp.aggcode = t1.aggcode))
 	</createView>
-</changeSet>
+</changeSet> 
+ <changeSet id="46" author="Siva">
+		<addColumn tableName="FinServiceInstruction">
+			<column name="PftChg" type="decimal(18,0)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="PftChg" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="47" author="Siva">
+		<sql>
+			update FinServiceInstruction set PftChg = 0 where PftChg is null;
+			update FinServiceInstruction_Temp set PftChg = 0 where PftChg is null;
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
