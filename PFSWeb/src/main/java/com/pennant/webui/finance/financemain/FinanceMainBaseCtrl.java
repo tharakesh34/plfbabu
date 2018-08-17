@@ -15681,7 +15681,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Grace period Disbursement exists or not
 		detail.getCustomerEligibilityCheck().setDisbOnGrace(false);
 		if(financeMain.isNewRecord() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
-			detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
+			if(financeMain.isAllowGrcPeriod()){
+				detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
+			}
 		}else{
 			List<FinanceDisbursement> tempDisbList = detail.getFinScheduleData().getDisbursementDetails();
 			List<FinanceDisbursement> aprdDisbList = getFinanceDetailService().getFinanceDisbursements(financeMain.getFinReference(), "", false);
