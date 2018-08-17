@@ -920,4 +920,22 @@
 			]]>
 		</sql>
 	</changeSet>	
+	<changeSet id="10" author="lakshmi.n">
+	<sql>
+		<![CDATA[
+		delete from REPORTLIST Where Code = 'Organization';
+		 INSERT INTO REPORTLIST  
+		 Values ('Organization','Organization',
+		 'listheader_CIF.label,listheader_OrgCode.label,listheader_Name.label,listheader_DateOfInc.label',
+		 'cif,code,name,date_Incorporation','String,String,String,Date',' ','ReportList04','Organization','Organization',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		 
+		 delete from REPORTLIST Where Code = 'IncomeExpenseHeader';
+		 INSERT INTO REPORTLIST  
+		 Values ('IncomeExpenseHeader','IncomeExpenseHeader',
+		 'listheader_CIF.label,listheader_FinancialYear.label',
+		 'custCif,financialYear','String,int',' ','ReportList02','IncomeExpense','IncomeExpense',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		 
+		]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>

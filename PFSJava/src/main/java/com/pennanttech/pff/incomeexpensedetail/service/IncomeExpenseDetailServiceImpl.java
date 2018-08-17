@@ -338,7 +338,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		}
 
 		IncomeExpenseHeader incomeExpenseHeader = (IncomeExpenseHeader) auditHeader.getAuditDetail().getModelData();
-		auditDetails.addAll(deleteChilds(incomeExpenseHeader, "", auditHeader.getAuditTranType()));
+		auditDetails.addAll(getListAuditDetails(deleteChilds(incomeExpenseHeader, "", auditHeader.getAuditTranType())));
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -417,15 +417,15 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				incomeExpenseHeader.getBefImage(), incomeExpenseHeader));
-
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeaderDAO.addAudit(auditHeader);
+		
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(incomeExpenseHeader);
-		auditHeader.setAuditDetails(auditDetails);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				incomeExpenseHeader.getBefImage(), incomeExpenseHeader));
+		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -451,7 +451,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				incomeExpenseHeader.getBefImage(), incomeExpenseHeader));
 
-		auditDetails.addAll(deleteChilds(incomeExpenseHeader, "_Temp", auditHeader.getAuditTranType()));
+		auditDetails.addAll(getListAuditDetails(deleteChilds(incomeExpenseHeader, "_Temp", auditHeader.getAuditTranType())));
 		incomeExpenseHeaderDAO.delete(incomeExpenseHeader, TableType.TEMP_TAB);
 		
 		auditHeader.setAuditDetails(auditDetails);
@@ -516,6 +516,49 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 
 		logger.debug(Literal.LEAVING);
 		return auditList;
+	}
+	
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
+
+		if (list != null && list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+
+				String transType = "";
+				String rcdType = "";
+				Object object = ((AuditDetail) list.get(i)).getModelData();
+				try {
+
+					rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
+
+					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						transType = PennantConstants.TRAN_ADD;
+					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+							|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						transType = PennantConstants.TRAN_DEL;
+					} else {
+						transType = PennantConstants.TRAN_UPD;
+					}
+
+					if (StringUtils.isNotEmpty(transType)) {
+
+						// check and change below line for Complete code Object
+						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
+								.invoke(object, object.getClass().getClasses());
+
+						auditDetailsList.add(
+								new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
+					}
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditDetailsList;
 	}
 	
 	@Override
