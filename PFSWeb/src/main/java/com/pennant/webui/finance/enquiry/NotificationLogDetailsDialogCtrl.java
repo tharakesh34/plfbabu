@@ -169,18 +169,22 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 
 	public void doFillNotificationEmail(List<Notification> notifications) {
 		this.listBoxNotificationLogEmail.getItems().clear();
-
+		String emailId = "" ;
+	
 		if (notifications != null) {
 			for (Notification notification : notifications) {
 				for (MessageAddress messageAddress : notification.getAddressesList()) {
-
+					emailId =emailId+ messageAddress.getEmailId()+", ";
+					
+				}
 					Listitem item = new Listitem();
 					Listcell lc;
-					lc = new Listcell(messageAddress.getEmailId());
+					lc = new Listcell(emailId);
+					lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+					lc.setTooltiptext(emailId);
 					lc.setParent(item);
 					
 					lc = new Listcell(notification.getSubject());
-					lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
 					lc.setTooltiptext(notification.getSubject());
 					lc.setParent(item);
 					
@@ -189,14 +193,14 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 					
 					lc = new Listcell(notification.getStage());
 					lc.setParent(item);
-
+	
 					String notificationCode = null;
 					if (CollectionUtils.isNotEmpty(notification.getAttributes())) {
 						for (NotificationAttribute attribute : notification.getAttributes()) {
 							if ("Notification_Code".equals(attribute.getAttribute())) {
 								notificationCode = attribute.getValue();
 								break;
-
+	
 							}
 						}
 						if (notification != null) {
@@ -210,12 +214,12 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 					}
 					lc = new Listcell(notificationCode);
 					lc.setParent(item);
-
+	
 					listBoxNotificationLogEmail.appendChild(item);
-				}
+				
 			}
 		}
-
+	
 	}
 
 	public void doFillNotificationSms(List<Notification> notifications) {

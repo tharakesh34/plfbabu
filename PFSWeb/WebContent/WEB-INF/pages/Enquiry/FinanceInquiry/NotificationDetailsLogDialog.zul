@@ -25,13 +25,27 @@
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel style="overflow:auto">
-									<listbox id="listBoxNotificationLogEmail" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
-										<listhead>
-											<listheader  id="emailTo" label="${c:l('listheader_Notification.Emailto.label')}" sort="false" width="12%" />
-											<listheader  id="emailSubject"  label="${c:l('listheader_Notification.EmailSubject.label')}" sort="false" width="35%" />
-											<listheader label="${c:l('listheader_Notification.EmailSubModule.label')}" sort="false" width="5%"/>
-											<listheader label="${c:l('listheader_Notification.EmailStage.label')}" sort="false" width="5%" />
-											<listheader label="${c:l('listheader_Notification.EmailCodeorDesc.label')}" sort="false" width="10%" />
+									<listbox
+										id="listBoxNotificationLogEmail" fixedLayout="true" span="true"
+										style="overflow:auto"
+										emptyMessage="${c:l('listbox.emptyMessage')} "
+										multiple="false">
+										<listhead sizable="false">
+											<listheader
+												label="${c:l('listheader_Notification.Emailto.label')}"
+												sort="false" width="20%"/>
+											<listheader
+												label="${c:l('listheader_Notification.EmailSubject.label')}"
+												width="25%" />
+											<listheader
+												label="${c:l('listheader_Notification.EmailSubModule.label')}"
+												width="5%" />
+											<listheader
+												label="${c:l('listheader_Notification.EmailStage.label')}"
+												width="5%" />
+											<listheader
+												label="${c:l('listheader_Notification.EmailCodeorDesc.label')}"
+												width="10%" />
 										</listhead>
 									</listbox>
 								</tabpanel>
@@ -44,7 +58,7 @@
 										<listhead sizable="false">
 											<listheader
 												label="${c:l('listheader_Notification.SMSto.label')}"
-												sort="false" width="6%" />
+												sort="false" width="6%"/>
 											<listheader
 												label="${c:l('listheader_Notification.SMSMessage.label')}"
 												width="45%" />
