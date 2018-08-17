@@ -400,7 +400,7 @@
 	</bean>
 	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl" parent="sequenceDao"/>
 	
-	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
+	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService" scope="prototype">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="notificationsService" ref="notificationsService" />
@@ -413,6 +413,10 @@
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
+	
+		<bean id="vehicleDealerService" class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl" parent="basisCodeDAO"/>
+		<bean id="financeReferenceDetailService" class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" parent="basisCodeDAO"/>
+	
 	
 	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
@@ -602,7 +606,35 @@
        <property name="snapShotColumnDAO" ref="snapShotColumnDAO" />
 	   <property name="snapShotDataSource" ref="snapShotDatasource" />
    </bean> -->
+   
+   <bean id="emailEngine" class="com.pennanttech.pennapps.notification.email.EmailEngine">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="outgoingMailProperties" />
+	</bean>
 	
+
+	 <bean id="smsEngine" class="com.pennanttech.pennapps.notification.sms.SmsEngine">
+		<constructor-arg ref="dataSource"/>
+		<!-- <constructor-arg value="${notification.sms.retrycount}"/> -->
+		<constructor-arg value="3"/>
+	</bean> 
+	
+	<bean id="outgoingMailProperties"
+		class="com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties">
+		<!-- <property name="servreId" value="${notification.email.out.server.id}" /> -->
+		<property name="user" value="${notification.email.out.user}" />
+		<property name="password" value="${notification.email.out.password}" />
+		<property name="host" value="${notification.email.out.host}" />
+		<property name="port" value="${notification.email.out.port}" />
+		<property name="encryptionType" value="${notification.email.out.encryptionType}" />
+		<property name="cronExpression" value="${notification.email.out.cronExpression}" />
+		<property name="from" value="${notification.email.out.from}" />
+		<property name="personal" value="${notification.email.out.personal}" />
+		<property name="returnMail" value="${notification.email.out.returnMail}" />
+		<!-- <property name="auth" value="${notification.email.out.auth}" /> -->
+		<!-- <property name="retrycount" value="${notification.email.out.retrycount}" /> -->
+	</bean>
+
 	<!-- GST Invoice -->
 	<bean id="gstInvoiceTxnDAO" class="com.pennant.backend.dao.finance.impl.GSTInvoiceTxnDAOImpl" parent="sequenceDao"/>
 		

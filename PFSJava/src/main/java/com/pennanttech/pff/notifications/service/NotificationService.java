@@ -105,7 +105,7 @@ public class NotificationService {
 	@Autowired
 	private EmailEngine emailEngine;
 
-	@Autowired(required = false)
+	@Autowired
 	private SmsEngine smsEngine;
 
 	@Autowired(required = false)
