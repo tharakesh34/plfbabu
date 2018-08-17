@@ -17,4 +17,5 @@
 	<include file="change-logs/change-log-4.9.0.xml" />
 	<include file="change-logs/change-log-4.10.0.xml"/>
 	<include file="change-logs/change-log-organizations.xml"/>
+	<!-- <include file="change-logs/change-log-LPP_AMZ.xml"/> -->
 </databaseChangeLog>
