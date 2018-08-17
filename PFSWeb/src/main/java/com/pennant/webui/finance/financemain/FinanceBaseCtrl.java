@@ -7271,7 +7271,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		FinanceDetail detail = getFinanceDetail();
 		//Stop Resetting data multiple times on Load Processing on Record or Double click the record
-		if (isLoadProcess) {
+		if (isLoadProcess && getFinanceDetail().getCustomerEligibilityCheck() != null) {
 			return detail;
 		}
 
