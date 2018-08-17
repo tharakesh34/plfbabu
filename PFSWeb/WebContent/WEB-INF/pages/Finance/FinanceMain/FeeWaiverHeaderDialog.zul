@@ -92,15 +92,6 @@
 										<datebox id="valueDate"
 											width="100px" />
 									</hbox>
-
-									<label id="label_PostingDate"
-										value="${c:l('label_feeWaiverHeaderDialog_PostingDate.value')}" />
-									<hbox>
-										<space id="space_PostingDate"
-											spacing="2px" sclass="mandatory"/>
-										<datebox id="postingDate"
-											width="100px" />
-									</hbox>
 								</row>
 								<row>
 									<label

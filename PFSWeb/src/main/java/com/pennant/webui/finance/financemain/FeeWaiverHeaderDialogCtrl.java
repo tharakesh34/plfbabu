@@ -107,7 +107,6 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	protected Window window_feeWaiverHeaderDialog;
 
 	protected Textbox remarks;
-	protected Datebox postingDate;
 	protected Datebox valueDate;
 	protected Checkbox select;
 	protected Listheader listheader_Select;
@@ -239,7 +238,6 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		setStatusDetails();
 		this.remarks.setMaxlength(500);
-		this.postingDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		logger.debug("Leaving");
@@ -341,10 +339,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		appendFinBasicDetails(this.financeMain);
 
 		if (aFeeWaiverHeader.isNewRecord()) {
-			this.postingDate.setValue(DateUtility.getAppDate());
 			this.valueDate.setValue(DateUtility.getAppDate());
 		} else {
-			this.postingDate.setValue(aFeeWaiverHeader.getPostingDate());
 			this.valueDate.setValue(aFeeWaiverHeader.getValueDate());
 		}
 
@@ -392,9 +388,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			wve.add(we);
 		}
 		try {
-			if (this.postingDate.getValue() != null) {
-				aFeeWaiverHeader.setPostingDate(new Timestamp(this.postingDate.getValue().getTime()));
-			}
+				aFeeWaiverHeader.setPostingDate(DateUtility.getAppDate());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -563,11 +557,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		if (getWorkFlow().firstTaskOwner().equals(getRole())) {
 			this.remarks.setReadonly(false);
-			this.postingDate.setDisabled(false);;
 			this.valueDate.setDisabled(false);
 		} else {
 			this.remarks.setReadonly(true);
-			this.postingDate.setDisabled(true);
 			this.valueDate.setDisabled(true);
 		}
 
@@ -640,9 +632,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				// Confirmation message
 				String msg = PennantApplicationUtil.getSavingStatus(aFeeWaiverHeader.getRoleCode(),
 						aFeeWaiverHeader.getNextRoleCode(), aFeeWaiverHeader.getFinReference() + "",
-						" Covenant Details ", aFeeWaiverHeader.getRecordStatus());
+						" Fee Waiver Details ", aFeeWaiverHeader.getRecordStatus());
 				if (StringUtils.equals(aFeeWaiverHeader.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
-					msg = " Covenant Detail with Reference " + aFeeWaiverHeader.getFinReference()
+					msg = " Fee Waiver Details with Reference " + aFeeWaiverHeader.getFinReference()
 							+ " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);

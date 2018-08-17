@@ -2237,8 +2237,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FeeWaiverHeader", new ModuleMapping("FeeWaiverHeader", FeeWaiverHeader.class, new String[] { "FeeWaiverHeader",
 		"FeeWaiverHeader_View" }, feeWaiverWF, new String[] {"WaiverId","FinReference"},null, 600));
 
-		ModuleUtil.register("FeeWaiverDetail", new ModuleMapping("FeeWaiverDetail", FeeWaiverDetail.class, new String[] { "FeeWaiverDetail",
-		"FeeWaiverDetail" }, null, new String[] {"WaiverId","WaivedAmount"},null, 600));
+		ModuleUtil.register("FeeWaiverDetail", new ModuleMapping("FeeWaiverDetail", FeeWaiverDetail.class, new String[] { "FeeWaiverDetails",
+		"FeeWaiverDetails" }, null, new String[] {"WaiverId","WaivedAmount"},null, 600));
  
 		ModuleUtil.register("UploadHeader", new ModuleMapping("UploadHeader", UploadHeader.class, new String[] { "uploadheader",
 		"UPLOADHEADER_AVIEW" }, null, new String[] {"UploadId","FileName"},null, 600));
