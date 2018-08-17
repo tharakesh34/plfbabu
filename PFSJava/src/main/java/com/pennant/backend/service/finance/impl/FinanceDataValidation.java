@@ -2762,9 +2762,36 @@ public class FinanceDataValidation {
 
 		//Validate BPI
 		if (financeType.isAlwBPI()) {
-		errorDetails = bpiValidation(finScheduleData);
+			errorDetails = bpiValidation(finScheduleData);
 		} else if (finMain.isAlwBPI()) {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90228", null)));
+			return errorDetails;
+		}
+		
+		// Advance EMI Validation
+		if(financeType.isAlwAdvEMI()){
+			if(financeType.getAdvEMIMinTerms() > 0 && financeType.getAdvEMIMaxTerms() > 0) {
+				if(finMain.getAdvEMITerms() < financeType.getAdvEMIMinTerms() || finMain.getAdvEMITerms() > financeType.getAdvEMIMaxTerms()) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Advance EMI";
+					valueParm[1] = String.valueOf(financeType.getAdvEMIMinTerms());
+					valueParm[2] = String.valueOf(financeType.getAdvEMIMaxTerms());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
+					return errorDetails;
+				}
+			}
+			if(finMain.getAdvEMITerms()>=finMain.getNumberOfTerms()){
+				String[] valueParm = new String[3];
+				valueParm[0] = "Advance EMI terms : "+String.valueOf(finMain.getAdvEMITerms());
+				valueParm[1] = " Number of terms : "+String.valueOf(finMain.getNumberOfTerms());;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
+				return errorDetails;
+			}
+		}else if(finMain.getAdvEMITerms() > 0) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Advance EMI Terms";
+			valueParm[1] = financeType.getFinType();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 			return errorDetails;
 		}
 

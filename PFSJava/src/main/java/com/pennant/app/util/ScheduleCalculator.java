@@ -262,6 +262,10 @@ public class ScheduleCalculator {
 			}
 			
 			setFinScheduleData(procGetCalSchd(finScheduleData));
+			
+			if (finScheduleData.getFinanceMain().getAdvEMITerms() > 0) {
+				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
+			}
 		}
 
 		if (StringUtils.equals(method, PROC_GETFRQEMIH)) {
@@ -5493,6 +5497,11 @@ public class ScheduleCalculator {
 		boolean isAdjustClosingBal = finMain.isAdjustClosingBal();
 
 		int sdSize = finSchdDetails.size();
+		
+		if(!isAdjustClosingBal){
+			sdSize = finSchdDetails.size()-finMain.getAdvEMITerms();
+		}
+		
 		int riSize = repayInstructions.size();
 		int iTerms = finMain.getAdjTerms();
 		int iRpyInst = 0;

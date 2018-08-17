@@ -852,11 +852,13 @@ public class FinanceDataDefaulting {
 		if (finMain.isAlwBPI()) {
 			if (StringUtils.isBlank(finMain.getBpiTreatment())) {
 				finMain.setBpiTreatment(financeType.getBpiTreatment());
-				finMain.setBpiRateBasis(financeType.getBpiRateBasis());
 			}
+			finMain.setBpiRateBasis(financeType.getBpiRateBasis());
 		} else {
 			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 		}
+		
+		
 	}
 
 	private void overdueDefaulting(String vldGroup, FinScheduleData finScheduleData) {
