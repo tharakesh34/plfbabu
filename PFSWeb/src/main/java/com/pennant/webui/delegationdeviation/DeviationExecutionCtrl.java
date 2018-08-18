@@ -139,7 +139,6 @@ public class DeviationExecutionCtrl {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * Check custom deviations and add to finance deviations, if any.
 	 * 

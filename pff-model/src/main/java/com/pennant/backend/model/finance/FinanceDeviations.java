@@ -53,6 +53,15 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 		this.approvalStatus = "";
 	}
 
+	public FinanceDeviations(String deviationCode, String deviationDesc, String module, String deviationCategory) {
+		this();
+
+		this.deviationCode = deviationCode;
+		this.deviationDesc = deviationDesc;
+		this.module = module;
+		this.deviationCategory = deviationCategory;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custCIF");
