@@ -66,6 +66,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -356,70 +357,72 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	}
 
 	/**
-	 * This method fills all the contacts of the user
+	 * This method fills all the contacts of the user.
 	 */
 	private void doFillContacts() {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
-		this.contacts.getItems().clear();
+		// Clear the existing list box.
+		contacts.getItems().clear();
 
+		// Get the list of user contacts.
 		UserContactsList list = getMessagesService().getUserContactsList(username, "USERS");
 
 		if (list == null || StringUtils.isEmpty(list.getContactsList())) {
 			return;
 		}
 
-		String contacts[] = list.getContactsList().split(",");
+		// Display the user contacts.
 		Listitem listitem;
-		Listcell listcell;
 
-		for (String contact : contacts) {
+		for (String contact : list.getContactsList().split(",")) {
 			listitem = new Listitem();
 			listitem.setId(contact);
-			this.contacts.appendChild(listitem);
+			contacts.appendChild(listitem);
 
-			listcell = new Listcell();
-			listcell.setLabel(contact);
-			listcell.setParent(listitem);
+			listitem.appendChild(new Listcell(contact));
 		}
 
+		// Show online users.
 		doShowOnlineUsers();
 
-		logger.debug("Leaving");
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**
-	 * This method fills all roles List
-	 * 
-	 * @throws Exception
+	 * This method fills all the roles.
 	 */
-	private void doFillRoles() throws Exception {
-		logger.debug("Entering");
+	private void doFillRoles() {
+		logger.trace(Literal.ENTERING);
 
-		this.roles.getItems().clear();
+		// Clear the existing list box.
+		roles.getItems().clear();
 
-		JdbcSearchObject<SecurityRole> object = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
-		object.addTabelName("SecRoles");
-		object.addSort("RoleCd", false);
+		// Get the list of system roles.
+		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<>(SecurityRole.class);
+		searchObject.addTabelName("SecRoles");
+		searchObject.addSort("RoleCd", false);
 
-		SearchResult<SecurityRole> result = getPagedListWrapper().getPagedListService().getSRBySearchObject(object);
-		Listitem listitem;
-		Listcell listcell;
+		SearchResult<SecurityRole> result = getPagedListWrapper().getPagedListService()
+				.getSRBySearchObject(searchObject);
 
-		if (result != null) {
-			for (int i = 0; i < result.getResult().size(); i++) {
-				listitem = new Listitem();
-				// Prefix with "#RL#_" to avoid conflicts with user names
-				listitem.setId(String.valueOf("#RL#_" + result.getResult().get(i).getRoleCd()));
-				this.roles.appendChild(listitem);
-
-				listcell = new Listcell();
-				listcell.setLabel(result.getResult().get(i).getRoleCd());
-				listcell.setParent(listitem);
-			}
+		if (result == null) {
+			return;
 		}
 
-		logger.debug("Leaving");
+		// Display the system roles.
+		Listitem listitem;
+
+		for (SecurityRole role : result.getResult()) {
+			listitem = new Listitem();
+			// Prefix with "#RL#_" to avoid conflicts with user names.
+			listitem.setId("#RL#_" + role.getRoleCd());
+			roles.appendChild(listitem);
+
+			listitem.appendChild(new Listcell(role.getRoleCd()));
+		}
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**
