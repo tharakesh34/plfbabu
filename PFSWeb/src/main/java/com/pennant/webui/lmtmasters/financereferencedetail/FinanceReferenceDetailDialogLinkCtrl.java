@@ -806,7 +806,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.rowPostpone.setVisible(false);
 		}
 		
-		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FINANCE)) {
+		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FINANCE)
+				&& FinanceConstants.PROCEDT_TEMPLATE == financeReferenceDetail.getFinRefType()) {
 			this.row_Resend.setVisible(true);
 		}
 
