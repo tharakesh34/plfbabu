@@ -280,8 +280,12 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		StringBuilder selectSql = new StringBuilder(" select T1.SummaryId,T1.DetailId,T1.SubCategoryCode,T1.ItemValue,");
 		selectSql.append(" T2.ConversionRate LovDescConversionRate,T2.bankName LovDescBankName ,T2.noOfShares lovDescNoOfShares,");
 		selectSql.append(" T2.marketPrice lovDescMarketPrice, T3.CcyEditField lovDescCcyEditField "); 
-		selectSql.append(" from FinCreditReviewSummary"+type+" T1  ");
-		selectSql.append(" INNER JOIN finCreditReviewDetails"+type+ " T2 on T1.detailId = T2.detailId ");
+		selectSql.append(" from FinCreditReviewSummary");
+		selectSql.append(type);
+		selectSql.append(" T1 ");
+		selectSql.append(" INNER JOIN finCreditReviewDetails");
+		selectSql.append(type);
+		selectSql.append(" T2 on T1.detailId = T2.detailId ");
 		selectSql.append(" INNER JOIN RMTCurrencies T3 ON T2.Currency = T3.CcyCode ");
 		selectSql.append(" where T2.CustomerId = :CustomerId and T2.Audityear = :Audityear");
 
@@ -385,8 +389,12 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		selectSql.append(" T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode," );
 		selectSql.append(" T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,");
 		selectSql.append(" T4.CategoryID lovDescCategoryId, T4.CategoryDesc lovDescCategoryDesc, T3.SubCategoryDesc lovDescSubCategoryDesc ");
-		selectSql.append(" from FinCreditReviewSummary"+type+" T1 ");
-		selectSql.append(" inner join finCreditReviewDetails"+type+" T2 on T1.detailId = T2.detailId ");
+		selectSql.append(" from FinCreditReviewSummary");
+		selectSql.append(type);
+		selectSql.append(" T1 ");
+		selectSql.append(" inner join finCreditReviewDetails");
+		selectSql.append(type);
+		selectSql.append(" T2 on T1.detailId = T2.detailId ");
 		selectSql.append(" inner join FinCreditRevSubCategory T3 on T1.SubCategoryCode = t3.SubCategoryCode ");
 		selectSql.append(" inner join FinCreditRevCategory T4 on T3.CategoryId = T4.CategoryId ");
 		
@@ -427,8 +435,12 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		selectSql.append(" T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,");
 		selectSql.append(" T4.CategoryID lovDescCategoryId, T4.CategoryDesc lovDescCategoryDesc, T3.SubCategoryDesc lovDescSubCategoryDesc ");
 
-		selectSql.append(" from FinCreditReviewSummary"+type+" T1 ");
-		selectSql.append(" inner join finCreditReviewDetails"+type+" T2 on T1.detailId = T2.detailId ");
+		selectSql.append(" from FinCreditReviewSummary");
+		selectSql.append(type);
+		selectSql.append(" T1 ");
+		selectSql.append(" inner join finCreditReviewDetails");
+		selectSql.append(type);
+		selectSql.append(" T2 on T1.detailId = T2.detailId ");
 		selectSql.append(" inner join FinCreditRevSubCategory T3 on T1.SubCategoryCode = t3.SubCategoryCode ");
 		selectSql.append(" inner join FinCreditRevCategory T4 on T3.CategoryId = T4.CategoryId ");
 		selectSql.append(" Where T2.Customerid = :Customerid and T2.Audityear = :Audityear");
