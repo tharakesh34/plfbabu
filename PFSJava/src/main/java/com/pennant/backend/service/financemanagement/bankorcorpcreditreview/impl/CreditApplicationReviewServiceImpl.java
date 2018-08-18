@@ -1488,7 +1488,8 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 	@Override
 	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode, List<Long> eligibilityIds) {
 		
-		return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(creditRevCode, eligibilityIds);
+		return null;
+		//return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(creditRevCode, eligibilityIds);
 	}
 
 	@Override
