@@ -1119,10 +1119,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// UnRealized Income Amount Resetting 
 		profitDetail.setAmzTillLBD(profitDetail.getAmzTillLBD().add((BigDecimal)returnList.get(1)));
-		profitDetail.setLpiTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal)returnList.get(3)));
-		profitDetail.setGstLpiTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal)returnList.get(4)));
-		profitDetail.setLppTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal)returnList.get(5)));
-		profitDetail.setGstLppTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal)returnList.get(6)));
+		profitDetail.setLpiTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal)returnList.get(2)));
+		profitDetail.setGstLpiTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal)returnList.get(3)));
+		profitDetail.setLppTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal)returnList.get(4)));
+		profitDetail.setGstLppTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal)returnList.get(5)));
 		
 		if(schdList == null){
 			schdList = scheduleData.getFinanceScheduleDetails();

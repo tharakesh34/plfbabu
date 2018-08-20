@@ -11192,6 +11192,7 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 	</bean>
 	
 	<bean id="cashManagementAccounting" class="com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting"  >

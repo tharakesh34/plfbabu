@@ -669,8 +669,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setParent(item);
 				
 				//Bank Name
-				lc = new Listcell(depositCheque.getPartnerBankCode());
-				lc.setParent(item);
+				//lc = new Listcell(depositCheque.getPartnerBankCode());
+				//lc.setParent(item);
 				
 				//Amount
 				lc = new Listcell(PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));

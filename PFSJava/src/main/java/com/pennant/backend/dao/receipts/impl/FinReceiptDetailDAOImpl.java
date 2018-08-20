@@ -57,6 +57,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -231,6 +232,30 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		Date maxReceivedDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 		logger.debug("Leaving");
 		return maxReceivedDate;
+	}
+	
+	@Override
+	public void updateFundingAcByReceiptID(long receiptID, long fundingAc, String type) {
+		logger.debug("Entering");
+		
+		List<String> paymentTypes = new ArrayList<String>();
+		paymentTypes.add(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
+		paymentTypes.add(DisbursementConstants.PAYMENT_TYPE_DD);
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("FundingAc", fundingAc);
+		source.addValue("PaymentType", paymentTypes);
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
+		updateSql.append(type);
+		updateSql.append(" Set FundingAc = :FundingAc");
+		updateSql.append(" Where ReceiptID = :ReceiptID And PaymentType in (:PaymentType)");
+
+		logger.debug("selectSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		
+		logger.debug("Leaving");
 	}
 
 }

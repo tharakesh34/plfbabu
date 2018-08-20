@@ -34,8 +34,6 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 	private Date				receivedDate;
 	private long				fundingAc;
 
-	private String				partnerBankCode;
-	private String				partnerBankName;
 	private boolean				visible				= false;		// For Display purpose
 	private String 				branchCode;	// Respective branch cheques we have show the user 
 	
@@ -65,8 +63,6 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("remarks");
 		excludeFields.add("receivedDate");
 		excludeFields.add("fundingAc");
-		excludeFields.add("partnerBankCode");
-		excludeFields.add("partnerBankName");
 		excludeFields.add("visible");
 		excludeFields.add("branchCode");
 		
@@ -206,22 +202,6 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 
 	public void setFundingAc(long fundingAc) {
 		this.fundingAc = fundingAc;
-	}
-
-	public String getPartnerBankCode() {
-		return partnerBankCode;
-	}
-
-	public void setPartnerBankCode(String partnerBankCode) {
-		this.partnerBankCode = partnerBankCode;
-	}
-
-	public String getPartnerBankName() {
-		return partnerBankName;
-	}
-
-	public void setPartnerBankName(String partnerBankName) {
-		this.partnerBankName = partnerBankName;
 	}
 
 	public boolean isVisible() {

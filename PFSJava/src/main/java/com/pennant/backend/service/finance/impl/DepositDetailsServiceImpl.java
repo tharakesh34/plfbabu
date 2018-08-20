@@ -56,6 +56,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.receipts.CashDenominationDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -87,6 +88,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	private PostingsDAO					postingsDAO;
 	private DepositChequesDAO			depositChequesDAO;
 	private FinReceiptHeaderDAO			finReceiptHeaderDAO;
+	private FinReceiptDetailDAO			finReceiptDetailDAO;
 
 	public DepositDetailsServiceImpl() {
 		super();
@@ -213,7 +215,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 					List<AuditDetail> depositChequesAuditList = depositDetails.getAuditDetailMap()
 							.get("DepositCheques");
 					depositChequesAuditList = processDepositChequesList(depositChequesAuditList, tableType.getSuffix(),
-							movements.getMovementId());
+							movements.getMovementId(), movements.getPartnerBankId());
 					auditDetails.addAll(depositChequesAuditList);
 				}
 
@@ -388,7 +390,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		return auditDetails;
 	}
 
-	private List<AuditDetail> processDepositChequesList(List<AuditDetail> auditDetails, String type, long movementId) {
+	private List<AuditDetail> processDepositChequesList(List<AuditDetail> auditDetails, String type, long movementId, long partnerBank) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -456,6 +458,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 						tableType = "_Temp";
 					}
 					finReceiptHeaderDAO.updateDepositProcessByReceiptID(depositCheques.getReceiptId(), false, tableType);
+					finReceiptDetailDAO.updateFundingAcByReceiptID(depositCheques.getReceiptId(), partnerBank, tableType);
 				}
 			}
 			if (updateRecord) {
@@ -762,7 +765,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 					if (CollectionUtils.isNotEmpty(movements.getDepositChequesList())) {
 						List<AuditDetail> depositChequesAuditDetails = depositDetails.getAuditDetailMap().get("DepositCheques");
 						depositChequesAuditDetails = processDepositChequesList(depositChequesAuditDetails, "",
-								movements.getMovementId());
+								movements.getMovementId(), movements.getPartnerBankId());
 						auditDetails.addAll(depositChequesAuditDetails);
 					}
 					break; // We have only one movement, so we are breaking the loop
@@ -1360,5 +1363,13 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	@Override
 	public List<DepositCheques> getDepositChequesList(String branchCode) {
 		return getDepositChequesDAO().getDepositChequesList(branchCode);
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 }

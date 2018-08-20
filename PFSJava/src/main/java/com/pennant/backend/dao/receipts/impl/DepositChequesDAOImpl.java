@@ -202,7 +202,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		StringBuilder sql = new StringBuilder("SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, LinkedTranId,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", Receiptpurpose, FavourNumber, ReceivedDate, FundingAc, Remarks, FinReference,  CustShrtName, PartnerBankCode, PartnerBankName");
+			sql.append(", Receiptpurpose, FavourNumber, ReceivedDate, FundingAc, Remarks, FinReference,  CustShrtName");
 		}
 		sql.append(" From DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -230,24 +230,22 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T1.Remarks, T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount,");
-		sql.append(" T3.FinReference, T4.CustShrtName, T5.PartnerBankCode, T5.PartnerBankName FROM FinReceiptHeader_Temp T1 ");
+		sql.append(" T3.FinReference, T4.CustShrtName FROM FinReceiptHeader_Temp T1 ");
 		sql.append(" INNER JOIN (SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail_Temp T ");
 		sql.append(" UNION ALL SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail T ");
 		sql.append(" WHERE NOT EXISTS(SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId");
 		sql.append(" INNER JOIN FinanceMain T3 ON T1.Reference = T3.finReference");
 		sql.append(" INNER JOIN Customers T4 ON T3.CustId = T4.CustId");
-		sql.append(" INNER JOIN PartnerBanks T5 ON T5.PartnerBankId = T2.FundingAc");
 		sql.append(" WHERE T1.ReceiptMode in (:ReceiptModes) and T1.DepositProcess = :DepositProcess And T1.DepositBranch = :DepositBranch");
 		sql.append(" And T1.ReceiptId Not In (SELECT ReceiptId FROM DepositCheques_Temp) ");
 		sql.append(" UNION ALL ");
 		sql.append(" SELECT T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T1.Remarks, T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount,");
-		sql.append(" T3.FinReference, T4.CustShrtName, T5.PartnerBankCode, T5.PartnerBankName FROM FinReceiptHeader T1 ");
+		sql.append(" T3.FinReference, T4.CustShrtName FROM FinReceiptHeader T1 ");
 		sql.append(" INNER JOIN (SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail_Temp T ");
 		sql.append(" UNION ALL SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail T"); 
 		sql.append(" WHERE NOT EXISTS(SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId");
 		sql.append(" INNER JOIN FinanceMain T3 ON T1.Reference = T3.finReference");
 		sql.append(" INNER JOIN Customers T4 ON T3.CustId = T4.CustId");
-		sql.append(" INNER JOIN PartnerBanks T5 ON T5.PartnerBankId = T2.FundingAc"); 
 		sql.append(" WHERE NOT EXISTS(SELECT 1 FROM FinReceiptHeader_Temp WHERE ReceiptId = T1.ReceiptId) ");
 		sql.append(" And T1.ReceiptMode in (:ReceiptModes) and T1.DepositProcess = :DepositProcess And T1.DepositBranch = :DepositBranch");
 		sql.append(" And T1.ReceiptId Not In (SELECT ReceiptId FROM DepositCheques_Temp)");

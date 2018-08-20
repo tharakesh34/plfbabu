@@ -1768,6 +1768,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
+				
+				if (ImplementationConstants.DEPOSIT_PROC_REQ) {
+					this.row_fundingAcNo.setVisible(false);
+				} else {
+					this.row_fundingAcNo.setVisible(true);
+				}
 
 				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 					this.row_ChequeAcNo.setVisible(true);
@@ -2647,7 +2653,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setTransactionRef(this.transactionRef.getValue());
 			receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 		
-			if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
+			boolean partnerBankReq = true;
+			if (StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())) {
+				partnerBankReq = false;
+			} else if (StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, receiptDetail.getPaymentType()) || 
+					StringUtils.equals(RepayConstants.RECEIPTMODE_DD, receiptDetail.getPaymentType())) {
+				if (ImplementationConstants.DEPOSIT_PROC_REQ) {
+					partnerBankReq = false;
+				}
+			}
+			
+			if (partnerBankReq) {
 				Object object = this.fundingAccount.getAttribute("fundingAccID");
 				receiptDetail.setFundingAc(Long.valueOf(object.toString()));
 			}
@@ -3056,7 +3072,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 						receiptDetail.setReceivedDate(this.receivedDate.getValue());
 						
-						if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
+						boolean partnerBankReq = true;
+						if (StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())) {
+							partnerBankReq = false;
+						} else if (StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, receiptDetail.getPaymentType()) || 
+								StringUtils.equals(RepayConstants.RECEIPTMODE_DD, receiptDetail.getPaymentType())) {
+							if (ImplementationConstants.DEPOSIT_PROC_REQ) {
+								partnerBankReq = false;
+							}
+						}
+						
+						if (partnerBankReq) {
 							Object object = this.fundingAccount.getAttribute("fundingAccID");
 							receiptDetail.setFundingAc(Long.valueOf(object.toString()));
 							
@@ -3469,7 +3495,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.chequeAcNo.setValue(receiptDetail.getChequeAcNo());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 					
-					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
+					boolean partnerBankReq = true;
+					if (StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())) {
+						partnerBankReq = false;
+					} else if (StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, receiptDetail.getPaymentType()) || 
+							StringUtils.equals(RepayConstants.RECEIPTMODE_DD, receiptDetail.getPaymentType())) {
+						if (ImplementationConstants.DEPOSIT_PROC_REQ) {
+							partnerBankReq = false;
+						}
+					}
+					
+					if (partnerBankReq) {
 						this.fundingAccount.setAttribute("fundingAccID", receiptDetail.getFundingAc());
 						this.fundingAccount.setValue(receiptDetail.getFundingAcCode(), StringUtils.trimToEmpty(receiptDetail.getFundingAcDesc()));
 					}
