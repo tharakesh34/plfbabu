@@ -16,6 +16,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennanttech.controller.FinanceDetailController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.FinanceScheduleRestService;
 import com.pennanttech.pffws.FinanceScheduleSoapService;
 import com.pennanttech.util.APIConstants;
@@ -40,7 +41,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	 */
 	@Override
 	public FinScheduleData createFinanceSchedule(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(finScheduleData, SaveValidationGroup.class);
@@ -101,8 +102,10 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			financeDataValidation.setFinanceDetail(null);
 		}
 		// for  logging purpose
-		APIErrorHandlerService.logReference(financeSchdData.getFinReference());
-		logger.debug("Leaving");
+		if (financeSchdData != null) {
+			APIErrorHandlerService.logReference(financeSchdData.getFinReference());
+		}
+		logger.debug(Literal.LEAVING);
 		return financeSchdData;
 	}
 
@@ -124,7 +127,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	 */
 	@Override
 	public FinScheduleData getFinanceInquiry(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(finReference)) {
@@ -153,7 +156,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			return response;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetailController.getFinanceInquiryDetails(finReference, type);
 	}
 

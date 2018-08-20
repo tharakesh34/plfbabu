@@ -55,7 +55,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 */
 	@Override
 	public FinanceDetail createFinance(FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
@@ -117,8 +117,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				}
 			}
 			// for logging purpose
-			APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
-			logger.debug("Leaving");
+			if (financeDetailRes != null) {
+				APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
+			}
+			logger.debug(Literal.LEAVING);
 			return financeDetailRes;
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -138,7 +140,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 */
 	@Override
 	public FinanceDetail createFinanceWithWIF(FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinancewithWIFGroup.class);
@@ -250,8 +252,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					}
 				}
 			}
-			APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
-			logger.debug("Leaving");
+			if (financeDetailRes != null) {
+				APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
+			}
+			logger.debug(Literal.LEAVING);
 			return financeDetailRes;
 		} catch(Exception e) {
 			logger.error("Exception", e);
@@ -271,7 +275,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 * @return
 	 */
 	private WSReturnStatus doValidations(FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -301,7 +305,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return returnStatus;
 	}
@@ -329,7 +333,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 		FinanceDetail financeDetail = createFinanceController.getFinInquiryDetails(finReference);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -360,7 +364,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		} else {
 			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -392,7 +396,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		} else {
 			response = createFinanceController.getFinanceDetailsById(collateralRef, "Collateral");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -405,7 +409,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 		FinanceDetail financeDetail = createFinanceController.getFinanceDetails(finReference);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -475,7 +479,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 * @return
 	 */
 	private WSReturnStatus validateFinReference(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -486,7 +490,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			valueParm[0] = finReference;
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 

@@ -981,7 +981,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	protected void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnEdit"));
 		this.btnDelete.setVisible(false);
@@ -991,14 +991,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Schedule related buttons
 		this.btnValidate.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnValidate"));
 		this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	protected void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		finDivision = financeType.getFinDivision();
 		StringBuilder whereClause = new StringBuilder();
@@ -1380,7 +1380,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setFinAssetFieldVisibility(FinanceType financeType) {
@@ -1486,7 +1486,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param Collateral
 	 */
 	private void doFillFinFlagsList(List<FinFlagsDetail> finFlagsDetailList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setFinFlagsDetailList(finFlagsDetailList);
 		if (finFlagsDetailList == null || finFlagsDetailList.isEmpty()) {
 			return;
@@ -1503,7 +1503,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		this.flagDetails.setValue(tempflagcode);
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 	}
 
 	private void doFillEnquiryList(ArrayList<Object> finBasicDetail) {
@@ -1547,7 +1547,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param finFlagsDetailList
 	 */
 	private void fetchFlagDetals() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<String> finFlagList = Arrays.asList(this.flagDetails.getValue().split(","));
 
@@ -1615,7 +1615,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1630,7 +1630,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unused")
 	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad)
 			throws ParseException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
 
@@ -1842,7 +1842,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1869,7 +1869,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	public void appendScheduleDetailTab(Boolean onLoadProcess, Boolean isFeeRender) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_SCHEDULE);
 		boolean isOverdraft = false;
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
@@ -1981,7 +1981,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					tab.setSelected(true);
 				}
 			}
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 		}
 	}
 
@@ -1989,7 +1989,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	protected void appendEligibilityDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<FinanceEligibilityDetail> elgRuleList = getFinanceDetail().getElgRuleList();
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_ELIGIBLITY, false);
@@ -2007,14 +2007,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			tab.setVisible((elgRuleList != null && !elgRuleList.isEmpty()));
 		}
 		elgRuleList = null;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Scoring Details Data in finance
 	 */
 	protected void appendFinScoringDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<FinanceReferenceDetail> scoringGroupList = getFinanceDetail().getScoringGroupList();
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_SCORING, false);
@@ -2031,28 +2031,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (tab != null) {
 			tab.setVisible((scoringGroupList != null && !scoringGroupList.isEmpty()));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Joint account and Guaranteer Details Data in finance
 	 */
 	protected void appendJointGuarantorDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, true);
 		} else {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_JOINTGUARANTOR), getDefaultArguments());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Joint account and guaranteer Details Data in finance
 	 */
 	protected void appendAgreementsDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (getFinanceDetail().getAggrementList() == null || getFinanceDetail().getAggrementList().isEmpty()) {
 			createTab = false;
@@ -2072,7 +2072,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setAgreementDetailTab(Window window) {
@@ -2091,7 +2091,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	protected void appendStepDetailTab(boolean screenOpening, boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (screenOpening) {
 			createTab(AssetConstants.UNIQUE_ID_STEPDETAILS, true);
 		} else {
@@ -2117,28 +2117,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				tab.setVisible(false);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Disbursement Details Data in finance
 	 */
 	private void appendDisbursementDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_DISBURSMENT, true);
 		} else {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DisbursementDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DISBURSMENT), getDefaultArguments());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Disbursement Details Data in finance
 	 */
 	private void appendChequeDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_CHEQUE, false);
 		} else {
@@ -2162,7 +2162,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_CHEQUE), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2171,7 +2171,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendFeeDetailTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_FEE, true);
@@ -2187,14 +2187,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	protected void appendStageAccountingDetailsTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (getFinanceDetail().getStageTransactionEntries() != null
 				&& getFinanceDetail().getStageTransactionEntries().size() > 0) {
@@ -2220,14 +2220,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				tab.setVisible(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	protected void appendContributorDetailsTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_CONTRIBUTOR, true);
 		} else {
@@ -2235,7 +2235,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					"/WEB-INF/pages/Finance/FinanceMain/ContributorDetailsDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_CONTRIBUTOR), getDefaultArguments());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2244,7 +2244,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendEtihadCreditBureauDetailTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_ETIHADCB, true);
@@ -2258,7 +2258,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2267,13 +2267,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendBundledProductsDetailTab() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			createTab(AssetConstants.UNIQUE_ID_BUNDLEDPRODUCTS, true);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2282,7 +2282,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendAgreementFieldsTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_AGREEMENTFIELDS, true);
@@ -2296,7 +2296,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2305,7 +2305,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendAssetEvaluationTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_ASSETEVALUATION, true);
@@ -2317,7 +2317,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2326,7 +2326,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendAdvancePaymentsDetailTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS, true);
@@ -2348,7 +2348,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2357,7 +2357,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendCovenantTypeTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_COVENANTTYPE, true);
@@ -2375,7 +2375,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2384,7 +2384,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendCustomerDetailTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				custDetailTab = new Tab(Labels.getLabel("lable_FinanceCustomer"));
@@ -2411,7 +2411,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2422,7 +2422,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param map
 	 */
 	protected void appendCheckListDetailTab(FinanceDetail financeDetail, boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (financeDetail.getCheckList() != null && financeDetail.getCheckList().size() > 0) {
 			if (getTab(AssetConstants.UNIQUE_ID_CHECKLIST) == null) {
@@ -2458,14 +2458,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	protected void appendAccountingDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
 			createTab = true;
@@ -2502,7 +2502,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				tab.setVisible(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setAccountingDetailTab(Window window) {
@@ -2519,7 +2519,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
 		} else {
@@ -2538,14 +2538,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Document Details Data in finance
 	 */
 	protected void appendDocumentDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
 		} else {
@@ -2555,14 +2555,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Deviations in finance
 	 */
 	protected void appendDeviationDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_DEVIATION, true);
 		} else {
@@ -2571,14 +2571,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DeviationDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DEVIATION), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Mandates in finance
 	 */
 	protected void appendMandateDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_MANDATE, false);
 		} else {
@@ -2588,14 +2588,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_MANDATE), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Appending tab for GST Details in Finance Origination
 	 */
 	protected void appendTaxDetailTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_TAX, false);
 		} else {
@@ -2613,14 +2613,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_TAX), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Collateral Details Data in finance
 	 */
 	protected void appendFinCollateralTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (!ImplementationConstants.COLLATERAL_INTERNAL) {
 			if (!getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()) {
 				return;
@@ -2664,14 +2664,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Collateral Details Data in finance
 	 */
 	protected void appendVasRecordingTab(boolean onLoad) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_VAS, true);
 		} else {
@@ -2682,7 +2682,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinVasRecordingDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_VAS), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2693,7 +2693,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tabVisible
 	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tabName = "";
 		if (StringUtils.equals(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, moduleID)) {
 			tabName = Labels.getLabel("tab_Co-borrower&Gurantors");
@@ -2712,7 +2712,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onSelectTab(ForwardEvent event)
@@ -2978,7 +2978,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
 			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -3097,7 +3097,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.accountsOfficer.setAttribute("DealerId", aFinanceMain.getAccountsOfficer());
 
 		if (!aFinanceMain.isNewRecord()) {
-			this.dsaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDsaName())),
+			this.dsaCode.setValue(StringUtils.trimToEmpty(aFinanceMain.getDsaName()),
 					StringUtils.trimToEmpty(aFinanceMain.getDsaCodeDesc()));
 			if (aFinanceMain.getDsaCode() != null) {
 				this.dsaCode.setAttribute("DSAdealerID", aFinanceMain.getDsaCode());
@@ -3107,7 +3107,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!aFinanceMain.isNewRecord()) {
-			this.dmaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDmaName())),
+			this.dmaCode.setValue(StringUtils.trimToEmpty(aFinanceMain.getDmaName()),
 					StringUtils.trimToEmpty(aFinanceMain.getDmaCodeDesc()));
 			if (aFinanceMain.getDsaCode() != null) {
 				this.dmaCode.setAttribute("DMAdealerID", aFinanceMain.getDmaCode());
@@ -3977,14 +3977,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		doFillEnquiryList(getFinBasicDetails());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Query Management Details Tab in finance
 	 */
 	protected void appendQueryMangementTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("financeMain", financeDetail.getFinScheduleData().getFinanceMain());
 		boolean createTab = false;
@@ -4001,7 +4001,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_QUERY_MGMT), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	
@@ -4009,7 +4009,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Credit Review Details Data in finance
 	 */
 	protected void appendCreditReviewDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		long custId = getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID();
 		boolean createTab = false;
@@ -4044,14 +4044,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW), map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * This method is for append extended field details
 	 */
 	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail, String finEvent) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -4091,7 +4091,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	
@@ -4101,7 +4101,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void appendPslDetailsTab(boolean onLoad) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String value = "N";
 		try {
 			value = SysParamUtil.getValueAsString("PSL_DATA_REQUIRED");
@@ -4137,7 +4137,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChangecustPayAmount(Event event) {
@@ -4230,7 +4230,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
 		if (afinanceDetail.isNewRecord()) {
@@ -4398,7 +4398,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onPostWinCreation(Event event) throws ParseException, InterruptedException {
@@ -5021,7 +5021,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	protected void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(true);
 		this.latePayWaiverAmount.setErrorMessage("");
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -5467,7 +5467,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -5492,7 +5492,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method to set validation on LOV fields
 	 */
 	protected void doSetLOVValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		//FinanceMain Details Tab ---> 1. Basic Details
 
@@ -5635,7 +5635,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void setReadOnlyForCombobox() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.cbProfitDaysBasis.setReadonly(true);
 		this.finRepayMethod.setReadonly(true);
 		this.grcRateBasis.setReadonly(true);
@@ -5644,14 +5644,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.cbScheduleMethod.setReadonly(true);
 		this.oDChargeCalOn.setReadonly(true);
 		this.oDChargeType.setReadonly(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Check AllowGracePeriod component for Allow Grace Or not
 	 */
 	protected void doAllowGraceperiod(boolean onCheckProc) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean checked = false;
 		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -5923,7 +5923,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		onChangeGrcSchdMthd();
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// CRUD operations
@@ -5934,7 +5934,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
@@ -6925,7 +6925,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/*
@@ -7006,7 +7006,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private boolean primaryValidations() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (!recSave && !this.finStartDate.isReadonly() && !isFirstTask()
 				&& StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)
 				&& !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
@@ -7036,12 +7036,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
 	private void addCasDocument(FinanceDetail aFinanceDetail) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		HashMap<String, Long> docNames = new HashMap<>();
 		DocumentDetails details = new DocumentDetails();
 
@@ -7081,11 +7081,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean isCovenantDocumentExist(FinanceDetail aFinanceDetail, String docType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (aFinanceDetail.getDocumentDetailsList() != null && !aFinanceDetail.getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails docDetails : aFinanceDetail.getDocumentDetailsList()) {
@@ -7097,7 +7097,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
@@ -7163,7 +7163,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private boolean doLimitCheckProcess(String role, FinanceDetail aFinanceDetail)
 			throws InterfaceException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (!ImplementationConstants.LIMIT_INTERNAL) {
 			// Checking for Limit check Authority i.e Is current Role contains limit check authority (or) Not
@@ -7186,12 +7186,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
 	protected String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// changes regarding parallel work flow 
 		String nextRoleCode = StringUtils.trimToEmpty(financeMain.getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
@@ -7208,12 +7208,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				serviceTasks = serviceTasks.replace(list[i] + ";", "");
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return serviceTasks;
 	}
 
 	protected void setNextTaskDetails(String taskId, FinanceMain financeMain) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the next task id
 		String action = userAction.getSelectedItem().getLabel();
@@ -7277,7 +7277,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeMain.setNextUserId(null);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -7289,7 +7289,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -7494,7 +7494,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -7509,7 +7509,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	private boolean doSaveProcess(AuditHeader auditHeader, String method)
 			throws InterfaceException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -7563,7 +7563,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			logger.error("Exception: ", e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 	// ******************************************************//
@@ -7598,7 +7598,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onChangefinStartDate() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 
 			//Reset LatePayAmount based on Date difference of finance start date and Rolleover Date
@@ -7623,7 +7623,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Date getfinstartDate() {
@@ -7631,7 +7631,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onChange$maturityDate(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (!isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 			doChangeTerms();
@@ -7641,7 +7641,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 			getManualScheduleDetailDialogCtrl().curDateChange(this.maturityDate.getValue(), true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$planDeferCount(Event event) {
@@ -7722,7 +7722,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	//Change all the Frequencies 
 	public void changeFrequencies() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (StringUtils.isNotBlank(this.gracePftFrq.getValue())) {
 			processFrqChange(this.gracePftFrq);
 		}
@@ -7750,14 +7750,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(this.droplineFrq.getValue())) {
 			processFrqChange(this.droplineFrq);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * This method is for updating frequency with latest data based on finance start date
 	 */
 	public void processFrqChange(FrequencyBox frequencyBox) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String mnth = "";
 		String frqCode = frequencyBox.getFrqCodeValue();
 		frequencyBox.setFrqCodeDetails();
@@ -7786,11 +7786,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			frequencyBox.updateFrequency(mnth, day);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheckmanualSchedule() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (manualSchedule.isChecked()) {
 
@@ -7921,7 +7921,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/*
@@ -7929,7 +7929,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 
 	public void onCheckgrace(boolean isGraceCheck) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
@@ -8003,17 +8003,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_GrcPftDayBasis.setVisible(isGraceCheck);
 		}
 		onChangeGrcSchdMthd();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$alwBpiTreatment(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		oncheckalwBpiTreatment(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void oncheckalwBpiTreatment(boolean isAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.alwBpiTreatment.isChecked()) {
 			this.space_DftBpiTreatment.setSclass(PennantConstants.mandateSclass);
 			this.dftBpiTreatment.setDisabled(isReadOnly("FinanceMainDialog_DftBpiTreatment"));
@@ -8042,20 +8042,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Setting Default Values of visibility on Check Planned Emi Holidays
 	 */
 	public void onCheck$alwPlannedEmiHoliday(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		onCheckPlannedEmiholiday(null, true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void onCheckPlannedEmiholiday(String planEmiHMType, boolean isAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType financeType = new FinanceType();
 		financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		if (this.alwPlannedEmiHoliday.isChecked()) {
@@ -8096,7 +8096,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		setPlanEMIHMethods(isAction);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -8389,7 +8389,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onFulfill$finBranch(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isBlank(this.finBranch.getValue())) {
 			this.finBranch.setValue(getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch());
@@ -8407,7 +8407,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.disbAcctId.setBranchCode(this.finBranch.getValue());
 		this.repayAcctId.setBranchCode(this.finBranch.getValue());
 		this.downPayAccount.setBranchCode(this.finBranch.getValue());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8416,7 +8416,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onFulfill$repayAcctId(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Clients.clearWrongValue(this.repayAcctId);
 		List<SecondaryAccount> secAccList = financeDetail.getFinScheduleData().getFinanceMain().getSecondaryAccount();
 		if (!secAccList.isEmpty()) {
@@ -8428,11 +8428,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$accountsOfficer(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Object dataObject = accountsOfficer.getObject();
 		if (dataObject instanceof String) {
@@ -8444,11 +8444,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.accountsOfficer.setAttribute("DealerId", details.getDealerId());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public void onFulfill$eligibilityMethod(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
 		if (dataObject instanceof String) {
 			this.eligibilityMethod.setValue(dataObject.toString());
@@ -8459,11 +8459,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$dsaCode(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Object dataObject = dsaCode.getObject();
 		if (dataObject == null || dataObject instanceof String) {
 			this.dsaCode.setValue("");
@@ -8475,11 +8475,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.dsaCode.setAttribute("DSAdealerID", details.getId());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$dmaCode(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Object dataObject = dmaCode.getObject();
 		if (dataObject == null || dataObject instanceof String) {
 			this.dmaCode.setValue("");
@@ -8487,15 +8487,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.dmaCode.setAttribute("DMAdealerID", null);
 		} else {
 			VehicleDealer details = (VehicleDealer) dataObject;
-			if (details != null) {
-				this.dmaCode.setAttribute("DMAdealerID", details.getId());
-			}
+			this.dmaCode.setAttribute("DMAdealerID", details.getId());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public void onFulfill$connector(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Object dataObject = connector.getObject();
 		if (dataObject == null || dataObject instanceof String) {
 			this.connector.setValue("");
@@ -8503,11 +8501,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.connector.setAttribute("DealerId", null);
 		} else {
 			VehicleDealer details = (VehicleDealer) dataObject;
-			if (details != null) {
-				this.connector.setAttribute("DealerId", details.getId());
-			}
+			this.connector.setAttribute("DealerId", details.getId());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -8826,7 +8822,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onChange$cbGrcSchdMthd(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 			final String msg = "Schedule will be recreated would you like to proceed";
@@ -8847,7 +8843,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		cbGrcSchddemethod = getComboboxValue(this.cbGrcSchdMthd);
 		onChangeGrcSchdMthd();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	private void onChangeGrcSchdMthd(){
@@ -9184,7 +9180,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void calculateRate(String rate, String currency, ExtendedCombobox splRate, ExtendedCombobox lovFieldTextBox,
 			BigDecimal margin, Decimalbox effectiveRate, Decimalbox minAllowedRate, Decimalbox maxAllowedRate)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		RateDetail rateDetail = RateUtil.rates(rate, currency, splRate.getValue(), margin, minAllowedRate.getValue(),
 				maxAllowedRate.getValue());
@@ -9196,7 +9192,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			splRate.setValue("");
 			lovFieldTextBox.setDescription("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -9206,7 +9202,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 *            (auditHeader)
 	 */
 	private boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int retValue = PennantConstants.porcessOVERIDE;
 		while (retValue == PennantConstants.porcessOVERIDE) {
@@ -9816,7 +9812,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		return false;
 	}
 
@@ -9893,9 +9889,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void updateFinanceMain(FinanceMain financeMain) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -9914,7 +9910,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public FinanceDetail onExecuteStageAccDetail()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		buildEvent = false;
 
 		doSetValidation();
@@ -9950,7 +9946,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		getFinanceDetail().setModuleDefiner(
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return getFinanceDetail();
 	}
 
@@ -9960,7 +9956,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 */
 	public List<Object> prepareContributor() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<Object> list = new ArrayList<Object>();
 
 		this.finAmount.setConstraint("");
@@ -9971,7 +9967,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		list.add(this.finAmount.getActualValue());
 		list.add(this.finCcy.getValue());
 		list.add(this.downPayBank.getActualValue());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return list;
 
 	}
@@ -12123,7 +12119,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 **/
 	protected void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -12145,7 +12141,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// GUI operations
@@ -12156,7 +12152,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		buildEvent = false;
 
 		doSetValidation();
@@ -12229,7 +12225,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Finance Accounting Details Execution
 		executeAccounting(onLoadProcess);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -12239,7 +12235,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 */
 	private void executeAccounting(boolean onLoadProcess) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
@@ -12303,7 +12299,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
@@ -12372,7 +12368,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 
@@ -12504,7 +12500,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			amountCodes.setPaidVasFee(paidVasFee);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -12519,7 +12515,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData, boolean isIstisnaProd)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 
@@ -12595,7 +12591,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceSchData.getDisbursementDetails().get(0).setDisbAccountId(aFinanceMain.getDisbAccountId());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return aFinanceSchData;
 	}
 
@@ -12662,14 +12658,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone)
 			throws ParseException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (customerDialogCtrl.getCustomerDetails() != null) {
 			return customerDialogCtrl.doSave_CustomerDetail(financeDetail, custDetailTab, validatePhone);
 		}
 		if (!customerDialogCtrl.setEmpStatusOnSalCust(custDetailTab)) {
 			return false;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -12681,11 +12677,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	public boolean doCustomerValidation() throws ParseException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (customerDialogCtrl != null) {
 			return processCustomerDetails(getFinanceDetail(), false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -12697,12 +12693,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	public boolean doExtendedDetailsValidation() throws ParseException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Extended Field validations
 		if (getFinanceDetail().getExtendedFieldHeader() != null) {
 			getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -12714,13 +12710,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	public boolean doPSLDetailsValidation() throws ParseException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Extended Field validations
 		Tab pslDetailsTab = getTab(AssetConstants.UNIQUE_ID_PSL_DETAILS);
 		if ((pslDetailsTab != null && pslDetailsTab.isVisible()) && pSLDetailDialogCtrl != null) {
 			pSLDetailDialogCtrl.doSave(getFinanceDetail(), pslDetailsTab, false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -12731,7 +12727,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 *            (FinanceDetail)
 	 ***/
 	private FinanceDetail doProcess_Assets(FinanceDetail aFinanceDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<CollateralAssignment> collateralAssignmentList = aFinanceDetail.getCollateralAssignmentList();
 		if (collateralAssignmentList != null && !collateralAssignmentList.isEmpty()) {
@@ -12752,7 +12748,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				finAssetTypes.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return aFinanceDetail;
 	}
 
@@ -12763,7 +12759,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private void doStoreDefaultValues() {
 		// calling method to clear the constraints
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -13076,11 +13072,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		doChangeTerms();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doChangeTerms() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		boolean singleTermFinance = false;
@@ -13373,14 +13369,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.defferments.setValue(count);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	protected void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -13700,7 +13696,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			legalRequiredRow.setVisible(false);
 		}
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -14091,7 +14087,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.grcMaxAmount.setReadonly(true);
 			gb_gracePeriodDetails.setVisible(false);
 
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -14131,14 +14127,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_GrcMaxAmount"), this.grcMaxAmount);
 		
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method to clear error messages.
 	 */
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		for (Component component : this.window.getFellows()) {
 			if (component instanceof InputElement) {
 				((InputElement) component).setErrorMessage("");
@@ -14150,14 +14146,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				((AccountSelectionBox) component).setErrorMessage("");
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	protected void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		//FinanceMain Details Tab ---> 1. Basic Details
 		this.custCIF.setDisabled(true);
@@ -14296,7 +14292,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -14448,11 +14444,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Filling FOlReference Based on finLimitRef field.
 	 */
 	private void doSetMMAProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Filter filter1[] = new Filter[1];
 		filter1[0] = new Filter("FOlReference", this.finLimitRef.getValue(), Filter.OP_EQUAL);
 		this.mMAReference.setFilters(filter1);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -14461,7 +14457,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterfaceException
 	 */
 	protected void processLimitData() throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		LimitDetail limitDetail = getLimitCheckDetails().getLimitDetails(this.finLimitRef.getValue(),
 				this.finBranch.getValue());
 		if (limitDetail != null) {
@@ -14471,11 +14467,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Setting Commitment Details parameters
 		doSetFacilityDetails(limitDetail);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetFacilityDetails(LimitDetail limitDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (limitDetail != null) {
 			this.facilityAmount.setValue(limitDetail.getApprovedLimit());
 			this.facilityUtilizedAmount.setValue(limitDetail.getReservedAmt());
@@ -14493,11 +14489,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.facilityMarginRate.setValue(BigDecimal.ZERO);
 			this.facilityNotes.setValue("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void checkLimitDetailsForSingleLimit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (StringUtils.isEmpty(this.finLimitRef.getValue())) {
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			JdbcSearchObject<LimitDetail> searchObject = new JdbcSearchObject<LimitDetail>(LimitDetail.class);
@@ -14514,7 +14510,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -14578,7 +14574,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	protected void setDownPayPercentage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BigDecimal downPayAmount = BigDecimal.ZERO;
 		BigDecimal finAmount = this.finAmount.getActualValue() == null ? BigDecimal.ZERO
@@ -14595,7 +14591,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.downPayPercentage
 				.setValue(Labels.getLabel("label_Percent", new String[] { String.valueOf(downPayAmount) }));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -14603,7 +14599,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 */
 	public void setDownpaymentRulePercentage(boolean isLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		if (financeType.getDownPayRule() != 0 && financeType.getDownPayRule() != Long.MIN_VALUE
 				&& StringUtils.isNotEmpty(financeType.getDownPayRuleDesc())) {
@@ -14622,14 +14618,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setMinDownPayPerc(BigDecimal.ZERO);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/*
 	 * setting the Grace rate or grace margin based on the rule execution on the pricing policy desc in financetype.
 	 */
 	public void setGrcPolicyRate(boolean isLoadProcess, boolean isNewRecord) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
@@ -14677,7 +14673,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/*
@@ -14685,7 +14681,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * financetype.
 	 */
 	public void setPolicyRate(boolean isLoadProcess, boolean isnewRecord) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
@@ -14731,11 +14727,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setNetFinanceAmount(boolean isDataRender) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		BigDecimal feeChargeAmount = BigDecimal.ZERO;
@@ -14777,11 +14773,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.netFinAmount.setValue("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setDownpayAmount() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.downPayBank.clearErrorMessage();
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		BigDecimal reqDwnPay = BigDecimal.ZERO;
@@ -14801,7 +14797,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.downPayBank.setValue(PennantAppUtil.formateAmount(reqDwnPay, formatter));
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -14875,7 +14871,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Validation in overdraft Maintenance if the curfinasset value is less than the finasset
 	 */
 	public void onFulfill$finAssetValue(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -14900,14 +14896,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			collateralHeaderDialogCtrl.updateShortfall(UtilizedAmt);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/***
 	 * Method to get the FinAsset Value by calling to the financemaindaoimpl
 	 */
 	public void getfinassetcheck(boolean isvalidCheck) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (isvalidCheck) {
 			int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
@@ -14920,7 +14916,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 			}
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 		}
 	}
 
@@ -14932,7 +14928,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	private boolean doValidateCommitment(FinanceDetail aFinanceDetail) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain finMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		FinanceType finType = aFinanceDetail.getFinScheduleData().getFinanceType();
@@ -15014,7 +15010,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -15025,9 +15021,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	protected boolean doValidateRecommendation() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean isRecommendEntered = true;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return isRecommendEntered;
 	}
 
@@ -15237,7 +15233,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.clearErrorMessage();
 		setCustomerData((Customer) nCustomer);
 		this.custCIFSearchObject = newSearchObject;
@@ -15256,23 +15252,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("searchObject", this.custCIFSearchObject);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Finance Schedule Detail For Maintenance purpose
 	 */
 	public void reRenderScheduleList(FinScheduleData aFinSchData) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (scheduleDetailDialogCtrl != null) {
 			scheduleDetailDialogCtrl.doFillScheduleList(aFinSchData);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -15314,7 +15310,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 */
 	public FinanceDetail prepareCustElgDetail(Boolean isLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail detail = getFinanceDetail();
 
@@ -15665,7 +15661,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		setFinanceDetail(detail);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return getFinanceDetail();
 	}
 
@@ -15896,7 +15892,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Reset Customer Data
 	 */
 	private void setCustomerData(Customer customer) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.custID.setValue(customer.getCustID());
 		this.custCIF.setValue(customer.getCustCIF());
@@ -15996,7 +15992,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isTabVisible(StageTabConstants.QueryMangement)) {
 			appendQueryMangementTab(false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -16013,7 +16009,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void validateAssetValue() throws ParseException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		this.finAmount.setErrorMessage("");
 		if (!this.finAmount.isReadonly()) {
@@ -16038,7 +16034,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	public FinanceDetail getAgrFinanceDetails() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
@@ -16125,7 +16121,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (finAdvancePaymentsListCtrl != null) {
 			finAdvancePaymentsListCtrl.doSave_AdvencePaymentDetail(aFinanceDetail);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return aFinanceDetail;
 	}
 
@@ -16149,7 +16145,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	protected void onCheckODPenalty(boolean checkAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int format = CurrencyUtil.getFormat(getFinanceMain().getFinCcy());
 		FinODPenaltyRate penaltyRate = getFinanceDetail().getFinScheduleData().getFinODPenaltyRate();
@@ -16216,7 +16212,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.space_oDMaxWaiverPerc.setSclass("");
 			this.space_oDChargeType.setSclass("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/*
@@ -16233,7 +16229,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void onChangeODChargeType(boolean changeAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (changeAction) {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
@@ -16271,7 +16267,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDIncGrcDays"), this.oDIncGrcDays);
 			this.oDIncGrcDays.setChecked(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$oDAllowWaiver(Event event) {
@@ -16281,7 +16277,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void onCheckODWaiver(boolean checkAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (checkAction) {
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
@@ -16293,7 +16289,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.oDMaxWaiverPerc);
 			this.space_oDMaxWaiverPerc.setSclass("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -16536,7 +16532,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Validate Limit Increases after New Maturity Date
 		List<OverdraftScheduleDetail> odSchdList = finScheduleData.getOverdraftScheduleDetails();
@@ -16553,7 +16549,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//If any errors , on Limit Increase validation
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
-			logger.debug("leaving");
+			logger.debug(Literal.LEAVING);
 			return finScheduleData;
 		}
 
@@ -16563,14 +16559,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//If any Errors on Overdraft Schedule build
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
-			logger.debug("leaving");
+			logger.debug(Literal.LEAVING);
 			return finScheduleData;
 		}
 
 		// To Recalculate the Schedule based on new Parameters
 		finScheduleData = getReScheduleService().doResetOverdraftSchd(finScheduleData);
 
-		logger.debug("leaving");
+		logger.debug(Literal.LEAVING);
 		return finScheduleData;
 	}
 
@@ -16585,7 +16581,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private FinanceDetail validate()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		recSave = false;
 
@@ -16684,11 +16680,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				lVerificationCtrl.setFinanceDetail(getFinanceDetail());
 			}
 
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return getFinanceDetail();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -16711,7 +16707,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * method to show pop up where user adds account and priority
 	 */
 	public void onClick$btnAddSecondaryAccounts(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financemainBaseCtrl", this);
 		map.put("financeDetail", this.financeDetail);
@@ -16719,7 +16715,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("isViewAllowed", getUserWorkspace().isAllowed("FinanceMainDialog_btnAddSecondaryAccounts"));
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AddSecondaryAccountDialog.zul", null, map);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -16728,7 +16724,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 */
 	protected void renderBundledProducts() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			HashMap<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_BUNDLEDPRODUCTS));
@@ -16739,7 +16735,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -16788,13 +16784,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// To set the NumberofTerms and MaturitDate in Manual Schedule 
 	public void doSetfinTerms(Integer noOfTerms, Integer graceTerms) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.graceTerms_Two.setValue(graceTerms);
 		this.numberOfTerms.setValue(noOfTerms);
 		this.numberOfTerms_two.setValue(noOfTerms);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public String getUserRole() {
@@ -16809,7 +16805,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void doLoadWorkFlow(FinanceMain financeMain)
 			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String roleCode = null;
 		if (StringUtils.isEmpty(moduleDefiner) && !financeMain.isNewRecord()
 				&& StringUtils.trimToEmpty(financeMain.getNextTaskId()).contains(";")) {
@@ -16823,7 +16819,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), null, roleCode);
 		}
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 	}
 
 	/**
@@ -16952,7 +16948,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onClickExtbtnEXTRACT() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			Map<String, Object> pdfExtractFields = getPdfParserCaller()
 					.callDocumentParser(customerDialogCtrl.getCustomerDocumentDetailList());
@@ -16966,7 +16962,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void processSave() throws InterruptedException, Exception {
@@ -16997,7 +16993,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void doFillReasons(int reason) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
 		map.put("reason", reason);
@@ -17006,7 +17002,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public FinanceDetail getFinanceDetail() {

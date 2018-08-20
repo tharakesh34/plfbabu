@@ -98,7 +98,9 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 
 		//for logging purpose
 		String[] logFields = new String[1];
-		logFields[0] = response.getCollateralRef();
+		if (response != null) {
+			logFields[0] = response.getCollateralRef();
+		}
 		APIErrorHandlerService.logKeyFields(logFields);
 		APIErrorHandlerService.logReference(collateralSetup.getDepositorCif());
 		logger.debug("Leaving");

@@ -4633,8 +4633,11 @@ public class FinanceDataValidation {
 						boolean isValidPan = false;
 						boolean isCustomerContainPan = false;
 						for (String panCardType : panCardTypes) {
-							CustomerDocument customerDocument = customerDocumentService
-									.getApprovedCustomerDocumentById(customer.getCustID(), panCardType);
+							CustomerDocument customerDocument = null;
+							if (customer != null) {
+								customerDocument = customerDocumentService
+										.getApprovedCustomerDocumentById(customer.getCustID(), panCardType);
+							}
 							if (customerDocument == null) {
 								continue;
 							}
