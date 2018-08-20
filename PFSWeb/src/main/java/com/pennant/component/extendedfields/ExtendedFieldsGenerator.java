@@ -53,6 +53,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1020,8 +1021,48 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				}
 			}
 		}
+		Map<String, Object> valueMapForExpComponents = getValueMapForExpComponents(wveMap);
 		showErrorDetails(wveMap, compList, notInputElements);
+		values.putAll(valueMapForExpComponents);
+		logger.debug(Literal.LEAVING);
+		return values;
+	}
 
+	// ## 18Aug2018 Bug Fix Related To ExtendedFields post validation
+	// some components values are not storing in the map in case they are
+	// throwing exception and root component is invisible, and these values are
+	// required for post validation so here put
+	// default data to the map those who raise exception.
+
+	/**
+	 * Method for put the default value to the map.
+	 * 
+	 * @param wveMap
+	 * @return
+	 */
+	private Map<String, Object> getValueMapForExpComponents(HashMap<ExtendedFieldDetail, WrongValueException> wveMap) {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> values = new HashMap<String, Object>();
+		Set<ExtendedFieldDetail> fields = wveMap.keySet();
+
+		for (ExtendedFieldDetail detail : fields) {
+			Object value = null;
+
+			if (fieldValueMap.get(detail.getFieldName()) != null) {
+				if (ExtendedFieldConstants.FIELDTYPE_DATE.equals(detail.getFieldType())) {
+					String id = getComponentId(detail.getFieldName());
+					Component component = tabpanel.getFellowIfAny(id);
+					if (component != null && component instanceof Datebox) {
+						Datebox datebox = (Datebox) component;
+						datebox.setConstraint(
+								new PTStringValidator(detail.getFieldLabel(), null, detail.isFieldMandatory()));
+					}
+				}
+				value = fieldValueMap.get(detail.getFieldName());
+			}
+
+			values.put(detail.getFieldName(), value);
+		}
 		logger.debug(Literal.LEAVING);
 		return values;
 	}
@@ -2622,7 +2663,5 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public void setParentTab(Tab parentTab) {
 		this.parentTab = parentTab;
 	}
-
-	
 
 }
