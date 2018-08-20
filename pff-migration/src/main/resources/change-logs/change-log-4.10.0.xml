@@ -3625,8 +3625,9 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="48" author="Srinivasa Varma">
+	<changeSet id="48.1" author="Srinivasa Varma">
 		<sql>
+			delete from RBFIELDDETAILS where rbmodule='AGRRULE' and rbevent='AGRRULE' and rbfldname='CY1_DIVPAID';
 			Insert into RBFIELDDETAILS values ('AGRRULE','AGRRULE','disbOnGrace','Is Disbursement on Grace?','nchar',1,'0','1',' ','static,global',' ');
 		</sql>
 	</changeSet>
