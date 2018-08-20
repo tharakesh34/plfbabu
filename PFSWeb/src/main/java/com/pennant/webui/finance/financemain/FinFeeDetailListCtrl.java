@@ -195,9 +195,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public static final String							FEE_UNIQUEID_REMAININ_GST			= "REMGST";
 	public static final String							FEE_UNIQUEID_REMAINING_FEE			= "REMFEE";
 
-	//public static final String FEE_UNIQUEID_PAIDAMOUNT = "PAIDAMT"; 
-	//public static final String FEE_UNIQUEID_REMAININGFEE = "REMFEE"; 
-
 	public static final String							FEE_UNIQUEID_PAYMENTMETHOD			= "PAYMETHD";
 	public static final String							FEE_UNIQUEID_FEESCHEDULEMETHOD		= "FEEMTHD";
 	public static final String							FEE_UNIQUEID_TERMS					= "TERMS";
