@@ -3749,5 +3749,19 @@ UNION ALL
 			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositCheques_Temp WHERE DepositCheques_Temp.Id = T1.Id))		
 		</createView>
 	</changeSet>
+	
+	 <changeSet id="54" author="Durgaprasad G">
+		<comment> Resolution of change set id 49</comment>
+		 <sql>
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);
+			
+			UPDATE SECRIGHTS SET RIGHTNAME = 'CollateralAssignmentDetailDialog_HostReference' WHERE RIGHTNAME = '3';
+			UPDATE SECRIGHTS SET Righttype = 3 WHERE RIGHTNAME = 'CollateralAssignmentDetailDialog_HostReference';
+		 	
+		 	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);
+		 	UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+		 </sql>
+	</changeSet> 
 	 
 	</databaseChangeLog>
