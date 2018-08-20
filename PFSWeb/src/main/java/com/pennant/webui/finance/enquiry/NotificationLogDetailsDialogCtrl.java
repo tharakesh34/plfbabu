@@ -26,7 +26,7 @@ import com.pennanttech.pennapps.notification.NotificationAttribute;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLogDetails> {
+public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<Notification> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(NotificationLogDetailsDialogCtrl.class);
 
@@ -146,7 +146,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<NotificationLo
 		List<Notification> notificationDetailsSms = getNotificationDetailsService()
 				.getNotificationLogDetailSmsList(finReference, module);
 		doFillNotificationSms(notificationDetailsSms);
-		logger.debug(finReference+ "Leaving...");
+		logger.debug("Leaving...");
 	}
 
 	public String getModule() {
