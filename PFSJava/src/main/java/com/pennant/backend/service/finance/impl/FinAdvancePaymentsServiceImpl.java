@@ -757,7 +757,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private boolean isnoValidationUserAction(String userAction) {
 		boolean noValidation = false;
 		if (userAction != null) {
-			if (userAction.equalsIgnoreCase("Cancel") || userAction.contains("Reject")
+			if ("Cancel".equalsIgnoreCase(userAction) || userAction.contains("Reject")
 					|| userAction.contains("Resubmit") || userAction.contains("Decline")) {
 				noValidation = true;
 			}

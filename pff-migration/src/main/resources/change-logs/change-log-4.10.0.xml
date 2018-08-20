@@ -3651,4 +3651,12 @@ UNION ALL
 		 	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);
 		 </sql>
 	</changeSet> 
+	
+	<changeSet id="50" author="Ganesh.p">
+		<comment> Correct the error message spelling of tktID 127910</comment>
+		<sql>
+			Update Errordetails SET Message = '{1} are not alowed for Disbursement Type : {0}' where code = '41101';
+		</sql>
+	</changeSet>
+	 
 	</databaseChangeLog>

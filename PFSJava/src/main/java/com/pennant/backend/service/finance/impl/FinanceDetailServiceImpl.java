@@ -633,11 +633,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		long dmaCode = 0;
 		long connectorCode=0;
 		if (StringUtils.isNotBlank(financeMain.getDsaCode()) && StringUtils.isNumeric(financeMain.getDsaCode())) {
-			dsaCode = Long.valueOf(financeMain.getDsaCode());
+			dsaCode = Long.parseLong(financeMain.getDsaCode());
 			dealerIds.add(dsaCode);
 		}
 		if (StringUtils.isNotBlank(financeMain.getDmaCode()) && StringUtils.isNumeric(financeMain.getDmaCode())) {
-			dmaCode = Long.valueOf(financeMain.getDmaCode());
+			dmaCode = Long.parseLong(financeMain.getDmaCode());
 			dealerIds.add(dmaCode);
 		}
 		if (financeMain.getConnector()>0) {

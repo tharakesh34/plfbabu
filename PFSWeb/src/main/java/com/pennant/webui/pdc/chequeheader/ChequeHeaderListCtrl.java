@@ -87,7 +87,6 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 	// List headers
 	protected Listheader listheader_FinReference;
-	protected Listheader listheader_ChequeType;
 	protected Listheader listheader_NoOfCheques;
 	protected Listheader listheader_TotalAmount;
 
@@ -147,7 +146,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		registerField("noOfCheques", listheader_NoOfCheques, SortOrder.NONE, noOfCheques, sortOperator_NoOfCheques,
 				Operators.NUMERIC);
 		registerField("totalAmount", listheader_TotalAmount, SortOrder.NONE, totalAmount, sortOperator_TotalAmount,
-				Operators.STRING);
+				Operators.NUMERIC);
 		registerField("active");
 
 		// Render the page and display the data.

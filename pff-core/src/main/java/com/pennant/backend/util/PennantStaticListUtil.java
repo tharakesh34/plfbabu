@@ -2917,7 +2917,7 @@ public class PennantStaticListUtil {
 		if (presentmentsStatusList == null) {
 			presentmentsStatusList = new ArrayList<ValueLabel>(5);
 			presentmentsStatusList.add(new ValueLabel("I", Labels.getLabel("label_Presentment_Status_Import")));
-			presentmentsStatusList.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
+			presentmentsStatusList.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Success")));
 			presentmentsStatusList.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
 			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
 			presentmentsStatusList.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
@@ -2929,7 +2929,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getPresentmentsStatusListForReport() {
 		if (presentmentsStatusListReport == null) {
 			presentmentsStatusListReport = new ArrayList<ValueLabel>(5);
-			presentmentsStatusListReport.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
+			presentmentsStatusListReport.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Success")));
 			presentmentsStatusListReport.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
 			presentmentsStatusListReport.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
 		}
