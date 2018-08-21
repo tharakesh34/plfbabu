@@ -823,7 +823,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 							depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 							depositCheques.getAmount(),
 							depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), 
-							depositDetails.getDepositMovementsList().get(0).getMovementId(), null, depositCheques.getReceiptId());
+							depositDetails.getDepositMovementsList().get(0).getMovementId(), depositCheques.getFinReference(), depositCheques.getReceiptId());
 					if (aeEvent != null && aeEvent.getLinkedTranId() > 0) {
 						depositCheques.setLinkedTranId(aeEvent.getLinkedTranId());
 					}
