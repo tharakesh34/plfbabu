@@ -2838,7 +2838,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (alwBpiTreatment.isChecked()
 					&& isValidComboValue(this.cbBpiRateBasis,
-							Labels.getLabel("label_FinanceTypeDialog_BpiRateBasis.value"))) {
+							Labels.getLabel("label_FinanceTypeDialog_BpiRateBasis.value")) 
+					&& !aFinanceType.getBpiTreatment().equals(FinanceConstants.BPI_NO)) {
 				aFinanceType.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
 			} 
 		} catch (WrongValueException we) {
