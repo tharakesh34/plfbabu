@@ -367,6 +367,26 @@
 											</row>
 											<row id="row11">
 												<label
+													id="label_LCREligibility"
+													value="${c:l('label_SamplingDialog_LCREligibility.value')}" />
+												<hbox>
+													<space
+														id="space_LCREligibility" spacing="2px" />
+													<decimalbox
+														id="lcrEligibility" width="155px" readonly="true" />
+												</hbox>
+												<label
+													id="label_LTVEligibility"
+													value="${c:l('label_SamplingDialog_LTVEligibility.value')}" />
+												<hbox>
+													<space
+														id="space_ILTVEligibility" spacing="2px" />
+													<decimalbox
+														id="ltvEligibility" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row12">
+												<label
 													id="label_LoanEligibility"
 													value="${c:l('label_SamplingDialog_LoanEligibility.value')}" />
 												<hbox>

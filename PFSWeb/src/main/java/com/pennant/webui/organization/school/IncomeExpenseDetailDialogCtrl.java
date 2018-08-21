@@ -948,10 +948,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Average Collection Per Unit" }));
 			}
 			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(avgCollPerUnit,2));
+			break;
 		case "totalNonCore":
 			CurrencyBox decimalbox3 = (CurrencyBox) getComponent(listitem, "totalNonCore");
 			BigDecimal totalNonCore = decimalbox3.getValidateValue();
 			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(totalNonCore,2));
+			break;
 		case "nonCoreconsidered":
 			Checkbox checkbox1 = (Checkbox) getComponent(listitem, "nonCoreconsidered");
 			incomeExpenseDetail.setConsider(checkbox1.isChecked());
@@ -1302,7 +1304,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	public void onChangeCalculateFeeReceiptFrq(ForwardEvent event){
 		logger.debug(Literal.ENTERING);
-		Listitem item = null;
+		Listitem item = new Listitem();
 		if (event != null) {
 			item = (Listitem) event.getData();
 		}
@@ -1340,7 +1342,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	public void onChangeFrqOfCollection(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		Listitem item = null;
+		Listitem item = new Listitem();
 		if (event != null) {
 			item = (Listitem) event.getData();
 		}
@@ -1361,7 +1363,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	
 	public void onChangeCalculateNonCoreTotal(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		Listitem item = null;
+		Listitem item = new Listitem();
 		if (event != null) {
 			item = (Listitem) event.getData();
 		}

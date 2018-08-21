@@ -49,14 +49,14 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("insert into sampling");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, keyreference, createdby, createdon,");
-		sql.append(" tenure, interestrate, loanEligibility, foireligibility, irreligibility, emi, totalincome,");
+		sql.append(" tenure, interestrate, loanEligibility, foireligibility, irreligibility, lcreligibility, ltveligibility, emi, totalincome,");
 		sql.append(" totalliability, remarks, samplingon, decision, recommendedamount, decisionon, resubmitreason,");
 		sql.append(" totalCustomerIntObligation, totalCoApplicantsIntObligation,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
 		sql.append(" values(");
 		sql.append(" :id, :keyReference, :createdBy, :createdOn,");
-		sql.append(" :tenure, :interestRate, :loanEligibility, :foirEligibility, :irrEligibility, :emi,:totalIncome, ");
+		sql.append(" :tenure, :interestRate, :loanEligibility, :foirEligibility, :irrEligibility, :lcrEligibility, :ltvEligibility, :emi,:totalIncome, ");
 		sql.append(" :totalLiability, :remarks, :samplingOn, :decision, :recommendedAmount, :decisionOn, :resubmitReason,");
 		sql.append(" :totalCustomerIntObligation, :totalCoApplicantsIntObligation,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
@@ -213,7 +213,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		StringBuilder query = new StringBuilder();
 		query.append(" update sampling");
 		query.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		query.append(" set tenure =:tenure, interestrate = :interestRate, loanEligibility = :loanEligibility,");
+		query.append(" set tenure =:tenure, interestrate = :interestRate, loanEligibility = :loanEligibility, lcreligibility = :lcrEligibility, ltveligibility = :ltvEligibility,");
 		query.append(" foireligibility =:foirEligibility, irreligibility = :irrEligibility, emi = :emi,");
 		query.append(" totalCustomerIntObligation = :totalCustomerIntObligation,");
 		query.append(" totalCoApplicantsIntObligation = :totalCoApplicantsIntObligation,");
@@ -506,7 +506,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("rulemodule", "ELGRULE");
 		source.addValue("rulecode",
-				Arrays.asList(Sampling.RULE_CODE_FOIRAMT, Sampling.RULE_CODE_IIRMAX, Sampling.RULE_CODE_EMI));
+				Arrays.asList(Sampling.RULE_CODE_FOIRAMT, Sampling.RULE_CODE_IIRMAX, Sampling.RULE_CODE_EMI,
+						Sampling.RULE_CODE_LCRMAXEL, Sampling.RULE_CODE_LTVAMOUN));
 
 		try {
 			jdbcTemplate.query(sql.toString(), source, new RowCallbackHandler() {
@@ -989,5 +990,26 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		}
 
 		return seqNo;
+	}
+	
+	@Override
+	public BigDecimal getCollateralAssignedValue(List<String> collateralReferences){
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select sum(collateralvalue) from");
+		sql.append(" collateralassignment_view ");
+		sql.append(" where collateralref in(:collateralReferences)");
+		
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("collateralReferences", collateralReferences);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return BigDecimal.ZERO;
+		
 	}
 }

@@ -36,6 +36,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
@@ -542,7 +543,37 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_Internal", sampling.getTotalCoApplicantsIntObligation());
 		fieldsandvalues.put("Customer_Obligation_Internal", sampling.getTotalCustomerIntObligation());
-
+		fieldsandvalues.put("reqProduct", sampling.getFinType());
+		fieldsandvalues.put("reqFinType", sampling.getFinType());
+		fieldsandvalues.put("Collaterals_Total_Assigned", sampling.getCollateralAssignedValue());
+		
+		Set<String> fieldNames = sampling.getCollateralFieldsForRule();
+		ExtendedFieldHeader extHeader = sampling.getExtendedFieldHeader();
+		if (extHeader != null) {
+			String moduleFinType = extHeader.getModuleName().concat("_").concat(sampling.getFinType());
+			Map<String, ExtendedFieldRender> extFieldRenderMap = sampling.getExtFieldRenderList();
+			for (ExtendedFieldRender extRender : extFieldRenderMap.values()) {
+				Map<String, Object> extRenderMap = extRender.getMapValues();
+				for (String fieldName : fieldNames) {
+					if (extRenderMap.containsKey(fieldName)) {
+						String key = moduleFinType.concat("_").concat(fieldName);
+						fieldsandvalues.put(key, extRenderMap.get(fieldName));
+					}
+				}
+				break;
+			}
+						
+			amount = BigDecimal.ZERO;
+			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LCRMAXEL);
+			if (ruleCode != null) {
+				object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
+			}
+			if (object != null) {
+				amount = (BigDecimal) object;
+			}
+			sampling.setLcrEligibility(amount);
+			
+		}
 		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
 		if (ruleCode != null) {
 			if (!ruleCode.contains("Customer_Obligation_Internal")) {
@@ -571,6 +602,16 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			amount = amount.multiply(new BigDecimal(100));
 		}
 		sampling.setIrrEligibility(amount);
+		
+		amount = BigDecimal.ZERO;
+		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LTVAMOUN);
+		if (ruleCode != null) {
+			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
+		}
+		if (object != null) {
+			amount = (BigDecimal) object;
+		}
+		sampling.setLtvEligibility(amount);
 
 		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
 		BigDecimal requestedAmount = sampling.getLoanAmountRequested();
@@ -579,6 +620,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			loanEligibilityAmount = sampling.getFoirEligibility();
 		} else {
 			loanEligibilityAmount = sampling.getIrrEligibility();
+		}
+		
+		if (sampling.getLcrEligibility().compareTo(loanEligibilityAmount) == -1) {
+			loanEligibilityAmount = sampling.getLcrEligibility();
+		}
+		if (sampling.getLtvEligibility().compareTo(loanEligibilityAmount) == -1) {
+			loanEligibilityAmount = sampling.getLtvEligibility();
 		}
 
 		if (requestedAmount.compareTo(loanEligibilityAmount) == -1) {
@@ -633,6 +681,14 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 			for (String collateralType : collateralTypes) {
 				temp.getCollaterals().addAll(samplingDAO.getCollaterals(finReference, collateralType));
+			}
+			
+			List<String> collReferences = new ArrayList<>();
+			if(CollectionUtils.isNotEmpty(temp.getCollaterals())){
+				for (SamplingCollateral samplingCollateral : temp.getCollaterals()) {
+					collReferences.add(samplingCollateral.getCollateralRef());
+				}
+				temp.setCollateralAssignedValue(samplingDAO.getCollateralAssignedValue(collReferences));
 			}
 
 			temp.setCustomerIncomeList(samplingDAO.getIncomes(sampling.getId()));

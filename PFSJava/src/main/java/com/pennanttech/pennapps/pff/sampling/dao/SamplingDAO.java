@@ -87,4 +87,6 @@ public interface SamplingDAO {
 	List<String> getCollateralLinkIds(long samplingId);
 
 	int getNextLiabilitSeq(long linkId);
+	
+	BigDecimal getCollateralAssignedValue(List<String> collateralReferences);
 }

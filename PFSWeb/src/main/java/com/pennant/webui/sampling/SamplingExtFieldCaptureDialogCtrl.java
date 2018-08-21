@@ -136,6 +136,13 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 					fieldSize = fieldSize + 1;
 				}
 			}
+			
+			for (ExtendedFieldDetail extendedFieldDetail : detailsList) {
+				if(extendedFieldDetail.isAllowInRule()){
+					sampling.getCollateralFieldsForRule().add(extendedFieldDetail.getFieldName());
+				}
+			}
+			
 			ExtendedFieldRender extendedFieldRender  =null;
 			
 			String CollateralRef = sampling.getCollateral().getCollateralRef();

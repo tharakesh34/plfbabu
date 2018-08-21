@@ -38,6 +38,8 @@ public class Sampling extends AbstractWorkflowEntity {
 	private BigDecimal emi;
 	private BigDecimal loanEligibility;
 	private BigDecimal irrEligibility;
+	private BigDecimal lcrEligibility;
+	private BigDecimal ltvEligibility;
 	private BigDecimal totalIncome;
 	private BigDecimal totalLiability;
 
@@ -63,9 +65,12 @@ public class Sampling extends AbstractWorkflowEntity {
 	private String branchCode;
 	private String branchDesc;
 	private String finGrcRateType;
-	private BigDecimal repaySpecialRate;
+	private String repayBaseRate;
+	private String repaySpecialRate;
 	private BigDecimal repayProfitRate;
+	private BigDecimal repayMargin;
 	private BigDecimal repayMinRate;
+	private BigDecimal repayMaxRate;
 	private int numberOfTerms;
 	private String finccy;
 	private int ccyeditfield;
@@ -88,6 +93,8 @@ public class Sampling extends AbstractWorkflowEntity {
 	private QueryDetail queryDetail = new QueryDetail();
 	private BigDecimal totalCustomerIntObligation;
 	private BigDecimal totalCoApplicantsIntObligation;
+	private Set<String> collateralFieldsForRule = new HashSet<>();
+	private BigDecimal collateralAssignedValue = BigDecimal.ZERO;
 
 	/**
 	 * Sampling approve details
@@ -111,6 +118,8 @@ public class Sampling extends AbstractWorkflowEntity {
 	public static final String RULE_CODE_FOIRAMT = "FOIRAMT";
 	public static final String RULE_CODE_IIRMAX = "IIRMAX";
 	public static final String RULE_CODE_EMI = "PMT1LAKH";
+	public static final String RULE_CODE_LTVAMOUN = "LTVAMOUN";
+	public static final String RULE_CODE_LCRMAXEL = "LCRMAXEL";
 
 	public Sampling() {
 		super();
@@ -129,8 +138,6 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("branchCode");
 		excludeFields.add("branchDesc");
-		excludeFields.add("repayProfitRate");
-		excludeFields.add("repayMinRate");
 		excludeFields.add("customerDetails");
 		excludeFields.add("customers");
 		excludeFields.add("numberOfTerms");
@@ -154,6 +161,8 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("RULE_CODE_FOIRAMT");
 		excludeFields.add("RULE_CODE_IIRMAX");
 		excludeFields.add("RULE_CODE_EMI");
+		excludeFields.add("RULE_CODE_LTVAMOUN");
+		excludeFields.add("RULE_CODE_LCRMAXEL");
 		excludeFields.add("finccy");
 		excludeFields.add("ccyeditfield");
 		excludeFields.add("collateralReference");
@@ -167,7 +176,12 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("resubmitReasonCode");
 		excludeFields.add("custShrtName");
 		excludeFields.add("extFieldHeaderList");
+		excludeFields.add("repayBaseRate");
 		excludeFields.add("repaySpecialRate");
+		excludeFields.add("repayProfitRate");
+		excludeFields.add("repayMargin");
+		excludeFields.add("repayMinRate");
+		excludeFields.add("repayMaxRate");
 		excludeFields.add("finGrcRateType");
 
 		excludeFields.add("originalLoanEligibility");
@@ -182,6 +196,8 @@ public class Sampling extends AbstractWorkflowEntity {
 		
 		excludeFields.add("totalCustomerExposre");
 		excludeFields.add("totalCoApplicantsExposre");
+		excludeFields.add("collateralFieldsForRule");
+		excludeFields.add("collateralAssignedValue");
 
 		return excludeFields;
 	}
@@ -374,11 +390,11 @@ public class Sampling extends AbstractWorkflowEntity {
 		this.finGrcRateType = finGrcRateType;
 	}
 
-	public BigDecimal getRepaySpecialRate() {
-		return repaySpecialRate == null ? BigDecimal.ZERO : repaySpecialRate;
+	public String getRepaySpecialRate() {
+		return repaySpecialRate;
 	}
 
-	public void setRepaySpecialRate(BigDecimal repaySpecialRate) {
+	public void setRepaySpecialRate(String repaySpecialRate) {
 		this.repaySpecialRate = repaySpecialRate;
 	}
 
@@ -396,6 +412,30 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	public void setRepayMinRate(BigDecimal repayMinRate) {
 		this.repayMinRate = repayMinRate;
+	}
+	
+	public String getRepayBaseRate() {
+		return repayBaseRate;
+	}
+
+	public void setRepayBaseRate(String repayBaseRate) {
+		this.repayBaseRate = repayBaseRate;
+	}
+
+	public BigDecimal getRepayMargin() {
+		return repayMargin == null ? BigDecimal.ZERO : repayMargin;
+	}
+
+	public void setRepayMargin(BigDecimal repayMargin) {
+		this.repayMargin = repayMargin;
+	}
+
+	public BigDecimal getRepayMaxRate() {
+		return repayMaxRate == null ? BigDecimal.ZERO : repayMaxRate;
+	}
+
+	public void setRepayMaxRate(BigDecimal repayMaxRate) {
+		this.repayMaxRate = repayMaxRate;
 	}
 
 	public int getNumberOfTerms() {
@@ -674,6 +714,22 @@ public class Sampling extends AbstractWorkflowEntity {
 		this.irrEligibility = irrEligibility;
 	}
 
+	public BigDecimal getLcrEligibility() {
+		return lcrEligibility == null ? BigDecimal.ZERO:lcrEligibility;
+	}
+
+	public void setLcrEligibility(BigDecimal lcrEligibility) {
+		this.lcrEligibility = lcrEligibility;
+	}
+
+	public BigDecimal getLtvEligibility() {
+		return ltvEligibility == null ? BigDecimal.ZERO:ltvEligibility;
+	}
+
+	public void setLtvEligibility(BigDecimal ltvEligibility) {
+		this.ltvEligibility = ltvEligibility;
+	}
+
 	public BigDecimal getOriginalTotalIncome() {
 		return originalTotalIncome == null ? BigDecimal.ZERO:originalTotalIncome;
 	}
@@ -737,4 +793,21 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setTotalCoApplicantsIntObligation(BigDecimal totalCoApplicantsIntObligation) {
 		this.totalCoApplicantsIntObligation = totalCoApplicantsIntObligation;
 	}
+
+	public Set<String> getCollateralFieldsForRule() {
+		return collateralFieldsForRule;
+	}
+
+	public void setCollateralFieldsForRule(Set<String> collateralFieldsForRule) {
+		this.collateralFieldsForRule = collateralFieldsForRule;
+	}
+
+	public BigDecimal getCollateralAssignedValue() {
+		return collateralAssignedValue;
+	}
+
+	public void setCollateralAssignedValue(BigDecimal collateralAssignedValue) {
+		this.collateralAssignedValue = collateralAssignedValue;
+	}
+	
 }

@@ -2655,4 +2655,106 @@
 			left join reasons r on r.id = s.resubmitreason
 		</createView>
 	</changeSet>
+	<changeSet id="24" author="murthy.y">
+		<renameColumn tableName="sampling" oldColumnName="auxiliary3" newColumnName="lcreligibility"/>
+		<renameColumn tableName="sampling_temp" oldColumnName="auxiliary3" newColumnName="lcreligibility"/>
+		<renameColumn tableName="sampling" oldColumnName="auxiliary4" newColumnName="ltveligibility"/>
+		<renameColumn tableName="sampling_temp" oldColumnName="auxiliary4" newColumnName="ltveligibility"/>
+	</changeSet>
+	<changeSet id="24.1" author="murthy.y">
+		<modifyDataType tableName="sampling" columnName="lcreligibility" newDataType="decimal(18,0)"/>
+		<modifyDataType tableName="sampling_temp" columnName="lcreligibility" newDataType="decimal(18,0)"/>
+		<modifyDataType tableName="sampling" columnName="ltveligibility" newDataType="decimal(18,0)"/>
+		<modifyDataType tableName="sampling_temp" columnName="ltveligibility" newDataType="decimal(18,0)"/>
+	</changeSet>	
+	<changeSet id="24.2" author="murthy.y">
+		<createView viewName="sampling_tview" replaceIfExists="true">
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.lcreligibility, s.ltveligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, s.totalCustomerIntObligation, s.totalCoApplicantsIntObligation,
+			r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repaybaserate, fm.repayspecialrate, fm.repayprofitrate, fm.repaymargin, fm.repayminrate, fm.repaymaxrate, fm.finccy, ccy.ccyeditfield,
+			lb.branchcode, lb.branchdesc,
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,           
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling_temp s 
+			inner join
+			(select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain_temp fm 
+			 union all
+			 select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain fm where not exists (select 1 from financemain_temp where finreference=fm.finreference)
+			) fm on fm.finreference = s.keyreference
+			inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+		</createView>
+	</changeSet>
+	<changeSet id="24.3" author="murthy.y">
+		<createView viewName="sampling_view" replaceIfExists="true">
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.lcreligibility, s.ltveligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, s.totalCustomerIntObligation, s.totalCoApplicantsIntObligation,
+			r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repaybaserate, fm.repayspecialrate, fm.repayprofitrate, fm.repaymargin, fm.repayminrate, fm.repaymaxrate, fm.finccy, ccy.ccyeditfield,
+			lb.branchcode, lb.branchdesc,
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,           
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling_temp s 
+			inner join
+			(select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain_temp fm 
+			 union all
+			 select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain fm where not exists (select 1 from financemain_temp where finreference=fm.finreference)
+			) fm on fm.finreference = s.keyreference
+			inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+			union all
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.lcreligibility, s.ltveligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, s.totalCustomerIntObligation, s.totalCoApplicantsIntObligation,
+			r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repaybaserate, fm.repayspecialrate, fm.repayprofitrate, fm.repaymargin, fm.repayminrate, fm.repaymaxrate, fm.finccy, ccy.ccyeditfield,
+			lb.branchcode, lb.branchdesc, 
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling s 
+			inner join
+			(select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain_temp fm 
+			 union all
+			 select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain fm where not exists (select 1 from financemain_temp where finreference=fm.finreference)
+			) fm on fm.finreference = s.keyreference
+			inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+			where not exists (select 1 from sampling_temp where id = s.id)
+		</createView>
+	</changeSet>
+	<changeSet id="24.4" author="murthy.y">
+		<createView viewName="sampling_aview" replaceIfExists="true">
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.lcreligibility, s.ltveligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, s.totalCustomerIntObligation, s.totalCoApplicantsIntObligation,
+			r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repaybaserate, fm.repayspecialrate, fm.repayprofitrate, fm.repaymargin, fm.repayminrate, fm.repaymaxrate, fm.finccy, ccy.ccyeditfield,
+			lb.branchcode, lb.branchdesc, 
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling s 
+			inner join
+			(select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain_temp fm 
+			 union all
+			 select finreference, fintype, finbranch, custid, numberofterms, repaybaserate, repayspecialrate, repayprofitrate, repaymargin, rpyminrate repayminrate, rpymaxrate repaymaxrate, finccy from financemain fm where not exists (select 1 from financemain_temp where finreference=fm.finreference)
+			) fm on fm.finreference = s.keyreference
+			inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+		</createView>
+	</changeSet>
 </databaseChangeLog>
