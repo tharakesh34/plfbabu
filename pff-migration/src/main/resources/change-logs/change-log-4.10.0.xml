@@ -3962,5 +3962,9 @@ UNION ALL
 		
 		</createView>
 		</changeSet>
-	 
+	<changeSet id="56" author="Madhubabu">
+		<sql>
+			Insert into ERRORDETAILS values ('91136','EN','E','current Waived amount for fee type {0} is more than specified amount {1},',null,'Approved',null,null,null,null,null,0,current_timestamp,1000,0);
+		</sql>
+	</changeSet> 
 	</databaseChangeLog>
