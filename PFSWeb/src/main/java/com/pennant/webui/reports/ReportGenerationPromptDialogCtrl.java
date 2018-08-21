@@ -2309,8 +2309,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 			}
 
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			
 			if (invoiceExist) {
-				StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
 			} else {
 				//check if invoice number is existed or not
@@ -2318,7 +2319,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
 				
 				if (invoiceNoExist) {
-					StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 					doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
 				} else {
 					MessageUtil.showMessage(Labels.getLabel("info.invoice_not_generate"));

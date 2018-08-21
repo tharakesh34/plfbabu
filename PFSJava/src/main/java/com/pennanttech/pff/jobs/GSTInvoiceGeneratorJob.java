@@ -1,12 +1,17 @@
 package com.pennanttech.pff.jobs;
 
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.external.gst.GSTInvoiceGeneratorService;
 
-public class GSTInvoiceGeneratorJob implements org.quartz.Job {
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
+public class GSTInvoiceGeneratorJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
