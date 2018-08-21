@@ -464,7 +464,8 @@ public class PennantJavaUtil {
 	private final static String sampling_WF="SAMPLING";
 	private final static String org_School_WF="ORGANIZATION_SCHOOL";
 	private static String feeWaiverWF = "FEE_WAIVER";
-
+	private final static String PaymentWF="PAYMENTINSTRUCTION";
+	
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
 			return "";
@@ -2178,7 +2179,7 @@ public class PennantJavaUtil {
 		
 		/*Payment Instructions*/
 		ModuleUtil.register("PaymentHeader", new ModuleMapping("PaymentHeader", PaymentHeader.class, new String[] { "PaymentHeader",
-		"PaymentHeader_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","ApprovedOn","Status"},null, 600));
+		"PaymentHeader_AView" }, PaymentWF, new String[] {"PaymentType","PaymentAmount","ApprovedOn","Status"},null, 600));
 		
 		ModuleUtil.register("PaymentDetail", new ModuleMapping("PaymentDetail", PaymentDetail.class, new String[] { "PaymentDetails",
 		"PaymentDetails_AView" }, masterWF, new String[] {"AmountType","ReferenceId"},null, 600));
