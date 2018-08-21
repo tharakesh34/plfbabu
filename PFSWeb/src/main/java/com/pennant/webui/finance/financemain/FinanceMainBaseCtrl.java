@@ -134,6 +134,7 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.impl.InputElement;
 
 import com.aspose.words.SaveFormat;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
@@ -18219,11 +18220,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						//engine.showDocument(this.window_documentDetailDialog, reportName, SaveFormat.DOCX);
 					}
 				//}
+			
 				DocumentDetails exstDetails = null;
 				if (financeDetail.getDocumentDetailsList().size() > 0)
+				
 				exstDetails = getExistDocDetails(financeDetail.getDocumentDetailsList(), agreementDefinition.getDocType());
 				if (exstDetails != null) {
 					//exstDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())){
 						exstDetails.setDocImage(engine.getDocumentInByteArray(
 								templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
@@ -18234,7 +18238,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					
 					return exstDetails;
 				}
-
+			
 				details.setDocCategory(agreementDefinition.getDocType());
 				if (PennantConstants.WORFLOW_MODULE_FINANCE.equals(agreementDefinition.getModuleName())) {
 					details.setDocModule("Finance");
@@ -18284,13 +18288,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		for (DocumentDetails docDetails : exstDoclst) {
 			if (docType.equalsIgnoreCase(docDetails.getDocCategory())) {
+				if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(docDetails.getRecordType())) {
+					return null;
+				}
 				return docDetails;
 			}
 		}
 		return null;
-
 	}
-	
+
 
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
