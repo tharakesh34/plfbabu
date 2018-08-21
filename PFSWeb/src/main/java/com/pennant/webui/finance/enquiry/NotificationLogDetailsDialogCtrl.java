@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.apache.xml.resolver.helpers.Debug;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -167,13 +166,12 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<Notification> 
 
 	public void doFillNotificationEmail(List<Notification> notifications) {
 		this.listBoxNotificationLogEmail.getItems().clear();
-		String emailId = "";
-
 		if (notifications != null) {
+			
 			for (Notification notification : notifications) {
+				String emailId = "";
 				for (MessageAddress messageAddress : notification.getAddressesList()) {
 					emailId = emailId + messageAddress.getEmailId() + ", ";
-
 				}
 				Listitem item = new Listitem();
 				Listcell lc;
