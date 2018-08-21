@@ -6161,6 +6161,7 @@
 		<property name="reportFilterFieldsDAO" ref="reportFilterFieldsDAO" />
 		<property name="reportSearchTemplateDAO" ref="reportSearchTemplateDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 	</bean>
 
 	<!-- Report Filter Fields -->

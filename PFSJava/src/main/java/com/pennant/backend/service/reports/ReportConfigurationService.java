@@ -42,6 +42,7 @@
  ********************************************************************************************
  */package com.pennant.backend.service.reports;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -70,4 +71,7 @@ public interface ReportConfigurationService {
 	//Month End Report Queries
 	List<ValueLabel> getMonthEndReportGrpCodes();
 	List<ValueLabel> getReportListByGrpCode(String grpCode);
+	
+	//GST Invoice Report
+	boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate);
 }

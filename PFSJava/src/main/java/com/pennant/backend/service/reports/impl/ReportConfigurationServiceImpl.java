@@ -43,6 +43,7 @@
 package com.pennant.backend.service.reports.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.reports.ReportFilterFieldsDAO;
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
@@ -75,6 +77,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	private AuditHeaderDAO auditHeaderDAO;	
 	private ReportConfigurationDAO reportConfigurationDAO;
 	private ReportFilterFieldsDAO reportFilterFieldsDAO;
+	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;	// GST Invoice Change
 
 	public ReportConfigurationServiceImpl() {
 		super();
@@ -746,5 +749,18 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	    return getReportConfigurationDAO().getReportListByGrpCode(grpCode);
     }
 
+	//GST Invoice
+	@Override
+	public boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate) {
+		return this.gstInvoiceTxnDAO.isGstInvoiceExist(custCif, finReference, invoiceType, fromDate, toDate);
+	}
+
+	public GSTInvoiceTxnDAO getGstInvoiceTxnDAO() {
+		return gstInvoiceTxnDAO;
+	}
+
+	public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {
+		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
+	}
 
 }

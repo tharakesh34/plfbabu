@@ -40,9 +40,12 @@
  */
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -274,5 +277,52 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		logger.debug(Literal.LEAVING);
 		return seqGSTInvoice;
+	}	
+	
+	@Override
+	public boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate) {
+		logger.debug(Literal.ENTERING);
+		
+		boolean invoiceExist = false;
+		List<GSTInvoiceTxn> list = new ArrayList<GSTInvoiceTxn>();
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" Select InvoiceId, InvoiceNo From GST_Invoice_Txn");
+		selectSql.append(" Where CustomerID = :CustomerID  And InvoiceType = :InvoiceType");
+		if (StringUtils.isNotBlank(finReference)) {
+			selectSql.append(" And LoanAccountNo = :LoanAccountNo");
+		}
+		
+		if (fromDate != null && toDate != null) {
+			selectSql.append(" And InvoiceDate >= :FromDate And InvoiceDate <= :ToDate");
+		}
+		
+		logger.debug(Literal.SQL + selectSql.toString());
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustomerID", custCif);
+		paramSource.addValue("LoanAccountNo", finReference);
+		paramSource.addValue("FromDate", fromDate);
+		paramSource.addValue("ToDate", toDate);
+		paramSource.addValue("InvoiceType", invoiceType);
+		RowMapper<GSTInvoiceTxn> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GSTInvoiceTxn.class);
+
+		try {
+			list = jdbcTemplate.query(selectSql.toString(), paramSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(Literal.EXCEPTION, dae);
+		}
+		
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (GSTInvoiceTxn invoiceTxn : list) {
+				if (StringUtils.isNotBlank(invoiceTxn.getInvoiceNo())) {
+					invoiceExist = true;
+					break;
+				}
+			}
+		}
+		
+		return invoiceExist;
 	}	
 }

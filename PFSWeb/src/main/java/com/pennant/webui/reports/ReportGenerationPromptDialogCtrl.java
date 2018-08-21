@@ -2276,10 +2276,58 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			// StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null);
+		} if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+			String custCif = null;
+			String finReference = null;
+			String fromDate = null;
+			String toDate = null;
+			String invoiceType = null;
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false, false);
+			boolean invoiceExist = false;
+			if (filters != null && filters.size() >= 2) {
+				for (ReportSearchTemplate template : filters) {
+					if (template.getFieldID() == 1) {	// CustCif
+						custCif = template.getFieldValue();
+					} else if (template.getFieldID() == 2) { // Fin Reference
+						finReference = template.getFieldValue();
+					} else if (template.getFieldID() == 3) { // Invoice Number
+						invoiceExist = true;
+						break;
+					} else if (template.getFieldID() == 4) { // Dates
+						String[] fromDateArray = ((ReportSearchTemplate) filters.get(2)).getFieldValue().split("&");
+						fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]), PennantConstants.DBDateFormat);
+						toDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]), PennantConstants.DBDateFormat);
+					} else if (template.getFieldID() == 5) { // Invoice Type
+						if (StringUtils.isNotBlank(template.getFieldValue())) {
+							if ("Credit".equals(template.getFieldValue())) {
+								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT;
+							} else if ("Debit".equals(template.getFieldValue())) {
+								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
+							}
+						}
+					}
+				}
+			}
+
+			if (invoiceExist) {
+				StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
+			} else {
+				//check if invoice number is existed or not
+				boolean invoiceNoExist = getReportConfigurationService().isGstInvoiceExist(custCif, finReference,
+						invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
+				
+				if (invoiceNoExist) {
+					StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+					doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
+				} else {
+					MessageUtil.showMessage(Labels.getLabel("info.invoice_not_generate"));
+					return;
+				}
+			}
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
-			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
-					null);
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
 		}
 
 		logger.debug("Leaving" + event.toString());

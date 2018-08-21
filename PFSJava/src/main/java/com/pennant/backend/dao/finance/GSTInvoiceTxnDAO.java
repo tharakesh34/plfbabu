@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.finance;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
@@ -62,5 +63,7 @@ public interface GSTInvoiceTxnDAO {
 	long getSeqNoFromSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);
 
 	SeqGSTInvoice getSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);
+
+	boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate);
 
 }
