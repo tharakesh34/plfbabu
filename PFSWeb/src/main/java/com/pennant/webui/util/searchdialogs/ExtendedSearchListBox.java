@@ -774,7 +774,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 			}
 		}
 
-		return searchFilters.toArray(new Filter[0]);
+		return searchFilters.toArray(new Filter[searchFilters.size()]);
 	}
 
 	/**
