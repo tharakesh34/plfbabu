@@ -942,11 +942,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 
-				if (approveRec) {
+				if (approveRec && !DocumentCategories.FINANCE.getKey().equalsIgnoreCase(documentDetails.getCategoryCode())) {
 					rcdType = documentDetails.getRecordType();
 					recordStatus = documentDetails.getRecordStatus();
-					//documentDetails.setRecordType("");
-					//documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					documentDetails.setRecordType("");
+					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
 				if (saveRecord) {
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
