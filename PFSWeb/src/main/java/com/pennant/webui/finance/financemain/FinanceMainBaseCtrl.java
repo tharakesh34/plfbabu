@@ -18255,7 +18255,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
-				details.setDocName(templateName);
+				details.setDocName(reportName.substring(15));
 				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
