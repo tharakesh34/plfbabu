@@ -59,8 +59,8 @@ import com.pennant.backend.util.PennantConstants;
 	        @Override
 	        public Timestamp unmarshal(final String dateAsString) throws Exception {
 	        	 Date date = dateFormat.parse(dateAsString);
-	        	 Timestamp sq = new java.sql.Timestamp(date.getTime());
-	            return sq;
+
+		return new Timestamp(date.getTime());
 	        }
 	        //this method is used to converting String to Timestamp for CXFWebServices
 	        @Override

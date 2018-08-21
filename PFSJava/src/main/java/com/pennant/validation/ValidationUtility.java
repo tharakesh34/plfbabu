@@ -59,7 +59,7 @@ public class ValidationUtility {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public Object validate(Object object , Class groupName) throws ServiceException {
+	public Object validate(Object object, Class groupName) {
 
 		Set<ConstraintViolation<Object>> violations = null;
 		
