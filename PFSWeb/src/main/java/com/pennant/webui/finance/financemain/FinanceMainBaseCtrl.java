@@ -18221,7 +18221,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//}
 				DocumentDetails exstDetails = null;
 				if (financeDetail.getDocumentDetailsList().size() > 0)
-				exstDetails = getExistDocDetails(financeDetail.getDocumentDetailsList(), reportName);
+				exstDetails = getExistDocDetails(financeDetail.getDocumentDetailsList(), agreementDefinition.getDocType());
 				if (exstDetails != null) {
 					//exstDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())){
@@ -18251,8 +18251,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
-				details.setDocName(reportName);
-				details.setDocReceivedDate(frefdata.getLastMntOn());
+				details.setDocName(templateName);
+				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
 				details.setCategoryCode(agreementDefinition.getModuleName());
@@ -18280,19 +18280,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	}
 		
-	
-	
-	private DocumentDetails getExistDocDetails(List<DocumentDetails> exstDoclst, String docName){
-		
-		for(DocumentDetails docDetails : exstDoclst){
-			if(docName.equalsIgnoreCase(docDetails.getDocName())){
+	private DocumentDetails getExistDocDetails(List<DocumentDetails> exstDoclst, String docType) {
+
+		for (DocumentDetails docDetails : exstDoclst) {
+			if (docType.equalsIgnoreCase(docDetails.getDocCategory())) {
 				return docDetails;
 			}
-				
 		}
 		return null;
-	}
 
+	}
 	
 
 	public List<String> getAssignCollateralRef() {
