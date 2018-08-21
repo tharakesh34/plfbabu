@@ -8,9 +8,9 @@ private String usrLogin;
 private String tokenId;
 private String ipAddress;
 
-//******************************************************//
-		// ****************** getter / setter *******************//
-		// ******************************************************//
+	public ServerAuthentication() {
+		super();
+	}
 
 public String getUsrLogin() {
 	return usrLogin;

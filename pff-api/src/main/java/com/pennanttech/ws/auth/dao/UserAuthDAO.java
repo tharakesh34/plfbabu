@@ -49,9 +49,9 @@ import com.pennanttech.ws.auth.model.UserAuthentication;
  * 
  */
 public interface UserAuthDAO {
-	public UserAuthentication validateSession(String tokenId);
+	UserAuthentication validateSession(String tokenId);
 
-	public String createSession(UserAuthentication webServiceAuthanticastion);
+	String createSession(UserAuthentication webServiceAuthanticastion);
 
-	public void updateSession(UserAuthentication webServiceAuthanticastion);
+	void updateSession(UserAuthentication webServiceAuthanticastion);
 }

@@ -11,9 +11,9 @@ public class UserAuthentication {
 	private String tokenId;
 	private Timestamp expiry;
 	
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public UserAuthentication() {
+		super();
+	}
 		
 	public String getUsrLogin() {
 		return usrLogin;

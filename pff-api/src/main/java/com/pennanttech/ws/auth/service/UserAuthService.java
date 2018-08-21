@@ -11,5 +11,5 @@ public interface UserAuthService {
 
 	String createSession(UserAuthentication webServiceAuthanticastion);
 
-	public void updateSession(UserAuthentication webServiceAuthanticastion);
+	void updateSession(UserAuthentication webServiceAuthanticastion);
 }

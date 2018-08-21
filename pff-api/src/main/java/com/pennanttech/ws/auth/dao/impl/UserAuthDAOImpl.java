@@ -54,15 +54,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.dao.systemmasters.impl.CityDAOImpl;
 import com.pennanttech.ws.auth.dao.UserAuthDAO;
 import com.pennanttech.ws.auth.model.UserAuthentication;
 /**
  * DAO methods implementation for the <b>WebServiceUserSecurity model</b> class.<br>
  * 
  */
-public class UserAuthDAOImpl extends BasisCodeDAO< UserAuthentication> implements UserAuthDAO  {
-private static Logger logger = Logger.getLogger(CityDAOImpl.class);
+public class UserAuthDAOImpl extends BasisCodeDAO<UserAuthentication> implements UserAuthDAO {
+	private static Logger logger = Logger.getLogger(UserAuthDAOImpl.class);
 	
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
