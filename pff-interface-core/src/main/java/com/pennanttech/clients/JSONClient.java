@@ -31,9 +31,8 @@ public class JSONClient {
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 		mapper.setSerializationInclusion(Inclusion.NON_NULL);
-		Object objResponse = mapper.readValue(json, responseClass);
 
-		return objResponse;
+		return mapper.readValue(json, responseClass);
 	}
 
 	private static Response getClient(String url, String path, Object requestData) {
