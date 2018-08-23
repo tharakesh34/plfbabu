@@ -133,8 +133,8 @@
 		<modifyDataType tableName="adtsampling" columnName="totalCoApplicantsIntObligation" newDataType="decimal(18,0)"/>
 	</changeSet>
 	<changeSet id="5" author="murthy.y">
-		<renameColumn tableName="adtsampling" oldColumnName="auxiliary3" newColumnName="totalCustomerIntObligation"/>
-		<renameColumn tableName="adtsampling" oldColumnName="auxiliary4" newColumnName="totalCoApplicantsIntObligation"/>
+		<renameColumn tableName="adtsampling" oldColumnName="auxiliary3" newColumnName="lcreligibility"/>
+		<renameColumn tableName="adtsampling" oldColumnName="auxiliary4" newColumnName="ltveligibility"/>
 	</changeSet>
 	<changeSet id="5.1" author="murthy.y">
 		<modifyDataType tableName="adtsampling" columnName="lcreligibility" newDataType="decimal(18,0)"/>
