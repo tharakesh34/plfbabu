@@ -3946,4 +3946,10 @@ UNION ALL
 			Insert into ERRORDETAILS values ('91136','EN','E','current Waived amount for fee type {0} is more than specified amount {1},',null,'Approved',null,null,null,null,null,0,current_timestamp,1000,0);
 		</sql>
 	</changeSet> 
+	<changeSet id="57" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where CODE = '91137';
+			Insert into ERRORDETAILS values ('91137','EN','E','Waiver amount should be 0 for Fee Code : {0}','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);
+		</sql>
+	</changeSet> 
 	</databaseChangeLog>

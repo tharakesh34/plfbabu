@@ -78,12 +78,12 @@ public interface FinFeeDetailService {
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 	
 	//GST
-	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail, String branchCode);
+	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap, boolean apiRequest);
 	BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap);
 	BigDecimal getFeeResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy);
 	void calculateGSTFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap);
 	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode, int taxRoundingTarget);
-	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail, String branchCode);
+	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap, boolean apiRequest);
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap);
 	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState, 
 			String highPriorityCountry,	FinanceTaxDetail taxDetail, String branchCode);
