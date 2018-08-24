@@ -633,6 +633,8 @@ public class NotificationService {
 			recommendations.append(notes.getRemarks());
 		}
 		data.setRecommendations(recommendations.toString());
+		data.setRecordStatus(main.getRecordStatus());
+		data.setReceiptPurpose(main.getReceiptPurpose());
 		return data.getDeclaredFieldValues();
 	}
 

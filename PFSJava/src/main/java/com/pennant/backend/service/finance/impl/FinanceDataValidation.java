@@ -1686,12 +1686,12 @@ public class FinanceDataValidation {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		Mandate mandate = financeDetail.getMandate();
 		// if it is stp process mandate is mandatory
-		if (financeDetail.isStp() && mandate == null) {
+		/*if (financeDetail.isStp() && mandate == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Mandate";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 			return errorDetails;
-		}
+		}*/
 		// Validate mandate details
 		if (mandate != null) {
 			if(StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod(), 

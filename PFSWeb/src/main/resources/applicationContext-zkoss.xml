@@ -5241,10 +5241,10 @@
 	<!--  ProcessView PopUp Details Configuration -->
 	<!-- ====================================================== -->
 
-	<!-- <bean id="processViewCtrl" class="com.pennant.webui.util.ProcessViewCtrl"
+	<bean id="processViewCtrl" class="com.pennant.webui.util.ProcessViewCtrl"
 		scope="prototype">
 		<property name="designerUrl" value="${process.designer.url}" />
-	</bean> -->
+	</bean>
 	
 	<!-- ====================================================== -->
 	<!-- ActivityLog Details Configuration -->

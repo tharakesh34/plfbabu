@@ -92,6 +92,8 @@ public class MailTemplateData {
 	private String facilityType;
 	private String finCurODAmt;
 	private int finCurODDays;
+	private String recordStatus;
+	private String receiptPurpose;
 	
 	public MailTemplateData() {
 		
@@ -586,6 +588,22 @@ public class MailTemplateData {
 
 	public void setInsAmount(String insAmount) {
 		this.insAmount = insAmount;
+	}
+
+	public String getRecordStatus() {
+		return recordStatus;
+	}
+
+	public void setRecordStatus(String recordStatus) {
+		this.recordStatus = recordStatus;
+	}
+
+	public String getReceiptPurpose() {
+		return receiptPurpose;
+	}
+
+	public void setReceiptPurpose(String receiptPurpose) {
+		this.receiptPurpose = receiptPurpose;
 	}
 }
 	
