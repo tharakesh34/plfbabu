@@ -678,6 +678,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private int advEMITerms = 0;
 	
+	@XmlElement
+	private int fixedRateTenor  = 0;
+	
+	@XmlElement
+	private BigDecimal fixedTenorRate  = BigDecimal.ZERO;	
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -3859,4 +3865,19 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.bpiRateBasis = bpiRateBasis;
 	}
 
+	public int getFixedRateTenor() {
+		return fixedRateTenor;
+	}
+
+	public void setFixedRateTenor(int fixedRateTenor) {
+		this.fixedRateTenor = fixedRateTenor;
+	}
+
+	public BigDecimal getFixedTenorRate() {
+		return fixedTenorRate;
+	}
+
+	public void setFixedTenorRate(BigDecimal fixedTenorRate) {
+		this.fixedTenorRate = fixedTenorRate;
+	}
 }

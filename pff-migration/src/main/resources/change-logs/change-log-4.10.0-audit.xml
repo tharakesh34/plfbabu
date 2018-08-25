@@ -64,4 +64,16 @@
 	<renameTable newTableName="ADTFEEWAIVERDETAILS"
 		oldTableName="ADTFEEWAIVERDETAIL" />
 </changeSet>
+	<changeSet id="6" author="Mangapathi">
+		<addColumn tableName="AdtRMTFinanceTypes" >
+			<column name="alwhybridrate" type="boolean" defaultValueBoolean="false"/>
+			<column name="fixedratetenor" type="Number(3,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="7" author="Mangapathi">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="fixedratetenor" type="Number(3,0)" defaultValue="0" />
+			<column name="fixedtenorrate" type="Number(13,9)" defaultValue="0.0" />
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>

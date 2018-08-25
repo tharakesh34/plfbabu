@@ -858,6 +858,7 @@ public class FinanceDataDefaulting {
 			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 		}
 		
+		finMain.setFixedRateTenor(financeType.getFixedRateTenor());		
 		
 	}
 

@@ -2794,6 +2794,32 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 			return errorDetails;
 		}
+		
+		if(financeType.isAlwHybridRate()) { 
+			if(finMain.getFixedRateTenor() < 0){
+				String[] valueParm = new String[2];
+				valueParm[0] = "Fixed Rate Tenor";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+				return errorDetails;
+			}
+
+			if(finMain.getFixedRateTenor()>=finMain.getNumberOfTerms()){
+				String[] valueParm = new String[2];
+				valueParm[0] = "Fixed Rate Tenor : "+String.valueOf(finMain.getFixedRateTenor());
+				valueParm[1] = " Number of terms : "+String.valueOf(finMain.getNumberOfTerms());;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
+				return errorDetails;
+			}
+
+			if(finMain.getFixedRateTenor() > 0 && finMain.getFixedTenorRate().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Fixed Tenor Rate";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+				return errorDetails;
+			}
+		}
 
 		return errorDetails;
 	}

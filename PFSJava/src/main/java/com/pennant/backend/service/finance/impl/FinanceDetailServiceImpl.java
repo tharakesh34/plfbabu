@@ -9758,6 +9758,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setMaxReAgeHolidays(financeType.getMaxReAgeHolidays());
 		financeMain.setUnPlanEMICpz(financeType.isUnPlanEMICpz());
 		financeMain.setReAgeCpz(financeType.isReAgeCpz());
+		
+		financeMain.setFixedRateTenor(financeType.getFixedRateTenor());
 
 		return financeMain;
 	}

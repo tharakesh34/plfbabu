@@ -1099,6 +1099,25 @@
 														</hbox>
 													</row>
 													<row
+														id="row_hybridRates" visible="false">
+													<label
+														id="label_FinanceMainDialog_FixedRateTenor"
+														value="${c:l('label_FinanceMainDialog_FixedRateTenor.value')}" />
+													<intbox
+														id="fixedRateTenor" width="45px" maxlength="3"
+														style="text-align:right" />
+													<label
+														id="label_FinanceMainDialog_FixedTenorRate"
+														value="${c:l('label_FinanceMainDialog_FixedTenorRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="fixedTenorRate" width="125px" maxlength="15"
+															style="text-align:right" />
+													</hbox>
+												</row>
+													<row
 														id="repayBaseRateRow" visible="false">
 														<label
 															id="label_FinanceMainDialog_RepayBaseRate"

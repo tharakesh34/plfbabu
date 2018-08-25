@@ -85,6 +85,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal finIntRate = BigDecimal.ZERO;
 	private BigDecimal fInMinRate = BigDecimal.ZERO;
 	private BigDecimal finMaxRate = BigDecimal.ZERO;
+	private boolean alwHybridRate;
+	private int fixedRateTenor;
 	private String finDftIntFrq;
 	private String finSchdMthd;
 	private boolean finIsIntCpz;
@@ -610,6 +612,22 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setFinMaxRate(BigDecimal finMaxRate) {
 		this.finMaxRate = finMaxRate;
+	}
+	
+	public boolean isAlwHybridRate() {
+		return alwHybridRate;
+	}
+
+	public void setAlwHybridRate(boolean alwHybridRate) {
+		this.alwHybridRate = alwHybridRate;
+	}
+
+	public int getFixedRateTenor() {
+		return fixedRateTenor;
+	}
+
+	public void setFixedRateTenor(int fixedRateTenor) {
+		this.fixedRateTenor = fixedRateTenor;
 	}
 
 	public String getFinDftIntFrq() {

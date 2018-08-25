@@ -134,7 +134,6 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.impl.InputElement;
 
 import com.aspose.words.SaveFormat;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
@@ -154,6 +153,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
+import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
@@ -508,6 +508,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_FinRepRates;
 	protected Decimalbox finMinRate;
 	protected Decimalbox finMaxRate;
+	protected Row row_hybridRates;
+	protected Intbox fixedRateTenor;
+	protected Decimalbox fixedTenorRate;
 	protected Combobox cbScheduleMethod;
 	protected Row rpyPftFrqRow;
 	protected FrequencyBox repayPftFrq;
@@ -1374,6 +1377,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_advEMITerms.setVisible(true);
 			this.advEMITerms.setMaxlength(3);
 			this.advEMITerms.setStyle("text-align:right;");
+		}
+		
+		if(financeType.isAlwHybridRate()) {
+			this.row_hybridRates.setVisible(true);
+			this.fixedRateTenor.setMaxlength(3);
+			this.fixedRateTenor.setStyle("text-align:right;");
+			
+			this.fixedTenorRate.setMaxlength(LengthConstants.LEN_RATE);
+			this.fixedTenorRate.setFormat(PennantConstants.rateFormate9);
+			this.fixedTenorRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+			this.fixedTenorRate.setScale(LengthConstants.LEN_RATE_SCALE);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -3523,6 +3537,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.advEMITerms.setValue(aFinanceMain.getAdvEMITerms());
+		
+		this.fixedRateTenor.setValue(aFinanceMain.getFixedRateTenor());
+		this.fixedTenorRate.setValue(aFinanceMain.getFixedTenorRate());
 
 		this.repayRate.setMarginValue(aFinanceMain.getRepayMargin());
 
@@ -11006,11 +11023,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (this.nextRepayRvwDate.getValue() != null) {
 					this.nextRepayRvwDate_two.setValue(this.nextRepayRvwDate.getValue());
 				}
+				
 				if (StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayRvwDate(DateUtility.getDate(DateUtility
 							.formatUtilDate(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
+				
 				//Validation Against the Repay Frequency and the next Frequency Date
 				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayRvwDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayRvwFrq.getValue(), this.nextRepayRvwDate.getValue())) {
@@ -11250,7 +11269,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if(row_hybridRates.isVisible()) {
+				int fixedRateTenor = this.fixedRateTenor.intValue();
+				int loanTerms = this.numberOfTerms_two.intValue();
+				
+				if (fixedRateTenor >= loanTerms) {
+					throw new WrongValueException(this.fixedRateTenor, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
+							Labels.getLabel("label_FinanceMainDialog_FixedRateTenor.value"), String.valueOf(loanTerms)}));
+				}
+			}
+			aFinanceMain.setFixedRateTenor(this.fixedRateTenor.intValue());
+		}catch(WrongValueException we) {
+			wve.add(we);
+		}
 
+		try {
+			if(row_hybridRates.isVisible()) {
+				if(this.fixedRateTenor.intValue() > 0 && this.fixedTenorRate.getValue().compareTo(BigDecimal.ZERO) <= 0){
+					throw new WrongValueException(this.fixedTenorRate,
+							Labels.getLabel("FIELD_NO_NEGATIVE",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_FixedTenorRate.value") }));
+				}
+				aFinanceMain.setFixedTenorRate(this.fixedTenorRate.getValue());
+			}
+		}catch(WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			if (this.maturityDate_two.getValue() != null) {
 				aFinanceMain.setMaturityDate(DateUtility.getDate(
@@ -13318,12 +13365,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (this.nextRepayRvwDate.getValue() == null && StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
-			this.nextRepayRvwDate_two.setValue(FrequencyUtil
-					.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-					.getNextFrequencyDate());
+			int fixedTenor = this.fixedRateTenor.getValue(); 
+			if(fixedTenor > 0) {
+				this.nextRepayRvwDate_two.setValue(FrequencyUtil
+						.getNextDate(this.repayRvwFrq.getValue(), 1, DateUtility.addMonths(this.gracePeriodEndDate_two.getValue(),fixedTenor-1),
+								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+						.getNextFrequencyDate());
+			}else {
+				this.nextRepayRvwDate_two.setValue(FrequencyUtil
+						.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
+								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+						.getNextFrequencyDate());
+			}
 		}
-
 		if (this.nextRepayRvwDate.getValue() != null) {
 			this.nextRepayRvwDate_two.setValue(this.nextRepayRvwDate.getValue());
 		}
@@ -13649,6 +13703,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_CpzAtReAge"), this.cpzAtReAge);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_RoundingMode"), this.roundingMode);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AdvEMITerms"), this.advEMITerms);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_FixedRateTenor"), this.fixedRateTenor);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_FixedTenorRate"), this.fixedTenorRate);
 
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(isReadOnly("FinanceMainDialog_applyODPenalty"), this.applyODPenalty);
@@ -14278,6 +14334,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.unPlannedEmiHLockPeriod.setReadonly(true);
 		this.cpzAtReAge.setDisabled(true);
 		readOnlyComponent(true, this.roundingMode);
+		this.advEMITerms.setReadonly(true);
 
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(true, this.applyODPenalty);

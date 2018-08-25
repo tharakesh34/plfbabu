@@ -266,6 +266,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox cbfinRateType; // autoWired
 	protected Decimalbox fInMinRate; // autoWired
 	protected Decimalbox finMaxRate; // autoWired
+	protected Checkbox alwHybridRate;// autoWired
+	protected Intbox fixedRateTenor;// autoWired
 	protected Row row_FinRepRates; // autoWired
 	protected Decimalbox finIntRate; // autoWired
 	protected RateBox financeBaserate;
@@ -814,6 +816,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMaxRate.setFormat(PennantConstants.rateFormate9);
 		this.finMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.finMaxRate.setScale(9);
+		this.fixedRateTenor.setMaxlength(3);
 		this.finGrcIntRate.setMaxlength(13);
 		this.finGrcIntRate.setFormat(PennantConstants.rateFormate9);
 		this.finGrcIntRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -1210,6 +1213,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMaxRate.setValue(aFinanceType.getFinMaxRate());
 		this.finIntRate.setValue(aFinanceType.getFinIntRate());
 		this.financeBaserate.setEffectiveRateVisible(true);
+		this.alwHybridRate.setChecked(aFinanceType.isAlwHybridRate());
+		this.fixedRateTenor.setValue(aFinanceType.getFixedRateTenor());
 
 		this.financeBaserate.setBaseValue(aFinanceType.getFinBaseRate());
 		this.financeBaserate.setSpecialValue(aFinanceType.getFinSplRate());
@@ -2345,6 +2350,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			aFinanceType.setAlwHybridRate(this.alwHybridRate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			if (this.alwHybridRate.isChecked() && this.fixedRateTenor.intValue() < 0) {
+				throw new WrongValueException(this.fixedRateTenor, Labels.getLabel("FIELD_IS_EQUAL_OR_GREATER", new String[] {
+						Labels.getLabel("label_FinanceTypeDialog_FixedRateTenor.value"), "0" }));
+			}
+			aFinanceType.setFixedRateTenor(this.fixedRateTenor.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			mustBeHigher(finMaxRate, fInMinRate, "label_FinanceTypeDialog_FinMaxRate.value",
 					"label_FinanceTypeDialog_FInMinRate.value");
@@ -3716,6 +3738,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyAdvPftRate.setConstraint("");
 		this.fInMinRate.setConstraint("");
 		this.finMaxRate.setConstraint("");
+		this.fixedRateTenor.setConstraint("");
 		this.finGrcIntRate.setConstraint("");
 		this.fInGrcMinRate.setConstraint("");
 		this.finGrcMaxRate.setConstraint("");
@@ -4097,6 +4120,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIntRate.setReadonly(isTrue);
 		this.fInMinRate.setReadonly(isTrue);
 		this.finMaxRate.setReadonly(isTrue);
+		this.fixedRateTenor.setReadonly(isTrue);
 		this.finIsIntCpz.setDisabled(isTrue);
 		this.finIsRvwAlw.setDisabled(isTrue);
 		this.rateChgAnyDay.setDisabled(isTrue);
@@ -4300,6 +4324,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIntRate.setValue("");
 		this.fInMinRate.setValue("");
 		this.finMaxRate.setValue("");
+		this.fixedRateTenor.setText("");
 		this.finDftIntFrq.setValue("");
 		this.finIsIntCpz.setChecked(false);
 		this.finCpzFrq.setValue("");
@@ -6286,6 +6311,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIntRate.setErrorMessage("");
 		this.fInMinRate.setErrorMessage("");
 		this.finMaxRate.setErrorMessage("");
+		this.fixedRateTenor.setErrorMessage("");
 		this.finGrcSchdMthd.setErrorMessage("");
 		this.finDftIntFrq.setErrorMessage("");
 		this.finCpzFrq.setErrorMessage("");

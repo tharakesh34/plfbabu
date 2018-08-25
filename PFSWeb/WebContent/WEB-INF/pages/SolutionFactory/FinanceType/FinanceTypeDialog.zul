@@ -895,6 +895,25 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
+											<row id="row_hybridRates">
+												<label
+													id="label_FinanceTypeDialog_AlwHybridRate"
+													value="${c:l('label_FinanceTypeDialog_AlwHybridRate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="alwHybridRate" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FixedRateTenor"
+													value="${c:l('label_FinanceTypeDialog_FixedRateTenor.value')}" />
+													<space
+														id="space_fixedRateTenor" spacing="2px" sclass="mandatory" />
+													<intbox
+														id="fixedRateTenor" width="45px" maxlength="3"
+														style="text-align:right" />
+											</row>
 											<row id = "row_ApplyPricingPolicy">
 												<label
 													id="label_ApplyRpyPricing"

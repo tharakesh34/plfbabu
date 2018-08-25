@@ -305,6 +305,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox									maturityDate_two;
 	protected Row 										row_advEMITerms;
 	protected Intbox 									advEMITerms;
+	protected Row 										row_hybridRates;
+	protected Intbox 									fixedRateTenor;
+	protected Decimalbox 								fixedTenorRate;
 
 	//Advised Profit Rates
 	protected ExtendedCombobox							rpyAdvBaseRate;
@@ -788,6 +791,16 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_advEMITerms.setVisible(true);
 			this.advEMITerms.setMaxlength(3);
 			this.advEMITerms.setStyle("text-align:right;");
+		}
+		if(financeType.isAlwHybridRate()) {
+			this.row_hybridRates.setVisible(true);
+			this.fixedRateTenor.setMaxlength(3);
+			this.fixedRateTenor.setStyle("text-align:right;");
+			
+			this.fixedTenorRate.setMaxlength(LengthConstants.LEN_RATE);
+			this.fixedTenorRate.setFormat(PennantConstants.rateFormate9);
+			this.fixedTenorRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+			this.fixedTenorRate.setScale(LengthConstants.LEN_RATE_SCALE);
 		}
 		setFinAssetFieldVisibility(financeType);
 
@@ -1339,6 +1352,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		this.advEMITerms.setValue(aFinanceMain.getAdvEMITerms());
+		this.fixedRateTenor.setValue(aFinanceMain.getFixedRateTenor());
+		this.fixedTenorRate.setValue(aFinanceMain.getFixedTenorRate());
 
 		//Advised profit Rates
 		doCheckAdviseRates(aFinanceMain, false, financeType.getFinCategory());
@@ -2438,6 +2453,40 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceMain.setAdvEMITerms(advEMITerms);
 			}
 		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			if(row_hybridRates.isVisible()) {
+				int defaultTenor = financeType.getFixedRateTenor();
+				int fixedRateTenor = this.fixedRateTenor.intValue();
+				int loanTerms = this.numberOfTerms_two.intValue();
+				
+				if(defaultTenor > 0 && fixedRateTenor > defaultTenor) {
+					throw new WrongValueException(this.fixedRateTenor, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
+							Labels.getLabel("label_FinanceMainDialog_FixedRateTenor.value"), String.valueOf(loanTerms)}));
+				}
+				
+				if (fixedRateTenor >= loanTerms) {
+					throw new WrongValueException(this.fixedRateTenor, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
+							Labels.getLabel("label_FinanceMainDialog_FixedRateTenor.value"), String.valueOf(loanTerms)}));
+				}
+			}
+			aFinanceMain.setFixedRateTenor(this.fixedRateTenor.intValue());
+		}catch(WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if(row_hybridRates.isVisible()) {
+				if(this.fixedRateTenor.intValue() > 0 && this.fixedTenorRate.getValue().compareTo(BigDecimal.ZERO) <= 0){
+					throw new WrongValueException(this.fixedTenorRate,
+							Labels.getLabel("FIELD_NO_NEGATIVE",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_FixedTenorRate.value") }));
+				}
+				aFinanceMain.setFixedTenorRate(this.fixedTenorRate.getValue());
+			}
+		}catch(WrongValueException we) {
 			wve.add(we);
 		}
 
