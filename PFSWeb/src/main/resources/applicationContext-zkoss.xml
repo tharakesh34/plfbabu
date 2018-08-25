@@ -5296,8 +5296,8 @@
 	
 	
 	
-	<!-- <bean id="cibilReportViewCtrl" class="com.pennant.webui.cibil.reports.CibilReportViewCtrl"
-		scope="prototype" parent="basisCtrl" /> -->
+	<bean id="cibilReportViewCtrl" class="com.pennant.webui.cibil.reports.CibilReportViewCtrl"
+		scope="prototype" parent="basisCtrl" />
 
 	
 	<!--============ Legal Verification Module ============== -->
