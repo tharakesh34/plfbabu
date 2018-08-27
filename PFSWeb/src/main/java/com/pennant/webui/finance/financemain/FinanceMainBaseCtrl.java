@@ -153,7 +153,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
-import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
@@ -7440,6 +7439,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			String templateValidateMsg = "";
 			String accMsg="";
 			boolean isTemplateError = false;
+			List<DocumentDetails> existingUploadDocList =aFinanceDetail.getDocumentDetailsList();
+			Map<String ,DocumentDetails> docCatMap=new HashMap<>();
+			for(DocumentDetails docDetail:existingUploadDocList){
+				docCatMap.put(docDetail.getDocCategory(), docDetail);
+			}
 			for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
 				long id = financeReferenceDetail.getFinRefId();
 				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
@@ -7461,20 +7465,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (isAgrRender) {
 					if (agreementDefinition.isAutoGeneration()) {
 						try {
-							templateValidateMsg = validateTemplate(financeReferenceDetail); //If valid template 
-							if("Y".equals(templateValidateMsg)){
-							if(!isTemplateError){	
-							documentDetails = autoGenerateAgreement(financeReferenceDetail, aFinanceDetail,
-									agreementDefinition);
-							}
-							}else{								
+							templateValidateMsg = validateTemplate(financeReferenceDetail); // If
+																							// valid
+																							// template
+							if ("Y".equals(templateValidateMsg)) {
+								if (!isTemplateError) {
+									documentDetails = autoGenerateAgreement(financeReferenceDetail, aFinanceDetail,
+											agreementDefinition, existingUploadDocList, docCatMap);
+								}
+							} else {
 								accMsg = accMsg + "  " + templateValidateMsg;
 								isTemplateError = true;
 								continue;
 							}
 							agenDocList.add(documentDetails);
 							if (agreementDefinition.isAutoDownload()) {
-							autoDownloadLst.add(documentDetails);
+								autoDownloadLst.add(documentDetails);
 							}
 						} catch (Exception e) {
 							MessageUtil.showError(e.getMessage());
@@ -18241,7 +18247,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//
 	
 	// tasks #503 Auto Generation of Agreements
-	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata ,FinanceDetail financeDetail,AgreementDefinition agreementDefinition) throws Exception 
+	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata ,FinanceDetail financeDetail,AgreementDefinition agreementDefinition,List<DocumentDetails> existingUploadDocList,Map docCatMap ) throws Exception 
 	{
 		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
@@ -18279,12 +18285,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//}
 			
 				DocumentDetails exstDetails = null;
-				if (financeDetail.getDocumentDetailsList().size() > 0)
+				if (existingUploadDocList.size() > 0)
 				
-				exstDetails = getExistDocDetails(financeDetail.getDocumentDetailsList(), agreementDefinition.getDocType());
+				exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition,docCatMap);
+		
 				if (exstDetails != null) {
-					//exstDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				
+					
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())){
 						exstDetails.setDocImage(engine.getDocumentInByteArray(
 								templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
@@ -18341,12 +18347,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	}
 		
-	private DocumentDetails getExistDocDetails(List<DocumentDetails> exstDoclst, String docType) {
+	private DocumentDetails getExistDocDetails(List<DocumentDetails> exstDoclst,
+			AgreementDefinition agreementDefinition, Map docCatMap) {
 
-		for (DocumentDetails docDetails : exstDoclst) {
-			if (docType.equalsIgnoreCase(docDetails.getDocCategory())) {
+		for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
+			if (agreementDefinition.getDocType().equalsIgnoreCase(docDetails.getDocCategory())) {
+				// ### 25-08-2018 Ticket ID : 637
 				if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(docDetails.getRecordType())) {
 					return null;
+				}
+				// ###25-08-2018 - Ticket ID : 638 & 639
+				// Document category template exists in this case user should
+				// not upload same document category to document list
+
+				if (agreementDefinition.getAggtype().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)) {
+					if (!(agreementDefinition.getAggReportName()).equalsIgnoreCase(docDetails.getDocName())) {
+						exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
+						return null;
+					}
+				}
+				if (agreementDefinition.getAggtype().equalsIgnoreCase(PennantConstants.DOC_TYPE_PDF)) {
+					if (!(agreementDefinition.getAggName() + "." + agreementDefinition.getAggtype())
+							.equalsIgnoreCase(docDetails.getDocName())) {
+						exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
+						return null;
+					}
 				}
 				return docDetails;
 			}
