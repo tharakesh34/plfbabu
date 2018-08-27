@@ -1931,6 +1931,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		Listheader listheader_addNewRecord = new Listheader();
 		listheader_addNewRecord.setHflex("40px");
 		listheader_addNewRecord.setAlign("center");
+		listheader_addNewRecord.setVisible(false);
 		listheader_addNewRecord.setParent(listHead);
 
 		Listheader listheader_subCategoryCode = new Listheader(Labels.getLabel("listheader_categories.value"));
