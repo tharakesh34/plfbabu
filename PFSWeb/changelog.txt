@@ -1,4 +1,25 @@
-pff 4.10.3, 2018-08-16
+ pff 4.10.2.3, 2018-08-27
+ --------------
+-story #617 LTV and LCR Eligibilty fields in sampling screen.
+-Spell Corrections related to TKTNo:127910 and code Refactoring. 
+-bugs #629 Multiple records are being displayed in Notification Logs Screen.
+-bugs #630 if change the document (upload another document) then submit the loan after auto download previously document is downloaded then move to another user.
+-bugs #631 Configure multiple Agreements(documents ex : 2 doc) but after submit the loan only one document download in the screen. But in the Documents tab show.
+-bugs #632 Document Recevied date and Application date not matched.
+-bugs #633 After Delete the document ,while "submit" the loan '850: The record has been modified by another user". error message coming. (ex ref 1000HFL0003630).
+-bugs #634 In Loan go to Documents tab Document name status show's including loan Reference also.
+-story #635 User Stories 	Mail Notifications in Receipts.
+-story #648 Allow Hybrid Rate for a Loan.
+-bugs #637  Unhandled Exception while submission when cancel document which is in Agreements.
+-bugs #638  Document Not behaving as expected after changing document view is Changing.
+-bugs #639  Expected document is missing (Document was Changed but Agreement file is override).
+-story #626  Deposit Bank Removed in CHEQUE/DD payment types for Cash Management
+-story #627  Deposit Cheques Accounting.
+-story #646  GST Fees Calculation in Loan Creation for API.
+-story #628 If GST Invoice Number not generated showing message in GST Invoice Report.
+-story #656  IMD receipt Api.
+	
+pff 4.10.2.2, 2018-08-16
 ----------------------
 - story #581 Deposit Cheques Accounting.
 - Bug #592 Wrong Income Type master selection.
