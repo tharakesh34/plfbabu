@@ -18354,6 +18354,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (agreementDefinition.getDocType().equalsIgnoreCase(docDetails.getDocCategory())) {
 				// ### 25-08-2018 Ticket ID : 637
 				if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(docDetails.getRecordType())) {
+					exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
 					return null;
 				}
 				// ###25-08-2018 - Ticket ID : 638 & 639
