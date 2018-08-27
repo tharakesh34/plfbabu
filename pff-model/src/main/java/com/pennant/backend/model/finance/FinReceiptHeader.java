@@ -66,6 +66,9 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String postBranch;
 	private boolean logSchInPresentment;
 	
+	private String extReference;
+	private String module;
+	
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
 	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
@@ -517,6 +520,23 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setGstLppAmount(BigDecimal gstLppAmount) {
 		this.gstLppAmount = gstLppAmount;
+	}
+
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public String getExtReference() {
+		return extReference;
+	}
+
+	public void setExtReference(String extReference) {
+		this.extReference = extReference;
 	}
 
 }

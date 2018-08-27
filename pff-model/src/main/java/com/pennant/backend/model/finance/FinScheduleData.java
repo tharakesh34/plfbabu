@@ -161,6 +161,11 @@ public class FinScheduleData {
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>();
 	private List<FinIRRDetails> iRRDetails = new ArrayList<FinIRRDetails>(); 
 	
+	@XmlElement
+	private String externalReference;
+	@XmlElement
+	private boolean isUpfrontAuto;
+	
 	public FinScheduleData() {
 		super();
 	}
@@ -553,5 +558,21 @@ public class FinScheduleData {
 
 	public void setiRRDetails(List<FinIRRDetails> iRRDetails) {
 		this.iRRDetails = iRRDetails;
+	}
+
+	public String getExternalReference() {
+		return externalReference;
+	}
+
+	public void setExternalReference(String externalReference) {
+		this.externalReference = externalReference;
+	}
+
+	public boolean isUpfrontAuto() {
+		return isUpfrontAuto;
+	}
+
+	public void setUpfrontAuto(boolean isUpfrontAuto) {
+		this.isUpfrontAuto = isUpfrontAuto;
 	}
 }

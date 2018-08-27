@@ -1,6 +1,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -24,6 +26,12 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private String finReference;
 	private String finEvent;
+	@XmlElement
+	private String externalReference;
+	private String module;
+	@XmlElement
+	private Date valueDate;
+	
 	@XmlElement
 	private Date fromDate;
 	@XmlElement
@@ -118,6 +126,20 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	
 	@SuppressWarnings("unused")
 	private FinServiceInstruction validateChangeRepayment = this;
+	
+	
+	@XmlElement
+	private String finType;
+	@XmlElement
+	private String currency;
+	private List<FinTypeFees> finTypeFeeList=new ArrayList<>(1);
+	
+	private long receiptId;
+	
+	@XmlElement
+	private String fromBranch;
+	@XmlElement
+	private String toBranch;
 
 
 	// ******************************************************//
@@ -537,6 +559,78 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 
 	public void setRemPartPayAmt(BigDecimal remPartPayAmt) {
 		this.remPartPayAmt = remPartPayAmt;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public List<FinTypeFees> getFinTypeFeeList() {
+		return finTypeFeeList;
+	}
+
+	public void setFinTypeFeeList(List<FinTypeFees> finTypeFeeList) {
+		this.finTypeFeeList = finTypeFeeList;
+	}
+
+	public long getReceiptId() {
+		return receiptId;
+	}
+
+	public void setReceiptId(long receiptId) {
+		this.receiptId = receiptId;
+	}
+
+	public String getExternalReference() {
+		return externalReference;
+	}
+
+	public void setExternalReference(String externalReference) {
+		this.externalReference = externalReference;
+	}
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getFromBranch() {
+		return fromBranch;
+	}
+
+	public void setFromBranch(String fromBranch) {
+		this.fromBranch = fromBranch;
+	}
+
+	public String getToBranch() {
+		return toBranch;
+	}
+
+	public void setToBranch(String toBranch) {
+		this.toBranch = toBranch;
 	}
 	
 }

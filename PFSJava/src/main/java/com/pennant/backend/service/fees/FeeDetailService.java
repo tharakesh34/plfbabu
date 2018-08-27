@@ -16,11 +16,13 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -44,6 +46,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FeeDetailService {
 	Logger				logger	= Logger.getLogger(FeeDetailService.class);
@@ -96,7 +99,9 @@ public class FeeDetailService {
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		setFinFeeDetailList(convertToFinanceFees(financeDetail, finReference, gstExecutionMap));
 		List<FinFeeDetail> finTypeFees = getFinFeeDetailList();
+
 		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());
+
 		setFinFeeDetailList(actualFinFeeList);
 		
 		// Organize Fee detail changes
@@ -113,6 +118,10 @@ public class FeeDetailService {
 			finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
 			if (StringUtils.isNotEmpty(finFeeDetail.getRuleCode())) {
 				feeRuleCodes.add(finFeeDetail.getRuleCode());
+			}
+			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())){
+				finFeeDetail.setPaidAmountOriginal(getPaidOriginal(finFeeDetail, gstExecutionMap, financeDetail));
+				finFeeDetail.setPaidAmount(finFeeDetail.getPaidAmountOriginal());
 			}
 		}
 		
@@ -182,6 +191,8 @@ public class FeeDetailService {
 		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
 			this.finFeeDetailService.calculateGSTFees(finFeeDetail, finScheduleData.getFinanceMain(), gstExecutionMap);
 		}
+		
+		
 
 		// Insurance Amounts calculation
 		List<FinInsurances> insurances = financeDetail.getFinScheduleData().getFinInsuranceList();
@@ -264,6 +275,19 @@ public class FeeDetailService {
 		logger.debug("Leaving");
 	}
 	
+	private BigDecimal getPaidOriginal(FinFeeDetail finFeeDetail, HashMap<String, Object> gstExecutionMap,
+			FinanceDetail financeDetail) {
+	    	BigDecimal gstNetOriginal=BigDecimal.ZERO;
+			BigDecimal gstPerc=this.finFeeDetailService.actualGSTFees(finFeeDetail, financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), gstExecutionMap);
+			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+				 gstNetOriginal =  calculateInclusivePercentage(finFeeDetail.getPaidAmount(), finFeeDetail.getCgst(),finFeeDetail.getSgst(),
+						finFeeDetail.getUgst(),finFeeDetail.getIgst(), taxRoundMode, taxRoundingTarget);
+				
+				
+		return gstNetOriginal;
+	}
+
 	private void validateFeeConfig(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		
@@ -573,7 +597,7 @@ public class FeeDetailService {
 		}
 	}
 
-	private List<FinFeeDetail> prepareActualFinFees(List<FinFeeDetail> finTypeFees, List<FinFeeDetail> finFeeDetailList) {
+	/*private List<FinFeeDetail> prepareActualFinFees(List<FinFeeDetail> finTypeFees, List<FinFeeDetail> finFeeDetailList) {
 		if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
 			for (FinFeeDetail finTypeFeeDetail : finTypeFees) {
 				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
@@ -603,6 +627,45 @@ public class FeeDetailService {
 							
 							finTypeFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount());
 							finTypeFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+						}
+					}
+				}
+			}
+		}
+		return finTypeFees;
+	}*/
+	
+	private List<FinFeeDetail> prepareActualFinFees(List<FinFeeDetail> finTypeFees, List<FinFeeDetail> finFeeDetailList) {
+		if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
+			for (FinFeeDetail finTypeFeeDetail : finTypeFees) {
+				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+					if (StringUtils.equals(finTypeFeeDetail.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())
+							&& StringUtils.equals(finTypeFeeDetail.getFinEvent(), finFeeDetail.getFinEvent())) {
+						finTypeFeeDetail.setFeeScheduleMethod(finFeeDetail.getFeeScheduleMethod());
+						finTypeFeeDetail.setPaidAmount(finFeeDetail.getPaidAmount());
+						finTypeFeeDetail.setTerms(finFeeDetail.getTerms());
+						finTypeFeeDetail.setWaivedAmount(finFeeDetail.getWaivedAmount());
+						
+						if (finTypeFeeDetail.isTaxApplicable()) {
+							if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finTypeFeeDetail.getTaxComponent())) {
+								finTypeFeeDetail.setActualAmountOriginal(finFeeDetail.getActualAmount());
+								finTypeFeeDetail.setActualAmount(finFeeDetail.getActualAmount());
+							} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finTypeFeeDetail.getTaxComponent())) {
+								finTypeFeeDetail.setNetAmount(finFeeDetail.getActualAmount());
+								finTypeFeeDetail.setActualAmount(finFeeDetail.getActualAmount());
+							}
+							finTypeFeeDetail.setPaidAmount(finFeeDetail.getPaidAmount());
+						} else {
+							finTypeFeeDetail.setActualAmountOriginal(finFeeDetail.getActualAmount());
+							finTypeFeeDetail.setActualAmountGST(BigDecimal.ZERO);
+							finTypeFeeDetail.setActualAmount(finFeeDetail.getActualAmount());
+							
+							BigDecimal netAmountOriginal = finTypeFeeDetail.getActualAmountOriginal().subtract(finTypeFeeDetail.getWaivedAmount());
+							
+							finTypeFeeDetail.setNetAmountOriginal(netAmountOriginal);
+							finTypeFeeDetail.setNetAmountGST(BigDecimal.ZERO);
+							finTypeFeeDetail.setNetAmount(netAmountOriginal);
+							finTypeFeeDetail.setPaidAmount(finFeeDetail.getPaidAmount());
 						}
 					}
 				}
@@ -759,6 +822,7 @@ public class FeeDetailService {
 				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
 				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
 				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
+				finFeeDetail.setAlwPreIncomization(finTypeFee.isAlwPreIncomization());
 				
 				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
 				
@@ -802,6 +866,118 @@ public class FeeDetailService {
 		}
 		return finFeeDetails;
 	}
+	
+	public FinFeeDetail setFinFeeDetails(FinTypeFees finTypeFee,FinFeeDetail finFeeDetail, HashMap<String, Object> gstExecutionMap,String currency){
+		
+		FinanceDetail financeDetail= new FinanceDetail();
+		FinScheduleData finScheduleData=new FinScheduleData();
+		FinanceMain finMain= new FinanceMain();
+		finMain.setFinCcy(currency);
+		finScheduleData.setFinanceMain(finMain);
+		financeDetail.setFinScheduleData(finScheduleData);
+		if (finTypeFee!=null) {
+			
+			
+				finFeeDetail.setNewRecord(true);
+				finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
+				finFeeDetail.setFinEvent(finTypeFee.getFinEvent());
+				finFeeDetail.setFinEventDesc(finTypeFee.getFinEventDesc());
+				finFeeDetail.setFeeTypeID(finTypeFee.getFeeTypeID());
+				finFeeDetail.setFeeOrder(finTypeFee.getFeeOrder());
+				finFeeDetail.setFeeTypeCode(finTypeFee.getFeeTypeCode());
+				finFeeDetail.setFeeTypeDesc(finTypeFee.getFeeTypeDesc());
+				finFeeDetail.setAlwPreIncomization(finTypeFee.isAlwPreIncomization());
+				finFeeDetail.setFeeScheduleMethod(finTypeFee.getFeeScheduleMethod());
+				finFeeDetail.setCalculationType(finTypeFee.getCalculationType());
+				finFeeDetail.setRuleCode(finTypeFee.getRuleCode());
+				finFeeDetail.setFixedAmount(finTypeFee.getAmount());
+				finFeeDetail.setPercentage(finTypeFee.getPercentage());
+				finFeeDetail.setCalculateOn(finTypeFee.getCalculateOn());
+				finFeeDetail.setAlwDeviation(finTypeFee.isAlwDeviation());
+				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
+				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
+				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
+				
+				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
+				
+				finFeeDetail.setTaxComponent(finTypeFee.getTaxComponent());
+				finFeeDetail.setTaxApplicable(finTypeFee.isTaxApplicable());
+				
+				if (finTypeFee.isTaxApplicable()) {
+					
+						BigDecimal gstPerc=this.finFeeDetailService.actualGSTFees(finFeeDetail, currency, gstExecutionMap);
+						String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+						int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())){
+						BigDecimal gstNetOriginal =  calculateInclusivePercentage(finFeeDetail.getActualAmount(), finFeeDetail.getCgst(),finFeeDetail.getSgst(),
+								finFeeDetail.getUgst(),finFeeDetail.getIgst(), taxRoundMode, taxRoundingTarget);
+						
+						finFeeDetail.setNetAmount(finFeeDetail.getActualAmount());
+						finFeeDetail.setNetAmountOriginal(gstNetOriginal);
+						finFeeDetail.setNetAmountGST(finFeeDetail.getActualAmount().subtract(gstNetOriginal));
+						
+						finFeeDetail.setActualAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
+						
+						BigDecimal actualGst = this.finFeeDetailService.calculatePercentage(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()), gstPerc, taxRoundMode, taxRoundingTarget);
+						finFeeDetail.setActualAmountGST(actualGst);
+						finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+
+						//finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+						finFeeDetail.setPaidAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
+						finFeeDetail.setPaidAmountGST(actualGst);
+						}else{
+							finFeeDetail.setNetAmountOriginal(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
+							BigDecimal netGst = this.finFeeDetailService.calculatePercentage(finFeeDetail.getNetAmountOriginal(), gstPerc, taxRoundMode, taxRoundingTarget);
+							finFeeDetail.setNetAmountGST(netGst);
+							finFeeDetail.setNetAmount(finFeeDetail.getNetAmountOriginal().add(netGst));
+							
+							finFeeDetail.setActualAmountOriginal(finFeeDetail.getActualAmount());
+							BigDecimal actualGst = this.finFeeDetailService.calculatePercentage(finFeeDetail.getActualAmountOriginal(), gstPerc, taxRoundMode, taxRoundingTarget);
+							finFeeDetail.setActualAmountGST(actualGst);
+							finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+
+							//finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+							finFeeDetail.setPaidAmountOriginal(finFeeDetail.getNetAmountOriginal());
+							finFeeDetail.setPaidAmount(finFeeDetail.getNetAmountOriginal().add(netGst));
+							finFeeDetail.setPaidAmountGST(netGst);
+						}
+					//this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
+					this.finFeeDetailService.calculateGSTFees(finFeeDetail, finMain, gstExecutionMap);
+				} else {
+					finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
+					finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
+					finFeeDetail.setActualAmount(finTypeFee.getAmount());
+					
+					BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal().subtract(finFeeDetail.getWaivedAmount());
+					
+					finFeeDetail.setNetAmountOriginal(netAmountOriginal);
+					finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
+					finFeeDetail.setNetAmount(netAmountOriginal);
+					
+					if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+						finFeeDetail.setPaidAmountOriginal(finTypeFee.getAmount());
+						finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+						finFeeDetail.setPaidAmount(finTypeFee.getAmount());
+					}
+					
+					if(StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)){
+						finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
+					}
+					
+					finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
+					finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
+				}
+				
+				finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+				finFeeDetail.setFinReference(null);
+				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		}
+		return finFeeDetail;
+	}
+	
+
 
 	/**
 	 * Method for execute finance fee details and validate with configured fees in loan type.<br>
@@ -867,6 +1043,49 @@ public class FeeDetailService {
 			//}
 		}*/
 		return finFeeDetailTemp;
+	}
+	
+	private BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal cgstPerc, BigDecimal sgstPerc, 
+			BigDecimal ugstPerc, BigDecimal igstPerc,String taxRoundMode,int taxRoundingTarget) {
+		logger.debug(Literal.ENTERING);
+		
+		if(amount.compareTo(BigDecimal.ZERO) == 0){
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
+		BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+		BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
+		actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
+		
+		
+		
+		BigDecimal actTaxAmount = amount.subtract(actualAmt);
+		
+		BigDecimal gstAmount = BigDecimal.ZERO;
+		if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
+			gstAmount = gstAmount.add(cgst);
+		}
+		if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
+			gstAmount = gstAmount.add(sgst);
+		}
+		if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
+			gstAmount = gstAmount.add(ugst);
+		}
+		if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
+			gstAmount = gstAmount.add(igst);
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return amount.subtract(gstAmount);
 	}
 	
 	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {

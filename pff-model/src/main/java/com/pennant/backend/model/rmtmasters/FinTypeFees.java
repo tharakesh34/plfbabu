@@ -102,6 +102,8 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private boolean taxApplicable;
 	private String	taxComponent;
 	
+	private boolean alwPreIncomization;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -327,6 +329,14 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public void setTaxComponent(String taxComponent) {
 		this.taxComponent = taxComponent;
+	}
+
+	public boolean isAlwPreIncomization() {
+		return alwPreIncomization;
+	}
+
+	public void setAlwPreIncomization(boolean alwPreIncomization) {
+		this.alwPreIncomization = alwPreIncomization;
 	}
 }
 

@@ -6,7 +6,9 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FeeReceiptService {
 
@@ -15,5 +17,5 @@ public interface FeeReceiptService {
 	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException;
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	List<FinFeeDetail> getPaidFinFeeDetails(String finReference);
-
+	List<ErrorDetail> processFeePayment(FinServiceInstruction finServInst) throws Exception;
 }

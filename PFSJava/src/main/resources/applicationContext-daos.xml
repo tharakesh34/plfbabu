@@ -3983,6 +3983,7 @@
 		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
 		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
 		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
@@ -5507,6 +5508,11 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
+		<property name="finTaxDetailsDAO" ref="finTaxDetailsDAO" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

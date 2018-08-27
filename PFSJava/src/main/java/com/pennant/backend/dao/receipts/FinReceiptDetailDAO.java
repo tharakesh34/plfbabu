@@ -17,4 +17,7 @@ public interface FinReceiptDetailDAO {
 	Date getMaxReceivedDateByReference(String finReference);
 	//Cash Management
 	void updateFundingAcByReceiptID(long receiptID, long fundingAc, String type);
+	
+	List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String finReference);
+
 }

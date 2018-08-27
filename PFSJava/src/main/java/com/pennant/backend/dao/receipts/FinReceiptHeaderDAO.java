@@ -18,4 +18,8 @@ public interface FinReceiptHeaderDAO {
 	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type);	//Cash Management Change
 	void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type); //Cash Management Change
 	BigDecimal getTotalReceiptAmount(String depositBranch, List<String> paymentTypes, String type); //Cash Management Change
+	
+	List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type);
+	void updateReference(String extReference, String finReference, String type);
+	List<FinReceiptHeader> getUpFrontReceiptHeaderByExtRef(String extRef, String type);
 }

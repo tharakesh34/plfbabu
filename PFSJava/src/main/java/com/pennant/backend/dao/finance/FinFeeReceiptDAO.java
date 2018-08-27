@@ -54,4 +54,5 @@ public interface FinFeeReceiptDAO {
 	long save(FinFeeReceipt finFeeReceipt,String type);
 	List<FinFeeReceipt> getFinFeeReceiptByFinRef(List<Long> feeIds, String type);
 	boolean isFinFeeReceiptAllocated(long receiptID, String type);
+	List<FinFeeReceipt> getFinFeeReceiptByFeeId(long feeId, String type);
 }

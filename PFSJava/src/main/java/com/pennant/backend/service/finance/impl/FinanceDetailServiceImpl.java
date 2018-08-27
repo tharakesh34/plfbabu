@@ -104,6 +104,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeExpenseDAO;
@@ -311,6 +312,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private ExtendedFieldDetailsService		extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
+	private FinReceiptHeaderDAO             finReceiptHeaderDAO;
 
 
 	private CustomServiceTask customServiceTask;
@@ -3630,6 +3632,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// ===========================================
 				saveSecondaryAccountList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF,
 						"");
+				
+				// update finreferece in finReceiptheader table for upfront receipts case 
+				if (financeDetail.getFinScheduleData().getExternalReference()!=null && !financeDetail.getFinScheduleData().getExternalReference().isEmpty()){
+					getFinReceiptHeaderDAO().updateReference(financeDetail.getFinScheduleData().getExternalReference(), financeDetail.getFinReference(), "");
+					getFinanceRepaymentsDAO().updateFinReference(financeDetail.getFinReference(), financeDetail.getFinScheduleData().getExternalReference(), "");
+				}
 
 				// Save FInance Tax Details
 				FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetails();
@@ -9933,6 +9941,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
 		this.pSLDetailDAO = pSLDetailDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }

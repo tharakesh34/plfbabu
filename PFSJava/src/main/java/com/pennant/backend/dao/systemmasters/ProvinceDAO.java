@@ -53,6 +53,7 @@ import com.pennanttech.pff.core.TableType;
 public interface ProvinceDAO extends BasicCrudDao<Province>  {
 
 	Province getProvinceById(String cPCountry, String cPProvince,String type);
+	Province getProvinceById( String cPProvince,String type);
 	String getSystemDefaultCount(String cpprovince);
 	
 	/**

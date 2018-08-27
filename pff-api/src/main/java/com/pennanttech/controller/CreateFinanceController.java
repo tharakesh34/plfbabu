@@ -33,11 +33,13 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -61,8 +63,10 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -142,7 +146,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	private DocumentDetailsDAO			documentDetailsDAO;
 	private DocumentService				documentService;
 	private DivisionDetailDAO			divisionDetailDAO;
-
+	private FinReceiptHeaderDAO			finReceiptHeaderDAO; 
+    private FinFeeReceiptDAO            finFeeReceiptDAO;
 	protected transient WorkflowEngine	workFlow	= null;
 
 
@@ -240,6 +245,15 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// set required mandatory values into finance details object
 			doSetRequiredDetails(financeDetail, loanWithWIF,userDetails,stp);
+			
+			if (financeDetail.getFinScheduleData().getExternalReference()!=null && !financeDetail.getFinScheduleData().getExternalReference().isEmpty()){
+				if (financeDetail.getFinScheduleData().isUpfrontAuto()){
+					adjustFeesAuto(finScheduleData);
+			}else{
+				
+				adjustFees(finScheduleData);
+			}
+			}
 
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
@@ -1658,7 +1672,197 @@ public class CreateFinanceController extends SummaryDetailService {
 		detail.setCollateralAssignmentList(null);
 		detail.setFinFlagsDetails(null);
 	}
-
+	
+	 private List<ErrorDetail> adjustFees(FinScheduleData detail){
+	    	List<ErrorDetail> errorDetails = detail.getErrorDetails();
+	    	LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+	    	if (detail.getFinFeeDetailList()!=null && detail.getFinFeeDetailList().size()>0){
+	    		Map<String,FinFeeDetail> feeDetailMap=new HashMap<>();
+	    		List<Long> receiptList=new ArrayList<>();
+	        	for (FinFeeDetail feeDetail:detail.getFinFeeDetailList()){
+	        		if (feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO)>0){
+	        			
+	        			if (feeDetail.getFinFeeReceipts()!=null && feeDetail.getFinFeeReceipts().size()>0){
+	        				BigDecimal feeAmountPaid=BigDecimal.ZERO;
+	        				for (FinFeeReceipt feeReceipt:feeDetail.getFinFeeReceipts()){
+	        					feeAmountPaid=feeAmountPaid.add(feeReceipt.getPaidAmount());
+	        					if (!receiptList.contains(feeReceipt.getReceiptID())){
+	        						receiptList.add(feeReceipt.getReceiptID());
+	        					}
+	        				}
+	        				if (feeAmountPaid.compareTo(BigDecimal.ZERO) <=0){
+	        					//Throw validation error and break the loop
+	        				}
+	        			}
+	        			
+	        		}
+	        		feeDetailMap.put(feeDetail.getFeeTypeCode(), feeDetail);
+	        	}
+	        	Map<Long,FinReceiptHeader> receiptHeaderMap=new HashMap<>();// map to save receipt header
+	        	List<FinReceiptHeader>	receiptHeaderList=finReceiptHeaderDAO.getUpFrontReceiptHeaderByExtRef(detail.getExternalReference(), "");
+	        	for (FinReceiptHeader header:receiptHeaderList){
+	        		receiptHeaderMap.put(header.getReceiptID(), header);
+	        	}
+	    		for (FinFeeDetail feeDtl:detail.getFinFeeDetailList()){// iterating existing finfee details list from finscheduledata
+	    			if (feeDetailMap.containsKey(feeDtl.getFeeTypeCode())){
+	    				FinFeeDetail finFeeDetail=feeDetailMap.get(feeDtl.getFeeTypeCode());
+	    				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO)>0){
+	    					if (finFeeDetail.getFinFeeReceipts()!=null && finFeeDetail.getFinFeeReceipts().size()>0){
+	    						for (FinFeeReceipt feeReceipt:finFeeDetail.getFinFeeReceipts()){// iterating receipt details
+	    							if(receiptHeaderMap.containsKey(feeReceipt.getReceiptID())){
+	    								
+	    							FinReceiptHeader header=receiptHeaderMap.get(feeReceipt.getReceiptID());
+	    							if (header.getReceiptAmount().compareTo(feeReceipt.getPaidAmount())>=0){
+	    								header.setReceiptAmount(header.getReceiptAmount().subtract(feeReceipt.getPaidAmount()));
+	    							}else{
+	    								String[] valueParm = new String[1];
+	    								valueParm[0] = "Insufficient funds to adjust fees";
+	    								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+	    								return errorDetails;
+	    							}
+	    							}else{
+	    								String[] valueParm = new String[1];
+	    								valueParm[0] = "Invalid receiptId "+feeReceipt.getReceiptID();
+	    								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+	    								return errorDetails;
+	    							}
+	    							feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
+	    							feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
+	    							feeReceipt.setRecordType(PennantConstants.RCD_ADD);
+	    							feeReceipt.setNewRecord(true);
+	    							feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
+	    							feeReceipt.setLastMntBy(getLastMntBy(false,userDetails));
+	    							detail.getFinFeeReceipts().add(feeReceipt);
+	    						}
+	    					}
+	    				}
+	    			}/*else{//Throw error if fee code does not exist in request and break the loop
+	    				
+	    			}*/
+	    			
+	    		}
+	    	}
+	    	return errorDetails;
+	    }
+	    
+	    
+	    
+	    private List<ErrorDetail> validatePaidFinFeeDetail(FinScheduleData detail,List<FinReceiptHeader> receiptHeaderList,Map<String,FinFeeDetail> paidFeeDetailMap){
+	    	List<ErrorDetail> errorDetails = detail.getErrorDetails();
+	    	
+	    		for (FinFeeDetail feeDetail:detail.getFinFeeDetailList()){
+	    			if (paidFeeDetailMap.containsKey(feeDetail.getFeeTypeCode())){
+	    				feeDetail.setTransactionId(detail.getExternalReference());
+	    				FinFeeDetail paidFee=paidFeeDetailMap.get(feeDetail.getFeeTypeCode());
+	    				if (feeDetail.getPaidAmount().compareTo(paidFee.getPaidAmount()) !=0){
+	    					String[] valueParm = new String[1];
+							valueParm[0] =feeDetail.getFeeTypeCode()+" Paid Amount must match with already paid amount ";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+							return errorDetails;
+	    				}
+	    				List<FinFeeReceipt> finFeeReceiptList=finFeeReceiptDAO.getFinFeeReceiptByFeeId(paidFee.getFeeID(), "_View");
+	    				
+	    				if (feeDetail.isAlwPreIncomization()){
+	    					if (finFeeReceiptList==null || finFeeReceiptList.size()==0 ){
+	    						String[] valueParm = new String[1];
+								valueParm[0] =feeDetail.getFeeTypeCode()+" Paid Amount must match with already paid amount ";
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+								return errorDetails;
+	    					}
+	    					
+	    				}
+	    				for (FinFeeReceipt finFeeReceipt:finFeeReceiptList){
+	    					finFeeReceipt.setRecordType("");
+	    					for (FinReceiptHeader receiptHeader:receiptHeaderList){
+	    						if (receiptHeader.getReceiptID()==finFeeReceipt.getReceiptID()){
+	    							receiptHeader.setReceiptAmount(receiptHeader.getReceiptAmount().subtract(finFeeReceipt.getPaidAmount()));
+	    						}
+	    					}
+	    				}
+	    				detail.getFinFeeReceipts().addAll(finFeeReceiptList);
+	    			}
+	    		}
+	    		
+	    	
+	    	return errorDetails;
+	    	
+	    }
+	    
+	    private Map<String,FinFeeDetail> getFeeDetailMap(List<FinFeeDetail> finFeeDetails){
+	    	 Map<String,FinFeeDetail> feeDetailMap=new HashMap<>();
+	    	 for(FinFeeDetail feeDetail:finFeeDetails){
+	    		 feeDetailMap.put(feeDetail.getFeeTypeCode(), feeDetail);
+	    	 }
+	    	 return feeDetailMap;
+	    }
+	   
+	    
+	    private List<ErrorDetail> adjustFeesAuto(FinScheduleData detail){
+	    	List<ErrorDetail> errorDetails = detail.getErrorDetails();
+	    	List<FinReceiptHeader>	receiptHeaderList=finReceiptHeaderDAO.getUpFrontReceiptHeaderByExtRef(detail.getExternalReference(), "");
+	    	List<FinFeeDetail> finFeeDetailsPaid=finFeeDetailDAO.getFinFeeDetailsByTran(detail.getExternalReference(), false, "_View");
+	    	Map<String,FinFeeDetail> paidFeeDetailMap=getFeeDetailMap(finFeeDetailsPaid);
+	    	LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+	    	if (finFeeDetailsPaid!=null && finFeeDetailsPaid.size()>0){
+	    		errorDetails=validatePaidFinFeeDetail(detail, receiptHeaderList, paidFeeDetailMap);
+	    		
+	    	}
+	    	
+	    	
+	    		if (detail.getFinFeeDetailList()!=null && detail.getFinFeeDetailList().size()>0 && errorDetails.isEmpty()){
+	    			for (FinFeeDetail feeDtl:detail.getFinFeeDetailList()){// iterating existing finfee details list from finscheduledata
+	    			if (!paidFeeDetailMap.containsKey(feeDtl.getFeeTypeCode())){
+	    				if (feeDtl.getPaidAmount().compareTo(BigDecimal.ZERO)>0){
+	    					BigDecimal feePaidAmount=feeDtl.getPaidAmount();
+	    					FinFeeReceipt feeReceipt= new FinFeeReceipt();
+	    					
+	    					for (FinReceiptHeader header:receiptHeaderList){
+	    						if (header.getReceiptAmount().compareTo(BigDecimal.ZERO)>0){
+	    							if (feePaidAmount.compareTo(header.getReceiptAmount())<=0){
+	    								header.setReceiptAmount(header.getReceiptAmount().subtract(feePaidAmount));
+	    								feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
+	    								feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
+	    								feeReceipt.setRecordType(PennantConstants.RCD_ADD);
+	    								feeReceipt.setNewRecord(true);
+	    								feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
+	    								feeReceipt.setLastMntBy(getLastMntBy(false,userDetails));
+	    								feeReceipt.setReceiptID(header.getReceiptID());
+	    								feeReceipt.setPaidAmount(feePaidAmount);
+	    								feePaidAmount=BigDecimal.ZERO;
+	    								
+	    								break;
+	    							}else{
+	    								feePaidAmount=feePaidAmount.subtract(header.getReceiptAmount());
+	    								feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
+	    								feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
+	    								feeReceipt.setRecordType(PennantConstants.RCD_ADD);
+	    								feeReceipt.setNewRecord(true);
+	    								feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
+	    								feeReceipt.setLastMntBy(getLastMntBy(false,userDetails));
+	    								feeReceipt.setReceiptID(header.getReceiptID());
+	    								feeReceipt.setPaidAmount(header.getReceiptAmount());
+	    								header.setReceiptAmount(BigDecimal.ZERO);
+	    							}
+	    						}
+	    						
+	    					}
+	    					if (feePaidAmount.compareTo(BigDecimal.ZERO)>0){
+	    						String[] valueParm = new String[1];
+	    						valueParm[0] = "Insufficient funds to adjust fees";
+	    						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+	    						return errorDetails;
+	    					}
+	    					detail.getFinFeeReceipts().add(feeReceipt);
+	    					
+	    				}
+	    			}
+	    				
+	    				
+	    			}
+	    		}
+	    	
+	    	return errorDetails;
+	    }
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -1768,5 +1972,21 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
 		this.divisionDetailDAO = divisionDetailDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public FinFeeReceiptDAO getFinFeeReceiptDAO() {
+		return finFeeReceiptDAO;
+	}
+
+	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
+		this.finFeeReceiptDAO = finFeeReceiptDAO;
 	}
 }

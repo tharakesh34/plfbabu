@@ -160,6 +160,8 @@ public class AEAmountCodes {
 	private String		postingType			= AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 	private String		userBranch			= "";
 	private String		paymentType				= "";
+	
+	private BigDecimal imdAmount= BigDecimal.ZERO;;
 
 	public AEAmountCodes() {
 		super();
@@ -1189,6 +1191,14 @@ public class AEAmountCodes {
 
 	public void setAdvanceEMI(BigDecimal advanceEMI) {
 		this.advanceEMI = advanceEMI;
+	}
+
+	public BigDecimal getImdAmount() {
+		return imdAmount;
+	}
+
+	public void setImdAmount(BigDecimal imdAmount) {
+		this.imdAmount = imdAmount;
 	}
 
 	

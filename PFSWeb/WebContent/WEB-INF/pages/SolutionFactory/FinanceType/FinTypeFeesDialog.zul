@@ -162,6 +162,12 @@
 									<space spacing="2px" />
 									<checkbox id="active" />
 								</hbox>
+								<label id="label_FinTypeFeesDialog_AlwPreIncomization"
+									value="${c:l('label_FinTypeFeesDialog_AlwPreIncomization.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="alwPreIncomization" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

@@ -34,5 +34,7 @@ public interface FinanceRepaymentsDAO {
 	// Receipts : Repay Header List & Repayment Schedule Detail list
 	List<FinRepayHeader> getFinRepayHeadersByRef(String finReference, String type);
 	void deleteByRef(String finReference, TableType tableType);
+	
+	void updateFinReference(String finReference,String extReference,String type);
 
 }

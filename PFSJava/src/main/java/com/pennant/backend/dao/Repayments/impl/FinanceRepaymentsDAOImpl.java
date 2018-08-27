@@ -53,6 +53,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -570,6 +571,28 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
+	}
+	
+	
+	@Override
+	public void updateFinReference(String finReference, String extReference, String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder updateSql = new StringBuilder("Update FinRepayHeader");
+		updateSql.append(type);
+		updateSql.append(" SET  FinReference=:Reference  ");
+		updateSql.append(" Where FinReference=:ExtReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExtReference", extReference);
+		source.addValue("Reference", finReference);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		
 	}
 
 }

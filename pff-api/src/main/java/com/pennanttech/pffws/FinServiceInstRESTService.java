@@ -75,6 +75,10 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/scheduleMethodChange")
 	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	
+	@POST
+	@Path("/loanInstructionService/feePayment")
+	public FinanceDetail feePayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 
 }

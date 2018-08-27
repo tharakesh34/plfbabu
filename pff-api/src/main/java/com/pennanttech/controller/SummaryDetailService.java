@@ -47,7 +47,7 @@ public class SummaryDetailService {
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
 	private AccrualService			accrualService;
 	protected FinExcessAmountDAO	finExcessAmountDAO;
-	private FinFeeDetailDAO			finFeeDetailDAO;
+	protected FinFeeDetailDAO			finFeeDetailDAO;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");

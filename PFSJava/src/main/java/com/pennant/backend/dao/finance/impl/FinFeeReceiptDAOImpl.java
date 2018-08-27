@@ -289,4 +289,32 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public List<FinFeeReceipt> getFinFeeReceiptByFeeId(long feeId, String type) {
+
+		logger.debug("Entering");
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("FeeID", feeId);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
+		selectSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					",ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeID, ReceiptType, transactionRef, favourNumber, vasReference,FeeTypeId ");
+		}
+		selectSql.append(" From FinFeeReceipts");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append("  Where FeeID =:FeeID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+	
+	}
+
 }

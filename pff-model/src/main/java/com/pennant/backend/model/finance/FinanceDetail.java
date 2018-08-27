@@ -275,6 +275,9 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean rcuInitTab = false;
 	private Map<String, String> showTabDetailMap = new HashMap<>();
 	
+	@XmlElement
+	private long receiptId;
+	
 	/**
 	 * Sampling variables
 	 */
@@ -1122,6 +1125,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setDirectFinalApprove(boolean directFinalApprove) {
 		this.directFinalApprove = directFinalApprove;
+	}
+
+	public long getReceiptId() {
+		return receiptId;
+	}
+
+	public void setReceiptId(long receiptId) {
+		this.receiptId = receiptId;
 	}
 	
 }

@@ -311,7 +311,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						finFeeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(finFeeDetail, isWIF, tableType) + 1);
 					}
 					
+					if (finFeeDetail.isAlwPreIncomization()){
+						FinFeeDetail finFeeDtl=getFinFeeDetailDAO().getFeeDetailByExtReference(finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
+						finFeeDetail.setFeeID(finFeeDtl.getFeeID());
+						finFeeDetail.setFeeSeq(finFeeDtl.getFeeSeq());
+						getFinFeeDetailDAO().update(finFeeDetail,false, "");
+					}else{
 					finFeeDetail.setFeeID(getFinFeeDetailDAO().save(finFeeDetail, isWIF, tableType));
+					}
+					
 					finTaxDetails.setFeeID(finFeeDetail.getFeeID());
 					
 					getFinTaxDetailsDAO().save(finTaxDetails, tableType);
@@ -465,7 +473,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return auditDetails;
 	}
 	
-	@Override
+	/*@Override
 	public List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String auditTranType, String finReference) {
 		logger.debug("Entering");
 		
@@ -505,6 +513,140 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		logger.debug("Leaving");
 		return auditDetails;
+	}*/
+	
+	
+	@Override
+	public List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String auditTranType, String finReference) {
+		logger.debug("Entering");
+		
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		
+		
+		Map<Long, List<FinFeeReceipt>> map= new HashMap<>();
+		if (!StringUtils.equals(PennantConstants.TRAN_DEL, auditTranType)) {
+		for (FinFeeReceipt finFeeRecipt:finFeeReceipts){
+			List<FinFeeReceipt> finFeeRecList=null;
+			if (map.containsKey(finFeeRecipt.getReceiptID())){
+				finFeeRecList=	map.get(finFeeRecipt.getReceiptID());
+			}else{
+				finFeeRecList=new ArrayList<>();
+			}
+			finFeeRecList.add(finFeeRecipt);
+			map.put(finFeeRecipt.getReceiptID(),finFeeRecList);
+
+			
+			}
+			
+			if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
+				createPayableAdvises(finReference, map);
+			}
+		}
+		
+		if (!ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
+			createExcessAmounts(finReference, map);
+		}
+		
+		auditDetails.addAll(processFinFeeReceipts(finFeeReceipts, tableType, auditTranType, true));
+		
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
+	
+	public void createExcessAmounts(String finReference, Map<Long, List<FinFeeReceipt>> map) {
+
+		logger.debug("Entering");
+		FinExcessAmount finExcessAmount;
+
+		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference);
+		BigDecimal excessAmount = BigDecimal.ZERO;
+		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
+			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
+				List<FinFeeReceipt> finFeeReceiptList=map.get(finReceiptDetail.getReceiptID());
+				BigDecimal feePaidAmount=BigDecimal.ZERO;
+				for (FinFeeReceipt feeReceipt:finFeeReceiptList){
+					feePaidAmount=feePaidAmount.add(feeReceipt.getPaidAmount());
+				}
+				excessAmount = excessAmount.add(finReceiptDetail.getAmount().subtract(feePaidAmount));
+			} else {
+				excessAmount = excessAmount.add(finReceiptDetail.getAmount());
+			}
+		}
+
+		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+			finExcessAmount = new FinExcessAmount();
+			finExcessAmount.setFinReference(finReference);
+			finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			finExcessAmount.setAmount(excessAmount);
+			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
+			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
+			finExcessAmount.setBalanceAmt(excessAmount);
+			getFinExcessAmountDAO().saveExcess(finExcessAmount);
+		}
+	
+		logger.debug("Leaving");
+	
+		
+	}
+
+
+	
+	
+	private void createPayableAdvises(String finReference, Map<Long, List<FinFeeReceipt>> map) {
+		logger.debug("Entering");
+
+		PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("MANUALADVISE_FEETYPEID");
+		long feeTypeId = Long.valueOf(pfsParameter.getSysParmValue());
+		ManualAdvise manualAdvise=null;
+		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference);
+		
+		
+		for (FinReceiptDetail finRecDetail:finReceiptDetailsList){
+			List<FinFeeReceipt> finFeeRecList = map.get(finRecDetail.getReceiptID());
+			BigDecimal feePaid=BigDecimal.ZERO;
+			BigDecimal available=BigDecimal.ZERO;
+			long getLastMntBy=Long.MIN_VALUE;
+			for (FinFeeReceipt feeReceipt:finFeeRecList){
+				feePaid=feePaid.add(feeReceipt.getPaidAmount());
+				getLastMntBy=feeReceipt.getLastMntBy();
+			}
+			available=finRecDetail.getAmount().subtract(feePaid);
+			if (available.compareTo(BigDecimal.ZERO)>0){
+				
+				manualAdvise = new ManualAdvise();
+				manualAdvise.setAdviseType(2);
+				manualAdvise.setFinReference(finReference);
+				manualAdvise.setFeeTypeID(feeTypeId);
+				manualAdvise.setSequence(0);
+				manualAdvise.setAdviseAmount(available);
+				manualAdvise.setPaidAmount(BigDecimal.ZERO);
+				manualAdvise.setWaivedAmount(BigDecimal.ZERO);
+				manualAdvise.setRemarks("FeeReceipt Remaining Amount");
+				manualAdvise.setBounceID(0);
+				manualAdvise.setReceiptID(finRecDetail.getReceiptID());
+				manualAdvise.setValueDate(DateUtility.getAppDate());
+				manualAdvise.setPostDate(DateUtility.getAppDate());
+				manualAdvise.setReservedAmt(BigDecimal.ZERO);
+				manualAdvise.setBalanceAmt(BigDecimal.ZERO);
+				
+				manualAdvise.setVersion(0);
+				manualAdvise.setLastMntBy(getLastMntBy);
+				manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				manualAdvise.setRoleCode("");
+				manualAdvise.setNextRoleCode("");
+				manualAdvise.setTaskId("");
+				manualAdvise.setNextTaskId("");
+				manualAdvise.setRecordType("");
+				manualAdvise.setWorkflowId(0);
+			}
+
+			getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
+		}
+		// FIXME CH Get the latest Receipt details and update the payable.
+
+		logger.debug("Leaving");
 	}
 
 	private void createPayableAdvise(String finReference, Map<Long, FinFeeReceipt> map) {
@@ -1041,7 +1183,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-			
+
 			BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
 			BigDecimal gstActual = BigDecimal.ZERO;
 			
@@ -1140,6 +1282,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		logger.debug(Literal.LEAVING);
 	}
+
 	
 	@Override
 	public BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap) {
@@ -1191,6 +1334,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 		BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
 		actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
+		
+		
+		
 		BigDecimal actTaxAmount = amount.subtract(actualAmt);
 		
 		BigDecimal gstAmount = BigDecimal.ZERO;
@@ -1582,6 +1728,38 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		return gstExecutionMap;
 	}
+	
+	@Override
+	public HashMap<String, Object> prepareGstMapping(String fromStateCode,String toStateCode) {
+		
+		HashMap<String, Object> gstExecutionMap = new HashMap<>();
+		boolean gstExempted = false;
+		
+			
+			Province fromState = getProvinceDAO().getProvinceById(fromStateCode,"");
+			
+			if (fromState != null) {
+				gstExecutionMap.put("fromState", fromState.getCPProvince());
+				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			}
+			
+			
+			Province toState = getProvinceDAO().getProvinceById(toStateCode,"");
+			
+			if (toState != null) {
+				gstExecutionMap.put("toState", toState.getCPProvince());
+				gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
+				gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+			}
+			
+			
+			gstExecutionMap.put("gstExempted", gstExempted);
+			
+		
+		return gstExecutionMap;
+	}
+	
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//

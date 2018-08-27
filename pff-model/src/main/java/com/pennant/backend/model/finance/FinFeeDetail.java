@@ -141,6 +141,9 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private FinFeeDetail befImage;
 	private LoggedInUser userDetails;
 	private Date postDate;
+	private String transactionId;
+	
+	private boolean alwPreIncomization;
 
 	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
@@ -155,6 +158,9 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal ugst = BigDecimal.ZERO;
 	private BigDecimal sgst = BigDecimal.ZERO;
 	private BigDecimal cgst = BigDecimal.ZERO;
+	
+	@XmlElement
+	private List<FinFeeReceipt> finFeeReceipts=new ArrayList<FinFeeReceipt>(1);
 	
 	private boolean feeModified = false;	//Added for rule and percentage auto calculation
 
@@ -191,6 +197,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("sgst");
 		excludeFields.add("cgst");
 		excludeFields.add("feeModified");
+		excludeFields.add("alwPreIncomization");
+		excludeFields.add("finFeeReceipts");
 		
 		return excludeFields;
 	}
@@ -641,6 +649,32 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public void setFeeModified(boolean feeModified) {
 		this.feeModified = feeModified;
 	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public List<FinFeeReceipt> getFinFeeReceipts() {
+		return finFeeReceipts;
+	}
+
+	public void setFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts) {
+		this.finFeeReceipts = finFeeReceipts;
+	}
+
+	public boolean isAlwPreIncomization() {
+		return alwPreIncomization;
+	}
+
+	public void setAlwPreIncomization(boolean alwPreIncomization) {
+		this.alwPreIncomization = alwPreIncomization;
+	}
+
+
 
 }
 

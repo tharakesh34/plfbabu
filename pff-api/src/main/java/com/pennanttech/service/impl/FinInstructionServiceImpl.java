@@ -14,6 +14,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.AddTermsService;
@@ -29,6 +30,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -86,6 +88,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private ValidationUtility			validationUtility;
 	private FinanceValidationService	financeValidationService;
 	private FinanceDataValidation		financeDataValidation;
+	
+	private FinReceiptDetailDAO			finReceiptDetailDAO;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -443,6 +447,58 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+	
+	
+	public FinanceDetail feePayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
+		logger.debug("Entering");
+
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
+		//String eventCode = AccountEventConstants.ACCEVENT_REPAY;
+
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		FinanceDetail financeDetail = null;
+		
+		//vlidate duplicate record
+		boolean dedupFound=checkUpFrontDuplicateRequest(finServiceInstruction,moduleDefiner);
+		if(dedupFound) {
+			return errorDetails();
+		}
+		// execute manual payment service
+		financeDetail = finServiceInstController.doFeePayment(finServiceInstruction);
+
+		logger.debug("Leaving");
+		return financeDetail;
+	}
+	
+	private FinanceDetail errorDetails() {
+		FinanceDetail financeDetail;
+		financeDetail = new FinanceDetail();
+		doEmptyResponseObject(financeDetail);
+		String valueParm[] = new String[1];
+		valueParm[0] = "transaction";
+		financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("41014", valueParm));
+		return financeDetail;
+	}
+	
+	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction finServiceInstruction,String moduleDefiner) {
+		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO
+				.getFinReceiptDetailByExternalReference(finServiceInstruction.getExternalReference());
+		if (finServiceInstruction.getReceiptDetail() != null) {
+			if (finServiceInstruction.getReceiptDetail().getReceivedDate() == null) {
+				finServiceInstruction.getReceiptDetail().setReceivedDate(DateUtility.getAppDate());
+			}
+			if (receiptDetails != null && !receiptDetails.isEmpty()) {
+				for (FinReceiptDetail finReceiptDetail : receiptDetails) {
+					if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
+							&& StringUtils.equals(finReceiptDetail.getTransactionRef(),finServiceInstruction.getReceiptDetail().getTransactionRef())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -1487,6 +1543,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
+	}
+
+	@Autowired
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 
 }

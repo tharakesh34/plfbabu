@@ -300,6 +300,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int advEMIDftTerms;
 	private String advEMISchdMthd;
 	
+	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

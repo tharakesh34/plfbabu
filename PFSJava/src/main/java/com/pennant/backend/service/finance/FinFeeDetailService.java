@@ -87,6 +87,7 @@ public interface FinFeeDetailService {
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap);
 	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState, 
 			String highPriorityCountry,	FinanceTaxDetail taxDetail, String branchCode);
+	HashMap<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
 
 	
 }

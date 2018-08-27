@@ -412,5 +412,39 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 
 		return count;
 	}
+
+	@Override
+	public Province getProvinceById(String cPProvince, String type) {
+
+		logger.debug(Literal.ENTERING);
+		Province province = new Province();
+		province.setCPProvince(cPProvince);
+
+		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive," );
+		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea," );
+		if(type.contains("View")){
+			selectSql.append(" lovDescCPCountryName, ");
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" FROM  RMTCountryVsProvince");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where  CPProvince =:cPProvince ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
+		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
+
+		try {
+			province = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
+					beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			province = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return province;
+	
+	}
 	
 }

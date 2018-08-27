@@ -120,7 +120,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected Checkbox         alwModifyFee; 
 	protected Checkbox         alwModifyFeeSchdMthd; 
 	protected Checkbox         active; 
+	protected Checkbox         alwPreIncomization;
 	protected Label            label_Window_Title; 
+	
 	// not auto wired vars
 	private FinTypeFees finTypeFees; // overhanded per param
 	private transient FinTypeFeesDialogCtrl finTypeFeesDialogCtrl; // overhanded per
@@ -438,6 +440,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} 
 		
 		this.active.setChecked(aFinTypeFees.isActive());
+		this.alwPreIncomization.setChecked(aFinTypeFees.isAlwPreIncomization());
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
 		
 		doSetRuleFilters();
@@ -590,6 +593,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		try {
 			aFinTypeFees.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinTypeFees.setAlwPreIncomization(this.alwPreIncomization.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -770,6 +778,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_alwModifyFeeSchdMthd"), this.alwModifyFeeSchdMthd);
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_active"), this.active);
 		
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -809,6 +818,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		readOnlyComponent(true, this.feeScheduleMethod);
 		readOnlyComponent(true, this.maxWaiver);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.alwPreIncomization);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -844,6 +854,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.alwModifyFee.setChecked(false);
 		this.alwModifyFeeSchdMthd.setChecked(false);
 		this.active.setChecked(false);
+		this.alwPreIncomization.setChecked(false);
 		this.feeOrder.setValue(0);
 		logger.debug("Leaving");
 	}

@@ -33,6 +33,8 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
@@ -79,14 +81,19 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
+import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -122,6 +129,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceMainService financeMainService;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private FeeDetailService feeDetailService;
+	private FinFeeDetailService finFeeDetailService;
 	private BankBranchService bankBranchService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private ReceiptService receiptService;
@@ -132,6 +140,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	private RepayCalculator repayCalculator;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private ChangeScheduleMethodService	changeScheduleMethodService;
+	private FinanceTypeDAO financeTypeDAO;
+	private FeeReceiptService feeReceiptService;
 
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
@@ -2352,6 +2362,205 @@ public class FinServiceInstController extends SummaryDetailService {
 		detail.setCollateralAssignmentList(null);
 		detail.setReturnDataSetList(null);
 	}
+	
+	
+	public FinanceDetail doFeePayment(FinServiceInstruction finServiceInst) {
+		logger.debug("Enteing");
+
+		FinanceDetail response = null;
+		try {
+			List<ErrorDetail> errorDetails = upfrontFeeValidations(PennantConstants.VLD_CRT_LOAN, finServiceInst, true,
+					AccountEventConstants.ACCEVENT_ADDDBSP);
+			if (errorDetails.size() == 0) {
+				errorDetails = feeReceiptService.processFeePayment(finServiceInst);
+			}
+			if (errorDetails != null) {
+				for (ErrorDetail errorDetail : errorDetails) {
+					response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReceiptId(finServiceInst.getReceiptId());
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
+			return response;
+		} catch (AppException appEx) {
+			logger.error("AppException", appEx);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+		logger.debug("Leaving");
+		return response;
+	}
+	
+	
+	private List<ErrorDetail> upfrontFeeValidations(String vldGroup, FinServiceInstruction finServInst,
+			boolean isAPICall, String eventCode) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+		String finEvent = eventCode;
+		boolean isOrigination = false;
+		int vasFeeCount = 0;
+		BigDecimal feePaidAmount = BigDecimal.ZERO;
+		FinanceType finType = getFinanceTypeDAO().getFinanceTypeByFinType(finServInst.getFinType());
+		List<FinFeeDetail> finFeeDetailList=new ArrayList<>();
+		
+		if (finType != null) {// if given fintype is not confugured
+		
+			if (finServInst.getFinFeeDetails() != null && !finServInst.getFinFeeDetails().isEmpty()) {
+				if (!StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
+					for (FinFeeDetail finFeeDetail : finServInst.getFinFeeDetails()) {
+						if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+							vasFeeCount++;
+						}
+					}
+
+					isOrigination = true;
+				} else {
+					for (FinFeeDetail finFeeDetail : finServInst.getFinFeeDetails()) {
+						if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Fee Schedule Method";
+							valueParm[1] = finFeeDetail.getFeeTypeCode();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90269", valueParm)));
+						}
+					}
+				}
+             
+				List<FinTypeFees> finTypeFeeDetail = null;
+				finTypeFeeDetail = financeDetailService.getFinTypeFees(finType.getFinType(), finEvent, isOrigination,
+						FinanceConstants.MODULEID_FINTYPE);
+				if (finTypeFeeDetail != null) {
+					finServInst.setFinTypeFeeList(finTypeFeeDetail);
+					if (finTypeFeeDetail.size() == finServInst.getFinFeeDetails().size() - vasFeeCount) {
+						for (FinFeeDetail feeDetail : finServInst.getFinFeeDetails()) {
+							BigDecimal finWaiverAmount = BigDecimal.ZERO;
+							BigDecimal finPaidAMount=BigDecimal.ZERO;
+							boolean isFeeCodeFound = false;
+							for (FinTypeFees finTypeFee : finTypeFeeDetail) {
+								if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())) {
+									isFeeCodeFound=true;
+									finPaidAMount=feeDetail.getPaidAmount();
+									HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMapping(finServInst.getFromBranch(),finServInst.getToBranch());
+									if (finTypeFee.isTaxApplicable() && !gstExecutionMap.containsKey("fromState")){
+										String[] valueParm = new String[1];
+										valueParm[0] = " GST not configured ";
+										errorDetails
+												.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+										return errorDetails;
+									}
+									feeDetailService.setFinFeeDetails(finTypeFee, feeDetail,gstExecutionMap, finServInst.getCurrency());
+									feePaidAmount = feePaidAmount.add(feeDetail.getPaidAmountOriginal().add(feeDetail.getPaidAmountGST()));
+									// validate negative values
+									if (feeDetail.getActualAmount().compareTo(BigDecimal.ZERO) < 0
+											|| feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0
+											|| feeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
+										String[] valueParm = new String[1];
+										valueParm[0] = feeDetail.getFeeTypeCode();
+										errorDetails
+												.add(ErrorUtil.getErrorDetail(new ErrorDetail("90259", valueParm)));
+										return errorDetails;
+									}
+
+									// validate actual amount and paid amount
+									if (finPaidAMount.compareTo(feeDetail.getActualAmount()) != 0) {
+										String[] valueParm = new String[1];
+										valueParm[0] = feeDetail.getFeeTypeCode()
+												+ " Paid amount must be  "+feeDetail.getActualAmount();
+										errorDetails
+												.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+										return errorDetails;
+									}
+
+									// validate fee schedule method
+									if (!finTypeFee.isAlwModifyFeeSchdMthd()
+											&& !StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+													finTypeFee.getFeeScheduleMethod())) {
+										String[] valueParm = new String[1];
+										valueParm[0] = feeDetail.getFeeTypeCode();
+										errorDetails
+												.add(ErrorUtil.getErrorDetail(new ErrorDetail("90246", valueParm)));
+										return errorDetails;
+									}
+
+									// validate paid by Customer method
+									if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(),
+											CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+										if (feeDetail.getPaidAmount().compareTo(finTypeFee.getAmount()) != 0) {
+											String[] valueParm = new String[1];
+											valueParm[0] = finTypeFee.getFeeTypeCode();
+											errorDetails.add(
+													ErrorUtil.getErrorDetail(new ErrorDetail("90254", valueParm)));
+											return errorDetails;
+										}
+									}
+									// validate waived by bank method
+									if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(),
+											CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+										if (feeDetail.getWaivedAmount().compareTo(finWaiverAmount) != 0) {
+											String[] valueParm = new String[3];
+											valueParm[0] = "Waiver amount";
+											valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
+											valueParm[2] = feeDetail.getFeeTypeCode();
+											errorDetails.add(
+													ErrorUtil.getErrorDetail(new ErrorDetail("90258", valueParm)));
+											return errorDetails;
+										}
+									}
+								}
+							}
+							if (!isFeeCodeFound) {
+								String[] valueParm = new String[1];
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90247", valueParm)));
+								return errorDetails;
+							}
+						}
+
+					} else {
+						String[] valueParm = new String[1];
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90244", valueParm)));
+						return errorDetails;
+					}
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = finServInst.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90245", valueParm)));
+					return errorDetails;
+				}
+				if (feePaidAmount.compareTo(finServInst.getAmount()) != 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Amount must match with sum of  fees paid amounts";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+					return errorDetails;
+				}
+
+			}
+		} else {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "finType " + finServInst.getFinType() + " is invalid";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+			return errorDetails;
+		}
+		return errorDetails;
+	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
@@ -2444,4 +2653,29 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public FeeReceiptService getFeeReceiptService() {
+		return feeReceiptService;
+	}
+
+	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
+		this.feeReceiptService = feeReceiptService;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
 }
