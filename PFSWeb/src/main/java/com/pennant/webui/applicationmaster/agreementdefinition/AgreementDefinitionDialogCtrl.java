@@ -723,6 +723,8 @@ public class AgreementDefinitionDialogCtrl extends
 			this.label_AgreementDefinitionDialog_AutoGeneration.setVisible(false);
 			this.docType.setVisible(false);
 			this.label_AgreementDefinitionDialog_doc_Type.setVisible(false);
+			this.autoDownload.setVisible(false);
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 		} else {
 			this.agrRule_row.setVisible(true);
 			this.allowMultiple_row.setVisible(true);
@@ -730,8 +732,12 @@ public class AgreementDefinitionDialogCtrl extends
 			this.label_AgreementDefinitionDialog_AutoGeneration.setVisible(true);
 			this.docType.setVisible(true);
 			this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
+			if(this.autoGeneration.isChecked()){
+			this.autoDownload.setVisible(true);
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
+			}
 			
-		}
+			}
 
 	}
 	
@@ -741,10 +747,12 @@ public class AgreementDefinitionDialogCtrl extends
 		
 		if (autoGeneration.isChecked()) {
 			this.autoDownload.setVisible(true);
+			this.autoDownload.setChecked(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
 			this.auto_check.setVisible(true);
 		} else {
 			this.autoDownload.setVisible(false);
+			this.autoDownload.setChecked(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 		}
 
