@@ -319,7 +319,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	private List<Filter> getFilterList() {
 		filterList = new ArrayList<Filter>();
 		filterList.add(new Filter("lovDescCustCtgType",
-				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME }, Filter.OP_IN));
+				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME, PennantConstants.PFF_CUSTCTG_INDIV }, Filter.OP_IN));
 		return filterList;
 	}
 
