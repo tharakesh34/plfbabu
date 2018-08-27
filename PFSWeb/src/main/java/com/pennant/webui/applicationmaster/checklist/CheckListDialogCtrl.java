@@ -92,10 +92,10 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
  * This is the controller class for the
@@ -436,12 +436,14 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			} else if(this.listbox_ChkListDetails.getItemCount() < this.checkMaxCount.intValue()){
 				throw new WrongValueException(this.btnNew_CheckListDetail,Labels.getLabel("label_CheckListDialog_Checklist_Madatory"));
 			}
-			
-			if (this.docRequired.isChecked() && this.listbox_ChkListDetails.getVisibleItemCount() != 0) {
-				aCheckList.setCheckMaxCount(this.listbox_ChkListDetails.getVisibleItemCount());
-			}else{
-				aCheckList.setCheckMaxCount(this.checkMaxCount.intValue());
-			}
+
+			aCheckList.setCheckMaxCount(this.checkMaxCount.intValue());
+			/*
+			 * if (this.docRequired.isChecked() && this.listbox_ChkListDetails.getVisibleItemCount() != 0) {
+			 * aCheckList.setCheckMaxCount(checkListCnt); //
+			 * aCheckList.setCheckMaxCount(this.listbox_ChkListDetails.getVisibleItemCount()); } else {
+			 * aCheckList.setCheckMaxCount(this.checkMaxCount.intValue()); }
+			 */
 			
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -1131,7 +1133,18 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 				this.docRequired.setDisabled(false);
 			}
 		}
-		
+		int checkListCnt = 0;
+
+		for (CheckListDetail checkDetail : checkListDetailList) {
+			if (StringUtils.isBlank(checkDetail.getRecordType())
+					|| !(checkDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)
+							|| checkDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
+				checkListCnt = checkListCnt + 1;
+			}
+		}
+
+		this.checkMaxCount.setValue(checkListCnt);
+		checkList.setCheckMaxCount(checkListCnt);
 		if (this.listbox_ChkListDetails.getVisibleItemCount() == 0) {
 			this.docRequired.setDisabled(false);
 		}else{
