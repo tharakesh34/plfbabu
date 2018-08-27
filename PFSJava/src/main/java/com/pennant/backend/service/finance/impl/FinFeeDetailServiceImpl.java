@@ -1033,7 +1033,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap, boolean apiRequest) {
 		logger.debug(Literal.ENTERING);
 
-		if ((!apiRequest && finFeeDetail.isFeeModified()) || finFeeDetail.isAlwModifyFee()) {
+		if ((!apiRequest && finFeeDetail.isFeeModified()) || (apiRequest && finFeeDetail.isAlwModifyFee())) {
 			return;
 		} else {
 			String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
@@ -1091,7 +1091,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap, boolean apiRequest) {
 		logger.debug(Literal.ENTERING);
 		
-		if ((!apiRequest && finFeeDetail.isFeeModified()) || finFeeDetail.isAlwModifyFee()) {
+		if ((!apiRequest && finFeeDetail.isFeeModified()) || (apiRequest && finFeeDetail.isAlwModifyFee())) {
 			return;
 		} else {
 			String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
