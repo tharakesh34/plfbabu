@@ -41,9 +41,11 @@ public class CreditApplicationReviewListModelItemRenderer implements ListitemRen
 			lc = new Listcell(Labels.getLabel("label_Corporate"));
 		}else if(PennantConstants.PFF_CUSTCTG_SME.equals(creditReviewDetails.getCreditRevCode())){
 			lc = new Listcell(Labels.getLabel("label_Financial"));
-		    } else{
+		}else if(PennantConstants.PFF_CUSTCTG_INDIV.equals(creditReviewDetails.getCreditRevCode())){
+			lc = new Listcell(Labels.getLabel("label_Individual"));
+		}else{
 			lc = new Listcell("");
-		}	  	
+		}  	
 		lc.setParent(item);
 	  	lc = new Listcell(creditReviewDetails.getAuditYear());
 	  	lc.setParent(item);
