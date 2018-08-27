@@ -579,14 +579,12 @@ public class FeeDetailService {
 				finFeeDetail.setCalculatedAmount(feeResult);
 				
 				if (finFeeDetail.isTaxApplicable()) {
-					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail, gstExecutionMap, true);
+					if (enquiry) {
+						this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail, gstExecutionMap, false);
+					} else {
+						this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail, gstExecutionMap, true);
+					}
 				}  else {
-					
-					/*if (!finFeeDetail.isFeeModified()) {
-						finFeeDetail.setActualAmountOriginal(feeResult);
-						finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
-						finFeeDetail.setActualAmount(feeResult);
-					}*/
 					if (enquiry) {
 						finFeeDetail.setActualAmount(feeResult);
 					}
@@ -689,13 +687,12 @@ public class FeeDetailService {
 					}
 					
 					if (finFeeDetail.isTaxApplicable()) {	//if GST applicable
-						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail, gstExecutionMap, true);
+						if (enquiry) {
+							this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail, gstExecutionMap, false);
+						} else {
+							this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail, gstExecutionMap, true);
+						}
 					} else {
-						/*if (!finFeeDetail.isFeeModified()) {
-							finFeeDetail.setActualAmountOriginal(calPercentageFee);
-							finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
-							finFeeDetail.setActualAmount(calPercentageFee);
-						}*/
 						if (enquiry) {
 							finFeeDetail.setActualAmount(calPercentageFee);
 						}

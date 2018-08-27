@@ -764,8 +764,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		// execute fee charges
 		String finEvent = "";
 		boolean enquiry=true;
-		if(financeDetail.getFinScheduleData().getFinFeeDetailList()!=null) {
-			enquiry=false;
+		if (financeDetail.getFinScheduleData() != null && CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+			enquiry = false;
 		} 
 		executeFeeCharges(financeDetail, finEvent, enquiry);
 
