@@ -6875,13 +6875,6 @@ UNION ALL
 		<addForeignKeyConstraint constraintName="FK_FCRC_Temp_ElgMthdId" referencedTableName="RMTLovFielddetail" baseColumnNames="EligibilityId" baseTableName="FinCreditRevCategory_Temp" referencedColumnNames="fieldcodeid"/>
 </changeSet>
 
-<changeSet id="74.7" author="Vinay">
-	<sql>
-		alter table rmtfinancetypes alter column eligibilitymethods type varchar(100);
-		alter table rmtfinancetypes_temp alter column eligibilitymethods type varchar(100);
-	</sql>
-</changeSet>
-
 <changeSet id="74.8" author="Vinay">
 	<sqlFile path="change-logs/EligibilityMethod_CreditReviewDetails.sql" endDelimiter="DonotStop" encoding="UTF-8"/>
 </changeSet>
