@@ -6009,6 +6009,25 @@ UNION ALL
 		<addDefaultValue columnName="eligibilitymethods" tableName="RMTFinanceTypes_temp" defaultValue="0" />
 	</changeSet>
 	
+	<changeSet id="74.1.0_pre" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','rmtfinancetypes');
+			select deps_save_and_drop_dependencies('plf','rmtfinancetypes_temp');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="74.1.1" author="Vinay">
+		<modifyDataType tableName="rmtfinancetypes" columnName="eligibilitymethods" newDataType="varchar(100)"/>
+		<modifyDataType tableName="rmtfinancetypes_temp" columnName="eligibilitymethods" newDataType="varchar(100)"/>
+	</changeSet>
+	
+	<changeSet id="74.1.0_post" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','rmtfinancetypes');
+			select deps_restore_dependencies('plf','rmtfinancetypes_temp');
+		</sql>
+	</changeSet>
+	
 	<changeSet id="74.2_Pre" author="Jayant">
 		<sql>
 			select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
@@ -6854,6 +6873,13 @@ UNION ALL
 <changeSet id="74.6" author="Vinay">
 	<addForeignKeyConstraint constraintName="FK_FCRC_ElgMthdId" referencedTableName="RMTLovFielddetail" baseColumnNames="EligibilityId" baseTableName="FinCreditRevCategory" referencedColumnNames="fieldcodeid"/>
 		<addForeignKeyConstraint constraintName="FK_FCRC_Temp_ElgMthdId" referencedTableName="RMTLovFielddetail" baseColumnNames="EligibilityId" baseTableName="FinCreditRevCategory_Temp" referencedColumnNames="fieldcodeid"/>
+</changeSet>
+
+<changeSet id="74.7" author="Vinay">
+	<sql>
+		alter table rmtfinancetypes alter column eligibilitymethods type varchar(100);
+		alter table rmtfinancetypes_temp alter column eligibilitymethods type varchar(100);
+	</sql>
 </changeSet>
 
 <changeSet id="74.8" author="Vinay">
