@@ -3727,9 +3727,8 @@ public class ScheduleCalculator {
 		 * capitalize on schedule date is false OR capitalize at end of grace is
 		 * True THEN force it to true
 		 */
-		if ((DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0 && finMain.isAllowGrcCpz())
-				|| (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0)
-						&& finMain.isCpzAtGraceEnd()) {
+		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0 
+				&& (finMain.isAllowGrcCpz() || finMain.isCpzAtGraceEnd())) {
 			curSchd.setCpzOnSchDate(true);
 		}
 

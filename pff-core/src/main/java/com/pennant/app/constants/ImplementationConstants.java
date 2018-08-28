@@ -128,5 +128,10 @@ public class ImplementationConstants {
 	
 	// Deposit Process 
 	public static final boolean	DEPOSIT_PROC_REQ				= true;
-	public static final boolean	ENTITY_REQ_TRAIL_BAL				= false;
+	
+	public static final boolean	ENTITY_REQ_TRAIL_BAL			= false;
+	
+	// BPI on Deduct from disbursement is Incomized or Receivable
+	public static final boolean	BPI_INCOMIZED_ON_ORG			= true;
+	
 }

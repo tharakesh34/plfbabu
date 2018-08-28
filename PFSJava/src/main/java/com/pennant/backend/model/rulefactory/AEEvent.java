@@ -56,6 +56,7 @@ public class AEEvent {
 	private boolean					uAmzExists = false;
 	private boolean					uLpiExists = false;
 	private boolean					uLppExists = false;
+	private boolean					bpiIncomized = false;
 	
 	private String                  entityCode;
 	
@@ -396,6 +397,14 @@ public class AEEvent {
 
 	public void setuLppExists(boolean uLppExists) {
 		this.uLppExists = uLppExists;
+	}
+
+	public boolean isBpiIncomized() {
+		return bpiIncomized;
+	}
+
+	public void setBpiIncomized(boolean bpiIncomized) {
+		this.bpiIncomized = bpiIncomized;
 	}
 
 

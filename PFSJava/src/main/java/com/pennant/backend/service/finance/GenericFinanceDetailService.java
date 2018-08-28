@@ -62,6 +62,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
@@ -1385,7 +1386,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
-		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
+		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
 		}
 		
@@ -1643,6 +1644,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// Prepared Postings execution 
 		getPostingsPreparationUtil().postAccounting(aeEvent);
+		
+		// BPI Updation Checking for Deduct from Disbursement case only
+		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG) &&
+				StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, financeMain.getBpiTreatment()) 
+				&& aeEvent.isBpiIncomized() && ImplementationConstants.BPI_INCOMIZED_ON_ORG) {
+			pftDetail.setAmzTillLBD(pftDetail.getAmzTillLBD().add(amountCodes.getBpi()));
+		}
 		
 		//GST Invoice Preparation
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG) && gstInvoiceTxnService !=null) {
