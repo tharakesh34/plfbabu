@@ -356,19 +356,13 @@ public class AgreementDefinitionDialogCtrl extends
 		if (this.autoGeneration.isChecked()) {
 			this.auto_check.setSclass(PennantConstants.mandateSclass);
 			this.auto_check.setVisible(true);
-		//	doAutoCheckValidation(agreementDefinition);
 		} else {
 			this.space_ModuleType.setSclass("");
 		}
 		logger.debug("Leaving");
 	}
 	
-	public void doAutoCheckValidation(AgreementDefinition aAgreementDefinition){
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
 	
-		
-	}
 
 	public void doCheckAllowDoctType() {
 		logger.debug("Entering");
