@@ -908,11 +908,14 @@
 												<label
 													id="label_FinanceTypeDialog_FixedRateTenor"
 													value="${c:l('label_FinanceTypeDialog_FixedRateTenor.value')}" />
+												<hbox>
 													<space
-														id="space_fixedRateTenor" spacing="2px" sclass="mandatory" />
+														id="space_fixedRateTenor" spacing="2px"
+														sclass="mandatory" />
 													<intbox
 														id="fixedRateTenor" width="45px" maxlength="3"
 														style="text-align:right" />
+												</hbox>
 											</row>
 											<row id = "row_ApplyPricingPolicy">
 												<label

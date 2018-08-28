@@ -13371,7 +13371,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (this.nextRepayRvwDate.getValue() == null && StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
-			int fixedTenor = this.fixedRateTenor.getValue(); 
+			int fixedTenor = this.fixedRateTenor.intValue(); 
 			if(fixedTenor > 0) {
 				this.nextRepayRvwDate_two.setValue(FrequencyUtil
 						.getNextDate(this.repayRvwFrq.getValue(), 1, DateUtility.addMonths(this.gracePeriodEndDate_two.getValue(),fixedTenor-1),
@@ -15493,12 +15493,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setReqFinType(financeMain.getFinType());
 
 		//detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
-		if (StringUtils.isNotEmpty(this.repayRate.getBaseValue())) {
-			detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayRate.getEffRateComp().getValue());
-		} else {
-			detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayProfitRate.getValue());
+		
+		Date fixedTenorEndDate = DateUtility.addMonths(this.gracePeriodEndDate_two.getValue(),this.fixedRateTenor.intValue());
+		
+		if(this.fixedRateTenor.intValue() > 0 && fixedTenorEndDate.compareTo(appDate) > 0) {
+			detail.getCustomerEligibilityCheck().setFinProfitRate(this.fixedTenorRate.getValue());
+		}else {
+			if (StringUtils.isNotEmpty(this.repayRate.getBaseValue())) {
+				detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayRate.getEffRateComp().getValue());
+			} else {
+				detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayProfitRate.getValue());
+			}
 		}
-
 		detail.getCustomerEligibilityCheck().setDownpayBank(financeMain.getDownPayBank());
 		detail.getCustomerEligibilityCheck().setDownpaySupl(financeMain.getDownPaySupl());
 		detail.getCustomerEligibilityCheck().setStepFinance(financeMain.isStepFinance());

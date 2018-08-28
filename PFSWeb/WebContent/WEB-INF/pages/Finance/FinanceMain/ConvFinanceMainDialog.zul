@@ -1083,7 +1083,7 @@
 														value="${c:l('label_FinanceMainDialog_FixedTenorRate.value')}" />
 													<hbox>
 														<space
-															spacing="2px" />
+															spacing="2px" sclass="mandatory"/>
 														<decimalbox
 															id="fixedTenorRate" width="125px" maxlength="15"
 															style="text-align:right" />

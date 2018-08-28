@@ -3446,6 +3446,7 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();
+		Date fixedTenorEndDate = DateUtility.addMonths(finMain.getGrcPeriodEndDate(),finMain.getFixedRateTenor());
 
 		// PROFIT LAST REVIEW IS ON OR AFTER MATURITY THEN NOT ALLOWED THEN DO
 		// NOT SET
@@ -3482,16 +3483,20 @@ public class ScheduleCalculator {
 			 * { break; }
 			 */
 			// Fetch current rates from DB
-			if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
-				if (curSchd.isRvwOnSchDate() || i == 0
-						|| DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0
-						|| (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)
-								&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
-					curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
-				} else {
-					curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
+			if(finMain.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(curSchd.getSchDate()) > 0){
+				curSchd.setCalculatedRate(finMain.getFixedTenorRate());
+			}else {
+				if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
+					if (curSchd.isRvwOnSchDate() || i == 0
+							|| DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0
+							|| (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)
+									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
+						curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
+					} else {
+						curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
+					}
+					curSchd.setCalOnIndRate(false);
 				}
-				curSchd.setCalOnIndRate(false);
 			}
 		}
 
