@@ -1653,7 +1653,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		
 		//GST Invoice Preparation
-		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG) && gstInvoiceTxnService !=null) {
+		if (gstInvoiceTxnService != null) {
 			gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail);
 		}
 
