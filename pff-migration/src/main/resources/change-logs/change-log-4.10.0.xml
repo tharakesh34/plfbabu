@@ -3962,7 +3962,7 @@ UNION ALL
 			<column name="fixedratetenor" type="Number(3,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="60.1" author="Mangapathi">
+	<changeSet id="60.2" author="Mangapathi">
 		<createView replaceIfExists="true" viewName="RmtFinanceTypes_AView">
  SELECT t1.fintype,
     t1.fincategory,
@@ -4159,7 +4159,6 @@ UNION ALL
     t1.advemidftterms,
     t1.advemischdmthd,
     t1.bpiratebasis,
-    t1.eligibilitymethod,
 	t1.alwhybridrate,
 	t1.fixedratetenor
    FROM rmtfinancetypes t1
@@ -4177,7 +4176,7 @@ UNION ALL
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 	 </createView>
 	</changeSet>
-	<changeSet id="61.1" author="Mangapathi">
+	<changeSet id="61.2" author="Mangapathi">
 		<createView viewName="RmtFinanceTypes_OrgView"
 			replaceIfExists="true">
 		SELECT t1.fintype,
@@ -4337,7 +4336,6 @@ UNION ALL
     t1.advemidftterms,
     t1.advemischdmthd,
     t1.bpiratebasis,
-    t1.eligibilitymethod,
 	t1.alwhybridrate,
 	t1.fixedratetenor
    FROM rmtfinancetypes t1
@@ -4349,7 +4347,7 @@ UNION ALL
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 	  </createView>
 	</changeSet>
-	<changeSet id="62.1" author="Mangapathi">
+	<changeSet id="62.2" author="Mangapathi">
 		<createView viewName="RmtFinanceTypes_View"
 			replaceIfExists="true">
 		 SELECT t1.fintype,
@@ -4547,7 +4545,6 @@ UNION ALL
     t1.advemidftterms,
     t1.advemischdmthd,
     t1.bpiratebasis,
-    t1.eligibilitymethod,
 	t1.alwhybridrate,
 	t1.fixedratetenor
    FROM rmtfinancetypes_temp t1
@@ -4759,7 +4756,6 @@ UNION ALL
     t1.advemidftterms,
     t1.advemischdmthd,
     t1.bpiratebasis,
-    t1.eligibilitymethod,
 	t1.alwhybridrate,
 	t1.fixedratetenor
    FROM rmtfinancetypes t1
