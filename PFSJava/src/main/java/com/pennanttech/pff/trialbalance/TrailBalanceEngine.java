@@ -158,7 +158,12 @@ public class TrailBalanceEngine extends DataEngineExport {
 		parameterMap.put("END_DATE", DateUtil.format(endDate, "ddMMyyyy"));
 		parameterMap.put("HEADER_ID", seqNo);
 		parameterMap.put("DIMENSION", dimension.name());
-		parameterMap.put("COMPANY_NAME", entityDescription);
+		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
+			parameterMap.put("COMPANY_NAME", entityDescription);
+		} else {
+			parameterMap.put("COMPANY_NAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
+		}
+		
 
 		if (dimension == Dimension.STATE) {
 			parameterMap.put("REPORT_NAME", "State Wise Trial Balance - Ledger A/C wise");
@@ -1124,7 +1129,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			sql.append("AND ENTITYCODE = :ENTITYCODE ");
 		}
-		sql.append(" )");
 		
 		int count = 0;
 		try {
