@@ -93,6 +93,7 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -203,6 +204,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	protected Button										btnSearchCustCIF;
 	protected Button										viewCustInfo;
+	protected Longbox 										custID;
 	protected Textbox										custCIF;
 	protected Label											custName;
 
@@ -646,7 +648,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custCIF", this.custCIF.getValue());
-			map.put("custid", Long.valueOf(this.custCIF.getValue()));
+			map.put("custid", this.custID.longValue());
 			map.put("custShrtName", this.custName.getValue());
 			map.put("finFormatter", defaultCCYDecPos);
 			map.put("finReference", this.cmtReference.getValue());
@@ -701,10 +703,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		Customer customer = (Customer) nCustomer;
 		if (customer != null) {
+			this.custID.setValue(customer.getCustID());
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custName.setValue(customer.getCustShrtName());
 			doChangeCustomer(customer);
 		} else {
+			this.custID.setValue(Long.valueOf(0));
 			this.custCIF.setValue("");
 		}
 
@@ -724,6 +728,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		CaluculateSummary();
 		this.openAccount.setChecked(true);
 		//doCheckOpenAccount();
+		this.custID.setValue(details.getCustID());
 		this.custCIF.setValue(details.getCustCIF());
 		this.cmtBranch.setValue(details.getCustDftBranch(), details.getLovDescCustDftBranchName());
 		this.cmtChargesAccount.setCustCIF(details.getCustCIF());
@@ -1365,6 +1370,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtTitle.setValue(aCommitment.getCmtTitle());
 		this.cmtReference.setValue(aCommitment.getCmtReference());
 		this.custCIF.setValue(aCommitment.getCustCIF());
+		this.custID.setValue(aCommitment.getCustID());
 
 		// Commitment Branch
 		this.cmtBranch.setValue(aCommitment.getCmtBranch());
@@ -1475,7 +1481,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			aCommitment.setCmtTitle(this.cmtTitle.getValue());
 			if (!this.cmtTitle.isReadonly() && StringUtils.isBlank(this.cmtTitle.getValue())) {
-
 				throw new WrongValueException(this.cmtTitle, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CmtTitle.value") }));
 			}
 		} catch (WrongValueException we) {
@@ -1494,13 +1499,13 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Customer CIF
 		try {
-			aCommitment.setCustShrtName(this.custName.getValue());
 			if (StringUtils.isEmpty(this.custCIF.getValue()) || !isValidCust) {
 				wve.add(new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") })));
 			} else {
+				aCommitment.setCustID(this.custID.longValue());
 				aCommitment.setCustCIF(this.custCIF.getValue());
-				aCommitment.setCustID(Long.valueOf(aCommitment.getCustCIF()));
 			}
+			aCommitment.setCustShrtName(this.custName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3090,7 +3095,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	private String executeRule(String ruleCode, CommitmentRuleData ruleObject) {
-		logger.debug("Entering executeRule()");
+		logger.debug("Entering");
 
 		// create a script engine manager
 		ScriptEngineManager factory = new ScriptEngineManager();
@@ -3117,15 +3122,15 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving executeRule()");
+		logger.debug("Leaving");
 		return result;
 	}
 
 	private void CaluculateSummary() {
 		logger.debug("Entering");
 
-		if (!"".equals(this.custCIF.getValue())) {
-			List<CommitmentSummary> list = getCommitmentService().getCommitmentSummary(Long.parseLong(this.custCIF.getValue()));
+		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
+			List<CommitmentSummary> list = getCommitmentService().getCommitmentSummary(this.custID.longValue());
 			doFillCommitmentSummary(list);
 		}
 

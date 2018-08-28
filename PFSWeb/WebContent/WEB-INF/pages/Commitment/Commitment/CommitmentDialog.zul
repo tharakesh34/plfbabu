@@ -118,6 +118,8 @@
 														value="${c:l('label_CommitmentDialog_CustCIF.value')}" />
 													<hlayout 
 														id="hlayout_CustCIF" spacing="2px">
+														<longbox
+															id="custID" width="171px" maxlength="26" visible="false" />
 														<space
 															id="space_CustCIF" spacing="2px" />
 														<uppercasebox
