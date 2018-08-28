@@ -105,10 +105,10 @@ public class LegalNoteService extends GenericService<LegalNote> {
 		String[] errParm = new String[2];
 
 		valueParm[0] = String.valueOf(legalNote.getCode());
-		valueParm[1] = legalNote.getDescription();
+		valueParm[1] = legalNote.getCode();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Title") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParm[1];
 
 		if (legalNote.isNew()) {
 			if (!legalNote.isWorkflow()) {

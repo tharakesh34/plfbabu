@@ -55,6 +55,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
@@ -318,16 +319,20 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
+		LegalDetail detail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
+		
+		if (FinanceConstants.MODULE_NAME.equals(detail.getModule())) {
+			auditHeader = getAuditDetails(auditHeader, "saveOrUpdate");
+		} else {
+			auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+			if (!auditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return auditHeader;
+			}
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
-
 		TableType tableType = TableType.MAIN_TAB;
 		if (legalDetail.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -412,13 +417,18 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		auditHeader = businessValidation(auditHeader, "delete");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
+		LegalDetail detail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
+		if (FinanceConstants.MODULE_NAME.equals(detail.getModule())) {
+			auditHeader = getAuditDetails(auditHeader, "delete");
+		} else {
+			auditHeader = businessValidation(auditHeader, "delete");
+			if (!auditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return auditHeader;
+			}
 		}
 
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
@@ -509,6 +519,10 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					String finAmountWords = NumberToEnglishWords
 							.getAmountInText(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(),
 									CurrencyUtil.getFormat(financeMain.getFinCcy())), financeMain.getFinCcy());
+					if (StringUtils.contains(finAmountWords, "INR")) {
+						finAmountWords = StringUtils.replace(finAmountWords, "INR", "Rupees");
+					}
+					
 					legalDetail.setFinAmountWords(finAmountWords);
 				} catch (Exception e) {
 					log.warn("Exception while fetching the finamount in words", e);
@@ -558,11 +572,15 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
-
-		if (!aAuditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return aAuditHeader;
+		LegalDetail detail = (LegalDetail) aAuditHeader.getAuditDetail().getModelData();
+		if (FinanceConstants.MODULE_NAME.equals(detail.getModule())) {
+			aAuditHeader = getAuditDetails(aAuditHeader, "doApprove");
+		} else {
+			aAuditHeader = businessValidation(aAuditHeader, "doApprove");
+			if (!aAuditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return aAuditHeader;
+			}
 		}
 		
 		Cloner cloner = new Cloner();
@@ -570,8 +588,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(legalDetail.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					legalDetailDAO.getLegalDetail(legalDetail.getLegalId(), TableType.MAIN_TAB.getSuffix()));
+			auditHeader.getAuditDetail().setBefImage(legalDetailDAO.getLegalDetail(legalDetail.getLegalId(), TableType.MAIN_TAB.getSuffix()));
 		}
 
 		if (legalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -676,10 +693,15 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
+		LegalDetail detail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
+		if (FinanceConstants.MODULE_NAME.equals(detail.getModule())) {
+			auditHeader = getAuditDetails(auditHeader, "doReject");
+		} else {
+			auditHeader = businessValidation(auditHeader, "doReject");
+			if (!auditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return auditHeader;
+			}
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -700,6 +722,28 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	}
 
 	/**
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = validate(auditHeader, method);
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
+		auditHeader = nextProcess(auditHeader);
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+	
+	/**
 	 * businessValidation method do the following steps. 1) get the details from
 	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
 	 * Record based on the record details. 4) Validate for any business
@@ -709,7 +753,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+	private List<AuditDetail> validate(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -721,6 +765,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		LegalDetail legalDetail = (LegalDetail) auditDetail.getModelData();
+		if (FinanceConstants.MODULE_NAME.equals(legalDetail.getModule())) {
+			auditDetails.add(auditDetail);
+		}
 		String usrLanguage = legalDetail.getUserDetails().getLanguage();
 
 		// Applicant Details validation
@@ -770,11 +817,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalNoteService().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		
-		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
-		return auditHeader;
+		return auditDetails;
 	}
 
 	/**
@@ -1022,8 +1067,6 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditDetails;
 	}
 	
-	
-	
 	/*Check the legal approved or not
 	 */
 	@Override
@@ -1052,14 +1095,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public List<LegalDetail> getApprovedLegalDetail(FinanceMain aFinanceMain) throws Exception {
 		logger.debug(Literal.ENTERING);
 		
-		List<Long> idLIst = getLegalDetailDAO().getLegalIdListByFinRef(aFinanceMain.getFinReference());
+		List<Long> idLIst = getLegalDetailDAO().getLegalIdListByFinRef(aFinanceMain.getFinReference(), "");
 		List<LegalDetail> detailList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(idLIst)) {
 			boolean modtDoc = true;
 			Branch branch =  getBranchService().getApprovedBranchById(aFinanceMain.getFinBranch());
 			String stateName = branch.getLovDescBranchProvinceName();
-			if ("DELHI".equalsIgnoreCase(stateName) || "PUNJAB".equalsIgnoreCase(stateName)
-					|| "HARYANA".equalsIgnoreCase(stateName) || "RAJASTHAN".equalsIgnoreCase(stateName)) {
+			
+			if (isMODTDoc("ESFB_LEGAL_DETAIL_MODT_DOCUMENTS_GENERATION_STATES", stateName)) {
 				modtDoc = false;
 			}
 
@@ -1077,6 +1120,19 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return detailList;
 	}
 	
+	private boolean isMODTDoc(String smtParameter, String stateName) {
+		String rolesList = SysParamUtil.getValueAsString(smtParameter);
+		if (StringUtils.isEmpty(rolesList)) {
+			return false;
+		}
+		String[] roles = rolesList.split(",");
+		for (String role : roles) {
+			if (StringUtils.equalsIgnoreCase(role, stateName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	/*
 	 * Formatting the details as per the marge fields
 	 */
@@ -1346,6 +1402,330 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return getDocumentDetailsDAO().getDocumentDetailsById(docId, type, readAttachment);
 	}
 	
+		
+	/**
+	 ****************************************************************************
+	 * Legal details Fetching , validating and saving from loan *
+	 ****************************************************************************
+	 */
+
+	/*
+	 *  
+	 * Getting the legaldetails list based on the fin reference
+	 */
+	@Override
+	public List<LegalDetail> getLegalDetailByFinreference(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		List<LegalDetail> legalDetailsList = new ArrayList<>();
+
+		List<Long> idList = getLegalDetailDAO().getLegalIdListByFinRef(finReference, "_View");
+		if (CollectionUtils.isNotEmpty(idList)) {
+			for (Long legalId : idList) {
+				LegalDetail legalDetail = getLegalDetails(legalId, "_View");
+				if (legalDetail != null) {
+					legalDetailsList.add(legalDetail);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return legalDetailsList;
+	}
+	
+	/*
+	 * Business validations
+	 */
+	@Override
+	public List<AuditDetail> validateDetailsFromLoan(FinanceDetail financeDetail, String auditTranType, String method) {
+		logger.debug(Literal.ENTERING);
+		
+		List<LegalDetail> legalDetailList = financeDetail.getLegalDetailsList();
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		
+		legalDetailList = getLegalDetailsAuditData(legalDetailList, auditTranType, method);
+
+		if (CollectionUtils.isNotEmpty(legalDetailList)) {
+			for (LegalDetail legalDetail : legalDetailList) {
+				if ("doApprove".equals(method)) {
+					legalDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				}
+				legalDetail = setWorkFlowValues(financeDetail, legalDetail, null);
+				AuditHeader auditHeader = getAuditHeader(legalDetail, auditTranType);
+				auditDetails.addAll(validate(auditHeader, method));
+			}
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+ 
+	private LegalDetail setWorkFlowValues(FinanceDetail financeDetail, LegalDetail aLegalDetail, String method) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		aLegalDetail.setUserDetails(financeMain.getUserDetails());
+		aLegalDetail.setWorkflowId(financeMain.getWorkflowId());
+		aLegalDetail.setModule(FinanceConstants.MODULE_NAME);
+
+		// Applicant details
+		List<LegalApplicantDetail> legalApplicantDetails = aLegalDetail.getApplicantDetailList();
+		if (CollectionUtils.isNotEmpty(legalApplicantDetails)) {
+			for (LegalApplicantDetail details : legalApplicantDetails) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(aLegalDetail.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+		}
+
+		// Property details
+		List<LegalPropertyDetail> legalPropertyDetail = aLegalDetail.getPropertyDetailList();
+		if (CollectionUtils.isNotEmpty(legalPropertyDetail)) {
+			for (LegalPropertyDetail details : legalPropertyDetail) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(aLegalDetail.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+		}
+		
+		// Document details
+		List<LegalDocument> legaldDocumentDetails = aLegalDetail.getDocumentList();
+		if (CollectionUtils.isNotEmpty(legaldDocumentDetails)) {
+			for (LegalDocument details : legaldDocumentDetails) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(aLegalDetail.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+		}
+		
+		// Legal Property Title
+		List<LegalPropertyTitle> legalPropertyTitles = aLegalDetail.getPropertyTitleList();
+		if (CollectionUtils.isNotEmpty(legalPropertyTitles)) {
+			for (LegalPropertyTitle details : legalPropertyTitles) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(aLegalDetail.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+		}
+
+		// Legal EC Details
+		List<LegalECDetail> legalECDetails = aLegalDetail.getEcdDetailsList();
+		if (CollectionUtils.isNotEmpty(legalECDetails)) {
+			for (LegalECDetail details : legalECDetails) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(aLegalDetail.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+		}
+		
+		// Legal Notes
+		List<LegalNote> legalNotes = aLegalDetail.getLegalNotesList();
+		if (CollectionUtils.isNotEmpty(legalNotes)) {
+			for (LegalNote details : legalNotes) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(aLegalDetail.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+		}
+
+		// Covenent details
+		List<FinCovenantType> covenantTypeDetails = aLegalDetail.getCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypeDetails)) {
+			for (FinCovenantType details : covenantTypeDetails) {
+				details.setFinReference(aLegalDetail.getLoanReference());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+			}
+		}
+		return aLegalDetail;
+	}
+
+	private AuditHeader getAuditHeader(LegalDetail aLegalDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLegalDetail.getBefImage(), aLegalDetail);
+		return new AuditHeader(aLegalDetail.getLegalReference(), null, null, null, auditDetail, aLegalDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+	
+	public List<LegalDetail> getLegalDetailsAuditData(List<LegalDetail> detailList, String auditTranType, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<LegalDetail> legalDetailsList = new ArrayList<>();
+
+		for (int i = 0; i < detailList.size(); i++) {
+
+			LegalDetail detail = detailList.get(i);
+			if (StringUtils.isEmpty(StringUtils.trimToEmpty(detail.getRecordType()))) {
+				continue;
+			}
+
+			boolean isRcdType = false;
+			if (detail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (detail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (detail.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (detail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+				detail.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+			legalDetailsList.add(detail);
+		}
+		logger.debug(Literal.LEAVING);
+		return legalDetailsList;
+	}
+	
+	/*
+	 * Processing the legal details based on the method
+	 */
+	@Override
+	public List<AuditDetail> processLegalDetails(AuditHeader aAuditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String auditTranType = "";
+
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (financeMain.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+		List<LegalDetail> legalDetailsList = financeDetail.getLegalDetailsList();
+
+		legalDetailsList = getLegalDetailsAuditData(legalDetailsList, auditTranType, method);
+
+		if (CollectionUtils.isNotEmpty(legalDetailsList)) {
+			int i = 0;
+			for (LegalDetail legalDetail : legalDetailsList) {
+				
+				if ("doApprove".equals(method)) {
+					legalDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					legalDetail.setRecordType("");
+				}
+
+				legalDetail = setWorkFlowValues(financeDetail, legalDetail, method);
+				String[] fields = PennantJavaUtil.getFieldDetails(legalDetail, legalDetail.getExcludeFields());
+				AuditHeader auditHeader = getAuditHeader(legalDetail, auditTranType);
+
+				switch (method) {
+				case "saveOrUpdate":
+					saveOrUpdate(auditHeader);
+					break;
+				case "doApprove":
+					doApprove(auditHeader);
+					break;
+				case "doReject":
+					doReject(auditHeader);
+					break;
+				case "delete":
+					delete(auditHeader);
+					break;
+				default:
+					break;
+				}
+				i = i + 1;
+				auditDetails.add(new AuditDetail(aAuditHeader.getAuditTranType(), i, fields[0], fields[1], legalDetail.getBefImage(), legalDetail));
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
@@ -1409,4 +1789,5 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
+
 }

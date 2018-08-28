@@ -121,7 +121,7 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 		valueParm[1] = legalDocument.getDocumentNo();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Title") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_LegalDocumentDialog_DocumentNo.value") + ":" + valueParm[1];
 
 		if (legalDocument.isNew()) {
 			if (!legalDocument.isWorkflow()) {

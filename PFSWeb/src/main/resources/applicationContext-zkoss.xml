@@ -5369,7 +5369,8 @@
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 	</bean>
-	
+	<bean id="legalDetailLoanListCtrl" class="com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
 	<!-- LegalPropertyDetail -->
 	<bean id="legalPropertyDetailDialogCtrl" class="com.pennant.webui.legal.legalpropertydetail.LegalPropertyDetailDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	

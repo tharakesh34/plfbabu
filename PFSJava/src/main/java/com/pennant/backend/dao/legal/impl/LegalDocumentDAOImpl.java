@@ -77,7 +77,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 	}
 
 	@Override
-	public LegalDocument getLegalDocument(long legalDocumentId, long legalId,String type) {
+	public LegalDocument getLegalDocument(long legalId, long legalDocumentId, String type) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -95,6 +95,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 
 		LegalDocument legalDocument = new LegalDocument();
 		legalDocument.setLegalDocumentId(legalDocumentId);
+		legalDocument.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalDocument);
 		RowMapper<LegalDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalDocument.class);

@@ -83,6 +83,6 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 
 	boolean isExists(String finReference, TableType mainTab);
 
-	List<Long> getLegalIdListByFinRef(String finReference);
+	List<Long> getLegalIdListByFinRef(String finReference, String tableType);
 
 }

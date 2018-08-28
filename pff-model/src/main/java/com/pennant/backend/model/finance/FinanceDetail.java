@@ -72,6 +72,7 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -258,6 +259,8 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	// Reason Details
 	private ReasonHeader reasonHeader;
+	
+	private List<LegalDetail> legalDetailsList;
 	
 	//FI Verification module
 	private Verification fiVerification;
@@ -1125,6 +1128,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setDirectFinalApprove(boolean directFinalApprove) {
 		this.directFinalApprove = directFinalApprove;
+	}
+
+	public List<LegalDetail> getLegalDetailsList() {
+		return legalDetailsList;
+	}
+
+	public void setLegalDetailsList(List<LegalDetail> legalDetailsList) {
+		this.legalDetailsList = legalDetailsList;
 	}
 
 	public long getReceiptId() {

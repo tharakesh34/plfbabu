@@ -44,6 +44,7 @@ package com.pennant.backend.service.legal;
 
 import java.util.List;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -79,4 +80,10 @@ public interface LegalDetailService {
 	DocumentDetails getDocDetailByDocId(long docId, String string, boolean readAttachment);
 
 	void saveDocumentDetails(List<DocumentDetails> documentsList);
+
+	List<LegalDetail> getLegalDetailByFinreference(String finReference);
+
+	List<AuditDetail> validateDetailsFromLoan(FinanceDetail financeDetail, String auditTranType, String method);
+
+	List<AuditDetail> processLegalDetails(AuditHeader aAuditHeader, String method);
 }

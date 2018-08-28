@@ -46,15 +46,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -62,6 +65,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.legal.LegalApplicantDetail;
 import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -97,11 +101,12 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	protected Decimalbox measurement;
 	protected Textbox registrationOffice;
 	protected Textbox registrationDistrict;
-	protected Textbox propertyOwner;
+	protected Combobox propertyOwner;
 	private LegalPropertyDetail legalPropertyDetail;  
 
 	private List<ValueLabel> listScheduleType = PennantStaticListUtil.getScheduleTypes();
 	private List<ValueLabel> listPropertyType = PennantStaticListUtil.getLegalPropertyTypes();
+	private List<ValueLabel> listPropertyOwners;
 	
 	private boolean enquiry = false;
 	private boolean newRecord = false;
@@ -338,6 +343,8 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	public void doWriteBeanToComponents(LegalPropertyDetail aLegalPropertyDetail) {
 		logger.debug(Literal.ENTERING);
 
+		listPropertyOwners = prepareOwnersNamesList(aLegalPropertyDetail);
+		
 		fillComboBox(this.scheduleType, aLegalPropertyDetail.getScheduleType(), listScheduleType, "");
 		this.propertySchedule.setValue(aLegalPropertyDetail.getPropertySchedule());
 		fillComboBox(this.propertyType, aLegalPropertyDetail.getPropertyType(), listPropertyType, "");
@@ -349,8 +356,55 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.measurement.setValue(aLegalPropertyDetail.getMeasurement());
 		this.registrationOffice.setValue(aLegalPropertyDetail.getRegistrationOffice());
 		this.registrationDistrict.setValue(aLegalPropertyDetail.getRegistrationDistrict());
-		this.propertyOwner.setValue(aLegalPropertyDetail.getPropertyOwner());
+		fillEditableComboBox(this.propertyOwner, aLegalPropertyDetail.getPropertyOwner(), listPropertyOwners, "");
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	private List<ValueLabel> prepareOwnersNamesList(LegalPropertyDetail aLegalPropertyDetail) {
+		List<ValueLabel> valueLableList = new ArrayList<>();
+		List<LegalApplicantDetail> applicantsList = getLegalDetailDialogCtrl().getApplicantDetailList();
+		
+		boolean added = false;
+		if (CollectionUtils.isNotEmpty(applicantsList)) {
+			for (LegalApplicantDetail detail : applicantsList) {
+				if (detail.getPropertyOwnersName().equals(aLegalPropertyDetail.getPropertyOwner())) {
+					added = true;
+				}
+				valueLableList.add(new ValueLabel(detail.getPropertyOwnersName(), detail.getPropertyOwnersName()));
+			}
+		}
+
+		if (StringUtils.trimToNull(aLegalPropertyDetail.getPropertyOwner()) != null && !added) {
+			valueLableList.add(new ValueLabel(aLegalPropertyDetail.getPropertyOwner(), aLegalPropertyDetail.getPropertyOwner()));
+		}
+		return valueLableList;
+	}
+	
+	/**
+	 * Method to fill the Editable combo box with given list of values
+	 * 
+	 * @param combobox
+	 * @param value
+	 * @param list
+	 */
+	public void fillEditableComboBox(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
+		logger.debug(Literal.ENTERING);
+		
+		combobox.getChildren().clear();
+		Comboitem comboitem = null;
+		for (ValueLabel valueLabel : list) {
+			if (!excludeFields.contains("," + valueLabel.getValue() + ",")) {
+				comboitem = new Comboitem();
+				comboitem.setValue(valueLabel.getValue());
+				comboitem.setLabel(valueLabel.getLabel());
+				combobox.appendChild(comboitem);
+			}
+			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(valueLabel.getValue()))) {
+				combobox.setSelectedItem(comboitem);
+			}
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -438,7 +492,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -548,12 +602,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_RegistrationDistrict.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		if (!this.propertyOwner.isReadonly()) {
-			this.propertyOwner.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_PropertyOwner.value"),
-							PennantRegularExpressions.REGEX_NAME, false));
-		}
-
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -756,7 +805,6 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 			this.btnCancel.setVisible(false);
 		} else {
 			this.btnCancel.setVisible(true);
-
 		}
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_ScheduleType"), this.scheduleType);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_PropertySchedule"), this.propertySchedule);
@@ -768,7 +816,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_Measurement"), this.measurement);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_RegistrationOffice"), this.registrationOffice);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_RegistrationDistrict"), this.registrationDistrict);
-		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_PropertyOwner"), this.propertyOwner);
+		readOnlyPropertyOwnerComponent(isReadOnly("LegalPropertyDetailDialog_PropertyOwner"), this.propertyOwner);
 	
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -840,7 +888,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.measurement.setValue("");
 		this.registrationOffice.setValue("");
 		this.registrationDistrict.setValue("");
-		this.propertyOwner.setValue("");
+		this.propertyOwner.setSelectedIndex(0);
 
 		logger.debug("Leaving");
 	}
@@ -921,6 +969,27 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 			showMessage(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	public void readOnlyPropertyOwnerComponent(boolean isReadOnly, Component component) {
+		if (isReadOnly) {
+			if (component instanceof Combobox) {
+				((Combobox) component).setTabindex(-1);
+				((Combobox) component).setAutodrop(false);
+				((Combobox) component).setStyle("#F2F2F2");
+				((Combobox) component).setButtonVisible(false);
+				((Combobox) component).setAutocomplete(false);
+				((Combobox) component).setDisabled(true);
+			}
+		} else {
+			if (component instanceof Combobox) {
+				((Combobox) component).setTabindex(0);
+				((Combobox) component).setAutodrop(true);
+				((Combobox) component).setButtonVisible(true);
+				((Combobox) component).setStyle("#F2F2F2");
+				((Combobox) component).setDisabled(false);
+			}
+		}
 	}
 
 	/**

@@ -126,6 +126,7 @@
 									<label id="label_DocumentCategory"
 										value="${c:l('label_LegalDocumentDialog_DocumentCategory.value')}" />
 									<hbox>
+									<space spacing="2px"/>
 									<combobox id="documentCategory"
 										width="180px" />
 									<space spacing="3px"/>
@@ -165,8 +166,7 @@
 									<label
 										value="${c:l('label_LegalDocumentDialog_DocumentUpload.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px" />
 										<textbox id="documentName"
 											width="250px" maxlength="200" readonly="true" />
 										<button upload="true"

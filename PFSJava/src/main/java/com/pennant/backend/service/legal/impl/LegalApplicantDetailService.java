@@ -107,10 +107,10 @@ public class LegalApplicantDetailService extends GenericService<LegalApplicantDe
 		String[] errParm = new String[2];
 
 		valueParm[0] = StringUtils.trimToEmpty(applicantDetail.getLegalReference());
-		valueParm[1] = applicantDetail.getTitleName();
+		valueParm[1] = applicantDetail.getPropertyOwnersName();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Title") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_PropertyOwnersName") + ":" + valueParm[1];
 
 		if (applicantDetail.isNew()) {
 			if (!applicantDetail.isWorkflow()) {

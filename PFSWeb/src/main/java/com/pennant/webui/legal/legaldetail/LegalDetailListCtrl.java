@@ -62,12 +62,14 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.service.legal.LegalDetailService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.legal.legaldetail.model.LegalDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -139,6 +141,17 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 		}
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (!StringUtils.equals(this.module, PennantConstants.YES)) {
+			Filter[] fileters = new Filter[2];
+			fileters[0] = new Filter("module", FinanceConstants.MODULE_NAME, Filter.OP_NOT_EQUAL);
+			fileters[1] = new Filter("module", null, Filter.OP_NULL);
+			this.searchObject.addFilterOr(fileters);
+		}
+	}
+	
 	/**
 	 * The framework calls this event handler when an application requests that
 	 * the window to be created.

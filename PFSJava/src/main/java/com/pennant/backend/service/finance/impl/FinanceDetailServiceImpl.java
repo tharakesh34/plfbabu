@@ -187,6 +187,7 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
@@ -624,6 +625,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//PSL details
 		financeDetail.setPslDetail(pSLDetailService.getPSLDetail((finReference)));
 
+		//Legal details
+		List<LegalDetail> ligelDetailsList = legalDetailService.getLegalDetailByFinreference(finReference);
+		if (CollectionUtils.isNotEmpty(ligelDetailsList)) {
+			financeDetail.setLegalDetailsList(ligelDetailsList);
+		}
+		
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -2457,6 +2464,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						financeDetail.getFinScheduleData().getFinanceMain());
 				auditDetails.addAll(details);
 			}
+			
+			// Save Legal details
+			List<LegalDetail> legalDetails = financeDetail.getLegalDetailsList();
+			if (CollectionUtils.isNotEmpty(legalDetails)) {
+				List<AuditDetail> details = getLegalDetailService().processLegalDetails(aAuditHeader, "saveOrUpdate");
+				auditDetails.addAll(details);
+			}
+			
 			// FinAssetTypes Audit
 			if (financeDetail.getFinAssetTypesList() != null && !financeDetail.getFinAssetTypesList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinAssetTypes");
@@ -3187,6 +3202,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
 				auditDetails.addAll(details);
 				getCollateralAssignmentDAO().deleteByReference(financeMain.getFinReference(), "");
+			}
+
+			// Legal details
+			List<LegalDetail> legalDetails = financeDetail.getLegalDetailsList();
+			if (CollectionUtils.isNotEmpty(legalDetails)) {
+				List<AuditDetail> details = getLegalDetailService().processLegalDetails(auditHeader, "delete");
+				auditDetails.addAll(details);
 			}
 
 			// FinAssetTypes details
@@ -3989,6 +4011,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(details);
 				}
 
+				// Save LegalDetails
+				List<LegalDetail> legalDetailsList = financeDetail.getLegalDetailsList();
+				if (CollectionUtils.isNotEmpty(legalDetailsList)) {
+					List<AuditDetail> details = getLegalDetailService().processLegalDetails(auditHeader, "doApprove");
+					auditDetails.addAll(details);
+				}
+				
 				// FinAssetTypes
 				if (financeDetail.getFinAssetTypesList() != null && !financeDetail.getFinAssetTypesList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinAssetTypes");
@@ -5433,6 +5462,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeDetail.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 		}
 
+		// Legal Details
+		List<LegalDetail> legalDetailsList = financeDetail.getLegalDetailsList();
+		if (CollectionUtils.isNotEmpty(legalDetailsList)) {
+			List<AuditDetail> details = getLegalDetailService().processLegalDetails(auditHeader, "doReject");
+			auditDetails.addAll(details);
+		}
+
 		// Delete Finance IRR values
 		deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
 
@@ -6051,6 +6087,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
 				details = getFlagDetailValidation().vaildateDetails(details, method, usrLanguage);
 				auditDetails.addAll(details);
+			}
+			
+			//Legal details from loan business validation
+			//========================
+			if (CollectionUtils.isNotEmpty(financeDetail.getLegalDetailsList())) {
+				auditDetails.addAll(getLegalDetailService().validateDetailsFromLoan(financeDetail, auditTranType, method));
 			}
 		}
 
@@ -9941,6 +9983,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
 		this.pSLDetailDAO = pSLDetailDAO;
+	}
+
+	public LegalDetailService getLegalDetailService() {
+		return legalDetailService;
+	}
+
+	public void setLegalDetailService(LegalDetailService legalDetailService) {
+		this.legalDetailService = legalDetailService;
 	}
 
 	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {

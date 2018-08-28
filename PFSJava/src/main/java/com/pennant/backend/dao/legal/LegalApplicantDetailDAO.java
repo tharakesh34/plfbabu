@@ -59,7 +59,7 @@ public interface LegalApplicantDetailDAO extends BasicCrudDao<LegalApplicantDeta
 	 *            The type of the table.
 	 * @return LegalApplicantDetail
 	 */
-	LegalApplicantDetail getLegalApplicantDetail(long legalApplicantId, long legalId, String type);
+	LegalApplicantDetail getLegalApplicantDetail(long legalId, long legalApplicantId, String type);
 
 	void deleteList(LegalApplicantDetail applicantDetail, String tableType);
 

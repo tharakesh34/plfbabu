@@ -268,6 +268,11 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private List<LegalNote> legalNotesList = null;
 	private String method = null;
 	private boolean newApplicants = false;
+	
+	private boolean fromLoan = false;
+	private boolean newRecord = false;
+
+	private LegalDetailLoanListCtrl legalDetailLoanListCtrl;
 
 	@Autowired
 	private EmailEngine emailEngine;
@@ -306,29 +311,44 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		try {
 			// Get the required arguments.
 			this.legalDetail = (LegalDetail) arguments.get("legalDetail");
-			this.legalDetailListCtrl = (LegalDetailListCtrl) arguments.get("legalDetailListCtrl");
+			
+			if (arguments.containsKey("fromLoan")) {
+				this.fromLoan = (boolean) arguments.get("fromLoan");
+				setNewRecord(true);
+			}
+			
+			if (fromLoan) {
+				setLegalDetailLoanListCtrl((LegalDetailLoanListCtrl) arguments.get("dialogCtrl"));
+			} else {
+				this.legalDetailListCtrl = (LegalDetailListCtrl) arguments.get("legalDetailListCtrl");
+			}
+			
 
 			if (this.legalDetail == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 
+			if (arguments.containsKey("roleCode")) {
+				setRole((String) arguments.get("roleCode"));
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			}
+			
 			// Store the before image.
 			LegalDetail legalDetail = new LegalDetail();
 			BeanUtils.copyProperties(this.legalDetail, legalDetail);
 			this.legalDetail.setBefImage(legalDetail);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.legalDetail.isWorkflow(), this.legalDetail.getWorkflowId(),
-					this.legalDetail.getNextTaskId());
+			if (!fromLoan) {
+				doLoadWorkFlow(this.legalDetail.isWorkflow(), this.legalDetail.getWorkflowId(), this.legalDetail.getNextTaskId());
+			}
 
-			if (isWorkFlowEnabled()) {
-				if (!enqiryModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				if (!fromLoan) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
 				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-			} else {
-				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
-			}
+			}  
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.legalDetail);
@@ -392,11 +412,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		doSave();
+		if (fromLoan) {
+			doSaveLoanLegalDetails();
+		} else {
+			doSave();
+		}
 		logger.debug(Literal.LEAVING);
 
 	}
-
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
@@ -502,9 +525,11 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
-			if (isWorkFlowEnabled()) {
+			if (isWorkFlowEnabled() || fromLoan) {
 				if (StringUtils.isNotBlank(legalDetail.getRecordType())) {
-					this.btnNotes.setVisible(true);
+					if (!fromLoan) {
+						this.btnNotes.setVisible(true);
+					}
 				}
 				doEdit();
 			} else {
@@ -518,7 +543,17 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			this.btnNotes.setVisible(false);
 		}
 		doWriteBeanToComponents(legalDetail);
-		setDialog(DialogType.EMBEDDED);
+		if (fromLoan) {
+			this.window_LegalDetailDialog.setHeight("80%");
+			this.window_LegalDetailDialog.setWidth("90%");
+			this.groupboxWf.setVisible(false);
+			this.window_LegalDetailDialog.doModal();
+		} else {
+			this.window_LegalDetailDialog.setWidth("100%");
+			this.window_LegalDetailDialog.setHeight("100%");
+			setDialog(DialogType.EMBEDDED);
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -616,16 +651,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aLegalDetail
-	 */
-	public void doWriteComponentsToBean(LegalDetail aLegalDetail) {
-		logger.debug(Literal.ENTERING);
-		logger.debug(Literal.LEAVING);
-	}
+ 
 
 	/**
 	 * Disables the Validation by setting empty constraints.
@@ -757,6 +783,15 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	public boolean isReadOnly(String componentName) {
+		if (fromLoan) {
+ 			return getUserWorkspace().isReadOnly(componentName);
+		} else {
+			return super.isReadOnly(componentName);
+		}
+	}
+	
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -796,206 +831,76 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	//Validate the data and render into list
+	private void doSaveLoanLegalDetails() {
+		logger.debug(Literal.ENTERING);
+
+		final LegalDetail aLegalDetail = new LegalDetail();
+		if (doWriteComponentsToBean(aLegalDetail)) {
+			return;
+		}
+
+		boolean isNew = aLegalDetail.isNew();
+		String tranType = "";
+		if (this.newRecord) {
+			if (isNew) {
+				aLegalDetail.setVersion(1);
+				aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+			if (StringUtils.isBlank(aLegalDetail.getRecordType())) {
+				aLegalDetail.setVersion(aLegalDetail.getVersion() + 1);
+				aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				aLegalDetail.setNewRecord(true);
+			}
+			if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && this.newRecord) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		} else {
+			aLegalDetail.setVersion(aLegalDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		aLegalDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aLegalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aLegalDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+		aLegalDetail.setRoleCode(getRole());
+		aLegalDetail.setModule(FinanceConstants.MODULE_NAME);
+
+		if (getLegalDetailLoanListCtrl() != null) {
+			List<LegalDetail> legalDetails = getLegalDetailLoanListCtrl().getLegalDetailsList();
+			for (LegalDetail legalDetail : legalDetails) {
+				if (legalDetail.getCollateralReference().equals(aLegalDetail.getCollateralReference())) {
+					BeanUtils.copyProperties(aLegalDetail, legalDetail);
+					break;
+				}
+			}
+			getLegalDetailLoanListCtrl().doFillLegalDetailDetails(legalDetails);
+		}
+		closeDialog();
+		logger.debug(Literal.LEAVING);
+	}
+
+	
 	/**
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
+		
 		final LegalDetail aLegalDetail = new LegalDetail();
-		BeanUtils.copyProperties(this.legalDetail, aLegalDetail);
-		boolean isNew = false;
-
-		// Setting the formatted fin amount for approval process
-		aLegalDetail.setFinAmount(PennantAppUtil.formateAmount(aLegalDetail.getFinAmount(),
-				CurrencyUtil.getFormat(aLegalDetail.getFinCcy())));
-
-		doRemoveValidation();
-		doWriteComponentsToBean(aLegalDetail);
-
-		// Applicant details
-		aLegalDetail.setApplicantDetailList(getApplicantDetailList());
-		if (this.applicationDetailsTab.isVisible() && CollectionUtils.isEmpty(getApplicantDetailList())) {
-			this.applicationDetailsTab.setSelected(true);
-			MessageUtil.showError(Labels.getLabel("label_LegalDetail_ApplicantDetails_Validation"));
-			return;
-		} else if (this.applicationDetailsTab.isVisible() && aLegalDetail.getApplicantDetailList().size() == 1) {
-			String recordType = getApplicantDetailList().get(0).getRecordType();
-			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-				MessageUtil.showError(Labels.getLabel("label_LegalDetail_ApplicantDetails_Del_Validation"));
-				return;
-			}
-		}
-
-		// Property details
-		aLegalDetail.setPropertyDetailList(getLegalPropertyDetailList());
-		if (this.propertryDetailsTab.isVisible() && CollectionUtils.isEmpty(getLegalPropertyDetailList())) {
-			this.propertryDetailsTab.setSelected(true);
-			MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertyDetails_Validation"));
+		if (doWriteComponentsToBean(aLegalDetail)) {
 			return;
 		}
 
-		if (this.propertryDetailsTab.isVisible() && CollectionUtils.isNotEmpty(getLegalPropertyDetailList())) {
-			if (StringUtils.trimToNull(this.scheduleLevelArea.getValue()) == null) {
-				this.propertryDetailsTab.setSelected(true);
-				throw new WrongValueException(this.scheduleLevelArea, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_LegalApplicantDetails_SchedulelevelArea.value") }));
-			} else {
-				aLegalDetail.setSchedulelevelArea(this.scheduleLevelArea.getValue());
-			}
-		}
-
-		if (this.propertryDetailsTab.isVisible() && aLegalDetail.getPropertyDetailList().size() == 1) {
-			String recordType = getLegalPropertyDetailList().get(0).getRecordType();
-			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-				MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertyDetails_Del_Validation"));
-				return;
-			}
-		}
-
-		// Document Details
-		aLegalDetail.setDocumentList(getLegalDocumentList());
-		if (this.documentDetailTab.isVisible() && CollectionUtils.isEmpty(getLegalDocumentList())) {
-			this.documentDetailTab.setSelected(true);
-			MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_Validation"));
-			return;
-		}
-
-		// Title details
-		aLegalDetail.setPropertyTitleList(getPropertyTitleList());
-		if (this.propertryTittleTab.isVisible() && CollectionUtils.isEmpty(getPropertyTitleList())) {
-			this.propertryTittleTab.setSelected(true);
-			MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertryTittle_Validation"));
-			return;
-		}
-		if (this.propertryTittleTab.isVisible() && CollectionUtils.isNotEmpty(getPropertyTitleList())) {
-			if (StringUtils.trimToNull(this.propertyDetailModt.getValue()) == null) {
-				this.propertryTittleTab.setSelected(true);
-				throw new WrongValueException(this.propertyDetailModt, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_MODT.value") }));
-			} else {
-				aLegalDetail.setPropertyDetailModt(this.propertyDetailModt.getValue());
-			}
-		}
-		if (this.propertryTittleTab.isVisible() && aLegalDetail.getPropertyTitleList().size() == 1) {
-			String recordType = getPropertyTitleList().get(0).getRecordType();
-			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-				MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertryTittle_Del_Validation"));
-				return;
-			}
-		}
-
-		// EC details
-		aLegalDetail.setEcdDetailsList(getEcdDetailList());
-		if (this.encumbranceCertificateTab.isVisible() && CollectionUtils.isEmpty(getEcdDetailList())) {
-			this.encumbranceCertificateTab.setSelected(true);
-			MessageUtil.showError(Labels.getLabel("label_LegalDetail_ECDetails_Validation"));
-			return;
-		}
-		if (this.encumbranceCertificateTab.isVisible() && CollectionUtils.isNotEmpty(getEcdDetailList())) {
-			if (this.propertyDetailECDate.getValue() == null) {
-				this.encumbranceCertificateTab.setSelected(true);
-				throw new WrongValueException(this.propertyDetailECDate, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_ECdate.value") }));
-			} else if (StringUtils.trimToNull(this.ecPropertyOwnerName.getValue()) == null) {
-				this.encumbranceCertificateTab.setSelected(true);
-				throw new WrongValueException(this.ecPropertyOwnerName, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_ECPropertyOwnerName.value") }));
-			} else {
-				aLegalDetail.setPropertyDetailECDate(this.propertyDetailECDate.getValue());
-				aLegalDetail.setEcPropertyOwnerName(this.ecPropertyOwnerName.getValue());
-			}
-		}
-		if (this.encumbranceCertificateTab.isVisible() && aLegalDetail.getEcdDetailsList().size() == 1) {
-			String recordType = getEcdDetailList().get(0).getRecordType();
-			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-				MessageUtil.showError(Labels.getLabel("label_LegalDetail_ECDetails_Del_Validation"));
-				return;
-			}
-		}
-
-		// Legal Notes details
-		aLegalDetail.setLegalNotesList(getLegalNotesList());
-		if (this.legalNotesTab.isVisible() && CollectionUtils.isEmpty(getLegalNotesList())) {
-			this.legalNotesTab.setSelected(true);
-			MessageUtil.showError(Labels.getLabel("label_LegalDetail_LegalNotes_Validation"));
-			return;
-		}
-		if (this.legalNotesTab.isVisible() && aLegalDetail.getLegalNotesList().size() == 1) {
-			String recordType = getLegalNotesList().get(0).getRecordType();
-			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-				MessageUtil.showError(Labels.getLabel("label_LegalDetail_LegalNotes_DEL_Validation"));
-				return;
-			}
-		}
-		// Covenant Details Saving
-		if (getFinCovenantTypeListCtrl() != null) {
-			aLegalDetail.setCovenantTypeList(getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList());
-		} else {
-			aLegalDetail.setCovenantTypeList(getLegalDetail().getCovenantTypeList());
-		}
-
-		// Legal Decision
-		if (this.legalDecisionTab.isVisible()) {
-			String legalDecision = this.legalDecision.getSelectedItem().getValue();
-			if (StringUtils.trimToNull(legalDecision) == null || PennantConstants.List_Select.equals(legalDecision)) {
-				this.legalDecisionTab.setSelected(true);
-				throw new WrongValueException(this.legalDecision, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_LegalDetailDialog_LegalDecision.value") }));
-			} else if (StringUtils.trimToNull(legalRemarks.getValue()) == null) {
-				this.legalDecisionTab.setSelected(true);
-				throw new WrongValueException(this.legalRemarks, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_LegalDetailDialog_LegalRemarks.value") }));
-			} else {
-				aLegalDetail.setLegalDecision(legalDecision);
-				aLegalDetail.setLegalRemarks(legalRemarks.getValue());
-			}
-		}
-
-		// Final validations of document details
-		if (this.documentDetailTab.isVisible() && CollectionUtils.isNotEmpty(getLegalDocumentList())) {
-			int cnt = 0;
-			for (LegalDocument document : getLegalDocumentList()) {
-				String recordType = document.getRecordType();
-				if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-						|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-					cnt++;
-				}
-				if (cnt == getLegalDocumentList().size()) {
-					MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_Del_Validation"));
-					return;
-				}
-			}
-		}
-		if (this.documentDetailTab.isVisible() && CollectionUtils.isNotEmpty(getLegalDocumentList())
-				&& !"Resubmit".equals(this.userAction.getSelectedItem().getLabel())) {
-			for (LegalDocument document : getLegalDocumentList()) {
-				if ("LEGAL_DOCUMENT_VERIFIER".equals(getRole())) {
-					if (StringUtils.trimToNull(document.getDocumentName()) == null) {
-						this.documentDetailTab.setSelected(true);
-						MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
-						return;
-					}
-				} else if ("LEGAL_APPROVAL_OFFICER".equals(getRole())
-						|| "LEGAL_APPROVAL_BRANCH_MANAGER".equals(getRole())
-						|| "LEGAL_APPROVAL_AREA_MANAGER".equals(getRole())
-						|| "LEGAL_APPROVAL_REGIONAL_MANAGER".equals(getRole())
-						|| "LEGAL_APPROVAL_HEAD".equals(getRole()) || "LEGAL_APPROVAL_MAKER".equals(getRole())) {
-					if (PennantConstants.List_Select.equals(document.getDocumentTypeApprove())
-							|| Labels.getLabel("Combo.Select").equals(document.getDocumentTypeApprove())) {
-						this.documentDetailTab.setSelected(true);
-						MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
-						return;
-					}
-				}
-			}
-		}
-
-		isNew = aLegalDetail.isNew();
+		boolean isNew = aLegalDetail.isNew();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1083,6 +988,210 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private boolean doWriteComponentsToBean(LegalDetail aLegalDetail) {
+		
+		BeanUtils.copyProperties(this.legalDetail, aLegalDetail);
+
+		// Setting the formatted fin amount for approval process
+		aLegalDetail.setFinAmount(PennantAppUtil.formateAmount(aLegalDetail.getFinAmount(), CurrencyUtil.getFormat(aLegalDetail.getFinCcy())));
+
+		doRemoveValidation();
+
+		// Applicant details
+		aLegalDetail.setApplicantDetailList(getApplicantDetailList());
+		if (this.applicationDetailsTab.isVisible() && CollectionUtils.isEmpty(getApplicantDetailList())) {
+			this.applicationDetailsTab.setSelected(true);
+			MessageUtil.showError(Labels.getLabel("label_LegalDetail_ApplicantDetails_Validation"));
+			return true;
+		} else if (this.applicationDetailsTab.isVisible() && aLegalDetail.getApplicantDetailList().size() == 1) {
+			String recordType = getApplicantDetailList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_ApplicantDetails_Del_Validation"));
+				return true;
+			}
+		}
+
+		// Property details
+		aLegalDetail.setPropertyDetailList(getLegalPropertyDetailList());
+		if (this.propertryDetailsTab.isVisible() && CollectionUtils.isEmpty(getLegalPropertyDetailList())) {
+			this.propertryDetailsTab.setSelected(true);
+			MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertyDetails_Validation"));
+			return true;
+		}
+
+		if (this.propertryDetailsTab.isVisible() && CollectionUtils.isNotEmpty(getLegalPropertyDetailList())) {
+			if (StringUtils.trimToNull(this.scheduleLevelArea.getValue()) == null) {
+				this.propertryDetailsTab.setSelected(true);
+				throw new WrongValueException(this.scheduleLevelArea, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_LegalApplicantDetails_SchedulelevelArea.value") }));
+			} else {
+				aLegalDetail.setSchedulelevelArea(this.scheduleLevelArea.getValue());
+			}
+		}
+
+		if (this.propertryDetailsTab.isVisible() && aLegalDetail.getPropertyDetailList().size() == 1) {
+			String recordType = getLegalPropertyDetailList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertyDetails_Del_Validation"));
+				return true;
+			}
+		}
+
+		// Document Details
+		aLegalDetail.setDocumentList(getLegalDocumentList());
+		if (this.documentDetailTab.isVisible() && CollectionUtils.isEmpty(getLegalDocumentList())) {
+			this.documentDetailTab.setSelected(true);
+			MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_Validation"));
+			return true;
+		}
+
+		// Title details
+		aLegalDetail.setPropertyTitleList(getPropertyTitleList());
+		if (this.propertryTittleTab.isVisible() && CollectionUtils.isEmpty(getPropertyTitleList())) {
+			this.propertryTittleTab.setSelected(true);
+			MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertryTittle_Validation"));
+			return true;
+		}
+		if (this.propertryTittleTab.isVisible() && CollectionUtils.isNotEmpty(getPropertyTitleList())) {
+			if (StringUtils.trimToNull(this.propertyDetailModt.getValue()) == null) {
+				this.propertryTittleTab.setSelected(true);
+				throw new WrongValueException(this.propertyDetailModt, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_MODT.value") }));
+			} else {
+				aLegalDetail.setPropertyDetailModt(this.propertyDetailModt.getValue());
+			}
+		}
+		if (this.propertryTittleTab.isVisible() && aLegalDetail.getPropertyTitleList().size() == 1) {
+			String recordType = getPropertyTitleList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertryTittle_Del_Validation"));
+				return true;
+			}
+		}
+
+		// EC details
+		aLegalDetail.setEcdDetailsList(getEcdDetailList());
+		if (this.encumbranceCertificateTab.isVisible() && CollectionUtils.isEmpty(getEcdDetailList())) {
+			this.encumbranceCertificateTab.setSelected(true);
+			MessageUtil.showError(Labels.getLabel("label_LegalDetail_ECDetails_Validation"));
+			return true;
+		}
+		if (this.encumbranceCertificateTab.isVisible() && CollectionUtils.isNotEmpty(getEcdDetailList())) {
+			if (this.propertyDetailECDate.getValue() == null) {
+				this.encumbranceCertificateTab.setSelected(true);
+				throw new WrongValueException(this.propertyDetailECDate, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_ECdate.value") }));
+			} else if (StringUtils.trimToNull(this.ecPropertyOwnerName.getValue()) == null) {
+				this.encumbranceCertificateTab.setSelected(true);
+				throw new WrongValueException(this.ecPropertyOwnerName, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_ECPropertyOwnerName.value") }));
+			} else {
+				aLegalDetail.setPropertyDetailECDate(this.propertyDetailECDate.getValue());
+				aLegalDetail.setEcPropertyOwnerName(this.ecPropertyOwnerName.getValue());
+			}
+		}
+		if (this.encumbranceCertificateTab.isVisible() && aLegalDetail.getEcdDetailsList().size() == 1) {
+			String recordType = getEcdDetailList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_ECDetails_Del_Validation"));
+				return true;
+			}
+		}
+
+		// Legal Notes details
+		aLegalDetail.setLegalNotesList(getLegalNotesList());
+		if (this.legalNotesTab.isVisible() && CollectionUtils.isEmpty(getLegalNotesList())) {
+			this.legalNotesTab.setSelected(true);
+			MessageUtil.showError(Labels.getLabel("label_LegalDetail_LegalNotes_Validation"));
+			return true;
+		}
+		if (this.legalNotesTab.isVisible() && aLegalDetail.getLegalNotesList().size() == 1) {
+			String recordType = getLegalNotesList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_LegalNotes_DEL_Validation"));
+				return true;
+			}
+		}
+		// Covenant Details Saving
+		if (getFinCovenantTypeListCtrl() != null) {
+			aLegalDetail.setCovenantTypeList(getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList());
+		} else {
+			aLegalDetail.setCovenantTypeList(getLegalDetail().getCovenantTypeList());
+		}
+
+		// Legal Decision
+		if (this.legalDecisionTab.isVisible()) {
+			String legalDecision = this.legalDecision.getSelectedItem().getValue();
+			if (StringUtils.trimToNull(legalDecision) == null || PennantConstants.List_Select.equals(legalDecision)) {
+				this.legalDecisionTab.setSelected(true);
+				throw new WrongValueException(this.legalDecision, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_LegalDetailDialog_LegalDecision.value") }));
+			} else if (StringUtils.trimToNull(legalRemarks.getValue()) == null) {
+				this.legalDecisionTab.setSelected(true);
+				throw new WrongValueException(this.legalRemarks, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_LegalDetailDialog_LegalRemarks.value") }));
+			} else {
+				aLegalDetail.setLegalDecision(legalDecision);
+				aLegalDetail.setLegalRemarks(legalRemarks.getValue());
+			}
+		}
+
+		// Final validations of document details
+		if (this.documentDetailTab.isVisible() && CollectionUtils.isNotEmpty(getLegalDocumentList())) {
+			int cnt = 0;
+			for (LegalDocument document : getLegalDocumentList()) {
+				String recordType = document.getRecordType();
+				if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+						|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+					cnt++;
+				}
+				if (cnt == getLegalDocumentList().size()) {
+					MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_Del_Validation"));
+					return true;
+				}
+			}
+		}
+		
+		if (this.documentDetailTab.isVisible() && CollectionUtils.isNotEmpty(getLegalDocumentList())
+				&& ((fromLoan ? fromLoan : !"Resubmit".equals(this.userAction.getSelectedItem().getLabel())))) {
+			for (LegalDocument document : getLegalDocumentList()) {
+				if (isRoleContains("ESFB_LEGAL_DETAIL_DOCUMENTNAME_MANDATORY_ROLES", getRole())) { 
+					if (StringUtils.trimToNull(document.getDocumentName()) == null) {
+						this.documentDetailTab.setSelected(true);
+						MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
+						return true;
+					}
+				} else if (isRoleContains("ESFB_LEGAL_DETAIL_DOCUMENTTYPE_MANDATORY_ROLES", getRole())) {
+					if (PennantConstants.List_Select.equals(document.getDocumentTypeApprove())
+							|| Labels.getLabel("Combo.Select").equals(document.getDocumentTypeApprove())) {
+						this.documentDetailTab.setSelected(true);
+						MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isRoleContains(String smtParameter, String reqRole) {
+		String rolesList = SysParamUtil.getValueAsString(smtParameter);
+		if (StringUtils.isEmpty(rolesList)) {
+			return false;
+		}
+		String[] roles = rolesList.split(",");
+		for (String role : roles) {
+			if (StringUtils.equalsIgnoreCase(role, reqRole)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1145,10 +1254,11 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			aLegalDetail.setNextTaskId(nextTaskId);
 			aLegalDetail.setRoleCode(getRole());
 			aLegalDetail.setNextRoleCode(nextRoleCode);
+			aLegalDetail.setModule(PennantConstants.QUERY_LEGAL_VERIFICATION);
 
 			// Applicant details
 			List<LegalApplicantDetail> legalApplicantDetails = aLegalDetail.getApplicantDetailList();
-			if (legalApplicantDetails != null && !legalApplicantDetails.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(legalApplicantDetails)) {
 				for (LegalApplicantDetail details : legalApplicantDetails) {
 					details.setLegalId(aLegalDetail.getLegalId());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1171,7 +1281,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 			// Property details
 			List<LegalPropertyDetail> legalPropertyDetail = aLegalDetail.getPropertyDetailList();
-			if (legalPropertyDetail != null && !legalPropertyDetail.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(legalPropertyDetail)) {
 				for (LegalPropertyDetail details : legalPropertyDetail) {
 					details.setLegalId(aLegalDetail.getLegalId());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1191,10 +1301,80 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					}
 				}
 			}
+			
 			// Document details
 			List<LegalDocument> legaldDocumentDetails = aLegalDetail.getDocumentList();
-			if (legaldDocumentDetails != null && !legaldDocumentDetails.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(legaldDocumentDetails)) {
 				for (LegalDocument details : legaldDocumentDetails) {
+					details.setLegalId(aLegalDetail.getLegalId());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setUserDetails(getUserWorkspace().getLoggedInUser());
+					details.setRecordStatus(aLegalDetail.getRecordStatus());
+					details.setWorkflowId(aLegalDetail.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(aLegalDetail.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+			// Legal Property Title
+			List<LegalPropertyTitle> legalPropertyTitles = aLegalDetail.getPropertyTitleList();
+			if (CollectionUtils.isNotEmpty(legalPropertyTitles)) {
+				for (LegalPropertyTitle details : legalPropertyTitles) {
+					details.setLegalId(aLegalDetail.getLegalId());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setUserDetails(getUserWorkspace().getLoggedInUser());
+					details.setRecordStatus(aLegalDetail.getRecordStatus());
+					details.setWorkflowId(aLegalDetail.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(aLegalDetail.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+			// Legal EC Details
+			List<LegalECDetail> legalECDetails = aLegalDetail.getEcdDetailsList();
+			if (CollectionUtils.isNotEmpty(legalECDetails)) {
+				for (LegalECDetail details : legalECDetails) {
+					details.setLegalId(aLegalDetail.getLegalId());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setUserDetails(getUserWorkspace().getLoggedInUser());
+					details.setRecordStatus(aLegalDetail.getRecordStatus());
+					details.setWorkflowId(aLegalDetail.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(aLegalDetail.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+			// Legal Notes
+			List<LegalNote> legalNotes = aLegalDetail.getLegalNotesList();
+			if (CollectionUtils.isNotEmpty(legalNotes)) {
+				for (LegalNote details : legalNotes) {
 					details.setLegalId(aLegalDetail.getLegalId());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1216,7 +1396,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 			// Covenet details
 			List<FinCovenantType> covenantTypeDetails = aLegalDetail.getCovenantTypeList();
-			if (covenantTypeDetails != null && !covenantTypeDetails.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(covenantTypeDetails)) {
 				for (FinCovenantType details : covenantTypeDetails) {
 					details.setFinReference(aLegalDetail.getLoanReference());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1629,7 +1809,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc.setParent(item);
 				lc = new Listcell(legalPropertyDetail.getRegistrationOffice());
 				lc.setParent(item);
-				lc = new Listcell(legalPropertyDetail.getPropertyOwner());
+				lc = new Listcell(legalPropertyDetail.getRegistrationDistrict());
 				lc.setParent(item);
 				lc = new Listcell(legalPropertyDetail.getRecordStatus());
 				lc.setParent(item);
@@ -2493,13 +2673,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private String downloadDocuments(LegalDetail legalDetail) {
 		logger.debug(Literal.ENTERING);
 		try {
-			if ("LEGAL_PRELIMINARY_MAKER".equals(getRole())) {
+			if (isRoleContains("ESFB_LEGAL_DETAIL_PRELIMINARY_DOC_ROLES", getRole()) && (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
 				// Legal Preliminary Document
 				return downloadDocument(legalDetail, "PRELIMINARY Draft", true);
-			} else if (("LEGAL_APPROVAL_OFFICER".equals(getRole()) || "LEGAL_APPROVAL_BRANCH_MANAGER".equals(getRole())
-					|| "LEGAL_APPROVAL_AREA_MANAGER".equals(getRole())
-					|| "LEGAL_APPROVAL_REGIONAL_MANAGER".equals(getRole()) || "LEGAL_APPROVAL_HEAD".equals(getRole()))
-					&& (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
+			} else if ((isRoleContains("ESFB_LEGAL_DETAIL_FINAL_OPINION_DOC_ROLES", getRole())) && (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
 				// Legal Final Opinion Document
 				return downloadDocument(legalDetail, "FINAL OPINION Draft", false);
 			}
@@ -2774,4 +2951,21 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	public void setFreemarkerMailConfiguration(Configuration freemarkerMailConfiguration) {
 		this.freemarkerMailConfiguration = freemarkerMailConfiguration;
 	}
+
+	public LegalDetailLoanListCtrl getLegalDetailLoanListCtrl() {
+		return legalDetailLoanListCtrl;
+	}
+
+	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
+		this.legalDetailLoanListCtrl = legalDetailLoanListCtrl;
+	}
+	
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
 }

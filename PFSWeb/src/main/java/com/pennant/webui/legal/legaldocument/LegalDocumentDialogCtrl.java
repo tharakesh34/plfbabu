@@ -183,8 +183,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	public void onCreate$window_LegalDocumentDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		logger.debug(Literal.ENTERING);
-
 		// Set the page level components.
 		setPageComponents(window_LegalDocumentDialog);
 
@@ -384,13 +382,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		if (CollectionUtils.isNotEmpty(collateralDocumentList)) {
 			List<String> docCategoryList = new ArrayList<>();
 			for (DocumentDetails documentDetails : collateralDocumentList) {
-				ValueLabel valueLabel = new ValueLabel();
-				valueLabel.setLabel(documentDetails.getDocCategory());
-				valueLabel.setValue(documentDetails.getDocCategory());
-				getListDocumentCategory().add(valueLabel);
 				docCategoryList.add(documentDetails.getDocCategory());
 			}
-			getDocumentTypeDesc(docCategoryList);
+			prepareDocumentsList(docCategoryList);
 		}
 		
 		// Maker
@@ -399,7 +393,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.documentNo.setValue(aLegalDocument.getDocumentNo());
 		this.surveyNo.setValue(aLegalDocument.getSurveyNo());
 		fillComboBox(this.documentTypeMaker, aLegalDocument.getDocumentType(), listDocumentType, "");
-		fillComboBox(this.documentCategory, aLegalDocument.getDocumentCategory(), getListDocumentCategory(), "");
+		fillDocumentCategory(aLegalDocument.getDocumentCategory());
 		setDocumentCategoryDesc(aLegalDocument.getDocumentCategory());
 		fillComboBox(this.scheduleType, aLegalDocument.getScheduleType(), listScheduleType, "");
 
@@ -438,11 +432,18 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		logger.debug(Literal.LEAVING);
 	}
- 
+
 	public void onChange$documentCategory(Event event) {
 		logger.debug(Literal.ENTERING);
-		String documentCategory = getComboboxValue(this.documentCategory);
-		setDocumentCategoryDesc(documentCategory);
+		String docCategory = getComboboxValue(this.documentCategory);
+
+		if (docCategory.contains("-")) {
+			String[] docCategoryArray = docCategory.split("-");
+			setDocumentCategoryDesc(docCategoryArray[0]);
+		} else {
+			setDocumentCategoryDesc(docCategory);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -457,7 +458,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	/*
 	 * Fetching the document category description
 	 */
-	private void getDocumentTypeDesc(List<String> docCategoryList) {
+	private void prepareDocumentsList(List<String> docCategoryList) {
 		Search search = new Search(DocumentType.class);
 		search.addField("docTypeCode");
 		search.addField("docTypeDesc");
@@ -467,8 +468,21 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (DocumentType documentType : list) {
+				ValueLabel valueLabel = new ValueLabel();
+				valueLabel.setLabel(documentType.getDocTypeCode().concat("-").concat(documentType.getDocTypeDesc()));
+				valueLabel.setValue(documentType.getDocTypeCode().concat("-").concat(documentType.getDocTypeDesc()));
+				getListDocumentCategory().add(valueLabel);
 				cetegoryDescMap.put(documentType.getDocTypeCode(), documentType.getDocTypeDesc());
 			}
+		}
+	}
+	
+	private void fillDocumentCategory(String documentCategory) {
+		if (StringUtils.trimToNull(documentCategory) == null || PennantConstants.List_Select.equals(documentCategory)) {
+			fillComboBox(this.documentCategory, documentCategory, getListDocumentCategory(), "");
+		} else {
+			String docCategory = documentCategory.concat("-").concat(cetegoryDescMap.get(documentCategory));
+			fillComboBox(this.documentCategory, docCategory, getListDocumentCategory(), "");
 		}
 	}
 	
@@ -516,7 +530,15 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		}
 
 		try {
-			aLegalDocument.setDocumentCategory(this.documentCategory.getSelectedItem().getValue().toString());
+			if (PennantConstants.List_Select.equals(this.documentCategory.getSelectedItem().getValue().toString())) {
+				aLegalDocument.setDocumentCategory(this.documentCategory.getSelectedItem().getValue().toString());
+			} else {
+				String docCategory = this.documentCategory.getSelectedItem().getValue().toString();
+				if (docCategory.contains("-")) {
+					String[] docCategoryArray = docCategory.split("-");
+					aLegalDocument.setDocumentCategory(docCategoryArray[0]);
+				}
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -547,16 +569,13 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		}
 
 		try {
-			if (this.gb_documentVerifyDetails.isVisible()
-					&& StringUtils.trimToNull(this.documentName.getValue()) == null) {
-				throw new WrongValueException(this.documentName, Labels.getLabel("MUST_BE_UPLOADED",
-						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
+			if (this.gb_documentVerifyDetails.isVisible() && StringUtils.trimToNull(this.documentName.getValue()) != null) {
+				aLegalDocument.setDocumentName(this.documentName.getValue());
+				LegalDocument details = (LegalDocument) this.documentName.getAttribute("data");
+				aLegalDocument.setDocImage(details.getDocImage());
+				aLegalDocument.setUploadDocumentType(aLegalDocument.getUploadDocumentType());
+				aLegalDocument.setDocumentReference(Long.MIN_VALUE);
 			}
-			aLegalDocument.setDocumentName(this.documentName.getValue());
-			LegalDocument details = (LegalDocument) this.documentName.getAttribute("data");
-			aLegalDocument.setDocImage(details.getDocImage());
-			aLegalDocument.setUploadDocumentType(aLegalDocument.getUploadDocumentType());
-			aLegalDocument.setDocumentReference(Long.MIN_VALUE);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -664,9 +683,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 					Labels.getLabel("label_LegalDocumentDialog_DocumentTypeMaker.value"), listDocumentType, true));
 		}
 		if (!this.documentCategory.isDisabled()) {
-			this.documentCategory.setConstraint(
-					new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentCategory.value"),
-							getListDocumentCategory(), false));
+			this.documentCategory.setConstraint(new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentCategory.value"), getListDocumentCategory(), false));
 		}
 		if (!this.scheduleType.isDisabled()) {
 			this.scheduleType.setConstraint(new PTListValidator(
@@ -686,7 +703,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		if (!this.documentName.isReadonly()) {
 			this.documentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentReference.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		if (!this.documentTypeApprove.isDisabled()) {
 			this.documentTypeApprove.setConstraint(

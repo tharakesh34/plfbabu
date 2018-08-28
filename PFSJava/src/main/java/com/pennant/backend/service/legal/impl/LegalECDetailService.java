@@ -108,7 +108,7 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 		valueParm[1] = String.valueOf(legalECDetail.getEcDate());
 
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Title") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_EcDate") + ":" + valueParm[1];
 
 		if (legalECDetail.isNew()) {
 			if (!legalECDetail.isWorkflow()) {

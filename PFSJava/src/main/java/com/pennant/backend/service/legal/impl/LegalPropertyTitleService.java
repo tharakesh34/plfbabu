@@ -108,7 +108,7 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 		valueParm[1] = propertyTitle.getTitle();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Title") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_LegalPropertyTitleDialog_Title.value") + ":" + valueParm[1];
 
 		if (propertyTitle.isNew()) {
 			if (!propertyTitle.isWorkflow()) {

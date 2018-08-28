@@ -119,10 +119,10 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 		String[] errParm = new String[2];
 
 		valueParm[0] = StringUtils.trimToEmpty(legalPropertyDetail.getLegalReference());
-		valueParm[1] = legalPropertyDetail.getPropertyType();
+		valueParm[1] = legalPropertyDetail.getScheduleType();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Title") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_ScheduleType") + ":" + valueParm[1];
 
 		if (legalPropertyDetail.isNew()) {
 			if (!legalPropertyDetail.isWorkflow()) {

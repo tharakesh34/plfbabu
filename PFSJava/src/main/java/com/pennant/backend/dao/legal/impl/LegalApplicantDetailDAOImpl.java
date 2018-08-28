@@ -75,7 +75,7 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 	}
 	
 	@Override
-	public LegalApplicantDetail getLegalApplicantDetail(long legalApplicantId, long legalId, String type) {
+	public LegalApplicantDetail getLegalApplicantDetail(long legalId, long legalApplicantId, String type) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
@@ -95,6 +95,7 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 
 		LegalApplicantDetail legalApplicantDetail = new LegalApplicantDetail();
 		legalApplicantDetail.setLegalApplicantId(legalApplicantId);
+		legalApplicantDetail.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalApplicantDetail);
 		RowMapper<LegalApplicantDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalApplicantDetail.class);

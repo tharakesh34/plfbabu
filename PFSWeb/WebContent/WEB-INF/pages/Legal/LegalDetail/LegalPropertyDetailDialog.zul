@@ -142,7 +142,7 @@
 								</hbox>
 								<label id="label_PropertyOwner"
 									value="${c:l('label_LegalPropertyDetailDialog_PropertyOwner.value')}" />
-								<textbox id="propertyOwner"
+								<combobox id="propertyOwner"
 									maxlength="1000" width="200px" />
 							</row>
 						</rows>

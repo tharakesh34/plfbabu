@@ -84,6 +84,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private String propertyDetailModt;
 	private Date propertyDetailECDate;
 	private String ecPropertyOwnerName;
+	private String module;
 	private boolean active = false;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -598,6 +599,14 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
 		this.jointAccountDetailList = jointAccountDetailList;
+	}
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
 	}
 
 }

@@ -1857,7 +1857,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			//Sampling Approval Details
 			appendSamplingApprovalTab(onLoad);
-			//Query Mangement Tab 
+			//Query Management Tab 
 			if (isTabVisible(StageTabConstants.QueryMangement)) {
 				appendQueryMangementTab(false);
 			}
@@ -1865,6 +1865,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (isTabVisible(StageTabConstants.PSLDetails) && StringUtils.isEmpty(moduleDefiner)) {
 			appendPslDetailsTab(onLoad);
+		}
+		//Legal details tab
+		if (isTabVisible(StageTabConstants.LegalDetails) && StringUtils.isEmpty(moduleDefiner)) {
+			appendLegalDetailsTab(onLoad);
 		}
 		
 
@@ -4165,6 +4169,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("financeMainDialogCtrl", this);
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PslDetailDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_PSL_DETAILS), map);
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/*
+	 * Appending the legal details tab
+	 */
+	private void appendLegalDetailsTab(boolean onLoad) {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (onLoad) {
+				createTab(AssetConstants.UNIQUE_ID_LEGAL_DETAILS, true);
+			} else {
+				HashMap<String, Object> map = getDefaultArguments();
+				map.put("finHeaderList", getFinBasicDetails());
+				map.put("tab", getTab(AssetConstants.UNIQUE_ID_LEGAL_DETAILS));
+				map.put("fromLoan", true);
+				map.put("roleCode", getRole());
+				map.put("financeDetail", getFinanceDetail());
+				map.put("financeMainDialogCtrl", this);
+				Executions.createComponents("/WEB-INF/pages/Legal/LegalDetail/LegalDetailsLoanList.zul", getTabpanel(AssetConstants.UNIQUE_ID_LEGAL_DETAILS), map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);

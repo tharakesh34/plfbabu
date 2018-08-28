@@ -329,4 +329,10 @@
 			<column name="customerId" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="15" author="Durgaprasad G">
+		 <addColumn tableName="AdtLegalDetails">
+		 	<column name="Module" type="varchar(20)"/>
+		 </addColumn>
+	</changeSet>
 </databaseChangeLog>

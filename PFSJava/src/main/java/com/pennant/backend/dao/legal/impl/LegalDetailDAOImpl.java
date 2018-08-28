@@ -84,7 +84,7 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
-		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active,");
+		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
 			sql.append(" ,branchDesc");
@@ -153,11 +153,11 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		StringBuilder sql = new StringBuilder(" insert into LegalDetails");
 		sql.append(tableType.getSuffix());
 		sql.append("( legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
-		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active,");
+		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalId, :legalReference, :loanReference, :collateralReference, :branch, :legalDate, :schedulelevelArea, ");
-		sql.append(" :legalDecision, :legalRemarks, :propertyDetailModt, :propertyDetailECDate, :ecPropertyOwnerName, :active,");
+		sql.append(" :legalDecision, :legalRemarks, :propertyDetailModt, :propertyDetailECDate, :ecPropertyOwnerName, :active, :module,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalDetail.getId() == Long.MIN_VALUE) {
@@ -187,7 +187,7 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		StringBuilder sql = new StringBuilder("update LegalDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" set legalId = :legalId, loanReference = :loanReference, collateralReference = :collateralReference, branch = :branch, ");
-		sql.append(" legalDate = :legalDate, schedulelevelArea = :schedulelevelArea, legalDecision = :legalDecision, active = :active, ");
+		sql.append(" legalDate = :legalDate, schedulelevelArea = :schedulelevelArea, legalDecision = :legalDecision, active = :active, module= :module,");
 		sql.append(" legalRemarks = :legalRemarks, propertyDetailModt = :propertyDetailModt, propertyDetailECDate = :propertyDetailECDate, ecPropertyOwnerName = :ecPropertyOwnerName,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -323,19 +323,18 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		return count > 0 ? true : false;
 	}
 
-	
-
 	@Override
-	public List<Long> getLegalIdListByFinRef(String loanReference) {
-		logger.debug("Entering");
+	public List<Long> getLegalIdListByFinRef(String loanReference, String tableType) {
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select LegalId from LegalDetails");
+		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" Where loanReference = :loanReference ");
 		source.addValue("loanReference", loanReference);
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
 	}
 	
