@@ -73,6 +73,7 @@ public class SessionUserDetails implements Serializable {
 		LoggedInUser user = new LoggedInUser();
 		user.setLoginUsrID(userDetails.getUserId());
 		user.setBranchCode(userDetails.getSecurityUser().getUsrBranchCode());
+		user.setBranchName(userDetails.getSecurityUser().getLovDescUsrBranchCodeName());
 		user.setDepartmentCode(userDetails.getSecurityUser().getUsrDeptCode());
 		user.setIpAddress(convertClientAddress(SecurityContextHolder.getContext().getAuthentication()));
 		user.setSessionId(convertClientSessionId(SecurityContextHolder.getContext().getAuthentication()));

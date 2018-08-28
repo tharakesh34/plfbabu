@@ -300,8 +300,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int advEMIDftTerms;
 	private String advEMISchdMthd;
 	
+	//Eligibility Method
+	private String eligibilityMethods;
 	
-
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -2084,4 +2085,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setBpiRateBasis(String bpiRateBasis) {
 		this.bpiRateBasis = bpiRateBasis;
 	}
+
+	public String getEligibilityMethods() {
+		return eligibilityMethods;
+	}
+
+	public void setEligibilityMethods(String eligibilityMethods) {
+		this.eligibilityMethods = eligibilityMethods;
+	}
+
 }

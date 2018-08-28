@@ -78,6 +78,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.stream.FactoryConfigurationError;
@@ -167,6 +168,7 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
@@ -315,6 +317,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
@@ -962,7 +965,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	
 	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-	
+	private String isCustomerBranch = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTBRANCH);
 	/**
 	 * default constructor.<br>
 	 */
@@ -1030,6 +1033,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible)) {
 			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 4);
+			List<Long> eligibilityIdsList = new ArrayList<>();
+			if(getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods() != null && 
+					!getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods().isEmpty()){
+				eligibilityIdsList = Arrays.asList(getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+				this.eligibilityMethod.setFilters(new Filter[] { new Filter("FieldCodeId", eligibilityIdsList, Filter.OP_IN) });
+			} else{
+				eligibilityIdsList.add(Long.valueOf(-1));
+				this.eligibilityMethod.setFilters(new Filter[] { new Filter("FieldCodeId", eligibilityIdsList, Filter.OP_IN) });
+			}
 		}
 		this.connector.setProperties("Connector", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
 		this.connector.getTextbox().setMaxlength(50);
@@ -4028,7 +4040,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void appendCreditReviewDetailTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		long custId = getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID();
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		long custId = financeMain.getCustID();
 		boolean createTab = false;
 		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW) == null) {
 			createTab = true;
@@ -4044,18 +4057,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("custID", custId);
 			map.put("userRole", getRole());
 			map.put("custCtgType", getFinanceDetail().getCustomerDetails().getCustomer().getCustCtgCode());
-			map.put("numberOfTerms", getFinanceDetail().getFinScheduleData().getFinanceMain().getNumberOfTerms());
+			map.put("numberOfTerms", financeMain.getNumberOfTerms());
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
 				map.put("repayProfitRate",
 						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate());
 			} else {
 				map.put("repayProfitRate", BigDecimal.ZERO);
 			}
-			map.put("roundingTarget", getFinanceDetail().getFinScheduleData().getFinanceMain().getRoundingTarget());
-			map.put("finAssetValue", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue());
-			map.put("finAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount());
-			map.put("firstRepay", getFinanceDetail().getFinScheduleData().getFinanceMain().getFirstRepay());
-			map.put("finReference", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+			map.put("roundingTarget", financeMain.getRoundingTarget());
+			map.put("finAssetValue", financeMain.getFinAssetValue());
+			map.put("finAmount", financeMain.getFinAmount());
+			map.put("firstRepay", financeMain.getFirstRepay());
+			map.put("finReference", financeMain.getFinReference());
+			map.put("eligibilityMethods", getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods());
+			map.put("fromLoan", true);
 
 			Executions.createComponents(
 					"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
@@ -15978,8 +15993,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.disbAcctId.setValue("");
 		this.repayAcctId.setValue("");
 		this.downPayAccount.setValue("");
-		this.finBranch.setValue(customer.getCustDftBranch());
-		this.finBranch.setDescription(customer.getLovDescCustDftBranchName());
+		if(!StringUtils.equals(PennantConstants.YES, isCustomerBranch)){
+			this.finBranch.setValue(customer.getCustDftBranch());
+			this.finBranch.setDescription(customer.getLovDescCustDftBranchName());
+		}else{
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			this.finBranch.setValue(userDetails.getBranchCode());
+			this.finBranch.setDescription(userDetails.getBranchName());
+		}
 		this.disbAcctId.setBranchCode(customer.getCustDftBranch());
 		this.repayAcctId.setBranchCode(customer.getCustDftBranch());
 		this.downPayAccount.setBranchCode(customer.getCustDftBranch());

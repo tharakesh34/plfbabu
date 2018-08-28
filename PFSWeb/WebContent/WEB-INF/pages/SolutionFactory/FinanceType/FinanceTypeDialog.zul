@@ -591,6 +591,20 @@
 															image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
+											<row
+												id="row_EligibilityMethod">
+												<label
+													id="label_FinanceTypeDialog_EligibilityMethod"
+													value="${c:l('label_FinanceTypeDialog_EligibilityMethod.value')}" />
+												<hbox id="hbox_ElgMthdDetails">
+													<space spacing="2px" />
+														<textbox
+															id="eligibilityMethod" width="170px" readonly="true" />
+														<button
+															id="btnAlwElgMthdDetails"
+															image="/images/icons/LOVSearch.png" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

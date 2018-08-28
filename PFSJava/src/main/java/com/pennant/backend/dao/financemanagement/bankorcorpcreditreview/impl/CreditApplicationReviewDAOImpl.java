@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewDetails> implements CreditApplicationReviewDAO {
 	private static Logger logger = Logger.getLogger(CreditApplicationReviewDAOImpl.class);
@@ -46,15 +49,58 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append(" LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
 		selectSql.append(" FROM FinCreditRevCategory Where CreditRevCode= :CreditRevCode ");
 
-
+		List<FinCreditRevCategory> creditRevCategories;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevCategory);
 		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
 		.newInstance(FinCreditRevCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		creditRevCategories = this.jdbcTemplate.query(selectSql.toString(), beanParameters,	typeRowMapper);
+		if(creditRevCategories != null){
+			return creditRevCategories;
+		}else {
+			return creditRevCategories = new ArrayList<>();
+		}
+	}
+	
+	/**
+	 * Method for get the CreditRevCategory Details
+	 */
+	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode, List<Long> eligibilityIds) {
+		logger.debug("Entering");
+		
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select * from (");
+		sql.append(" select CategoryId, CategorySeque, CreditRevCode, CategoryDesc, Remarks, NoOfyears, changedsply, ");
+		sql.append(" brkdowndsply, Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from FinCreditRevCategory where CreditRevCode = :CreditRevCode and EligibilityId in (:EligibilityId)");
+		sql.append(" union all ");
+		sql.append(" select CategoryId, CategorySeque, CreditRevCode, CategoryDesc, Remarks, NoOfyears, changedsply, ");
+		sql.append(" brkdowndsply, Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from FinCreditRevCategory where CreditRevCode = :CreditRevCode and EligibilityId");
+		sql.append(" in (select fieldcodeid from rmtlovfielddetail where fieldcode = :fieldcode and fieldcodevalue in (:fieldcodevalue))) T");
+		sql.append(" order by CategoryId");
+		
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CreditRevCode", creditRevCode);
+		source.addValue("EligibilityId", eligibilityIds);
+		source.addValue("fieldcode", "ELGMETHOD");
+		source.addValue("fieldcodevalue", Arrays.asList(new String[]{"PL", "BS", "RT", "ES"})); //FIXME make me as constants
+		
+		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditRevCategory.class);
+		
+		logger.trace(Literal.SQL+sql.toString());
+		
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (DataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		
+		return new ArrayList<>();
 	}
 
 	@Override

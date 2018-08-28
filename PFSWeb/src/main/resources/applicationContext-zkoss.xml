@@ -3498,6 +3498,7 @@
 		<property name="creditApplicationReviewDAO" ref="creditApplicationReviewDAO" />
 		<property name="customerBankInfoService" ref="customerBankInfoService" />
 		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
+		<property name="incomeExpenseDetailDAO" ref="incomeExpenseDetailDAO" />
 	</bean>
 
 	<!--============ Customer Summary Details ============== -->

@@ -76,4 +76,21 @@
 			<column name="fixedtenorrate" type="Number(13,9)" defaultValue="0.0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="8.0" author="Vinay">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="EligibilityMethods" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="8.1" author="Vinay">
+		<addDefaultValue columnName="eligibilitymethods" tableName="AdtRMTFinanceTypes" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="8.2" author="Vinay">
+		<comment>Add new column to to visible eligibility tabs</comment>
+		<addColumn tableName="AdtFinCreditRevCategory">
+			<column name="EligibilityId" type="bigint"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>

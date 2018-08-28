@@ -147,11 +147,11 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -226,6 +226,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox manualSchedule;
 	protected Row row_Commitment;
 	protected Checkbox developerFinance; // autoWired
+	protected Row row_EligibilityMethod;
+	protected Hbox hbox_ElgMthdDetails;
+	protected Textbox eligibilityMethod;
+	protected Button btnAlwElgMthdDetails;
 
 	// Grace Period Schedule Details Tab
 	protected Space space_cbfinGrcRateType;
@@ -1098,6 +1102,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.cbfinProductType, aFinanceType.getFinCategory(), PennantAppUtil.getProductByCtg(filters), "");
 		this.finAssetType.setValue(StringUtils.trimToEmpty(aFinanceType.getFinAssetType()));
 		this.collateralType.setValue(StringUtils.trimToEmpty(aFinanceType.getCollateralType()));
+		this.eligibilityMethod.setValue(StringUtils.trimToEmpty(aFinanceType.getEligibilityMethods()));
 		fillComboBox(this.finLTVCheck, aFinanceType.getFinLTVCheck(), finLVTCheckList, "");
 		this.finCollateralCheck.setChecked(aFinanceType.isPartiallySecured());
 		this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwEarlyPayMethods()));
@@ -1880,6 +1885,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			aFinanceType.setCollateralType(this.collateralType.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setEligibilityMethods(this.eligibilityMethod.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4032,6 +4042,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMinAmount.setReadonly(isTrue);
 		this.btnSearchfinAssetType.setDisabled(isTrue);
 		this.btnSearchCollateralType.setDisabled(isTrue);
+		this.btnAlwElgMthdDetails.setDisabled(isTrue);
 		this.btnSearchAlwEarlyMethod.setDisabled(isTrue);
 		this.cbfinProductType.setDisabled(isTrue);
 		this.finIsOpenPftPayAcc.setDisabled(isTrue);
@@ -6559,6 +6570,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving  " + event.toString());
 
+	}
+	
+	public void onClick$btnAlwElgMthdDetails(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "EligibilityMethods",
+				String.valueOf(this.eligibilityMethod.getValue()), null);
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			this.eligibilityMethod.setValue(details);
+		}
+		logger.debug("Leaving  " + event.toString());
+		
 	}
 	/**
 	 * 

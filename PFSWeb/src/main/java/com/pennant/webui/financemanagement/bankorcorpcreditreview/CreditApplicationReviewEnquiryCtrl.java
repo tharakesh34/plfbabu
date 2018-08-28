@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -101,6 +103,7 @@ import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseDetailDAO;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
@@ -167,7 +170,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private NotificationService notificationService;
 	private CreditApplicationReviewListCtrl creditApplicationReviewListCtrl = null;
 
-	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
+	private List<FinCreditRevCategory> listOfFinCreditRevCategory = new ArrayList<>();
 	private int noOfYears = SysParamUtil.getValueAsInt("NO_OF_YEARS_TOSHOW");
 	private int currFormatter;
 	private Map<String,String> dataMap = new HashMap<>();
@@ -221,6 +224,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private List<JointAccountDetail> coAppIds =  new ArrayList<>();
 	CustomerBankInfo customerBankInfo = null;
 	BigDecimal sumOfEMI = BigDecimal.ZERO;
+
+	private IncomeExpenseDetailDAO incomeExpenseDetailDAO;
+	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
+	private boolean fromLoan = false;
+	private String eligibilityMethods = "";
 	
 	/**
 	 * default constructor.<br>
@@ -260,7 +268,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				isEnquiry = false;
 				this.custCIF.setValue((String) arguments.get("custCIF"));
 				this.custCtgCode = (String) arguments.get("custCtgType");
-				this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
+				this.fromLoan = (boolean) arguments.get("fromLoan");
+				
+				//based on loan type configuration
+				if(fromLoan){
+					List<Long> eligibilityIdsList = new ArrayList<>();
+					this.eligibilityMethods  = (String) arguments.get("eligibilityMethods");
+					if(this.eligibilityMethods != null && !this.eligibilityMethods.isEmpty()){
+						eligibilityIdsList = Arrays.asList(eligibilityMethods.split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+						this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(this.custCtgCode, eligibilityIdsList);
+					}else{
+						eligibilityIdsList.add(Long.valueOf(-1));
+						this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(this.custCtgCode, eligibilityIdsList);
+					}
+				}else{
+					this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
+				}
+				
 				this.finReference = (String) arguments.get("finReference");
 				this.maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
 				
@@ -339,8 +363,25 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				
 				//School Funding Extended fields data setting
-				extendedDataMap.put("EXT_TOT_TUT_FEE","60000000");
-				extendedDataMap.put("EXT_TOT_NON_COR_INC","7000000");
+				if(this.toYear.getValue() > 0 && this.custID.getValue() > 0){
+					schlDataMap = incomeExpenseDetailDAO.getTotal(this.custID.getValue(), this.toYear.getValue());
+				}
+				
+				BigDecimal coreIncome = BigDecimal.ZERO;
+				BigDecimal nonCoreIncome = BigDecimal.ZERO;
+				//BigDecimal expenses = BigDecimal.ZERO;
+				
+				for (Map<String, Object> map : schlDataMap) {
+					if(map.get("incomeexpensetype").equals("CORE_INCOME")){
+						coreIncome = (BigDecimal) map.get("sum");
+					} else if(map.get("incomeexpensetype").equals("NONCORE_INCOME")){
+						nonCoreIncome = (BigDecimal) map.get("sum");
+					}else{
+						//BigDecimal expenses = (BigDecimal) map.get("sum");
+					}
+				}
+				extendedDataMap.put("EXT_TOT_TUT_FEE",unFormat(coreIncome.toString()));
+				extendedDataMap.put("EXT_TOT_NON_COR_INC",unFormat(nonCoreIncome.toString()));
 				
 				setTabs(isEnquiry);
 				
@@ -1771,6 +1812,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+
+	public void setIncomeExpenseDetailDAO(IncomeExpenseDetailDAO incomeExpenseDetailDAO) {
+		this.incomeExpenseDetailDAO = incomeExpenseDetailDAO;
 	}
 	
 }
