@@ -5854,6 +5854,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				this.grcCpzFrqRow.setVisible(false);
 			}
+			
+			// Apply Grace End Capitalization from Finance Type
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setCpzAtGraceEnd(finType.isFinIsIntCpzAtGrcEnd());
 
 			this.allowGrcRepay.setChecked(finType.isFinIsAlwGrcRepay());
 			fillComboBox(cbGrcSchdMthd, finType.getFinGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),
