@@ -15497,16 +15497,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
 		
-		Date fixedTenorEndDate = DateUtility.addMonths(this.gracePeriodEndDate_two.getValue(),this.fixedRateTenor.intValue());
+		Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(), financeMain.getFixedRateTenor());
 		
-		if(this.fixedRateTenor.intValue() > 0 && fixedTenorEndDate.compareTo(appDate) > 0) {
-			detail.getCustomerEligibilityCheck().setFinProfitRate(this.fixedTenorRate.getValue());
+		if(financeMain.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(appDate) > 0) {
+			detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getFixedTenorRate());
+			detail.getCustomerEligibilityCheck().addExtendedField("Finance_Fixed_Tenor", PennantConstants.YES);
 		}else {
 			if (StringUtils.isNotEmpty(this.repayRate.getBaseValue())) {
 				detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayRate.getEffRateComp().getValue());
 			} else {
 				detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayProfitRate.getValue());
 			}
+			detail.getCustomerEligibilityCheck().addExtendedField("Finance_Fixed_Tenor", PennantConstants.NO);
 		}
 		detail.getCustomerEligibilityCheck().setDownpayBank(financeMain.getDownPayBank());
 		detail.getCustomerEligibilityCheck().setDownpaySupl(financeMain.getDownPaySupl());

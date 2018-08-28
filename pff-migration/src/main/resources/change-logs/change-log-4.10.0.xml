@@ -5934,4 +5934,10 @@ UNION ALL
 			Insert into ERRORDETAILS values ('91138','EN','E','Receipt Cancellation is in progress to this loan reference : {0}','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);
 		</sql>
 	</changeSet> 
+	<changeSet id="70" author="Mangapathi">
+		<sql>
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE)
+			values ('FEES','EARLYSTL','Finance_Fixed_Tenor','With in Fixed Tenor Y?N?','nvarchar',1,'1','1','','static','');
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
