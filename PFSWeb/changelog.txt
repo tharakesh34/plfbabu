@@ -1,4 +1,4 @@
- pff 4.10.2.3, 2018-08-28
+ pff 4.10.2.4, 2018-08-28
  --------------
 -story #660 Upgrade pennapps-core (from 0.8 to 0.8.1 to use Branch and Department Names in LoggedInUser)
 -story #662 BPI Accounting Treatment.
