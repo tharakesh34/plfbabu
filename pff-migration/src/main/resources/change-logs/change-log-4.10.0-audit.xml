@@ -83,6 +83,10 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="8.1.0" author="Vinay">
+		<modifyDataType tableName="adtrmtfinancetypes" columnName="eligibilitymethods" newDataType="varchar(100)"/>
+	</changeSet>
+	
 	<changeSet id="8.1" author="Vinay">
 		<addDefaultValue columnName="eligibilitymethods" tableName="AdtRMTFinanceTypes" defaultValue="0" />
 	</changeSet>
@@ -93,4 +97,5 @@
 			<column name="EligibilityId" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	
 	</databaseChangeLog>
