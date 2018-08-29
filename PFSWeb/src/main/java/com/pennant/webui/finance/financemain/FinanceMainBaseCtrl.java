@@ -18414,27 +18414,66 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (agreementDefinition.getDocType().equalsIgnoreCase(docDetails.getDocCategory())) {
 				// ### 25-08-2018 Ticket ID : 637
 				if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(docDetails.getRecordType())) {
-					exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
+					for (DocumentDetails existDocDetails : exstDoclst) {
+						if (existDocDetails.getDocCategory().equalsIgnoreCase(agreementDefinition.getDocType())
+								&& "ADD".equalsIgnoreCase(existDocDetails.getRecordType())) {
+							exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
+							return null;
+						}
+					}
 					return null;
 				}
+
 				// ###25-08-2018 - Ticket ID : 638 & 639
 				// Document category template exists in this case user should
 				// not upload same document category to document list
-
+				// when document type is "WORD" then record replace with
+				// Agreement
 				if (agreementDefinition.getAggtype().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)) {
 					if (!(agreementDefinition.getAggReportName()).equalsIgnoreCase(docDetails.getDocName())) {
-						exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
-						return null;
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SUBMITTED)
+								|| docDetails.getRecordStatus()
+										.equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)) {
+							docDetails.setDocName(agreementDefinition.getAggName() + "."
+									+ agreementDefinition.getAggtype().toLowerCase());
+							docDetails.setDoctype(PennantConstants.DOC_TYPE_WORD);
+							return docDetails;
+						}
+						if (docDetails.getRecordStatus().isEmpty()) {
+							exstDoclst.remove(docDetails);
+							return null;
+						}
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+							docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							return null;
+						}
 					}
+					return docDetails;
 				}
+				// when document type is "PDF" then record replace with
+				// Agreement
 				if (agreementDefinition.getAggtype().equalsIgnoreCase(PennantConstants.DOC_TYPE_PDF)) {
 					if (!(agreementDefinition.getAggName() + "." + agreementDefinition.getAggtype())
 							.equalsIgnoreCase(docDetails.getDocName())) {
-						exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
-						return null;
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SUBMITTED)
+								|| docDetails.getRecordStatus()
+										.equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)) {
+							docDetails.setDocName(agreementDefinition.getAggName() + "."
+									+ agreementDefinition.getAggtype().toLowerCase());
+							docDetails.setDoctype(PennantConstants.DOC_TYPE_PDF);
+							return docDetails;
+						}
+						if (docDetails.getRecordStatus().isEmpty()) {
+							exstDoclst.remove(docDetails);
+							return null;
+						}
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+							docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							return null;
+						}
 					}
+					return docDetails;
 				}
-				return docDetails;
 			}
 		}
 		return null;
