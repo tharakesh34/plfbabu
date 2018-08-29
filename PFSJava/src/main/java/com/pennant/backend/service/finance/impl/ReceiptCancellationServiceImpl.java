@@ -942,7 +942,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// GST Invoice Preparation
 					long postingSeqId = 0;	//TODO should be pass linkedTranId
 					FinanceDetail  financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
-					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetail, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);
+					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetail, null, advMovementsTemp,
+							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 				}
 				
 			}
@@ -1241,7 +1242,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
 						advMovementsTemp.add(adviseMovements);
 						FinanceDetail  financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
-						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);
+						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
+								advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 					}
 				}
 

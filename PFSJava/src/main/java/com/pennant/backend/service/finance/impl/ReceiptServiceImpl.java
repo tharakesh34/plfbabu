@@ -1553,7 +1553,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						finReference = financeDetailTemp.getFinScheduleData().getFinanceMain().getFinReference();
 					}
 					
-					getGstInvoiceTxnService().gstInvoicePreparation(postingSeqId, financeDetailTemp, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);
+					getGstInvoiceTxnService().gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
+							advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 				}
 			}
 		}

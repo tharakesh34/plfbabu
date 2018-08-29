@@ -785,7 +785,8 @@ public class RepaymentProcessUtil {
 					}
 					if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 						if (financeDetail != null) {
-							this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, finFeeDetails, null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference);
+							this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, finFeeDetails,
+									null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
 							gstInvoiceExist = true;
 						}
 					}
@@ -910,7 +911,9 @@ public class RepaymentProcessUtil {
 			}
 			
 			if (CollectionUtils.isNotEmpty(manualAdviseMovementsList)) {
-				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null, manualAdviseMovementsList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference());
+				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
+						manualAdviseMovementsList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
+						financeMain.getFinReference(), false);
 			}
 		}
 

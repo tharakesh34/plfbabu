@@ -58,26 +58,6 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		super();
 	}
 
-	@Override
-	public long save(GSTInvoiceTxn gstInvoiceTxn) {
-		return this.gstInvoiceTxnDAO.save(gstInvoiceTxn);
-	}
-	
-	@Override
-	public Entity getEntity(String entityCode) {
-		return this.entityService.getApprovedEntity(entityCode);
-	}
-	
-	@Override
-	public Entity getEntityByFinDivision(String divisionCode, String type) {
-		return entityService.getEntityByFinDivision(divisionCode, type);
-	}
-	
-	@Override
-	public Province getApprovedProvince(String cPCountry, String cPProvince) {
-		return provinceService.getApprovedProvinceById(cPCountry, cPProvince);
-	}
-	
 	/**
 	 * preparing GST Invoice Details and insert data into GST Invoice related tables
 	 * @param aeEvent
@@ -85,7 +65,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	 */
 	@Override
 	public void gstInvoicePreparation(long linkedTranId, FinanceDetail financeDetail, List<FinFeeDetail> finFeeDetailsList, 
-			List<ManualAdviseMovements> movements, String invoiceType, String finReference) {
+			List<ManualAdviseMovements> movements, String invoiceType, String finReference, boolean origination) {
 		logger.debug(Literal.ENTERING);
 		
 		if (CollectionUtils.isEmpty(finFeeDetailsList) && CollectionUtils.isEmpty(movements) && StringUtils.isBlank(finReference) && financeDetail == null) {
@@ -93,7 +73,9 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		} else {
 			
 			// Tax Details fetching
-			financeDetail.setFinanceTaxDetails(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
+			if (financeDetail.getFinanceTaxDetails() == null) {
+				financeDetail.setFinanceTaxDetails(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
+			}
 			
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 			FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -107,9 +89,9 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate()); //Need to confirm either it is system date or application date
 			Entity entity = null;
 			if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {
-				entity = getEntity(financeMain.getLovDescEntityCode());
+				entity = this.entityService.getApprovedEntity(financeMain.getLovDescEntityCode());
 			} else {
-				entity = getEntityByFinDivision(financeType.getFinDivision(), "_Aview");
+				entity = this.entityService.getEntityByFinDivision(financeType.getFinDivision(), "_Aview");
 			}
 			gstInvoiceTxn.setCompanyCode(entity.getEntityCode());
 			gstInvoiceTxn.setCompanyName(entity.getEntityDesc());
@@ -117,7 +99,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			gstInvoiceTxn.setLoanAccountNo(finReference);
 
 			// Check whether State level Tax Details exists or not
-			Province companyProvince = getApprovedProvince(entity.getCountry(), entity.getStateCode());
+			Province companyProvince = this.provinceService.getApprovedProvinceById(entity.getCountry(), entity.getStateCode());
 			if (companyProvince != null) {
 
 				if (StringUtils.isBlank(companyProvince.getCPProvince()) || StringUtils.isBlank(companyProvince.getCPProvinceName())) {
@@ -248,7 +230,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				}
 			}
 			
-			customerProvince = getApprovedProvince(country, province);
+			customerProvince = this.provinceService.getApprovedProvinceById(country, province);
 			gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());	
 			gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
 			
@@ -256,8 +238,15 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			// Invoice Transaction details preparation for Fee Details if any exists
 			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) {	//Fees
 				for (FinFeeDetail feeDetail : finFeeDetailsList) {
-					if (feeDetail.isOriginationFee() || !feeDetail.isTaxApplicable() || BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) {
-						continue;
+					
+					if (origination) {
+						if (!feeDetail.isTaxApplicable() || BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) {
+							continue;
+						}
+					} else {
+						if (feeDetail.isOriginationFee() || !feeDetail.isTaxApplicable() || BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) {
+							continue;
+						}
 					}
 					FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
 					if (finTaxDetails != null) {
@@ -320,7 +309,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
 			gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
 			
-			save(gstInvoiceTxn);
+			this.gstInvoiceTxnDAO.save(gstInvoiceTxn);
 		}
 		
 		logger.debug(Literal.LEAVING);

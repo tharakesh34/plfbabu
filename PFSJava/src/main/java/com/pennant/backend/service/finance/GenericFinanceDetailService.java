@@ -126,8 +126,6 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.applicationmaster.Entity;
-import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -135,7 +133,6 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.configuration.VASRecording;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -158,28 +155,22 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennant.backend.model.finance.FinStatusDetail;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.GSTInvoiceTxn;
-import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.SecondaryAccount;
-import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.finance.salary.FinSalariedPayment;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.collateral.impl.FinAssetTypesValidation;
@@ -202,7 +193,6 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 
@@ -1661,8 +1651,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		
 		//GST Invoice Preparation
-		if (gstInvoiceTxnService != null) {
-			gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail);
+		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0) {
+			boolean orgination = false;
+			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+				orgination = true;
+			}
+			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail,
+					financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(), orgination);
 		}
 
 		//Disbursement Instruction Posting
@@ -1702,202 +1698,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return auditHeader;
 	}
 	
-	/**
-	 * preparing GST Invoice Details and insert data into GST Invoice related tables
-	 * @param aeEvent
-	 * @param financeDetail
-	 */
-	public void gstInvoicePreparation(long transactionId, FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
-		
-		GSTInvoiceTxn gstInvoiceTxn = new GSTInvoiceTxn();
-
-		List<FinFeeDetail> finFeeDetailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
-
-		if (CollectionUtils.isEmpty(finFeeDetailsList)) {
-			return;
-		} else {
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-			gstInvoiceTxn.setTransactionID(transactionId);
-			List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
-
-			gstInvoiceTxn.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
-			gstInvoiceTxn.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
-			gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate()); //Need to confirm either it is system date or application date
-			Entity entity = null;
-			if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {
-				entity = gstInvoiceTxnService.getEntity(financeMain.getLovDescEntityCode());
-			} else {
-				entity = gstInvoiceTxnService.getEntityByFinDivision(financeType.getFinDivision(), "_Aview");
-			}
-			gstInvoiceTxn.setCompanyCode(entity.getEntityCode());
-			gstInvoiceTxn.setCompanyName(entity.getEntityDesc());
-			gstInvoiceTxn.setPanNumber(entity.getPANNumber());
-			gstInvoiceTxn.setLoanAccountNo(financeMain.getFinReference());
-
-			// Check whether State level Tax Details exists or not
-			Province companyProvince = gstInvoiceTxnService.getApprovedProvince(entity.getCountry(), entity.getStateCode());
-			if (companyProvince != null) {
-				
-				if (StringUtils.isBlank(companyProvince.getCPProvince()) || StringUtils.isBlank(companyProvince.getCPProvinceName())) {
-					return; //FIXME write this case as a error message
-				}
-						
-				gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
-				gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
-
-				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
-					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
-					
-					if (StringUtils.isBlank(taxDetail.getHsnNumber()) 
-							|| StringUtils.isBlank(taxDetail.getNatureService())
-							|| StringUtils.isBlank(taxDetail.getPinCode())
-							|| StringUtils.isBlank(taxDetail.getAddressLine1())
-							|| StringUtils.isBlank(taxDetail.getTaxCode())) {
-						return;		//FIXME write this case as a error message
-					}
-					
-					gstInvoiceTxn.setCompany_GSTIN(taxDetail.getTaxCode());
-					gstInvoiceTxn.setCompany_Address1(taxDetail.getAddressLine1());
-					gstInvoiceTxn.setCompany_Address2(taxDetail.getAddressLine2());
-					gstInvoiceTxn.setCompany_Address3(taxDetail.getAddressLine3());
-					gstInvoiceTxn.setCompany_PINCode(taxDetail.getPinCode());
-					gstInvoiceTxn.setHsnNumber(taxDetail.getHsnNumber());
-					gstInvoiceTxn.setNatureService(taxDetail.getNatureService());
-				} else {
-					return;		//FIXME write this case as a error message
-				}
-			}
-
-			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
-			Province customerProvince =  null;
-			String country = "";
-			String province = "";
-
-			if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor()) && !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())) {
-				country = finTaxDetail.getCountry();
-				province = finTaxDetail.getProvince();
-				gstInvoiceTxn.setCustomerID(finTaxDetail.getCustCIF());
-				gstInvoiceTxn.setCustomerName(finTaxDetail.getCustShrtName());
-				gstInvoiceTxn.setCustomerGSTIN(finTaxDetail.getTaxNumber());	
-				gstInvoiceTxn.setCustomerAddress(finTaxDetail.getAddrLine1());
-			} else {
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
-					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							continue;
-						}
-						country = customerAddres.getCustAddrCountry();
-						
-						Customer cust =  customerDAO.getCustomerByID(customerAddres.getCustID());
-						province = customerAddres.getCustAddrProvince();
-						gstInvoiceTxn.setCustomerID(cust.getCustCIF()); 
-						gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
-						
-						String custAddress = "";
-						
-						if (StringUtils.isNotBlank(customerAddres.getCustAddrHNbr())) {
-							custAddress = customerAddres.getCustAddrHNbr();
-						}
-						
-						if (StringUtils.isNotBlank(customerAddres.getCustFlatNbr())) {
-							if (StringUtils.isBlank(custAddress)) {
-								custAddress = custAddress.concat(customerAddres.getCustFlatNbr());
-							} else {
-								custAddress = custAddress + ", " + customerAddres.getCustFlatNbr();
-							}
-						}
-						
-						if (StringUtils.isNotBlank(customerAddres.getCustAddrStreet())) {
-							if (StringUtils.isBlank(custAddress)) {
-								custAddress = custAddress.concat(customerAddres.getCustAddrStreet());
-							} else {
-								custAddress = custAddress + ", " + customerAddres.getCustAddrStreet();
-							}
-						}
-						
-						if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCityName())) {
-							if (StringUtils.isBlank(custAddress)) {
-								custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCityName());
-							} else {
-								custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCityName();
-							}
-						}
-						
-						if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrProvinceName())) {
-							if (StringUtils.isBlank(custAddress)) {
-								custAddress = custAddress.concat(customerAddres.getLovDescCustAddrProvinceName());
-							} else {
-								custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrProvinceName();
-							}
-						}
-						
-						if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCountryName())) {
-							if (StringUtils.isBlank(custAddress)) {
-								custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCountryName());
-							} else {
-								custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCountryName();
-							}
-						}
-						
-						if (StringUtils.isNotBlank(customerAddres.getCustPOBox())) {
-							if (StringUtils.isBlank(custAddress)) {
-								custAddress = custAddress.concat(customerAddres.getCustPOBox());
-							} else {
-								custAddress = custAddress + ", " + customerAddres.getCustPOBox();
-							}
-						}
-						
-						gstInvoiceTxn.setCustomerAddress(custAddress);
-						break;
-					}
-				}
-			}
-			
-			customerProvince = gstInvoiceTxnService.getApprovedProvince(country, province);
-			gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());	
-			gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
-			
-			BigDecimal invoiceAmout = BigDecimal.ZERO;
-			// Invoice Transaction details preparation for Fee Details if any exists
-			for (FinFeeDetail feeDetail : finFeeDetailsList) {
-				if (!feeDetail.isTaxApplicable() || BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) {
-					continue;
-				}
-				FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
-				if (finTaxDetails != null) {
-					GSTInvoiceTxnDetails details = new GSTInvoiceTxnDetails();
-					details.setFeeCode(feeDetail.getFeeTypeCode());
-					details.setFeeDescription(feeDetail.getFeeTypeDesc());
-					details.setFeeAmount(feeDetail.getNetAmountOriginal());	//Fee Amount with out GST
-					details.setCGST_RATE(feeDetail.getCgst());
-					details.setIGST_RATE(feeDetail.getIgst());
-					details.setSGST_RATE(feeDetail.getSgst());
-					details.setUGST_RATE(feeDetail.getUgst());
-					details.setCGST_AMT(finTaxDetails.getNetCGST());
-					details.setIGST_AMT(finTaxDetails.getNetIGST());
-					details.setSGST_AMT(finTaxDetails.getNetSGST());
-					details.setUGST_AMT(finTaxDetails.getNetUGST());
-					invoiceAmout = invoiceAmout.add(finTaxDetails.getNetCGST()).add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
-					gstInvoiceTxnDetails.add(details);
-				}
-			}
-			
-			if (CollectionUtils.isEmpty(gstInvoiceTxnDetails)) {	
-				return;	//TODO check this case
-			}
-			
-			gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
-			gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
-			
-			this.gstInvoiceTxnService.save(gstInvoiceTxn);
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
 	/**
 	 * Method for Processing each stage Accounting Entry details for particular Finance
 	 * 

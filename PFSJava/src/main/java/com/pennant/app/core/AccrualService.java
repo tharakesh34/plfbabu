@@ -845,7 +845,8 @@ public class AccrualService extends ServiceHelper {
 			List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, lpiFeeType, taxPercmap, calGstMap, aeEvent);
 			
 			if (CollectionUtils.isNotEmpty(feesList)) {
-				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList, null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, main.getFinReference());
+				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList, null,
+						PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, main.getFinReference(), false);
 			}
 		}
 		
