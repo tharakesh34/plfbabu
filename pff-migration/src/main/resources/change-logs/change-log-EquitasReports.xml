@@ -1039,5 +1039,9 @@ UNION ALL
    update reportconfiguration set alwmultiformat=1 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment');
   </sql>
 </changeSet>			
-		
+<changeSet id="57" author="Jayant">
+	<sql>
+		update errordetails set severity='E' where Code='65034';
+	</sql>
+</changeSet>		
 </databaseChangeLog>
