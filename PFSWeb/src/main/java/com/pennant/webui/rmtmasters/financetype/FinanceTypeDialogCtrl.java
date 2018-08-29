@@ -2868,11 +2868,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		
 		try {
-			if (alwBpiTreatment.isChecked()
-					&& isValidComboValue(this.cbBpiRateBasis,
-							Labels.getLabel("label_FinanceTypeDialog_BpiRateBasis.value")) 
-					&& !aFinanceType.getBpiTreatment().equals(FinanceConstants.BPI_NO)) {
-				aFinanceType.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
+			if (alwBpiTreatment.isChecked()){
+					if(!aFinanceType.getBpiTreatment().equals(FinanceConstants.BPI_NO) && isValidComboValue(this.cbBpiRateBasis,
+								Labels.getLabel("label_FinanceTypeDialog_BpiRateBasis.value"))){
+						aFinanceType.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
+						}
 			} 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4033,7 +4033,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		this.costOfFunds.setReadonly(isTrue);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
-			this.alwdIRRDetails.setReadonly(isTrue);
+			//this.alwdIRRDetails.setReadonly(isTrue);
 			this.btnAlwIRRDetails.setDisabled(isTrue);
 		}
 		
@@ -5986,6 +5986,44 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * If Allow BPI Treatment? is checked and Default BPI Treatment is not No BPI than 
+	 * BPI Interest Days Basis is mandatory otherwise un-mandatory
+	 * @param bpiRateBasis
+	 */
+	private void setMandatoryForAlwBpiTreat(String bpiRateBasis) {
+		logger.debug("Entering");
+		if (this.alwBpiTreatment.isChecked()
+				&& !StringUtils.equals(PennantConstants.List_Select, getComboboxValue(this.dftBpiTreatment))
+				&& !StringUtils.equals(FinanceConstants.BPI_NO, getComboboxValue(this.dftBpiTreatment))) {
+			this.space_bpiRateBasis.setSclass(PennantConstants.mandateSclass);
+			this.cbBpiRateBasis.setDisabled(isCompReadonly);
+			if (bpiRateBasis == null) {
+				setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
+			} else {
+				setComboboxSelectedItem(this.cbBpiRateBasis, bpiRateBasis);
+			}
+		} else {
+			this.space_bpiRateBasis.setSclass("");
+			this.cbBpiRateBasis.setDisabled(true);
+			this.cbBpiRateBasis.setConstraint("");
+			this.cbBpiRateBasis.setErrorMessage("");
+			setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * BPI Interest Days Basis mandatory setting based on condition
+	 * @param event
+	 */
+	public void onChange$dftBpiTreatment(Event event) {
+		logger.debug("Entering");
+		setMandatoryForAlwBpiTreat("");
+		logger.debug("Leaving");
+	}
+	
 	private void oncheckalwBpiTreatment(String bpiType, String bpiRateBasis) {
 		logger.debug("Entering");
 		if (this.alwBpiTreatment.isChecked()) {
@@ -5996,28 +6034,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				setComboboxSelectedItem(this.dftBpiTreatment, bpiType);
 			}
-			
-			this.space_bpiRateBasis.setSclass(PennantConstants.mandateSclass);
-			this.cbBpiRateBasis.setDisabled(isCompReadonly);
-			if (bpiRateBasis == null) {
-				setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
-			} else {
-				setComboboxSelectedItem(this.cbBpiRateBasis, bpiRateBasis);
-			}
-			
 		} else {
 			this.dftBpiTreatment.setDisabled(true);
 			this.space_DftBpiTreatment.setSclass("");
 			this.dftBpiTreatment.setConstraint("");
 			this.dftBpiTreatment.setErrorMessage("");
 			setComboboxSelectedItem(this.dftBpiTreatment, FinanceConstants.BPI_NO);
-			
-			this.cbBpiRateBasis.setDisabled(true);
-			this.space_bpiRateBasis.setSclass("");
-			this.cbBpiRateBasis.setConstraint("");
-			this.cbBpiRateBasis.setErrorMessage("");
-			setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
 		}
+		setMandatoryForAlwBpiTreat(bpiRateBasis);
 		logger.debug("Leaving");
 
 	}
