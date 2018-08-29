@@ -3962,6 +3962,11 @@ UNION ALL
 			<column name="fixedratetenor" type="Number(3,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="60.2_Pre" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
+		</sql>
+	</changeSet>
 	<changeSet id="60.2" author="Mangapathi">
 		<createView replaceIfExists="true" viewName="RmtFinanceTypes_AView">
  SELECT t1.fintype,
@@ -4175,6 +4180,11 @@ UNION ALL
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 	 </createView>
+	</changeSet>
+	<changeSet id="60.2_Post" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','rmtfinancetypes_aview');
+		</sql>
 	</changeSet>
 	<changeSet id="61.2" author="Mangapathi">
 		<createView viewName="RmtFinanceTypes_OrgView"
