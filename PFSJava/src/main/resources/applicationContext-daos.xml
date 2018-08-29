@@ -5600,6 +5600,9 @@
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
 		
+		<!-- LPP/LPI -->
+		<property name="accrualService" ref="accrualService" />
+		
 		<!-- GST Invoice Changes -->
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />

@@ -1139,12 +1139,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Deletion of Finance Schedule Related Details From Main Table
 				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
+				scheduleData.setFinanceMain(financeMain);
 				if(alwSchdReversalByLog){
 					listDeletion(finReference, "", false, 0);
 
 					// Fetching Last Log Entry Finance Details
 					scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
-					scheduleData.setFinanceMain(financeMain);
 
 					// Re-Insert Log Entry Data before Repayments Process Recalculations
 					listSave(scheduleData, "", 0);

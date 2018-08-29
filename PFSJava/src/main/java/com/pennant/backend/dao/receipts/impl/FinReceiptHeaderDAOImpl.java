@@ -347,6 +347,44 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		return amount;
 	}
 	
+	/**
+	 * 
+	 */
+	@Override
+	public boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type, long receiptId) {
+		logger.debug("Entering");
+		
+		int count = 0;
+		
+		StringBuilder selectSql = new StringBuilder("Select Count(ReceiptId) from FinReceiptDetail");
+		//selectSql.append(type);	//TODO check this case when we are submit the cancel request Details not effected to Temp table
+		selectSql.append(" Where PaymentType In (:PaymentType) And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
+		selectSql.append(type);
+		selectSql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType And DepositBranch = :DepositBranch And ReceiptId = :ReceiptId)");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PaymentType", paymentTypes);
+		source.addValue("ReceiptModeStatus", "C");
+		source.addValue("RecordType", PennantConstants.RECORD_TYPE_NEW);
+		source.addValue("DepositBranch", depositBranch);
+		source.addValue("ReceiptId", receiptId);
+		
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+			count = 0;
+		} finally {
+			logger.debug("Leaving");
+		}
+		
+		if (count > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	@Override
 	public List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type) {

@@ -54,6 +54,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -72,13 +73,18 @@ public class DepositMovementsListModelItemRenderer implements ListitemRenderer<D
 
 		Listcell lc;
 		
-		//Deposit Slip Number
+		//Deposit Type
+		lc = new Listcell(PennantAppUtil.getlabelDesc(depositMovements.getDepositType(), PennantStaticListUtil.getDepositTypesListList()));
+		lc.setParent(item);
+		
+		//Deposit Branch Code
 		lc = new Listcell(depositMovements.getBranchCode() + " - " + depositMovements.getBranchDesc());
 		lc.setParent(item);
 		
 		//Deposit Slip Number
 		lc = new Listcell(depositMovements.getDepositSlipNumber());
 		lc.setParent(item);
+		
 		//Deposit Date
 		lc = new Listcell(DateUtility.formatToLongDate(depositMovements.getTransactionDate()));
 		lc.setParent(item);
@@ -95,6 +101,7 @@ public class DepositMovementsListModelItemRenderer implements ListitemRenderer<D
 		//Record Status
 		lc = new Listcell(depositMovements.getRecordStatus());
 		lc.setParent(item);
+		
 		//Record Type
 		lc = new Listcell(PennantJavaUtil.getLabel(depositMovements.getRecordType()));
 		lc.setParent(item);

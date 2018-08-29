@@ -32,6 +32,7 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 	
 	private String branchCode;
 	private String branchDesc;
+	private String depositType;
 	
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -59,6 +60,7 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("partnerBankName");
 		excludeFields.add("branchCode");
 		excludeFields.add("branchDesc");
+		excludeFields.add("depositType");
 
 		return excludeFields;
 	}
@@ -220,5 +222,13 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 
 	public void setDepositChequesList(List<DepositCheques> depositChequesList) {
 		this.depositChequesList = depositChequesList;
+	}
+
+	public String getDepositType() {
+		return depositType;
+	}
+
+	public void setDepositType(String depositType) {
+		this.depositType = depositType;
 	}
 }

@@ -159,7 +159,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected void doAddFilters() {
 		super.doAddFilters();
 		this.searchObject.addWhereClause(" FinIsActive = 1 AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' "
-				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NOT NULL) ) "
+				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND (RecordType IS NOT NULL AND RecordType<>'' )) ) "
 				+ " AND (ReceiptMode = '"+RepayConstants.RECEIPTMODE_CHEQUE+"' OR ReceiptMode = '"+RepayConstants.RECEIPTMODE_DD+"') ");
 	}
 

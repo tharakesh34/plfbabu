@@ -51,6 +51,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -62,6 +63,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.service.finance.DepositDetailsService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.financemanagement.receipts.model.DepositMovementsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -84,6 +86,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	protected Listbox						listBoxDepositMovements;
 
 	// List headers
+	protected Listheader					listheader_DepositType;
 	protected Listheader					listheader_DepositSlipNumber;
 	protected Listheader					listheader_TransactionDate;
 	protected Listheader					listheader_BranchCode;
@@ -97,9 +100,11 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	// Search Fields
 	protected Textbox						depositSlipNumber;
 	protected Datebox						transactionDate;
+	protected Combobox						depositType;
 
 	protected Listbox						sortOperator_DepositSlipNumber;
 	protected Listbox						sortOperator_TransactionDate;
+	protected Listbox						sortOperator_DepositType;
 
 	private transient DepositDetailsService	depositDetailsService;
 
@@ -146,13 +151,17 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		registerButton(button_DepositMovementsList_DepositMovementsSearch);
 		registerButton(button_DepositMovementsList_NewDepositMovements, "button_DepositMovementsList_NewDepositMovements", true);
 
+		registerField("DepositType", listheader_DepositType, SortOrder.NONE, depositType, sortOperator_DepositType, Operators.STRING);
 		registerField("depositSlipNumber", listheader_DepositSlipNumber, SortOrder.NONE, depositSlipNumber, sortOperator_DepositSlipNumber, Operators.STRING);
 		registerField("TransactionDate", listheader_TransactionDate, SortOrder.NONE, transactionDate, sortOperator_TransactionDate, Operators.DATE);
+		registerField("ReservedAmount", listheader_DepositAmount, SortOrder.NONE);
 		registerField("MovementId");
 		registerField("BranchCode");
 		registerField("BranchDesc");
 		registerField("PartnerBankName");
-		registerField("ReservedAmount", listheader_DepositAmount, SortOrder.NONE);
+		
+		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
+		depositType.removeItemAt(0);
 
 		// Render the page and display the data.
 		doRenderPage();

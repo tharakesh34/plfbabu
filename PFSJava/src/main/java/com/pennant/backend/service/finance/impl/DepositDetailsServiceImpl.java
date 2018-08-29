@@ -924,7 +924,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		if (depositDetails.getAuditDetailMap().get("DepositCheques") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("DepositCheques");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = validationDepositCheques(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = validationDepositCheques(auditDetail, usrLanguage, method, depositDetails.getRecordStatus(), depositDetails.getBranchCode())
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -962,7 +962,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		return auditDetail;
 	}
 
-	private AuditDetail validationDenominations(AuditDetail auditDetail, String usrLanguage, String type) {
+	private AuditDetail validationDenominations(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		// Get the model object.
@@ -985,7 +985,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		return auditDetail;
 	}
 
-	private AuditDetail validationDepositCheques(AuditDetail auditDetail, String usrLanguage, String type) {
+	private AuditDetail validationDepositCheques(AuditDetail auditDetail, String usrLanguage, String method, String recordStatus, String branchCode) {
 		logger.debug("Entering");
 
 		// Get the model object.
@@ -1001,6 +1001,21 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
+		
+		// If Receipt Cancellation process exist
+		/*if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)) {
+			List<String> paymentTypes = new ArrayList<String>();
+			paymentTypes.add(RepayConstants.RECEIPTMODE_CHEQUE);
+			paymentTypes.add(RepayConstants.RECEIPTMODE_DD);
+			
+			boolean exist = getFinReceiptHeaderDAO().isReceiptCancelProcess(branchCode, paymentTypes, "_Temp", depositCheques.getReceiptId());
+			
+			if (exist) {
+				String[] valueParam = new String[1];
+				valueParam[0] = depositCheques.getFinReference();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91138", valueParam)));
+			}
+		}*/
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -1292,14 +1307,10 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		}
 		
 		//Validation for Receipt Cancellation process if any available
-		if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus())) {
+		if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus())
+				&& CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
 			List<String> paymentTypes = new ArrayList<String>();
-			if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
-				paymentTypes.add(RepayConstants.RECEIPTMODE_CASH);
-			} else if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD.equals(depositDetails.getDepositType())) {
-				paymentTypes.add(RepayConstants.RECEIPTMODE_CHEQUE);
-				paymentTypes.add(RepayConstants.RECEIPTMODE_DD);
-			}
+			paymentTypes.add(RepayConstants.RECEIPTMODE_CASH);
 			
 			// Get the total maintenance amount in Receipt Cancellation
 			BigDecimal amount = getFinReceiptHeaderDAO().getTotalReceiptAmount(depositDetails.getBranchCode(), paymentTypes, "_Temp");

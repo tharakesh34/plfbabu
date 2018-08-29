@@ -153,7 +153,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		registerButton(button_DepositDetailsList_DepositDetailsSearch);
 		registerButton(button_DepositDetailsList_NewDepositDetails, "button_DepositDetailsList_NewDepositDetails", true);
 		
-		
 		registerField("depositType", listheader_DepositType, SortOrder.NONE, depositType, sortOperator_DepositType, Operators.STRING);
 		registerField("BranchCode", listheader_BranchCode, SortOrder.NONE, branchCode, sortOperator_BranchCode, Operators.STRING);
 		registerField("ActualAmount", listheader_AvailableAmount, SortOrder.NONE);

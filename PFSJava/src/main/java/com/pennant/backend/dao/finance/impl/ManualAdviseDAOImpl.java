@@ -212,7 +212,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where adviseID = :adviseID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));  
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
