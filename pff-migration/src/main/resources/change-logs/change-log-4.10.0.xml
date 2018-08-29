@@ -6885,4 +6885,43 @@ UNION ALL
 Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N',1,0,null,null,'Customer Branch for finance loan branch',1,1000,to_timestamp('2018-08-23 12:47:10.102078','null'),'Approved',null,null,null,null,null,0);
 	</sql>
 </changeSet>
+
+<changeSet id="80" author="somasekhar">
+	 <dropView viewName="interfacemapping_aview"/>
+	 <dropView viewName="interfacemapping_view"/>
+</changeSet> 
+	
+<changeSet id="81" author="somasekhar" dbms="postgresql">
+	 <modifyDataType tableName="interfacemapping" columnName="active" newDataType="smallint"/>
+	  <modifyDataType tableName="interfacemapping_temp" columnName="active" newDataType="smallint"/>
+</changeSet>
+	
+<changeSet id="82" author="somasekhar">
+	 <createView replaceIfExists="true" viewName="interfacemapping_aview">
+	  SELECT t1.interfacemappingid,t1.interfaceid,t1.interfacename,t1.interfacefield,t1.mappingvalue,t1.mappingtable,t1.mappingcolumn,
+              t1.active,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,
+              t1.nexttaskid,t1.recordtype,t1.workflowid
+      FROM interfacemapping t1;
+	 </createView>
+</changeSet>
+	
+<changeSet id="83" author="somasekhar">
+	 <createView replaceIfExists="true" viewName="interfacemapping_view">
+	  SELECT t1.interfacemappingid,t1.interfaceid,t1.interfacename,t1.interfacefield,t1.mappingvalue,t1.mappingtable,t1.mappingcolumn,
+             t1.active,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+             t1.recordtype,t1.workflowid,t2.mappingtype,t2.module
+     FROM interfacemapping_temp t1
+     JOIN interface_fields t2 ON t1.interfaceid = t2.interfaceid
+     UNION ALL
+     SELECT t1.interfacemappingid,t1.interfaceid,t1.interfacename,t1.interfacefield,t1.mappingvalue,t1.mappingtable,t1.mappingcolumn,
+            t1.active,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+            t1.recordtype,t1.workflowid,t2.mappingtype,t2.module
+   FROM interfacemapping t1
+   JOIN interface_fields t2 ON t1.interfaceid = t2.interfaceid
+    WHERE NOT (EXISTS ( SELECT 1
+           FROM interfacemapping_temp
+          WHERE interfacemapping_temp.interfacemappingid = t1.interfacemappingid));
+	 </createView>
+</changeSet>
+
 	</databaseChangeLog>

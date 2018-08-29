@@ -98,4 +98,8 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="9" author="somasekhar" dbms="postgresql">
+	 <modifyDataType tableName="adtinterfacemapping" columnName="active" newDataType="smallint"/>
+	</changeSet>
+	
 	</databaseChangeLog>

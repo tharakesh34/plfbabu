@@ -310,6 +310,10 @@
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
+			
+		<menuItem id="menu_Item_InterfaceMapping"
+	        zulNavigation="/WEB-INF/pages/InterfaceMapping/InterfaceMappingList.zul"
+	        rightName="menuItem_CollectionInterface_InterfaceMapping" />
 	</menu>
 
 	<!-- Rules Factory -->

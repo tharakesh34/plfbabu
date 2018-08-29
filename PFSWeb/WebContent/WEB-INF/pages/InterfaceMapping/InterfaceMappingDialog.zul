@@ -157,7 +157,7 @@
 							<radiogroup id="userAction" name="action" />
 							<label
 								id="label_InterfaceMappingDialog_RecordStatus"
-								value="${c:l('label_InterfaceMappingDialog_RecordStatus')}"
+								value="${c:l('label.RecordStatus.dialog')}"
 								sclass="label-status" />
 							<label id="recordStatus" />
 						</hbox>
