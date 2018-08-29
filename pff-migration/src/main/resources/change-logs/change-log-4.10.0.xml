@@ -6944,4 +6944,11 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		<modifyDataType tableName="DepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
 	</changeSet> 
 	
+	<changeSet id="86" author="Vinay">
+		<sql>
+			update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ', ') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD' and isactive='1');
+			update rmtfinancetypes_temp set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ', ') from rmtlovfielddetail where fieldcode = 'ELGMETHOD' and isactive='1');
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
