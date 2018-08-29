@@ -6933,5 +6933,15 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
           WHERE interfacemapping_temp.interfacemappingid = t1.interfacemappingid));
 	 </createView>
 </changeSet>
-
-	</databaseChangeLog>
+	
+	<changeSet author="Kesav" id="84">
+		<comment> data type modified from varchar(8) to varchar(9)</comment>
+		<modifyDataType tableName="DepositDetails_Temp" columnName="BranchCode" newDataType="varchar(9)" />
+	</changeSet> 
+	
+	<changeSet author="Kesav" id="85">
+		<comment> data type modified from varchar(8) to varchar(9)</comment>
+		<modifyDataType tableName="DepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
+	</changeSet> 
+	
+</databaseChangeLog>

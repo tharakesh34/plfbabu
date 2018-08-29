@@ -129,8 +129,9 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("ReceiptId", 0, Filter.OP_EQUAL);
+		filters[1] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
 		this.searchObject.addFilters(filters);
 	}
 

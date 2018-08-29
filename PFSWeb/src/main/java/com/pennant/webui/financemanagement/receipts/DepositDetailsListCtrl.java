@@ -135,6 +135,8 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		filters[0]= new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
 		this.branchCode.setFilters(filters);
 		this.branchCode.setVisible(false);
+		//this.branchCode.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
+		this.searchObject.addFilters(filters);
 	}
 
 	/**

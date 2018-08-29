@@ -102,4 +102,9 @@
 	 <modifyDataType tableName="adtinterfacemapping" columnName="active" newDataType="smallint"/>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="10">
+		<comment> data type modified from varchar(8) to varchar(9)</comment>
+		<modifyDataType tableName="AdtDepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
+	</changeSet> 
+	
 	</databaseChangeLog>
