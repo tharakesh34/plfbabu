@@ -238,8 +238,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggDesc.setMaxlength(100);
 		this.aggReportName.setMaxlength(500);
 
-		
-		this.docType.setMaxlength(8);
+		this.docType.setMaxlength(20);
 		this.docType.setMandatoryStyle(true);
 		this.docType.setModuleName("DocumentType");
 		this.docType.setValueColumn("DocTypeCode");
@@ -247,7 +246,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.docType.setValidateColumns(new String[] {"DocTypeCode"});
 		
 		
-		this.agrRule.setMaxlength(8);
+		this.docType.setMaxlength(20);
 		this.agrRule.setMandatoryStyle(false);
 		this.agrRule.setModuleName("Rule");
 		this.agrRule.setValueColumn("RuleCode");
