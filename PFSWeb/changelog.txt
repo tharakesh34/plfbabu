@@ -1,3 +1,22 @@
+pff 4.10.3, 2018-08-29
+ --------------
+-Bug #696 : Cash Management Bug Fixes
+-story #661 : GST Invoice Preparaton for LMS.
+-story #646 : GST Fees Calculation in Loan Creation for API.
+-PPM #18340 After deleting a checklist detail in a checklist maximum count is not updating automatically.
+-tasks #525 Add new Field Eligibility Method in Loan Type
+-tasks #611 Display Credit Review Tabs based on the Allowed Eligibility Methods at Loan Type.
+-story #666 Added New Interface Mapping Master.
+-Task#690	Workflow change
+-Task#691	Legal Preliminary
+-Task#692	Original Verification
+-Task#693	LA maker(New Role in Legal)
+-Task#694	LA Approver(New Role in Legal)
+-Task#695	DI MODT Maker, DI MODT Approver(New roles in loan Workflow)
+-PSD#128565:basic details maintenance-customer ID's- open and close.
+-PSD#128540 :basic details maintenance-sourcing type field - mandatory yet disabled.
+-PSD#128514 :employee name and employer name.
+
  pff 4.10.2.4, 2018-08-28
  --------------
 -story #660 Upgrade pennapps-core (from 0.8 to 0.8.1 to use Branch and Department Names in LoggedInUser)
