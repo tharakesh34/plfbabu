@@ -407,7 +407,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (isNewRecord() && !isNewCustomer() && !isCheckList) {
 				// onload();
 			}
-			setDeviationExecutionCtrl();
+			//setDeviationExecutionCtrl();
 
 			if (isCheckList) {// TODO Need to add a condition based visibility
 				// for delete button

@@ -770,7 +770,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		
 		this.accountsOfficer.setMaxlength(8);
-		this.accountsOfficer.setMandatoryStyle(true);
+		this.accountsOfficer.setMandatoryStyle(false);
 		this.accountsOfficer.setModuleName("SourceOfficer");
 		this.accountsOfficer.setValueColumn("DealerName");
 		this.accountsOfficer.setDescColumn("DealerCity");
