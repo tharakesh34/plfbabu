@@ -88,7 +88,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		source.addValue("CreditRevCode", creditRevCode);
 		source.addValue("EligibilityId", eligibilityIds);
 		source.addValue("fieldcode", "ELGMETHOD");
-		source.addValue("fieldcodevalue", Arrays.asList(new String[]{"PL", "BS", "RT", "ES"})); //FIXME make me as constants
+		source.addValue("fieldcodevalue", Arrays.asList(new String[]{"PL", "BL", "RT", "ES"})); //FIXME make me as constants
 		
 		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditRevCategory.class);
 		
