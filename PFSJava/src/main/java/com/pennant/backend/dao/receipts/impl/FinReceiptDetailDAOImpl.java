@@ -276,5 +276,22 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
 	}
+	
+	
+	@Override
+	public void cancelReceiptDetails(List<Long> receiptID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
+		updateSql.append(" Set Status='C' ");
+		updateSql.append(" Where ReceiptID IN  (:ReceiptID)  ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
 
 }

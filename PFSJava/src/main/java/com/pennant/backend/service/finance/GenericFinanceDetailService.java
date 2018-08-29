@@ -1457,39 +1457,44 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			BigDecimal addVasToFinance = BigDecimal.ZERO;
 			BigDecimal paidVasFee = BigDecimal.ZERO;
 			BigDecimal vasFeeWaived = BigDecimal.ZERO;
+			
+			BigDecimal unIncomized=BigDecimal.ZERO;
 
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 				feeRule = new FeeRule();
-
+                boolean isPreIncomized=false;
+                if (finFeeDetail.isAlwPreIncomization() && finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO)>0){
+                	isPreIncomized=true;
+                }
 				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
 				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
 				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
 				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
 				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
 				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getActualAmountOriginal());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getWaivedAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getPaidAmountOriginal());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getActualAmountOriginal());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getWaivedAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getPaidAmountOriginal());
 				
 				//GST Added
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getNetAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getNetAmount());
 				//Calculated Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualUGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getActualUGST());
 				
 				//Paid Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidUGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getPaidUGST());
 	
 				//Net Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.isAlwPreIncomization()?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetUGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", isPreIncomized?BigDecimal.ZERO:finFeeDetail.getFinTaxDetails().getNetUGST());
 
 				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
@@ -1537,7 +1542,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						addVasToFinance = addVasToFinance.add(finFeeDetail.getActualAmount());
 					}
 				}
-
+                if (!isPreIncomized){
+                	unIncomized=unIncomized.add(finFeeDetail.getPaidAmount());
+                }
 				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
 				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
 				
@@ -1551,6 +1558,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			amountCodes.setAddFeeToFinance(addFeeToFinance);
 			amountCodes.setFeeWaived(feeWaived);
 			amountCodes.setPaidFee(paidFee);
+			amountCodes.setImdAmount(unIncomized);
 			
 			//VAS
 			amountCodes.setDeductVasDisb(deductVasDisb);

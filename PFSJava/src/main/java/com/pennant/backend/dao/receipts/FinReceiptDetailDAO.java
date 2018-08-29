@@ -19,5 +19,6 @@ public interface FinReceiptDetailDAO {
 	void updateFundingAcByReceiptID(long receiptID, long fundingAc, String type);
 	
 	List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String finReference);
+	void cancelReceiptDetails(List<Long> receiptID);
 
 }

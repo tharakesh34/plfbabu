@@ -40,6 +40,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
@@ -163,6 +164,7 @@ public class FinanceDataValidation {
 	private CurrencyDAO						currencyDAO;
 	private LoanPurposeDAO					loanPurposeDAO;
 	private PinCodeDAO						pinCodeDAO;
+	private FinReceiptHeaderDAO             finReceiptHeaderDAO;
 
 	public FinanceDataValidation() {
 		super();
@@ -961,7 +963,19 @@ public class FinanceDataValidation {
 		if(error != null) {
 			errorDetails.add(error);
 		}
-
+        // validate external reference
+		if (financeDetail.getFinScheduleData().getExternalReference()!=null && !financeDetail.getFinScheduleData().getExternalReference().isEmpty()){
+			boolean isExtAssigned=finReceiptHeaderDAO.isExtRefAssigned(financeDetail.getFinScheduleData().getExternalReference());
+			if (isExtAssigned){
+			String[] valueParm = new String[1];
+			valueParm[0] = " External Reference Already Assigned to Finance ";
+			errorDetails
+					.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+			}
+		}
+		
 		// Validate customer
 		if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) {
 			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
@@ -1206,6 +1220,7 @@ public class FinanceDataValidation {
 		return errorDetail;
 	}
 
+	
 	/**
 	 * Method for validate Update Finance details
 	 * @param financeDetail 
@@ -5024,6 +5039,10 @@ public class FinanceDataValidation {
 
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }

@@ -526,7 +526,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		header.setReceiptMode(finServInst.getPaymentMode());
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_FEES);
 		header.setRemarks(finServInst.getReceiptDetail().getRemarks());
-		header.setFinCcy("INR");
+		header.setFinCcy(finServInst.getCurrency());
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		
 		header.setRecordType(PennantConstants.RECORD_TYPE_NEW);

@@ -478,4 +478,60 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	
 	}
 
+	@Override
+	public void cancelReceipts(String finReference) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = null;
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
+		updateSql.append(" Set ReceiptModeStatus='C'  Where Reference =:Reference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+		 this.jdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public List<Long> fetchReceiptIdList(String finreference) {
+
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptID from FinreceiptHeader where Reference=:Reference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		/*SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);*/
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finreference);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
+	
+	}
+
+	@Override
+	public boolean isExtRefAssigned(String extReference) {
+
+		logger.debug("Entering");
+       boolean isAssigned=false;
+       int count=0;
+		StringBuilder selectSql = new StringBuilder(
+				" Select COUNT(*)  From FinReceiptHeader Where ExtReference =:ExtReference  AND Reference is not null");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExtReference", extReference);
+
+		logger.debug("Leaving");
+		count=this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		if (count>0){
+			isAssigned=true;
+		}
+	   return isAssigned;
+	}
+
 }

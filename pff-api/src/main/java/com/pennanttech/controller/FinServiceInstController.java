@@ -33,6 +33,7 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
@@ -142,6 +143,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ChangeScheduleMethodService	changeScheduleMethodService;
 	private FinanceTypeDAO financeTypeDAO;
 	private FeeReceiptService feeReceiptService;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
@@ -2421,6 +2423,20 @@ public class FinServiceInstController extends SummaryDetailService {
 		BigDecimal feePaidAmount = BigDecimal.ZERO;
 		FinanceType finType = getFinanceTypeDAO().getFinanceTypeByFinType(finServInst.getFinType());
 		List<FinFeeDetail> finFeeDetailList=new ArrayList<>();
+		if (finServInst.getExternalReference()!=null && !finServInst.getExternalReference().isEmpty()){
+			boolean isExtAssigned=getFinReceiptHeaderDAO().isExtRefAssigned(finServInst.getExternalReference());
+			if (isExtAssigned){
+			String[] valueParm = new String[1];
+			valueParm[0] = " External Reference Already Assigned to Finance ";
+			errorDetails
+					.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+			return errorDetails;
+			}
+		}
+		
+		
+		
+		
 		
 		if (finType != null) {// if given fintype is not confugured
 		
@@ -2449,7 +2465,6 @@ public class FinServiceInstController extends SummaryDetailService {
 						FinanceConstants.MODULEID_FINTYPE);
 				if (finTypeFeeDetail != null) {
 					finServInst.setFinTypeFeeList(finTypeFeeDetail);
-					if (finTypeFeeDetail.size() == finServInst.getFinFeeDetails().size() - vasFeeCount) {
 						for (FinFeeDetail feeDetail : finServInst.getFinFeeDetails()) {
 							BigDecimal finWaiverAmount = BigDecimal.ZERO;
 							BigDecimal finPaidAMount=BigDecimal.ZERO;
@@ -2533,11 +2548,6 @@ public class FinServiceInstController extends SummaryDetailService {
 							}
 						}
 
-					} else {
-						String[] valueParm = new String[1];
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90244", valueParm)));
-						return errorDetails;
-					}
 				} else {
 					String[] valueParm = new String[1];
 					valueParm[0] = finServInst.getFinType();
@@ -2676,6 +2686,14 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }

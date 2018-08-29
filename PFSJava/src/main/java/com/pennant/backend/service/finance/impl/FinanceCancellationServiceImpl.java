@@ -64,6 +64,8 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -106,6 +108,8 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	private LimitManagement					limitManagement;
 	private FinAdvancePaymentsDAO 			finAdvancePaymentsDAO;
 	private FinTypeFeesDAO 					finTypeFeesDAO;
+	private FinReceiptHeaderDAO             finReceiptHeaderDAO;
+	private FinReceiptDetailDAO             finReceiptDetailDAO;
 
 	
 	public FinanceCancellationServiceImpl() {
@@ -441,6 +445,13 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 				return auditHeader;
 			}
 			
+		}
+		
+		//Cancelling IMD receipts
+		List<Long> receiptIdList=getFinReceiptHeaderDAO().fetchReceiptIdList(finReference);
+		if (receiptIdList!=null && receiptIdList.size()>0){
+			getFinReceiptHeaderDAO().cancelReceipts(finReference);
+			getFinReceiptDetailDAO().cancelReceiptDetails(receiptIdList);
 		}
 
 		tranType = PennantConstants.TRAN_UPD;
@@ -882,6 +893,22 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 	
 }

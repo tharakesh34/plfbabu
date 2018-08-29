@@ -4060,6 +4060,7 @@
 		<property name="documentService" ref="documentService" />
 		<property name="loanPurposeDAO" ref="loanPurposeDAO" />
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -5837,6 +5838,8 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
