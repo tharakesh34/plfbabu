@@ -18417,7 +18417,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					for (DocumentDetails existDocDetails : exstDoclst) {
 						if (existDocDetails.getDocCategory().equalsIgnoreCase(agreementDefinition.getDocType())
 								&& "ADD".equalsIgnoreCase(existDocDetails.getRecordType())) {
-							exstDoclst.remove(docCatMap.get(agreementDefinition.getDocType()));
+							exstDoclst.remove(existDocDetails);
 							return null;
 						}
 					}
