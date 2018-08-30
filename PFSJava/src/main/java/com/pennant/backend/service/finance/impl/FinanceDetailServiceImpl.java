@@ -4624,7 +4624,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String role) {
 		logger.trace(Literal.ENTERING);
 
-		// Get the current next task id.
+		// Get the existing next task id.
 		String nextTaskId = StringUtils.trimToEmpty(financeMain.getNextTaskId());
 
 		if ("".equals(nextTaskId)) {
