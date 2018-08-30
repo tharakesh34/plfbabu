@@ -78,6 +78,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.TextField;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -146,6 +147,7 @@ import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -163,6 +165,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
@@ -179,8 +182,10 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -247,6 +252,8 @@ public class AgreementGeneration implements Serializable {
 	private FinSamplingService finSamplingService;
 	@Autowired
 	private CreditApplicationReviewService creditApplicationReviewService;
+	@Autowired
+	private FinTypeFeesService finTypeFeesService;
 	
 	private  List<DocumentType> documentTypeList;
 	
@@ -257,6 +264,10 @@ public class AgreementGeneration implements Serializable {
 	BigDecimal totalIncome=BigDecimal.ZERO;
 	BigDecimal totalExpense=BigDecimal.ZERO;
 	
+	private List<FinTypeFees> finTypeFeesList;
+
+	private BigDecimal totalDeduction = BigDecimal.ZERO;
+	private BigDecimal BPIAmount = BigDecimal.ZERO;
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	public AgreementGeneration() {
@@ -475,8 +486,8 @@ public class AgreementGeneration implements Serializable {
 		agreement.setLpoDate(appDate);
 		totalIncome=BigDecimal.ZERO;
 		totalExpense=BigDecimal.ZERO;
-
-		
+		totalDeduction=BigDecimal.ZERO;
+		BPIAmount=BigDecimal.ZERO;
 		try {
 
 			// ------------------ Customer Details
@@ -554,6 +565,30 @@ public class AgreementGeneration implements Serializable {
 				
 
 					List<CustomerDocument> customerDocumentsList = detail.getCustomerDetails().getCustomerDocumentsList();
+					
+					if (CollectionUtils.isEmpty(agreement.getKycDetails())) {
+						agreement.setKycDetails(new ArrayList<>());
+					}
+					
+					if (aggModuleDetails.contains(PennantConstants.AGG_KYCDT) && CollectionUtils.isNotEmpty(customerDocumentsList)) {
+						for (CustomerDocument cusDocument : customerDocumentsList)
+							if (null != cusDocument) {
+								com.pennant.backend.model.finance.AgreementDetail.KYCDetail kycDetail = agreement.new KYCDetail();
+								kycDetail.setApplicantType("Primary Applicant");
+								kycDetail.setCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+								kycDetail.setCusName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+								kycDetail.setIdNumber(StringUtils.trimToEmpty(cusDocument.getCustDocTitle()));
+								kycDetail.setIdType(StringUtils.trimToEmpty(cusDocument.getCustDocCategory()));
+								kycDetail.setIdTypeDesc(
+										StringUtils.trimToEmpty(cusDocument.getLovDescCustDocCategory()));
+								kycDetail.setIssuedDate(
+										DateUtility.formatToLongDate(cusDocument.getCustDocIssuedOn()));
+								kycDetail.setExpiryDate(
+										DateUtility.formatToLongDate(cusDocument.getCustDocExpDate()));
+								agreement.getKycDetails().add(kycDetail);
+							}
+					}
+
 					if (customerDocumentsList != null
 							&& !customerDocumentsList.isEmpty()) {
 						
@@ -746,11 +781,18 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getLoanDeviations())){
 				agreement.setLoanDeviations(new ArrayList<>());
 			}
+			if (CollectionUtils.isEmpty(agreement.getLoanAppCoreBankIDDetails())) {
+				agreement.setLoanAppCoreBankIDDetails(new ArrayList<>());
+			}
 			
 			//Existing Customer
 			if (null!=detail.getCustomerDetails() && null!=detail.getCustomerDetails().getCustomer()){
 				String custCoreBank = detail.getCustomerDetails().getCustomer().getCustCoreBank();
 				agreement.setExistingCustomer((StringUtils.isNotBlank(custCoreBank))?"YES":"NO");
+				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB)&& StringUtils.isNotBlank(custCoreBank)){
+					getLoanAppCoreBankIDDetails(agreement, detail, detail.getCustomerDetails().getCustomer(), "Primary Applicant");
+				}
+				
 			}
 			
 			if(aggModuleDetails.contains(PennantConstants.AGG_DEVIATI)){
@@ -943,9 +985,14 @@ public class AgreementGeneration implements Serializable {
 				if(CollectionUtils.isEmpty(agreement.getDisbursements())){
 					agreement.setDisbursements(new ArrayList<>());
 				}
+				List<FinanceDisbursement> disbursementDetails  =  null;
+				if(null!=detail.getFinScheduleData()){
+				 disbursementDetails  = detail.getFinScheduleData().getDisbursementDetails();
+				}
+				
 				List<FinAdvancePayments> advancePaymentsList = detail.getAdvancePaymentsList();
 				if(CollectionUtils.isNotEmpty(advancePaymentsList)){
-					setDisbursementDetails(agreement, advancePaymentsList,formatter);
+					setDisbursementDetails(agreement, advancePaymentsList,disbursementDetails,formatter );
 				}
 			}
 			if(CollectionUtils.isEmpty(agreement.getDisbursements())){
@@ -1447,6 +1494,40 @@ public class AgreementGeneration implements Serializable {
 				agreement.setSmplResubmitReasonDesc(StringUtils.trimToEmpty(sampling.getResubmitReasonDesc()));
 			}
 			
+			BigDecimal totalDeductionWithBPI=totalDeduction.add(BPIAmount);
+			BigDecimal totalLoanAmount=BigDecimal.ZERO;
+			if (detail != null && detail.getFinScheduleData() != null && detail.getFinScheduleData().getFinanceMain() != null){
+				totalLoanAmount=detail.getFinScheduleData().getFinanceMain().getFinAssetValue();
+			}
+			agreement.setTotalDeductionwithoutBPI(PennantAppUtil.amountFormate(totalDeduction, formatter));
+			agreement.setTotalDeductionwithBPI(PennantAppUtil.amountFormate(totalDeductionWithBPI, formatter));
+			agreement.setNetDisbWithoutBPI(PennantAppUtil.amountFormate(totalLoanAmount.add(totalDeduction), formatter));
+			agreement.setNetDisbWithBPI(PennantAppUtil.amountFormate(totalLoanAmount.add(totalDeductionWithBPI), formatter));
+			
+			if (CollectionUtils.isEmpty(agreement.getLoanServicingFeeDetails())) {
+				agreement.setLoanServicingFeeDetails(new ArrayList<AgreementDetail.LoanServicingFee>());
+			}
+			if (null != finTypeFeesService && detail != null && null != detail.getFinScheduleData()
+					&& null != detail.getFinScheduleData().getFinanceType()
+					&& StringUtils.isNotEmpty(detail.getFinScheduleData().getFinanceType().getFinType())) {
+				finTypeFeesList = finTypeFeesService.getFinTypeFeesById(
+						detail.getFinScheduleData().getFinanceType().getFinType(), FinanceConstants.MODULEID_FINTYPE);
+			}
+			if (aggModuleDetails.contains(PennantConstants.AGG_SERVFEE) && CollectionUtils.isNotEmpty(finTypeFeesList)) {
+				getLoanServicingFee(agreement, detail, formatter, finTypeFeesList);
+			}
+			if (CollectionUtils.isEmpty(agreement.getLoanServicingFeeDetails())) {
+				agreement.getLoanServicingFeeDetails().add(agreement.new LoanServicingFee());
+			}
+			
+			//Here we are setting default object to valid tags in document after calling co_applicant details
+			if (CollectionUtils.isEmpty(agreement.getLoanAppCoreBankIDDetails())) {
+				agreement.getLoanAppCoreBankIDDetails().add(agreement.new LoanAppCoreBankID());
+			}
+			if (CollectionUtils.isEmpty(agreement.getKycDetails())) {
+				agreement.getKycDetails().add(agreement.new KYCDetail());
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
@@ -1462,6 +1543,48 @@ public class AgreementGeneration implements Serializable {
 			returnAmount = tempAmount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
 		}
 		return PennantAppUtil.formatAmount(returnAmount, dec, false);
+	}
+	
+	private AgreementDetail getLoanAppCoreBankIDDetails(AgreementDetail agreement, FinanceDetail detail,Customer customer, String applicantType ) {
+		
+		if(null!= customer){
+			com.pennant.backend.model.finance.AgreementDetail.LoanAppCoreBankID loanAppCoreBankID = agreement.new LoanAppCoreBankID();
+			loanAppCoreBankID.setApplicantType(StringUtils.trimToEmpty(applicantType));
+			loanAppCoreBankID.setCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+			loanAppCoreBankID.setCusName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+			loanAppCoreBankID.setCoreBankName(StringUtils.trimToEmpty(customer.getCustCoreBank()));
+			agreement.getLoanAppCoreBankIDDetails().add(loanAppCoreBankID);
+		}
+		return agreement;
+	}
+	
+	private AgreementDetail getLoanServicingFee(AgreementDetail agreement, FinanceDetail detail, int formatter,
+			List<FinTypeFees> finTypeFeesList) {
+		finTypeFeesList.forEach(finTypeFeesDetails -> {
+			if (!StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSP, finTypeFeesDetails.getFinEvent())) {
+				com.pennant.backend.model.finance.AgreementDetail.LoanServicingFee FinTypeFee = agreement.new LoanServicingFee();
+				FinTypeFee.setFinEvent(StringUtils.trimToEmpty(finTypeFeesDetails.getFinEvent()));
+				FinTypeFee.setFinEventDesc(StringUtils.trimToEmpty(finTypeFeesDetails.getFinEventDesc()));
+				FinTypeFee.setFeeTypeCode(StringUtils.trimToEmpty(finTypeFeesDetails.getFeeTypeCode()));
+				FinTypeFee.setFeeTypeDesc(StringUtils.trimToEmpty(finTypeFeesDetails.getFeeTypeDesc()));
+				FinTypeFee.setFeeOrder(String.valueOf(finTypeFeesDetails.getFeeOrder()));
+				FinTypeFee.setFeeScheduleMethod(StringUtils.trimToEmpty(finTypeFeesDetails.getFeeScheduleMethod()));
+				FinTypeFee.setRuleCode(StringUtils.trimToEmpty(finTypeFeesDetails.getRuleCode()));
+				FinTypeFee.setRuleDesc(StringUtils.trimToEmpty(finTypeFeesDetails.getRuleDesc()));
+				FinTypeFee.setAmount(PennantApplicationUtil.amountFormate(finTypeFeesDetails.getAmount(), formatter));
+				FinTypeFee.setPercentage(
+						PennantApplicationUtil.formatRate(finTypeFeesDetails.getPercentage().doubleValue(), formatter));
+				FinTypeFee.setCalculateOn(StringUtils.trimToEmpty(finTypeFeesDetails.getCalculateOn()));
+				FinTypeFee.setMaxWaiverPerc(PennantApplicationUtil
+						.formatRate(finTypeFeesDetails.getMaxWaiverPerc().doubleValue(), formatter));
+				FinTypeFee.setAlwModifyFee((finTypeFeesDetails.isAlwModifyFee()) ? "YES" : "NO");
+				FinTypeFee.setAlwModifyFeeSchdMthd((finTypeFeesDetails.isAlwModifyFeeSchdMthd()) ? "YES" : "NO");
+				FinTypeFee.setAlwDeviation((finTypeFeesDetails.isAlwDeviation()) ? "YES" : "NO");
+				FinTypeFee.setOriginationFee((finTypeFeesDetails.isOriginationFee()) ? "YES" : "NO");
+				agreement.getLoanServicingFeeDetails().add(FinTypeFee);
+			}
+		});
+		return agreement;
 	}
 	
 	private AgreementDetail getDirectorDetails(AgreementDetail agreement, FinanceDetail detail, int formatter){
@@ -2061,7 +2184,7 @@ public class AgreementGeneration implements Serializable {
 		});
 	}
 
-	private void setDisbursementDetails(AgreementDetail agreement, List<FinAdvancePayments> advancePaymentsList, int formatter) {
+	private void setDisbursementDetails(AgreementDetail agreement, List<FinAdvancePayments> advancePaymentsList,List<FinanceDisbursement> disbursementDetails, int formatter) {
 		agreement.setDisbursements(new ArrayList<>());
 		advancePaymentsList.forEach((advancePayment)->{
 			Disbursement disbursement = agreement.new Disbursement();
@@ -2076,7 +2199,16 @@ public class AgreementGeneration implements Serializable {
 			disbursement.setIssueBankName(StringUtils.trimToEmpty(advancePayment.getBankName()));
 			disbursement.setIirReferenceNo(StringUtils.trimToEmpty(advancePayment.getLlReferenceNo()));
 			disbursement.setPaymentModeRef(StringUtils.trimToEmpty(advancePayment.getTransactionRef()));
-			
+			Date disbDate=null;
+			if(CollectionUtils.isEmpty(disbursementDetails)){
+				for (FinanceDisbursement disbDetails : disbursementDetails) {
+					if (advancePayment.getDisbSeq() == disbDetails.getDisbSeq()) {
+						disbDate = disbDetails.getDisbDate();
+						break;
+					}
+				}
+			}
+			disbursement.setScheduleDisbursementDate(DateUtility.formatToLongDate(disbDate));
 			//additional details
 			disbursement.setPaymentId(String.valueOf(advancePayment.getPaymentId()));
 			disbursement.setPaymentSeq(String.valueOf(advancePayment.getPaymentSeq()));
@@ -2128,10 +2260,13 @@ public class AgreementGeneration implements Serializable {
 				com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
 				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
 				charge.setChargeAmt(PennantAppUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
+				totalDeduction=totalDeduction.add(finFeeDetail.getActualAmountOriginal());
 				charge.setChargeWaver(PennantAppUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
 				charge.setChargePaid(PennantAppUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
 				charge.setRemainingAmount(PennantAppUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
 				charge.setFeeTreatment(StringUtils.trimToEmpty(finFeeDetail.getFeeScheduleMethod()));
+				charge.setFeeTreatmentDesc(StringUtils.trimToEmpty(PennantStaticListUtil.getlabelDesc(
+						finFeeDetail.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods())));
 				agreement.getCusCharges().add(charge);
 			});
 		}
@@ -2288,6 +2423,8 @@ public class AgreementGeneration implements Serializable {
 		if (!PennantConstants.CITY_FREETEXT) {
 			agreement.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
 		}
+		agreement.setCustAddrDistrict(StringUtils.trimToEmpty(customerAddres.getCustDistrict()));
+		agreement.setCustAddrSubDistrict(StringUtils.trimToEmpty(customerAddres.getCustAddrLine4()));
 		agreement.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
 		agreement.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
@@ -2326,10 +2463,29 @@ public class AgreementGeneration implements Serializable {
 				coapplicant.setCustRelation(StringUtils.trimToEmpty(jointAccountDetail.getCatOfcoApplicant()));
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				coapplicant.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+				
+				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB)&& null != customer && StringUtils.isNotBlank(customer.getCustCoreBank())){
+					getLoanAppCoreBankIDDetails(agreement, detail, customer, "Co-Applicant");
+				}
 				//pan number
 				List<CustomerDocument> doclist = custdetails.getCustomerDocumentsList();
 				coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
-				
+				if(aggModuleDetails.contains(PennantConstants.AGG_KYCDT) && CollectionUtils.isNotEmpty(doclist)){
+					doclist.forEach(coApplicantDocument-> {
+						if(null != coApplicantDocument){
+				    		com.pennant.backend.model.finance.AgreementDetail.KYCDetail kycDetail= agreement.new KYCDetail();
+				    		kycDetail.setApplicantType("Co-Applicant");
+				    		kycDetail.setCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+				    		kycDetail.setCusName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+				    		kycDetail.setIdNumber(StringUtils.trimToEmpty(coApplicantDocument.getCustDocTitle()));
+				    		kycDetail.setIdType(StringUtils.trimToEmpty(coApplicantDocument.getCustDocCategory()));
+				    		kycDetail.setIdTypeDesc(StringUtils.trimToEmpty(coApplicantDocument.getLovDescCustDocCategory()));
+				    		kycDetail.setIssuedDate(DateUtility.formatToLongDate(coApplicantDocument.getCustDocIssuedOn()));
+				    		kycDetail.setExpiryDate(DateUtility.formatToLongDate(coApplicantDocument.getCustDocExpDate()));
+				    		agreement.getKycDetails().add(kycDetail);
+				    	}
+					});
+				}
 				List<CustomerAddres> addlist = custdetails.getAddressList();
 				if (addlist!=null && !addlist.isEmpty()) {
 					setCoapplicantAddress(coapplicant, addlist);
@@ -2457,6 +2613,10 @@ public class AgreementGeneration implements Serializable {
 		for (FinanceScheduleDetail finSchDetail : finschdetails) {
 			com.pennant.backend.model.finance.AgreementDetail.FinanceScheduleDetail scheduleData = agreement.new FinanceScheduleDetail();
 			scheduleData.setSchDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
+			if(StringUtils.equals(finSchDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+				BPIAmount=finSchDetail.getRepayAmount();
+				agreement.setBPIAmount(PennantApplicationUtil.amountFormate(BPIAmount, formatter));
+			}
 			scheduleData.setSchdPft(PennantApplicationUtil.amountFormate(finSchDetail.getProfitSchd(), formatter));
 			scheduleData.setSchdPri(PennantApplicationUtil.amountFormate(finSchDetail.getPrincipalSchd(), formatter));
 			scheduleData.setSchTotalPriAmt(PennantApplicationUtil.amountFormate(finSchDetail.getRepayAmount(),

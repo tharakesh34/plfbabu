@@ -301,6 +301,7 @@ public class PennantConstants {
 	public static final String AGG_CONTACT = "CONTACT";
 	public static final String AGG_COAPPDT = "COAPPDT";
 	public static final String AGG_COLLTRL = "COLLTRL";
+	public static final String AGG_SERVFEE = "SERVFEE";
 	public static final String AGG_VAS     = "VAS";
 	public static final String AGG_DIRECDT = "DIRECDT";
 	public static final String AGG_REPAYDT = "REPAYDT";
@@ -319,6 +320,8 @@ public class PennantConstants {
 	public static final String AGG_QRYMODL = "QRYMODL";
 	public static final String AGG_PSLMODL = "PSLMODL";
 	public static final String AGG_SMPMODL = "SMPMODL";
+	public static final String AGG_LNAPPCB = "LNAPPCB";
+	public static final String AGG_KYCDT   = "KYCDT"  ;
 
 	// Workflow definition Constants
 	

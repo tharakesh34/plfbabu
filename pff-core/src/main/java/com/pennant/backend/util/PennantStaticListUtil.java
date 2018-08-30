@@ -1181,7 +1181,8 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_VERIFIC,Labels.getLabel("label_AggVerifications")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_CONTACT,Labels.getLabel("label_AggContact")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_COAPPDT,Labels.getLabel("label_AggCoApplicantDetails")));
-			aggDetails.add(new ValueLabel(PennantConstants.AGG_COLLTRL,Labels.getLabel("label_AggCollateralDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_COLLTRL,Labels.getLabel("label_AggLoanServicingFee")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_SERVFEE,Labels.getLabel("label_AggCollateralDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_VAS,Labels.getLabel("label_VasRecordingBasicDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_DIRECDT,Labels.getLabel("label_DirectorDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_REPAYDT,Labels.getLabel("label_AggRepaymentDetails")));
@@ -1200,6 +1201,8 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_QRYMODL,Labels.getLabel("label_AggQueryDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_PSLMODL,Labels.getLabel("label_AggPSLDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_SMPMODL,Labels.getLabel("label_AggSmplDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_LNAPPCB,Labels.getLabel("label_LoanAppCoreBankID")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_KYCDT,Labels.getLabel("label_KYCDetails")));
 		}
 		return aggDetails;
 	}
