@@ -1313,9 +1313,9 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			paymentTypes.add(RepayConstants.RECEIPTMODE_CASH);
 			
 			// Get the total maintenance amount in Receipt Cancellation
-			BigDecimal amount = getFinReceiptHeaderDAO().getTotalReceiptAmount(depositDetails.getBranchCode(), paymentTypes, "_Temp");
+			BigDecimal cancelAmount = getFinReceiptHeaderDAO().getTotalReceiptAmount(depositDetails.getBranchCode(), paymentTypes, "_Temp");
 			
-			if (amount != null && amount.compareTo(depositDetails.getReservedAmount()) > 0) {
+			if (cancelAmount != null && cancelAmount.compareTo(depositDetails.getActualAmount().subtract(depositDetails.getReservedAmount())) > 0) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65037", parameters, null));
 			}
 		}
