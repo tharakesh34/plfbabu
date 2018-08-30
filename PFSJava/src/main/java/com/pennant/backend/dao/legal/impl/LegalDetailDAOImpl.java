@@ -324,13 +324,17 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 	}
 
 	@Override
-	public List<Long> getLegalIdListByFinRef(String loanReference, String tableType) {
+	public List<Long> getLegalIdListByFinRef(String loanReference, String tableType, String moduleName) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select LegalId from LegalDetails");
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" Where loanReference = :loanReference ");
+		if (StringUtils.trimToNull(moduleName) != null) {
+			selectSql.append(" and module = :module ");
+			source.addValue("module", moduleName);
+		}
 		source.addValue("loanReference", loanReference);
 		logger.debug(Literal.SQL + selectSql.toString());
 

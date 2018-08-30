@@ -295,6 +295,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
 				legalDetail.setTaskId(engine.getUserTaskId(legalDetail.getRoleCode()));
 				legalDetail.setNextTaskId(engine.getUserTaskId(legalDetail.getNextRoleCode()) + ";");
+				legalDetail.setModule(PennantConstants.QUERY_LEGAL_VERIFICATION);
 
 				getLegalDetailDAO().save(legalDetail, TableType.TEMP_TAB);
 			}
@@ -520,9 +521,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 							.getAmountInText(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(),
 									CurrencyUtil.getFormat(financeMain.getFinCcy())), financeMain.getFinCcy());
 					if (StringUtils.contains(finAmountWords, "INR")) {
-						finAmountWords = StringUtils.replace(finAmountWords, "INR", "Rupees");
+						finAmountWords = StringUtils.remove(finAmountWords, "INR");
+						finAmountWords = finAmountWords.concat(" rupees ");
 					}
-					
 					legalDetail.setFinAmountWords(finAmountWords);
 				} catch (Exception e) {
 					log.warn("Exception while fetching the finamount in words", e);
@@ -601,7 +602,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			legalDetail.setTaskId("");
 			legalDetail.setNextTaskId("");
 			legalDetail.setWorkflowId(0);
-
+			legalDetail.setModule(FinanceConstants.MODULE_NAME);
+ 
 			if (legalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				legalDetail.setRecordType("");
@@ -1095,7 +1097,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public List<LegalDetail> getApprovedLegalDetail(FinanceMain aFinanceMain) throws Exception {
 		logger.debug(Literal.ENTERING);
 		
-		List<Long> idLIst = getLegalDetailDAO().getLegalIdListByFinRef(aFinanceMain.getFinReference(), "");
+		List<Long> idLIst = getLegalDetailDAO().getLegalIdListByFinRef(aFinanceMain.getFinReference(), "", null);
 		List<LegalDetail> detailList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(idLIst)) {
 			boolean modtDoc = true;
@@ -1419,7 +1421,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		List<LegalDetail> legalDetailsList = new ArrayList<>();
 
-		List<Long> idList = getLegalDetailDAO().getLegalIdListByFinRef(finReference, "_View");
+		List<Long> idList = getLegalDetailDAO().getLegalIdListByFinRef(finReference, "_View", FinanceConstants.MODULE_NAME);
 		if (CollectionUtils.isNotEmpty(idList)) {
 			for (Long legalId : idList) {
 				LegalDetail legalDetail = getLegalDetails(legalId, "_View");

@@ -57,7 +57,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
@@ -80,7 +79,6 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 	private FinanceDetail financedetail;
 	private Object financeMainDialogCtrl;
 	private Component parent = null;
-	private Tab parentTab = null;
 	private String roleCode = "";
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
@@ -108,6 +106,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 	 * @param event
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_LegalDetailLoanList(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -128,10 +127,6 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 				roleCode = (String) arguments.get("roleCode");
 			}
 
-			if (arguments.containsKey("parentTab")) {
-				parentTab = (Tab) arguments.get("parentTab");
-			}
-
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
 				if (getFinancedetail() != null) {
@@ -147,6 +142,13 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 					logger.error(Literal.EXCEPTION, e);
 				}
 			}
+			
+			if (arguments.containsKey("finHeaderList")) {
+				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
+			} else {
+				appendFinBasicDetails(null);
+			}
+			
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -166,7 +168,6 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			appendFinBasicDetails();
 			doWriteBeanToComponents();
 			this.listBoxLegalDetail.setHeight(borderLayoutHeight - 226 + "px");
 			if (parent != null) {
@@ -181,11 +182,13 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 
 	/**
 	 * This method is for append finance basic details to respective parent tabs
+	 * @param arrayList 
 	 */
-	private void appendFinBasicDetails() {
+	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
+			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {

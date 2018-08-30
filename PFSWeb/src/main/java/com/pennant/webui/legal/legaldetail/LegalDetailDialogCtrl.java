@@ -841,33 +841,19 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 
 		boolean isNew = aLegalDetail.isNew();
-		String tranType = "";
 		if (this.newRecord) {
 			if (isNew) {
 				aLegalDetail.setVersion(1);
 				aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-			}
+			} 
 			if (StringUtils.isBlank(aLegalDetail.getRecordType())) {
 				aLegalDetail.setVersion(aLegalDetail.getVersion() + 1);
 				aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				aLegalDetail.setNewRecord(true);
 			}
-			if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && this.newRecord) {
-				tranType = PennantConstants.TRAN_ADD;
-			} else if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType = PennantConstants.TRAN_UPD;
-			}
 		} else {
 			aLegalDetail.setVersion(aLegalDetail.getVersion() + 1);
-			if (isNew) {
-				tranType = PennantConstants.TRAN_ADD;
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-			}
 		}
-
 		aLegalDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLegalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLegalDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -1165,6 +1151,13 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 						this.documentDetailTab.setSelected(true);
 						MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
 						return true;
+					} else if (isRoleContains("ESFB_LEGAL_DETAIL_DOCUMENTTYPE_MANDATORY_ROLES", getRole())) {
+						if (PennantConstants.List_Select.equals(document.getDocumentTypeApprove())
+								|| Labels.getLabel("Combo.Select").equals(document.getDocumentTypeApprove())) {
+							this.documentDetailTab.setSelected(true);
+							MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
+							return true;
+						}
 					}
 				} else if (isRoleContains("ESFB_LEGAL_DETAIL_DOCUMENTTYPE_MANDATORY_ROLES", getRole())) {
 					if (PennantConstants.List_Select.equals(document.getDocumentTypeApprove())

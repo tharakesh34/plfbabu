@@ -145,9 +145,8 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		if (!StringUtils.equals(this.module, PennantConstants.YES)) {
-			Filter[] fileters = new Filter[2];
-			fileters[0] = new Filter("module", FinanceConstants.MODULE_NAME, Filter.OP_NOT_EQUAL);
-			fileters[1] = new Filter("module", null, Filter.OP_NULL);
+			Filter[] fileters = new Filter[1];
+			fileters[0] = new Filter("module", PennantConstants.QUERY_LEGAL_VERIFICATION, Filter.OP_EQUAL);
 			this.searchObject.addFilterOr(fileters);
 		}
 	}
