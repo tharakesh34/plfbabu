@@ -18434,9 +18434,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SUBMITTED)
 								|| docDetails.getRecordStatus()
 										.equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)) {
-							docDetails.setDocName(agreementDefinition.getAggName() + "."
-									+ agreementDefinition.getAggtype().toLowerCase());
-							docDetails.setDoctype(PennantConstants.DOC_TYPE_WORD);
+							docDetails.setDocName(agreementDefinition.getAggReportName());
+							docDetails.setDoctype(agreementDefinition.getAggtype());
 							return docDetails;
 						}
 						if (docDetails.getRecordStatus().isEmpty()) {
