@@ -1435,6 +1435,12 @@
 							
 		</sql>
 	</changeSet>
+	<changeSet id="79" author="Sriram">
+	<sql>
+		DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'ACC_EFF_VALDATE';
+		INSERT INTO SMTPARAMETERS VALUES ('ACC_EFF_VALDATE', 'Accrual Effective Date will be Appdate or Valuedate ', 'String', 1, 'N', 1, 0, NULL, NULL,'Accrual Effective Date will be Y - Value Date and N - APP Date', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
