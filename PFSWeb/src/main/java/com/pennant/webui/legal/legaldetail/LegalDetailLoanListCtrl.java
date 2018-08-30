@@ -142,7 +142,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 				try {
-					financeMainDialogCtrl.getClass().getMethod("setLegalDetailListCtrl", this.getClass()).invoke(financeMainDialogCtrl, this);
+					financeMainDialogCtrl.getClass().getMethod("setLegalDetailLoanListCtrl", this.getClass()).invoke(financeMainDialogCtrl, this);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}

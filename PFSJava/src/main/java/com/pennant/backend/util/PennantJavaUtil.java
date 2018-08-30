@@ -2337,7 +2337,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("EligibilityMethods", new ModuleMapping("EligibilityMethod", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
-				new Object[][] { {"IsActive", "0", 1 } , { "FieldCode", "0", "ELGMETHOD" } }, 300));
+				new Object[][] { {"IsActive", "0", 1 } , { "FieldCode", "0", "ELGMETHOD" } }, 400));
 	
 		ModuleUtil.register("QueryCategory", new ModuleMapping("QueryCategory", QueryCategory.class, new String[] { "BMTQueryCategories",
 		"BMTQueryCategories_AView" }, masterWF, new String[] {"Id","Code","Description"},new Object[][] { { "Active", "0", 1 } }, 600));

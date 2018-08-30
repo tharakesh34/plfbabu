@@ -307,6 +307,8 @@ import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl;
+import com.pennant.webui.legal.legaldetail.LegalDetailListCtrl;
+import com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
@@ -813,6 +815,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient ChequeDetailDialogCtrl chequeDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl mandateDialogCtrl;
+	private transient LegalDetailLoanListCtrl legalDetailLoanListCtrl;
 	private transient FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl;
 	private transient EtihadCreditBureauDetailDialogCtrl etihadCreditBureauDetailDialogCtrl;
 	private transient BundledProductsDetailDialogCtrl bundledProductsDetailDialogCtrl;
@@ -1810,8 +1813,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(onLoad);
 
 		//Credit Review Tab
-		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES) && 
-				!StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, financeDetail.getCustomerDetails().getCustomer().getCustCtgCode())) {
+		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES)) {
 			appendCreditReviewDetailTab(false);
 		}
 
@@ -16105,11 +16107,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Credit Review Details
 		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES)) {
-
-			if (customer.getCustID() != 0 && !StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV,
-					financeDetail.getCustomerDetails().getCustomer().getCustCtgCode())) {
-				appendCreditReviewDetailTab(false);
-			}
+			appendCreditReviewDetailTab(false);
 		}
 
 		//Query Management Tab
@@ -18566,6 +18564,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+
+	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
+		this.legalDetailLoanListCtrl = legalDetailLoanListCtrl;
 	}
 
 }

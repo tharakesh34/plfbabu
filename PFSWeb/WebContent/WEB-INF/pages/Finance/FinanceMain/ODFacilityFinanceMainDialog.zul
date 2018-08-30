@@ -667,6 +667,42 @@
 													<currencyBox
 														id="securityDeposit" />
 												</row>
+												<row id="row_EligibilityMethod" visible="false">
+													<label
+														id="label_FinanceMainDialog_EligibilityMethod"
+														value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
+													<extendedcombobox 
+															id="eligibilityMethod" width="200px" />
+												</row>
+												<row id="samplingRequiredRow">
+													<label
+														id="label_FinanceMainDialog_SamplingRequired"
+														value="${c:l('label_FinanceMainDialog_SamplingRequired.value')}" />
+													<hbox>
+														<space
+															spacing="2px" id="spaceSamplingRequired"/>
+														<checkbox
+															id="samplingRequired" checked="false"/>
+													</hbox>
+												</row>
+												<row id="legalRequiredRow">
+													<label
+														id="label_FinanceMainDialog_LegalRequired"
+														value="${c:l('label_FinanceMainDialog_LegalRequired.value')}" />
+													<hbox>
+														<space
+															spacing="2px" id="spacelegalRequired"/>
+														<checkbox
+															id="legalRequired" checked="false"/>
+													</hbox>
+												</row>
+												<row id="row_Connector">
+													<label
+														id="label_FinanceMainDialog_Connector"
+														value="${c:l('label_FinanceMainDialog_Connector.value')}" />
+													<extendedcombobox 
+															id="connector" width="200px" />
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
@@ -940,6 +976,13 @@
 														<combobox
 															id="cbGrcSchdMthd" width="275px" readonly="true" />
 													</hbox>
+												</row>
+												<row id="row_GrcMaxAmount">
+													<label
+														id="label_FinanceMainDialog_GrcMaxReqAmount"
+														value="${c:l('label_FinanceMainDialog_GrcMaxReqAmount.value')}" />
+													<currencyBox
+														id="grcMaxAmount" />
 												</row>
 											</rows>
 										</grid>
@@ -1461,6 +1504,38 @@
 														<datebox
 															id="maturityDate_two" readonly="true" visible="false"
 															buttonVisible="false" width="120px" tabindex="-1" />
+													</hbox>
+												</row>
+												<row
+													id="row_advEMITerms" visible="false">
+													<label
+														id="label_FinanceMainDialog_AdvEMITerms"
+														value="${c:l('label_FinanceMainDialog_AdvEMITerms.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<intbox
+															id="advEMITerms" width="45px" maxlength="3"
+															style="text-align:right" />
+													</hbox>
+												</row>
+												<row
+													id="row_hybridRates" visible="false">
+													<label
+														id="label_FinanceMainDialog_FixedRateTenor"
+														value="${c:l('label_FinanceMainDialog_FixedRateTenor.value')}" />
+													<intbox
+														id="fixedRateTenor" width="45px" maxlength="3"
+														style="text-align:right" />
+													<label
+														id="label_FinanceMainDialog_FixedTenorRate"
+														value="${c:l('label_FinanceMainDialog_FixedTenorRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory"/>
+														<decimalbox
+															id="fixedTenorRate" width="125px" maxlength="15"
+															style="text-align:right" />
 													</hbox>
 												</row>
 											</rows>
