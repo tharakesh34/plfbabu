@@ -4620,12 +4620,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
-	public void setNextTaskDetails(String taskId, FinanceMain financeMain, WorkflowEngine engine, String usrAction,
+	private void setNextTaskDetails(String taskId, FinanceMain financeMain, WorkflowEngine engine, String action,
 			String role) {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
-		// Set the next task id
-		String action = usrAction;
+		// Get the current next task id.
 		String nextTaskId = StringUtils.trimToEmpty(financeMain.getNextTaskId());
 
 		if ("".equals(nextTaskId)) {
@@ -4691,7 +4690,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeMain.setNextUserId(null);
 			}
 		}
-		logger.debug("Leaving");
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	private FinanceDetail createOrUpdateCrmCustomer(FinanceDetail financeDetail) {
