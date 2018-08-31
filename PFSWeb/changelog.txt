@@ -1,3 +1,11 @@
+pff 4.10.3.1, 2018-08-31
+ --------------
+-story#689 Legal details change 
+-Bug #696 : Cash Management Bug Fixes.
+-story #703 Work-flow engine enhancement to support sequential flows within the parallel flow.
+-story#709 : SOA Report Interest Rate details displayed based on interest Rate Type('Fixed' and 'Floating').
+-story #524 School Funding.
+
 pff 4.10.3, 2018-08-29
  --------------
 -Bug #696 : Cash Management Bug Fixes
@@ -7,12 +15,6 @@ pff 4.10.3, 2018-08-29
 -tasks #525 Add new Field Eligibility Method in Loan Type
 -tasks #611 Display Credit Review Tabs based on the Allowed Eligibility Methods at Loan Type.
 -story #666 Added New Interface Mapping Master.
--Task#690	Workflow change
--Task#691	Legal Preliminary
--Task#692	Original Verification
--Task#693	LA maker(New Role in Legal)
--Task#694	LA Approver(New Role in Legal)
--Task#695	DI MODT Maker, DI MODT Approver(New roles in loan Workflow)
 -PSD#128565:basic details maintenance-customer ID's- open and close.
 -PSD#128540 :basic details maintenance-sourcing type field - mandatory yet disabled.
 -PSD#128514 :employee name and employer name.
