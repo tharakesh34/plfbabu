@@ -2949,6 +2949,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					executionMap.put("totalPayment", totalPayment);
 					executionMap.put("partialPaymentAmount", receiptDialogCtrl.getRemBalAfterAllocationAmt());
 					executionMap.put("totalDueAmount", receiptDialogCtrl.getCustPaidAmt());
+					
+					Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(), financeMain.getFixedRateTenor());
+					
+					if(financeMain.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(DateUtility.getAppDate()) > 0) {
+						executionMap.put("Finance_Fixed_Tenor", PennantConstants.YES);
+					}else {
+						executionMap.put("Finance_Fixed_Tenor", PennantConstants.NO);
+					}
 				}
 				
 				String finCcy = financeMain.getFinCcy();
