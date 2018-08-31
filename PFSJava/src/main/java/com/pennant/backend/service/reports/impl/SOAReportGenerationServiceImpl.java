@@ -75,6 +75,7 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
+import com.pennant.backend.model.systemmasters.InterestRateDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -94,6 +95,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private static final String exclusive = "^";
 	
 	private SOAReportGenerationDAO soaReportGenerationDAO;
+	
+	private Date fixedEndDate = null; 
 
 	public SOAReportGenerationServiceImpl() {
 		super();
@@ -401,6 +404,35 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			sOATransactionReport.setFromDate(startDate);
 			sOATransactionReport.setToDate(endDate);
 			finalSOATransactionReports.add(sOATransactionReport);
+		}
+		List<InterestRateDetail> interestRateDetails = new ArrayList<>();
+		if (finMain.getFixedRateTenor() > 0) {
+			int noOfMonths = DateUtility.getMonthsBetween(finMain.getFinStartDate(), fixedEndDate);
+			statementOfAccount.setIntRateType("Fixed and Floating");
+			InterestRateDetail fixedDetail = new InterestRateDetail();
+			fixedDetail.setFormTenure(1);
+			fixedDetail.setToTenure( finMain.getFixedRateTenor() + finMain.getGraceTerms());
+			fixedDetail.setInterestType("Fixed");
+			fixedDetail.setInterestRate(finMain.getFixedTenorRate());
+			fixedDetail.setNoOfMonths(noOfMonths);
+			interestRateDetails.add(fixedDetail);
+
+			InterestRateDetail floatDetail = new InterestRateDetail();
+			floatDetail.setFormTenure(finMain.getFixedRateTenor() + 1);
+			floatDetail.setToTenure(finMain.getNumberOfTerms());
+			floatDetail.setInterestType("Float");
+			floatDetail.setInterestRate(finMain.getRepayProfitRate());
+			floatDetail.setNoOfMonths(financeProfitDetail.getTotalTenor() - noOfMonths);
+			interestRateDetails.add(floatDetail);
+		} else {
+			statementOfAccount.setIntRateType("Floating");
+			InterestRateDetail detail = new InterestRateDetail();
+			detail.setFormTenure(finMain.getFixedRateTenor() + 1);
+			detail.setToTenure(finMain.getNumberOfTerms());
+			detail.setInterestType("Float");
+			detail.setInterestRate(finMain.getRepayProfitRate());
+			detail.setNoOfMonths(financeProfitDetail.getTotalTenor());
+			interestRateDetails.add(detail);
 		}
 
 		//Summary Reports List
@@ -873,6 +905,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							soaTransactionReports.add(soaTransactionReport);
 						}
 					}
+				}
+				if(finSchdDetail.getInstNumber() == finMain.getFixedRateTenor()){
+					fixedEndDate = null;
+					fixedEndDate = finSchdDetail.getSchDate();
 				}
 			}
 			

@@ -198,6 +198,11 @@ public class StatementOfAccount {
 	//Co-Applicant And Borrower Details
 	private List<ApplicantDetail> applicantDetails = new ArrayList<ApplicantDetail>();
 
+	//Co-Applicant And Borrower Details
+	private List<InterestRateDetail> interestRateDetails = new ArrayList<InterestRateDetail>();
+	
+	
+
 	/**
 	 * Default Constructor
 	 */
@@ -1036,6 +1041,14 @@ public class StatementOfAccount {
 
 	public void setApplicantDetails(List<ApplicantDetail> applicantDetails) {
 		this.applicantDetails = applicantDetails;
+	}
+
+	public List<InterestRateDetail> getInterestRateDetails() {
+		return interestRateDetails;
+	}
+
+	public void setInterestRateDetails(List<InterestRateDetail> interestRateDetails) {
+		this.interestRateDetails = interestRateDetails;
 	}
 	
 }

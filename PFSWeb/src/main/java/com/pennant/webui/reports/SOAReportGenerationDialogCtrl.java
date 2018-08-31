@@ -176,6 +176,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		list.add(this.statementOfAccount.getTransactionReports());
 		list.add(this.statementOfAccount.getApplicantDetails());
 		list.add(this.statementOfAccount.getOtherFinanceDetails());
+		list.add(this.statementOfAccount.getInterestRateDetails());
+		
 		try {
 				ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, true, 1,
 						getUserWorkspace().getLoggedInUser().getFullName(), null);
