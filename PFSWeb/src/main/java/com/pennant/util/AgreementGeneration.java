@@ -261,6 +261,9 @@ public class AgreementGeneration implements Serializable {
 	private List<ValueLabel> subCategoryList=PennantStaticListUtil.getSubCategoryList();
 	private List<ValueLabel> landAreaList=PennantStaticListUtil.getLandAreaList();
 	private List<ValueLabel> sectorList=PennantStaticListUtil.getPSLSectorList();
+	private List<ValueLabel> subSectorList=PennantStaticListUtil.getSubSectorList();
+	private List<ValueLabel> subCategoryGeneralList=PennantStaticListUtil.getSubCategoryGeneralList();
+	
 	BigDecimal totalIncome=BigDecimal.ZERO;
 	BigDecimal totalExpense=BigDecimal.ZERO;
 	
@@ -1453,6 +1456,12 @@ public class AgreementGeneration implements Serializable {
 								break;
 							}
 						}
+					}
+					if(StringUtils.isEmpty(pslSubCategoryName) ){
+						pslSubCategoryName=PennantStaticListUtil.getlabelDesc(pslDetail.getSubCategory(), subSectorList);
+					}
+					if(StringUtils.isEmpty(pslSubCategoryName) ){
+						pslSubCategoryName=PennantStaticListUtil.getlabelDesc(pslDetail.getSubCategory(), subCategoryGeneralList);
 					}
 					if (StringUtils.isNotBlank(pslSubCategoryName)) {
 						agreement.setPslSubCategoryName(StringUtils.trimToEmpty(pslSubCategoryName));
