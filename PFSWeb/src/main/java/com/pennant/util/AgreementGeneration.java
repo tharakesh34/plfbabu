@@ -573,9 +573,9 @@ public class AgreementGeneration implements Serializable {
 					if (aggModuleDetails.contains(PennantConstants.AGG_KYCDT) && CollectionUtils.isNotEmpty(customerDocumentsList)) {
 						for (CustomerDocument cusDocument : customerDocumentsList)
 							if (null != cusDocument) {
-								com.pennant.backend.model.finance.AgreementDetail.KYCDetail kycDetail = agreement.new KYCDetail();
+								com.pennant.backend.model.finance.AgreementDetail.KycDetail kycDetail = agreement.new KycDetail();
 								kycDetail.setApplicantType("Primary Applicant");
-								kycDetail.setCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+								kycDetail.setCustCif(StringUtils.trimToEmpty(customer.getCustCIF()));
 								kycDetail.setCusName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 								kycDetail.setIdNumber(StringUtils.trimToEmpty(cusDocument.getCustDocTitle()));
 								kycDetail.setIdType(StringUtils.trimToEmpty(cusDocument.getCustDocCategory()));
@@ -1525,7 +1525,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.getLoanAppCoreBankIDDetails().add(agreement.new LoanAppCoreBankID());
 			}
 			if (CollectionUtils.isEmpty(agreement.getKycDetails())) {
-				agreement.getKycDetails().add(agreement.new KYCDetail());
+				agreement.getKycDetails().add(agreement.new KycDetail());
 			}
 			
 		} catch (Exception e) {
@@ -1550,7 +1550,7 @@ public class AgreementGeneration implements Serializable {
 		if(null!= customer){
 			com.pennant.backend.model.finance.AgreementDetail.LoanAppCoreBankID loanAppCoreBankID = agreement.new LoanAppCoreBankID();
 			loanAppCoreBankID.setApplicantType(StringUtils.trimToEmpty(applicantType));
-			loanAppCoreBankID.setCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+			loanAppCoreBankID.setCustCif(StringUtils.trimToEmpty(customer.getCustCIF()));
 			loanAppCoreBankID.setCusName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 			loanAppCoreBankID.setCoreBankName(StringUtils.trimToEmpty(customer.getCustCoreBank()));
 			agreement.getLoanAppCoreBankIDDetails().add(loanAppCoreBankID);
@@ -2473,9 +2473,9 @@ public class AgreementGeneration implements Serializable {
 				if(aggModuleDetails.contains(PennantConstants.AGG_KYCDT) && CollectionUtils.isNotEmpty(doclist)){
 					doclist.forEach(coApplicantDocument-> {
 						if(null != coApplicantDocument){
-				    		com.pennant.backend.model.finance.AgreementDetail.KYCDetail kycDetail= agreement.new KYCDetail();
+				    		com.pennant.backend.model.finance.AgreementDetail.KycDetail kycDetail= agreement.new KycDetail();
 				    		kycDetail.setApplicantType("Co-Applicant");
-				    		kycDetail.setCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+				    		kycDetail.setCustCif(StringUtils.trimToEmpty(customer.getCustCIF()));
 				    		kycDetail.setCusName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				    		kycDetail.setIdNumber(StringUtils.trimToEmpty(coApplicantDocument.getCustDocTitle()));
 				    		kycDetail.setIdType(StringUtils.trimToEmpty(coApplicantDocument.getCustDocCategory()));

@@ -258,21 +258,29 @@ public class AgreementDetail {
 	 */
 	private String totalExpense ="0.00";
 	
+	/** Provides current customers BPI Amount.
+	 */
 	private String BPIAmount ="0.00";
 	
 	
 	
 	/** Provides Sum current Loan fee .
 	 */
-	private String TotalDeductionwithoutBPI ="0.00";
+	private String totalDeductionwithoutBPI ="0.00";
 	
 	/** Provides Sum current Loan fee with BPI .
 	 */
-	private String TotalDeductionwithBPI ="0.00";
+	private String totalDeductionwithBPI = "0.00";
 	
-	private String NetDisbWithBPI ="0.00";
+	/**
+	 * Provides disbursement Amount with BPI .
+	 */
+	private String netDisbWithBPI ="0.00";
 	
-	private String NetDisbWithoutBPI ="0.00";
+	/**
+	 * Provides disbursement Amount without BPI .
+	 */
+	private String netDisbWithoutBPI ="0.00";
 
 	
 
@@ -285,35 +293,35 @@ public class AgreementDetail {
 	}
 
 	public String getTotalDeductionwithoutBPI() {
-		return TotalDeductionwithoutBPI;
+		return totalDeductionwithoutBPI;
 	}
 
 	public void setTotalDeductionwithoutBPI(String totalDeductionwithoutBPI) {
-		TotalDeductionwithoutBPI = totalDeductionwithoutBPI;
+		this.totalDeductionwithoutBPI = totalDeductionwithoutBPI;
 	}
 
 	public String getTotalDeductionwithBPI() {
-		return TotalDeductionwithBPI;
+		return totalDeductionwithBPI;
 	}
 
 	public void setTotalDeductionwithBPI(String totalDeductionwithBPI) {
-		TotalDeductionwithBPI = totalDeductionwithBPI;
+		this.totalDeductionwithBPI = totalDeductionwithBPI;
 	}
 
 	public String getNetDisbWithBPI() {
-		return NetDisbWithBPI;
+		return netDisbWithBPI;
 	}
 
 	public void setNetDisbWithBPI(String netDisbWithBPI) {
-		NetDisbWithBPI = netDisbWithBPI;
+		this.netDisbWithBPI = netDisbWithBPI;
 	}
 
 	public String getNetDisbWithoutBPI() {
-		return NetDisbWithoutBPI;
+		return netDisbWithoutBPI;
 	}
 
 	public void setNetDisbWithoutBPI(String netDisbWithoutBPI) {
-		NetDisbWithoutBPI = netDisbWithoutBPI;
+		this.netDisbWithoutBPI = netDisbWithoutBPI;
 	}
 
 	public String getCustAddrHNbr() {
@@ -8327,7 +8335,9 @@ public class AgreementDetail {
 		}
 
 	}
-
+	/**
+	 * It gives PLF Core Bank ID details as List for Primary Applicant and Co-applicant. 
+	 */
 	private List<LoanAppCoreBankID> loanAppCoreBankIDDetails;
 
 	public List<LoanAppCoreBankID> getLoanAppCoreBankIDDetails() {
@@ -8348,7 +8358,7 @@ public class AgreementDetail {
 		/**
 		 * Provides Current/ Co-applicant Customer ID.
 		 */
-		private String CIF = "";
+		private String custCif = "";
 		
 		/**
 		 * Provides Customer Id type i.e PAN Number, Aadhar Number
@@ -8368,12 +8378,12 @@ public class AgreementDetail {
 			this.applicantType = applicantType;
 		}
 
-		public String getCIF() {
-			return CIF;
+		public String getCustCif() {
+			return custCif;
 		}
 
-		public void setCIF(String cIF) {
-			CIF = cIF;
+		public void setCustCif(String custCif) {
+			this.custCif = custCif;
 		}
 
 		public String getCusName() {
@@ -8393,17 +8403,20 @@ public class AgreementDetail {
 		}
 	}
 
-	private List<KYCDetail> kycDetails;
+	/**
+	 * It gives All Primary Applicant & Co-Applicant Customers Kyc Details.
+	 */
+	private List<KycDetail> kycDetails;
 
-	public List<KYCDetail> getKycDetails() {
+	public List<KycDetail> getKycDetails() {
 		return kycDetails;
 	}
 
-	public void setKycDetails(List<KYCDetail> kycDetails) {
+	public void setKycDetails(List<KycDetail> kycDetails) {
 		this.kycDetails = kycDetails;
 	}
 
-	public class KYCDetail {
+	public class KycDetail {
 		/**
 		 * Provides Current/ Co-applicant Customer Type.
 		 */
@@ -8411,33 +8424,31 @@ public class AgreementDetail {
 		/**
 		 * Provides Current/ Co-applicant Customer ID.
 		 */
-		private String CIF = "";
+		private String custCif = "";
 
 		/**
 		 * Provides Current/ Co-applicant Customer Name.
 		 */
 		private String cusName = "";
 		/**
-		 * Provides Customer Id type i.e PAN Number, Aadhar Number
-		 * etc.
+		 * Provides Customer Id type i.e PAN Number, Aadhar Number etc.
 		 */
 		private String idType = "";
 		/**
-		 * Provides Customer Id type Name i.e PAN , Aadhar
-		 *  etc.
+		 * Provides Customer Id type Name i.e PAN , Aadhar etc.
 		 */
 		private String idTypeDesc = "";
 		/**
-		 * Provides Customer Id  provided ID Proof Number i.e PAN Number , Aadhar Number
-		 * Number etc.
+		 * Provides Customer Id provided ID Proof Number i.e PAN Number , Aadhar
+		 * Number Number etc.
 		 */
 		private String idNumber = "";
 		/**
-		 * Provides Customer Id  provided ID Proof Issed Date.
+		 * Provides Customer Id provided ID Proof Issed Date.
 		 */
 		private String issuedDate = "";
 		/**
-		 * Provides Customer Id  provided ID Proof Expiry Date
+		 * Provides Customer Id provided ID Proof Expiry Date
 		 */
 		private String expiryDate = "";
 
@@ -8457,12 +8468,12 @@ public class AgreementDetail {
 			this.idTypeDesc = idTypeDesc;
 		}
 
-		public String getCIF() {
-			return CIF;
+		public String getCustCif() {
+			return custCif;
 		}
 
-		public void setCIF(String cIF) {
-			CIF = cIF;
+		public void setCustCif(String custCif) {
+			this.custCif = custCif;
 		}
 
 		public String getCusName() {
