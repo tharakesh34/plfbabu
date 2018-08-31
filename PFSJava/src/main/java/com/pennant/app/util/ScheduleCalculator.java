@@ -4886,18 +4886,27 @@ public class ScheduleCalculator {
 		Date firstSchdDate = finScheduleData.getFinanceScheduleDetails().get(1).getSchDate();
 		String frqBPI = "";
 
+		Date nextInstDate = null;
 		if (finMain.isAllowGrcPeriod()) {
 			frqBPI = finMain.getGrcPftFrq();
+			nextInstDate = finMain.getNextGrcPftDate();
 		} else {
 			frqBPI = finMain.getRepayPftFrq();
+			nextInstDate = finMain.getNextRepayPftDate();
 		}
-
-		Date bpiDate = DateUtility
-				.getDate(
-						DateUtility.formatUtilDate(
-								FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
-										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
-								PennantConstants.dateFormat));
+		
+		String bpiCalOn = SysParamUtil.getValueAsString("BPI_CALC_ON");
+		Date bpiDate = null;
+		if(StringUtils.equals(bpiCalOn, FinanceConstants.BPI_CAL_ON_LASTFRQDATE)){
+			int terms = FrequencyUtil.getTerms(frqBPI, finMain.getFinStartDate(), nextInstDate, false, true).getTerms();
+			List<Calendar> termSchList = FrequencyUtil.getNextDate(frqBPI, terms-1, finMain.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false).getScheduleList();
+			bpiDate = DateUtility.getDate(DateUtility.formatUtilDate(termSchList.get(termSchList.size()-1).getTime(),
+					PennantConstants.dateFormat));
+		}else{
+			bpiDate = DateUtility.getDate(DateUtility.formatUtilDate(FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(), PennantConstants.dateFormat));
+		}
 
 		if (DateUtility.compare(bpiDate, firstSchdDate) >= 0) {
 			finScheduleData.getFinanceScheduleDetails().get(1).setBpiOrHoliday(FinanceConstants.FLAG_BPI);

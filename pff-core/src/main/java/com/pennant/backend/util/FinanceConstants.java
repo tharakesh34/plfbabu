@@ -295,6 +295,10 @@ public class FinanceConstants {
 	public static final String	BPI_SCHEDULE					= "S";
 	public static final String	BPI_CAPITALIZE					= "C";
 	public static final String	BPI_SCHD_FIRSTEMI				= "E";
+	
+	// BPI Treatment Calculation
+	public static final String	BPI_CAL_ON_FIRSTFRQDATE			= "F";
+	public static final String	BPI_CAL_ON_LASTFRQDATE			= "L";
 
 	//Freezing Period Details
 	public static final String	FREEZEPERIOD_INTEREST			= "I";

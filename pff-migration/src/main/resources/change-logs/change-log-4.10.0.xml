@@ -6951,4 +6951,14 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		</sql>
 	</changeSet>
 	
+	<changeSet id = "87" author = "Siva">
+		<comment> BPI Claculation on First date or Frequency of Before Installment Interest calculation date </comment>
+		<sql>
+			Delete From SMTparameters where SYSPARMCODE = 'BPI_CALC_ON';
+	
+			INSERT INTO SMTparameters values('BPI_CALC_ON', 'BPI Calculation On Frequncy Date(First,Last)', 'String', 0, 'F', 1, 0, NULL, NULL, 
+				'BPI Calculation On Frequncy Date(First,Last)', 1, 1000, CURRENT_TIMESTAMP, 'Approved','','','','','',0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
