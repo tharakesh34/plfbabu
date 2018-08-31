@@ -243,6 +243,7 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.ProcessUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
@@ -4627,24 +4628,43 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Get the existing next task id.
 		String nextTaskId = StringUtils.trimToEmpty(financeMain.getNextTaskId());
 
-		if ("".equals(nextTaskId)) {
+		// Re-set the existing next task id.
+		if (StringUtils.isNotEmpty(nextTaskId)) {
 			if ("Save".equals(action)) {
-				nextTaskId = taskId + ";";
-			}
-		} else {
-			if ("Resubmit".equals(action)) {
-				nextTaskId = "";
-			} else if (!"Save".equals(action)) {
-				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				// Do nothing.
+			} else {
+				String result = engine.getNextUserTaskIdsAsString(taskId, financeMain);
+				Flow flow = engine.compareTo(taskId, result);
+
+				if (flow == Flow.PREDECESSOR) {
+					if (ProcessUtil.parallelGatewayExists(engine, result, taskId)) {
+						nextTaskId = "";
+					} else {
+						// Sequential flow within concurrent flow.
+						nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
+					}
+				} else {
+					if (ProcessUtil.parallelGatewayExists(engine, taskId, result)) {
+						nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+					} else {
+						// Sequential flow within concurrent flow.
+						nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
+					}
+				}
 			}
 		}
 
-		if ("".equals(nextTaskId)) {
-			String result = engine.getNextUserTaskIdsAsString(taskId, financeMain);
-			if (StringUtils.isNotBlank(result)) {
-				result += ";";
+		// Set the new next task id if there are no pending existing queues.
+		if (StringUtils.isEmpty(nextTaskId)) {
+			if ("Save".equals(action)) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = engine.getNextUserTaskIdsAsString(taskId, financeMain);
+
+				if (StringUtils.isNotBlank(nextTaskId)) {
+					nextTaskId += ";";
+				}
 			}
-			nextTaskId = result;
 		}
 
 		// Set the role codes for the next tasks
