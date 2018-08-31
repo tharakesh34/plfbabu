@@ -149,4 +149,27 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
+	@Override
+	public boolean organizationExistForIncomeExpense(long organizationId, String type) {
+		logger.debug(Literal.ENTERING);
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("orgid", organizationId);
+
+		StringBuilder selectSql = new StringBuilder("select  count(orgid)  FROM  org_income_expense_header");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where orgid = :orgid");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try{
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return count > 0 ? true : false;
+		
+	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,7 +209,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -260,7 +261,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
@@ -293,16 +294,18 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		return auditHeader;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
 		Organization organization = (Organization) auditDetail.getModelData();
+		long organizationId = organization.getId();
+		String[] parameters = new String[3];
+		parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ": " + organizationId;
 
 		// Check the unique keys.
 		if (organization.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(organization.getRecordType())
 				&& organizationDAO.isDuplicateKey(organization.getCustId(), organization.getCode(),
 						organization.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_CIF.value") + ": "
 					+ organization.getCif();
 			parameters[1] = PennantJavaUtil.getLabel("label_OrganizationDialog_Code.value") + ": "
@@ -310,7 +313,15 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-
+		if (!StringUtils.equals(method, PennantConstants.method_doReject)
+				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(organization.getRecordType())) {
+			parameters[2] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ": " + organizationId;
+			boolean organizationExistForIncomeExpense = organizationDAO.organizationExistForIncomeExpense(organizationId, "_View");
+			if (organizationExistForIncomeExpense) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

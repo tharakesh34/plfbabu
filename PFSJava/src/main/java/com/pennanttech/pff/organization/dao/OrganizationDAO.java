@@ -15,4 +15,6 @@ public interface OrganizationDAO {
 
 	boolean isDuplicateKey(Long custId, String code, TableType tableType);
 
+	boolean organizationExistForIncomeExpense(long organizationId, String string);
+
 }
