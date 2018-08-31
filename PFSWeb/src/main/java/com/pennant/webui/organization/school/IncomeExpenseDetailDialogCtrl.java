@@ -553,6 +553,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				wve.add(we);
 			}
 			
+			try {
+				setValue(listitem, "nonCoreconsidered");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
 			showErrorDetails(wve, this.OrgSchoolIncomeDetailsTab);
 			
 			IncomeExpenseDetail aSchoolNonCoreIncome = (IncomeExpenseDetail) listitem.getAttribute("data");
