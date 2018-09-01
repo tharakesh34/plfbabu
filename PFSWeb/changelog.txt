@@ -2,7 +2,7 @@ pff 4.10.3.1, 2018-08-31
  --------------
 -story#689 Legal details change 
 -Bug #696 : Cash Management Bug Fixes.
--story #703 Work-flow engine enhancement to support sequential flows within the parallel flow.
+- story #703 Work-flow engine enhancement to support sequential flows within the parallel flow. [Note: Ensure the exiting parallel work-flows should use parallel gateways.]
 -story#709 : SOA Report Interest Rate details displayed based on interest Rate Type('Fixed' and 'Floating').
 -story #524 School Funding.
 
