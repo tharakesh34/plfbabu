@@ -35,7 +35,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class PennantStaticListUtil {
 	
 	// List Declarations for Static Initializations
-	private static List<Property> applications;
+	private static volatile List<Property> applications;
 	private static ArrayList<ValueLabel> fieldSelection;
 	private static ArrayList<ValueLabel> fieldType;
 	private static ArrayList<ValueLabel> regexType;
@@ -230,7 +230,6 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> chequeTypesList;
 	
 	private static ArrayList<ValueLabel> feeTaxTypes;	//GST FeeTaxTypes
-	private static ArrayList<ValueLabel> collections;
 	private static ArrayList<ValueLabel> mandateMapping;
 	private static ArrayList<ValueLabel> presentmentMapping;
 	private static ArrayList<ValueLabel> responseStatus;
