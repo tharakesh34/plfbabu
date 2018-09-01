@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,16 +42,12 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * This is the controller class for the /customer.zul file.
@@ -88,9 +83,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private CustomerDetails customerDetails;
 
 	// Declaration of Service(s) & DAO(s)
-	private transient CustomerDetailsService customerDetailsService;
 	private int ccyFormatter = 0;
-	private int old_ccyFormatter = 0;
 
 	protected Tabpanel directorDetails;
 	// Customer Directory details List
@@ -98,17 +91,12 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listbox listBoxCustomerDirectory;
 	protected Listheader listheader_CustDirector_RecordStatus;
 	protected Listheader listheader_CustDirector_RecordType;
-	private List<DirectorDetail> directorList = new ArrayList<DirectorDetail>();
-	private List<FinanceMain> financeMainList = new ArrayList<FinanceMain>();
-	private transient DirectorDetailService directorDetailService;
 	Date appDate = DateUtility.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 	protected Listbox listBoxCustomerLoanDetails;
 	protected Listbox listBoxCustomerVasDetails;
 	protected Listbox listBoxCustomerCollateralDetails;
-
-	private ExternalDocumentManager externalDocumentManager = null;
 
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	private boolean isCustPhotoAvail = false;
@@ -135,7 +123,6 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void onCreate$window_CustomerSummaryDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -153,7 +140,6 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			Customer customer = customerDetails.getCustomer();
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
-			old_ccyFormatter = ccyFormatter;
 
 			if (arguments.containsKey("customerViewDialogCtrl")) {
 				setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments.get("customerViewDialogCtrl"));
@@ -322,7 +308,6 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerLoanDetails.appendChild(item);
 
 			}
-			financeMainList = customerLoanDetails;
 		}
 		
 		if (this.listBoxCustomerLoanDetails.getItemCount() == 0) {
@@ -520,20 +505,9 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		logger.debug("Leaving");
 	}
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public void setDirectorDetailService(DirectorDetailService directorDetailService) {
-		this.directorDetailService = directorDetailService;
-	}
 
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
-	}
-
-	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
-		this.externalDocumentManager = externalDocumentManager;
 	}
 
 	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
@@ -543,5 +517,4 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
-
 }
