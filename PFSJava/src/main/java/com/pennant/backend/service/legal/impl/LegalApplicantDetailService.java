@@ -147,13 +147,7 @@ public class LegalApplicantDetailService extends GenericService<LegalApplicantDe
 					}
 				}
 			} else {
-
 				if (tempApplicantDetail == null) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-
-				if (tempApplicantDetail != null && oldApplicantDetail != null
-						&& !oldApplicantDetail.getLastMntOn().equals(tempApplicantDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}

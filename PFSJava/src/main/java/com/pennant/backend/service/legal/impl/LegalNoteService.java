@@ -149,11 +149,6 @@ public class LegalNoteService extends GenericService<LegalNote> {
 				if (templegalNote == null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
-				if (templegalNote != null && oldLegalNote != null
-						&& !oldLegalNote.getLastMntOn().equals(templegalNote.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

@@ -162,11 +162,6 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 				if (tempLegalDocument == null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
-				if (tempLegalDocument != null && oldApplicantDetail != null
-						&& !oldApplicantDetail.getLastMntOn().equals(tempLegalDocument.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
 			}
 		}
 

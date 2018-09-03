@@ -145,13 +145,7 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 					}
 				}
 			} else {
-
 				if (tempPropertyTitle == null) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-
-				if (tempPropertyTitle != null && oldPropertyTitleDetail != null
-						&& !oldPropertyTitleDetail.getLastMntOn().equals(tempPropertyTitle.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}

@@ -163,11 +163,6 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 				if (tempLegalPropertyDetail == null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
-				if (tempLegalPropertyDetail != null && oldApplicantDetail != null
-						&& !oldApplicantDetail.getLastMntOn().equals(tempLegalPropertyDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
 			}
 		}
 

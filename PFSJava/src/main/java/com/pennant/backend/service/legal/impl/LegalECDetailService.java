@@ -149,11 +149,6 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 				if (templegalECDetail == null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
-				if (templegalECDetail != null && oldLegalECDetail != null
-						&& !oldLegalECDetail.getLastMntOn().equals(templegalECDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

@@ -1254,6 +1254,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (CollectionUtils.isNotEmpty(legalApplicantDetails)) {
 				for (LegalApplicantDetail details : legalApplicantDetails) {
 					details.setLegalId(aLegalDetail.getLegalId());
+					details.setLegalReference(aLegalDetail.getLegalReference());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setUserDetails(getUserWorkspace().getLoggedInUser());

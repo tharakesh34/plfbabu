@@ -1474,6 +1474,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		if (CollectionUtils.isNotEmpty(legalApplicantDetails)) {
 			for (LegalApplicantDetail details : legalApplicantDetails) {
 				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLegalReference(aLegalDetail.getLegalReference());
 				details.setLastMntBy(aLegalDetail.getLastMntBy());
 				details.setLastMntOn(aLegalDetail.getLastMntOn());
 				details.setUserDetails(aLegalDetail.getUserDetails());
