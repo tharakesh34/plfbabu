@@ -133,51 +133,42 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			List<FeeWaiverDetail> detailList = new ArrayList<FeeWaiverDetail>();
 			// get manual advise cases
 			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(feeWaiverHeader.getFinReference());
+
 			if (adviseList != null && !adviseList.isEmpty()) {
 				for (ManualAdvise manualAdvise : adviseList) {
-					receivableAmt = receivableAmt.add(manualAdvise.getAdviseAmount());
-					receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount());
-					waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
-					balAmt = balAmt.add(manualAdvise.getBalanceAmt());
+					if (manualAdvise.getBounceID() != 0) {
+						receivableAmt = receivableAmt.add(manualAdvise.getAdviseAmount());
+						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount());
+						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
+						balAmt = balAmt.add(manualAdvise.getBalanceAmt());
+					} else {
+						feeWaiverDetail = new FeeWaiverDetail();
+						feeWaiverDetail.setAdviseId(manualAdvise.getAdviseID());
+						feeWaiverDetail.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+						feeWaiverDetail.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+						feeWaiverDetail.setReceivableAmount(manualAdvise.getAdviseAmount());
+						feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
+						feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
+						feeWaiverDetail.setBalanceAmount(manualAdvise.getBalanceAmt());
+						detailList.add(feeWaiverDetail);
+					}
 				}
-
+				// get Bounce cases
 				feeWaiverDetail = new FeeWaiverDetail();
-				feeWaiverDetail.setFeeTypeCode(RepayConstants.ALLOCATION_MANADV);
-				feeWaiverDetail.setFeeTypeDesc(Labels.getLabel("label_feeWaiver_WaiverType_MANADV"));
+				feeWaiverDetail.setFeeTypeCode(RepayConstants.ALLOCATION_BOUNCE);
+				feeWaiverDetail.setFeeTypeDesc(Labels.getLabel("label_ReceiptDialog_BounceCharge.value"));
 				feeWaiverDetail.setReceivableAmount(receivableAmt);
 				feeWaiverDetail.setReceivedAmount(receivedAmt);
 				feeWaiverDetail.setWaivedAmount(waivedAmt);
 				feeWaiverDetail.setBalanceAmount(balAmt);
 				detailList.add(feeWaiverDetail);
-
 			}
-
-			/*
-			 * if (adviseList != null && !adviseList.isEmpty()) { for
-			 * (ManualAdvise manualAdvise : adviseList) { feeWaiverDetail = new
-			 * FeeWaiverDetail();
-			 * feeWaiverDetail.setAdviseId(manualAdvise.getAdviseID());
-			 * feeWaiverDetail.setFeeTypeCode(manualAdvise.getFeeTypeCode());
-			 * feeWaiverDetail.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-			 * feeWaiverDetail.setReceivableAmount(manualAdvise.getAdviseAmount(
-			 * ));
-			 * feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
-			 * feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
-			 * feeWaiverDetail.setBalanceAmount(manualAdvise.getBalanceAmt());
-			 * detailList.add(feeWaiverDetail); } }
-			 */
-
 			receivableAmt = BigDecimal.ZERO;
 			receivedAmt = BigDecimal.ZERO;
 			waivedAmt = BigDecimal.ZERO;
 			balAmt = BigDecimal.ZERO;
 
-			// get Bounce cases
-
-			// List<ManualAdvise> adviseList =
-			// manualAdviseDAO.getManualAdvise(feeWaiverHeader.getFinReference());
-
-			// prepare for Late pay penality list
+			// get Over Due charges
 			List<FinODDetails> finODPenaltyList = finODDetailsDAO
 					.getFinODPenalityByFinRef(feeWaiverHeader.getFinReference(), false, true);
 
@@ -206,7 +197,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			balAmt = BigDecimal.ZERO;
 			List<FinODDetails> finODProfitList = finODDetailsDAO
 					.getFinODPenalityByFinRef(feeWaiverHeader.getFinReference(), true, true);
-
+			// get Late pay profit
 			if (finODProfitList != null && !finODProfitList.isEmpty()) {
 				for (FinODDetails finoddetails : finODProfitList) {
 					receivableAmt = receivableAmt.add(finoddetails.getLPIAmt());
@@ -543,33 +534,51 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				true, false);
 		List<FinODDetails> finodPenalitydetails = finODDetailsDAO
 				.getFinODPenalityByFinRef(feeWaiverHeader.getFinReference(), false, false);
+		allocateBounceCharges(feeWaiverHeader);
+		allocateManualAdvises(feeWaiverHeader);
+		allocateLatePayandPenalities(feeWaiverHeader, finodPftdetails, finodPenalitydetails);
 
+		logger.debug("Leaving");
+	}
+
+	private void allocateManualAdvises(FeeWaiverHeader feeWaiverHeader) {
 		for (FeeWaiverDetail waiverdetail : feeWaiverHeader.getFeeWaiverDetails()) {
 
-			if (waiverdetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_MANADV)) {
+			if (!waiverdetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_ODC)
+					&& !waiverdetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_LPFT)) {
+				// update manual advises other than bounce cases.
 				BigDecimal curwaivedAmt = waiverdetail.getCurrWaiverAmount();
 				for (ManualAdvise advise : manualAdviseList) {
 
-					if (advise.getBalanceAmt().compareTo(curwaivedAmt) >= 0) {
-						advise.setWaivedAmount(advise.getWaivedAmount().add(curwaivedAmt));
-						advise.setBalanceAmt(advise.getBalanceAmt().subtract(curwaivedAmt));
-						curwaivedAmt = BigDecimal.ZERO;
-					} else {
-						advise.setWaivedAmount(advise.getWaivedAmount().add(advise.getBalanceAmt()));
-						curwaivedAmt = curwaivedAmt.subtract(advise.getBalanceAmt());
-						advise.setBalanceAmt(BigDecimal.ZERO);
+					if (advise.getAdviseID() == waiverdetail.getAdviseId()) {
+						if (advise.getBalanceAmt().compareTo(curwaivedAmt) >= 0) {
+							advise.setWaivedAmount(advise.getWaivedAmount().add(curwaivedAmt));
+							advise.setBalanceAmt(advise.getBalanceAmt().subtract(curwaivedAmt));
+							curwaivedAmt = BigDecimal.ZERO;
+						} else {
+							advise.setWaivedAmount(advise.getWaivedAmount().add(advise.getBalanceAmt()));
+							curwaivedAmt = curwaivedAmt.subtract(advise.getBalanceAmt());
+							advise.setBalanceAmt(BigDecimal.ZERO);
+						}
+						advise.setVersion(advise.getVersion() + 1);
+						manualAdviseDAO.update(advise, TableType.MAIN_TAB);
+						ManualAdviseMovements movement = new ManualAdviseMovements();
+						movement.setAdviseID(advise.getAdviseID());
+						movement.setMovementDate(DateUtility.getAppDate());
+						movement.setMovementAmount(advise.getPaidAmount());
+						movement.setPaidAmount(advise.getPaidAmount());
+						movement.setWaivedAmount(advise.getWaivedAmount());
+						manualAdviseDAO.saveMovement(movement, "");
 					}
-					advise.setVersion(advise.getVersion() + 1);
-					manualAdviseDAO.update(advise, TableType.MAIN_TAB);
-					ManualAdviseMovements movement = new ManualAdviseMovements();
-					movement.setAdviseID(advise.getAdviseID());
-					movement.setMovementDate(DateUtility.getAppDate());
-					movement.setMovementAmount(advise.getPaidAmount());
-					movement.setPaidAmount(advise.getPaidAmount());
-					movement.setWaivedAmount(advise.getWaivedAmount());
-					manualAdviseDAO.saveMovement(movement, "");
 				}
 			}
+
+		}
+	}
+
+	private void allocateLatePayandPenalities(FeeWaiverHeader feeWaiverHeader, List<FinODDetails> finodPftdetails,
+			List<FinODDetails> finodPenalitydetails) {
+		for (FeeWaiverDetail waiverdetail : feeWaiverHeader.getFeeWaiverDetails()) {
 			// update late pay penalty waived amounts to the Finoddetails table.
 			if (waiverdetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_ODC)) {
 				BigDecimal curwaivedAmt = waiverdetail.getCurrWaiverAmount();
@@ -603,7 +612,39 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 			}
 		}
-		logger.debug("Leaving");
+	}
+
+	private void allocateBounceCharges(FeeWaiverHeader feeWaiverHeader) {
+		for (FeeWaiverDetail waiverdetail : feeWaiverHeader.getFeeWaiverDetails()) {
+			if (waiverdetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_BOUNCE)) {
+				// update manual advises other than bounce cases.
+				BigDecimal curwaivedAmt = waiverdetail.getCurrWaiverAmount();
+				for (ManualAdvise advise : manualAdviseList) {
+
+					if (advise.getBounceID()!=0) {
+						if (advise.getBalanceAmt().compareTo(curwaivedAmt) >= 0) {
+							advise.setWaivedAmount(advise.getWaivedAmount().add(curwaivedAmt));
+							advise.setBalanceAmt(advise.getBalanceAmt().subtract(curwaivedAmt));
+							curwaivedAmt = BigDecimal.ZERO;
+						} else {
+							advise.setWaivedAmount(advise.getWaivedAmount().add(advise.getBalanceAmt()));
+							curwaivedAmt = curwaivedAmt.subtract(advise.getBalanceAmt());
+							advise.setBalanceAmt(BigDecimal.ZERO);
+						}
+						advise.setVersion(advise.getVersion() + 1);
+						manualAdviseDAO.update(advise, TableType.MAIN_TAB);
+						ManualAdviseMovements movement = new ManualAdviseMovements();
+						movement.setAdviseID(advise.getAdviseID());
+						movement.setMovementDate(DateUtility.getAppDate());
+						movement.setMovementAmount(advise.getPaidAmount());
+						movement.setPaidAmount(advise.getPaidAmount());
+						movement.setWaivedAmount(advise.getWaivedAmount());
+						manualAdviseDAO.saveMovement(movement, "");
+					}
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -790,7 +831,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		// update the waiver amounts to the tables.
 		for (FeeWaiverDetail waiverDetail : feeWaiverHeader.getFeeWaiverDetails()) {
 
-			if (waiverDetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_MANADV)) {
+			if (!waiverDetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_ODC)
+					&& !waiverDetail.getFeeTypeCode().equals(RepayConstants.ALLOCATION_LPFT)) {
 				manualAdviseList = manualAdviseDAO.getManualAdvise(feeWaiverHeader.getFinReference());
 				for (ManualAdvise manualAdvise : manualAdviseList) {
 					// validate the current waived amount against the manual

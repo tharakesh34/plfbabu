@@ -408,10 +408,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		List<FeeWaiverDetail> list = new ArrayList<FeeWaiverDetail>();
 		if (aFeeWaiverHeader.isNewRecord()) {
 			for (FeeWaiverDetail detail : getFeeWaiverDetails()) {
-				if (detail.getCurrWaiverAmount() != null
+				/*if (detail.getCurrWaiverAmount() != null
 						&& (BigDecimal.ZERO.compareTo(detail.getCurrWaiverAmount()) == 0)) {
 					continue;
-				}
+				}*/
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setNewRecord(true);
@@ -419,29 +419,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			}
 		} else {
 			for (FeeWaiverDetail detail : getFeeWaiverDetails()) {
-				if (detail.isNewRecord()) {
-					if (detail.getCurrWaiverAmount() != null
-							&& (BigDecimal.ZERO.compareTo(detail.getCurrWaiverAmount()) == 0)) {
-						continue;
-					}
-					detail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-					detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					detail.setNewRecord(true);
-					list.add(detail);
-				} else {
-					if (detail.getCurrWaiverAmount() != null
-							&& (BigDecimal.ZERO.compareTo(detail.getCurrWaiverAmount()) == 0)) {
-						detail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
-						detail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-						detail.setNewRecord(false);
-						list.add(detail);
-					} else {
-						detail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-						detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						detail.setNewRecord(false);
-						list.add(detail);
-					}
-				}
+				detail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				detail.setNewRecord(false);
+				list.add(detail);
 			}
 		}
 		aFeeWaiverHeader.setFeeWaiverDetails(list);
@@ -890,6 +871,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 				lc = new Listcell(detail.getFeeTypeDesc());
 				lc.setParent(item);
+				lc.setStyle("font-weight:bold;color:##FF4500;");
+				
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivableAmount(), ccyFormatter));
 				totReceivableAmt = detail.getReceivableAmount().add(totReceivableAmt);
@@ -992,8 +975,13 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
 				if ((detail.getBalanceAmount().compareTo(amount)) == -1) {
-					throw new WrongValueException(currWaivedAmt,
-							Labels.getLabel("label_FeeWaiverHeaderDialog_currWaiverAmountErrorMsg.value"));
+					if(amount.compareTo(BigDecimal.ZERO) < 0){
+						throw new WrongValueException(currWaivedAmt,
+								Labels.getLabel("label_FeeWaiverHeaderDialog_CurrWaivedAmt_Non_Negative.value"));
+					}else{						
+						throw new WrongValueException(currWaivedAmt,
+								Labels.getLabel("label_FeeWaiverHeaderDialog_currWaiverAmountErrorMsg.value"));
+					}
 				} else if (amount.compareTo(BigDecimal.ZERO) == 0) {
 					totCurrWaivedAmt = totCurrWaivedAmt.subtract(detail.getCurrWaiverAmount());
 					currWaivedAmt.setValue(BigDecimal.ZERO);

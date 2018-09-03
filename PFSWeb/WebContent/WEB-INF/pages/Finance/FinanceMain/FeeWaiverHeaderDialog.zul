@@ -117,7 +117,7 @@
 									hflex="min" align="center" visible="false">
 								</listheader>
 								<listheader id="listheader_Type"
-									label="${c:l('listheader_Type.label')}" sort="auto"
+									label="${c:l('listheader_Type.label')}" sort="none"
 									hflex="min" />
 								<listheader
 									id="listheader_ReceivableAmount"
