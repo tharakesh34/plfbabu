@@ -254,8 +254,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 		doLoadWorkFlow(this.creditReviewDetail.isWorkflow(), this.creditReviewDetail.getWorkflowId(),
 				this.creditReviewDetail.getNextTaskId());
-
-		fillComboBox(auditPeriod, "", PennantStaticListUtil.getPeriodList(), "");
+		this.auditPeriod.setReadonly(true);
+		this.auditPeriod.setDisabled(true);
+		fillComboBox(auditPeriod, "12", PennantStaticListUtil.getPeriodList(), "");
 
 		fillComboBox(auditType, "", PennantStaticListUtil.getCreditReviewAuditTypesList(), "");
 		doSetFieldProperties();
@@ -601,14 +602,14 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	}
 
 	// method for reading sheets
-	private void validateHeaderRow(Row headerRow, String sheetName) {
+	private boolean validateHeaderRow(Row headerRow, String sheetName) {
 		logger.debug(Literal.ENTERING);
-
+		boolean duplicate = false;
 		int minColumns = headerRow.getLastCellNum();
 		if (minColumns < 5) {
 			MessageUtil.showMessage("Minimum Header Columns are not available , invalid File uploaded");
 			documentName.setValue("");
-			return;
+			return true;
 		} else {
 			for (int k = 0; k < headerRow.getLastCellNum(); k++) {
 				String readCell = null;
@@ -625,20 +626,20 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					if (!"ID".equalsIgnoreCase(readCell)) {
 						MessageUtil.showMessage(readCell + " Invalid column Header, Please upload valid data");
 						documentName.setValue("");
-						return;
+						return true;
 					}
 				if (k == 1) {
 					if (!"Description".equalsIgnoreCase(readCell)) {
 						MessageUtil.showMessage(readCell + " Invalid column Header, Please upload valid data");
 						documentName.setValue("");
-						return;
+						return true;
 					}
 				}
 				if (k == 3) {
 					if (!"Type".equalsIgnoreCase(readCell)) {
 						MessageUtil.showMessage(readCell + " Invalid column Header, Please upload valid data");
 						documentName.setValue("");
-						return;
+						return true;
 					}
 				}
 				if (k >= 4) {
@@ -654,7 +655,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 									readYearCell.substring(0, 4) + " Year having duplicates in 'P&L' Sheet");
 							plYearData.clear();
 							documentName.setValue("");
-							return;
+							return true;
 						}
 						plYearData.add((readYearCell));
 						continue;
@@ -664,7 +665,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 									readYearCell.substring(0, 4) + " Year having duplicates in 'BS' Sheet");
 							bsYearData.clear();
 							documentName.setValue("");
-							return;
+							return true;
 						}
 						bsYearData.add(readYearCell);
 					}
@@ -672,17 +673,18 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 						MessageUtil.showMessage(
 								readYearCell.substring(0, 4) + " Year is not Allowed please upload valid year data");
 						documentName.setValue("");
-						return;
+						return true;
 					}
 					if (Double.parseDouble(readYearCell) >= year) {
 						MessageUtil.showMessage(readYearCell + " Invalid column Header, Please upload valid data");
 						documentName.setValue("");
-						return;
+						return true;
 					}
 				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
+		return duplicate;
 	}
 
 	private Map<String, List<Object[]>> readSheet(HSSFSheet sheet, int sheetNumber) throws Exception {
@@ -711,8 +713,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					documentName.setValue("");
 					break;
 				}
-
-				validateHeaderRow(headerRow, sheet.getSheetName());
+				if(validateHeaderRow(headerRow, sheet.getSheetName())){
+					return null;
+				}
 				// validation for valid years in both sheets in EXCEL File
 				if (sheetNumber == 1) {
 					for (String years : plYearData) {
@@ -1065,6 +1068,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, customer.getCustCtgCode())) {
 				category = PennantConstants.PFF_CUSTCTG_SME;
 				aCreditReviewDetails.setLovDescCustCtgCode(category);
+			} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
+					category = PennantConstants.PFF_CUSTCTG_INDIV;
+					aCreditReviewDetails.setLovDescCustCtgCode(category);
 			} else {
 				category = PennantConstants.PFF_CUSTCTG_CORP;
 				aCreditReviewDetails.setLovDescCustCtgCode(category);
@@ -1173,19 +1179,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				aCreditReviewDetails.setConsolidated(true);
 			} else {
 				aCreditReviewDetails.setConsolidated(false);
-			}
-		} catch (WrongValueException wve) {
-			wveList.add(wve);
-		}
-
-		try {
-			if (this.auditType.getValue() != null) {
-				aCreditReviewDetails.setAuditType(this.auditType.getValue());
-			} else {
-				throw new WrongValueException(this.auditType,
-						Labels.getLabel("FIELD_NO_EMPTY",
-								new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_AuditType.value"),
-										Labels.getLabel("label_CreditApplicationReviewDialog_AuditType.value") }));
 			}
 		} catch (WrongValueException wve) {
 			wveList.add(wve);

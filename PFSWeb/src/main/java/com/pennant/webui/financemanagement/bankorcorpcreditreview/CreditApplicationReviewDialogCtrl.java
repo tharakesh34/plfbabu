@@ -1582,7 +1582,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		int ratioTabCount = 1;
 		prevAuditPeriod = getCreditApplicationReviewService().getCreditReviewAuditPeriodByAuditYear(
 				this.custID.getValue(), String.valueOf(Integer.parseInt(this.creditReviewDetails.getAuditYear()) - 1),
-				this.creditReviewDetails.getAuditPeriod(), false, "_VIew");
+				this.creditReviewDetails.getAuditPeriod(), false, "_View");
 		//Create Tabs based on the finCreditReview Category and Customer Category Type
 		for (FinCreditRevCategory finCreditRevCategory : listOfFinCreditRevCategory) {
 
