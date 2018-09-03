@@ -271,6 +271,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Decimalbox fInMinRate; // autoWired
 	protected Decimalbox finMaxRate; // autoWired
 	protected Checkbox alwHybridRate;// autoWired
+	protected Space space_fixedRateTenor;// autoWired
 	protected Intbox fixedRateTenor;// autoWired
 	protected Row row_FinRepRates; // autoWired
 	protected Decimalbox finIntRate; // autoWired
@@ -1219,6 +1220,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIntRate.setValue(aFinanceType.getFinIntRate());
 		this.financeBaserate.setEffectiveRateVisible(true);
 		this.alwHybridRate.setChecked(aFinanceType.isAlwHybridRate());
+		setFixedRateTenor(aFinanceType.isAlwHybridRate(), this.isCompReadonly);
 		this.fixedRateTenor.setValue(aFinanceType.getFixedRateTenor());
 
 		this.financeBaserate.setBaseValue(aFinanceType.getFinBaseRate());
@@ -6249,6 +6251,37 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
+	/** method to check rate type in grace tab */
+	
+	public void onCheck$alwHybridRate(Event event) {
+		logger.debug("Entering onCheck$alwHybridRate()");
+		
+		boolean alwHybridRate = this.alwHybridRate.isChecked();
+		setFixedRateTenor(alwHybridRate,false);
+		
+		logger.debug("Leaving onCheck$alwHybridRate()");
+		
+	}
+
+	/**
+	 * method to set mandatory style and field editable for fixedRateTenor
+	 * @param alwHybridRate
+	 */
+	private void setFixedRateTenor(boolean alwHybridRate, boolean isCompReadonly) {
+		logger.debug("Entering");
+		this.space_fixedRateTenor.setSclass("");
+		this.alwHybridRate.setDisabled(isCompReadonly);
+		if(alwHybridRate && !isCompReadonly){
+			this.fixedRateTenor.setReadonly(false);
+		}else{
+			this.fixedRateTenor.setReadonly(true);
+			this.fixedRateTenor.setValue(0);
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	
 	/** method to check rate type in grace tab */
 
 	public void onCheck$finIsAlwDifferment(Event event) {
