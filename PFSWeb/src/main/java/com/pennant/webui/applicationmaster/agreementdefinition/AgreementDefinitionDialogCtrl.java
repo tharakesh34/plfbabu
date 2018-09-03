@@ -82,10 +82,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-import bsh.org.objectweb.asm.Label;
 
 /**
  * This is the controller class for the
@@ -184,11 +184,9 @@ public class AgreementDefinitionDialogCtrl extends
 
 		try {
 			/* set components visible dependent of the users rights */
-			
 
 			if (arguments.containsKey("agreementDefinition")) {
-				this.agreementDefinition = (AgreementDefinition) arguments
-						.get("agreementDefinition");
+				this.agreementDefinition = (AgreementDefinition) arguments.get("agreementDefinition");
 				AgreementDefinition befImage = new AgreementDefinition();
 				BeanUtils.copyProperties(this.agreementDefinition, befImage);
 				this.agreementDefinition.setBefImage(befImage);
@@ -198,22 +196,18 @@ public class AgreementDefinitionDialogCtrl extends
 				setAgreementDefinition(null);
 			}
 
-			doLoadWorkFlow(this.agreementDefinition.isWorkflow(),
-					this.agreementDefinition.getWorkflowId(),
+			doLoadWorkFlow(this.agreementDefinition.isWorkflow(), this.agreementDefinition.getWorkflowId(),
 					this.agreementDefinition.getNextTaskId());
-			
-			
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"AgreementDefinitionDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "AgreementDefinitionDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 			if (arguments.containsKey("agreementDefinitionListCtrl")) {
-				setAgreementDefinitionListCtrl((AgreementDefinitionListCtrl) arguments
-						.get("agreementDefinitionListCtrl"));
+				setAgreementDefinitionListCtrl(
+						(AgreementDefinitionListCtrl) arguments.get("agreementDefinitionListCtrl"));
 			} else {
 				setAgreementDefinitionListCtrl(null);
 			}
@@ -238,15 +232,12 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggDesc.setMaxlength(100);
 		this.aggReportName.setMaxlength(500);
 
-		this.docType.setMaxlength(20);
 		this.docType.setMandatoryStyle(true);
 		this.docType.setModuleName("DocumentType");
 		this.docType.setValueColumn("DocTypeCode");
 		this.docType.setDescColumn("DocTypeDesc");
 		this.docType.setValidateColumns(new String[] {"DocTypeCode"});
 		
-		
-		this.docType.setMaxlength(20);
 		this.agrRule.setMandatoryStyle(false);
 		this.agrRule.setModuleName("Rule");
 		this.agrRule.setValueColumn("RuleCode");
@@ -348,15 +339,15 @@ public class AgreementDefinitionDialogCtrl extends
 		logger.debug("Leaving");
 	}
 	
-	
-	
+
 	public void doCheckAutoGeneration() {
 		logger.debug("Entering");
+		this.docType.setButtonDisabled(true);
 		if (this.autoGeneration.isChecked()) {
-			this.auto_check.setSclass(PennantConstants.mandateSclass);
-			this.auto_check.setVisible(true);
+			this.docType.setButtonDisabled(false);
 		} else {
-			this.space_ModuleType.setSclass("");
+			this.docType.setVisible(false);
+			this.docType.setButtonDisabled(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -461,40 +452,34 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggDesc.setValue(aAgreementDefinition.getAggDesc());
 		this.aggReportName.setValue(aAgreementDefinition.getAggReportName());
 		this.agrRule.setValue(aAgreementDefinition.getAgrRule());
-		this.agrRule.setDescription(aAgreementDefinition
-				.getLovDescAgrRuleDesc());
+		this.agrRule.setDescription(aAgreementDefinition.getLovDescAgrRuleDesc());
 		// this.aggReportPath.setValue(aAgreementDefinition.getAggReportPath());
 		this.aggIsActive.setChecked(aAgreementDefinition.isAggIsActive());
 		this.recordStatus.setValue(aAgreementDefinition.getRecordStatus());
-		fillComboBox(this.aggType, aAgreementDefinition.getAggtype(),
-				PennantStaticListUtil.getAgreementType(), "");
-		fillComboBox(this.moduleType, aAgreementDefinition.getModuleType(),
-				PennantStaticListUtil.getModulType(), "");
+		fillComboBox(this.aggType, aAgreementDefinition.getAggtype(), PennantStaticListUtil.getAgreementType(), "");
+		fillComboBox(this.moduleType, aAgreementDefinition.getModuleType(), PennantStaticListUtil.getModulType(), "");
 		this.allowMultiple.setChecked(aAgreementDefinition.isAllowMultiple());
 		if (this.agreementDefinition.isNewRecord()) {
 			fillComboBox(this.moduleName, PennantConstants.WORFLOW_MODULE_FINANCE,
 					PennantStaticListUtil.getWorkFlowModules(), "");
-		}else{
+		} else {
 			fillComboBox(this.moduleName, aAgreementDefinition.getModuleName(),
 					PennantStaticListUtil.getWorkFlowModules(), "");
 		}
-		if(aAgreementDefinition.isAutoGeneration())
-		{
-		this.autoGeneration.setChecked(aAgreementDefinition.isAutoGeneration());
-		this.autoDownload.setVisible(true);
-		this.autoDownload.setChecked(aAgreementDefinition.isAutoDownload());
-		this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
-		this.docType.setValue(agreementDefinition.getDocType());
-		this.docType.setDescription(agreementDefinition.getLovDescDocumentType());
-		}		
-		else{
-		
+		if (aAgreementDefinition.isAutoGeneration()) {
+			this.autoGeneration.setChecked(aAgreementDefinition.isAutoGeneration());
+			this.autoDownload.setVisible(true);
+			this.autoDownload.setChecked(aAgreementDefinition.isAutoDownload());
+			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
+			this.docType.setValue(agreementDefinition.getDocType());
+			this.docType.setDescription(agreementDefinition.getLovDescDocumentType());
+
+		} else {
 			this.autoDownload.setVisible(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 		}
 		if (aAgreementDefinition.isNew()
-				|| (aAgreementDefinition.getRecordType() != null ? aAgreementDefinition
-						.getRecordType() : "")
+				|| (aAgreementDefinition.getRecordType() != null ? aAgreementDefinition.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.aggIsActive.setChecked(true);
 			this.aggIsActive.setDisabled(true);
@@ -503,7 +488,7 @@ public class AgreementDefinitionDialogCtrl extends
 		doFillAggDetailsList(aAgreementDefinition);
 		doCheckAllowMuliple();
 		doCheckAutoGeneration();
-		
+
 		String modulename = this.moduleName.getSelectedItem().getValue().toString();
 		doModuleSelection(modulename);
 
@@ -742,8 +727,12 @@ public class AgreementDefinitionDialogCtrl extends
 			this.autoDownload.setVisible(true);
 			this.autoDownload.setChecked(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
-			this.auto_check.setVisible(true);
+			this.docType.setSclass(PennantConstants.mandateSclass);
+			this.docType.setValue("");
+			this.docType.setButtonDisabled(false);
 		} else {
+			this.docType.setButtonDisabled(true);
+			this.docType.setValue("");
 			this.autoDownload.setVisible(false);
 			this.autoDownload.setChecked(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
