@@ -110,4 +110,8 @@
 		<comment> Column rename</comment>
 		<renameColumn tableName="AdtRMTFinanceTypes" oldColumnName="bpiratebasis" newColumnName="bpipftdaysbasis"/>
 </changeSet>
+<changeSet author="Mangapathi" id="12">
+		<comment> Column rename</comment>
+		<renameColumn tableName="AdtFinanceMain" oldColumnName="bpiratebasis" newColumnName="bpipftdaysbasis"/>
+</changeSet>
 	</databaseChangeLog>
