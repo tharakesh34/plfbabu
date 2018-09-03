@@ -82,7 +82,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"rpyAdvMargin", "supplementRent", "increasedCost", "rolloverFrq", "nextRolloverDate", "finContractDate",
 		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
 		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod",
-		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiRateBasis", "planEMIHAlw",
+		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "planEMIHAlw",
 		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate","stage","status", "advEMITerms"})
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
