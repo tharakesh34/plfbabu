@@ -1058,16 +1058,16 @@
 															id="dftBpiTreatment" width="250px" readonly="true" />
 													</hbox>
 												</row>
-												<row id="row_BpiRateBasis" visible="false">
+												<row id="row_BpiPftDaysBasis" visible="false">
 												<label
-													id="label_FinanceMainDialog_BpiRateBasis"
-													value="${c:l('label_FinanceMainDialog_BpiRateBasis.value')}" />
+													id="label_FinanceMainDialog_BpiPftDaysBasis"
+													value="${c:l('label_FinanceMainDialog_BpiPftDaysBasis.value')}" />
 												<hbox>
 													<space
-														id="space_BpiRateBasis" spacing="2px"
+														id="space_BpiPftDaysBasis" spacing="2px"
 														sclass="mandatory" />
 													<combobox
-														id="cbBpiRateBasis" width="275px" readonly="true" />
+														id="cbBpiPftDaysBasis" width="275px" readonly="true" />
 												</hbox>
 												</row>
 												<row

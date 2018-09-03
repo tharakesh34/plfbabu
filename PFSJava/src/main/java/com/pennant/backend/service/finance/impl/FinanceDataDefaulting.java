@@ -853,7 +853,7 @@ public class FinanceDataDefaulting {
 			if (StringUtils.isBlank(finMain.getBpiTreatment())) {
 				finMain.setBpiTreatment(financeType.getBpiTreatment());
 			}
-			finMain.setBpiRateBasis(financeType.getBpiRateBasis());
+			finMain.setBpiPftDaysBasis(financeType.getBpiPftDaysBasis());
 		} else {
 			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 		}

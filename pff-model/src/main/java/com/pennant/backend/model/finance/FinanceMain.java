@@ -354,8 +354,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean alwBPI = false;
 	@XmlElement(name="dftBpiTreatment")
 	private String bpiTreatment;
-	@XmlElement(name="bpiRateBasis")
-	private String bpiRateBasis;	
+	@XmlElement(name="bpiPftDaysBasis")
+	private String bpiPftDaysBasis;	
 
 	// ===========================================
 	// =========Planned EMI Holidays & Deferments
@@ -3860,13 +3860,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setAdjustClosingBal(boolean isAdjustClosingBal) {
 		this.isAdjustClosingBal = isAdjustClosingBal;
 	}
-	
-	public String getBpiRateBasis() {
-		return bpiRateBasis;
+
+	public String getBpiPftDaysBasis() {
+		return bpiPftDaysBasis;
 	}
 
-	public void setBpiRateBasis(String bpiRateBasis) {
-		this.bpiRateBasis = bpiRateBasis;
+	public void setBpiPftDaysBasis(String bpiPftDaysBasis) {
+		this.bpiPftDaysBasis = bpiPftDaysBasis;
 	}
 
 	public int getFixedRateTenor() {

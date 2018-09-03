@@ -1366,7 +1366,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
 		fillComboBox(this.dftBpiTreatment, aFinanceMain.getBpiTreatment(), PennantStaticListUtil.getDftBpiTreatment(),
 				"");
-		fillComboBox(this.cbBpiRateBasis, aFinanceMain.getBpiRateBasis(), PennantStaticListUtil.getProfitDaysBasis(),
+		fillComboBox(this.cbBpiRateBasis, aFinanceMain.getBpiPftDaysBasis(), PennantStaticListUtil.getProfitDaysBasis(),
 				"");
 		oncheckalwBpiTreatment(false);
 		this.alwPlannedEmiHoliday.setChecked(aFinanceMain.isPlanEMIHAlw());
@@ -2548,7 +2548,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& !getComboboxValue(this.dftBpiTreatment).equals(FinanceConstants.BPI_NO)
 					&& isValidComboValue(this.cbBpiRateBasis,
 					Labels.getLabel("label_FinanceMainDialog_BpiRateBasis.value"))) {
-				aFinanceMain.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
+				aFinanceMain.setBpiPftDaysBasis(getComboboxValue(this.cbBpiRateBasis));
 			} 
 		} catch (WrongValueException we) {
 			wve.add(we);

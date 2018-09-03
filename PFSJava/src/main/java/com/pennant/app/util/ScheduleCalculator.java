@@ -4953,7 +4953,11 @@ public class ScheduleCalculator {
 		sd.setMrgRate(openSchd.getMrgRate());
 		sd.setActRate(openSchd.getActRate());
 		sd.setCalculatedRate(openSchd.getCalculatedRate());
-		sd.setPftDaysBasis(finMain.getBpiRateBasis());
+		if(StringUtils.isNotEmpty(finMain.getBpiPftDaysBasis())){
+			sd.setPftDaysBasis(finMain.getBpiPftDaysBasis());
+		}else {
+			sd.setPftDaysBasis(openSchd.getPftDaysBasis());
+		}
 		sd.setAdvBaseRate(openSchd.getAdvBaseRate());
 		sd.setAdvMargin(openSchd.getAdvMargin());
 		sd.setAdvPftRate(openSchd.getAdvPftRate());

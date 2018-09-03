@@ -1247,14 +1247,14 @@
 											</row>
 											<row visible="true">
 												<label
-													id="label_FinanceTypeDialog_BpiRateBasis"
-													value="${c:l('label_FinanceTypeDialog_BpiRateBasis.value')}" />
+													id="label_FinanceTypeDialog_BpiPftDaysBasis"
+													value="${c:l('label_FinanceTypeDialog_BpiPftDaysBasis.value')}" />
 												<hbox>
 													<space
-														id="space_bpiRateBasis" spacing="2px"
+														id="space_bpiPftDaysBasis" spacing="2px"
 														sclass="mandatory" />
 													<combobox
-														id="cbBpiRateBasis" width="275px" readonly="true" />
+														id="cbBpiPftDaysBasis" width="275px" readonly="true" />
 												</hbox>
 											</row>
 											<row visible="true">

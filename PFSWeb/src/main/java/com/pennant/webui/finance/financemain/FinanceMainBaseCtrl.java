@@ -307,7 +307,6 @@ import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl;
-import com.pennant.webui.legal.legaldetail.LegalDetailListCtrl;
 import com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
@@ -15541,12 +15540,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setReqFinType(financeMain.getFinType());
 
 		//detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
-		
-		Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(), financeMain.getFixedRateTenor());
-		
-		if(financeMain.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(appDate) > 0) {
-			detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getFixedTenorRate());
-			detail.getCustomerEligibilityCheck().addExtendedField("Finance_Fixed_Tenor", PennantConstants.YES);
+		if(financeMain.getFixedRateTenor() > 0 && financeMain.getGrcPeriodEndDate() != null) {
+			Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(), financeMain.getFixedRateTenor());
+
+			if(fixedTenorEndDate.compareTo(appDate) > 0) {
+				detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getFixedTenorRate());
+				detail.getCustomerEligibilityCheck().addExtendedField("Finance_Fixed_Tenor", PennantConstants.YES);
+			} 
 		}else {
 			if (StringUtils.isNotEmpty(this.repayRate.getBaseValue())) {
 				detail.getCustomerEligibilityCheck().setFinProfitRate(this.repayRate.getEffRateComp().getValue());

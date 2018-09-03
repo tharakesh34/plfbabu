@@ -9813,7 +9813,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		financeMain.setAlwBPI(financeType.isAlwBPI());
 		financeMain.setBpiTreatment(financeType.getBpiTreatment());
-		financeMain.setBpiRateBasis(financeType.getBpiRateBasis());
+		financeMain.setBpiPftDaysBasis(financeType.getBpiPftDaysBasis());
 		financeMain.setPlanEMIHAlw(financeType.isPlanEMIHAlw());
 		financeMain.setPlanEMIHMethod(financeType.getPlanEMIHMethod());
 		financeMain.setPlanEMIHLockPeriod(financeType.getPlanEMIHLockPeriod());

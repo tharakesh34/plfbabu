@@ -325,8 +325,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox alwBpiTreatment;
 	protected Space space_DftBpiTreatment;
 	protected Combobox dftBpiTreatment;
-	protected Space space_bpiRateBasis;
-	protected Combobox cbBpiRateBasis;
+	protected Space space_bpiPftDaysBasis;
+	protected Combobox cbBpiPftDaysBasis;
 	protected Space space_PftDueSchdOn;
 	protected Combobox pftDueSchOn;
 	protected Checkbox alwPlannedEmiHoliday;
@@ -914,10 +914,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
 			fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_NO, PennantStaticListUtil.getDftBpiTreatment(), "");
-			fillComboBox(this.cbBpiRateBasis, FinanceConstants.BPI_NO, PennantStaticListUtil.getProfitDaysBasis(), "");
+			fillComboBox(this.cbBpiPftDaysBasis, FinanceConstants.BPI_NO, PennantStaticListUtil.getProfitDaysBasis(), "");
 		} else {
 			fillComboBox(this.dftBpiTreatment, null, new ArrayList<ValueLabel>(), "");
-			fillComboBox(this.cbBpiRateBasis, null, new ArrayList<ValueLabel>(), "");
+			fillComboBox(this.cbBpiPftDaysBasis, null, new ArrayList<ValueLabel>(), "");
 		}
 
 		this.gb_ProfitOnPastDue.setVisible(ImplementationConstants.INTERESTON_PASTDUE_PRINCIPAL);
@@ -1366,17 +1366,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (aFinanceType.isNewRecord()) {
 				bpiType = FinanceConstants.BPI_NO;
 			}
-			oncheckalwBpiTreatment(bpiType,aFinanceType.getBpiRateBasis());
+			oncheckalwBpiTreatment(bpiType,aFinanceType.getBpiPftDaysBasis());
 		} else {
 			this.dftBpiTreatment.setDisabled(true);
 			this.space_DftBpiTreatment.setSclass("");
 			this.dftBpiTreatment.setConstraint("");
 			this.dftBpiTreatment.setErrorMessage("");
 			
-			this.cbBpiRateBasis.setDisabled(true);
-			this.space_bpiRateBasis.setSclass("");
-			this.cbBpiRateBasis.setConstraint("");
-			this.cbBpiRateBasis.setErrorMessage("");
+			this.cbBpiPftDaysBasis.setDisabled(true);
+			this.space_bpiPftDaysBasis.setSclass("");
+			this.cbBpiPftDaysBasis.setConstraint("");
+			this.cbBpiPftDaysBasis.setErrorMessage("");
 		}
 
 		fillComboBox(this.pftDueSchOn, aFinanceType.getPftDueSchOn(), PennantStaticListUtil.getpftDueSchOn(), "");
@@ -2871,9 +2871,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		try {
 			if (alwBpiTreatment.isChecked()){
-					if(!aFinanceType.getBpiTreatment().equals(FinanceConstants.BPI_NO) && isValidComboValue(this.cbBpiRateBasis,
+					if(!aFinanceType.getBpiTreatment().equals(FinanceConstants.BPI_NO) && isValidComboValue(this.cbBpiPftDaysBasis,
 								Labels.getLabel("label_FinanceTypeDialog_BpiRateBasis.value"))){
-						aFinanceType.setBpiRateBasis(getComboboxValue(this.cbBpiRateBasis));
+						aFinanceType.setBpiPftDaysBasis(getComboboxValue(this.cbBpiPftDaysBasis));
 						}
 			} 
 		} catch (WrongValueException we) {
@@ -3761,7 +3761,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.pftDueSchOn.setConstraint("");
 		this.planEmiHLockPeriod.setConstraint("");
 		this.dftBpiTreatment.setConstraint("");
-		this.cbBpiRateBasis.setConstraint("");
+		this.cbBpiPftDaysBasis.setConstraint("");
 		this.planEmiMethod.setConstraint("");
 		this.maxPlanEmiPerAnnum.setConstraint("");
 		this.maxPlanEmi.setConstraint("");
@@ -4073,7 +4073,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.droplineOD.setDisabled(isTrue);
 		this.alwBpiTreatment.setDisabled(isTrue);
 		this.dftBpiTreatment.setDisabled(isTrue);
-		this.cbBpiRateBasis.setDisabled(isTrue);
+		this.cbBpiPftDaysBasis.setDisabled(isTrue);
 		this.pftDueSchOn.setDisabled(isTrue);
 		this.alwPlannedEmiHoliday.setDisabled(isTrue);
 		this.planEmiMethod.setDisabled(isTrue);
@@ -4162,7 +4162,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setReadonly(isTrue);
 		this.rpyHierarchy.setDisabled(isTrue);
 		this.dftBpiTreatment.setDisabled(isTrue);
-		this.cbBpiRateBasis.setDisabled(isTrue);
+		this.cbBpiPftDaysBasis.setDisabled(isTrue);
 		this.btnSearchRpyMethod.setDisabled(isTrue);
 		this.btnFrequencyRate.setDisabled(isTrue);
 		this.alwUnPlannedEmiHoliday.setDisabled(isTrue);
@@ -4414,7 +4414,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.pftDueSchOn.setSelectedIndex(0);
 		this.planEmiHLockPeriod.setValue(0);
 		this.dftBpiTreatment.setSelectedIndex(0);
-		this.cbBpiRateBasis.setSelectedIndex(0);
+		this.cbBpiPftDaysBasis.setSelectedIndex(0);
 		this.alwBpiTreatment.setChecked(false);
 		this.alwPlannedEmiHoliday.setChecked(false);
 		onCheckPlannedEmiholiday(null);
@@ -5998,19 +5998,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (this.alwBpiTreatment.isChecked()
 				&& !StringUtils.equals(PennantConstants.List_Select, getComboboxValue(this.dftBpiTreatment))
 				&& !StringUtils.equals(FinanceConstants.BPI_NO, getComboboxValue(this.dftBpiTreatment))) {
-			this.space_bpiRateBasis.setSclass(PennantConstants.mandateSclass);
-			this.cbBpiRateBasis.setDisabled(isCompReadonly);
+			this.space_bpiPftDaysBasis.setSclass(PennantConstants.mandateSclass);
+			this.cbBpiPftDaysBasis.setDisabled(isCompReadonly);
 			if (bpiRateBasis == null) {
-				setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
+				setComboboxSelectedItem(this.cbBpiPftDaysBasis, PennantConstants.List_Select);
 			} else {
-				setComboboxSelectedItem(this.cbBpiRateBasis, bpiRateBasis);
+				setComboboxSelectedItem(this.cbBpiPftDaysBasis, bpiRateBasis);
 			}
 		} else {
-			this.space_bpiRateBasis.setSclass("");
-			this.cbBpiRateBasis.setDisabled(true);
-			this.cbBpiRateBasis.setConstraint("");
-			this.cbBpiRateBasis.setErrorMessage("");
-			setComboboxSelectedItem(this.cbBpiRateBasis, PennantConstants.List_Select);
+			this.space_bpiPftDaysBasis.setSclass("");
+			this.cbBpiPftDaysBasis.setDisabled(true);
+			this.cbBpiPftDaysBasis.setConstraint("");
+			this.cbBpiPftDaysBasis.setErrorMessage("");
+			setComboboxSelectedItem(this.cbBpiPftDaysBasis, PennantConstants.List_Select);
 		}
 
 		logger.debug("Leaving");
