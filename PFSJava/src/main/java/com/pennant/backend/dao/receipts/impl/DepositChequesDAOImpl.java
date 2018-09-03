@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.receipts.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,7 +59,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.model.finance.DepositCheques;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -229,37 +227,15 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T1.Remarks, T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount,");
-		sql.append(" T3.FinReference, T4.CustShrtName FROM FinReceiptHeader_Temp T1 ");
-		sql.append(" INNER JOIN (SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail_Temp T ");
-		sql.append(" UNION ALL SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail T ");
-		sql.append(" WHERE NOT EXISTS(SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId");
-		sql.append(" INNER JOIN FinanceMain T3 ON T1.Reference = T3.finReference");
-		sql.append(" INNER JOIN Customers T4 ON T3.CustId = T4.CustId");
-		sql.append(" WHERE T1.ReceiptMode in (:ReceiptModes) and T1.DepositProcess = :DepositProcess And T1.DepositBranch = :DepositBranch");
-		sql.append(" And T1.ReceiptId Not In (SELECT ReceiptId FROM DepositCheques_Temp) ");
-		sql.append(" UNION ALL ");
-		sql.append(" SELECT T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T1.Remarks, T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount,");
-		sql.append(" T3.FinReference, T4.CustShrtName FROM FinReceiptHeader T1 ");
-		sql.append(" INNER JOIN (SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail_Temp T ");
-		sql.append(" UNION ALL SELECT T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount FROM FinReceiptDetail T"); 
-		sql.append(" WHERE NOT EXISTS(SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId");
-		sql.append(" INNER JOIN FinanceMain T3 ON T1.Reference = T3.finReference");
-		sql.append(" INNER JOIN Customers T4 ON T3.CustId = T4.CustId");
-		sql.append(" WHERE NOT EXISTS(SELECT 1 FROM FinReceiptHeader_Temp WHERE ReceiptId = T1.ReceiptId) ");
-		sql.append(" And T1.ReceiptMode in (:ReceiptModes) and T1.DepositProcess = :DepositProcess And T1.DepositBranch = :DepositBranch");
-		sql.append(" And T1.ReceiptId Not In (SELECT ReceiptId FROM DepositCheques_Temp)");
+		sql.append(" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, FavourNumber, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
+		sql.append(" FROM FinReceiptHeader_DView");
+		sql.append(" WHERE DepositBranch = :DepositBranch");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		
-		List<String> receiptModes = new ArrayList<String>();
-		receiptModes.add(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
-		receiptModes.add(DisbursementConstants.PAYMENT_TYPE_DD);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("ReceiptModes", receiptModes);
 		paramSource.addValue("DepositBranch", branchCode);
-		paramSource.addValue("DepositProcess", 1);
 		RowMapper<DepositCheques> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
 
 		try {

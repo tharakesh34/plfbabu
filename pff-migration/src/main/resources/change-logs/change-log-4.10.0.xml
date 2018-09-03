@@ -6961,4 +6961,44 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		</sql>
 	</changeSet>
 	
+	<changeSet id="88" author="Kesav">
+		 <createView replaceIfExists="true" viewName="FinReceiptHeader_DView">
+			Select 		T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T1.Remarks, T1.DepositBranch,
+						T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount,
+						T3.FinReference, 
+						T4.CustShrtName
+			 From 		FinReceiptHeader_Temp T1 
+			 Inner Join (Select 	T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount, T.PaymentType
+						 From   	FinReceiptDetail_Temp T 
+						 Union All
+						 Select 	T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount, T.PaymentType
+						 From   	FinReceiptDetail T 
+						 WHERE  NOT  EXISTS (SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId And T2.PaymentType = T1.ReceiptMode
+			 Inner Join FinanceMain T3 ON T1.Reference = T3.finReference
+			 Inner Join Customers T4 ON T3.CustId = T4.CustId
+			 where 		T1.ReceiptMode in ('CHEQUE', 'DD') and T1.DepositProcess = 1
+			 And 		T1.ReceiptId Not In (Select ReceiptId from DepositCheques_Temp)
+			 
+			 Union All 
+			 
+			 Select 	T1.ReceiptId, T1.Receiptpurpose, T1.ReceiptMode, T1.Remarks, T1.DepositBranch,
+						T2.FavourNumber, T2.ReceivedDate, T2.FundingAc, T2.Amount,
+						T3.FinReference, 
+						T4.CustShrtName
+			 From 		FinReceiptHeader T1 
+			 Inner Join (Select 	T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount, T.PaymentType
+						 From   	FinReceiptDetail_Temp T 
+						 Union All
+						 Select 	T.ReceiptId, T.FavourNumber, T.ReceivedDate, T.FundingAc, T.Amount, T.PaymentType
+						 From   	FinReceiptDetail T 
+						 WHERE  NOT  EXISTS (SELECT 1 FROM FinReceiptDetail_Temp WHERE ReceiptId = T.ReceiptId)) T2 On T2.ReceiptId = T1.ReceiptId And T2.PaymentType = T1.ReceiptMode
+			 Inner Join FinanceMain T3 ON T1.Reference = T3.finReference
+			 Inner Join Customers T4 ON T3.CustId = T4.CustId
+			 
+			 WHERE  	NOT  EXISTS (SELECT 1 FROM FinReceiptHeader_Temp WHERE ReceiptId = T1.ReceiptId) 
+						And T1.ReceiptMode in ('CHEQUE', 'DD') and T1.DepositProcess = 1
+						And T1.ReceiptId Not In (Select ReceiptId from DepositCheques_Temp)
+		 </createView>
+	</changeSet>
+	
 </databaseChangeLog>
