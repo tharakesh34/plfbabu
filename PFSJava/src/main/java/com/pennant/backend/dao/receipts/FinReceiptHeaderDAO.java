@@ -25,6 +25,9 @@ public interface FinReceiptHeaderDAO {
 	List<FinReceiptHeader> getUpFrontReceiptHeaderByExtRef(String extRef, String type);
 	List<Long> fetchReceiptIdList(String finreference);
 	
+	boolean checkInProcessPresentments(String reference);
+	boolean checkInProcessReceipts(String refernce);
+	
 	public void cancelReceipts(String finReference);
 	
 	public boolean isExtRefAssigned(String finReference);

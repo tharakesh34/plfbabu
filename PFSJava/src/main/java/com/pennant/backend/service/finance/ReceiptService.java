@@ -31,4 +31,5 @@ public interface ReceiptService {
 			Date valueDate, List<FinanceRepayments> repayments, boolean resetReq);
 	Date getMaxReceiptDate(String finReference);
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction, String method);
+	boolean isReceiptsPending(String finreference);
 }

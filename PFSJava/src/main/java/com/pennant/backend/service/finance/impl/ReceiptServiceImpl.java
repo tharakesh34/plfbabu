@@ -2910,6 +2910,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				valueParm[1] = DateUtility.formatToShortDate(DateUtility.getAppDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91126", "", valueParm)));
 			}
+			//#### 04-09-2018 for core (Checking for inprocess receipts and presentments)
+			if (isReceiptsPending(finServiceInstruction.getFinReference())){
+			    String[] valueParm = new String[1];
+				valueParm[0] = "Not allowed to do Early Settlement due to previous Presentments/Receipts are in process";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm)));
+				return auditDetail;
+			}
 		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			// It should be greater than or equals to application date
 			if (fromDate.compareTo(DateUtility.getAppDate()) < 0) {
@@ -2970,6 +2977,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+	
+	//#### 04-09-2018 for core (Checking for inprocess receipts and presentments)
+	
+		@Override
+		public boolean isReceiptsPending(String finreference) {
+			boolean isPending =false;
+			isPending=getFinReceiptHeaderDAO().checkInProcessPresentments(finreference);
+			if (!isPending){
+				isPending=getFinReceiptHeaderDAO().checkInProcessReceipts(finreference);
+			}
+			return isPending;
+		}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

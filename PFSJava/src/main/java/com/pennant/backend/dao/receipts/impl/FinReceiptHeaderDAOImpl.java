@@ -533,5 +533,56 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 	   return isAssigned;
 	}
+	
+	
+	@Override
+	public boolean checkInProcessPresentments(String reference) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*)  from PresentmentDetails where Id In (select PresentmentId from finScheduleDetails where ");
+		selectSql.append(" FinReference = :Reference and presentmentId !=0 ) AND status in ('A','I') and FinReference =:Reference");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count>0;
+	}
+
+	@Override
+	public boolean checkInProcessReceipts(String reference) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*)  from FinReceiptHeader_Temp where ");
+		selectSql.append(" FinReference = :Reference");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count>0;
+	}
 
 }

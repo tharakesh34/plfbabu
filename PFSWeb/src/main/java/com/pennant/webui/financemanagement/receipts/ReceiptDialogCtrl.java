@@ -1422,6 +1422,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 			} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+				//#### 04-09-2018 for core (Checking for inprocess receipts and presentments)
+				boolean isReceiptPending=getReceiptService().isReceiptsPending(this.finReference.getValue());
+				if (isReceiptPending){
+					 MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Cannot_Process" ,
+								new String[] {recPurpose}));
+					 this.receiptPurpose.setSelectedIndex(0);
+					return;
+				}
 			}
 
 			makeFeeRender = true;
