@@ -1,5 +1,7 @@
 package com.pennanttech.pennapps.pff.sampling.model;
 
+import java.math.BigDecimal;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class SamplingCollateral extends AbstractWorkflowEntity {
@@ -12,6 +14,8 @@ public class SamplingCollateral extends AbstractWorkflowEntity {
 	private String collateralType;
 	private String collateralTypeName;
 	private String linkId;
+	private BigDecimal bankLTV = BigDecimal.ZERO;
+	private BigDecimal assignPerc = BigDecimal.ZERO;
 	
 	public SamplingCollateral() {
 		super();
@@ -71,5 +75,21 @@ public class SamplingCollateral extends AbstractWorkflowEntity {
 
 	public void setLinkId(String linkId) {
 		this.linkId = linkId;
+	}
+
+	public BigDecimal getBankLTV() {
+		return bankLTV;
+	}
+
+	public void setBankLTV(BigDecimal bankLTV) {
+		this.bankLTV = bankLTV;
+	}
+
+	public BigDecimal getAssignPerc() {
+		return assignPerc;
+	}
+
+	public void setAssignPerc(BigDecimal assignPerc) {
+		this.assignPerc = assignPerc;
 	}
 }

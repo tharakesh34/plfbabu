@@ -324,6 +324,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String casteDesc;
 	private String religionDesc;
 	private String aadhaarNo;
+	private boolean	includeIncome;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -374,6 +375,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("religionDesc");
 		excludeFields.add("aadhaarNo");
 		excludeFields.add("customerAge");
+		excludeFields.add("includeIncome");
 		return excludeFields;
 	}
 
@@ -1907,6 +1909,13 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.aadhaarNo = aadhaarNo;
 	}
 
+	public boolean isIncludeIncome() {
+		return includeIncome;
+	}
+
+	public void setIncludeIncome(boolean includeIncome) {
+		this.includeIncome = includeIncome;
+	}
 
 	public boolean isMarginDeviation() {
 		return marginDeviation;

@@ -214,6 +214,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		query.append(" update sampling");
 		query.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		query.append(" set tenure =:tenure, interestrate = :interestRate, loanEligibility = :loanEligibility, lcreligibility = :lcrEligibility, ltveligibility = :ltvEligibility,");
+		query.append(" totalincome =:totalIncome, totalliability = :totalLiability,");
 		query.append(" foireligibility =:foirEligibility, irreligibility = :irrEligibility, emi = :emi,");
 		query.append(" totalCustomerIntObligation = :totalCustomerIntObligation,");
 		query.append(" totalCoApplicantsIntObligation = :totalCoApplicantsIntObligation,");
@@ -398,7 +399,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select 1 custTypeCode, cu.custid, cu.custCif, cu.custshrtname, cu.phonenumber,");
-		sql.append(" ca.custaddrtype custAddlVar1");
+		sql.append(" ca.custaddrtype custAddlVar1, 0 includeincome ");
 		sql.append(" from sampling").append(type).append(" s");
 		sql.append(" inner join financemain_view fm on fm.finreference = s.keyreference");
 		sql.append(" inner join customers_view cu on cu.custid = fm.custid");
@@ -406,7 +407,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" where s.keyreference = :keyreference and ca.custaddrpriority = :custaddrpriority");
 		sql.append(" union all");
 		sql.append(" select 2 custTypeCode, cu.custid, cu.custCif, cu.custshrtname, cu.phonenumber,");
-		sql.append(" ca.custaddrtype custAddlVar1");
+		sql.append(" ca.custaddrtype custAddlVar1, ja.includeincome ");
 		sql.append(" from sampling").append(type).append(" s");
 		sql.append(" inner join finjointaccountdetails_view ja on ja.finreference = s.keyreference");
 		sql.append(" inner join customers_view cu on cu.custid = ja.custid");
@@ -472,7 +473,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public List<SamplingCollateral> getCollaterals(String keyreference, String collateralType) {
 		collateralType = collateralType.toLowerCase();
 		StringBuilder sql = new StringBuilder();
-		sql.append("select depositorcif, depositorname, cs.collateralref, tv.Seqno,");
+		sql.append("select depositorcif, depositorname, ca.assignperc, cs.collateralref, cs.bankltv, tv.Seqno,");
 		sql.append(" collateraltype, collateraltypename");
 		sql.append(" from collateralassignment_view ca");
 		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
@@ -993,23 +994,33 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	}
 	
 	@Override
-	public BigDecimal getCollateralAssignedValue(List<String> collateralReferences){
+	public List<CustomerIncome> getIncomesByCustId(long samplingId, long custId, String type) {
 		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
-		sql.append("select sum(collateralvalue) from");
-		sql.append(" collateralassignment_view ");
-		sql.append(" where collateralref in(:collateralReferences)");
-		
+		sql.append("select * from sampling_income_details");
+		sql.append(type);
+		sql.append(" where linkid in(");
+		sql.append(" (select coalesce(linkid, 0) from link_sampling_incomes");
+		sql.append(" where samplingid = :samplingid and custid = :custId))");
+
 		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("collateralReferences", collateralReferences);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("samplingid", samplingId);
+		paramSource.addValue("custId", custId);
+
+		RowMapper<CustomerIncome> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			return new ArrayList<>();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return BigDecimal.ZERO;
-		
+		return new ArrayList<>();
+
 	}
 }

@@ -77,7 +77,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
+import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 
 /**
  * Service implementation for methods that depends on <b>JountAccountDetail</b>.<br>
@@ -96,6 +99,10 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	@Autowired
 	private IncomeDetailDAO incomeDetailDAO;
 	private CustomerDAO customerDAO;
+	@Autowired
+	private SamplingDAO samplingDAO;
+	@Autowired
+	private SamplingService samplingService;
 
 	public JointAccountDetailServiceImpl() {
 		super();
@@ -520,10 +527,23 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
-
+		
+		Sampling sampling  = null;
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			JointAccountDetail JointAccountDetail = (JointAccountDetail) auditDetails.get(i).getModelData(); 
+			
+			if (!JointAccountDetail.isIncludeIncome() && !JointAccountDetail.isNewRecord()) {
+				if (sampling == null) {
+					sampling = samplingService.getSampling(JointAccountDetail.getFinReference(), "_aview");
+				}
+				if (sampling != null) {
+					long linkId = samplingDAO.getIncomeLinkIdByCustId(JointAccountDetail.getCustID(), sampling.getId());
+					if (linkId != 0) {
+						incomeDetailDAO.deletebyLinkId(linkId, "");
+					}
+				}
+			}
 			
 			if(JointAccountDetail.getCustomerDetails() != null&&JointAccountDetail.getCustomerDetails().getExtendedFieldRender() != null){
 				processingJointAccExtendedFields(JointAccountDetail, tableType, auditTranType);

@@ -384,6 +384,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("newRecord", "true");
 		map.put("roleCode", roleCode);
 		map.put("financeMain", financeMain);
+		map.put("financeDetail", financeDetail);
 		map.put("primaryCustID", custCIF);
 		map.put("ccy", ccy);
 		map.put("filter", getjointAcFilter());
@@ -529,8 +530,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("filter", getjointAcFilter());
 				if(!enquiry){
 					map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
+					map.put("financeDetail", financeDetail);
 				}else{
 					map.put("financeMain", financeMain);
+					map.put("financeDetail", financeDetail);
 					map.put("enqModule", enquiry);
 					map.put("moduleType", "ENQ");
 				}

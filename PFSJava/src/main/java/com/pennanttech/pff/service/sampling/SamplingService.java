@@ -5,7 +5,9 @@ import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 
 public interface SamplingService {
@@ -43,5 +45,8 @@ public interface SamplingService {
 	long getCollateralLinkId(String collateralRef, long id, String string);
 
 	void saveOnReSubmit(Sampling sampling);
-
+	
+	List<CustomerIncome> getIncomesByCustId(long samplingId,long custId, String type);
+	
+	void reCalculate(FinanceDetail financeDetail);
 }

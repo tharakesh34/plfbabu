@@ -150,7 +150,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private Map<String, ExtendedFieldRender> extFieldRenderList;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	private Set<String> primaryCustomer = new HashSet<>();
-	private Set<String> coApplicantCustomers = new HashSet<>();
+	private Set<String> coApplicantIncomeCustomers = new HashSet<>();
+	private Set<String> coApplicantObligationCustomers = new HashSet<>();
 
 	private boolean fromLoanOrg;
 
@@ -377,9 +378,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		this.loanTenure.setValue(sampling.getTenure());
 		this.interestRate.setValue(PennantApplicationUtil.formatRate(sampling.getInterestRate().doubleValue(), 2));
-
+		
 		setEligibilityAmounts(sampling);
-
+		
 		calculateEligibility(false);
 
 		this.recordStatus.setValue(sampling.getRecordStatus());
@@ -403,7 +404,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.iirEligibility.setValue(PennantAppUtil.formateAmount(sampling.getIrrEligibility(), ccyFormatter));
 		this.loanEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLoanEligibility(), ccyFormatter));
 		this.lcrEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLcrEligibility(), ccyFormatter));
-		this.ltvEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLtvEligibility(), ccyFormatter));
+		this.ltvEligibility.setValue(sampling.getLtvEligibility());
 	}
 
 	private void doFillCollaterals(List<SamplingCollateral> collSetupList) {
@@ -486,8 +487,11 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 				if (Integer.valueOf(customer.getCustTypeCode()) == 1) {
 					primaryCustomer.add(customer.getCustCIF());
-				} else {
-					coApplicantCustomers.add(customer.getCustCIF());
+				} else if(customer.isIncludeIncome()) {
+					coApplicantIncomeCustomers.add(customer.getCustCIF());
+					coApplicantObligationCustomers.add(customer.getCustCIF());
+				}else {
+					coApplicantObligationCustomers.add(customer.getCustCIF());
 				}
 				this.listBoxCustomerDetails.appendChild(item);
 			}
@@ -620,13 +624,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		aSampling.setTenure(this.loanTenure.getValue());
 		aSampling.setInterestRate(this.interestRate.getValue());
 		aSampling.setExtFieldRenderList(getExtFieldRenderList());
-
-		if ((aSampling.getTenure() != null && aSampling.getTenure() > 0) && (aSampling.getInterestRate() != null
-				&& BigDecimal.ZERO.compareTo(aSampling.getInterestRate()) != 0)) {
+		
 			this.samplingService.calculateEligilibity(aSampling);
 			setEligibilityAmounts(aSampling);
-		}
-
 	}
 
 	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
@@ -641,7 +641,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerIncome", customerIncome);
 				map.put("samplingDialogCtrl", this);
-				map.put("coApplicants", coApplicantCustomers);
+				map.put("coApplicants", coApplicantIncomeCustomers);
 				map.put("ccyFormatter", ccyFormatter);
 				map.put("roleCode", getRole());
 				map.put("enqiryModule", enqiryModule);
@@ -670,7 +670,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				map.put("externalLiability", externalLiability);
 				map.put("finFormatter", ccyFormatter);
 				map.put("samplingDialogCtrl", this);
-				map.put("coApplicants", coApplicantCustomers);
+				map.put("coApplicants", coApplicantObligationCustomers);
 				map.put("isFinanceProcess", false);
 				map.put("roleCode", getRole());
 				map.put("enqiryModule", enqiryModule);
@@ -819,8 +819,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				ltvEligibility = BigDecimal.ZERO;
 			}
 
-			ltvEligibility = PennantAppUtil.unFormateAmount(ltvEligibility, ccyFormatter);
-
 			sampling.setLtvEligibility(ltvEligibility);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -900,15 +898,19 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		arrayList.add(2, this.sampling.getFinTypeDesc());
 		arrayList.add(3, this.sampling.getBranchCode());
 		arrayList.add(4, this.sampling.getBranchDesc());
-		arrayList.add(5, this.sampling.getLoanAmountRequested());
+		arrayList.add(5, PennantAppUtil.amountFormate(sampling.getLoanAmountRequested(), ccyFormatter));
 		arrayList.add(6, this.sampling.getNumberOfTerms());
 		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(), DateFormat.SHORT_DATE));
-
-		if ("F".equals(sampling.getFinGrcRateType())) {
-			arrayList.add(8, PennantApplicationUtil.formatRate(Double.parseDouble(this.sampling.getRepaySpecialRate()), 2));
+		
+		BigDecimal rate = BigDecimal.ZERO;
+		if (sampling.getRepayBaseRate() != null) {
+			RateDetail details = RateUtil.rates(sampling.getRepayBaseRate(), sampling.getFinccy(),
+					sampling.getRepaySpecialRate(), sampling.getRepayMargin(), sampling.getRepayMinRate(), sampling.getRepayMaxRate());
+			rate = details.getNetRefRateLoan();
 		} else {
-			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
+			rate = sampling.getRepayProfitRate();
 		}
+		arrayList.add(8, PennantApplicationUtil.formatRate(rate.doubleValue(), 2));
 
 		return arrayList;
 	}
@@ -943,7 +945,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("samplingDialogCtrl", this);
 		map.put("newRecord", "true");
 		map.put("finReference", sampling.getKeyReference());
-		map.put("coApplicants", coApplicantCustomers);
+		map.put("coApplicants", coApplicantIncomeCustomers);
 		map.put("ccyFormatter", ccyFormatter);
 		map.put("roleCode", getRole());
 		map.put("enqiryModule", enqiryModule);
@@ -970,7 +972,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("externalLiability", laibility);
 		map.put("finFormatter", ccyFormatter);
 		map.put("samplingDialogCtrl", this);
-		map.put("coApplicants", coApplicantCustomers);
+		map.put("coApplicants", coApplicantObligationCustomers);
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
 		map.put("enqiryModule", enqiryModule);

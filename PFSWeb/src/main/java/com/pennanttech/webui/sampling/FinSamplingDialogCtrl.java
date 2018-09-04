@@ -299,7 +299,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 	private void renderList() {
 		// renderFields();
-		renderSamplingDtails();
+		renderSamplingDtails(sampling);
 		this.samplingResubmitReason.addForward("onFulfill", self, "onChangeReason");
 	}
 
@@ -314,15 +314,18 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug("Leaving");
 	}
 
-	private void renderSamplingDtails() {
+	public void renderSamplingDtails(Sampling sampling) {
+		if(sampling == null){
+			return;
+		}
+		this.sampling = sampling;
 		formatter = sampling.getCcyeditfield();
 		Textbox textbox;
 		Row row;
 		Label label;
 		Cell cell;
-
+			rows_Sampling.getChildren().clear();
 		for (SamplingDetail sd : sampling.getSamplingDetailsList()) {
-
 			// Render collateral Caption
 			if (StringUtils.isNotEmpty(sd.getCaption())) {
 				row = new Row();

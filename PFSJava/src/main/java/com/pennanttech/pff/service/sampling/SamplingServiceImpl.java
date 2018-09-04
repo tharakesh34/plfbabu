@@ -38,6 +38,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -53,6 +54,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
@@ -95,11 +97,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	@Autowired
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	@Autowired
+	private FinSamplingService finSamplingService;
 
 	public SamplingServiceImpl() {
 		super();
 	}
-	
+
 	@Override
 	public void save(Sampling sampling) {
 		setWorkflowDetails(sampling);
@@ -543,26 +547,34 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_Internal", sampling.getTotalCoApplicantsIntObligation());
 		fieldsandvalues.put("Customer_Obligation_Internal", sampling.getTotalCustomerIntObligation());
-		fieldsandvalues.put("reqProduct", sampling.getFinType());
+		fieldsandvalues.put("reqProduct", sampling.getFinCategory());
 		fieldsandvalues.put("reqFinType", sampling.getFinType());
-		fieldsandvalues.put("Collaterals_Total_Assigned", sampling.getCollateralAssignedValue());
+    
+	     BigDecimal unitPrice =BigDecimal.ZERO;
+	     BigDecimal bankLTV = BigDecimal.ZERO;
+	 	 BigDecimal assignPerc = BigDecimal.ZERO;
 		
 		Set<String> fieldNames = sampling.getCollateralFieldsForRule();
 		ExtendedFieldHeader extHeader = sampling.getExtendedFieldHeader();
 		if (extHeader != null) {
-			String moduleFinType = extHeader.getModuleName().concat("_").concat(sampling.getFinType());
+			String moduleSubmodule = extHeader.getModuleName().concat("_").concat(extHeader.getSubModuleName());
 			Map<String, ExtendedFieldRender> extFieldRenderMap = sampling.getExtFieldRenderList();
 			for (ExtendedFieldRender extRender : extFieldRenderMap.values()) {
 				Map<String, Object> extRenderMap = extRender.getMapValues();
 				for (String fieldName : fieldNames) {
 					if (extRenderMap.containsKey(fieldName)) {
-						String key = moduleFinType.concat("_").concat(fieldName);
+						String key = moduleSubmodule.concat("_").concat(fieldName);
 						fieldsandvalues.put(key, extRenderMap.get(fieldName));
 					}
 				}
+				if (extRenderMap.containsKey("UNITPRICE")) {
+					unitPrice = (BigDecimal) extRenderMap.get("UNITPRICE");
+				}
+				bankLTV = sampling.getCollateral().getBankLTV();
+				assignPerc = sampling.getCollateral().getAssignPerc();
 				break;
 			}
-						
+
 			amount = BigDecimal.ZERO;
 			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LCRMAXEL);
 			if (ruleCode != null) {
@@ -572,47 +584,71 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				amount = (BigDecimal) object;
 			}
 			sampling.setLcrEligibility(amount);
+
+			BigDecimal collateralAssignedValue =BigDecimal.ZERO;
+			collateralAssignedValue = bankLTV.multiply(unitPrice).multiply(assignPerc);
+			collateralAssignedValue = collateralAssignedValue.divide(new BigDecimal(10000));
+			fieldsandvalues.put("Collaterals_Total_Assigned", collateralAssignedValue);
 			
-		}
-		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
-		if (ruleCode != null) {
-			if (!ruleCode.contains("Customer_Obligation_Internal")) {
-				sampling.setTotalCustomerIntObligation(BigDecimal.ZERO);
+			amount = BigDecimal.ZERO;
+			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LTVAMOUN);
+			if (ruleCode != null) {
+				object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
 			}
-
-			if (!ruleCode.contains("Co_Applicants_Obligation_External")) {
-				sampling.setTotalCoApplicantsIntObligation(BigDecimal.ZERO);
+			if (object != null) {
+				amount = (BigDecimal) object;
 			}
-
-			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
+			sampling.setLtvEligibility(amount);
 		}
-		if (object != null) {
-			amount = (BigDecimal) object;
-			amount = amount.multiply(new BigDecimal(100));
-		}
-		sampling.setFoirEligibility(amount);
-
-		amount = BigDecimal.ZERO;
-		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_IIRMAX);
-		if (ruleCode != null) {
-			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
-		}
-		if (object != null) {
-			amount = (BigDecimal) object;
-			amount = amount.multiply(new BigDecimal(100));
-		}
-		sampling.setIrrEligibility(amount);
 		
-		amount = BigDecimal.ZERO;
-		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LTVAMOUN);
-		if (ruleCode != null) {
-			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
-		}
-		if (object != null) {
-			amount = (BigDecimal) object;
-		}
-		sampling.setLtvEligibility(amount);
+		if ((sampling.getTenure() != null && sampling.getTenure() > 0) && (sampling.getInterestRate() != null
+				&& BigDecimal.ZERO.compareTo(sampling.getInterestRate()) != 0)) {
+			amount = BigDecimal.ZERO;
+			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
+			if (ruleCode != null) {
+				if (!ruleCode.contains("Customer_Obligation_Internal")) {
+					sampling.setTotalCustomerIntObligation(BigDecimal.ZERO);
+				}
 
+				if (!ruleCode.contains("Co_Applicants_Obligation_External")) {
+					sampling.setTotalCoApplicantsIntObligation(BigDecimal.ZERO);
+				}
+
+				object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
+			}
+			if (object != null) {
+				amount = (BigDecimal) object;
+				amount = amount.multiply(new BigDecimal(100));
+			}
+			sampling.setFoirEligibility(amount);
+
+			amount = BigDecimal.ZERO;
+			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_IIRMAX);
+			if (ruleCode != null) {
+				object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
+			}
+			if (object != null) {
+				amount = (BigDecimal) object;
+				amount = amount.multiply(new BigDecimal(100));
+			}
+			sampling.setIrrEligibility(amount);
+
+			BigDecimal rate = sampling.getInterestRate();
+			int frqequency = 12;
+			int noOfTerms = sampling.getTenure();
+			BigDecimal principle = new BigDecimal(100000);
+
+			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
+					BigDecimal.ROUND_HALF_DOWN);
+			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
+			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
+			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
+
+			BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
+			emi = emi.multiply(new BigDecimal(100));
+			sampling.setEmi(emi);
+		}
+		
 		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
 		BigDecimal requestedAmount = sampling.getLoanAmountRequested();
 
@@ -621,7 +657,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		} else {
 			loanEligibilityAmount = sampling.getIrrEligibility();
 		}
-		
+
 		if (sampling.getLcrEligibility().compareTo(loanEligibilityAmount) == -1) {
 			loanEligibilityAmount = sampling.getLcrEligibility();
 		}
@@ -638,21 +674,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 
 		sampling.setLoanEligibility(loanEligibilityAmount);
-
-		BigDecimal rate = sampling.getInterestRate();
-		int frqequency = 12;
-		int noOfTerms = sampling.getTenure();
-		BigDecimal principle = new BigDecimal(100000);
-
-		BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-				BigDecimal.ROUND_HALF_DOWN);
-		BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
-		BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
-		BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
-
-		BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
-		emi = emi.multiply(new BigDecimal(100));
-		sampling.setEmi(emi);
 	}
 
 	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {
@@ -683,14 +704,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				temp.getCollaterals().addAll(samplingDAO.getCollaterals(finReference, collateralType));
 			}
 			
-			List<String> collReferences = new ArrayList<>();
-			if(CollectionUtils.isNotEmpty(temp.getCollaterals())){
-				for (SamplingCollateral samplingCollateral : temp.getCollaterals()) {
-					collReferences.add(samplingCollateral.getCollateralRef());
-				}
-				temp.setCollateralAssignedValue(samplingDAO.getCollateralAssignedValue(collReferences));
-			}
-
 			temp.setCustomerIncomeList(samplingDAO.getIncomes(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
@@ -821,12 +834,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		} else {
 			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByFinReference(keyReference));
 		}
-		
+
 		BigDecimal amount = sampling.getOriginalTotalLiability();
 		amount = amount.add(sampling.getTotalCustomerIntObligation());
 		amount = amount.add(sampling.getTotalCoApplicantsIntObligation());
 		sampling.setOriginalTotalLiability(amount);
-		
+
 		List<SamplingCollateral> collaters = samplingDAO.getCollateralTypesBySamplingId(sampling.getId());
 
 		List<String> linkIds = samplingDAO.getCollateralLinkIds(sampling.getId());
@@ -880,7 +893,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 
 		sampling.setOriginalLoanEligibility(samplingDAO.getLoanEligibility(keyReference, eligibilityRule));
-
+		sampling.setEligibilityRules(samplingDAO.getEligibilityRules());
 		return sampling;
 	}
 
@@ -1662,6 +1675,46 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				samplingDAO.updateCollaterals(sampling, collateralType);
 				collateral.add(collateralType);
 			}
+		}
+	}
+
+	@Override
+	public List<CustomerIncome> getIncomesByCustId(long samplingId, long custId, String type) {
+		return samplingDAO.getIncomesByCustId(samplingId, custId, type);
+	}
+
+	@Override
+	public void reCalculate(FinanceDetail financeDetail) {
+		Sampling sampling = financeDetail.getSampling();
+		if (sampling == null) {
+			return;
+		}
+		BigDecimal originalIncome = sampling.getTotalIncome();
+		BigDecimal totIncome = BigDecimal.ZERO;
+		List<CustomerIncome> incomes = new ArrayList<>();
+		Set<Long> excludeIncomes = sampling.getExcludeIncome();
+		for (Long custId : excludeIncomes) {
+			incomes = getIncomesByCustId(sampling.getId(), custId, "_aview");
+			for (CustomerIncome customerIncome : incomes) {
+				totIncome = totIncome.add(customerIncome.getCalculatedAmount());
+			}
+			originalIncome = originalIncome.subtract(totIncome);
+		}
+
+		totIncome = BigDecimal.ZERO;
+		Set<Long> includeIncomes = sampling.getIncludeIncome();
+		for (Long custId : includeIncomes) {
+			incomes = getIncomesByCustId(sampling.getId(), custId, "_aview");
+			for (CustomerIncome customerIncome : incomes) {
+				totIncome = totIncome.add(customerIncome.getCalculatedAmount());
+			}
+			originalIncome = originalIncome.add(totIncome);
+		}
+
+		if (BigDecimal.ZERO.compareTo(originalIncome) < 0) {
+			sampling.setTotalIncome(originalIncome);
+			calculateEligilibity(sampling);
+			financeDetail.setSampling(finSamplingService.calculateVariance(sampling));
 		}
 	}
 }

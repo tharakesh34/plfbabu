@@ -23,6 +23,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAO;
+import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
@@ -38,6 +39,9 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 	
 	@Autowired
 	private SamplingService samplingService;
+	
+	@Autowired
+	private SamplingDAO samplingDAO;
 
 	@Override
 	public AuditDetail saveOrUpdate(FinanceDetail financeDetail, String auditTranType) {
@@ -63,24 +67,29 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		}
 
 		finSamplingDAO.saveOrUpdateRemarks(samplingRemarks, TableType.MAIN_TAB);
+		samplingDAO.update(sampling, TableType.MAIN_TAB);
 		logger.debug(Literal.LEAVING);
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], sampling.getBefImage(), sampling);
 	}
 
 	public Sampling getSamplingDetails(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
+		Sampling sampling = samplingService.getSampling(finReference, type);
+		return calculateVariance(sampling);
+	}
+
+	public Sampling calculateVariance(Sampling sampling) {
 		BigDecimal varaiance;
 		BigDecimal original;
 		BigDecimal current;
 		SamplingDetail sd;
-		Sampling sampling = samplingService.getSampling(finReference, type);
 
 		if (sampling == null) {
 			return null;
 		}
 		int formatter = sampling.getCcyeditfield();
 		List<SamplingDetail> sdList = sampling.getSamplingDetailsList();
-
+		sdList.clear();
 		original = sampling.getOriginalTotalIncome();
 		current = sampling.getTotalIncome();
 

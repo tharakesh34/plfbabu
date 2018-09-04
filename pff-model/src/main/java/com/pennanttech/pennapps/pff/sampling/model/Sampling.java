@@ -62,6 +62,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	private String custShrtName;
 	private String finType;
 	private String finTypeDesc;
+	private String finCategory;
 	private String branchCode;
 	private String branchDesc;
 	private String finGrcRateType;
@@ -94,7 +95,8 @@ public class Sampling extends AbstractWorkflowEntity {
 	private BigDecimal totalCustomerIntObligation;
 	private BigDecimal totalCoApplicantsIntObligation;
 	private Set<String> collateralFieldsForRule = new HashSet<>();
-	private BigDecimal collateralAssignedValue = BigDecimal.ZERO;
+	private Set<Long> excludeIncome = new HashSet<>();
+	private Set<Long> includeIncome = new HashSet<>();
 
 	/**
 	 * Sampling approve details
@@ -136,6 +138,7 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("custShrtN0ame");
 		excludeFields.add("finType");
 		excludeFields.add("finTypeDesc");
+		excludeFields.add("finCategory");
 		excludeFields.add("branchCode");
 		excludeFields.add("branchDesc");
 		excludeFields.add("customerDetails");
@@ -197,7 +200,8 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("totalCustomerExposre");
 		excludeFields.add("totalCoApplicantsExposre");
 		excludeFields.add("collateralFieldsForRule");
-		excludeFields.add("collateralAssignedValue");
+		excludeFields.add("excludeIncome");
+		excludeFields.add("includeIncome");
 
 		return excludeFields;
 	}
@@ -364,6 +368,14 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	public void setFinTypeDesc(String finTypeDesc) {
 		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getFinCategory() {
+		return finCategory;
+	}
+
+	public void setFinCategory(String finCategory) {
+		this.finCategory = finCategory;
 	}
 
 	public String getBranchCode() {
@@ -802,12 +814,20 @@ public class Sampling extends AbstractWorkflowEntity {
 		this.collateralFieldsForRule = collateralFieldsForRule;
 	}
 
-	public BigDecimal getCollateralAssignedValue() {
-		return collateralAssignedValue;
+	public Set<Long> getExcludeIncome() {
+		return excludeIncome;
 	}
 
-	public void setCollateralAssignedValue(BigDecimal collateralAssignedValue) {
-		this.collateralAssignedValue = collateralAssignedValue;
+	public void setExcludeIncome(Set<Long> excludeIncome) {
+		this.excludeIncome = excludeIncome;
+	}
+
+	public Set<Long> getIncludeIncome() {
+		return includeIncome;
+	}
+
+	public void setIncludeIncome(Set<Long> includeIncome) {
+		this.includeIncome = includeIncome;
 	}
 	
 }

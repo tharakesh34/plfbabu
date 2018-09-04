@@ -2945,6 +2945,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		case AssetConstants.UNIQUE_ID_PSL_DETAILS:
 			pSLDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
+		case AssetConstants.UNIQUE_ID_SAMPLINGAPPROVAL:
+			finSamplingDialogCtrl.renderSamplingDtails(financeDetail.getSampling());
+			break;
 		default:
 			break;
 		}

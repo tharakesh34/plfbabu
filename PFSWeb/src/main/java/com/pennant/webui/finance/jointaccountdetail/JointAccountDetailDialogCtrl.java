@@ -85,6 +85,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -100,11 +101,14 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.service.sampling.SamplingService;
 
 /**
  * This is the controller class for the
@@ -181,6 +185,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	// not auto wired vars
 	private com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl finJointAccountCtrl;
 	private FinanceMain financeMain;
+	private FinanceDetail financeDetail = null;
 	private JointAccountDetail jountAccountDetail;
 	private List<JointAccountDetail> jointAccountDetailList; // overhanded per
 	// param
@@ -210,6 +215,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	List<ValueLabel> coapplicantList = PennantAppUtil.getcoApplicants();
 	@Autowired
 	CustomerDetailsService customerDetailsService;
+	@Autowired
+	private SamplingService samplingService;
 	
 	/**
 	 * default constructor.<br>
@@ -294,6 +301,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			
 			if (arguments.containsKey("financeMain")) {
 				setFinanceMain((FinanceMain) arguments.get("financeMain"));
+			}
+			
+			if (arguments.containsKey("financeDetail")) {
+				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+				if(financeDetail!=null && financeDetail.getSampling()!=null){
+					financeDetail.getSampling().getExcludeIncome().clear();
+					financeDetail.getSampling().getIncludeIncome().clear();
+				}
 			}
 			
 			if (arguments.containsKey("primaryCustID")) {
@@ -1473,7 +1488,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				auditHeader = ErrorControl.showErrorDetails(this.window_JountAccountDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					
+					if(financeDetail!=null && financeDetail.getSampling()!=null){
+						samplingService.reCalculate(financeDetail);
+					}
 					getFinanceMainDialogCtrl().doFillJointDetails(this.jointAccountDetailList);
 					closeDialog();
 				}
@@ -1624,6 +1641,22 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.label_Sequence.setVisible(false);
 			this.sequence.setValue(0);
 		}
+	}
+	
+	public void onCheck$includeIncome(Event event) {
+		logger.debug(Literal.ENTERING);
+		Sampling sampling = financeDetail.getSampling();
+		if (sampling != null) {
+			sampling.getIncludeIncome().clear();
+			sampling.getExcludeIncome().clear();
+			if (includeIncome.isChecked() && !this.jountAccountDetail.isNewRecord()) {
+				sampling.getIncludeIncome().add(this.jountAccountDetail.getCustID());
+			} else if (!includeIncome.isChecked() && !this.jountAccountDetail.isNewRecord()) {
+				sampling.getExcludeIncome().add(this.jountAccountDetail.getCustID());
+			}
+			financeDetail.setSampling(sampling);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//
