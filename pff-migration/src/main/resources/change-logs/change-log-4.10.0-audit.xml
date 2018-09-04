@@ -114,4 +114,11 @@
 		<comment> Column rename</comment>
 		<renameColumn tableName="AdtFinanceMain" oldColumnName="bpiratebasis" newColumnName="bpipftdaysbasis"/>
 </changeSet>
+
+	<changeSet id="13" author="Durgaprasad G">
+		<addColumn tableName="AdtExtendedfielddetail">
+			<column name="filters" type="varchar(400)"/>
+		</addColumn>
+	</changeSet>
+	
 	</databaseChangeLog>
