@@ -106,7 +106,7 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("ruleCode");
 		excludeFields.add("ruleCodeDesc");
 		excludeFields.add("categoryDesc");
-		excludeFields.add("lovDescCategory");
+		excludeFields.add("lovdesccategory");
 		return excludeFields;
 	}
 
