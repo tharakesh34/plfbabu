@@ -4638,17 +4638,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				if (flow == Flow.PREDECESSOR) {
 					if (ProcessUtil.parallelGatewayExists(engine, result, taskId)) {
+						// Sequential flow within concurrent flow.
 						nextTaskId = "";
 					} else {
-						// Sequential flow within concurrent flow.
-						nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
+						if ("".equals(result)) {
+							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result);
+						} else {
+							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
+						}
 					}
 				} else {
 					if (ProcessUtil.parallelGatewayExists(engine, taskId, result)) {
+						// Sequential flow within concurrent flow.
 						nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 					} else {
-						// Sequential flow within concurrent flow.
-						nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
+						if ("".equals(result)) {
+							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result);
+						} else {
+							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
+						}
 					}
 				}
 			}
