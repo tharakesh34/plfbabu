@@ -1,3 +1,10 @@
+pff 4.10.3.2, 2018-09-04
+ --------------
+-bug #711  Auto Generate flag is not selected but Document Type Field is in Enable Mode in Agreement Master.
+-Stroy#689    Legal details changes and issues
+-Tuleap Bug #696 : Cash Management Bug Fixes
+-PPM #18342 While Creating new Record in Bounce Reasons master, click on save button Unhandled exception coming.
+
 pff 4.10.3.1, 2018-08-31
  --------------
 -story#689 Legal details change 
