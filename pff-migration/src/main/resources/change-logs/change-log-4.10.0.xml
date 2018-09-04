@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="1" author="Kesav">
+ 	<changeSet id="1" author="Kesav">
 		<comment>View altered</comment>
 		<createView viewName="DepositCheques_TView" replaceIfExists="true">
 			Select	 	T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount, T1.RevLinkedTranId, T1.Status,
@@ -8998,6 +8998,142 @@ UNION ALL
 			Inner JOIN 	customers T5 ON T4.custid = T5.custid
 			
 			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositCheques_Temp WHERE DepositCheques_Temp.Id = T1.Id))		
+		</createView>
+	</changeSet>
+
+	<changeSet id="101" author="Durgaprasad G">
+		<addColumn tableName="extendedfielddetail">
+			<column name="filters" type="varchar(400)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="102" author="Durgaprasad G">
+		<addColumn tableName="extendedfielddetail_temp">
+			<column name="filters" type="varchar(400)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="103" author="Durgaprasad G">
+		<createView viewName="extendedfielddetail_aview" replaceIfExists="true">
+			SELECT t1.moduleid,
+		    t1.fieldname,
+		    t2.modulename AS lovdescmodulename,
+		    t2.submodulename AS lovdescsubmodulename,
+		    t1.fieldtype,
+		    t1.fieldlength,
+		    t1.fieldprec,
+		    t1.fieldlabel,
+		    t1.fieldmandatory,
+		    t1.fieldconstraint,
+		    t1.fieldseqorder,
+		    t1.fieldlist,
+		    t1.fielddefaultvalue,
+		    t1.fieldminvalue,
+		    t1.fieldmaxvalue,
+		    t1.fieldunique,
+		    t1.extendedtype,
+		    t1.filters,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.multiline,
+		    t1.parenttag,
+		    t1.inputelement,
+		    t1.editable,
+		    t1.allowinrule,
+		    t1.scriptlet,
+		    t1.visible
+		   FROM extendedfielddetail t1
+		     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid;
+		</createView>
+	</changeSet>
+	
+	<changeSet id="104" author="Durgaprasad G">
+		<createView viewName="extendedfielddetail_view" replaceIfExists="true">
+			SELECT t1.moduleid,
+		    t1.fieldname,
+		    t2.modulename AS lovdescmodulename,
+		    t2.submodulename AS lovdescsubmodulename,
+		    t1.fieldtype,
+		    t1.fieldlength,
+		    t1.fieldprec,
+		    t1.fieldlabel,
+		    t1.fieldmandatory,
+		    t1.fieldconstraint,
+		    t1.fieldseqorder,
+		    t1.fieldlist,
+		    t1.fielddefaultvalue,
+		    t1.fieldminvalue,
+		    t1.fieldmaxvalue,
+		    t1.fieldunique,
+		    t1.extendedtype,
+		    t1.filters,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.multiline,
+		    t1.parenttag,
+		    t1.inputelement,
+		    t1.editable,
+		    t1.allowinrule,
+		    t1.scriptlet,
+		    t1.visible
+		   FROM plf.extendedfielddetail_temp t1
+		     JOIN plf.extendedfieldheader_temp t2 ON t1.moduleid = t2.moduleid
+		UNION ALL
+		 SELECT t1.moduleid,
+		    t1.fieldname,
+		    t2.modulename AS lovdescmodulename,
+		    t2.submodulename AS lovdescsubmodulename,
+		    t1.fieldtype,
+		    t1.fieldlength,
+		    t1.fieldprec,
+		    t1.fieldlabel,
+		    t1.fieldmandatory,
+		    t1.fieldconstraint,
+		    t1.fieldseqorder,
+		    t1.fieldlist,
+		    t1.fielddefaultvalue,
+		    t1.fieldminvalue,
+		    t1.fieldmaxvalue,
+		    t1.fieldunique,
+		    t1.extendedtype,
+		    t1.filters,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.multiline,
+		    t1.parenttag,
+		    t1.inputelement,
+		    t1.editable,
+		    t1.allowinrule,
+		    t1.scriptlet,
+		    t1.visible
+		   FROM plf.extendedfielddetail t1
+		     JOIN plf.extendedfieldheader t2 ON t1.moduleid = t2.moduleid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM plf.extendedfielddetail_temp
+		          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname));
 		</createView>
 	</changeSet>
 	
