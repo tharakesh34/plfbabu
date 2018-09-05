@@ -9235,5 +9235,134 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
+	<changeSet id="107" author="Saikiran.v">
+		<addColumn tableName="bmtdocumenttypes">
+			<column name="docexternalref" type="varchar(100)" />
+		</addColumn>
+		<addColumn tableName="bmtdocumenttypes_temp">
+			<column name="docexternalref" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="108" author="Saikiran.v">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			INSERT INTO SECRIGHTS values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'DocumentTypeDialog_DocExternalRef','DocumentTypeDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 );
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="109" author="Saikiran.v">
+		<createView viewName="bmtdocumenttypes_view"
+			replaceIfExists="true">
+		 	SELECT doctemp.doctypecode,
+		    doctemp.doctypedesc,
+		    doctemp.docismandatory,
+		    doctemp.doctypeisactive,
+		    doctemp.version,
+		    doctemp.lastmntby,
+		    doctemp.lastmnton,
+		    doctemp.recordstatus,
+		    doctemp.rolecode,
+		    doctemp.nextrolecode,
+		    doctemp.taskid,
+		    doctemp.nexttaskid,
+		    doctemp.recordtype,
+		    doctemp.workflowid,
+		    doctemp.docexpdateismand,
+		    doctemp.docissuedatemand,
+		    doctemp.docidnummand,
+		    doctemp.docissuedauthoritymand,
+		    doctemp.docispdfextrequired,
+		    doctemp.docispasswordprotected,
+		    doctemp.pdfmappingref,
+		    doctemp.categoryid,
+		    doctemp.pdd,
+		    doctemp.otc,
+		    doctemp.lvreq,
+		    doctemp.rcureq,
+		    dc.code AS categorycode,
+		    dc.description AS categorydesc,
+		    doctemp.docexternalref
+		   FROM bmtdocumenttypes_temp doctemp
+		     LEFT JOIN documentcategory dc ON dc.id = doctemp.categoryid
+		UNION ALL
+		 SELECT doc.doctypecode,
+		    doc.doctypedesc,
+		    doc.docismandatory,
+		    doc.doctypeisactive,
+		    doc.version,
+		    doc.lastmntby,
+		    doc.lastmnton,
+		    doc.recordstatus,
+		    doc.rolecode,
+		    doc.nextrolecode,
+		    doc.taskid,
+		    doc.nexttaskid,
+		    doc.recordtype,
+		    doc.workflowid,
+		    doc.docexpdateismand,
+		    doc.docissuedatemand,
+		    doc.docidnummand,
+		    doc.docissuedauthoritymand,
+		    doc.docispdfextrequired,
+		    doc.docispasswordprotected,
+		    doc.pdfmappingref,
+		    doc.categoryid,
+		    doc.pdd,
+		    doc.otc,
+		    doc.lvreq,
+		    doc.rcureq,
+		    dc.code AS categorycode,
+		    dc.description AS categorydesc,
+		    doc.docexternalref
+		   FROM bmtdocumenttypes doc
+		     LEFT JOIN documentcategory dc ON dc.id = doc.categoryid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM bmtdocumenttypes_temp
+		          WHERE bmtdocumenttypes_temp.doctypecode = doc.doctypecode))
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="110" author="Saikiran.v">
+		<createView viewName="bmtdocumenttypes_aview"
+			replaceIfExists="true">
+		SELECT doc.doctypecode,
+		    doc.doctypedesc,
+		    doc.docismandatory,
+		    doc.doctypeisactive,
+		    doc.version,
+		    doc.lastmntby,
+		    doc.lastmnton,
+		    doc.recordstatus,
+		    doc.rolecode,
+		    doc.nextrolecode,
+		    doc.taskid,
+		    doc.nexttaskid,
+		    doc.recordtype,
+		    doc.workflowid,
+		    doc.docexpdateismand,
+		    doc.docissuedatemand,
+		    doc.docidnummand,
+		    doc.docissuedauthoritymand,
+		    doc.docispdfextrequired,
+		    doc.docispasswordprotected,
+		    doc.pdfmappingref,
+		    doc.categoryid,
+		    doc.pdd,
+		    doc.otc,
+		    doc.lvreq,
+		    doc.rcureq,
+		    dc.code AS categorycode,
+		    dc.description AS categorydesc,
+		    doc.docexternalref
+		   FROM bmtdocumenttypes doc
+		     LEFT JOIN documentcategory dc ON dc.id = doc.categoryid
+		</createView>
+	</changeSet>
 	
 </databaseChangeLog>

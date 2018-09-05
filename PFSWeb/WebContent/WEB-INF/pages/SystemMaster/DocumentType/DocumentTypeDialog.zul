@@ -204,7 +204,7 @@
 
 								<label id="label_ExternalReference"
 									value="${c:l('label_DocumentTypeDialog_ExternalReference')}" />
-								<textbox id="docExternalRef"  maxlength="50" width="350px" />
+								<textbox id="docExternalRef"  maxlength="100" width="350px" />
 							</row>
 							<row>
 								<label

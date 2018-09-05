@@ -203,7 +203,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		// Empty sent any required attributes
 		this.docTypeCode.setMaxlength(50);
 		this.docTypeDesc.setMaxlength(150);
-		this.docExternalRef.setMaxlength(50);
+		this.docExternalRef.setMaxlength(100);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
