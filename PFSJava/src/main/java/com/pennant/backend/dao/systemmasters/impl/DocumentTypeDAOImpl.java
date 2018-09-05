@@ -101,7 +101,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 
 		selectSql.append(" SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq,");
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
+		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef");
 		if (type.contains("View")) {
 			selectSql.append(" ,categoryCode,categoryDesc ");
 		}
@@ -168,10 +168,10 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		sql.append(tableType.getSuffix());
 		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq," );
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef)");
+		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef)");
 		sql.append(" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :CategoryId, :Pdd, :Otc, :LvReq, :RcuReq," );
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand, :DocIsPdfExtRequired, :DocIsPasswordProtected, :PdfMappingRef)");
+		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand, :DocIsPdfExtRequired, :DocIsPasswordProtected, :PdfMappingRef,:docExternalRef)");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -200,7 +200,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		sql.append("  LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand,");
 		sql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand,");
-		sql.append(" DocIsPdfExtRequired = :DocIsPdfExtRequired, DocIsPasswordProtected = :DocIsPasswordProtected, PdfMappingRef = :PdfMappingRef");
+		sql.append(" DocIsPdfExtRequired = :DocIsPdfExtRequired, DocIsPasswordProtected = :DocIsPasswordProtected, PdfMappingRef = :PdfMappingRef ,docExternalRef =:docExternalRef");
 		sql.append(" where DocTypeCode =:DocTypeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -252,7 +252,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 
 		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq," );
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
+		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef");
 		selectSql.append(" FROM  BMTDocumentTypes"); 
 		selectSql.append(type);
 		selectSql.append(" Where DocIsPdfExtRequired =1") ;

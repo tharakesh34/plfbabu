@@ -201,6 +201,12 @@
 								<label id="label_MappingRef"
 									value="${c:l('label_DocumentTypeDialog_MappingRef.value')}" />
 								<extendedcombobox id="mappingRef" />
+
+								<label id="label_ExternalReference"
+									value="${c:l('label_DocumentTypeDialog_ExternalReference')}" />
+								<textbox id="docExternalRef"  maxlength="50" width="350px" />
+							</row>
+							<row>
 								<label
 									id="label_DocumentTypeDialog_DocTypeIsActive"
 									value="${c:l('label_DocumentTypeDialog_DocTypeIsActive.value')}" />

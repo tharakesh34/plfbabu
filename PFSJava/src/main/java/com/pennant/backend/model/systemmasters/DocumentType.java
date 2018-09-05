@@ -74,7 +74,7 @@ public class DocumentType extends AbstractWorkflowEntity {
 	private boolean lvReq;
 	private boolean rcuReq;
 	private Long categoryId;
-
+	private String docExternalRef;
 	private String categoryCode;
 	private String categoryDesc;
 
@@ -145,6 +145,14 @@ public class DocumentType extends AbstractWorkflowEntity {
 
 	public void setDocTypeIsActive(boolean docTypeIsActive) {
 		this.docTypeIsActive = docTypeIsActive;
+	}
+
+	public String getDocExternalRef() {
+		return docExternalRef;
+	}
+
+	public void setDocExternalRef(String docExternalRef) {
+		this.docExternalRef = docExternalRef;
 	}
 
 	public boolean isNewRecord() {

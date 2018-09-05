@@ -105,6 +105,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	protected Checkbox 	docIsPasswordProtected; 	// autoWired
 	protected ExtendedCombobox mappingRef;
 	protected ExtendedCombobox docCategory;
+	protected Textbox docExternalRef;			// autoWired
 	protected Row rowMappingRef;
 	
 
@@ -202,6 +203,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		// Empty sent any required attributes
 		this.docTypeCode.setMaxlength(50);
 		this.docTypeDesc.setMaxlength(150);
+		this.docExternalRef.setMaxlength(50);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -351,7 +353,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.recordStatus.setValue(aDocumentType.getRecordStatus());
 		this.docIsPdfExtRequired.setChecked(aDocumentType.isDocIsPdfExtRequired());
 		this.docIsPasswordProtected.setChecked(aDocumentType.isDocIsPasswordProtected());
-		
+		this.docExternalRef.setValue(aDocumentType.getDocExternalRef());
 		DocumentCategory category = new DocumentCategory();
 		category.setId(aDocumentType.getCategoryId());
 		category.setCode(aDocumentType.getCategoryCode());
@@ -479,6 +481,11 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 				aDocumentType.setPdfMappingRef(0);
 			}
 		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setDocExternalRef(org.apache.commons.lang3.StringUtils.isBlank(this.docExternalRef.getValue())? this.docTypeCode.getValue():this.docExternalRef.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		doRemoveValidation();
@@ -696,6 +703,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIssuedAuthorityMand.setDisabled(true);
 		this.docIsPasswordProtected.setDisabled(true);
 		this.mappingRef.setButtonDisabled(true);
+		this.docExternalRef.setDisabled(isReadOnly("DocumentTypeDialog_DocExternalRef"));
 		if (getDocumentType().isDocIsPdfExtRequired()) {
 			this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
 			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
@@ -743,7 +751,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIssuedAuthorityMand.setDisabled(true);
 		this.docTypeIsActive.setDisabled(true);
 		this.docCategory.setButtonDisabled(true);
-
+		this.docExternalRef.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -771,6 +779,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.rcuReq.setChecked(false);
 		this.docTypeIsActive.setChecked(false);
 		this.docCategory.setValue("");
+		this.docExternalRef.setValue("");
 		logger.debug("Leaving");
 	}
 
