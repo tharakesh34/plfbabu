@@ -1713,8 +1713,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		FinanceDetail financeDetail = null;
 		Date valueDate = DateUtility.getAppDate();
+		BigDecimal tranAmount = BigDecimal.ZERO;
 		String receiptNumber = null;
-		BigDecimal cashAmount = BigDecimal.ZERO;
+		String paymentType = null;
+		String partnerBankAc = null;
+		
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof LiabilityRequest) {
@@ -1732,14 +1735,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					if(StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode()) &&
 							!StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)){
 						valueDate = detail.getReceivedDate();
+						tranAmount = detail.getAmount();
 						receiptNumber = detail.getPaymentRef();
-					}
-					
-					if(StringUtils.equals(detail.getPaymentType(), RepayConstants.RECEIPTMODE_CASH)){
-						cashAmount = detail.getAmount();
+						partnerBankAc = detail.getPartnerBankAcType();
 					}
 				}
 			}
+			paymentType = receiptHeader.getReceiptMode();
 		} else {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -1755,9 +1757,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		
 		FinanceProfitDetail pftDetail;
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())){
 			pftDetail = new FinanceProfitDetail();
-		} else {
+		}else{
 			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(finMain.getFinReference());
 		}
 
@@ -1802,19 +1804,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (rule != null) {
 				accountSetId = (Integer) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap, finMain.getFinCcy(), RuleReturnType.INTEGER);
 				if (accountSetId <= 0) {
-					logger.debug("Leaving");
-					return auditHeader;
+					continue;
 				}
 				acSetIdList.add(Long.valueOf(accountSetId));
 			}
 		}
 		
 		// If No Accounting Sets added against stage, no action to be done
-		if (CollectionUtils.isEmpty(acSetIdList)){
+		if (CollectionUtils.isEmpty(acSetIdList)) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent = AEAmounts.procAEAmounts(finMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),
@@ -1822,13 +1823,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		
 		aeEvent.getAcSetIDList().addAll(acSetIdList);
 		amountCodes = aeEvent.getAeAmountCodes();
+		amountCodes.setTransfer(tranAmount);
+		amountCodes.setPaymentType(paymentType);
+		amountCodes.setPartnerBankAcType(partnerBankAc);
 		aeEvent.setModuleDefiner(financeDetail.getModuleDefiner());
+		aeEvent.setEntityCode(finMain.getLovDescEntityCode());					
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setPostDate(DateUtility.getAppDate());
-		
-		if(cashAmount.compareTo(BigDecimal.ZERO) > 0){
-			amountCodes.setPaymentType(RepayConstants.RECEIPTMODE_CASH);
-		}
 		amountCodes.setUserBranch(auditHeader.getAuditBranchCode());
 		
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();

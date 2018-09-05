@@ -573,8 +573,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		//Save Deposit Details
 		saveDepositDetails(receiptHeader, null);
 		// Update Deposit Branch
-		getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(), receiptHeader.getUserDetails().getBranchCode(), tableType.getSuffix());
-				
+		if(ImplementationConstants.DEPOSIT_PROC_REQ){
+			getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(),
+					receiptHeader.getUserDetails().getBranchCode(), tableType.getSuffix());
+		}
+		
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
 
@@ -1368,7 +1371,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Update Deposit Branch
-		getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(), receiptHeader.getUserDetails().getBranchCode(), "");
+		if(ImplementationConstants.DEPOSIT_PROC_REQ){
+			getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(),
+					receiptHeader.getUserDetails().getBranchCode(), "");
+		}
 		
 		logger.debug("Leaving");
 		return auditHeader;
