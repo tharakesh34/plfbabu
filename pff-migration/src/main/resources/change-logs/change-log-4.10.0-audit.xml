@@ -122,7 +122,7 @@
 	</changeSet>
 	
 	<changeSet id="14" author="Saikiran.v">
-		<addColumn tableName="plfaudit.adtbmtdocumenttypes">
+		<addColumn tableName="adtbmtdocumenttypes">
 			<column name="docexternalref" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
