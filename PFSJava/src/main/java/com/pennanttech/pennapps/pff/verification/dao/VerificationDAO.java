@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -75,5 +76,11 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 	List<Verification> getCollateralDetails(String[] collaterals);
 	
 	List<Integer> getVerificationTypes(String keyReference);
+
+	void updateDocumentId(DocumentDetails documentDetails, Long verificationId, TableType stageTab);
+
+	List<Long> getRCUVerificationId(String finReference, int verificationType, String referencetype);
+
+	void updateRCUReference(DocumentDetails documentDetails, Long verificationId);
 
 }

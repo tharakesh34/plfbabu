@@ -152,6 +152,13 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		super.enquiryTableName = "CollateralSetup_View";
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		this.searchObject.addFilterNull("finReference");
+		this.searchObject.addFilterNull("status");
+	}
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -191,6 +198,8 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		registerField("nextReviewDate", listheader_NextReviewDate, SortOrder.ASC, nextReviewDate, sortOperator_NextReviewDate,
 				Operators.DATE);
 		registerField("nextRoleCode");
+		registerField("finReference");
+		registerField("status");
 
 		
 		// Render the page and display the data.
@@ -241,7 +250,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		arg.put("collateralSetup", collateralSetup);
 		arg.put("collateralSetupListCtrl", this);
 		arg.put("role", getUserWorkspace().getUserRoles());
-		
+		arg.put("window", window_CollateralSetupList);
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/SelectCollateralTypeDialog.zul", null, arg);
 		} catch (Exception e) {

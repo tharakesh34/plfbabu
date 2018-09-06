@@ -6,7 +6,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
+<window>
 	<window id="window_CollateralAssignmentDetailDialog" border="normal"
 		apply="${collateralAssignmentDialogCtrl}" width="620px" height="260px"
 		sizable="false">
@@ -85,6 +85,14 @@
 										label="${c:l('label_ViewCollateral')}"
 										image="/images/icons/more.png"
 										tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_CollateralInfo.tooltiptext')}" />
+									<space spacing="8px"/>
+									<button id="btnNewCollateral"
+										label="${c:l('label_NewCollateral')}"
+										tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_NewCollateral.tooltiptext')}" />
+									<space spacing="8px"/>
+									<button id="btnEditCollateral"
+										label="${c:l('label_EditCollateral')}"
+										tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_EditCollateral.tooltiptext')}" />
 								</hbox>
 							</row>
 							<row>
@@ -177,4 +185,5 @@
 			</south>
 		</borderlayout>
 	</window>
+ </window>
 </zk>

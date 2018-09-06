@@ -39,7 +39,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
-import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -48,10 +47,11 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -108,13 +108,15 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private List<LVDocument> customerDocuments = new ArrayList<>();
 	private List<LVDocument> loanDocuments = new ArrayList<>();
 	private List<LVDocument> collateralDocuments = new ArrayList<>();
+	private LVInitiationDialogCtrl lvInitiationDialogCtrl = null;
+	private CollateralHeaderDialogCtrl collateralHeaderDialogCtrl = null;
 
 	@Autowired
 	private VerificationService verificationService;
 	@Autowired
 	private LegalVerificationService legalVerificationService;
 	@Autowired
-	private transient DocumentDetailsDAO documentDetailsDAO;
+	private transient CollateralSetupFetchingService collateralSetupFetchingService;
 	@Autowired
 	private transient CollateralSetupDAO collateralSetupDAO;
 	@Autowired
@@ -548,7 +550,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (collaterls != null) {
-			addCollateralDocuments(collaterls);
+			addCollateralDocuments(collaterls, financeDetail);
 		}
 	}
 
@@ -592,9 +594,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void addCollateralDocuments(List<CollateralAssignment> collaterals) {
+	public void addCollateralDocuments(List<CollateralAssignment> collateralAsssignments, FinanceDetail financeDetails) {
 		collateralDocuments.clear();
-		List<DocumentDetails> documents = getCollateralDocuments(collaterals);
+		List<DocumentDetails> documents = getCollateralSetupFetchingService().getCollateralDocuments(collateralAsssignments, financeDetails.getCollaterals(), false);
 
 		for (DocumentDetails document : documents) {
 			LVDocument lvDocument = new LVDocument();
@@ -607,21 +609,13 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 			collateralDocuments.add(lvDocument);
 		}
-	}
-
-	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals) {
-		List<DocumentDetails> documents = new ArrayList<>();
-
-		for (CollateralAssignment collateral : collaterals) {
-			List<DocumentDetails> list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(),
-					CollateralConstants.MODULE_NAME, "", "_View");
-
-			if (list != null) {
-				documents.addAll(list);
-			}
+		if (getLvInitiationDialogCtrl() != null) {
+			getLvInitiationDialogCtrl().setCollateralTypeList(collateralAsssignments, financeDetails.getCollaterals());
+			setupdatedFinanceData(collateralAsssignments,financeDetails);
 		}
-
-		return documents;
+		if (getCollateralHeaderDialogCtrl() != null) {
+			setupdatedFinanceData(getCollateralHeaderDialogCtrl().getCollateralAssignments(), getCollateralHeaderDialogCtrl().getFinanceDetail());
+		}
 	}
 
 	/**
@@ -658,7 +652,6 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 		// Display the dialog page.
 		Map<String, Object> arg = new HashMap<>();
-		;
 		arg.put("initiation", initiation);
 		arg.put("verification", vrf);
 		arg.put("legalVerificationListCtrl", this);
@@ -865,7 +858,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			return;
 		}
 
-		vrf.setCollateralSetup(collateralSetupDAO.getCollateralSetupByRef(vrf.getReferenceFor(), "_Aview"));
+		vrf.setCollateralSetup(collateralSetupDAO.getCollateralSetupByRef(vrf.getReferenceFor(), "_view"));
 		vrf.setRequestType(RequestType.INITIATE.getKey());
 		vrf.setNewRecord(true);
 		vrf.setApproveTab(true);
@@ -1287,6 +1280,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		verification.setReference(customer.getCustCIF());
 		verification.setCreatedOn(DateUtility.getAppDate());
 	}
+	
+	private void setupdatedFinanceData(List<CollateralAssignment> collateralAsssignments, FinanceDetail financeDetails) {
+		this.financeDetail.setCollateralAssignmentList(collateralAsssignments);
+		this.financeDetail.setCollaterals(financeDetails.getCollaterals());
+	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		finBasicDetailsCtrl.doWriteBeanToComponents(finHeaderList);
@@ -1315,6 +1313,30 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 		setVerificationData(financeDetail);
+	}
+
+	public LVInitiationDialogCtrl getLvInitiationDialogCtrl() {
+		return lvInitiationDialogCtrl;
+	}
+
+	public void setLvInitiationDialogCtrl(LVInitiationDialogCtrl lvInitiationDialogCtrl) {
+		this.lvInitiationDialogCtrl = lvInitiationDialogCtrl;
+	}
+
+	public CollateralSetupFetchingService getCollateralSetupFetchingService() {
+		return collateralSetupFetchingService;
+	}
+
+	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
+		this.collateralSetupFetchingService = collateralSetupFetchingService;
+	}
+
+	public CollateralHeaderDialogCtrl getCollateralHeaderDialogCtrl() {
+		return collateralHeaderDialogCtrl;
+	}
+
+	public void setCollateralHeaderDialogCtrl(CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
+		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
 	}
 
 }

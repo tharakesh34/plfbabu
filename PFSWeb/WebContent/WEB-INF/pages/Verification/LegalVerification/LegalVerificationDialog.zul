@@ -7,7 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
+<window>
 	<window id="window_LegalVerificationDialog" border="normal"
 		apply="${legalVerificationDialogCtrl}" width="100%" height="100%"
 		sizable="false">
@@ -309,4 +309,5 @@
 			</south>
 		</borderlayout>
 	</window>
+ </window>
 </zk>

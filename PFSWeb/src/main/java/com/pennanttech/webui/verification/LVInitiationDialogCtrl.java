@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -82,6 +83,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -106,8 +108,7 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPhoneNumber
- * /customerPhoneNumberDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul file.
  */
 @Component(value = "lvInitiationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -160,6 +161,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient VerificationService verificationService;
 	@Autowired
 	private transient LegalVerificationService legalVerificationService;
+	@Autowired
+	private transient CollateralSetupFetchingService collateralSetupFetchingService;
 
 	/**
 	 * default constructor.<br>
@@ -211,6 +214,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+				setFinanceDetail(this.financeDetail);
 				if (!financeDetail.getCollateralAssignmentList().isEmpty()) {
 					for (CollateralAssignment item : financeDetail.getCollateralAssignmentList()) {
 						if (collateralRefList.length() > 0) {
@@ -288,26 +292,16 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.collateral.setValueColumn("CollateralRef");
 		this.collateral.setDescColumn("CollateralType");
 		this.collateral.setValidateColumns(new String[] { "CollateralRef" });
-
-		if (collateralRefList.length() > 0) {
-			this.collateral.setWhereClause("CollateralRef in (" + collateralRefList + ")");
-		} else {
-			this.collateral.setWhereClause("CollateralRef in (" + "''" + ")");
-
-		}
-
 		this.collateral.addForward("onFulfill", self, "onChangeCollateral");
-
+	
 		if (initiation) {
-
 			this.agency.setMandatoryStyle(true);
 			this.agency.setTextBoxWidth(121);
 			this.agency.setModuleName("VerificationAgencies");
 			this.agency.setValueColumn("DealerName");
 			this.agency.setDescColumn("DealerCity");
 			this.agency.setValidateColumns(new String[] { "DealerName" });
-			this.agency
-					.setFilters(new Filter[] { new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL) });
+			this.agency.setFilters(new Filter[] { new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL) });
 
 		} else {
 
@@ -329,6 +323,34 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	// Getting the approved collateral setup values from search object and adding the newly created collateral setup list
+	public void setCollateralTypeList(List<CollateralAssignment> collateralAsssignments, List<CollateralSetup> collateralSetupList) {
+		
+		
+		collateralSetupList = getCollateralSetupFetchingService().getResultantCollateralsList(collateralAsssignments, collateralSetupList);
+
+		StringBuilder whereClause = new StringBuilder();
+		if (collateralRefList.length() > 0) {
+			whereClause.append("CollateralRef in (" + collateralRefList + ")");
+		} else {
+			whereClause.append("CollateralRef in (" + "''" + ")");
+		}
+
+		Search search = new Search(CollateralSetup.class);
+		search.addTabelName("CollateralSetup_AView");
+		search.addWhereClause(whereClause.toString());
+		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
+
+		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
+			collateralSetupSearchList = new ArrayList<CollateralSetup>();
+		}
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			collateralSetupSearchList.addAll(collateralSetupList);
+		}
+		this.collateral.setList(collateralSetupSearchList);
+	}
+		
 	public void onChangeCollateral(ForwardEvent event) throws Exception {
 		Object dataObject = this.collateral.getObject();
 		if (dataObject != null) {
@@ -434,6 +456,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		this.collateral.setAttribute("collateralType", aVerification.getReferenceType());
+		
+		setCollateralTypeList(getFinanceDetail().getCollateralAssignmentList(), getFinanceDetail().getCollaterals());
 
 		if (initiation) {
 			this.agency.setValue(aVerification.getAgencyName());
@@ -751,6 +775,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(verification);
+			
+			getLegalVerificationListCtrl().setLvInitiationDialogCtrl(this);
 
 			doCheckEnquiry();
 			this.window_LVInitiationDialog.setHeight("80%");
@@ -1338,5 +1364,20 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setLegalVerificationListCtrl(LVerificationCtrl lVerificationCtrl) {
 		this.lVerificationCtrl = lVerificationCtrl;
 	}
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
 
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public CollateralSetupFetchingService getCollateralSetupFetchingService() {
+		return collateralSetupFetchingService;
+	}
+
+	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
+		this.collateralSetupFetchingService = collateralSetupFetchingService;
+	}
+	
 }

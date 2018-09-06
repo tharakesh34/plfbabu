@@ -1836,7 +1836,6 @@
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
-		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="legalDetailService" ref="legalDetailService" />
 		<property name="baseRateService" ref="baseRateService" />
 		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
@@ -1844,6 +1843,7 @@
 		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
 		<property name="customerBankInfoService" ref="customerBankInfoService" />
 		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
+		<property name="collateralSetupFetchingService" ref="collateralSetupFetchingService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
@@ -2060,7 +2060,6 @@
 		<property name="notesService" ref="notesService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="mMAgreementService" ref="mMAgreementService" />
-		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="activityLogService" ref="activityLogService" />
 	</bean>

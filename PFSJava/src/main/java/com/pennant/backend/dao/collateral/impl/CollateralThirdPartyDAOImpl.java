@@ -193,16 +193,17 @@ public class CollateralThirdPartyDAOImpl implements CollateralThirdPartyDAO {
 	 * 
 	 */
 	@Override
-	public void deleteList(CollateralThirdParty collateralThirdParty, String type) {
+	public void deleteList(String collateralRef, String tableType) {
 		logger.debug("Entering");
 
 		StringBuilder deleteSql = new StringBuilder("Delete From CollateralThirdParty");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where  CollateralRef = :CollateralRef");
 		logger.debug("deleteSql: " + deleteSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CollateralRef", collateralRef);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralThirdParty);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 	

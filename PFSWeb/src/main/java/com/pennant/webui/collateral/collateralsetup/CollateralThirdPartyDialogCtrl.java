@@ -36,10 +36,10 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdParty> implements Serializable {
 	private static final long				serialVersionUID		= 1L;
@@ -393,8 +393,6 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				btnCancel.setVisible(true);
 			}
 		}
-		
-	     this.btnSave.setVisible(isNewRecord());
 		
 		logger.debug("Leaving");
 	}

@@ -94,7 +94,6 @@ import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
-import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
@@ -130,6 +129,7 @@ import com.pennant.backend.model.finance.AgreementDetail.ExceptionList;
 import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetail;
 import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetailCollateral;
 import com.pennant.backend.model.finance.AgreementDetail.ExternalLiabilityDetail;
+import com.pennant.backend.model.finance.AgreementDetail.FinCollaterals;
 import com.pennant.backend.model.finance.AgreementDetail.GroupRecommendation;
 import com.pennant.backend.model.finance.AgreementDetail.InternalLiabilityDetail;
 import com.pennant.backend.model.finance.AgreementDetail.IrrDetail;
@@ -176,7 +176,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
-import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
@@ -237,7 +237,6 @@ public class AgreementGeneration implements Serializable {
 	private VerificationService verificationService;
 	@Autowired
 	private SearchProcessor searchProcessor;
-	private CollateralSetupService collateralSetupService;
 	private SecurityUserService securityUserService;
 	private ActivityLogService activityLogService;
 	@Autowired
@@ -252,6 +251,8 @@ public class AgreementGeneration implements Serializable {
 	private FinSamplingService finSamplingService;
 	@Autowired
 	private CreditApplicationReviewService creditApplicationReviewService;
+	@Autowired
+	private CollateralSetupFetchingService collateralSetupFetchingService;
 	@Autowired
 	private FinTypeFeesService finTypeFeesService;
 	
@@ -2657,7 +2658,7 @@ public class AgreementGeneration implements Serializable {
 		return agreement;
 	}
 
-	private AgreementDetail getCollateralDetails(AgreementDetail agreement, FinanceDetail detail, int formatter) {
+	private AgreementDetail getCollateralDetails(AgreementDetail agreement, FinanceDetail aFinanceDetail, int formatter) {
 		/*List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals();
 		agreement.setCollateralData(new ArrayList<AgreementDetail.FinCollaterals>());
 
@@ -2671,85 +2672,84 @@ public class AgreementGeneration implements Serializable {
 		}*/
 		
 		//retrieving from CollateralSetup instead of FinanceCollaterals
-		List<CollateralAssignment> collateralAssignmentList = detail.getCollateralAssignmentList();
-		if(CollectionUtils.isNotEmpty(collateralAssignmentList)){
-			collateralAssignmentList.forEach((collateralAssignment)->{
-				if(null!=collateralAssignment){
-					CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralAssignment.getCollateralRef(),"", false);
-					if(null!=collateralSetup){
-						com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new FinCollaterals();
-						collateralData.setCollateralType(StringUtils.trimToEmpty(collateralSetup.getCollateralType()));
-						collateralData.setDepositorName(StringUtils.trimToEmpty(collateralSetup.getDepositorName()));
-						collateralData.setReference(StringUtils.trimToEmpty(collateralSetup.getCollateralRef()));
-						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getCollateralValue(),formatter));
-						if(null!=collateralSetup.getCollateralStructure()){
-							collateralData.setColDesc(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
-							collateralData.setColLtv(PennantApplicationUtil.formatRate(
-									collateralSetup.getCollateralStructure().getLtvPercentage().doubleValue(), 2));
-						}
-						collateralData.setColAddrCity(StringUtils.trimToEmpty(collateralSetup.getCollateralLoc()));
-						collateralData.setCollateralBankAmt(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(),formatter));			
-						agreement.getCollateralData().add(collateralData);
-						
-						if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
-							agreement.setExtendedDetails(new ArrayList<>());
-						}
-						List<ExtendedDetailCollateral> extendedDetailsList = new ArrayList<>();
-						
-						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
-							int colCcyFormat = CurrencyUtil.getFormat(collateralSetup.getCollateralCcy());
-							
-							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
-								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){
-									ExtendedDetailCollateral detailCol=agreement.new ExtendedDetailCollateral();
-									detailCol.setId(String.valueOf(extendedFieldRender.getSeqNo()));
-									if(null!=collateralSetup.getCollateralStructure()){
-										detailCol.setColType(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
-									}
-									detailCol.setExtDtls(new ArrayList<>());
-									Map<String, Object> mapValues = extendedFieldRender.getMapValues();
-									for (String key : mapValues.keySet()) {
-										ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
-										ExtendedFieldDetail extendedFieldDetail=null;
-										if(null!= collateralSetup.getCollateralStructure() && null!= collateralSetup.getCollateralStructure().getExtendedFieldHeader() 
-												&& CollectionUtils.isNotEmpty(collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails())){
-											List<ExtendedFieldDetail> extendedFieldDetails = collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails();
-											List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
-											if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
-												extendedFieldDetail=requiredExtendedFields.get(0);
-												extendedDetail.setFieldLabel(StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
-											}
-										}
-										
-										extendedDetail.setKey(StringUtils.trimToEmpty(key));
-										if (null != mapValues.get(key)) {
-											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
-											if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
-												extendedDetail.setValue(PennantAppUtil.amountFormate((BigDecimal) mapValues.get(key), colCcyFormat));
-											}else{
-												extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
-											}
-										} else {
-											extendedDetail.setValue(StringUtils.EMPTY);
-										}
-										extendedDetail.setFieldType("COLLATERAL");
-										detailCol.getExtDtls().add(extendedDetail);
-										agreement.getExtendedDetails().add(extendedDetail);
-									}
-									extendedDetailsList.add(detailCol);
+		
+		List<CollateralSetup> collateralSetupList = getCollateralSetupFetchingService().getCollateralSetupList(aFinanceDetail, false);
+		
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			for (CollateralSetup collateralSetup : collateralSetupList) {
+				if (null != collateralSetup) {
+
+					FinCollaterals collateralData = agreement.new FinCollaterals();
+					collateralData.setCollateralType(StringUtils.trimToEmpty(collateralSetup.getCollateralType()));
+					collateralData.setDepositorName(StringUtils.trimToEmpty(collateralSetup.getDepositorName()));
+					collateralData.setReference(StringUtils.trimToEmpty(collateralSetup.getCollateralRef()));
+					collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getCollateralValue(), formatter));
+					if (null != collateralSetup.getCollateralStructure()) {
+						collateralData.setColDesc(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
+						collateralData.setColLtv(PennantApplicationUtil.formatRate(collateralSetup.getCollateralStructure().getLtvPercentage().doubleValue(), 2));
+					}
+					collateralData.setColAddrCity(StringUtils.trimToEmpty(collateralSetup.getCollateralLoc()));
+					collateralData.setCollateralBankAmt(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(), formatter));
+					agreement.getCollateralData().add(collateralData);
+
+					if (CollectionUtils.isEmpty(agreement.getExtendedDetails())) {
+						agreement.setExtendedDetails(new ArrayList<>());
+					}
+					List<ExtendedDetailCollateral> extendedDetailsList = new ArrayList<>();
+
+					if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
+						int colCcyFormat = CurrencyUtil.getFormat(collateralSetup.getCollateralCcy());
+
+						for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
+							if (null != extendedFieldRender&& MapUtils.isNotEmpty(extendedFieldRender.getMapValues())) {
+								
+								ExtendedDetailCollateral detailCol = agreement.new ExtendedDetailCollateral();
+								detailCol.setId(String.valueOf(extendedFieldRender.getSeqNo()));
+								if (null != collateralSetup.getCollateralStructure()) {
+									detailCol.setColType(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
 								}
+								detailCol.setExtDtls(new ArrayList<>());
+								Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+								for (String key : mapValues.keySet()) {
+									ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+									ExtendedFieldDetail extendedFieldDetail = null;
+									if (null != collateralSetup.getCollateralStructure() && null != collateralSetup.getCollateralStructure().getExtendedFieldHeader()
+											&& CollectionUtils.isNotEmpty(collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails())) {
+										List<ExtendedFieldDetail> extendedFieldDetails = collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails();
+										List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key,efd.getFieldName())).collect(Collectors.toList());
+										if (CollectionUtils.isNotEmpty(requiredExtendedFields)) {
+											extendedFieldDetail = requiredExtendedFields.get(0);
+											extendedDetail.setFieldLabel(StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
+										}
+									}
+
+									extendedDetail.setKey(StringUtils.trimToEmpty(key));
+									if (null != mapValues.get(key)) {
+										extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+										if (extendedFieldDetail != null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())) {
+											extendedDetail.setValue(PennantAppUtil.amountFormate((BigDecimal) mapValues.get(key), colCcyFormat));
+										} else {
+											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+										}
+									} else {
+										extendedDetail.setValue(StringUtils.EMPTY);
+									}
+									extendedDetail.setFieldType("COLLATERAL");
+									detailCol.getExtDtls().add(extendedDetail);
+									agreement.getExtendedDetails().add(extendedDetail);
+								}
+								extendedDetailsList.add(detailCol);
 							}
 						}
-						collateralData.setExtendedDetailsList(extendedDetailsList);
 					}
+					collateralData.setExtendedDetailsList(extendedDetailsList);
 				}
-			});
+			}
 		}
 		return agreement;
 	}
 
-	private AgreementDetail setMMAgreementGenDetails(AgreementDetail agreement, String appDate, int ccyformatt,
-			String mMAReference) throws Exception {
+	private AgreementDetail setMMAgreementGenDetails(AgreementDetail agreement, String appDate, int ccyformatt, String mMAReference) throws Exception {
 		MMAgreement mMAgreement = getmMAgreementService().getMMAgreementByIdMMARef(mMAReference);
 
 		if (agreement != null) {
@@ -3561,14 +3561,6 @@ public class AgreementGeneration implements Serializable {
 		this.mMAgreementService = mMAgreementService;
 	}
 
-	public CollateralSetupService getCollateralSetupService() {
-		return collateralSetupService;
-	}
-
-	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
-		this.collateralSetupService = collateralSetupService;
-	}
-
 	public SecurityUserService getSecurityUserService() {
 		return securityUserService;
 	}
@@ -3584,4 +3576,13 @@ public class AgreementGeneration implements Serializable {
 	public void setActivityLogService(ActivityLogService activityLogService) {
 		this.activityLogService = activityLogService;
 	}
+
+	public CollateralSetupFetchingService getCollateralSetupFetchingService() {
+		return collateralSetupFetchingService;
+	}
+
+	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
+		this.collateralSetupFetchingService = collateralSetupFetchingService;
+	}
+	
 }

@@ -140,9 +140,17 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		StringBuilder sql = new StringBuilder("insert into collateral_");
 		sql.append(collateralType);
 		sql.append("_ed_tv");
-		sql.append(" select :verificationId,* from collateral_");
-		sql.append(collateralType);
-		sql.append("_ed  Where reference = :reference ");
+		
+		sql.append(" select :verificationId,* from (select * from collateral_");
+		sql.append(collateralType).append("_ed");
+		sql.append("_temp");
+		sql.append(" t1  union all select * from collateral_");
+		sql.append(collateralType).append("_ed");
+		sql.append(" t1  where not exists (select 1 from collateral_");
+		sql.append(collateralType).append("_ed");
+		sql.append("_temp");
+		sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();

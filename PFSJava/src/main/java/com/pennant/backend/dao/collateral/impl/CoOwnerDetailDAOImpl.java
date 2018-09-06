@@ -249,16 +249,19 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	 * 
 	 */
 	@Override
-	public void deleteList(CoOwnerDetail coOwnerDetail, String type) {
+	public void deleteList(String collateralRef, String type) {
 		logger.debug("Entering");
-
-		StringBuilder deleteSql = new StringBuilder("Delete From CollateralCoOwners");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CollateralRef = :CollateralRef");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(coOwnerDetail);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+		
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		
+		sql = new StringBuilder("Delete From CollateralCoOwners");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CollateralRef = :CollateralRef");
+		logger.debug("deleteSql: " + sql.toString());
+		source = new MapSqlParameterSource();
+		source.addValue("CollateralRef", collateralRef);
+		this.jdbcTemplate.update(sql.toString(), source);
 		
 		logger.debug("Leaving");
 	}

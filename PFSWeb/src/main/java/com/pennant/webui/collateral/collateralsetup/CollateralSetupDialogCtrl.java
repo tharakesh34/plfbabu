@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -95,6 +96,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -112,6 +114,8 @@ import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -136,6 +140,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.collateral.collateralassignment.CollateralAssignmentDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
@@ -247,13 +252,19 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	protected String										selectMethodName			= "onSelectTab";
 	private String											moduleType					= "";
-	private String											module					= "";
+	private String											module						= "";
+
 
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private List<FinanceCheckListReference> collateralChecklists = null;
 	private HashMap<Long, Long> selectedAnsCountMap = null;
 	protected Map<String, Object> flagTypeDataMap = new HashMap<String, Object>();
 
+	private transient CollateralAssignmentDialogCtrl collateralAssignmentDialogCtrl;
+	private transient FinanceDetail financeDetail;
+	private boolean fromLoan = false;
+	private boolean newRecord = false;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -287,8 +298,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		try {
 			// Get the required arguments.
 			this.collateralSetup = (CollateralSetup) arguments.get("collateralSetup");
-			this.collateralSetupListCtrl = (CollateralSetupListCtrl) arguments.get("collateralSetupListCtrl");
-
+		
 			if (this.collateralSetup == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -304,22 +314,45 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
 				enqiryModule = true;
 			}
-			
 			// Store the before image.
 			CollateralSetup collateralSetup = new CollateralSetup();
 			BeanUtils.copyProperties(this.collateralSetup, collateralSetup);
 			this.collateralSetup.setBefImage(collateralSetup);
 
-			if (!"E".equals(module)) {
-				// Render the page and display the data.
-				doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(),
-						this.collateralSetup.getNextTaskId());
+			if (arguments.containsKey("fromLoan")) {
+				this.fromLoan = (boolean) arguments.get("fromLoan");
+				if (arguments.containsKey("newRecord")) {
+					this.newRecord = (boolean) arguments.get("newRecord");
+				}
 			}
-			if (isWorkFlowEnabled() && !enqiryModule) {
-				this.userAction = setListRecordStatus(this.userAction);
+			
+			if (fromLoan) {
+				setCollateralAssignmentDialogCtrl((CollateralAssignmentDialogCtrl) arguments.get("dialogCtrl"));
+			} else {
+				this.collateralSetupListCtrl = (CollateralSetupListCtrl) arguments.get("collateralSetupListCtrl");
+			}
+
+			if (arguments.containsKey("financeDetail")) {
+				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+			}
+			if (arguments.containsKey("roleCode")) {
+				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			//Set Listbox hights...
+			
+			if (!"E".equals(module)) {
+				// Render the page and display the data.
+				doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(), this.collateralSetup.getNextTaskId());
+			}
+			
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				if (!fromLoan) {
+					this.userAction = setListRecordStatus(this.userAction);
+				}
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			}
+			
+			//Set Listbox heights...
 			this.listBoxAssignmentDetail.setHeight(borderLayoutHeight - 210 + "px");
 			this.listBoxMovements.setHeight(borderLayoutHeight - 210 + "px");
 			
@@ -348,6 +381,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
+		
 		if (!enqiryModule) {
 			getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnNew"));
@@ -425,7 +459,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * @throws Exception 
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
-		doSave();
+		if (fromLoan) {
+			doSaveFinCollaterals();
+		} else {
+			doSave();
+		}
 	}
 
 	/**
@@ -537,7 +575,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		// fill the components with the data
 		doWriteBeanToComponents(collateralSetup);
-		if (enqiryModule && !"E".equals(module)) {
+		if (fromLoan) {
+			this.btnDelete.setVisible(false);
+			this.btnNotes.setVisible(false);
 			this.window_CollateralSetupDialog.setHeight("80%");
 			this.window_CollateralSetupDialog.setWidth("90%");
 			this.groupboxWf.setVisible(false);
@@ -571,9 +611,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		String tempflagcode = "";
 		for (FinFlagsDetail finFlagsDetail : finFlagsDetailList) {
 			if(!StringUtils.equals(finFlagsDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)){
-				if(StringUtils.isEmpty(tempflagcode)){
+				if (StringUtils.isEmpty(tempflagcode)) {
 					tempflagcode = finFlagsDetail.getFlagCode();
-				}else{
+				} else {
 					tempflagcode = tempflagcode.concat(",").concat(finFlagsDetail.getFlagCode());
 				}
 			}
@@ -610,8 +650,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 			// Check object is already exists in saved list or not
 			if(flagMap.containsKey(flagCode)){
-				// Do Nothing
-
 				//Removing from map to identify existing modifications
 				boolean isDelete = false;
 				if (this.userAction.getSelectedItem() != null){
@@ -621,7 +659,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 						isDelete = true;
 					}
 				}
-				
 				if(!isDelete){
 					flagMap.remove(flagCode);
 				}
@@ -911,6 +948,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getCollateralSetup().getDocuments());
 		map.put("module", DocumentCategories.COLLATERAL.getKey());
+		if (enqiryModule) {
+			map.put("enqModule", enqiryModule);
+		} else {
+			map.put("enqModule", isReadOnly("CollateralSetupDialog_DocumentDetails"));
+		}
+		
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
 		logger.debug("Leaving");
@@ -1163,7 +1206,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		boolean validationSuccess = true;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
-		map.put("userAction", this.userAction.getSelectedItem().getLabel());
+		if (fromLoan) {
+			map.put("userAction", PennantConstants.RCD_STATUS_SAVED);
+		} else {
+			map.put("userAction", this.userAction.getSelectedItem().getLabel());
+		}
 		map.put("moduleName", CollateralConstants.MODULE_NAME);
 		if(isForAgreementGen){
 			map.put("agreement", isForAgreementGen);
@@ -1470,13 +1517,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.thirdPartyAssignment.setDisabled(true);
 		this.flagDetails.setReadonly(true);
 		this.remarks.setReadonly(true);
-
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
-
-			if(userAction.getItemCount()>0) {
+			if (userAction.getItemCount() > 0) {
 				this.recordStatus.setValue("");
 				this.userAction.setSelectedIndex(0);
 			}
@@ -1554,9 +1600,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Method for fetching Currency format of selected currency
+	 * 
 	 * @return
 	 */
-	public int getCcyFormat(){
+	public int getCcyFormat() {
 		return CurrencyUtil.getFormat(this.collateralCcy.getValue());
 	}
 
@@ -1908,22 +1955,16 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
+	 * Saves the components to table. from financemain <br>
 	 * @throws Exception 
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void doSave() throws Exception {
+	private void doSaveFinCollaterals() throws Exception {
 		logger.debug("Entering");
+
 		final CollateralSetup aCollateralSetup = new CollateralSetup();
 		BeanUtils.copyProperties(getCollateralSetup(), aCollateralSetup);
-		boolean isNew = false;
-
-		if (isWorkFlowEnabled()) {
-			aCollateralSetup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCollateralSetup.getNextTaskId(),
-					aCollateralSetup);
-		}
 
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// force validation, if on, than execute by component.getValue()
@@ -1934,11 +1975,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			// fill the CollateralSetup object with the components data
 			doWriteComponentsToBean(aCollateralSetup);
 
-			//Add third party details list
+			// Add third party details list
 			if (this.thirdPartyAssignment.isChecked()) {
 
-				//Add the Extended Field Detail list
-				if(getCollateralThirdPartyList() == null || getCollateralThirdPartyList().isEmpty()){
+				// Add the Extended Field Detail list
+				if (getCollateralThirdPartyList() == null || getCollateralThirdPartyList().isEmpty()) {
 					this.basicDetailsTab.setSelected(true);
 					MessageUtil.showError(Labels.getLabel("label_Colateral_ThirdParty_Validation"));
 					return;
@@ -1959,7 +2000,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				aCollateralSetup.setFinFlagsDetailsList(getCollateralSetup().getFinFlagsDetailsList());
 			}
 
-			//Add the Extended Field Detail list
+			// Add the Extended Field Detail list
 			if (getExtendedFieldRenderList() == null || getExtendedFieldRenderList().isEmpty()) {
 				this.extendedDetailsTab.setSelected(true);
 				MessageUtil.showError(Labels.getLabel("label_Colateral_ExtendedField_Validation"));
@@ -1967,6 +2008,182 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			}
 			aCollateralSetup.setExtendedFieldRenderList(getExtendedFieldRenderList());
 
+			// Finance CheckList Details Saving
+			if (checkListChildWindow != null) {
+				boolean validationSuccess = doSave_CheckList(aCollateralSetup, false);
+				if (!validationSuccess) {
+					return;
+				}
+			} else {
+				aCollateralSetup.setCheckLists(getCollateralSetup().getCheckLists());
+			}
+
+			// Document Details Saving
+			if (documentDetailDialogCtrl != null) {
+				aCollateralSetup.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
+			} else {
+				aCollateralSetup.setDocuments(getCollateralSetup().getDocuments());
+			}
+		}
+		
+		boolean isNew = aCollateralSetup.isNew();
+		String tranType = "";
+		if (this.newRecord) {
+			if (isNew) {
+				aCollateralSetup.setVersion(1);
+				aCollateralSetup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+			if (StringUtils.isBlank(aCollateralSetup.getRecordType())) {
+				aCollateralSetup.setVersion(aCollateralSetup.getVersion() + 1);
+				aCollateralSetup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				aCollateralSetup.setNewRecord(true);
+			}
+			if (aCollateralSetup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && this.newRecord) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (aCollateralSetup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		} else {
+			aCollateralSetup.setVersion(aCollateralSetup.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+	
+		
+		aCollateralSetup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aCollateralSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aCollateralSetup.setUserDetails(getUserWorkspace().getLoggedInUser());
+		aCollateralSetup.setRoleCode(getRole());
+		aCollateralSetup.setFromLoan(true);
+
+		// save it to database
+		try {
+			AuditHeader auditHeader = newCollateralProcess(aCollateralSetup, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CollateralSetupDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getCollateralAssignmentDialogCtrl() != null) {
+					getCollateralAssignmentDialogCtrl().doFillAssignment(aCollateralSetup);
+				}
+				closeDialog();
+			}
+		} catch (final DataAccessException e) {
+			logger.error("Exception: ", e);
+			showMessage(e);
+		}
+		logger.debug("Leaving");
+	}
+	 
+	private AuditHeader newCollateralProcess(CollateralSetup aCollateralSetup, String tranType) {
+		AuditHeader auditHeader = getAuditHeader(aCollateralSetup, tranType);
+		String[] valueParm = new String[1];
+		String[] errParm = new String[1];
+
+		valueParm[0] = aCollateralSetup.getCollateralType();
+		errParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":" + valueParm[0];
+
+		List<CollateralSetup> collaterals =  getFinanceDetail().getCollaterals();
+		if (CollectionUtils.isNotEmpty(collaterals)) {
+			for (int i = 0; i < collaterals.size(); i++) {
+				CollateralSetup collateralSetup = collaterals.get(i);
+
+				if (collateralSetup.getCollateralType().equals(aCollateralSetup.getCollateralType())) {
+					if (this.newRecord) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+				}
+			}
+		}
+		return auditHeader;
+	}
+
+	/**
+	 * Display Message in Error Box
+	 * 
+	 * @param e
+	 *            (Exception)
+	 */
+	private void showMessage(Exception e) {
+		logger.debug("Entering");
+		AuditHeader auditHeader = new AuditHeader();
+		try {
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_CollateralSetupDialog, auditHeader);
+		} catch (Exception exp) {
+			logger.error("Exception: ", exp);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 * @throws Exception 
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doSave() throws Exception {
+		logger.debug("Entering");
+		
+		final CollateralSetup aCollateralSetup = new CollateralSetup();
+		BeanUtils.copyProperties(getCollateralSetup(), aCollateralSetup);
+		boolean isNew = false;
+		
+		if (isWorkFlowEnabled()) {
+			aCollateralSetup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCollateralSetup.getNextTaskId(),
+					aCollateralSetup);
+		}
+		
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		// force validation, if on, than execute by component.getValue()
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aCollateralSetup.getRecordType()) && isValidation()) {
+			doClearMessage();
+			doSetValidation();
+			// fill the CollateralSetup object with the components data
+			doWriteComponentsToBean(aCollateralSetup);
+			
+			//Add third party details list
+			if (this.thirdPartyAssignment.isChecked()) {
+				
+				//Add the Extended Field Detail list
+				if(getCollateralThirdPartyList() == null || getCollateralThirdPartyList().isEmpty()){
+					this.basicDetailsTab.setSelected(true);
+					MessageUtil.showError(Labels.getLabel("label_Colateral_ThirdParty_Validation"));
+					return;
+				}
+				aCollateralSetup.setCollateralThirdPartyList(getCollateralThirdPartyList());
+			} else {
+				aCollateralSetup.setCollateralThirdPartyList(getCollateralThirdPartyList());
+			}
+			
+			// Co-Owner Detail list
+			aCollateralSetup.setCoOwnerDetailList(getCoOwnerDetailList());
+			
+			// Collateral Flags
+			fetchFlagDetals();
+			if (getFinFlagsDetailList() != null && !getFinFlagsDetailList().isEmpty()) {
+				aCollateralSetup.setFinFlagsDetailsList(getFinFlagsDetailList());
+			} else {
+				aCollateralSetup.setFinFlagsDetailsList(getCollateralSetup().getFinFlagsDetailsList());
+			}
+			
+			//Add the Extended Field Detail list
+			if (getExtendedFieldRenderList() == null || getExtendedFieldRenderList().isEmpty()) {
+				this.extendedDetailsTab.setSelected(true);
+				MessageUtil.showError(Labels.getLabel("label_Colateral_ExtendedField_Validation"));
+				return;
+			}
+			aCollateralSetup.setExtendedFieldRenderList(getExtendedFieldRenderList());
+			
 			//Finance CheckList Details Saving
 			if (checkListChildWindow != null) {
 				boolean validationSuccess = doSave_CheckList(aCollateralSetup,false);
@@ -1976,7 +2193,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			} else {
 				aCollateralSetup.setCheckLists(getCollateralSetup().getCheckLists());
 			}
-
+			
 			//Document Details Saving
 			if (documentDetailDialogCtrl != null) {
 				aCollateralSetup.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
@@ -1984,14 +2201,14 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				aCollateralSetup.setDocuments(getCollateralSetup().getDocuments());
 			}
 		}
-
+		
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-
+		
 		isNew = aCollateralSetup.isNew();
 		String tranType = "";
-
+		
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.trimToEmpty(aCollateralSetup.getRecordType()).equals("")) {
@@ -2018,7 +2235,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
 					Notification notification = new Notification();
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE); // FIXME Check with siva
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
 					notification.setModule("COLLATERAL");
@@ -2059,10 +2276,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-
+				
 				// List Detail Refreshment
 				refreshList();
-
+				
 				// Confirmation message
 				String msg = PennantApplicationUtil.getSavingStatus(aCollateralSetup.getRoleCode(),aCollateralSetup.getNextRoleCode(), 
 						aCollateralSetup.getCollateralRef(), " Collateral ", aCollateralSetup.getRecordStatus());
@@ -2211,7 +2428,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 			//FinFlags Details
 			if (aCollateralSetup.getFinFlagsDetailsList() != null && !aCollateralSetup.getFinFlagsDetailsList().isEmpty()) {
-				for (FinFlagsDetail details : finFlagsDetailList) {
+				for (FinFlagsDetail details : aCollateralSetup.getFinFlagsDetailsList()) {
 					if(StringUtils.isNotBlank(details.getRecordType())){
 						details.setReference(aCollateralSetup.getCollateralRef());
 						details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -2841,6 +3058,18 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		return 0;
 	}
 	
+	public boolean isReadOnly(String componentName) {
+		boolean collateralAssignmentWorkFlow = false;
+		if (getCollateralAssignmentDialogCtrl() != null && getFinanceDetail() != null) {
+			FinanceMain financemain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			collateralAssignmentWorkFlow = financemain.isWorkflow();
+		}
+		if (isWorkFlowEnabled() || collateralAssignmentWorkFlow) {
+			return getUserWorkspace().isReadOnly(componentName);
+		}
+		return false;
+	}
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -2977,6 +3206,22 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	public void setFlagTypeDataMap(Map<String, Object> flagTypeDataMap) {
 		this.flagTypeDataMap = flagTypeDataMap;
+	}
+
+	public CollateralAssignmentDialogCtrl getCollateralAssignmentDialogCtrl() {
+		return collateralAssignmentDialogCtrl;
+	}
+
+	public void setCollateralAssignmentDialogCtrl(CollateralAssignmentDialogCtrl collateralAssignmentDialogCtrl) {
+		this.collateralAssignmentDialogCtrl = collateralAssignmentDialogCtrl;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 
 }

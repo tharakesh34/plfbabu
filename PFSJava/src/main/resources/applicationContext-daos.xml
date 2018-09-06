@@ -4025,6 +4025,8 @@
 		<property name="customerService" ref="customerService" />
 		<!-- VehicleDealer -->
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
+		<!-- Collateral Setup -->
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -8560,6 +8562,11 @@
 		<property name="extendedFieldDetailsService" ref = "extendedFieldDetailsService" />
 	</bean>
 
+	<bean name="collateralSetupFetchingService" class="com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService">
+		<property name="documentDetailsDAO" ref = "documentDetailsDAO" />
+		<property name="collateralSetupService" ref = "collateralSetupService" />
+	</bean>
+	
 	<!-- Collateral ThirdParty details -->
 	<bean id="collateralThirdPartyDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralThirdPartyDAOImpl">

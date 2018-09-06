@@ -50,6 +50,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface CollateralSetupService {
 
@@ -74,14 +75,20 @@ public interface CollateralSetupService {
 	List<CollateralSetup> getApprovedCollateralByCustId(long depositorId);
 
 	BigDecimal getAssignedPerc(String collateralRef, String reference);
-	
+
 	int getCountByCollateralRef(String collateralRef);
-	
+
 	List<CollateralSetup> getCollateralSetupByCustId(long custId);
 
 	List<CollateralMovement> getCollateralMovements(String collateralRef);
 
 	boolean isThirdPartyUsed(String collateralRef, long custId);
 
+	List<AuditDetail> processCollateralSetupList(AuditHeader aAuditHeader, String method);
+
+	List<CollateralSetup> getCollateralDetails(String finReference);
+
 	CollateralSetup getCollateralSetupForLegal(String collateralRef);
+
+	List<AuditDetail> validateDetails(FinanceDetail financeDetail, String auditTranType, String method);
 }

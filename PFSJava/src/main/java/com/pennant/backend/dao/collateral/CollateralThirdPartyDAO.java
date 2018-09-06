@@ -16,7 +16,7 @@ public interface CollateralThirdPartyDAO {
 
 	List<CollateralThirdParty> getCollThirdPartyDetails(String collateralRef, String tableType);
 
-	void deleteList(CollateralThirdParty collateralThirdParty, String tableType);
+	void deleteList(String collateralRef, String tableType);
 
 	boolean isThirdPartyUsed(String collateralRef, long custId);
 

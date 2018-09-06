@@ -67,6 +67,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
@@ -78,11 +79,11 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;
@@ -105,7 +106,12 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	private CollateralStructureService		collateralStructureService;
 	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 
-	private List<String>					userRoleCodeList	= new ArrayList<String>();
+	private List<String> userRoleCodeList = new ArrayList<String>();
+
+	private Object dialogCtrl = null;
+	private Window window = null;
+	private FinanceDetail financeDetail = null;
+	private boolean fromLoan = false;
 
 	public SelectCollateralTypeDialogCtrl() {
 		super();
@@ -125,6 +131,23 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			this.collateralSetup = (CollateralSetup) arguments.get("collateralSetup");
 			this.collateralSetupListCtrl = (CollateralSetupListCtrl) arguments.get("collateralSetupListCtrl");
 			this.userRoleCodeList = (ArrayList<String>) arguments.get("role");
+			
+			if (arguments.containsKey("fromLoan")) {
+				this.fromLoan = (boolean) arguments.get("fromLoan");
+			}
+			if (arguments.containsKey("roleCode")) {
+				setRole((String) arguments.get("roleCode"));
+			}
+			if (arguments.containsKey("dialogCtrl")) {
+				this.dialogCtrl = (Object) arguments.get("dialogCtrl");
+			}
+			if (arguments.containsKey("window")) {
+				this.window = (Window) arguments.get("window");
+			}
+			if (arguments.containsKey("financeDetail")) {
+				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+				//financemain = financeDetail.getFinScheduleData().getFinanceMain();
+			}
 			if (this.collateralSetup == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -170,12 +193,21 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
 		this.collateralType.setFilters(filters);
 
-		String whereClause = getWhereClauseWithFirstTask();
-		if (StringUtils.isNotEmpty(whereClause)) {
-			this.collateralType.setWhereClause(whereClause);
+		if (!fromLoan) {
+			String whereClause = getWhereClauseWithFirstTask();
+			if (StringUtils.isNotEmpty(whereClause)) {
+				this.collateralType.setWhereClause(whereClause);
+			}
 		}
 
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
+		if (fromLoan) {
+			Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
+			this.custCIF.setValue(customer.getCustCIF());
+			this.custName.setValue(customer.getCustShrtName());
+			this.custCIF.setReadonly(true);
+			this.btnSearchCustCIF.setVisible(false);
+		} 
 		logger.debug("Leaving");
 	}
 
@@ -220,6 +252,49 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			return;
 		}
 
+		if (fromLoan) {
+			setLoanCollateralSetupDetails();
+		} else {
+			setCollateralSetupDetails();
+		}
+
+		showDetailView();
+		logger.debug("Leaving " + event.toString());
+	}
+
+	private void setLoanCollateralSetupDetails() throws InterruptedException {
+		//Customer Data Fetching
+		
+		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
+		if (customerDetails == null) {
+			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
+			return;
+		}
+		
+		// Workflow Details Setup
+		WorkFlowDetails workFlowDetails = null;
+		if (workFlowDetails == null) {
+			setWorkFlowEnabled(false);
+			collateralSetup.setWorkflowId(0);
+		}  
+		//Role  need to send 
+		collateralSetup.setNewRecord(true);
+		
+		collateralSetup.setCollateralType(this.collateralType.getValue());
+		collateralSetup.setCollateralTypeName(this.collateralType.getDescription());
+		collateralSetup.setCollateralCcy(SysParamUtil.getAppCurrency());
+		collateralSetup.setCustomerDetails(customerDetails);
+		collateralSetup.setDepositorCif(customerDetails.getCustomer().getCustCIF());
+		collateralSetup.setDepositorId(customerDetails.getCustomer().getCustID());
+		collateralSetup.setDepositorName(customerDetails.getCustomer().getCustShrtName());
+		
+		//Fetching the collateral Structure details
+		collateralSetup.setCollateralStructure(getCollateralStructureService().getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+		// Fetching Finance Reference Detail
+		collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(), FinanceConstants.FINSER_EVENT_ORG);
+	}
+	
+	private void setCollateralSetupDetails() throws InterruptedException {
 		//Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData();
 		if (customerDetails == null) {
@@ -280,9 +355,6 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		if (getFinanceWorkFlow() != null) {
 			collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(), FinanceConstants.FINSER_EVENT_ORG);
 		}
-
-		showDetailView();
-		logger.debug("Leaving " + event.toString());
 	}
 
 	private void showDetailView() {
@@ -291,9 +363,16 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		HashMap<String, Object> arguments = new HashMap<String, Object>();
 		arguments.put("collateralSetup", this.collateralSetup);
 		arguments.put("collateralSetupListCtrl", this.collateralSetupListCtrl);
+		arguments.put("dialogCtrl", this.dialogCtrl);
+		arguments.put("fromLoan", this.fromLoan);
+		arguments.put("roleCode", getRole());
+		if (fromLoan) {
+			arguments.put("financeDetail", getFinanceDetail());
+			arguments.put("newRecord", true);
+		}
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul",
-					this.collateralSetupListCtrl.window_CollateralSetupList, arguments);
+					window, arguments);
 			this.window_SelectCollateralDialog.onClose();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -351,9 +430,9 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	 */
 	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
-
-		CustomerDetails customerDetails = null;
+		
 		// Get the data of Customer from Core Banking Customer
+		CustomerDetails customerDetails = null;
 		try {
 			this.custCIF.setConstraint("");
 			this.custCIF.setErrorMessage("");
@@ -494,6 +573,14 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	}
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 
 }

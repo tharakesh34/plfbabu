@@ -28,6 +28,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -147,7 +148,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(tableType.getSuffix());
 		sql.append(" set verificationType = :verificationType, module = :module, keyReference = :keyReference, ");
-		sql.append(" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, ");
+		sql.append(" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, custId = :custId,");
 		sql.append(" requestType = :requestType, reinitid = :reinitid, agency = :agency, ");
 		sql.append(" reason = :reason, remarks = :remarks, agencyRemarks = :agencyRemarks, ");
 		sql.append(" agencyReason = :agencyReason, decision = :decision, ");
@@ -429,6 +430,87 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		}
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public List<Long> getRCUVerificationId(String finReference, int verificationType, String referencetype) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select id from verifications");
+		sql.append(" where verificationType=:verificationType and keyReference=:keyReference and referencetype=:referencetype");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("verificationType", verificationType);
+		paramMap.addValue("referencetype", referencetype);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<Long>();
+	}
+	
+	@Override
+	public void updateDocumentId(DocumentDetails detail, Long verificationId, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder("update verification_lv_details");
+		sql.append(tableType.getSuffix());
+		sql.append(" set documentid = :documentid, documentrefid = :documentrefid ");
+		sql.append(" Where verificationid = :verificationid and documentsubid = :documentsubid ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("documentid", detail.getDocId());
+		source.addValue("documentrefid", detail.getDocRefId());
+		source.addValue("documentsubid", detail.getDocCategory());
+		source.addValue("verificationid", verificationId);
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updateRCUReference(DocumentDetails detail, Long verificationId) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder("Update verifications set reference = :reference Where referenceFor = :referenceFor and id = :id ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("id", verificationId);
+		source.addValue("reference", String.valueOf(detail.getDocId()));
+		source.addValue("referenceFor", detail.getDocCategory());
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		}  catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 }

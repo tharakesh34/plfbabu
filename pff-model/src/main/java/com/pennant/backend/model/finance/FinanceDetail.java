@@ -243,7 +243,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private String processStage;
 	@XmlElementWrapper(name="collateralDetails")
 	@XmlElement(name="collateralDetail")
-	private List<CollateralSetup> collateralSetup;
+	private List<CollateralSetup> collaterals = null;
 	
 	// API Foreclosure letter statement purpose
 	@XmlElementWrapper(name="foreClosures")
@@ -869,12 +869,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.finFeeDetails = finFeeDetails;
 	}
 
-	public List<CollateralSetup> getCollateralSetup() {
-		return collateralSetup;
+	public List<CollateralSetup> getCollaterals() {
+		return collaterals;
 	}
 
-	public void setCollateralSetup(List<CollateralSetup> collateralSetup) {
-		this.collateralSetup = collateralSetup;
+	public void setCollaterals(List<CollateralSetup> collaterals) {
+		this.collaterals = collaterals;
 	}
 
 	public List<ForeClosure> getForeClosureDetails() {

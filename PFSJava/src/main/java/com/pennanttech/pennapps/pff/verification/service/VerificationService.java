@@ -87,4 +87,6 @@ public interface VerificationService {
 	List<Verification> getVerificationsForAggrement(String finReference);
 
 	void deleteVerification(Verification verification, TableType tableType);
+
+	void updateReferenceIds(FinanceDetail financeDetail);
 }

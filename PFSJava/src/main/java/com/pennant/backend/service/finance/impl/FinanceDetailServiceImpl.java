@@ -129,6 +129,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -209,6 +210,7 @@ import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -329,6 +331,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinIRRDetailsDAO finIRRDetailsDAO;
 	private VehicleDealerService vehicleDealerService;
 	private PSLDetailService			pSLDetailService;
+	private CollateralSetupService 			collateralSetupService;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -617,6 +620,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Cheque Header and Cheque Details getting
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
+		
+		// Collateral setup details and assignment details
+		List<CollateralSetup> collateralSetupList = getCollateralSetupService().getCollateralDetails(finReference);
+		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+			if (ImplementationConstants.COLLATERAL_INTERNAL) {
+				List<CollateralAssignment> assignmentsList = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_CTView");
+				financeDetail.getCollateralAssignmentList().addAll(assignmentsList);
+			}
+		}
+		financeDetail.setCollaterals(collateralSetupList);
+				
+		financeDetail.setSampling(samplingService.getSampling(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
+
 		
 		if (financeDetail.isSamplingApprover()) {
 			financeDetail.setSampling(finSamplingService
@@ -2465,6 +2481,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						financeDetail.getFinScheduleData().getFinanceMain());
 				auditDetails.addAll(details);
 			}
+			// Save Collateral setup Details
+			List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+				List<AuditDetail> details = getCollateralSetupService().processCollateralSetupList(aAuditHeader, "saveOrUpdate");
+				auditDetails.addAll(details);
+			}
 			
 			// Save Legal details
 			List<LegalDetail> legalDetails = financeDetail.getLegalDetailsList();
@@ -2750,7 +2772,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		for (AuditDetail auditDetail : adtVerifications) {
 			auditDetail.setAuditSeq(++i);
 		}
-
+		
+		//Update verification stage  tables document id's after saving to database and reference of RCU documntes
+		verificationService.updateReferenceIds(financeDetail);
+		
 		auditDetails.addAll(adtVerifications);
 	}
 
@@ -3203,6 +3228,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
 				auditDetails.addAll(details);
 				getCollateralAssignmentDAO().deleteByReference(financeMain.getFinReference(), "");
+			}
+			
+			// Save Collateral setup Details
+			List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+				List<AuditDetail> details = getCollateralSetupService().processCollateralSetupList(auditHeader, "delete");
+				auditDetails.addAll(details);
 			}
 
 			// Legal details
@@ -4009,6 +4041,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
 					details = processingCollateralAssignmentList(details, "",
 							financeDetail.getFinScheduleData().getFinanceMain());
+					auditDetails.addAll(details);
+				}
+				
+				// Save Collateral setup Details
+				List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+				if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+					List<AuditDetail> details = getCollateralSetupService().processCollateralSetupList(aAuditHeader, "doApprove");
 					auditDetails.addAll(details);
 				}
 
@@ -5490,6 +5529,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeDetail.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 		}
 
+		// Save Collateral setup Details
+		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+			List<AuditDetail> details = getCollateralSetupService().processCollateralSetupList(auditHeader, "doReject");
+			auditDetails.addAll(details);
+		}
+
 		// Legal Details
 		List<LegalDetail> legalDetailsList = financeDetail.getLegalDetailsList();
 		if (CollectionUtils.isNotEmpty(legalDetailsList)) {
@@ -6036,7 +6082,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(details);
 				}
 			}
-
+			
+			//Collateral Setup details Business validations
+			//========================
+			if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals())) {
+				auditDetails.addAll(getCollateralSetupService().validateDetails(financeDetail, auditTranType, method));
+			}
+			
 			// FinAssetType Detail
 			if (financeDetail.getFinAssetTypesList() != null && !financeDetail.getFinAssetTypesList().isEmpty()) {
 
@@ -9995,6 +10047,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 
 	public PSLDetailService getpSLDetailService() {

@@ -27,8 +27,6 @@ import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
-import com.pennant.backend.model.collateral.CollateralAssignment;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
@@ -43,7 +41,7 @@ import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
-import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.util.DeviationConstants;
@@ -75,7 +73,7 @@ public class DeviationExecutionCtrl {
 	@Autowired
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	@Autowired
-	private CollateralSetupService collateralSetupService;
+	private CollateralSetupFetchingService collateralSetupFetchingService;
 	@Autowired(required = false)
 	@Qualifier("financePostDeviationHook")
 	private PostDeviationHook postDeviationHook;
@@ -173,25 +171,9 @@ public class DeviationExecutionCtrl {
 			coApplicant.setCustomerDetails(customer);
 		}
 
-		// *** Collateral's details. ***
-		if (aFinanceDetail.getCollateralSetup() == null) {
-			aFinanceDetail.setCollateralSetup(new ArrayList<>());
-		} else {
-			aFinanceDetail.getCollateralSetup().clear();
-		}
-
-		CollateralSetup collateral;
-
-		for (CollateralAssignment collateralAssignment : aFinanceDetail.getCollateralAssignmentList()) {
-			if (PennantConstants.RECORD_TYPE_CAN.equals(collateralAssignment.getRecordType())) {
-				continue;
-			}
-
-			collateral = getCollateralSetupService().getCollateralSetupByRef(collateralAssignment.getCollateralRef(),
-					"", false);
-			aFinanceDetail.getCollateralSetup().add(collateral);
-		}
-
+		//Setting the collateral setup list
+		getCollateralSetupFetchingService().getCollateralSetupList(aFinanceDetail, true);
+		
 		// Call the customization hook.
 		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail);
 
@@ -1102,11 +1084,12 @@ public class DeviationExecutionCtrl {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
 
-	public CollateralSetupService getCollateralSetupService() {
-		return collateralSetupService;
+	public CollateralSetupFetchingService getCollateralSetupFetchingService() {
+		return collateralSetupFetchingService;
 	}
 
-	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
-		this.collateralSetupService = collateralSetupService;
+	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
+		this.collateralSetupFetchingService = collateralSetupFetchingService;
 	}
+	
 }

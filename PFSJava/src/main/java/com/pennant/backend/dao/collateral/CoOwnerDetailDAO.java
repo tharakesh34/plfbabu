@@ -18,6 +18,6 @@ public interface CoOwnerDetailDAO {
 
 	int getVersion(String collateralRef, String tableType);
 
-	void deleteList(CoOwnerDetail coOwnerDetail, String tableType);
+	void deleteList(String collateralRef, String tableType);
 
 }

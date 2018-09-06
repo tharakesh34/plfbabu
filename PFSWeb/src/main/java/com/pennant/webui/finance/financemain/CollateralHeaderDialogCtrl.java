@@ -73,6 +73,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAssetTypes;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.configuration.AssetTypeService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -136,6 +137,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	//### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules = new HashMap<>();
 	
+	private FinanceDetail financeDetail;
+	
 	public Map<String, Object> getRules() {
 		return rules;
 	}
@@ -179,6 +182,26 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				parent = event.getTarget().getParent();
 			}
 
+			if (arguments.containsKey("roleCode")) {
+				this.roleCode = (String) arguments.get("roleCode");
+			}
+			
+			if (arguments.containsKey("finType")) {
+				this.finType = (String) arguments.get("finType");
+			}
+			
+			if (arguments.containsKey("financeMainDialogCtrl")) {
+				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
+				
+				if(this.financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+					((FinanceMainBaseCtrl)financeMainDialogCtrl).setCollateralHeaderDialogCtrl(this);
+				}
+			}
+			
+			if (arguments.containsKey("financeDetail")) {
+				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+			}
+			
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("collateralAssignmentList")) {
 				setCollateralAssignments((List<CollateralAssignment>)arguments.get("collateralAssignmentList"));
@@ -190,22 +213,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			
 			if (arguments.containsKey("finassetTypeList")) {
 				setFinAssetTypes((List<FinAssetTypes>)arguments.get("finassetTypeList"));
-			}
-			
-			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
-				
-				if(this.financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
-					((FinanceMainBaseCtrl)financeMainDialogCtrl).setCollateralHeaderDialogCtrl(this);
-				}
-			}
-
-			if (arguments.containsKey("roleCode")) {
-				this.roleCode = (String) arguments.get("roleCode");
-			}
-			
-			if (arguments.containsKey("finType")) {
-				this.finType = (String) arguments.get("finType");
 			}
 			
 			if (arguments.containsKey("moduleName")) {
@@ -285,7 +292,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				int borderHeight = ((this.borderLayoutHeight - 240)/2);
 				if(!assetsReq || !collateralReq){
 					borderHeight = (this.borderLayoutHeight - 230);
-					if(!assetsReq){
+					if (!assetsReq) {
 						this.assetTypeDiv.setVisible(false);
 						this.listBoxAssetTypeHeader.setVisible(false);
 					}
@@ -296,7 +303,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 						this.listBoxCollateralAssignments.setVisible(false);
 					}
 					this.window_CollateralAssignmentDialog.setHeight(this.borderLayoutHeight - 80 + "px");	
-				}else{
+				} else {
 					this.window_CollateralAssignmentDialog.setHeight(this.borderLayoutHeight - 75 + "px");
 				}
 				this.listBoxAssetTypeHeader.setHeight(borderHeight +"px");
@@ -346,10 +353,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		
 		// If Record is processing with Prospect Customer and not yet created in Application
 		// Same Customer should not eligible to assign Collateral Details
-		if(customerId <= 0){
-			MessageUtil.showError(Labels.getLabel("label_FinCollateralHeaderDialog_NotFound_Customer"));
-			return;
-		}
 
 		CollateralAssignment assignment = new CollateralAssignment();
 		assignment.setNewRecord(true);
@@ -361,7 +364,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		map.put("collateralAssignment", assignment);
 		map.put("assignCollateralRef", assignCollateralRef);
 		map.put("finType", finType);
+		map.put("ccyFormat",getFormat());
 		map.put("customerId", customerId);
+		map.put("financeDetail", getFinanceDetail());
 
 		Executions.createComponents("/WEB-INF/pages/Collateral/CollateralAssignment/CollateralAssignmentDialog.zul",window_CollateralAssignmentDialog, map);
 
@@ -498,7 +503,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				item.setAttribute("data", fieldValueDetail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onAssetTypeItemDoubleClicked");
 				listBoxAssetTypeHeader.appendChild(item);
-
 			}
 		}
 		logger.debug("Leaving");
@@ -539,14 +543,14 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	
 	/**
 	 * Method for Filling List box with the list rendering for Assignments
-	 * @param CollateralAssignments
+	 * @param collateralAssignments
 	 * @throws SecurityException 
 	 * @throws NoSuchMethodException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doFillCollateralDetails(List<CollateralAssignment> CollateralAssignments, boolean fromAssignment) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void doFillCollateralDetails(List<CollateralAssignment> collateralAssignments, boolean fromAssignment) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		
 		//### 10-05-2018 Start Development Item 82
@@ -565,17 +569,17 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		BigDecimal totAssignedColValue = BigDecimal.ZERO;
 		
 		this.listBoxCollateralAssignments.getItems().clear();
-		setCollateralAssignments(CollateralAssignments);
+		setCollateralAssignments(collateralAssignments);
 		
 		BigDecimal loanAssignedValue = BigDecimal.ZERO;
-		if (CollateralAssignments != null && !CollateralAssignments.isEmpty()) {
+		if (collateralAssignments != null && !collateralAssignments.isEmpty()) {
 			
-			for (CollateralAssignment collateralAssignment : CollateralAssignments) {
+			for (CollateralAssignment collateralAssignment : collateralAssignments) {
 				loanAssignedValue = loanAssignedValue.add(collateralAssignment.getBankValuation().multiply(
 						collateralAssignment.getAssignPerc()).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
 			}
 			
-			for (CollateralAssignment collateralAssignment : CollateralAssignments) {
+			for (CollateralAssignment collateralAssignment : collateralAssignments) {
 
 				int ccyFormat = CurrencyUtil.getFormat(collateralAssignment.getCollateralCcy());
 				Listitem listitem = new Listitem();
@@ -686,15 +690,15 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		
 		if (fromAssignment) {
 			if (tVerificationDialogCtrl != null) {
-				tVerificationDialogCtrl.addCollaterals(collateralAssignments);
+				tVerificationDialogCtrl.addCollaterals(collateralAssignments, getFinanceDetail());
 			}
 
 			if (rcuVerificationDialogCtrl != null) {
-				rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments);
+				rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments, getFinanceDetail().getCollaterals());
 			}
 
 			if (lVerificationCtrl != null) {
-				lVerificationCtrl.addCollateralDocuments(collateralAssignments);
+				lVerificationCtrl.addCollateralDocuments(collateralAssignments, getFinanceDetail());
 			}
 		}
 		
@@ -755,11 +759,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				map.put("collateralAssignment", assignment);
 				map.put("finType", finType);
 				map.put("customerId", customerId);
+				map.put("financeDetail", getFinanceDetail());
 
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents(
-							"/WEB-INF/pages/Collateral/CollateralAssignment/CollateralAssignmentDialog.zul", null, map);
+					Executions.createComponents("/WEB-INF/pages/Collateral/CollateralAssignment/CollateralAssignmentDialog.zul", null, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -901,7 +905,19 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	}
 
 	public void setlVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
-		this.lVerificationCtrl = lVerificationCtrl;
+		try {
+			this.lVerificationCtrl = lVerificationCtrl;
+			this.lVerificationCtrl.setCollateralHeaderDialogCtrl(this);
+		} catch (Exception e) {
+		}
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 	
 }

@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -59,6 +60,7 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -201,6 +203,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					setVerificationData(financeDetail, item, verificationType);
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {
+					if (verificationType == VerificationType.LV) {
+						item.setCustId(financeDetail.getCustomerDetails().getCustomer().getCustID());
+					}
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 
@@ -504,6 +509,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 
 		List<DocumentDetails> list = null;
+		//Collateral Documents
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			list = documentDetailsDAO.getDocumentDetailsByRef(item.getReferenceFor(), CollateralConstants.MODULE_NAME,
 					"", "_View");
@@ -1087,5 +1093,82 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		verificationDAO.delete(verification, tableType);
 		logger.info(Literal.LEAVING);
 
+	}
+	
+	/**
+	 *Update verification stage  tables document id's after saving to database
+	 */
+	private void updateStageTableDocumentIds(FinanceDetail financeDetail) {
+		logger.info(Literal.ENTERING);
+
+		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+
+			for (CollateralSetup collateralSetup : collateralSetupList) {
+
+				if (collateralSetup.isFromLoan()) {
+					Long verificationId = verificationDAO.getVerificationIdByReferenceFor(
+							collateralSetup.getFinReference(), collateralSetup.getCollateralRef(), VerificationType.LV.getKey());
+
+					if (verificationId != null) {
+						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(
+								collateralSetup.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
+					
+						if (CollectionUtils.isNotEmpty(documentDetailsList)) {
+							
+							for (DocumentDetails documentDetails : documentDetailsList) {
+								verificationDAO.updateDocumentId(documentDetails, verificationId, TableType.STAGE_TAB);
+							}
+						}
+					}
+				}
+			}
+		}
+		logger.info(Literal.LEAVING);
+	}
+	
+	/**
+	 *Update verification stage  tables document id's after saving to database
+	 */
+	private void updateRCUVerificationReference(FinanceDetail financeDetail) {
+		logger.info(Literal.ENTERING);
+		
+		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+		
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			
+			for (CollateralSetup collateralSetup : collateralSetupList) {
+				
+				if (collateralSetup.isFromLoan()) {
+					List<Long> verificationIds = verificationDAO.getRCUVerificationId(collateralSetup.getFinReference(), VerificationType.RCU.getKey(), DocumentType.COLLATRL.getValue());
+					
+					if (CollectionUtils.isNotEmpty(verificationIds)) {
+						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(collateralSetup.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
+						for (Long verificationId : verificationIds) {
+							if (CollectionUtils.isNotEmpty(documentDetailsList)) {
+								for (DocumentDetails documentDetails : documentDetailsList) {
+									verificationDAO.updateRCUReference(documentDetails, verificationId);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		logger.info(Literal.LEAVING);
+	}
+
+	@Override
+	public void updateReferenceIds(FinanceDetail financeDetail) {
+		logger.info(Literal.ENTERING);
+
+		if (financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()) {
+			updateStageTableDocumentIds(financeDetail);
+		}
+		if (financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()) {
+			updateRCUVerificationReference(financeDetail);
+		}
+		logger.info(Literal.LEAVING);
 	}
 }

@@ -42,6 +42,7 @@ import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -176,7 +177,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			collaterls = financeDetail.getCollateralAssignmentList();
 		}
 
-		renderList(getFinalVerifications(collaterls));
+		renderList(getFinalVerifications(collaterls, financeDetail));
 	}
 
 	private boolean isNotDeleted(String recordType) {
@@ -184,12 +185,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				|| PennantConstants.RECORD_TYPE_CAN.equals(recordType));
 	}
 
-	public void addCollaterals(List<CollateralAssignment> collaterals) {
+	public void addCollaterals(List<CollateralAssignment> collaterals, FinanceDetail financeDetail) {
 		if (!initType) {
 			return;
 		}
 		if (collaterals != null) {
-			renderList(getFinalVerifications(collaterals));
+			renderList(getFinalVerifications(collaterals, financeDetail));
 		}
 	}
 
@@ -225,7 +226,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return item;
 	}
 
-	private List<Verification> getFinalVerifications(List<CollateralAssignment> collaterals) {
+	private List<Verification> getFinalVerifications(List<CollateralAssignment> collaterals, FinanceDetail financeDetails) {
 		List<Verification> verifications = new ArrayList<>();
 		Map<String, Verification> collateralMap = new HashMap<>();
 		Set<String> deletedSet = new HashSet<>();
@@ -307,7 +308,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				references[i++] = reference.getReferenceFor();
 			}
 
-			List<Verification> collateralDetails = verificationService.getCollateralDetails(references);
+			List<Verification> collateralDetails = getCollateralDetails(financeDetails, references);
 
 			for (Verification item : collateralDetails) {
 				for (Verification ver : verifications) {
@@ -336,6 +337,49 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		return verifications;
+	}
+
+	private List<Verification> getCollateralDetails(FinanceDetail financeDetails, String[] references) {
+
+		List<Verification> newCollateralDetails = new ArrayList<Verification>();
+		
+		List<Verification> collateralDetails = verificationService.getCollateralDetails(references); 
+		
+		if (financeDetails != null) {
+			List<CollateralSetup> collateralSetupList = financeDetails.getCollaterals();
+			CustomerDetails customerDetails = financeDetails.getCustomerDetails();
+
+			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+				for (CollateralSetup collateralSetup : collateralSetupList) {
+					if (PennantConstants.RECORD_TYPE_NEW.equals(collateralSetup.getRecordType())) {
+						for (int i = 0; i < references.length; i++) {
+							String collReference = references[i];
+							if (collateralSetup.getCollateralRef().equals(collReference)) {
+								boolean isAdded = false;
+								for (Verification verification : collateralDetails) {
+									if (verification.getReferenceFor().equals(collReference)) {
+										isAdded = true;
+										break;
+									}
+								}
+								if (!isAdded) {
+									Verification verification = new Verification();
+									verification.setReferenceFor(collateralSetup.getCollateralRef());
+									verification.setReferenceType(collateralSetup.getCollateralType());
+									verification.setReference(customerDetails.getCustomer().getCustCIF());
+									verification.setCustomerName(customerDetails.getCustomer().getCustShrtName());
+									verification.setVerificationReq(collateralSetup.getCollateralStructure().isCollateralValuatorReq());
+									newCollateralDetails.add(verification);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		collateralDetails.addAll(newCollateralDetails);
+		return collateralDetails;
 	}
 
 	private List<Verification> getOldVerifications() {

@@ -39,16 +39,16 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -112,7 +112,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	@Autowired
 	private transient VerificationService verificationService;
 	@Autowired
-	private transient DocumentDetailsDAO documentDetailsDAO;
+	private transient CollateralSetupFetchingService collateralSetupFetchingService;
 
 	/**
 	 * default constructor.<br>
@@ -185,7 +185,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (collaterls != null) {
-			setDocumentDetails(getCollateralDocuments(collaterls), DocumentType.COLLATRL);
+			setDocumentDetails(getCollateralDocuments(collaterls, financeDetail.getCollaterals()), DocumentType.COLLATRL);
 		}
 
 		renderVerifications();
@@ -750,10 +750,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		renderVerifications();
 	}
 
-	public void addCollateralDocuments(List<CollateralAssignment> collaterals) {
+	public void addCollateralDocuments(List<CollateralAssignment> collaterals, List<CollateralSetup> collateralSetupList) {
 		collateralDocuments.clear();
 		if (collaterals != null) {
-			setDocumentDetails(getCollateralDocuments(collaterals), DocumentType.COLLATRL);
+			setDocumentDetails(getCollateralDocuments(collaterals, collateralSetupList), DocumentType.COLLATRL);
 		}
 
 		renderVerifications();
@@ -769,24 +769,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return loanDocs;
 	}
 
-	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals) {
-		List<DocumentDetails> documents = new ArrayList<>();
-
-		for (CollateralAssignment collateral : collaterals) {
-			List<DocumentDetails> list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(),
-					CollateralConstants.MODULE_NAME, "", "_View");
-
-			if (list != null) {
-				for (DocumentDetails documentDetails : list) {
-					if (!isNotDeleted(collateral.getRecordType())) {
-						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
-				}
-				documents.addAll(list);
-			}
-		}
-
-		return documents;
+	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals, List<CollateralSetup> collateralSetupList) {
+		return getCollateralSetupFetchingService().getCollateralDocuments(collaterals, collateralSetupList, true);
 	}
 
 	/**
@@ -1597,4 +1581,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
+	public CollateralSetupFetchingService getCollateralSetupFetchingService() {
+		return collateralSetupFetchingService;
+	}
+
+	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
+		this.collateralSetupFetchingService = collateralSetupFetchingService;
+	}
+	
 }

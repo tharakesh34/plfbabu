@@ -88,6 +88,8 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String				collateralRef;
+	@XmlElement
+	private String				finReference;
 	@XmlElement(name = "cif")
 	private String				depositorCif;
 	
@@ -127,6 +129,8 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElement(name = "alwThirdPartyAssign")
 	private boolean				thirdPartyAssignment;
 	
+	private boolean				fromLoan;
+	
 	@XmlElement
 	private String				remarks;
 	private boolean				newRecord			= false;
@@ -138,6 +142,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	
 	private long				createdBy;
 	private Timestamp			createdOn;
+	private String				status;
 	
 	private CollateralStructure collateralStructure = null;
 	private CustomerDetails 		customerDetails;
@@ -204,6 +209,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		excludeFields.add("extendedDetails");
 		excludeFields.add("finFlagsDetails");
 		excludeFields.add("assignmentDetails");
+		excludeFields.add("fromLoan");
 		return excludeFields;
 	}
 
@@ -221,6 +227,14 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setCollateralRef(String collateralRef) {
 		this.collateralRef = collateralRef;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
 	}
 
 	public String getDepositorCif() {
@@ -330,6 +344,14 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	}
 	public void setThirdPartyAssignment(boolean thirdPartyAssignment) {
 		this.thirdPartyAssignment = thirdPartyAssignment;
+	}
+
+	public boolean isFromLoan() {
+		return fromLoan;
+	}
+
+	public void setFromLoan(boolean fromLoan) {
+		this.fromLoan = fromLoan;
 	}
 
 	public String getRemarks() {
@@ -547,5 +569,13 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 				// Nothing TO DO
 			}
 		}
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

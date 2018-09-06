@@ -249,7 +249,7 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
-import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -875,6 +875,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private MailTemplateService mailTemplateService;
 	private LegalDetailService legalDetailService;
 	private BaseRateService baseRateService;
+	private CollateralSetupFetchingService collateralSetupFetchingService;
 
 	protected BigDecimal availCommitAmount = BigDecimal.ZERO;
 	protected Commitment commitment;
@@ -952,7 +953,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
-	private CollateralSetupService collateralSetupService;
 	private Map<String, Object> collateralRuleMap = new HashMap<>();
 	//adding new document fields
 	private Object financeMainDialogCtrl = null;
@@ -2669,6 +2669,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
 				map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
 				map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());	
+				map.put("financeDetail", getFinanceDetail());	
 				
 				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
 					utilizedAmt = financeMain.getFinAssetValue().subtract(financeMain.getFinRepaymentAmount());
@@ -15898,53 +15899,49 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal propertyLTV = BigDecimal.ZERO;
 		StringBuilder collateralType = new StringBuilder("");
 
-		if (collateralHeaderDialogCtrl != null
-				&& CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())) {
-			for (CollateralAssignment assignment : collateralHeaderDialogCtrl.getCollateralAssignments()) {
-				CollateralSetup setup = getCollateralSetupService()
-						.getCollateralSetupByRef(assignment.getCollateralRef(), curNextRoleCode, isEnquiry);
+		if (collateralHeaderDialogCtrl != null && CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())) {
 
-				if (setup != null && setup.getCollateralStructure() != null) {
+			List<CollateralSetup> collateralSetupList = getCollateralSetupFetchingService().getCollateralSetupList(
+					collateralHeaderDialogCtrl.getCollateralAssignments(), collateralHeaderDialogCtrl.getFinanceDetail());
 
-					for (ExtendedFieldDetail fieldDetail : setup.getCollateralStructure().getExtendedFieldHeader()
-							.getExtendedFieldDetails()) {
-						if (fieldDetail.isAllowInRule()) {
-							String key = fieldDetail.getLovDescModuleName() + "_"
-									+ fieldDetail.getLovDescSubModuleName() + "_" + fieldDetail.getFieldName();
+			if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+				for (CollateralSetup setup : collateralSetupList) {
 
-							if (CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())) {
-								for (ExtendedFieldRender extendedFieldRender : setup.getExtendedFieldRenderList()) {
-									// FIXME currently it  is available for the first REcord only 
-									if (!collateralRuleMap.containsKey(key)) {
-										Object value = extendedFieldRender.getMapValues()
-												.get(fieldDetail.getFieldName());
-										value = getRuleValue(value, fieldDetail.getFieldType(),
-												setup.getCollateralCcy());
-										collateralRuleMap.put(key, value);
+					if (setup != null && setup.getCollateralStructure() != null) {
+
+						for (ExtendedFieldDetail fieldDetail : setup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails()) {
+							if (fieldDetail.isAllowInRule()) {
+								String key = fieldDetail.getLovDescModuleName() + "_" + fieldDetail.getLovDescSubModuleName() + "_" + fieldDetail.getFieldName();
+
+								if (CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())) {
+									for (ExtendedFieldRender extendedFieldRender : setup.getExtendedFieldRenderList()) {
+										// FIXME currently it is available for  the first REcord only
+										if (!collateralRuleMap.containsKey(key)) {
+											Object value = extendedFieldRender.getMapValues().get(fieldDetail.getFieldName());
+											value = getRuleValue(value, fieldDetail.getFieldType(),setup.getCollateralCcy());
+											collateralRuleMap.put(key, value);
+										}
 									}
 								}
 							}
 						}
-					}
-					if (CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())) {
-						ExtendedFieldRender extendedFieldRender = setup.getExtendedFieldRenderList().get(0);
-						if (!collateralRuleMap.containsKey("GLNVAL")) {
-							guidedValue = decimalValue(extendedFieldRender.getMapValues().get("GLNVAL"),
-									setup.getCollateralCcy());
-						}
-						if (!collateralRuleMap.containsKey("MKTVAL")) {
-							marketValue = decimalValue(extendedFieldRender.getMapValues().get("MKTVAL"),
-									setup.getCollateralCcy());
-						}
-						if (!collateralRuleMap.containsKey("UNITPRICE")) {
-							unitPrice = decimalValue(extendedFieldRender.getMapValues().get("UNITPRICE"),
-									setup.getCollateralCcy());
-						}
+						if (CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())) {
+							ExtendedFieldRender extendedFieldRender = setup.getExtendedFieldRenderList().get(0);
+							if (!collateralRuleMap.containsKey("GLNVAL")) {
+								guidedValue = decimalValue(extendedFieldRender.getMapValues().get("GLNVAL"), setup.getCollateralCcy());
+							}
+							if (!collateralRuleMap.containsKey("MKTVAL")) {
+								marketValue = decimalValue(extendedFieldRender.getMapValues().get("MKTVAL"), setup.getCollateralCcy());
+							}
+							if (!collateralRuleMap.containsKey("UNITPRICE")) {
+								unitPrice = decimalValue(extendedFieldRender.getMapValues().get("UNITPRICE"),setup.getCollateralCcy());
+							}
 
-						String type = (String) extendedFieldRender.getMapValues().get("COLLATERALTYPE");
-						if (type != null && !StringUtils.contains(collateralType.toString(), type)) {
-							collateralType.append(type);
-							collateralType.append(",");
+							String type = (String) extendedFieldRender.getMapValues().get("COLLATERALTYPE");
+							if (type != null && !StringUtils.contains(collateralType.toString(), type)) {
+								collateralType.append(type);
+								collateralType.append(",");
+							}
 						}
 					}
 				}
@@ -18137,7 +18134,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getLvVerification());
-			map.put("financeDetail", financeDetail);
+			map.put("financeDetail", getFinanceDetail());
 			map.put("InitType", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_LVINITIATION), map);
@@ -18168,7 +18165,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getLvVerification());
-			map.put("financeDetail", financeDetail);
+			map.put("financeDetail", getFinanceDetail());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVApproval.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_LVAPPROVAL), map);
 		}
@@ -18483,15 +18480,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
 	}
-
-	public CollateralSetupService getCollateralSetupService() {
-		return collateralSetupService;
-	}
-
-	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
-		this.collateralSetupService = collateralSetupService;
-	}
-
+ 
 	public PSLDetailDialogCtrl getpSLDetailDialogCtrl() {
 		return pSLDetailDialogCtrl;
 	}
@@ -18567,6 +18556,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+
+	public CollateralSetupFetchingService getCollateralSetupFetchingService() {
+		return collateralSetupFetchingService;
+	}
+
+	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
+		this.collateralSetupFetchingService = collateralSetupFetchingService;
 	}
 
 	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
