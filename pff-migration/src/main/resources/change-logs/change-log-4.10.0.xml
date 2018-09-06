@@ -9394,4 +9394,11 @@ UNION ALL
 		
 		</createView>
 	</changeSet>
+	<changeSet id="112" author="Madhubabu.P">
+		<sql>
+		update secroles set roledesc='Fee Waiver Maker' where rolecd='FEE_WAIVER_MAKER';
+		update secroles set roledesc='Fee Waiver Approver' where rolecd='FEE_WAIVER_APPROVER';
+		
+		</sql>
+	</changeSet>
 </databaseChangeLog>
