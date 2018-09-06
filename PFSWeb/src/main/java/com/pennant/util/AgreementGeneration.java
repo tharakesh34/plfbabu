@@ -1505,14 +1505,14 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			BigDecimal totalDeductionWithBPI=totalDeduction.add(BPIAmount);
-			BigDecimal totalLoanAmount=BigDecimal.ZERO;
+			BigDecimal firstDisbursementAmt=BigDecimal.ZERO;
 			if (detail != null && detail.getFinScheduleData() != null && detail.getFinScheduleData().getFinanceMain() != null){
-				totalLoanAmount=detail.getFinScheduleData().getFinanceMain().getFinAssetValue();
+				firstDisbursementAmt=detail.getFinScheduleData().getFinanceMain().getFinAmount();
 			}
 			agreement.setTotalDeductionwithoutBPI(PennantAppUtil.amountFormate(totalDeduction, formatter));
 			agreement.setTotalDeductionwithBPI(PennantAppUtil.amountFormate(totalDeductionWithBPI, formatter));
-			agreement.setNetDisbWithoutBPI(PennantAppUtil.amountFormate(totalLoanAmount.add(totalDeduction), formatter));
-			agreement.setNetDisbWithBPI(PennantAppUtil.amountFormate(totalLoanAmount.add(totalDeductionWithBPI), formatter));
+			agreement.setNetDisbWithoutBPI(PennantAppUtil.amountFormate(firstDisbursementAmt.add(totalDeduction), formatter));
+			agreement.setNetDisbWithBPI(PennantAppUtil.amountFormate(firstDisbursementAmt.add(totalDeductionWithBPI), formatter));
 			
 			if (CollectionUtils.isEmpty(agreement.getLoanServicingFeeDetails())) {
 				agreement.setLoanServicingFeeDetails(new ArrayList<AgreementDetail.LoanServicingFee>());
