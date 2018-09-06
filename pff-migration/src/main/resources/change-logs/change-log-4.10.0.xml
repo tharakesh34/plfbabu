@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	<!--  <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -9363,6 +9363,35 @@ UNION ALL
 		   FROM bmtdocumenttypes doc
 		     LEFT JOIN documentcategory dc ON dc.id = doc.categoryid
 		</createView>
+	</changeSet> -->
+	<changeSet id="111" author="Madhubabu.P">
+		<createView viewName="postings_view"
+			replaceIfExists="true">
+		 SELECT    T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate,
+	  		T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                    T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                    T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
+				FROM          Postings T1 INNER JOIN
+                     BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode  
+                     inner join financemain T3 on T3.finreference=T1.finreference
+  union all
+  SELECT    T1.LinkedTranId, T1.Postref, T1.PostingId, T3.Primarylinkref, T1.FinEvent, T1.PostDate, T1.ValueDate,
+	  		T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                    T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                    T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
+				FROM          Postings T1 INNER JOIN
+                     BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+                     inner join vasrecording T3 on T3.vasreference=T1.finreference
+                     
+   union all       
+  SELECT    T1.LinkedTranId, T1.Postref, T1.PostingId, T3.REFERENCE, T1.FinEvent, T1.PostDate, T1.ValueDate,
+	  		T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                    T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                    T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
+				FROM          Postings T1 INNER JOIN
+                     BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+                     inner join jvpostings T3 on T3.BATCHREFERENCE::text=T1.finreference
+		
+		</createView>
 	</changeSet>
-	
 </databaseChangeLog>
