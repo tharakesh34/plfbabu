@@ -282,7 +282,15 @@ public class AgreementDetail {
 	 */
 	private String netDisbWithoutBPI ="0.00";
 
-	
+	private String totalReceiptFeeAmount = "0.00";
+
+	public String getTotalReceiptFeeAmount() {
+		return totalReceiptFeeAmount;
+	}
+
+	public void setTotalReceiptFeeAmount(String totalReceiptFeeAmount) {
+		this.totalReceiptFeeAmount = totalReceiptFeeAmount;
+	}
 
 	public String getBPIAmount() {
 		return BPIAmount;

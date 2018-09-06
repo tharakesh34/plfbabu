@@ -144,6 +144,7 @@ import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -1536,6 +1537,19 @@ public class AgreementGeneration implements Serializable {
 			}
 			if (CollectionUtils.isEmpty(agreement.getKycDetails())) {
 				agreement.getKycDetails().add(agreement.new KycDetail());
+			}
+			
+			BigDecimal totalFeeAmount = BigDecimal.ZERO;
+			if (null != detail && null != detail.getFinScheduleData()) {
+				List<FinReceiptDetail> finReceiptDetails = detail.getFinScheduleData().getFinReceiptDetails();
+				if (CollectionUtils.isEmpty(finReceiptDetails)) {
+					finReceiptDetails.forEach(finReceiptDts -> {
+						if (null != finReceiptDts) {
+							totalFeeAmount.add(finReceiptDts.getAmount());
+						}
+					});
+					agreement.setTotalReceiptFeeAmount(PennantApplicationUtil.amountFormate(totalFeeAmount, formatter));
+				}
 			}
 			
 		} catch (Exception e) {
