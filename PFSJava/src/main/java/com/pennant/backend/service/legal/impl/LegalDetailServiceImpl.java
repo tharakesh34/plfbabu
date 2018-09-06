@@ -494,8 +494,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				List<CoOwnerDetail> coOwnerDetailsList = collateralSetup.getCoOwnerDetailList();
 				if (CollectionUtils.isNotEmpty(coOwnerDetailsList)) {
 					for (CoOwnerDetail coOwnerDetail : coOwnerDetailsList) {
-						CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(coOwnerDetail.getCustomerId(), false, "_View");
-						customersList.add(customerDetails.getCustomer());
+						if(coOwnerDetail.getCustomerId() != 0){
+							CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(coOwnerDetail.getCustomerId(), false, "_View");
+							if (customerDetails != null) {
+								customersList.add(customerDetails.getCustomer());
+							}
+						}
 					}
 				}
 				legalDetail.setCustomerList(customersList);
