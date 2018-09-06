@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<!--  <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -9363,7 +9363,7 @@ UNION ALL
 		   FROM bmtdocumenttypes doc
 		     LEFT JOIN documentcategory dc ON dc.id = doc.categoryid
 		</createView>
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="111" author="Madhubabu.P">
 		<createView viewName="postings_view"
 			replaceIfExists="true">
