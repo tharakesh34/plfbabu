@@ -1,7 +1,6 @@
 package com.pennant.webui.rmtmasters.accountingset;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -20,6 +19,8 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -44,7 +45,7 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	protected Button 		btn_Stimulate;						// autowired
 	protected Row 			rowResult;							// autowired
 	protected Label 		result;								// autowired
-	protected Decimalbox 	textbox;
+	protected Decimalbox 	amountValueBox;
 	
 	JSONArray variables = new JSONArray();
 	protected TransactionEntryDialogCtrl transactionEntryDialogCtrl;
@@ -91,9 +92,11 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 				row.appendChild(label);
 				label = new Label(":");
 				row.appendChild(label);
-				textbox = new Decimalbox();
-				textbox.setId(variable.get("name").toString());
-				row.appendChild(textbox);
+				amountValueBox = new Decimalbox();
+				amountValueBox.setId(variable.get("name").toString());
+				amountValueBox.setScale(PennantConstants.defaultCCYDecPos);
+				amountValueBox.setFormat(PennantConstants.amountFormate2);
+				row.appendChild(amountValueBox);
 				row.setParent(rows_Fields);
 			}
 		}
@@ -119,22 +122,30 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
 				if (!"Result".equals(variable.get("name"))) {
-					textbox = (Decimalbox) rows_Fields.getFellowIfAny(variable
+					amountValueBox = (Decimalbox) rows_Fields.getFellowIfAny(variable
 							.get("name").toString().trim());
+					
+					BigDecimal compValue = amountValueBox.getValue();
+					if(compValue == null){
+						compValue = BigDecimal.ZERO;
+					}
+					
+					compValue = PennantApplicationUtil.unFormateAmount(compValue, PennantConstants.defaultCCYDecPos);
+					
 					// bindings to the engine
-					engine.put(textbox.getId().trim(), textbox.getValue()== null ? BigDecimal.ZERO : textbox.getValue());
+					engine.put(amountValueBox.getId().trim(), compValue);
 				}
 			}
+			
 			// Execute the engine
 			String rule="function Eligibility(){"+transactionEntryDialogCtrl.amountRule.getValue()+"}Eligibility();";
 			engine.eval(rule);			
 			
-			Object result=engine.get("Result");
-				
 			// make result row visible and set value
+			Object result=engine.get("Result");
 			this.rowResult.setVisible(true);		
 			BigDecimal tempResult= new BigDecimal(result.toString());
-			tempResult = tempResult.setScale(2,RoundingMode.UP);
+			tempResult = PennantApplicationUtil.formateAmount(tempResult, PennantConstants.defaultCCYDecPos);
 			this.result.setValue(String.valueOf(tempResult));
 		} catch (Exception e) {
 			MessageUtil.showError(e);

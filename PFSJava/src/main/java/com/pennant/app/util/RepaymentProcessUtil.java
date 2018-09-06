@@ -136,11 +136,13 @@ public class RepaymentProcessUtil {
 		
 		//TDS Calculation, if Applicable
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		String tdsRoundMode = null;
+		int tdsRoundingTarget = 0;
 		if(financeMain.isTDSApplicable()){
 
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 			
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
@@ -223,7 +225,10 @@ public class RepaymentProcessUtil {
 									tdsAdjust = balPft.subtract(actPftAdjust);
 								}else{
 									actPftAdjust = totalReceiptAmt;
-									tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
+									if(financeMain.isTDSApplicable()){
+										tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
+										tdsAdjust = CalculationUtil.roundAmount(tdsAdjust, tdsRoundMode, tdsRoundingTarget);
+									}
 									totalReceiptAmt = BigDecimal.ZERO;
 								}
 								
