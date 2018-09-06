@@ -98,7 +98,7 @@ public class FinStatementController extends SummaryDetailService {
 					if (custId != 0) {
 						List<CollateralSetup> collatSetupList = collateralSetupService
 								.getCollateralSetupByCustId(custId);
-						financeDetail.setCollateralSetup(collatSetupList);
+						financeDetail.setCollaterals(collatSetupList);
 					}
 				}
 
@@ -157,7 +157,7 @@ public class FinStatementController extends SummaryDetailService {
 					if (custId != 0) {
 						List<CollateralSetup> collatSetupList = collateralSetupService
 								.getCollateralSetupByCustId(custId);
-						financeDetail.setCollateralSetup(collatSetupList);
+						financeDetail.setCollaterals(collatSetupList);
 					}
 				}
 
