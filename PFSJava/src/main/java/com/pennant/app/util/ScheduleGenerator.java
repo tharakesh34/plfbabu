@@ -82,6 +82,7 @@ public class ScheduleGenerator {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		int fixedRateTenor = financeMain.getFixedRateTenor();
 		BigDecimal fixedTenorRate =  financeMain.getFixedTenorRate();
+		Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(), fixedRateTenor>0?fixedRateTenor:0); 
 		
 		boolean isOverdraft = false;
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
@@ -128,11 +129,11 @@ public class ScheduleGenerator {
 				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
 			} else {
-				if(((curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) || curSchd.isRepayOnSchDate()) && fixedRateTenor > 0){
+ 				if(fixedRateTenor > 0 && (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0 || curSchd.isRvwOnSchDate() || curSchd.isRepayOnSchDate()) 
+						&& curSchd.getSchDate().compareTo(fixedTenorEndDate) <= 0){
 					curSchd.setActRate(fixedTenorRate);
 					curSchd.setCalculatedRate(fixedTenorRate);
 					curSchd.setRvwOnSchDate(false);
-					fixedRateTenor = fixedRateTenor-1;
 				}else {
 					curSchd.setActRate(financeMain.getRepayProfitRate());
 					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());

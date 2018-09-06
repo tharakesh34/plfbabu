@@ -3446,8 +3446,8 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();
-		Date fixedTenorEndDate = DateUtility.addMonths(finMain.getGrcPeriodEndDate(),finMain.getFixedRateTenor());
-		int fixedTenor = finMain.getFixedRateTenor();
+		int fixedRateTenor = finMain.getFixedRateTenor();
+		Date fixedTenorEndDate = DateUtility.addMonths(finMain.getGrcPeriodEndDate(), fixedRateTenor>0?fixedRateTenor:0); 
 
 		// PROFIT LAST REVIEW IS ON OR AFTER MATURITY THEN NOT ALLOWED THEN DO
 		// NOT SET
@@ -3484,9 +3484,9 @@ public class ScheduleCalculator {
 			 * { break; }
 			 */
 			// Fetch current rates from DB
-			if(fixedTenor > 0){
+			if(curSchd.getSchDate().compareTo(fixedTenorEndDate) < 0){
 				curSchd.setCalculatedRate(finMain.getFixedTenorRate());
-				fixedTenor = fixedTenor - 1;
+				fixedRateTenor = fixedRateTenor>0?fixedRateTenor - 1:fixedRateTenor;
 			}else {
 				if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
 					if (curSchd.isRvwOnSchDate() || i == 0
@@ -3495,7 +3495,7 @@ public class ScheduleCalculator {
 									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
 						curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 					} else {
-						if(fixedTenor == 0){
+						if(fixedRateTenor == 0){
 							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 						}else {
 							curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());

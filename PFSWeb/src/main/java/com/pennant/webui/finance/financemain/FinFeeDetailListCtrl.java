@@ -2953,9 +2953,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					executionMap.put("totalDueAmount", receiptDialogCtrl.getCustPaidAmt());
 					
 					Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(), financeMain.getFixedRateTenor());
-					FrequencyUtil
-					.getNextDate(financeMain.getRepayRvwFrq(), 1, DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),financeMain.getFixedRateTenor()-1),
-							HolidayHandlerTypes.MOVE_NONE, false, finScheduleData.getFinanceType().getFddLockPeriod()).getNextFrequencyDate();
 					
 					if(financeMain.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(DateUtility.getAppDate()) > 0) {
 						executionMap.put("Finance_Fixed_Tenor", PennantConstants.YES);
