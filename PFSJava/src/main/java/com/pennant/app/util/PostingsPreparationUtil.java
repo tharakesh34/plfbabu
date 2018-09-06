@@ -583,7 +583,7 @@ public class PostingsPreparationUtil implements Serializable {
 		for (JVPostingEntry jvPostingEntry : jvPostingEntryList) {
 			returnDataSet = new ReturnDataSet();
 			//Set Object Data of ReturnDataSet(s)
-			returnDataSet.setFinReference(String.valueOf(jVPosting.getReference()));
+			returnDataSet.setFinReference(String.valueOf(jVPosting.getBatchReference()));
 			returnDataSet.setAccount(jvPostingEntry.getAccount());
 			returnDataSet.setAcCcy(jvPostingEntry.getAccCCy());
 			returnDataSet.setAccountType(StringUtils.trim(jvPostingEntry.getAcType()));
