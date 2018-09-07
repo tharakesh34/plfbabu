@@ -45,6 +45,7 @@ package com.pennant.backend.model.finance;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -2522,6 +2523,8 @@ public class AgreementDetail {
 		private String id="";
 		private String colType="";
 		private List<ExtendedDetail> extDtls;
+		private Map<String, Object> fields = new HashMap<>();
+
 		public String getId() {
 			return id;
 		}
@@ -2539,6 +2542,14 @@ public class AgreementDetail {
 		}
 		public void setColType(String colType) {
 			this.colType = colType;
+		}
+
+		public Map<String, Object> getFields() {
+			return fields;
+		}
+
+		public void setFields(Map<String, Object> fields) {
+			this.fields = fields;
 		}
 	}
 	
