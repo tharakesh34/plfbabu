@@ -122,20 +122,20 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 
 			doWriteBeanToComponents(moduleCode, map);
 
-			//get activities
+			// get activities
 			List<Activity> activities = activityLogService.getActivities(moduleCode, keyValue);
 
-			//Prepare Module Names
+			// Prepare Module Names
 			List<String> moduleNames = new ArrayList<>();
 			moduleNames.add(moduleCode);
 			for (Activity activity : activities) {
-				if (!moduleNames.contains(activity.getRcdMaintainSts())
-						&& StringUtils.isNotEmpty(activity.getRcdMaintainSts())) {
+				if (StringUtils.isNotEmpty(activity.getRcdMaintainSts())
+						&& !moduleNames.contains(activity.getRcdMaintainSts())) {
 					moduleNames.add(activity.getRcdMaintainSts());
 				}
 			}
 
-			//get notesList
+			// get notesList
 			notesList = activityLogService.getNotesList(keyValue, moduleNames);
 
 			// Display the audit log.
@@ -395,7 +395,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 			listBoxActivityLog.appendChild(item);
 			prvActivityDate = prvAuditDate = activity.getAuditDate();
 
-			if (StringUtils.isEmpty(activity.getNextTaskId())
+			if (StringUtils.isBlank(activity.getNextTaskId())
 					|| activities.indexOf(activity) == activities.size() - 1) {
 				List<Long> list = new ArrayList<>();
 				list.add(activity.getWorkflowId());
@@ -461,7 +461,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 
 			currVersion.add(activity);
 
-			if (StringUtils.isEmpty(activity.getNextRoleCode())) {
+			if (StringUtils.isBlank(activity.getNextRoleCode())) {
 				eol = true;
 				prevVersion = activity.getVersion();
 				prevAction = activity.getRecordType();
@@ -475,8 +475,9 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 
 		Activity latestActivity = activityLists.get(activityLists.size() - 1)
 				.get(activityLists.get(activityLists.size() - 1).size() - 1);
-		if (!StringUtils.isEmpty(latestActivity.getNextRoleCode())) {
+		if (!StringUtils.isBlank(latestActivity.getNextRoleCode())) {
 			latestActivity.setNextRoleCode("");
+			latestActivity.setNextTaskId("");
 		}
 
 		for (int k = activityLists.size() - 1; k >= 0; k--) {
