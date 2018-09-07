@@ -1513,7 +1513,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(
 				" :ReferralId, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference, :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,:RvwRateApplFor, :SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin, :FinCategory, :ProductCategory,");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :AdvEMITerms, :BpiPftDaysBasis, :FixedTenorRate, :Fixedratetenor)");
+		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :AdvEMITerms, :BpiPftDaysBasis, :FixedTenorRate, :FixedRateTenor)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);

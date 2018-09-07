@@ -83,7 +83,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
 		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod",
 		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw",
-		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate","stage","status", "advEMITerms"})
+		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate","stage","status", "advEMITerms",
+		"fixedRateTenor","fixedTenorRate"})
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
