@@ -1518,6 +1518,14 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 									: PennantAppUtil.unFormateAmount(
 											this.curYearValuesMap.get(creditReviewSummary.getSubCategoryCode()),
 											this.currFormatter));
+
+					if ("CHECK".equals(creditReviewSummary.getSubCategoryCode())) {
+						if (creditReviewSummary.getItemValue().compareTo(BigDecimal.ZERO) != 0
+								&& userAction.getSelectedItem().getValue().toString().equals(PennantConstants.RCD_STATUS_APPROVED)) {
+							MessageUtil.showError("Total Assets and Total Liabilities & Net Worth not Matched..");
+							return;
+						}
+					}
 					listOfCreditReviewSummary.add(creditReviewSummary);
 					creditReviewSummary = null;
 				}
