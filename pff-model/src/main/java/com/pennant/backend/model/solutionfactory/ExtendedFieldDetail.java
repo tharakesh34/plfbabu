@@ -106,6 +106,7 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	
 	@XmlElement(name="uniqueField")
 	private boolean fieldUnique;
+	private String filters;
 	
 	private int extendedType;
 	private int		multiLine;
@@ -363,5 +364,13 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+
+	public String getFilters() {
+		return filters;
+	}
+
+	public void setFilters(String filters) {
+		this.filters = filters;
 	}
 }

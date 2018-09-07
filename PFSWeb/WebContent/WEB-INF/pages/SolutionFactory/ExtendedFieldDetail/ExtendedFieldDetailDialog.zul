@@ -152,7 +152,8 @@
 										checked="false" />
 								</hbox>
 							</row>
-							<row id="rowfieldMultilinetxt" visible="false">
+							<row id="rowfieldMultilinetxt"
+								visible="false">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldMultilinetxt"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldMultilinetxt.value')}" />
@@ -160,7 +161,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<intbox id="fieldMultilinetxt"
-										width="50px"  />
+										width="50px" />
 								</hbox>
 							</row>
 							<row visible="false"
@@ -172,10 +173,12 @@
 									<space spacing="2px" />
 									<textbox id="fieldDefaultValue"
 										maxlength="50" width="200px" />
-									<checkbox id="fieldDefaultValue_Boolean"
-										checked="false" visible="false" />
-									<combobox id="fieldDefaultValue_Date"
-										width="200px" visible="false" readonly="true"/>
+									<checkbox
+										id="fieldDefaultValue_Boolean" checked="false"
+										visible="false" />
+									<combobox
+										id="fieldDefaultValue_Date" width="200px" visible="false"
+										readonly="true" />
 								</hbox>
 							</row>
 							<row visible="false" id="rowfieldList">
@@ -236,7 +239,8 @@
 										width="50px" maxlength="14" />
 								</hbox>
 							</row>
-							<row id="rowfieldparentTag" visible="true">
+							<row id="rowfieldparentTag"
+								visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_Parent"
 									value="${c:l('label_ExtendedFieldDetailDialog_Parent.value')}" />
@@ -246,7 +250,8 @@
 										readonly="true" width="200px" />
 								</hbox>
 							</row>
-							<row id="rowfieldIsEditable" visible="true">
+							<row id="rowfieldIsEditable"
+								visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_IsEditable"
 									value="${c:l('label_ExtendedFieldDetailDialog_IsEditable.value')}" />
@@ -256,7 +261,8 @@
 										checked="true" />
 								</hbox>
 							</row>
-							<row id="rowfieldAllowInRule" visible="true">
+							<row id="rowfieldAllowInRule"
+								visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_allowInRule"
 									value="${c:l('label_ExtendedFieldDetailDialog_AllowInRule.value')}" />
@@ -266,7 +272,34 @@
 										checked="false" />
 								</hbox>
 							</row>
-							
+							<row id="rowExtAddtionalFilters" spans="1,3" visible="false">
+								<label value="${c:l('label_ExtendedFieldDetailDialog_Filters.value')}" />
+								<hbox width="480px">
+									<groupbox style="border:none;">
+										<div sclass="z-toolbar" style="padding:0">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+												<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+													<button id="btnAddFilters" label="${c:l('label_Add')}" tooltiptext="${c:l('btnAddFilters.tooltiptext')}"
+														autodisable="btnAddFilters" />
+												</toolbar>
+											</hbox>
+										</div>
+										<listbox id="listBoxAddtionalFilters" span="true" sizedByContent="true" width="480px" multiple="false"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead  hflex="min" sizable="true">
+												<listheader  label="${c:l('listheader_ExtendedFieldDetailDialog_Parameter.label')}"
+													sort="false" width="130px" />
+												<listheader  label="${c:l('listheader_ExtendedFieldDetailDialog_Value.label')}"
+													sort="false" width="120px" />
+												<listheader label="${c:l('listheader_ExtendedFieldDetailDialog_Operator.label')}"
+													sort="false" width="120px" />
+												<listheader sort="false" width="80px" />
+											</listhead>
+										</listbox>
+									</groupbox>
+								</hbox>
+							</row>
+
 						</rows>
 					</grid>
 				</groupbox>

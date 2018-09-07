@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -131,6 +132,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -165,6 +167,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private static final String SCRIPTLET_DELIMITER = "^^";
 	private static final String SCRIPT_DELIMITER = ">>";
 
+	//story #699 Allow Additional filters for extended combobox.
+	private List<ExtendedFieldDetail> extendedFieldDetails = new ArrayList<>();
+	
+
 	public ExtendedFieldsGenerator() {
 		super();
 	}
@@ -183,16 +189,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			this.tabpanel.setHeight(tabHeight + "px");
 		}
 		this.tabpanel.setStyle("overflow:auto;border:none;");
-		
-		List<ExtendedFieldDetail> extendedFieldDetails = null;
-
-		if (fieldHeader != null) {
-			extendedFieldDetails = fieldHeader.getExtendedFieldDetails();
-		}
-
-		if (extendedFieldDetails == null || extendedFieldDetails.isEmpty()) {
+		 
+		if (fieldHeader != null && CollectionUtils.isEmpty(fieldHeader.getExtendedFieldDetails())) {
 			return;
 		}
+		setExtendedFieldDetails(fieldHeader.getExtendedFieldDetails());
 
 		columnCount = Integer.parseInt(fieldHeader.getNumberOfColumns());
 
@@ -201,7 +202,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		List<ExtendedFieldDetail> inputElemetswithParents = new ArrayList<ExtendedFieldDetail>();
 
 		// group the Containers and inputElements
-		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
+		for (ExtendedFieldDetail extendedFieldDetail : getExtendedFieldDetails()) {
 			if (extendedFieldDetail.isInputElement()) {
 				if (extendedFieldDetail.getParentTag() == null) {
 					inputElemetswithoutParents.add(extendedFieldDetail);
@@ -1833,10 +1834,19 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param detail
 	 * @return ExtendedCombobox
 	 */
+	@SuppressWarnings("unchecked")
 	private ExtendedCombobox getExtendedCombobox(ExtendedFieldDetail detail) {
 		ExtendedCombobox extendedCombobox = new ExtendedCombobox();
 		extendedCombobox.setId(getComponentId(detail.getFieldName()));
 		extendedCombobox.setReadonly(isReadOnly);
+
+		// Adding the event listener
+		//story #699 Allow Additional filters for extended combobox. 
+		extendedCombobox.addEventListener(Events.ON_FULFILL, new MyExtendedComboListener());
+		
+		// Adding the default filters
+		//story #699 Allow Additional filters for extended combobox.
+		addDefaultFilters(extendedCombobox, detail);
 
 		// Module Parameters Identification from Module Mapping
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(detail.getFieldList());
@@ -1846,7 +1856,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					detail.isFieldMandatory(), detail.getFieldLength(), 150);
 		}
 
-		//Data Setting
+		// Data Setting
 		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 			extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
@@ -1854,6 +1864,171 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		return extendedCombobox;
 	}
 
+	//story #699 Allow Additional filters for extended combobox. Development Started.
+	/**
+	 * 
+	 * Extended Combobox event listener.
+	 */
+	private class MyExtendedComboListener implements EventListener {
+		@Override
+		public void onEvent(Event event) throws Exception {
+			Component component = event.getTarget();
+			ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+			String componentId = extendedCombobox.getId();
+
+			String fieldName = StringUtils.split(componentId, "ad_")[0];
+
+			ExtendedFieldDetail detail = getFieldDetail(fieldName);
+			addFilters(detail);
+		}
+	}
+
+	/**
+	 * Adding the default filters
+	 * 
+	 * @param extendedCombobox
+	 * @param detail
+	 */
+	private void addDefaultFilters(ExtendedCombobox extendedCombobox, ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+
+		if (StringUtils.trimToNull(detail.getFilters()) == null) {
+			return;
+		}
+		
+		List<String> filters = new ArrayList<>();
+		String delimiter = SCRIPT_DELIMITER;
+
+		String[] parentArray = StringUtils.split(detail.getFilters(), SCRIPTLET_DELIMITER);
+		for (String value : parentArray) {
+			String[] childArray = StringUtils.split(value, SCRIPT_DELIMITER);
+			String fieldName = childArray[1];
+
+			if (fieldValueMap.containsKey(fieldName) && fieldValueMap.get(fieldName) != null
+					&& StringUtils.isNotBlank(fieldValueMap.get(fieldName).toString())) {
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(childArray[0]).append(delimiter).append(fieldValueMap.get(fieldName)).append(delimiter).append(childArray[2]);
+				filters.add(sb.toString());
+				
+				
+			}
+		}
+		appendFilters(extendedCombobox, filters);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Adding the filters
+	 * 
+	 * @param detail
+	 */
+	private void addFilters(ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+
+		for (ExtendedFieldDetail fieldDetail : getExtendedFieldDetails()) {
+			if (ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO.equals(fieldDetail.getFieldType())) {
+
+				if (StringUtils.trimToNull(fieldDetail.getFilters()) != null) {
+					String[] parentArray = StringUtils.split(fieldDetail.getFilters(), SCRIPTLET_DELIMITER);
+					boolean exists = false;
+					for (String param : parentArray) {
+						String[] childArray = StringUtils.split(param, SCRIPT_DELIMITER);
+						String fieldName = childArray[1];
+						if (detail.getFieldName().equals(fieldName)) {
+							exists = true;
+							break;
+						}
+					}
+
+					if (exists) {
+						String id = getComponentId(fieldDetail.getFieldName());
+						Component component = tabpanel.getFellowIfAny(id);
+						if (component instanceof ExtendedCombobox) {
+							ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+							updateFilters(extendedCombobox, fieldDetail);
+						}
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Update Filters with latest values.
+	 * 
+	 * @param extendedCombobox
+	 * @param detail
+	 */
+	private void updateFilters(ExtendedCombobox extendedCombobox, ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+
+		if (StringUtils.trimToNull(detail.getFilters()) == null) {
+			return;
+		}
+
+		extendedCombobox.setConstraint("");
+		extendedCombobox.setErrorMessage("");
+		extendedCombobox.setValue("");
+
+		String delimiter = SCRIPT_DELIMITER;
+		List<String> filters = new ArrayList<>();
+		
+		String[] parentArray = StringUtils.split(detail.getFilters(), SCRIPTLET_DELIMITER);
+		for (String value : parentArray) {
+			String[] childArray = StringUtils.split(value, delimiter);
+			String fieldName = childArray[1];
+
+			String id = getComponentId(fieldName);
+			Component component = tabpanel.getFellowIfAny(id);
+			if (component instanceof ExtendedCombobox) {
+				ExtendedCombobox combobox = (ExtendedCombobox) component;
+				extendedCombobox.setConstraint("");
+				extendedCombobox.setErrorMessage("");
+				
+				if (StringUtils.trimToNull(combobox.getValue()) != null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(childArray[0]).append(delimiter).append(combobox.getValue()).append(delimiter).append(childArray[2]);
+					filters.add(sb.toString());
+				}
+			}
+		}
+		appendFilters(extendedCombobox, filters);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Getting the Extendedfield details
+	 * 
+	 * @param fileldName
+	 * @return
+	 */
+	private ExtendedFieldDetail getFieldDetail(String fileldName) {
+		for (ExtendedFieldDetail detail : getExtendedFieldDetails()) {
+			if (detail.getFieldName().equals(fileldName)) {
+				return detail;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Appending the filters to component
+	 * 
+	 * @param extendedCombobox
+	 * @param filters
+	 */
+	private void appendFilters(ExtendedCombobox extendedCombobox, List<String> filterList) {
+		Filter[] filters = new Filter[filterList.size()];
+		for (int i = 0; i < filterList.size(); i++) {
+			String[] paramsArray = StringUtils.split(filterList.get(i), SCRIPT_DELIMITER);
+			filters[i] = new Filter(paramsArray[0], paramsArray[1], Integer.parseInt(paramsArray[2]));
+		}
+		extendedCombobox.setFilters(filters);
+	}
+	//story #699 Allow Additional filters for extended combobox. Development Ended.
+	
 	/**
 	 * Method for create MultiExtendedCombox based on the Extended field details.
 	 * 
@@ -2662,6 +2837,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setParentTab(Tab parentTab) {
 		this.parentTab = parentTab;
+	}
+
+	public List<ExtendedFieldDetail> getExtendedFieldDetails() {
+		return extendedFieldDetails;
+	}
+
+	public void setExtendedFieldDetails(List<ExtendedFieldDetail> extendedFieldDetails) {
+		this.extendedFieldDetails = extendedFieldDetails;
 	}
 
 }

@@ -27,6 +27,7 @@ import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -261,6 +262,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> depositTypesList;
 	private static ArrayList<String> denominations;
 	private static ArrayList<ValueLabel> invoiceTypes;	//GST Invoice Types (Cr/Dr)
+	private static ArrayList<ValueLabel> filtersList;
 	
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
 	
@@ -3623,5 +3625,25 @@ public class PennantStaticListUtil {
 			advEmiSchMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_START,Labels.getLabel("label_EMIScheduleMethod_Start")));
 		}
 		return advEmiSchMthdList;
+	}
+	
+	public static ArrayList<ValueLabel> getFilters(){
+		if(filtersList == null){
+			filtersList = new ArrayList<ValueLabel>(13);
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), Labels.getLabel("label_Filter.OP_EQUAL")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_NOT_EQUAL), Labels.getLabel("label_Filter.OP_NOT_EQUAL")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_LESS_THAN), Labels.getLabel("label_Filter.OP_LESS_THAN")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_GREATER_THAN), Labels.getLabel("label_Filter.OP_GREATER_THAN")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_LESS_OR_EQUAL), Labels.getLabel("label_Filter.OP_LESS_OR_EQUAL")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_GREATER_OR_EQUAL), Labels.getLabel("label_Filter.OP_GREATER_OR_EQUAL")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_LIKE), Labels.getLabel("label_Filter.OP_LIKE")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_NULL), Labels.getLabel("label_Filter.OP_NULL")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_NOT_NULL), Labels.getLabel("label_Filter.OP_NOT_NULL")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_IN), Labels.getLabel("label_Filter.OP_IN")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_NOT_IN), Labels.getLabel("label_Filter.OP_NOT_IN")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_AND), Labels.getLabel("label_Filter.OP_AND")));
+			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_OR), Labels.getLabel("label_Filter.OP_OR")));
+		}
+		return filtersList;	 
 	}
 }
