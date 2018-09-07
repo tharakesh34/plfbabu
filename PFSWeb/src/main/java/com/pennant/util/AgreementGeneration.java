@@ -1512,8 +1512,8 @@ public class AgreementGeneration implements Serializable {
 			}
 			agreement.setTotalDeductionwithoutBPI(PennantAppUtil.amountFormate(totalDeduction, formatter));
 			agreement.setTotalDeductionwithBPI(PennantAppUtil.amountFormate(totalDeductionWithBPI, formatter));
-			agreement.setNetDisbWithoutBPI(PennantAppUtil.amountFormate(firstDisbursementAmt.add(totalDeduction), formatter));
-			agreement.setNetDisbWithBPI(PennantAppUtil.amountFormate(firstDisbursementAmt.add(totalDeductionWithBPI), formatter));
+			agreement.setNetDisbWithoutBPI(PennantAppUtil.amountFormate(firstDisbursementAmt.subtract(totalDeduction), formatter));
+			agreement.setNetDisbWithBPI(PennantAppUtil.amountFormate(firstDisbursementAmt.subtract(totalDeductionWithBPI), formatter));
 			
 			if (CollectionUtils.isEmpty(agreement.getLoanServicingFeeDetails())) {
 				agreement.setLoanServicingFeeDetails(new ArrayList<AgreementDetail.LoanServicingFee>());
@@ -2284,7 +2284,10 @@ public class AgreementGeneration implements Serializable {
 				com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
 				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
 				charge.setChargeAmt(PennantAppUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
-				totalDeduction=totalDeduction.add(finFeeDetail.getActualAmountOriginal());
+				if(StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())&&finFeeDetail.getFeeScheduleMethod().equals("DISB")){
+					totalDeduction=totalDeduction.add(finFeeDetail.getRemainingFee());
+				}
+				
 				charge.setChargeWaver(PennantAppUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
 				charge.setChargePaid(PennantAppUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
 				charge.setRemainingAmount(PennantAppUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
@@ -2633,11 +2636,16 @@ public class AgreementGeneration implements Serializable {
 		String defDates = "";
 		int seqNO = 0;
 		boolean isSchdPftFirstInst = false;
+		boolean bpiAmtReq=false;
+		if(StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, detail.getFinScheduleData().getFinanceMain().getBpiTreatment())){
+			bpiAmtReq=true;
+			
+		}
 		agreement.setScheduleData(new ArrayList<AgreementDetail.FinanceScheduleDetail>());
 		for (FinanceScheduleDetail finSchDetail : finschdetails) {
 			com.pennant.backend.model.finance.AgreementDetail.FinanceScheduleDetail scheduleData = agreement.new FinanceScheduleDetail();
 			scheduleData.setSchDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
-			if(StringUtils.equals(finSchDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+			if(StringUtils.equals(finSchDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)&& bpiAmtReq){
 				BPIAmount=finSchDetail.getRepayAmount();
 				agreement.setBPIAmount(PennantApplicationUtil.amountFormate(BPIAmount, formatter));
 			}
