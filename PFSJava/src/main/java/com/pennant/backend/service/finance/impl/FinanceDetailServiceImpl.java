@@ -4054,7 +4054,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Save LegalDetails
 				List<LegalDetail> legalDetailsList = financeDetail.getLegalDetailsList();
 				if (CollectionUtils.isNotEmpty(legalDetailsList)) {
-					List<AuditDetail> details = getLegalDetailService().processLegalDetails(auditHeader, "doApprove");
+					List<AuditDetail> details = getLegalDetailService().processLegalDetails(aAuditHeader, "doApprove");
 					auditDetails.addAll(details);
 				}
 				
@@ -5521,14 +5521,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		// Cheque Details
-		if (financeDetail.getChequeHeader() != null) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
-			finChequeHeaderService.doReject(auditHeader);
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-					financeDetail.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
-		}
-
 		// Save Collateral setup Details
 		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
 		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
@@ -5543,6 +5535,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(details);
 		}
 
+		// Cheque Details
+		if (financeDetail.getChequeHeader() != null) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			finChequeHeaderService.doReject(auditHeader);
+			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+					financeDetail.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
+		}
+		
 		// Delete Finance IRR values
 		deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
 
