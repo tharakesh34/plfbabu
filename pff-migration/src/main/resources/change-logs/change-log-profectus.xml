@@ -1441,6 +1441,139 @@
 		INSERT INTO SMTPARAMETERS VALUES ('ACC_EFF_VALDATE', 'Accrual Effective Date will be Appdate or Valuedate ', 'String', 1, 'N', 1, 0, NULL, NULL,'Accrual Effective Date will be Y - Value Date and N - APP Date', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 	</changeSet>
+	
+	<changeSet id="80" author="Vinay">
+		<sql>
+			delete from MASTER_DEF where key_code in ('VID','DL');
+			Insert into MASTER_DEF ("master_type","key_type","key_code") values ('DOC_TYPE','VID','VID');
+			Insert into MASTER_DEF ("master_type","key_type","key_code") values ('DOC_TYPE','DL','DL');
+				
+			delete from DEDUPFIELDS where fieldname in ('MotherName','FatherName','VoterID','');
+			Insert into DEDUPFIELDS values ('MotherName','Mothers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into DEDUPFIELDS values ('FatherName','Fathers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into DEDUPFIELDS values ('VoterID','Mothers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into DEDUPFIELDS values ('DrivingLicence','Driving Licence','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="81" author="Vinay">
+		<createView viewName="CustomersDedup_View" replaceIfExists="true">
+			SELECT t1.custid,
+    t1.custcif,
+    t1.custfname,
+    t1.custlname,
+    t1.custcrcpr,
+    cdpp.custdoctitle AS custpassportno,
+    t1.custshrtname,
+    t1.custdob,
+    t1.custnationality,
+    COALESCE(
+        CASE
+            WHEN t1.phonenumber = ' '::citext THEN NULL::citext
+            ELSE t1.phonenumber
+        END, t7.phonenumber) AS mobilenumber,
+    t1.custctgcode,
+    t1.custdftbranch,
+    t1.custtypecode,
+    t1.custsector,
+    t1.custsubsector,
+    t1.subcategory,
+    t1.casteid,
+    t1.religionid,
+    t3.castecode,
+    t3.castedesc,
+    t4.religioncode,
+    t4.religiondesc,
+    t2.custtypectg AS lovdesccustctgtype,
+    cda.custdoctitle AS aadharnumber,
+    cdp.custdoctitle AS pannumber,
+    t6.custemail,
+    t1.custshrtnamelcllng AS mothername,
+    t1.custmothermaiden AS fathername,
+    cdv.custdoctitle AS voterid,
+    cdd.custdoctitle AS drivinglicence
+   FROM customers_temp t1
+     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN caste t3 ON t1.casteid = t3.casteid
+     LEFT JOIN religion t4 ON t1.religionid = t4.religionid
+     LEFT JOIN customerdocuments cda ON cda.custid = t1.custid AND cda.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'AADHAAR'::text))::text)
+     LEFT JOIN customerdocuments cdp ON cdp.custid = t1.custid AND cdp.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'PAN'::text))::text)
+     LEFT JOIN customerdocuments cdpp ON cdpp.custid = t1.custid AND cdpp.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'PASSPORT'::text))::text)
+     LEFT JOIN customerdocuments cdv ON cdv.custid = t1.custid AND cdv.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'VTRID'::text))::text)
+     LEFT JOIN customerdocuments cdd ON cdd.custid = t1.custid AND cdd.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'DL'::text))::text)
+     LEFT JOIN customeremails t6 ON t1.custid = t6.custid AND t6.custemailpriority = 5
+     LEFT JOIN customerphonenumbers t7 ON t1.custid = t7.phonecustid
+UNION ALL
+ SELECT t1.custid,
+    t1.custcif,
+    t1.custfname,
+    t1.custlname,
+    t1.custcrcpr,
+    cdpp.custdoctitle AS custpassportno,
+    t1.custshrtname,
+    t1.custdob,
+    t1.custnationality,
+    COALESCE(
+        CASE
+            WHEN t1.phonenumber = ' '::citext THEN NULL::citext
+            ELSE t1.phonenumber
+        END, t7.phonenumber) AS mobilenumber,
+    t1.custctgcode,
+    t1.custdftbranch,
+    t1.custtypecode,
+    t1.custsector,
+    t1.custsubsector,
+    t1.subcategory,
+    t1.casteid,
+    t1.religionid,
+    t3.castecode,
+    t3.castedesc,
+    t4.religioncode,
+    t4.religiondesc,
+    t2.custtypectg AS lovdesccustctgtype,
+    cda.custdoctitle AS aadharnumber,
+    cdp.custdoctitle AS pannumber,
+    t6.custemail,
+    t1.custshrtnamelcllng AS mothername,
+    t1.custmothermaiden AS fathername,
+    cdv.custdoctitle AS voterid,
+    cdd.custdoctitle AS drivinglicence
+   FROM customers t1
+     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN caste t3 ON t1.casteid = t3.casteid
+     LEFT JOIN religion t4 ON t1.religionid = t4.religionid
+     LEFT JOIN customerdocuments cda ON cda.custid = t1.custid AND cda.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'AADHAAR'::text))::text)
+     LEFT JOIN customerdocuments cdp ON cdp.custid = t1.custid AND cdp.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'PAN'::text))::text)
+     LEFT JOIN customerdocuments cdpp ON cdpp.custid = t1.custid AND cdpp.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'PASSPORT'::text))::text)
+     LEFT JOIN customerdocuments cdv ON cdv.custid = t1.custid AND cdv.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'VTRID'::text))::text)
+     LEFT JOIN customerdocuments cdd ON cdd.custid = t1.custid AND cdd.custdoccategory::text = ((( SELECT master_def.key_code
+           FROM master_def
+          WHERE master_def.master_type::text = 'DOC_TYPE'::text AND master_def.key_type::text = 'DL'::text))::text)
+     LEFT JOIN customeremails t6 ON t1.custid = t6.custid AND t6.custemailpriority = 5
+     LEFT JOIN customerphonenumbers t7 ON t1.custid = t7.phonecustid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM customers_temp
+          WHERE customers_temp.custid = t1.custid))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
 	
