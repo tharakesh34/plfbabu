@@ -121,6 +121,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -242,7 +243,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_CustomerDocumentDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_CustomerDocumentDialog);
@@ -425,7 +426,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Empty sent any required attributes
 		this.custID.setMaxlength(19);
@@ -461,7 +462,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.groupboxWf.setVisible(false);
 			this.south.setHeight("0px");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -473,7 +474,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		getUserWorkspace().allocateAuthorities("CustomerDocumentDialog",userRole);
 
@@ -482,7 +483,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -567,11 +568,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		doWriteBeanToComponents(this.customerDocument.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -581,7 +582,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 *            CustomerDocument
 	 */
 	public void doWriteBeanToComponents(CustomerDocument aCustomerDocument) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if(aCustomerDocument.getCustID()!=Long.MIN_VALUE){
 			this.custID.setValue(aCustomerDocument.getCustID());	
@@ -696,15 +697,15 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			finDocumentPdfView.setContent(amedia);
 		}
 		this.recordStatus.setValue(aCustomerDocument.getRecordStatus());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$custDocTitle(Event event){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (PennantConstants.CPRCODE.equalsIgnoreCase(this.custDocType.getValue())) {
 			this.custDocTitle.setValue(this.custDocTitle.getValue());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	/**
 	 * Writes the components values to the bean.<br>
@@ -712,7 +713,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * @param aCustomerDocument
 	 */
 	public void doWriteComponentsToBean(CustomerDocument aCustomerDocument) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -799,7 +800,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		aCustomerDocument.setRecordStatus(this.recordStatus.getValue());
 		setCustomerDocument(aCustomerDocument);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void checkDocumentExpired(CustomerDocument aCustomerDocument) {
@@ -830,7 +831,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	public void doShowDialog(CustomerDocument aCustomerDocument)
 			throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (isNewRecord()) {
@@ -893,19 +894,19 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 
 		} catch (UiException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			this.window_CustomerDocumentDialog.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(true);
 
 		if (!this.custID.isReadonly()){
@@ -963,14 +964,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.pdfPassword.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_pdf_password.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setValidationOn(false);
 		this.custCIF.setConstraint("");
@@ -981,27 +982,27 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocExpDate.setConstraint("");
 		this.custDocIssuedOn.setConstraint("");
 		this.custDocVerifiedBy.setConstraint("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custDocType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value"),null,true,true));
 		this.custDocIssuedCountry.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerDocumentDialog_CustDocIssuedCountry.value"),null,true,true));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custDocType.setConstraint("");
 		this.custDocIssuedCountry.setConstraint("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1009,7 +1010,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.setErrorMessage("");
 		this.custDocTitle.setErrorMessage("");
 		this.custDocSysName.setErrorMessage("");
@@ -1021,7 +1022,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocType.setErrorMessage("");
 		this.custDocIssuedCountry.setErrorMessage("");
 		this.documnetName.setErrorMessage("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// Method for refreshing the list after successful update
@@ -1033,7 +1034,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 
 	public void getCreditApplicationRevDialog(){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Window windowDocDetails = creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog;
 		Tab tab = (Tab) windowDocDetails.getFellowIfAny("documentDetailsTab");
 		//Tab tab = (Tab) creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog.getFellowIfAny("documentDetailsTab");
@@ -1056,7 +1057,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog.removeChild(tab);
 		creditApplicationReviewDialogCtrl.appendDocumentDetailTab();
 		((Tab) windowDocDetails.getFellowIfAny("documentDetailsTab")).setSelected(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -1071,7 +1072,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerDocument aCustomerDocument = new CustomerDocument();
 		BeanUtils.copyProperties(getCustomerDocument(), aCustomerDocument);
@@ -1135,14 +1136,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (isNewRecord()){
 
 			if(isNewCustomer()){
@@ -1207,7 +1208,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.btnCtrl.setBtnStatus_Edit();
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckEnquiry() {
@@ -1245,7 +1246,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.setReadonly(true);
 		this.custDocType.setReadonly(true);
 		this.custDocTitle.setReadonly(true);
@@ -1270,14 +1271,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// remove validation, if there are a save before
 		this.custCIF.setValue("");
@@ -1294,11 +1295,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIsVerified.setChecked(false);
 		this.custDocVerifiedBy.setText("");
 		this.custDocIsAcrive.setChecked(false);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private DocumentDetails getCustDocumentDetail(CustomerDocument aCustomerDocument){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		DocumentDetails aDocumentDetails = new DocumentDetails();
 		aDocumentDetails.setDocImage(aCustomerDocument.getCustDocImage());
 		aDocumentDetails.setDocRefId(aCustomerDocument.getDocRefId());
@@ -1329,12 +1330,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if(aCustomerDocument.getBefImage() != null){
 			aDocumentDetails.setBefImage(getCustDocumentDetail(aCustomerDocument.getBefImage()));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return aDocumentDetails;
 	}
 
 	private void processChecklistDocuments(CustomerDocument aCustomerDocument,boolean isSaveProcess){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if(getFinanceMainDialogCtrl() !=null){
 			try{
 				if(getFinanceMainDialogCtrl().getClass().getMethod("getFinanceCheckListReferenceDialogCtrl") != null && 
@@ -1379,7 +1380,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				logger.debug(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1388,7 +1389,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * @throws InterruptedException
 	 */
 	public void doSave() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int docCount=0;
 
 		final CustomerDocument aCustomerDocument = new CustomerDocument();
@@ -1602,7 +1603,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 								if (StringUtils.equals(custDocType.getValue(),
 										SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE"))) {
 									getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-									getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+									if (this.custDocIssuedOn.getValue() != null) {
+										getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+									}
 								}
 							}
 						}
@@ -1625,12 +1628,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				if (StringUtils.equals(custDocType.getValue(),
 						SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE"))) {
 					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-					getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+					if (this.custDocIssuedOn.getValue() != null) {
+						getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+					}
 				}
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1788,7 +1793,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * 
 	 */
 	private boolean doProcess(CustomerDocument aCustomerDocument, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1864,7 +1869,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			auditHeader = getAuditHeader(aCustomerDocument, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1881,7 +1886,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1947,9 +1952,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -2064,7 +2069,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	}
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
@@ -2122,9 +2127,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				textbox.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {
-			logger.error("Exception: ", ex);
+			logger.error(Literal.EXCEPTION, ex);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onDocumentClicked(Event event) throws Exception {
@@ -2149,9 +2154,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	public void onClick$btnSearchPRCustid(Event event)
 			throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		onload();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 
@@ -2161,7 +2166,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * @throws InterruptedException
 	 */
 	private void onload() throws SuspendNotAllowedException,InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -2169,7 +2174,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		map.put("searchObject",this.newSearchObject);
 		Executions.createComponents(
 				"/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2180,13 +2185,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	public void doSetCustomer(Object nCustomer,
 			JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final Customer aCustomer = (Customer)nCustomer; 		
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// WorkFlow Components
@@ -2213,15 +2218,15 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerDocumentDialog, auditHeader);
 		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
+			logger.error(Literal.EXCEPTION, exp);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
