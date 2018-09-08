@@ -43,11 +43,13 @@
 	</changeSet>
 	
 	
-	<changeSet id="13" author="bharat">
+	<changeSet id="13" author="bharat" dbms="oracle,postgresql">
 	<dropNotNullConstraint tableName="ADTFINFEEDETAIL" columnName="FINREFERENCE"/>
 </changeSet> 
 	
-	
+	<changeSet id="13" author="bharat" dbms="mssql">
+	<dropNotNullConstraint tableName="ADTFINFEEDETAIL" columnName="FINREFERENCE" columnDataType="varchar(20)"/>
+</changeSet> 
 	
 
 <changeSet id="25" author="bharat">
