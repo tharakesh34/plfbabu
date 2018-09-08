@@ -1240,7 +1240,7 @@
 			</sql>
 		</changeSet>
 		
-		<changeSet id="66" author="DurgaPrasad G">
+		<changeSet id="66" author="DurgaPrasad G" dbms="oracle,postgresql">
 			<addColumn tableName="financemain">
 				<column name="legalrequired" type="smallint" defaultValue="0" />
 			</addColumn>
@@ -1248,7 +1248,20 @@
 				<column name="legalrequired" type="smallint" defaultValue="0" />
 			</addColumn>
 		</changeSet>
-		 
+		 <changeSet id="66" author="DurgaPrasad G" dbms="mssql">
+			<addColumn tableName="financemain">
+				<column name="legalrequired" type="smallint"/>
+			</addColumn>
+			<addColumn tableName="financemain_temp">
+				<column name="legalrequired" type="smallint"/>
+			</addColumn>
+		</changeSet>
+		<changeSet id="66_Post" author="DurgaPrasad G" dbms="mssql">
+			<sql>
+				alter table financemain add constraint df_finmain_lr default 0 for legalrequired;
+				alter table financemain_temp add constraint df_finmain_lr_t default 0 for legalrequired;
+			</sql>
+		</changeSet>
 		<changeSet id="67.1" author="DurgaPrasad G">
 				<createView viewName="financemain_view" replaceIfExists="true">
 					SELECT t1.finreference,
