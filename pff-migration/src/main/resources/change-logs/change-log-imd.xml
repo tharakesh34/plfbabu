@@ -34,11 +34,14 @@
 	
 </changeSet>
 
-<changeSet id="8" author="bharat">
+<changeSet id="8" author="bharat" dbms="oracle,postgresql">
 	<dropNotNullConstraint tableName="FINRECEIPTHEADER" columnName="REFERENCE"/>
 	<dropNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="REFERENCE"/>
 </changeSet>
-
+<changeSet id="8" author="bharat" dbms="mssql">
+	<dropNotNullConstraint tableName="FINRECEIPTHEADER" columnName="REFERENCE" columnDataType="varchar(20)"/>
+	<dropNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="REFERENCE" columnDataType="varchar(20)"/>
+</changeSet>
 	
 	
 	
@@ -69,11 +72,14 @@
 	</addColumn>
 	</changeSet>
 	
-	<changeSet id="13" author="bharat">
+	<changeSet id="13" author="bharat" dbms="oracle,postgresql">
 	<dropNotNullConstraint tableName="FINFEEDETAIL" columnName="FINREFERENCE"/>
 	<dropNotNullConstraint tableName="FINFEEDETAIL_TEMP" columnName="finREFERENCE"/>
 </changeSet> 
-
+<changeSet id="13" author="bharat" dbms="mssql">
+	<dropNotNullConstraint tableName="FINFEEDETAIL" columnName="FINREFERENCE" columnDataType="varchar(20)"/>
+	<dropNotNullConstraint tableName="FINFEEDETAIL_TEMP" columnName="FINREFERENCE" columnDataType="varchar(20)"/>
+</changeSet>
 <changeSet id="14" author="bharat">
 	<createView viewName="FINFEEDETAIL_VIEW" replaceIfExists="true">
 			 SELECT t1.feeid,
@@ -200,7 +206,7 @@ UNION ALL
 	</addColumn>
 </changeSet> 
 
-<changeSet id="26" author="bharat">
+<changeSet id="26.1" author="bharat">
 	<createView viewName="fintypefees_view" replaceIfExists="true">
 	
  SELECT t1.fintype,
@@ -238,7 +244,7 @@ UNION ALL
     t3.rulecodedesc AS ruledesc
    FROM fintypefees_temp t1
      JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES' AND t1.finevent = t3.ruleevent
 UNION ALL
  SELECT t1.fintype,
     t1.originationfee,
@@ -275,7 +281,7 @@ UNION ALL
     t3.rulecodedesc AS ruledesc
    FROM fintypefees t1
      JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES' AND t1.finevent = t3.ruleevent
   WHERE NOT (EXISTS ( SELECT 1
            FROM fintypefees_temp
           WHERE fintypefees_temp.fintype = t1.fintype AND fintypefees_temp.finevent = t1.finevent AND fintypefees_temp.feetypeid = t1.feetypeid AND fintypefees_temp.originationfee = t1.originationfee))
@@ -284,7 +290,7 @@ UNION ALL
 
 
 
-<changeSet id="27" author="bharat">
+<changeSet id="27.1" author="bharat">
 	<createView viewName="fintypefees_aview" replaceIfExists="true">
 	
   SELECT t1.fintype,
@@ -322,7 +328,7 @@ UNION ALL
     t3.rulecodedesc AS ruledesc
    FROM fintypefees t1
      JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES' AND t1.finevent = t3.ruleevent
 </createView>
 </changeSet>
 
