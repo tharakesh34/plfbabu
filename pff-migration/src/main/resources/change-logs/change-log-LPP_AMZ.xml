@@ -60,7 +60,7 @@
 	</addColumn>
 </changeSet>
 
-<changeSet id="2" author="Siva">
+<changeSet id="2" author="Siva" dbms="oracle,postgresql">
 	<addDefaultValue columnName="RealizeUnLpi" tableName="FinRepayHeader" defaultValue="0"/>
 	<addDefaultValue columnName="RealizeUnLpi" tableName="FinRepayHeader_Temp" defaultValue="0"/>
 	
@@ -73,7 +73,18 @@
 	<addDefaultValue columnName="RealizeUnLppGst" tableName="FinRepayHeader" defaultValue="0"/>
 	<addDefaultValue columnName="RealizeUnLppGst" tableName="FinRepayHeader_Temp" defaultValue="0"/>
 </changeSet>
-
+<changeSet id="2" author="Jayant" dbms="mssql">
+	<sql>
+		alter table FinRepayHeader add constraint df_frp_rulp default 0 for RealizeUnLpi;
+		alter table FinRepayHeader_Temp add constraint df_frp_rulp_t default 0 for RealizeUnLpi;
+		alter table FinRepayHeader add constraint df_frp_rulg default 0 for RealizeUnLpiGst;
+		alter table FinRepayHeader_Temp add constraint df_frp_rulg_t default 0 for RealizeUnLpiGst;
+		alter table FinRepayHeader add constraint df_frp_rul default 0 for RealizeUnLpp;
+		alter table FinRepayHeader_Temp add constraint df_frp_rul_t default 0 for RealizeUnLpp;
+		alter table FinRepayHeader add constraint df_frp_rulpg default 0 for RealizeUnLppGst;
+		alter table FinRepayHeader_Temp add constraint df_frp_rulpg_t default 0 for RealizeUnLppGst;
+	</sql>
+</changeSet>
 <changeSet id="3" author="Siva">
 	<sql>
 		update FinRepayHeader set RealizeUnLpi = 0 where RealizeUnLpi is null;
