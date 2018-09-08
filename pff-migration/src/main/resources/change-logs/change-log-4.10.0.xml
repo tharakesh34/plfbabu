@@ -6014,11 +6014,16 @@ UNION ALL
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="74.1" author="Vinay">
+	<changeSet id="74.1" author="Vinay" dbms="oracle,postgresql">
 		<addDefaultValue columnName="eligibilitymethods" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="eligibilitymethods" tableName="RMTFinanceTypes_temp" defaultValue="0" />
 	</changeSet>
-	
+	<changeSet id="74.1" author="Jayant" dbms="mssql">
+		<sql>
+			alter table RMTFinanceTypes add constraint df_rmtfintype_elmeth default 0 for eligibilitymethods;
+			alter table RMTFinanceTypes_Temp add constraint df_rmtfintype_elmeth_t default 0 for eligibilitymethods;
+		</sql>
+	</changeSet>
 	<changeSet id="74.1.0_pre" author="Vinay" dbms="postgresql">
 		<sql>
 			select deps_save_and_drop_dependencies('plf','rmtfinancetypes');
@@ -6038,7 +6043,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="74.2_Pre" author="Jayant">
+	<changeSet id="74.2_Pre" author="Jayant" dbms="postgresql">
 		<sql>
 			select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
 		</sql>
@@ -6864,7 +6869,7 @@ UNION ALL
  </createView>
 </changeSet>
 
-	<changeSet id="74.2_Post" author="Jayant">
+	<changeSet id="74.2_Post" author="Jayant" dbms="postgresql">
 		<sql>
 			select deps_restore_dependencies('plf','rmtfinancetypes_aview');
 		</sql>
@@ -6885,17 +6890,22 @@ UNION ALL
 		<addForeignKeyConstraint constraintName="FK_FCRC_Temp_ElgMthdId" referencedTableName="RMTLovFielddetail" baseColumnNames="EligibilityId" baseTableName="FinCreditRevCategory_Temp" referencedColumnNames="fieldcodeid"/>
 </changeSet>
 
-<changeSet id="74.8" author="Vinay">
+ <changeSet id="74.8" author="Vinay">
 	<sqlFile path="change-logs/EligibilityMethod_CreditReviewDetails.sql" endDelimiter="DonotStop" encoding="UTF-8"/>
 </changeSet>
 
-<changeSet id="74.9" author="Vinay">
+<changeSet id="74.9" author="Vinay" dbms="postgresql">
 	<sql>
 	delete from smtparameters where sysparmcode='CUSTBRANCH';
 Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N',1,0,null,null,'Customer Branch for finance loan branch',1,1000,to_timestamp('2018-08-23 12:47:10.102078','null'),'Approved',null,null,null,null,null,0);
 	</sql>
 </changeSet>
-
+<changeSet id="74.9" author="Vinay" dbms="oracle,mssql">
+	<sql>
+	delete from smtparameters where sysparmcode='CUSTBRANCH';
+Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N',1,0,null,null,'Customer Branch for finance loan branch',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	</sql>
+</changeSet>
 <changeSet id="80" author="somasekhar">
 	 <dropView viewName="interfacemapping_aview"/>
 	 <dropView viewName="interfacemapping_view"/>
@@ -6944,12 +6954,12 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		<modifyDataType tableName="DepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
 	</changeSet> 
 	
-	<changeSet id="86" author="Vinay">
+<!-- 	<changeSet id="86" author="Vinay">
 		<sql>
 			update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD' and isactive='1');
 			update rmtfinancetypes_temp set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail where fieldcode = 'ELGMETHOD' and isactive='1');
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id = "87" author = "Siva">
 		<comment> BPI Claculation on First date or Frequency of Before Installment Interest calculation date </comment>
@@ -9364,7 +9374,7 @@ UNION ALL
 		     LEFT JOIN documentcategory dc ON dc.id = doc.categoryid
 		</createView>
 	</changeSet>
-	<changeSet id="111" author="Madhubabu.P">
+	<changeSet id="111.1" author="Madhubabu.P">
 		<createView viewName="postings_view"
 			replaceIfExists="true">
 		 SELECT    T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate,
@@ -9390,7 +9400,7 @@ UNION ALL
                     T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
 				FROM          Postings T1 INNER JOIN
                      BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
-                     inner join jvpostings T3 on T3.BATCHREFERENCE::text=T1.finreference
+                     inner join jvpostings T3 on T3.BATCHREFERENCE=T1.finreference
 		
 		</createView>
 	</changeSet>
