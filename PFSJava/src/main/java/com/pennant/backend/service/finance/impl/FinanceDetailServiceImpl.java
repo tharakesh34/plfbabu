@@ -260,6 +260,7 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
+import com.pennanttech.pff.external.ProfectusHunterBreService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.rits.cloning.Cloner;
 
@@ -346,6 +347,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired
 	private DMSIdentificationService dmsIdentificationService;
 
+	@Autowired(required = false)
+	private ProfectusHunterBreService profectusHunterBreService;
 	@Autowired
 	private SamplingService samplingService;
 	@Autowired
@@ -4596,6 +4599,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		case PennantConstants.method_doDms:
 			if (null != dmsIdentificationService) {
 				dmsIdentificationService.identifyExternalDocument(auditHeader);
+			}
+			break;
+		case PennantConstants.method_doPrfHunter:
+			if (null != profectusHunterBreService) {
+				profectusHunterBreService.getOnlineMatchDetails(auditHeader);
 			}
 			break;
 		case PennantConstants.method_doCheckDeviations:
