@@ -87,10 +87,14 @@
 		<modifyDataType tableName="adtrmtfinancetypes" columnName="eligibilitymethods" newDataType="varchar(100)"/>
 	</changeSet>
 	
-	<changeSet id="8.1" author="Vinay">
+	<changeSet id="8.1" author="Vinay" dbms="oracle,postgresql">
 		<addDefaultValue columnName="eligibilitymethods" tableName="AdtRMTFinanceTypes" defaultValue="0" />
 	</changeSet>
-	
+	<changeSet id="8.1" author="Vinay" dbms="mssql">
+		<sql>
+			alter table  AdtRMTFinanceTypes add constraint df_adtrmtfintype_em default 0 for eligibilitymethods;
+		</sql>
+	</changeSet>
 	<changeSet id="8.2" author="Vinay">
 		<comment>Add new column to to visible eligibility tabs</comment>
 		<addColumn tableName="AdtFinCreditRevCategory">
