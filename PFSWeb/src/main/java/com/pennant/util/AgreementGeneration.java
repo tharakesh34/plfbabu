@@ -2732,7 +2732,6 @@ public class AgreementGeneration implements Serializable {
 								}
 								detailCol.setExtDtls(new ArrayList<>());
 								Map<String, Object> mapValues = extendedFieldRender.getMapValues();
-								detailCol.setFields(mapValues);
 								for (String key : mapValues.keySet()) {
 									ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
 									ExtendedFieldDetail extendedFieldDetail = null;
@@ -2757,10 +2756,12 @@ public class AgreementGeneration implements Serializable {
 									} else {
 										extendedDetail.setValue(StringUtils.EMPTY);
 									}
+									mapValues.put(key, extendedDetail.getValue());
 									extendedDetail.setFieldType("COLLATERAL");
 									detailCol.getExtDtls().add(extendedDetail);
 									agreement.getExtendedDetails().add(extendedDetail);
 								}
+								detailCol.setFields(mapValues);
 								extendedDetailsList.add(detailCol);
 							}
 						}
