@@ -130,5 +130,9 @@
 			<column name="docexternalref" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="15" author="Amarnath">
+		<addColumn tableName="adtmastermapping">
+			<column name="InterfaceSequence" type="VARCHAR(100)"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>

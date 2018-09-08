@@ -83,7 +83,7 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 		source.addValue("InterfaceMappingId", interfaceMappingId);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select MasterMappingId, InterfaceMappingId, PLFValue, InterfaceValue");
+				"Select MasterMappingId, InterfaceMappingId, PLFValue, InterfaceValue, InterfaceSequence");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From MasterMapping");
@@ -121,6 +121,7 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set PlfValue = :PlfValue,");
 		updateSql.append(" InterfaceValue = :InterfaceValue, ");
+		updateSql.append(" InterfaceSequence = :InterfaceSequence, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
@@ -205,10 +206,10 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 		}
 		insertSql.append("Insert Into MasterMapping");
 		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql.append(" (MasterMappingId,InterfaceMappingId,PlfValue,InterfaceValue");
+		insertSql.append(" (MasterMappingId,InterfaceMappingId,PlfValue,InterfaceValue,InterfaceSequence");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(" Values(:MasterMappingId,:InterfaceMappingId, :PlfValue , :InterfaceValue");
+		insertSql.append(" Values(:MasterMappingId,:InterfaceMappingId, :PlfValue , :InterfaceValue, :InterfaceSequence");
 		insertSql.append(
 				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
 		insertSql.append(", :RecordType, :WorkflowId)");

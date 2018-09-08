@@ -9411,4 +9411,74 @@ UNION ALL
 		
 		</sql>
 	</changeSet>
+	<changeSet id="113" author="Amarnath">
+		<addColumn tableName="mastermapping_temp">
+			<column name="InterfaceSequence" type="VARCHAR(100)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="114" author="Amarnath">
+		<addColumn tableName="mastermapping">
+			<column name="InterfaceSequence" type="VARCHAR(100)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="115" author="Amarnath">
+		<createView viewName="mastermapping_view" replaceIfExists="true">
+			SELECT t1.mastermappingid,
+				    t1.interfacemappingid,
+				    t1.plfvalue,
+				    t1.interfacevalue,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+					t1.interfaceSequence
+				   FROM mastermapping_temp t1
+				UNION ALL
+				 SELECT t1.mastermappingid,
+				    t1.interfacemappingid,
+				    t1.plfvalue,
+				    t1.interfacevalue,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+					t1.interfaceSequence
+				   FROM mastermapping t1
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM mastermapping_temp
+				          WHERE mastermapping_temp.mastermappingid = t1.mastermappingid))
+		</createView>
+	</changeSet>
+	<changeSet id="116" author="Amarnath">
+		<createView viewName="mastermapping_aview" replaceIfExists="true">
+			SELECT t1.mastermappingid,
+				    t1.interfacemappingid,
+				    t1.plfvalue,
+				    t1.interfacevalue,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+					t1.interfaceSequence
+				   FROM mastermapping t1
+		</createView>
+	</changeSet>
 </databaseChangeLog>

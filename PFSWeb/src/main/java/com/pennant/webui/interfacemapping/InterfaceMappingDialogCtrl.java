@@ -1160,8 +1160,10 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		this.listBoxInterfaceMapping.getItems().clear();
 
 		Hbox hbox = null;
+		Hbox hbox2 = null;
 		Space space = null;
 		Textbox interfaceValue = null;
+		Textbox interfaceSequence = null;
 		boolean condition = isReadOnly("InterfaceMappingDialog_List");
 		
 		setMasterMappingList(mappingList);
@@ -1198,6 +1200,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 
 				// Interface Value
 				interfaceValue = new Textbox();
+				interfaceValue.setMaxlength(100);
 				interfaceValue.setValue(masterMapping.getInterfaceValue());
 				interfaceValue.setReadonly(condition);
 				hbox.appendChild(interfaceValue);
@@ -1205,8 +1208,28 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				List<Object> interfaceList = new ArrayList<Object>(11);
 				interfaceList.add(interfaceValue);
 				interfaceList.add(masterMapping);
-				
 				interfaceValue.addForward("onChange", window_InterfaceMappingDialog, "onChangeInterfaceValue", interfaceList);
+				
+				
+				item.appendChild(lc);
+				
+				lc = new Listcell();
+				hbox2 = new Hbox();
+				hbox2.setParent(lc);
+
+				
+				// Sequence Value
+				interfaceSequence = new Textbox();
+				interfaceSequence.setMaxlength(100);
+				interfaceSequence.setValue(masterMapping.getInterfaceSequence());
+				interfaceSequence.setReadonly(condition);
+				hbox2.appendChild(interfaceSequence);
+				
+				List<Object> interfaceList1 = new ArrayList<Object>(11);
+				interfaceList1.add(interfaceSequence);
+				interfaceList1.add(masterMapping);
+				
+				interfaceSequence.addForward("onChange", window_InterfaceMappingDialog, "onChangeInterfaceSequence", interfaceList1);
 				
 				item.appendChild(lc);
 
@@ -1240,7 +1263,29 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		
 		logger.debug("Leaving" + event.toString());
 	}
+	
+	public void onChangeInterfaceSequence(ForwardEvent event) {
+		logger.debug("Entering" + event.toString());
+		
+		@SuppressWarnings("unchecked")
+		List<Object> list = (List<Object>) event.getData();
 
+		Textbox interfaceSequence = (Textbox) list.get(0);
+		MasterMapping masterMapping = (MasterMapping) list.get(1);
+		
+		interfaceSequence.setErrorMessage("");
+		
+		if (StringUtils.isBlank(masterMapping.getRecordType())) {
+			if (isWorkFlowEnabled()) {
+				masterMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				masterMapping.setNewRecord(true);
+			}
+		}
+
+		masterMapping.setInterfaceSequence(interfaceSequence.getValue());
+		
+		logger.debug("Leaving" + event.toString());
+	}
 	/**
 	 * Method doListModelItemRender to extact data based on data given and added to mastermappinglist
 	 * 

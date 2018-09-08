@@ -66,6 +66,7 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 	private String								mappingTable;
 	private String								mappingColumn;
 	private String								mappingValue;
+	private String 								mappingSequence;
 	private boolean								active;
 	private String								mappingType;
 	private String								module;
@@ -85,6 +86,7 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 		excludeFields.add("mappingid");
 		excludeFields.add("mappingType");
 		excludeFields.add("module");
+		excludeFields.add("mappingSequence");
 		return excludeFields;
 	}
 	public InterfaceMapping() {
@@ -237,4 +239,11 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 		this.interfaceId = interfaceId;
 	}
 
+	public String getMappingSequence() {
+		return mappingSequence;
+	}
+
+	public void setMappingSequence(String mappingSequence) {
+		this.mappingSequence = mappingSequence;
+	}
 }

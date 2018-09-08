@@ -145,6 +145,9 @@
 								<listheader id="listheader_Interface_Value"
 									label="${c:l('listheader_Interface_Value.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_Interface_Mapping_Sequesnce_Value"
+									label="${c:l('listheader_Interface_Mapping_Sequesnce_Value.label')}" sort="auto"
+									hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

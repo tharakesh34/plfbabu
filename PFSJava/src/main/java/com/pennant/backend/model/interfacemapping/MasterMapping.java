@@ -60,6 +60,7 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	private long				interfaceMappingId	= 0;
 	private String				plfValue;
 	private String				interfaceValue;
+	private String				interfaceSequence;
 	private boolean				newRecord;
 	private String				lovValue;
 	private MasterMapping	    befImage;
@@ -157,6 +158,14 @@ public class MasterMapping extends AbstractWorkflowEntity {
 
 	public void setInterfaceMappingId(Long interfaceMappingId) {
 		this.interfaceMappingId = interfaceMappingId;
+	}
+
+	public String getInterfaceSequence() {
+		return interfaceSequence;
+	}
+
+	public void setInterfaceSequence(String interfaceSequence) {
+		this.interfaceSequence = interfaceSequence;
 	}
  
 }
