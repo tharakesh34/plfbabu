@@ -88,7 +88,7 @@
 	</sql>
 </changeSet>
 
-<changeSet id="4" author="Siva">
+<changeSet id="4" author="Siva" dbms="oracle,postgresql">
 <comment>Added Field LpiAmount for LPI, LPP Amortization Purpose </comment>
 	<addColumn tableName="FinReceiptHeader">
 		<column name="LpiAmount" type="decimal(18,0)" defaultValue="0" />
@@ -118,7 +118,48 @@
 		<column name="GstLppAmount" type="decimal(18,0)" defaultValue="0" />
 	</addColumn>
 </changeSet>
-
+<changeSet id="4" author="Siva" dbms="mssql">
+<comment>Added Field LpiAmount for LPI, LPP Amortization Purpose </comment>
+	<addColumn tableName="FinReceiptHeader">
+		<column name="LpiAmount" type="decimal(18,0)" />
+	</addColumn>
+	<addColumn tableName="FinReceiptHeader_Temp">
+		<column name="LpiAmount" type="decimal(18,0)"/>
+	</addColumn>
+	
+	<addColumn tableName="FinReceiptHeader">
+		<column name="GstLpiAmount" type="decimal(18,0)"/>
+	</addColumn>
+	<addColumn tableName="FinReceiptHeader_Temp">
+		<column name="GstLpiAmount" type="decimal(18,0)" />
+	</addColumn>
+	
+	<addColumn tableName="FinReceiptHeader">
+		<column name="LppAmount" type="decimal(18,0)" />
+	</addColumn>
+	<addColumn tableName="FinReceiptHeader_Temp">
+		<column name="LppAmount" type="decimal(18,0)" />
+	</addColumn>
+	
+	<addColumn tableName="FinReceiptHeader">
+		<column name="GstLppAmount" type="decimal(18,0)"/>
+	</addColumn>
+	<addColumn tableName="FinReceiptHeader_Temp">
+		<column name="GstLppAmount" type="decimal(18,0)" />
+	</addColumn>
+</changeSet>
+<changeSet id="4_Post" author="Jayant" dbms="mssql">
+	<sql>
+		alter table FinReceiptHeader add constraint df_frh_lpa default 0 for LpiAmount;
+		alter table FinReceiptHeader_Temp add constraint df_frh_lpa_t default 0 for LpiAmount;
+		alter table FinReceiptHeader add constraint df_frh_gli default 0 for GstLpiAmount;
+		alter table FinReceiptHeader_Temp add constraint df_frh_gli_t default 0 for GstLpiAmount;
+		alter table FinReceiptHeader add constraint df_frh_la default 0 for LppAmount;
+		alter table FinReceiptHeader_Temp add constraint df_frh_la_t default 0 for LppAmount;
+		alter table FinReceiptHeader add constraint df_frh_gla default 0 for GstLppAmount;
+		alter table FinReceiptHeader_Temp add constraint df_frh_gla_t default 0 for GstLppAmount;
+	</sql>
+</changeSet>
 <changeSet id="5" author="Siva"> 
 	<comment>Update newly added column LPIAmount,LPPAmount to zero by default</comment>
 	<sql>
