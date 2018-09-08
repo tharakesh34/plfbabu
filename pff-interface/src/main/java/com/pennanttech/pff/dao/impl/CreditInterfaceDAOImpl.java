@@ -33,6 +33,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennanttech.model.interfacemapping.InterfaceMappingDetails;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -585,7 +586,26 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		logger.debug("Leaving");
 	}
 
-
+	@Override
+	public List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference,String moduleValue) {
+		logger.debug("Entering");
+		String str="select T3.interfacevalue,T3.interfacesequence,T3.plfvalue from interface_fields T1 "
+				+ "inner join interfacemapping T2 on T2.INTERFACEID=T1.INTERFACEID "
+				+ "inner join mastermapping T3 on T3.INTERFACEMAPPINGID=T2.INTERFACEMAPPINGID "
+				+ "where T1.interfacename=:inerfaceReference and T1.module=:moduleValue";
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("inerfaceReference", inerfaceReference);
+		paramMap.addValue("moduleValue", moduleValue);
+		logger.debug("selectSql: " + str.toString());
+		logger.debug(Literal.LEAVING);
+		try {
+			RowMapper<InterfaceMappingDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterfaceMappingDetails.class);
+			return (List<InterfaceMappingDetails>) this.namedParameterJdbcTemplate.query(str, paramMap, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception :", e);
+		}
+		return null;
+	}
 
 }
 

@@ -10,6 +10,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennanttech.model.interfacemapping.InterfaceMappingDetails;
 
 public interface CreditInterfaceDAO {
 
@@ -34,5 +35,5 @@ public interface CreditInterfaceDAO {
 
 	void updateExtendedDetails(String custCIF, int seqNo, Map<String, Object> appplicationdata, String type, String tableName);
 
-	
+	List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference,String moduleValue);
 }
