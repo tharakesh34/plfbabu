@@ -40,7 +40,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="Siva">
+	<changeSet id="1" author="Siva" dbms="oracle,postgresql">
 		<comment>Added Field LpiAmount, GstLpiAmount, LppAmount, GstLppAmount for LPI, LPP Amortization Purpose </comment>
 		<addColumn tableName="AdtFinReceiptHeader">
 			<column name="LpiAmount" type="decimal(18,0)" defaultValue="0" />
@@ -55,7 +55,29 @@
 			<column name="GstLppAmount" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-
+	<changeSet id="1" author="Siva" dbms="mssql">
+		<comment>Added Field LpiAmount, GstLpiAmount, LppAmount, GstLppAmount for LPI, LPP Amortization Purpose </comment>
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="LpiAmount" type="decimal(18,0)" />
+		</addColumn>
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="GstLpiAmount" type="decimal(18,0)"/>
+		</addColumn>
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="LppAmount" type="decimal(18,0)" />
+		</addColumn>
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="GstLppAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="1_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinReceiptHeader add constraint df_afrh_lpa default 0 for LpiAmount;
+			alter table AdtFinReceiptHeader add constraint df_afrh_gli default 0 for GstLpiAmount;
+			alter table AdtFinReceiptHeader add constraint df_afrh_la default 0 for LppAmount;
+			alter table AdtFinReceiptHeader add constraint df_afrh_gla default 0 for GstLppAmount;
+		</sql>
+	</changeSet>
 	<changeSet id="2" author="Siva">
 		<comment>Update newly added columns LpiAmount, GstLpiAmount, LppAmount, GstLppAmount to zero by default</comment>
 		<sql>
