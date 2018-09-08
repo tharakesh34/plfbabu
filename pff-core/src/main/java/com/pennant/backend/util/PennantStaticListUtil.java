@@ -30,13 +30,12 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.staticlist.AppStaticList;
 
 @Component("appList")
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PennantStaticListUtil {
-	
 	// List Declarations for Static Initializations
-	private static volatile List<Property> applications;
 	private static ArrayList<ValueLabel> fieldSelection;
 	private static ArrayList<ValueLabel> fieldType;
 	private static ArrayList<ValueLabel> regexType;
@@ -265,7 +264,16 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> filtersList;
 	
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
-	
+
+	/**
+	 * Gets the list of applications.
+	 * 
+	 * @return The list of applications.
+	 */
+	public static List<Property> getApplications() {
+		return AppStaticList.getApplications();
+	}
+
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getValue().equalsIgnoreCase(value)) {
@@ -735,15 +743,6 @@ public class PennantStaticListUtil {
 			appCodeList.add(new ValueLabel("1", Labels.getLabel("PLF")));
 		}
 		return appCodeList;
-	}
-
-	public static List<Property> getApplications() {
-		if (applications == null) {
-			applications = new ArrayList<>(1);
-			applications.add(new Property(1, Labels.getLabel("PLF")));
-		}
-
-		return applications;
 	}
 
 	public static ArrayList<ValueLabel> getRuleOperator() {
