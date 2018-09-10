@@ -1610,7 +1610,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				
-				this.finFeeDetailService.actualGSTFees(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
+				this.finFeeDetailService.calculateGstPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
 				
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
@@ -2121,7 +2121,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		finFeeDetail.setNetAmount(PennantAppUtil.unFormateAmount(netFeeBox.getValue(), formatter));
 		finFeeDetail.setPaidAmount(PennantAppUtil.unFormateAmount(paidBox.getValue(), formatter));
 		
-		this.finFeeDetailService.calculateGSTFees(finFeeDetail, financeMain, gstExecutionMap);
+		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 		
 		//Paid Fee
 		paidBoxOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmountOriginal(), formatter));
@@ -2268,7 +2268,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
 			}
 			
-			this.finFeeDetailService.calculateGSTFees(finFeeDetail, financeMain, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 			
 			remainingOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
 			remainingGSTBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeGST(), formatter));
@@ -2836,7 +2836,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		//Calculating GST
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateGSTFees(finFeeDetail, financeMain, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 		}
 		
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
@@ -2875,7 +2875,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		//finScheduleData.setFinFeeDetailList(getFinFeeDetailUpdateList());
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			//Calculating GST
-			this.finFeeDetailService.calculateGSTFees(finFeeDetail, financeMain, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 		}
 		
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());

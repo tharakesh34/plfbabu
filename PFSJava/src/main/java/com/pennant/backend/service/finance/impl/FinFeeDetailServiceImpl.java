@@ -589,9 +589,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	
 		
 	}
-
-
-	
 	
 	private void createPayableAdvises(String finReference, Map<Long, List<FinFeeReceipt>> map) {
 		logger.debug("Entering");
@@ -600,7 +597,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		long feeTypeId = Long.valueOf(pfsParameter.getSysParmValue());
 		ManualAdvise manualAdvise=null;
 		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference);
-		
 		
 		for (FinReceiptDetail finRecDetail:finReceiptDetailsList){
 			List<FinFeeReceipt> finFeeRecList = map.get(finRecDetail.getReceiptID());
@@ -1140,10 +1136,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	
 	@Override
 	public void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap) {
+		logger.debug(Literal.ENTERING);
 		
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finCcy = financeMain.getFinCcy();
-		BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
+		BigDecimal gstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
 		BigDecimal gstActual = BigDecimal.ZERO;
 		BigDecimal gstNetOriginal = BigDecimal.ZERO;
 		
@@ -1183,6 +1180,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetail.setPaidAmount(finTypeFee.getAmount());
 			}
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	@Override
@@ -1198,7 +1197,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
-			BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
+			BigDecimal gstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
 			BigDecimal gstActual = BigDecimal.ZERO;
 			
 			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
@@ -1255,7 +1254,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 			
-			BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
+			BigDecimal gstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
 			BigDecimal gstActual = BigDecimal.ZERO;
 			int formatter = CurrencyUtil.getFormat(finCcy);
 			
@@ -1299,7 +1298,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	
 	@Override
-	public BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap) {
+	public BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap) {
 		logger.debug(Literal.ENTERING);
 	
 		BigDecimal cgstPercentage = BigDecimal.ZERO;
@@ -1406,7 +1405,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public void calculateGSTFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap) {
+	public void calculateFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap) {
 		logger.debug(Literal.ENTERING);
 		
 		BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal().subtract(finFeeDetail.getWaivedAmount());
@@ -1423,7 +1422,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		if (finFeeDetail.isTaxApplicable()) {
 			
-			BigDecimal tgstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
+			BigDecimal tgstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
 			BigDecimal cgstPercentage = finFeeDetail.getCgst();
 			BigDecimal igstPercentage = finFeeDetail.getIgst();
 			BigDecimal ugstPercentage = finFeeDetail.getUgst();
@@ -1629,7 +1628,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage,String taxRoundMode,int taxRoundingTarget) {
+	public BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode, int taxRoundingTarget) {
 		logger.debug(Literal.ENTERING);
 		
 		BigDecimal result = BigDecimal.ZERO;
@@ -1642,7 +1641,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	
 	@Override
 	public HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode,String dftBranch, String highPriorityState, 
-			String highPriorityCountry,FinanceTaxDetail taxDetail, String branchCode) {
+			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode) {
 		
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
 		boolean gstExempted = false;
@@ -1744,33 +1743,29 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public HashMap<String, Object> prepareGstMapping(String fromStateCode,String toStateCode) {
-		
+	public HashMap<String, Object> prepareGstMapping(String fromStateCode, String toStateCode) {
+
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
 		boolean gstExempted = false;
-		
-			
-			Province fromState = getProvinceDAO().getProvinceById(fromStateCode,"");
-			
-			if (fromState != null) {
-				gstExecutionMap.put("fromState", fromState.getCPProvince());
-				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
-				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
-			}
-			
-			
-			Province toState = getProvinceDAO().getProvinceById(toStateCode,"");
-			
-			if (toState != null) {
-				gstExecutionMap.put("toState", toState.getCPProvince());
-				gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
-				gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
-			}
-			
-			
-			gstExecutionMap.put("gstExempted", gstExempted);
-			
-		
+
+		Province fromState = getProvinceDAO().getProvinceById(fromStateCode, "");
+
+		if (fromState != null) {
+			gstExecutionMap.put("fromState", fromState.getCPProvince());
+			gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+			gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+		}
+
+		Province toState = getProvinceDAO().getProvinceById(toStateCode, "");
+
+		if (toState != null) {
+			gstExecutionMap.put("toState", toState.getCPProvince());
+			gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
+			gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+		}
+
+		gstExecutionMap.put("gstExempted", gstExempted);
+
 		return gstExecutionMap;
 	}
 	

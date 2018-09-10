@@ -79,9 +79,9 @@ public interface FinFeeDetailService {
 	
 	//GST
 	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap, boolean apiRequest);
-	BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap);
+	BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap);
 	BigDecimal getFeeResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy);
-	void calculateGSTFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap);
+	void calculateFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap);
 	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode, int taxRoundingTarget);
 	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap, boolean apiRequest);
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap);

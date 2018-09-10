@@ -521,7 +521,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				finTypeFee.setAmount(adviseAmount);
 				
 				finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
-				finFeeDetailService.calculateGSTFees(finFeeDetail, financeMain, gstExecutionMap);
+				finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 				
 				String taxComponent = "";
 				
