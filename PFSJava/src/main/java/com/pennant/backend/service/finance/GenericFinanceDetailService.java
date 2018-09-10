@@ -2463,9 +2463,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			// Bounce Tax Details
 			FeeType feeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
-			if(feeType == null || feeType.getAccountSetId() <= 0){
+			if (feeType == null || feeType.getAccountSetId() == null || feeType.getAccountSetId() <= 0) {
 				logger.debug("Leaving");
-				return null;				
+				return null;
 			}
 			acSetIdList.add(feeType.getAccountSetId());
 			taxApplicable = feeType.isTaxApplicable();
