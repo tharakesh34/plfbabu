@@ -1428,6 +1428,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					aCustomerDocument.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType =PennantConstants.TRAN_UPD;
+					boolean workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerDocument.getRecordType())) {
+						aCustomerDocument.setNewRecord(true);
+					}
 				}
 
 				if(StringUtils.isBlank(aCustomerDocument.getRecordType())){
