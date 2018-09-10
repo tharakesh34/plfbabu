@@ -1,3 +1,23 @@
+pff 4.10.4.1, 2018-09-10
+ --------------
+-story  #737: Hunter Service Task Changes in Core
+-story  #732: Adding the Sequence Number for the Interface Mapping Master
+-story  #726 Add support to get the values from Map in the Data Collection.
+-story  #707 : Agreement Related Changes to update logic for BPIAmount, NetDisbursement's, Deduction's 
+-story #655 Consider Co-Applicant income in sampling with respect to "Include Income Expenditure" flag.
+-story #699, Allow additional filters for application list in extended fields.
+-PSD# 128635  DOB/Date of Incorporation field in Customer screen is changed according to the PrimaryDocument issued date.
+-story #721 : Equitas DMS Changes for Document Type (External Reference)
+-story#707 : Agreement Related Changes replacing totalLoanAmt to FirstDisbursementAmt
+-story #707 : Agreement Related Changes adding ReceiptFeeAmount
+-story #127, Create a new Collateral setup along with Loan in Collateral Assignments.
+
+pff 4.10.3.3, 2018-09-06
+ --------------
+-story#712:External Reference Changes for Document Types Master and DB Script Changes 
+-story #648 Allow Hybrid Rate for a Loan
+-story #655 Consider Co-Applicant income in sampling with respect to "Include Income Expenditure" flag.
+
 pff 4.10.3.2, 2018-09-04
  --------------
 -bug #711  Auto Generate flag is not selected but Document Type Field is in Enable Mode in Agreement Master.
