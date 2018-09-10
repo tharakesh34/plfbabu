@@ -82,7 +82,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -332,26 +331,12 @@ public class AgreementDefinitionDialogCtrl extends
 		if (this.allowMultiple.isChecked()) {
 			this.space_ModuleType.setSclass(PennantConstants.mandateSclass);
 			this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
-		
+
 		} else {
 			this.space_ModuleType.setSclass("");
 		}
 		logger.debug("Leaving");
 	}
-	
-
-	public void doCheckAutoGeneration() {
-		logger.debug("Entering");
-		this.docType.setButtonDisabled(true);
-		if (this.autoGeneration.isChecked()) {
-			this.docType.setButtonDisabled(false);
-		} else {
-			this.docType.setVisible(false);
-			this.docType.setButtonDisabled(true);
-		}
-		logger.debug("Leaving");
-	}
-	
 	
 
 	public void doCheckAllowDoctType() {
@@ -361,6 +346,7 @@ public class AgreementDefinitionDialogCtrl extends
 		if(autoGenCheckbox.equals(true)){
 			this.auto_check.setSclass(PennantConstants.mandateSclass);
 			this.docType.setVisible(true);
+			this.docType.setButtonDisabled(false);
 			this.autoDownload.setVisible(true);
 			this.auto_check.setVisible(true);
 		}else{
@@ -487,7 +473,6 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggImage = aAgreementDefinition.getAggImage();
 		doFillAggDetailsList(aAgreementDefinition);
 		doCheckAllowMuliple();
-		doCheckAutoGeneration();
 
 		String modulename = this.moduleName.getSelectedItem().getValue().toString();
 		doModuleSelection(modulename);
@@ -684,7 +669,7 @@ public class AgreementDefinitionDialogCtrl extends
 	private void doModuleSelection(String modulename) {
 
 		if ((PennantConstants.WORFLOW_MODULE_FINANCE.equals(modulename))) {
-		this.auto_check.setVisible(true);
+			this.auto_check.setVisible(true);
 			Filter[] filtersDoc = new Filter[1];
 			filtersDoc[0] = new Filter("categorycode", PennantConstants.WORFLOW_MODULE_FINANCE, Filter.OP_EQUAL);
 			this.docType.setFilters(filtersDoc);
@@ -708,14 +693,18 @@ public class AgreementDefinitionDialogCtrl extends
 			this.allowMultiple_row.setVisible(true);
 			this.autoGeneration.setVisible(true);
 			this.label_AgreementDefinitionDialog_AutoGeneration.setVisible(true);
-			this.docType.setVisible(true);
-			this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
-			if(this.autoGeneration.isChecked()){
-			this.autoDownload.setVisible(true);
-			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
+			if (autoGeneration.isChecked()) {
+				this.autoDownload.setVisible(true);
+				this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
+				this.docType.setVisible(true);
+				this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
+			} else {
+				this.docType.setButtonDisabled(true);
+				this.docType.setVisible(true);
+				this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
 			}
-			
-			}
+
+		}
 
 	}
 	
@@ -730,9 +719,11 @@ public class AgreementDefinitionDialogCtrl extends
 			this.docType.setSclass(PennantConstants.mandateSclass);
 			this.docType.setValue("");
 			this.docType.setButtonDisabled(false);
+			this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
+			this.docType.setVisible(true);
 		} else {
-			this.docType.setButtonDisabled(true);
 			this.docType.setValue("");
+			this.docType.setButtonDisabled(true);
 			this.autoDownload.setVisible(false);
 			this.autoDownload.setChecked(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
@@ -1064,7 +1055,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.moduleType.setDisabled(true);
 		this.allowMultiple.setDisabled(true);
 		this.moduleName.setDisabled(true);
-		// this.aggReportPath.setReadonly(true);
+		this.docType.setReadonly(true);
 		this.aggIsActive.setDisabled(true);
 		doDisable(true);
 		if (isWorkFlowEnabled()) {
