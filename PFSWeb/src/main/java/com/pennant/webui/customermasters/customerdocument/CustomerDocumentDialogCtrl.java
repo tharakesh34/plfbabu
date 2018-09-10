@@ -214,6 +214,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean   isRetailCustomer = false;
 	private boolean   isIssuedAuth=false;
 	private boolean   isDocuploadMand=false;
+	private boolean workflow = false;
 	private DeviationExecutionCtrl deviationExecutionCtrl; 
 	private List<DocumentDetails> verificationDocuments;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
@@ -367,7 +368,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (enqiryModule) {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
-
+			
+			if (getCustomerDialogCtrl() != null && !isFinanceProcess ) {
+				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+			}
+			
 			doLoadWorkFlow(this.customerDocument.isWorkflow(),
 					this.customerDocument.getWorkflowId(),
 					this.customerDocument.getNextTaskId());
@@ -1428,7 +1433,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					aCustomerDocument.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType =PennantConstants.TRAN_UPD;
-					boolean workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerDocument.getRecordType())) {
 						aCustomerDocument.setNewRecord(true);
 					}
