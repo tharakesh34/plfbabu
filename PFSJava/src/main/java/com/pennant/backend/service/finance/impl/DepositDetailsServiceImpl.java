@@ -73,7 +73,6 @@ import com.pennant.backend.service.finance.DepositDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -658,12 +657,13 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		DepositDetails depositDetails = getDepositDetailsDAO().getDepositDetailsById(depositId, "_View");
 
 		if (depositDetails != null && StringUtils.isNotBlank(depositDetails.getRecordType())) {
-			DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsByDepositId(depositId,
-					"_TView");
+			DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsByDepositId(depositId, "_TView");
 			if (depositMovements != null) {
+				//Cash Denominations
 				List<CashDenomination> denominationsList = getCashDenominationDAO()
 						.getCashDenominationList(depositMovements.getMovementId(), "_TView");
 				depositMovements.setDenominationList(denominationsList);
+				//Deposit Cheques
 				List<DepositCheques> chequesList = getDepositChequesDAO()
 						.getDepositChequesList(depositMovements.getMovementId(), "_TView");
 				depositMovements.setDepositChequesList(chequesList);
@@ -965,19 +965,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	private AuditDetail validationDenominations(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		// Get the model object.
-		/*
-		 * CashDenomination cashDenomination = (CashDenomination) auditDetail.getModelData(); long requestId =
-		 * cashDenomination.getProcessId(); String[] parameters = new String[1]; parameters[0] =
-		 * PennantJavaUtil.getLabel("label_BranchCode") + ": " + cashDenomination.getDenomination();
-		 * 
-		 * // Check the unique keys. if (cashDenomination.isNew() &&
-		 * PennantConstants.RECORD_TYPE_NEW.equals(cashDenomination.getRecordType()) &&
-		 * this.cashDenominationDAO.isDuplicateKey(requestId, cashDenomination.isWorkflow() ? TableType.BOTH_TAB :
-		 * TableType.MAIN_TAB)) {
-		 * 
-		 * auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null)); }
-		 */
+		// validation should be create
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -1143,7 +1131,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		for (int i = 0; i < depositMovementsList.size(); i++) {
 			DepositMovements depositMovement = depositMovementsList.get(i);
 
-			//TODO for Cash Denominations Maintenance
+			//for Cash Denominations and Deposit Cheques Maintenance
 			/*
 			 * if (StringUtils.isEmpty(depositMovement.getRecordType())) { continue; }
 			 */
@@ -1309,11 +1297,9 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		//Validation for Receipt Cancellation process if any available
 		if (!PennantConstants.method_doReject.equals(method) && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus())
 				&& CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
-			List<String> paymentTypes = new ArrayList<String>();
-			paymentTypes.add(RepayConstants.RECEIPTMODE_CASH);
 			
 			// Get the total maintenance amount in Receipt Cancellation
-			BigDecimal cancelAmount = getFinReceiptHeaderDAO().getTotalReceiptAmount(depositDetails.getBranchCode(), paymentTypes, "_Temp");
+			BigDecimal cancelAmount = getFinReceiptHeaderDAO().getTotalCashReceiptAmount(depositDetails.getBranchCode(), "_Temp");
 			
 			if (cancelAmount != null && cancelAmount.compareTo(depositDetails.getActualAmount().subtract(depositDetails.getReservedAmount())) > 0) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65037", parameters, null));
@@ -1332,8 +1318,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsById(movementId, "_View");
 
 		if (depositMovements != null) {
-			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId,
-					"_View");
+			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId, "_View");
 			depositMovements.setDenominationList(denominationsList);
 
 			List<DepositCheques> chequesList = getDepositChequesDAO().getDepositChequesList(movementId, "_View");
@@ -1349,8 +1334,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsById(movementId, "_AView");
 
 		if (depositMovements != null) {
-			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId,
-					"_AView");
+			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId, "_AView");
 			depositMovements.setDenominationList(denominationsList);
 
 			List<DepositCheques> chequesList = getDepositChequesDAO().getDepositChequesList(movementId, "_AView");

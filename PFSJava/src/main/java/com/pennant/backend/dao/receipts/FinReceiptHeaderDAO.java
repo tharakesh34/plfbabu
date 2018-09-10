@@ -17,7 +17,7 @@ public interface FinReceiptHeaderDAO {
 	long generatedReceiptID(FinReceiptHeader receiptHeader);
 	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type);	//Cash Management Change
 	void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type); //Cash Management Change
-	BigDecimal getTotalReceiptAmount(String depositBranch, List<String> paymentTypes, String type); //Cash Management Change
+	BigDecimal getTotalCashReceiptAmount(String depositBranch, String type); //Cash Management Change
 	boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type, long receiptId); //Cash Management Change
 	
 	List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type);

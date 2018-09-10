@@ -58,6 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pff.core.TableType;
@@ -317,21 +318,21 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	 * 
 	 */
 	@Override
-	public BigDecimal getTotalReceiptAmount(String depositBranch, List<String> paymentTypes, String type) {
+	public BigDecimal getTotalCashReceiptAmount(String depositBranch, String type) {
 		logger.debug("Entering");
 
 		BigDecimal amount = BigDecimal.ZERO;
 
 		StringBuilder selectSql = new StringBuilder("Select Sum(Amount) from FinReceiptDetail");
-		//selectSql.append(type);	//TODO check this case when we are submit the cancel request Details not effected to Temp table
-		selectSql.append(" Where PaymentType In (:PaymentType) And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
+		//selectSql.append(type);	//check this case when we are submit the cancel request Details not effected to Temp table
+		selectSql.append(" Where PaymentType = :PaymentType And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
 		selectSql.append(type);
 		selectSql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType And DepositBranch = :DepositBranch)");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PaymentType", paymentTypes);
-		source.addValue("ReceiptModeStatus", "C");
+		source.addValue("PaymentType", RepayConstants.RECEIPTMODE_CASH);
+		source.addValue("ReceiptModeStatus", RepayConstants.PAYSTATUS_CANCEL);
 		source.addValue("RecordType", PennantConstants.RECORD_TYPE_NEW);
 		source.addValue("DepositBranch", depositBranch);
 
@@ -357,7 +358,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		int count = 0;
 		
 		StringBuilder selectSql = new StringBuilder("Select Count(ReceiptId) from FinReceiptDetail");
-		//selectSql.append(type);	//TODO check this case when we are submit the cancel request Details not effected to Temp table
+		//selectSql.append(type);	//check this case when we are submit the cancel request Details not effected to Temp table
 		selectSql.append(" Where PaymentType In (:PaymentType) And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
 		selectSql.append(type);
 		selectSql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType And DepositBranch = :DepositBranch And ReceiptId = :ReceiptId)");
@@ -365,7 +366,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PaymentType", paymentTypes);
-		source.addValue("ReceiptModeStatus", "C");
+		source.addValue("ReceiptModeStatus", RepayConstants.PAYSTATUS_CANCEL);
 		source.addValue("RecordType", PennantConstants.RECORD_TYPE_NEW);
 		source.addValue("DepositBranch", depositBranch);
 		source.addValue("ReceiptId", receiptId);

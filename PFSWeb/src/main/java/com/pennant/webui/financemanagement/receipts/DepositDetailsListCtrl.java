@@ -163,7 +163,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		registerField("ReservedAmount");
 		
 		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
-		depositType.removeItemAt(0);
 		
 		// Render the page and display the data.
 		doRenderPage();
@@ -190,7 +189,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
-		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
 		search();
 	}
 

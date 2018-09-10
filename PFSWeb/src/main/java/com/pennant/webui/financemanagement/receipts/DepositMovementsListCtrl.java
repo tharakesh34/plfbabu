@@ -162,7 +162,6 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		registerField("PartnerBankName");
 		
 		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
-		depositType.removeItemAt(0);
 
 		// Render the page and display the data.
 		doRenderPage();
