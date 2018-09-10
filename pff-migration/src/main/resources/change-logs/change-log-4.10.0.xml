@@ -9487,5 +9487,10 @@ UNION ALL
 			Insert into ERRORDETAILS values ('91139','EN','E','Fee method : {0} should not allowed for Fee Code : {1}','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);
 		</sql>
 	</changeSet> 
+	<changeSet id="118" author="Madhubabu">
+		<sql>
+			Insert into ERRORDETAILS values ('90354','EN','E','Receipt is in porcess for the LAN : {0}',null,'Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);
+		</sql>
+	</changeSet> 
 	
 </databaseChangeLog>
