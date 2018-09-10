@@ -1448,7 +1448,7 @@
 			Insert into MASTER_DEF ("master_type","key_type","key_code") values ('DOC_TYPE','VID','VID');
 			Insert into MASTER_DEF ("master_type","key_type","key_code") values ('DOC_TYPE','DL','DL');
 				
-			delete from DEDUPFIELDS where fieldname in ('MotherName','FatherName','VoterID','');
+			delete from DEDUPFIELDS where fieldname in ('MotherName','FatherName','VoterID','DrivingLicence');
 			Insert into DEDUPFIELDS values ('MotherName','Mothers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			Insert into DEDUPFIELDS values ('FatherName','Fathers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			Insert into DEDUPFIELDS values ('VoterID','Voter ID','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
