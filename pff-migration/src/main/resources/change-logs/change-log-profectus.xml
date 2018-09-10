@@ -1451,7 +1451,7 @@
 			delete from DEDUPFIELDS where fieldname in ('MotherName','FatherName','VoterID','');
 			Insert into DEDUPFIELDS values ('MotherName','Mothers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			Insert into DEDUPFIELDS values ('FatherName','Fathers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-			Insert into DEDUPFIELDS values ('VoterID','Mothers Name','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into DEDUPFIELDS values ('VoterID','Voter ID','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			Insert into DEDUPFIELDS values ('DrivingLicence','Driving Licence','varchar','RETAILCustomer',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
