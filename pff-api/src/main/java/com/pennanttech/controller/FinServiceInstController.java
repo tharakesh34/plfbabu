@@ -1368,6 +1368,9 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
 		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
+		long receiptId = getFinReceiptHeaderDAO().generatedReceiptID(receiptHeader);
+		receiptHeader.setReceiptID(receiptId);
+
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			if (StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
@@ -1414,6 +1417,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 		finReceiptDetail.setPaymentType(finServiceInst.getPaymentMode());
 		finReceiptDetail.setAmount(finServiceInst.getAmount());
+		finReceiptDetail.setReceiptID(receiptId);
 		receiptHeader.getReceiptDetails().add(finReceiptDetail);
 
 		receiptHeader.setRemarks(finReceiptDetail.getRemarks());
