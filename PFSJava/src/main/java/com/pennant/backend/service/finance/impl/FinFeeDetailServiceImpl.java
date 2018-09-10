@@ -1030,6 +1030,20 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			valueParam[0] = finFeeDetail.getFeeTypeCode();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91137", valueParam)));
 		}
+		
+		// Fee scheduled methods (Include to First Installment, entire tenor, N installments, Paid by customer and Waived by bank) should not allowed if Tax applicable
+		String feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
+		if (finFeeDetail.isTaxApplicable()
+				&& (CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT.equals(feeScheduleMethod)
+						|| CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS.equals(feeScheduleMethod)
+						|| CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR.equals(feeScheduleMethod)
+						|| CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(feeScheduleMethod)
+						|| CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(feeScheduleMethod))) {
+			String[] valueParam = new String[2];
+			valueParam[0] = feeScheduleMethod;
+			valueParam[1] = finFeeDetail.getFeeTypeCode();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91139", valueParam)));
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

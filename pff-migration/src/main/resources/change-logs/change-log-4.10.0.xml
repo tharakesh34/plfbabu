@@ -6954,12 +6954,12 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		<modifyDataType tableName="DepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
 	</changeSet> 
 	
-<!-- 	<changeSet id="86" author="Vinay">
+	<changeSet id="86" author="Vinay">
 		<sql>
 			update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD' and isactive='1');
 			update rmtfinancetypes_temp set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail where fieldcode = 'ELGMETHOD' and isactive='1');
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id = "87" author = "Siva">
 		<comment> BPI Claculation on First date or Frequency of Before Installment Interest calculation date </comment>
@@ -9481,4 +9481,11 @@ UNION ALL
 				   FROM mastermapping t1
 		</createView>
 	</changeSet>
+	
+	<changeSet id="117" author="Kesav">
+		<sql>
+			Insert into ERRORDETAILS values ('91139','EN','E','Fee method : {0} should not allowed for Fee Code : {1}','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);
+		</sql>
+	</changeSet> 
+	
 </databaseChangeLog>
