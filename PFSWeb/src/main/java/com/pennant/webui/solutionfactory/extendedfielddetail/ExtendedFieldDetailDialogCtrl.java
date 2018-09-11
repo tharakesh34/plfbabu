@@ -2638,8 +2638,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 */
 	private List<ValueLabel> getExtendedParentsList() {
 		List<ValueLabel> valueLabelList = new ArrayList<>();
-		List<ExtendedFieldDetail> details = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
-		
+		List<ExtendedFieldDetail> details = new ArrayList<>();
+
+		if (getExtendedFieldDialogCtrl() != null) {
+			details = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		} else if (getTechnicalValuationDialogCtrl() != null) {
+			details = getTechnicalValuationDialogCtrl().getTechValuationFieldDetailsList();
+		}
+
 		if (CollectionUtils.isEmpty(details)) {
 			return valueLabelList;
 		}
@@ -2670,7 +2676,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 * @return
 	 */
 	private String existsAdditionalFilters(String addFilters, ExtendedFieldDetail aExtendedFieldDetail) {
-		List<ExtendedFieldDetail> details = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		
+		List<ExtendedFieldDetail> details = new ArrayList<>();
+		
+		if (getExtendedFieldDialogCtrl() != null) {
+			details = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		} else if (getTechnicalValuationDialogCtrl() != null) {
+			details = getTechnicalValuationDialogCtrl().getTechValuationFieldDetailsList();
+		}
 
 		if (CollectionUtils.isEmpty(details)) {
 			return null;
