@@ -1061,7 +1061,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				}
 
 				if (tempCollateralSetup != null && oldCollateralSetup != null
-						&& !oldCollateralSetup.getLastMntOn().equals(tempCollateralSetup.getLastMntOn())) {
+						&& !oldCollateralSetup.getLastMntOn().equals(tempCollateralSetup.getLastMntOn()) && !collateralSetup.isFromLoan()) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}

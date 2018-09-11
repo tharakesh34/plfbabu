@@ -73,6 +73,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -104,6 +105,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	private CollateralSetupService			collateralSetupService;
 	private CustomerDetailsService			customerDetailsService;
 	private CollateralStructureService		collateralStructureService;
+	private FinanceTypeService				financeTypeService;
 	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 
 	private List<String> userRoleCodeList = new ArrayList<String>();
@@ -146,7 +148,6 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			}
 			if (arguments.containsKey("financeDetail")) {
 				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
-				//financemain = financeDetail.getFinScheduleData().getFinanceMain();
 			}
 			if (this.collateralSetup == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
@@ -193,7 +194,26 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
 		this.collateralType.setFilters(filters);
 
-		if (!fromLoan) {
+		if (fromLoan) {
+			String finType = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType();
+			if (StringUtils.isNotEmpty(finType)) {
+				StringBuilder whereClause = new StringBuilder();
+				String collateralTypes = getFinanceTypeService().getAllowedCollateralTypes(finType);
+				if (StringUtils.isNotEmpty(collateralTypes)) {
+					String[] collTypes = collateralTypes.split(",");
+					whereClause.append("(TypeCode in (");
+					for (int i = 0; i < collTypes.length; i++) {
+						if (i == 0) {
+							whereClause.append("'").append(collTypes[i]).append("'");
+						} else {
+							whereClause.append(",'").append(collTypes[i]).append("'");
+						}
+					}
+					whereClause.append("))");
+				}
+				this.collateralType.setWhereClause(whereClause.toString());
+			}
+		} else {
 			String whereClause = getWhereClauseWithFirstTask();
 			if (StringUtils.isNotEmpty(whereClause)) {
 				this.collateralType.setWhereClause(whereClause);
@@ -581,6 +601,14 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public FinanceTypeService getFinanceTypeService() {
+		return financeTypeService;
+	}
+
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
 	}
 
 }

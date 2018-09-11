@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -48,6 +49,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.CollectionUtil;
 
 public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssignment> {
 	private static final long				serialVersionUID		= 1L;
@@ -1105,11 +1107,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		search.addWhereClause(whereClause.toString());
 		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
 
-		if (collateralSetupSearchList == null) {
+		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
 			collateralSetupSearchList = new ArrayList<CollateralSetup>();
 		}
 
-		if (collateralSetupList != null && !collateralSetupSearchList.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 			collateralSetupSearchList.addAll(collateralSetupList);
 		}
 		this.collateralRef.setList(collateralSetupSearchList);

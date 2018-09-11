@@ -760,9 +760,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		renderMovementDetails();
 		
 		if (!enqiryModule) {
-
-			//Customer Details   
-			appendCustomerDetailTab(true);
+			
+			// Customer Details
+			if (!fromLoan) {
+				appendCustomerDetailTab(true);
+			}
 
 			//Agreements Detail Tab Addition
 			appendAgreementsDetailTab(true);

@@ -4391,6 +4391,7 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="collateralStructureService" ref="collateralStructureService" />
+		<property name="financeTypeService" ref="financeTypeService" />
 	</bean>
 
 	<!-- Extended Field Detail Renderer -->

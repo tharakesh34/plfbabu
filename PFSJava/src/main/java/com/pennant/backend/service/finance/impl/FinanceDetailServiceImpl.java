@@ -612,30 +612,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.getFinScheduleData().setVasRecordingList(getVasRecordings(finReference, "_TView"));
 		}
 
-		// Collateral Details
-		if (ImplementationConstants.COLLATERAL_INTERNAL) {
-			financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO()
-					.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_TView"));
-		} else {
-			financeDetail
-					.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, "_TView"));
-		}
-
 		// Cheque Header and Cheque Details getting
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
+				
+				
+		// Collateral Details
+		List<CollateralAssignment> assignmentListMain = null;
+		if (ImplementationConstants.COLLATERAL_INTERNAL) {
+			assignmentListMain = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_TView");
+		} else {
+			financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, "_TView"));
+		}
 		
 		// Collateral setup details and assignment details
 		List<CollateralSetup> collateralSetupList = getCollateralSetupService().getCollateralDetails(finReference);
-		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+		List<CollateralAssignment> assignmentListTemp = null; 
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 			if (ImplementationConstants.COLLATERAL_INTERNAL) {
-				List<CollateralAssignment> assignmentsList = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_CTView");
-				financeDetail.getCollateralAssignmentList().addAll(assignmentsList);
+				assignmentListTemp = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_CTView");
 			}
 		}
 		financeDetail.setCollaterals(collateralSetupList);
+		financeDetail = setCollateralAssignments(financeDetail,assignmentListMain, assignmentListTemp);
+		
 				
 		financeDetail.setSampling(samplingService.getSampling(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
-
 		
 		if (financeDetail.isSamplingApprover()) {
 			financeDetail.setSampling(finSamplingService
@@ -652,6 +653,47 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		logger.debug("Leaving");
+		return financeDetail;
+	}
+
+	/**
+	 * Removing the collateral assignment if the assignment is available in both main and temp.
+	 * @param financeDetail
+	 * @param assignmentListMain
+	 * @param assignmentListTemp
+	 * @return
+	 */
+	private FinanceDetail setCollateralAssignments(FinanceDetail financeDetail, List<CollateralAssignment> assignmentListMain, List<CollateralAssignment> assignmentListTemp) {
+		if (CollectionUtils.isEmpty(assignmentListMain) && CollectionUtils.isEmpty(assignmentListTemp)) {
+			return financeDetail;
+		}
+
+		if (CollectionUtils.isEmpty(assignmentListMain)) {
+			financeDetail.getCollateralAssignmentList().addAll(assignmentListTemp);
+			return financeDetail;
+		}
+
+		if (CollectionUtils.isEmpty(assignmentListTemp)) {
+			financeDetail.getCollateralAssignmentList().addAll(assignmentListMain);
+			return financeDetail;
+		}
+
+		List<CollateralAssignment> resultantList = new ArrayList<>();
+		resultantList.addAll(assignmentListMain);
+
+		for (CollateralAssignment assignmentTemp : assignmentListTemp) {
+			boolean equal = false;
+			for (CollateralAssignment assignmentMain : assignmentListMain) {
+				if (assignmentTemp.getCollateralRef().equals(assignmentMain.getCollateralRef())) {
+					equal = true;
+					break;
+				}
+			}
+			if (!equal) {
+				resultantList.add(assignmentTemp);
+			}
+		}
+		financeDetail.getCollateralAssignmentList().addAll(resultantList);
 		return financeDetail;
 	}
 
