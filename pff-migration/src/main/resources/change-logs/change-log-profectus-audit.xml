@@ -67,5 +67,12 @@
 	<changeSet id="13" author="Jayant">
 		<modifyDataType tableName="ADTCUSTOMER_RETAIL_ED" columnName="CIBILSCORE" newDataType="INT"/>
 	</changeSet>
+	
+	<changeSet id="14" author="Vinay">
+		<addColumn tableName="adtdocumentdetails">
+			<column name="remarks" type="varchar(4000)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
 	
