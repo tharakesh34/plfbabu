@@ -338,9 +338,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder(" insert into ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
-				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST)");
+				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaiverID)");
 		sql.append(
-				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST)");
+				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, :WaiverID)");
 
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {

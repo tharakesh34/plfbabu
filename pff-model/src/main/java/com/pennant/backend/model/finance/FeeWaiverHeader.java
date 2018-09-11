@@ -9,8 +9,8 @@ import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>FeeWaiverHeader table</b>.<br>
@@ -30,6 +30,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 	private FeeWaiverHeader befImage;
 	private String lovValue;
 	private LoggedInUser userDetails;
+	private boolean isAlwtoProceed=true;
 
 	private List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
 
@@ -39,6 +40,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("feeWaiverDetails");
 		excludeFields.add("auditDetailMap");
+		excludeFields.add("isAlwtoProceed");
 		return excludeFields;
 	}
 
@@ -157,4 +159,13 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
+	public boolean isAlwtoProceed() {
+		return isAlwtoProceed;
+	}
+
+	public void setAlwtoProceed(boolean isAlwtoProceed) {
+		this.isAlwtoProceed = isAlwtoProceed;
+	}
+
+	
 }

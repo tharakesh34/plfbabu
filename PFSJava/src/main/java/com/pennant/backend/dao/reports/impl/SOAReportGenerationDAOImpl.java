@@ -329,7 +329,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" SELECT T1.Movementdate, T2.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
+		selectSql.append(" SELECT T1.Movementdate, T1.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
 		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
 		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
 		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");

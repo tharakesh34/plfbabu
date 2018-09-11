@@ -11257,6 +11257,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="feeWaiverDetailDAO" ref="feeWaiverDetailDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 	<!-- Organization -->
 	<bean id="organizationDAO" class="com.pennanttech.pff.organization.dao.OrganizationDAOImpl" parent="sequenceDao" />

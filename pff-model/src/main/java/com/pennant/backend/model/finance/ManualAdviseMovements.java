@@ -27,7 +27,7 @@ public class ManualAdviseMovements {
 	private String receiptMode;
 // ### 24-05-2018  SOA Merging from Bajaj to QC
 	private Date valueDate;
-
+	private long waiverID = Long.MIN_VALUE;
 	
 	// Getters and Setters
 	
@@ -142,7 +142,11 @@ public class ManualAdviseMovements {
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
+	public long getWaiverID() {
+		return waiverID;
+	}
+	public void setWaiverID(long waiverID) {
+		this.waiverID = waiverID;
+	}
 	
-	
-
 }

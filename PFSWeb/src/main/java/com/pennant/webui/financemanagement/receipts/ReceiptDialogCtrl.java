@@ -136,6 +136,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -170,6 +171,7 @@ import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.feetype.FeeTypeService;
+import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -430,7 +432,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private int version = 0;
 	private FinanceMain befImage;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
-	/**
+	private transient FeeWaiverHeaderService               feeWaiverHeaderService;
+	/** 
 	 * default constructor.<br>
 	 */
 	public ReceiptDialogCtrl() {
@@ -1434,6 +1437,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			makeFeeRender = true;
 		}
+		FeeWaiverHeader header = getFeeWaiverHeaderService().getFeeWaiverHeaderByFinRef(this.finReference.getValue(),
+				"_Temp");
+		if (header != null) {
+			MessageUtil.showMessage(Labels.getLabel("Waiver_Is_In_Process") + this.finReference.getValue());
+			return;
+		}
+		
 		paidAllocationMap = new HashMap<>();
 		waivedAllocationMap = new HashMap<>();
 		feesRecalculation(makeFeeRender, false, true);
@@ -7703,6 +7713,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
+	}
+
+	public FeeWaiverHeaderService getFeeWaiverHeaderService() {
+		return feeWaiverHeaderService;
+	}
+
+	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
+		this.feeWaiverHeaderService = feeWaiverHeaderService;
 	}
 	
 }

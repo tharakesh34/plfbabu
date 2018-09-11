@@ -2891,6 +2891,7 @@
 		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="partnerBankService" ref="partnerBankService" />
+		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

@@ -70,4 +70,6 @@ public interface FeeWaiverHeaderService {
 
 	List<FinODDetails> getFinODBalByFinRef(String finReference);
 	
+	FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finReference,String type);
+	
 }

@@ -121,25 +121,25 @@
 									hflex="min" />
 								<listheader
 									id="listheader_ReceivableAmount"
-									label="${c:l('listheader_Amount.label')}" sort="auto"
+									label="${c:l('listheader_Amount.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 								<listheader
 									id="listheader_RecivedAmount"
-									label="${c:l('listheader_Recived.label')}" sort="auto"
+									label="${c:l('listheader_Recived.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 								<listheader id="listheader_WaivedAmount"
-									label="${c:l('listheader_Waived.label')}" sort="auto"
+									label="${c:l('listheader_Waived.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 								<listheader
 									id="listheader_BalanceAmount"
-									label="${c:l('listheader_BalanceAmount.label')}" sort="auto"
+									label="${c:l('listheader_BalanceAmount.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 								<listheader
 									id="listheader_CurrentWaivedAmount"
-									label="${c:l('listheader_CurrentWaived.label')}" sort="auto"
+									label="${c:l('listheader_CurrentWaived.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 								<listheader id="listheader_NetBalance"
-									label="${c:l('listheader_NetBalance.label')}" sort="auto"
+									label="${c:l('listheader_NetBalance.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 							</listhead>
 						</listbox>
