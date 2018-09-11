@@ -44,6 +44,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptCancellationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -178,20 +180,66 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
-			this.searchObject.addWhereClause(" FinIsActive = 1 AND ReceiptMode IN( '"+RepayConstants.RECEIPTMODE_CHEQUE+"','"+RepayConstants.RECEIPTMODE_DD+"') AND "
-					+ " ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' "
-					+ " OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND (RecordType IS NULL OR RecordType='' ))"
-					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_BOUNCE+"' AND RecordType IS NOT NULL AND RecordType != '') ) ");
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
-			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' "
-					+ " AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' "
-					+ " AND( RecordType IS NULL  OR RecordType='')) OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL AND RecordType != '') ) ");
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE) ||
+				StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+
+			StringBuilder whereClause = new StringBuilder();
+			whereClause= whereClause.append(" FinIsActive = 1 ");
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+				whereClause= whereClause.append(" AND ReceiptMode IN( '");
+				whereClause = whereClause.append(RepayConstants.RECEIPTMODE_CHEQUE);
+				whereClause = whereClause.append("','");
+				whereClause = whereClause.append(RepayConstants.RECEIPTMODE_DD);
+				whereClause = whereClause.append("') ");
+			}
+			
+			whereClause = whereClause.append(" AND  ReceiptPurpose = '");
+			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_SCHDRPY);
+			whereClause = whereClause.append("' AND (ReceiptModeStatus = '");
+			whereClause = whereClause.append(RepayConstants.PAYSTATUS_APPROVED);
+			whereClause = whereClause.append("' OR (ReceiptModeStatus = '");
+			whereClause = whereClause.append(RepayConstants.PAYSTATUS_REALIZED);
+			if (App.DATABASE == Database.ORACLE){
+				whereClause = whereClause.append("' AND RecordType IS NULL ) OR ( ReceiptModeStatus = '");
+			}else{
+				whereClause = whereClause.append("' AND RecordType = '' ) OR ( ReceiptModeStatus = '");
+			}
+			
+			// Module Parameter
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+				whereClause = whereClause.append(RepayConstants.PAYSTATUS_BOUNCE);
+			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+				whereClause = whereClause.append(RepayConstants.PAYSTATUS_CANCEL);
+			}
+			
+			if (App.DATABASE == Database.ORACLE){
+				whereClause = whereClause.append("' AND RecordType IS NOT NULL )) ");
+			}else{
+				whereClause = whereClause.append("' AND RecordType <> '' )) ");
+			}
+
+			this.searchObject.addWhereClause(whereClause.toString());
+
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND "
-					+ " ((ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_FEES+"'  AND( RecordType IS NULL OR RecordType='')) "
-					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL AND RecordType != '') ) ");
+			
+			StringBuilder whereClause = new StringBuilder();
+			whereClause= whereClause.append(" FinIsActive = 1 AND  ReceiptPurpose = '");
+			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+			whereClause = whereClause.append("' AND ((ReceiptModeStatus = '");
+			whereClause = whereClause.append(RepayConstants.PAYSTATUS_FEES);
+			if (App.DATABASE == Database.ORACLE){
+				whereClause = whereClause.append("' AND RecordType IS NULL ) OR ( ReceiptModeStatus = '");
+			}else{
+				whereClause = whereClause.append("' AND RecordType = '' ) OR ( ReceiptModeStatus = '");
+			}
+			whereClause = whereClause.append(RepayConstants.PAYSTATUS_CANCEL);
+			if (App.DATABASE == Database.ORACLE){
+				whereClause = whereClause.append(" AND RecordType IS NOT NULL )) ");
+			}else{
+				whereClause = whereClause.append(" AND RecordType <> '' )) ");
+			}
+			
+			this.searchObject.addWhereClause(whereClause.toString());
 		}
 	}
 
