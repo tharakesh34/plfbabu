@@ -102,7 +102,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn  From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CollateralRef = :CollateralRef AND Status isnull ");
+		sql.append(" Where CollateralRef = :CollateralRef AND Status is null ");
 		 
 		logger.debug("sql: " + sql.toString());
 
@@ -246,7 +246,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		sql = new StringBuilder();
 		sql.append(" Select Count(*) from CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CollateralRef = :CollateralRef AND Status isnull");
+		sql.append(" Where CollateralRef = :CollateralRef AND Status is null");
 		logger.debug("Sql: " + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -307,7 +307,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Version FROM CollateralSetup");
 		selectSql.append(tableType);
-		selectSql.append(" WHERE CollateralRef = :CollateralRef AND Status isnull");
+		selectSql.append(" WHERE CollateralRef = :CollateralRef AND Status is null");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
@@ -339,7 +339,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM CollateralSetup");
 		selectSql.append(tableType);
-		selectSql.append(" WHERE CollateralRef = :CollateralRef AND Status isnull");
+		selectSql.append(" WHERE CollateralRef = :CollateralRef AND Status is null");
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -377,7 +377,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn");
 		selectSql.append(" From CollateralSetup");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CollateralRef = :CollateralRef AND DepositorId = :DepositorId AND Status isnull ");
+		selectSql.append(" Where CollateralRef = :CollateralRef AND DepositorId = :DepositorId AND Status is null ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class);
@@ -415,7 +415,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where DepositorId = :DepositorId AND Status isnull");
+		sql.append(" Where DepositorId = :DepositorId AND Status is null");
 		logger.debug("sql: " + sql.toString());
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -445,7 +445,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Count(*) FROM CollateralSetup");
-		selectSql.append(" WHERE CollateralRef = :CollateralRef  AND Status isnull");
+		selectSql.append(" WHERE CollateralRef = :CollateralRef  AND Status is null");
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -476,7 +476,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn  From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference AND Status isnull");
+		sql.append(" Where FinReference = :FinReference AND Status is null");
 		logger.debug("sql: " + sql.toString());
 
 		source = new MapSqlParameterSource();
