@@ -1,3 +1,12 @@
+pff 4.10.4.1, 2018-09-11
+ --------------
+-bug #743   Auto Generate flag is not selected but Document Type Field is in Enable Mode in Agreement Master.
+-bugs #742 Related to Customer document modification and customer .
+-PSD# 128396 : Posting Reversal Not Displaying for DRE upload Receipt cancellation 
+-story #646 : GST Fees Calculation in Loan Creation for API.
+-story #127, Create a new Collateral setup along with Loan in Collateral Assignments.
+-story #732: Adding the Sequence Number for the Interface Mapping Master
+
 pff 4.10.4.1, 2018-09-10
  --------------
 -story  #737: Hunter Service Task Changes in Core
