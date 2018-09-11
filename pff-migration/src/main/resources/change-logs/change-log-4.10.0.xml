@@ -9492,5 +9492,15 @@ UNION ALL
 			Insert into ERRORDETAILS values ('90354','EN','E','Receipt is in porcess for the LAN : {0}',null,'Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);
 		</sql>
 	</changeSet> 
+	<changeSet id="119" author="Madhubabu">
+		<sql>
+			delete from ERRORDETAILS where code='90354';
+		</sql>
+	</changeSet>
+	<changeSet id="120" author="MadhuBabu">
+		<addColumn tableName="manualadvisemovements">
+			<column name="WaiverID" type="bigint" />
+		</addColumn>
+	</changeSet> 
 	
 </databaseChangeLog>
