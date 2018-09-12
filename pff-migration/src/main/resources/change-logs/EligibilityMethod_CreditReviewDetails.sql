@@ -14,8 +14,8 @@ insert into rmtlovfielddetail values((select max(fieldcodeid) from rmtlovfieldde
 insert into rmtlovfielddetail values((select max(fieldcodeid) from rmtlovfielddetail)+1, 'ELGMETHOD', 'ES',  'Eligibility Summary', 0, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 1);  
 update Seqrmtlovfielddetail set seqno = (select max(fieldcodeid) from rmtlovfielddetail);
 
-update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ', ') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD');
-update rmtfinancetypes_temp set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ', ') from rmtlovfielddetail where fieldcode = 'ELGMETHOD');
+update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD');
+update rmtfinancetypes_temp set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail where fieldcode = 'ELGMETHOD');
 
 Insert into FINCREDITREVCATEGORY values (1,10,'CORP','Profit and Loss',' ',3,'0','0',1,1000,null,null,null,null,null,null,null,1, (select fieldcodeid from rmtlovfielddetail where fieldcode = 'ELGMETHOD' and fieldcodevalue='PL'));
 Insert into FINCREDITREVCATEGORY values ((select max(categoryid)+1 from FINCREDITREVCATEGORY),(select max(categoryseque)+10 from FINCREDITREVCATEGORY),'CORP','Balance Sheet',' ',3,'0','0',1,1000,null,null,null,null,null,null,null,1, (select fieldcodeid from rmtlovfielddetail where fieldcode = 'ELGMETHOD' and fieldcodevalue='BL'));
