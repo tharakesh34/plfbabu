@@ -9502,5 +9502,10 @@ UNION ALL
 			<column name="WaiverID" type="bigint" />
 		</addColumn>
 	</changeSet> 
+	<changeSet id="121" author="MadhuBabu">
+		<addColumn tableName="manualadvisemovements_temp">
+			<column name="WaiverID" type="bigint" />
+		</addColumn>
+	</changeSet> 
 	
 </databaseChangeLog>
