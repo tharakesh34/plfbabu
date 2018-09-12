@@ -41,6 +41,6 @@
 	<bean id="extSearchProcessor" class="com.pennanttech.pennapps.jdbc.search.SearchProcessor">
 		<constructor-arg name="dataSource" ref="extDataSource" />
 	</bean>
-	
-	<bean id="sequenceGenetor" class="com.pennanttech.pennapps.core.jdbc.SequenceDao" parent="basicDao" />
+	<bean id="sequenceGenetor" class="com.pennanttech.pennapps.core.jdbc.SequenceDao"
+		parent="basicDao" />
 </beans>

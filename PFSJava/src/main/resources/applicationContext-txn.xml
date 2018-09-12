@@ -9,8 +9,8 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
-	
-	<import resource="classpath:applicationContext-ds.xml"/>	
+
+	<import resource="classpath:applicationContext-ds.xml" />
 	<!-- Application Transaction Managers -->
 	<bean id="secTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -28,7 +28,7 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="extDataSource" />
 	</bean>
-	
+
 	<tx:advice id="secServiceTxAdvice" transaction-manager="secTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
@@ -49,21 +49,28 @@
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	
-	<!-- The below cross cutting functionality may not required since we are defining the transaction for each service configuration -->
+
+	<!-- The below cross cutting functionality may not required since we are 
+		defining the transaction for each service configuration -->
 	<aop:config>
-		<aop:pointcut id="guiServiceMethods" expression="execution(* com.pennant.gui.service.*.*(..))" />
-		<aop:pointcut id="serviceMethods" expression="execution(* com.pennant.backend.service.*.*(..))" />
-		<aop:pointcut id="daoMethods" expression="execution(* com.pennant.backend.dao.*.*(..))" />
+		<aop:pointcut id="guiServiceMethods"
+			expression="execution(* com.pennant.gui.service.*.*(..))" />
+		<aop:pointcut id="serviceMethods"
+			expression="execution(* com.pennant.backend.service.*.*(..))" />
+		<aop:pointcut id="daoMethods"
+			expression="execution(* com.pennant.backend.dao.*.*(..))" />
 
 		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="guiServiceMethods" />
 		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="serviceMethods" />
 		<aop:advisor advice-ref="serviceTxAdvice" pointcut-ref="guiServiceMethods" />
 		<aop:advisor advice-ref="serviceTxAdvice" pointcut-ref="serviceMethods" />
-		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="serviceMethods" />
-		<!-- <aop:advisor advice-ref="extServiceTxAdvice" pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="extServiceTxAdvice" pointcut-ref="serviceMethods" />	 -->
+		<aop:advisor advice-ref="auditServiceTxAdvice"
+			pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="auditServiceTxAdvice"
+			pointcut-ref="serviceMethods" />
+		<!-- <aop:advisor advice-ref="extServiceTxAdvice" pointcut-ref="guiServiceMethods" 
+			/> <aop:advisor advice-ref="extServiceTxAdvice" pointcut-ref="serviceMethods" 
+			/> -->
 	</aop:config>
-	
+
 </beans>

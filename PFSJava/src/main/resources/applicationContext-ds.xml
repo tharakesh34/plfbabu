@@ -9,8 +9,8 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
-	
-	<!-- Application  Data Sources -->
+
+	<!-- Application Data Sources -->
 	<bean id="secDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PFFSEC" />
@@ -31,11 +31,4 @@
 		<property name="jndiName" value="jdbc/PFFEXT" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-	
-	<!-- This data source should be in customization layer -->
-	<!-- <bean id="finOneDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-      <property name="resourceRef" value="true" />
-      <property name="jndiName" value="jdbc/FINONE" />
-      <property name="lookupOnStartup" value="true" />
-	</bean> -->
 </beans>
