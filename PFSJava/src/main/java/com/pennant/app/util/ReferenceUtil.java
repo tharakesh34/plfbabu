@@ -130,6 +130,8 @@ public class ReferenceUtil implements Serializable {
 			}
 			boolean status = true;
 
+			referenceNumber = "";
+
 			while (status) {
 				generatedSeqNo = Long.parseLong(
 						String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
@@ -278,6 +280,8 @@ public class ReferenceUtil implements Serializable {
 			}
 			boolean status = true;
 
+			referenceNumber = "";
+
 			while (status) {
 				generatedSeqNo = Long.parseLong(
 						String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
@@ -294,7 +298,8 @@ public class ReferenceUtil implements Serializable {
 
 			refUpdated = getvASRecordingDAO().updateVasReference(befSeqNumber, generatedSeqNo);
 		}
-		logger.debug("Generated Reference Number --->" + referenceNumber);
+		
+		logger.debug(String.format("VAS Reference %s", referenceNumber));
 		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
