@@ -63,6 +63,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReferenceUtil implements Serializable {
 	private static final long serialVersionUID = -4965488291173350445L;
@@ -85,7 +86,7 @@ public class ReferenceUtil implements Serializable {
 	 */
 	@Deprecated
 	public static String generateNewFinRef(boolean isWIF, String finDivision) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		long generatedSeqNo = 0;
 		boolean refUpdated = false;
 		String referenceNumber = "";
@@ -101,7 +102,7 @@ public class ReferenceUtil implements Serializable {
 				try {
 					dateYYJDay = Long.parseLong(seqNumString);
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 			} else if (seqNumString.length() > 5) {
@@ -109,14 +110,14 @@ public class ReferenceUtil implements Serializable {
 				try {
 					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 
 				try {
 					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 			}
@@ -128,8 +129,6 @@ public class ReferenceUtil implements Serializable {
 				seqNumber = seqNumber + 1;
 			}
 			boolean status = true;
-
-			referenceNumber = "";
 
 			while (status) {
 				generatedSeqNo = Long.parseLong(
@@ -154,7 +153,7 @@ public class ReferenceUtil implements Serializable {
 			refUpdated = getFinanceMainDAO().updateSeqNumber(befSeqNumber, generatedSeqNo);
 		}
 		logger.debug("Generated Reference Number --->" + referenceNumber);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
 	}
@@ -163,7 +162,7 @@ public class ReferenceUtil implements Serializable {
 	 * Method for Preparing Sequence Reference Number for the Collateral Detail module
 	 */
 	public static String generateCollateralRef() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		long generatedSeqNo = 0;
 		boolean refUpdated = false;
 		String referenceNumber = "";
@@ -179,7 +178,7 @@ public class ReferenceUtil implements Serializable {
 				try {
 					dateYYJDay = Long.parseLong(seqNumString);
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 			} else if (seqNumString.length() > 5) {
@@ -187,14 +186,13 @@ public class ReferenceUtil implements Serializable {
 				try {
 					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					seqNumber = 1;
+					logger.error(Literal.EXCEPTION, e);
 				}
 
 				try {
 					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 			}
@@ -226,7 +224,7 @@ public class ReferenceUtil implements Serializable {
 			refUpdated = getCollateralSetupDAO().updateCollReferene(befSeqNumber, generatedSeqNo);
 		}
 		logger.debug("Generated Reference Number --->" + referenceNumber);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
 	}
@@ -235,7 +233,7 @@ public class ReferenceUtil implements Serializable {
 	 * Method for Preparing Sequence Reference Number for the VAS Module
 	 */
 	public static String generateVASRef() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		long generatedSeqNo = 0;
 		boolean refUpdated = false;
@@ -252,7 +250,7 @@ public class ReferenceUtil implements Serializable {
 				try {
 					dateYYJDay = Long.parseLong(seqNumString);
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 			} else if (seqNumString.length() > 5) {
@@ -260,14 +258,14 @@ public class ReferenceUtil implements Serializable {
 				try {
 					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 
 				try {
 					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					seqNumber = 1;
 				}
 			}
@@ -279,8 +277,6 @@ public class ReferenceUtil implements Serializable {
 				seqNumber = seqNumber + 1;
 			}
 			boolean status = true;
-
-			referenceNumber = "";
 
 			while (status) {
 				generatedSeqNo = Long.parseLong(
@@ -299,13 +295,13 @@ public class ReferenceUtil implements Serializable {
 			refUpdated = getvASRecordingDAO().updateVasReference(befSeqNumber, generatedSeqNo);
 		}
 		logger.debug("Generated Reference Number --->" + referenceNumber);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
 	}
 
 	public static String genNewCafRef(String division, String custCtgCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Date appldate = DateUtility.getAppDate();
 		StringBuilder caf = new StringBuilder();
 		//Division
@@ -352,14 +348,14 @@ public class ReferenceUtil implements Serializable {
 		caf.append(yearToAppend);
 		sequenceGenetor.setSeqNumber("SeqCAFReference", befSeqNumber);
 
-		logger.debug("CAFReferenceNum--->" + caf.toString());
-		logger.debug("Leaving");
+		logger.debug(String.format("CAF Reference %s", caf.toString()));
+		logger.debug(Literal.LEAVING);
 		return caf.toString();
 
 	}
 
 	public static String genNewFacilityRef(String cafRefrence) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder facilityref = new StringBuilder(cafRefrence);
 		//Unique Sequence
 		long befSeqNumber = sequenceGenetor.getSeqNumber("SeqFacilityDetails");
@@ -381,14 +377,14 @@ public class ReferenceUtil implements Serializable {
 		facilityref.append(StringUtils.leftPad(String.valueOf(befSeqNumber), 2, '0'));
 		sequenceGenetor.setSeqNumber("SeqFacilityDetails", befSeqNumber);
 
-		logger.debug("facilityRef--->" + facilityref.toString());
-		logger.debug("Leaving");
+		logger.debug(String.format("Facility Reference %s", facilityref.toString()));
+		logger.debug(Literal.LEAVING);
 		return facilityref.toString();
 
 	}
 
 	public static long genInvetmentNewRef() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		long investmentRef = 0;
 
@@ -403,7 +399,7 @@ public class ReferenceUtil implements Serializable {
 			try {
 				dateYYJDay = Long.parseLong(seqNumString);
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 				seqNumber = 1;
 			}
 		} else if (seqNumString.length() > 5) {
@@ -411,14 +407,14 @@ public class ReferenceUtil implements Serializable {
 			try {
 				dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 				seqNumber = 1;
 			}
 
 			try {
 				seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 				seqNumber = 1;
 			}
 		}
@@ -444,20 +440,11 @@ public class ReferenceUtil implements Serializable {
 		}
 		sequenceGenetor.setSeqNumber("SeqInvestment", investmentRef);
 
-		logger.debug("Back Office Reference --->" + investmentRef);
-		logger.debug("Leaving");
+		logger.debug(String.format("Back Office Reference %s", investmentRef));
+		logger.debug(Literal.LEAVING);
 		return investmentRef;
 
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/*
-	 * public void setNextidviewDAO(NextidviewDAO nextidviewDAO) { ReferenceUtil.nextidviewDAO = nextidviewDAO; } public
-	 * static NextidviewDAO getNextidviewDAO() { return nextidviewDAO; }
-	 */
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		ReferenceUtil.financeMainDAO = financeMainDAO;
@@ -510,5 +497,4 @@ public class ReferenceUtil implements Serializable {
 	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
 		ReferenceUtil.sequenceGenetor = sequenceGenetor;
 	}
-
 }
