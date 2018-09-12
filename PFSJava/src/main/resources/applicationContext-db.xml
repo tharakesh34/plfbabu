@@ -31,7 +31,7 @@
 			</list>
 		</property>
 	</bean>
-	-->
+	
 	<bean id="environmentVariablesConfiguration"
 		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
 		<property name="algorithm" value="PBEWithMD5AndDES" />
