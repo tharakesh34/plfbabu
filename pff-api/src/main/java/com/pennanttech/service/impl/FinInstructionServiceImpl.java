@@ -1028,7 +1028,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(status);
 			return financeDetail;
 		}
-
+		 //validate duplicate record
+		boolean dedupFound=checkDuplicateRequest(finServiceInstruction,moduleDefiner);
+		if(dedupFound) {
+			return errorDetails();
+		}
 		// execute Early settlement service
 		financeDetail = finServiceInstController.doEarlySettlement(finServiceInstruction, eventCode);
 
@@ -1060,6 +1064,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
+		 //validate duplicate record
+		boolean dedupFound=checkDuplicateRequest(finServiceInstruction,moduleDefiner);
+		if(dedupFound) {
+			return errorDetails();
+		}
 		// execute partial payment service
 		financeDetail = finServiceInstController.doPartialSettlement(finServiceInstruction, eventCode);
 
@@ -1095,6 +1104,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(status);
 			return financeDetail;
 		}
+		 //validate duplicate record
+		boolean dedupFound=checkDuplicateRequest(finServiceInstruction,moduleDefiner);
+		if(dedupFound) {
+			return errorDetails();
+		}
+
 		// execute manual payment service
 		financeDetail = finServiceInstController.doManualPayment(finServiceInstruction, eventCode);
 
@@ -1419,6 +1434,25 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		logger.debug("Leaving");
 		return errors;
+	}
+
+	private boolean checkDuplicateRequest(FinServiceInstruction finServiceInstruction,String moduleDefiner) {
+		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO
+				.getFinReceiptDetailByFinReference(finServiceInstruction.getFinReference());
+		if (finServiceInstruction.getReceiptDetail() != null) {
+			if (finServiceInstruction.getReceiptDetail().getReceivedDate() == null) {
+				finServiceInstruction.getReceiptDetail().setReceivedDate(DateUtility.getAppDate());
+			}
+			if (receiptDetails != null && !receiptDetails.isEmpty()) {
+				for (FinReceiptDetail finReceiptDetail : receiptDetails) {
+					if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
+							&& StringUtils.equals(finReceiptDetail.getTransactionRef(),finServiceInstruction.getReceiptDetail().getTransactionRef())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

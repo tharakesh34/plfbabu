@@ -294,4 +294,22 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug("Leaving");
 	}
 
+	 @Override
+	public List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference) {
+			logger.debug("Entering");
+
+			StringBuilder selectSql = new StringBuilder();
+			selectSql.append(" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
+			selectSql.append(" From FINRECEIPTHEADER T1");
+			selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+			selectSql.append(" where Reference = '" + finReference + "'");
+
+			BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
+
+			logger.debug("selectSql: " + selectSql.toString());
+			RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+			logger.debug("Leaving");
+
+			return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
+		}
 }
