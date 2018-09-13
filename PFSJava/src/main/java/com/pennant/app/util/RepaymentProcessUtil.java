@@ -894,6 +894,7 @@ public class RepaymentProcessUtil {
 		amountCodes.setFinType(financeMain.getFinType());
 		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+		amountCodes.setPaymentType(receiptDetail.getPaymentType());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 		dataMap.putAll(prepareMovementMap(movements));

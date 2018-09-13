@@ -1039,6 +1039,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
+		finReceiptHeaderDAO.generatedReceiptID(receiptHeader);
 		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
 
 		//Finance Stage Accounting Process
@@ -1084,6 +1085,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		Date valueDate = DateUtility.getAppDate();
 		if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
+				receiptHeader.getReceiptDetails().get(i).setReceiptID(receiptHeader.getReceiptID());
 				if(StringUtils.equals(receiptHeader.getReceiptDetails().get(i).getPaymentType(), receiptHeader.getReceiptMode()) &&
 						!StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)){
 					valueDate = receiptHeader.getReceiptDetails().get(i).getReceivedDate();
