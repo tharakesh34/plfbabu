@@ -45,8 +45,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,26 +52,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
  * 
  */
-public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> implements FinTypeAccountingDAO {
-
+public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> implements FinTypeAccountingDAO {
 	private static Logger logger = Logger.getLogger(FinTypeAccountingDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public FinTypeAccountingDAOImpl() {
 		super();
@@ -141,7 +134,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	
@@ -160,7 +153,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	
@@ -193,7 +186,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		try {
-			finTypeAccounting = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finTypeAccounting = null;
@@ -201,16 +194,6 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		logger.debug("Leaving");
 		return finTypeAccounting;
 	}
-
-	/**
-	 * @param dataSource
-	 *         the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 
 	/**
 	 * This method insert new Records into FinTypeAccounting or FinTypeAccounting_Temp.
@@ -241,7 +224,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return finTypeAccounting.getId();
 	}
@@ -279,7 +262,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -312,7 +295,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -344,7 +327,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -374,7 +357,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 
 		Long result = Long.MIN_VALUE;
 		try {
-			result =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			result =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -396,7 +379,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
 	}
 	
 	@Override
@@ -413,7 +396,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, Long.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, Long.class);
 	}
 	
 	@Override
@@ -432,7 +415,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		source.addValue("AccountSetId", accountSetId);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

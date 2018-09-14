@@ -69,8 +69,6 @@ import com.pennanttech.pff.core.TableType;
 public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTypeDAO {
 	private static Logger logger = Logger.getLogger(IRRFeeTypeDAOImpl.class);
 
-	
-
 	public IRRFeeTypeDAOImpl() {
 		super();
 	}

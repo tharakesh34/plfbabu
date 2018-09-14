@@ -52,7 +52,6 @@ import com.pennant.backend.model.administration.SecurityRoleGroups;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityOperationRolesService {
-	
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 

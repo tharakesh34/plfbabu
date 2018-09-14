@@ -49,14 +49,21 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityRoleService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SecurityRole getSecurityRoleById(long id);
+
 	SecurityRole getApprovedSecurityRoleById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<SecurityRole> getSecRoleCodeDesc(String roleCode);
+
 	List<SecurityRole> getApprovedSecurityRoles();
 
 }

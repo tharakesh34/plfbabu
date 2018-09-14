@@ -154,7 +154,7 @@ public class ReferenceUtil implements Serializable {
 
 			refUpdated = getFinanceMainDAO().updateSeqNumber(befSeqNumber, generatedSeqNo);
 		}
-		logger.debug("Generated Reference Number --->" + referenceNumber);
+		logger.debug(String.format("Fin Reference %s", referenceNumber));
 		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
@@ -225,7 +225,7 @@ public class ReferenceUtil implements Serializable {
 
 			refUpdated = getCollateralSetupDAO().updateCollReferene(befSeqNumber, generatedSeqNo);
 		}
-		logger.debug("Generated Reference Number --->" + referenceNumber);
+		logger.debug(String.format("Fin Reference %s", referenceNumber));
 		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 

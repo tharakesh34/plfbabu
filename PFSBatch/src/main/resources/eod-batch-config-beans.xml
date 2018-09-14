@@ -46,9 +46,9 @@
 	<bean id="financeTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	
+	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl" parent="sequenceDao"/>
+	
 	<!-- Finance Main -->
 	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
@@ -87,6 +87,7 @@
 	<!-- ====================================================== -->
 	<!-- Postings -->
 	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao"/>
+	
 	<!-- System Parameter Details -->
 	<bean id="SysParamUtil " class="com.pennant.app.util.SysParamUtil">
 		<property name="systemParameterService" ref="systemParameterService" />
@@ -215,6 +216,7 @@
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
 		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
 	</bean>
+	
 	<!-- Transaction Entry -->
 	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl" parent="basicDao"/>
 		
@@ -268,6 +270,7 @@
 	</bean>
 	<!-- Finance Repayment -->
 	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="sequenceDao"/>
+	
 	<!-- Suspense Posting util -->
 	<bean id="suspensePostingUtil" class="com.pennant.app.util.SuspensePostingUtil">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -327,6 +330,7 @@
 	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
 	<bean id="finCommodityInventoryDAO" class="com.pennant.backend.dao.lmtmasters.impl.FinCommodityInventoryDAOImpl" parent="sequenceDao"/>
 		
 	<!-- Ext Tables DAO Details -->
@@ -398,6 +402,7 @@
 	<bean id="notificationsService" class="com.pennant.backend.service.notifications.impl.NotificationsServiceImpl">
 		<property name="notificationsDAO" ref="notificationsDAO" />
 	</bean>
+	
 	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl" parent="sequenceDao"/>
 	
 	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService" scope="prototype">
@@ -421,6 +426,7 @@
 	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
 	<!-- DPDBucketConfiguration -->
 	<bean id="dPDBucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketConfigurationDAOImpl" parent="sequenceDao"/>
 		
@@ -469,17 +475,12 @@
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!--============ Finance Excess Amounts Details ============== -->
-
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="sequenceDao"/>
-	
 
 	<!--============ Finance Receipt Header Details ============== -->
-
 	<bean id="finReceiptHeaderDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="sequenceDao"/>
-		
 
 	<!--============ Finance Receipt Detail Details ============== -->
-
 	<bean id="finReceiptDetailDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="sequenceDao"/>
 		
 
@@ -506,14 +507,13 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
+	
 	<bean id="limitDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitDetailDAOImpl" parent="sequenceDao"/>
-		
+	
 	<bean id="limitHeaderDAO" class="com.pennant.backend.dao.limit.impl.LimitHeaderDAOImpl" parent="sequenceDao"/>
-		
-	<bean id="limitReferenceMappingDAO" class="com.pennant.backend.dao.limit.impl.LimitReferenceMappingDAOImpl" parent="sequenceDao"/>
-		
+	
 	<bean id="limitTransactionDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitTransactionDetailsDAOImpl" parent="sequenceDao"/>
-		
+	
 	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -582,7 +582,6 @@
 	
 	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl" parent="sequenceDao"/>
 		
-	
 	<!-- Limit Structure -->
 	<bean id="limitStructureDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitStructureDAOImpl"

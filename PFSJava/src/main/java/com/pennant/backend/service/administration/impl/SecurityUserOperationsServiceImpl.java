@@ -73,7 +73,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUserOperations>
 		implements SecurityUserOperationsService {
-	private static final Logger			logger	= Logger.getLogger(SecurityUserOperationsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SecurityUserOperationsServiceImpl.class);
 
 	private SecurityUserOperationsDAO securityUserOperationsDAO;
 	private SecurityRoleGroupsDAO securityRoleGroupsDAO;
@@ -214,14 +214,12 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 																				// main
 																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-								usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSecurityUser == null || tempSecurityUser != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-								usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -709,5 +707,5 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 }

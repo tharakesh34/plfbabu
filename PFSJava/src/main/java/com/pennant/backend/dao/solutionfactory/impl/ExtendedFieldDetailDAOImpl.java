@@ -85,8 +85,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
 	}
 
-	
-	private NamedParameterJdbcTemplate adtNamedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate adtJdbcTemplate;
 
 	public ExtendedFieldDetailDAOImpl() {
 		super();
@@ -136,15 +135,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		}
 		logger.debug(Literal.LEAVING);
 		return extendedFieldDetail;
-	}
-
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setAuditDataSource(DataSource dataSource) {
-		this.adtNamedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -415,7 +405,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 			try {
 				if (isAudit) {
-					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+					this.adtJdbcTemplate.getJdbcOperations().update(sql.toString());
 				} else {
 					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
@@ -460,7 +450,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			int recordCount = 0;
 			try {
 				if(isAudit){
-					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+					this.adtJdbcTemplate.getJdbcOperations().update(sql.toString());
 				}else{
 					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
@@ -1011,5 +1001,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
-
+	
+	public void setAuditDataSource(DataSource dataSource) {
+		this.adtJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
 }

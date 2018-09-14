@@ -47,12 +47,17 @@ import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityGroupService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SecurityGroup getSecurityGroupById(long id);
+
 	SecurityGroup getApprovedSecurityGroupById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

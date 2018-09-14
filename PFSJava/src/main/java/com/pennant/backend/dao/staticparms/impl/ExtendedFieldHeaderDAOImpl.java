@@ -70,11 +70,9 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * DAO methods implementation for the <b>ExtendedFieldHeader model</b> class.<br>
  */
 public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader> implements ExtendedFieldHeaderDAO {
-
 	private static Logger logger = Logger.getLogger(ExtendedFieldHeaderDAOImpl.class);
-
 	
-	private NamedParameterJdbcTemplate adtNamedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate adtJdbcTemplate;
 
 	public ExtendedFieldHeaderDAOImpl() {
 		super();
@@ -190,14 +188,12 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		return null;
 	}
 	
-	
-	
 	/**
 	 * To Set  dataSource
 	 * @param dataSource
 	 */
 	public void setAuditDataSource(DataSource dataSource) {
-		this.adtNamedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.adtJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -458,14 +454,13 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			try {
 				logger.debug("createsql: " + syntax.toString());
 				if (i == 2 || i == 6) {// Audit DB
-					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
+					this.adtJdbcTemplate.getJdbcOperations().update(syntax.toString());
 				} else {
 					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
 			}
-
 		}
 
 	}

@@ -68,9 +68,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>IRRFinanceType</code> with set of CRUD operations.
  */
 public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements IRRFinanceTypeDAO {
-	private static Logger				logger	= Logger.getLogger(IRRFinanceTypeDAOImpl.class);
-
-
+	private static Logger logger = Logger.getLogger(IRRFinanceTypeDAOImpl.class);
 
 	public IRRFinanceTypeDAOImpl() {
 		super();

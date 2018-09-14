@@ -47,14 +47,21 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityOperationService {
 
-	
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SecurityOperation getSecurityOperationById(long id);
+
 	SecurityOperation getApprovedSecurityOperationById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	SecurityOperation getSecurityOperationRolesById(long id);
+
 	SecurityOperation getApprovedSecurityOperationRolesById(long id);
-	SecurityOperation getSecurityOperationRoleById(long id,String type, boolean getRoles);
+
+	SecurityOperation getSecurityOperationRoleById(long id, String type, boolean getRoles);
 }

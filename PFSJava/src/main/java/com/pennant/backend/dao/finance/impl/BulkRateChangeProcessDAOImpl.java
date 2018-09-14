@@ -24,15 +24,9 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHeader> implements BulkRateChangeProcessDAO {
 	private static Logger logger = Logger.getLogger(BulkRateChangeProcessDAOImpl.class);
 
-	
-	
-
 	public BulkRateChangeProcessDAOImpl() {
 		super();
 	}
-
-	
-
 	
 	/**
 	 * This method set the Work Flow id based on the module name and return the

@@ -7,9 +7,12 @@ import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityGroupRightsService {
-	
-	AuditHeader         save(AuditHeader auditHeaders);
-	List<SecurityRight>      getRightsByGroupId(long grpID,boolean isAssigned);
-	SecurityGroupRights getGroupRightsByGrpAndRightIds(long grpId,long rightId);
+
+	AuditHeader save(AuditHeader auditHeaders);
+
+	List<SecurityRight> getRightsByGroupId(long grpID, boolean isAssigned);
+
+	SecurityGroupRights getGroupRightsByGrpAndRightIds(long grpId, long rightId);
+
 	SecurityGroupRights getSecurityGroupRights();
 }

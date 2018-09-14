@@ -45,8 +45,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,26 +52,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
  * 
  */
-public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements FinTypeFeesDAO {
-
+public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinTypeFeesDAO {
 	private static Logger logger = Logger.getLogger(FinTypeFeesDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public FinTypeFeesDAOImpl() {
 		super();
@@ -143,7 +136,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	
@@ -182,7 +175,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 	
 	/**
@@ -218,7 +211,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 	
 	@Override
@@ -238,7 +231,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 	
 	/**
@@ -272,7 +265,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		try {
-			finTypeFees = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finTypeFees = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finTypeFees = null;
 		}
@@ -292,16 +285,6 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	public void refresh(FinTypeFees finTypeFees) {
 
 	}
-
-	/**
-	 * @param dataSource
-	 *         the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 
 	/**
 	 * This method insert new Records into RMTFinanceTypes or RMTFinanceTypes_Temp.
@@ -336,7 +319,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return finTypeFees.getId();
 	}
@@ -375,7 +358,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -408,7 +391,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -441,7 +424,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
 		
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -463,7 +446,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 	
 	@Override
@@ -480,6 +463,6 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }
