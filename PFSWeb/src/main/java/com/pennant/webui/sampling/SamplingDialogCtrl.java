@@ -403,8 +403,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.emiPerLakh.setValue(PennantAppUtil.formateAmount(sampling.getEmi(), ccyFormatter));
 		this.iirEligibility.setValue(PennantAppUtil.formateAmount(sampling.getIrrEligibility(), ccyFormatter));
 		this.loanEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLoanEligibility(), ccyFormatter));
-		this.lcrEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLcrEligibility(), ccyFormatter));
-		this.ltvEligibility.setValue(sampling.getLtvEligibility());
+		this.lcrEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLcrEligibility() , ccyFormatter));
+		this.ltvEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLtvEligibility() , ccyFormatter));
 	}
 
 	private void doFillCollaterals(List<SamplingCollateral> collSetupList) {
@@ -819,6 +819,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				ltvEligibility = BigDecimal.ZERO;
 			}
 
+			ltvEligibility = PennantAppUtil.unFormateAmount(ltvEligibility, ccyFormatter);
 			sampling.setLtvEligibility(ltvEligibility);
 		} catch (WrongValueException we) {
 			wve.add(we);

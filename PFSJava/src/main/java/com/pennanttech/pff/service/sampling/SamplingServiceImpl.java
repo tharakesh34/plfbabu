@@ -528,6 +528,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	@Override
 	public void calculateEligilibity(Sampling sampling) {
+
 		HashMap<String, Object> fieldsandvalues = new HashMap<>();
 		BigDecimal amount = BigDecimal.ZERO;
 		String ruleCode;
@@ -553,28 +554,33 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	     BigDecimal unitPrice =BigDecimal.ZERO;
 	     BigDecimal bankLTV = BigDecimal.ZERO;
 	 	 BigDecimal assignPerc = BigDecimal.ZERO;
+	 	 BigDecimal cnsArea = BigDecimal.ZERO;
 		
 		Set<String> fieldNames = sampling.getCollateralFieldsForRule();
 		ExtendedFieldHeader extHeader = sampling.getExtendedFieldHeader();
 		if (extHeader != null) {
 			String moduleSubmodule = extHeader.getModuleName().concat("_").concat(extHeader.getSubModuleName());
-			Map<String, ExtendedFieldRender> extFieldRenderMap = sampling.getExtFieldRenderList();
-			for (ExtendedFieldRender extRender : extFieldRenderMap.values()) {
-				Map<String, Object> extRenderMap = extRender.getMapValues();
-				for (String fieldName : fieldNames) {
-					if (extRenderMap.containsKey(fieldName)) {
-						String key = moduleSubmodule.concat("_").concat(fieldName);
+			ExtendedFieldRender extFieldRenderMap = sampling.getExtendedFieldRender();
+				Map<String, Object> extRenderMap = extFieldRenderMap.getMapValues();
+			for (String fieldName : fieldNames) {
+				if (extRenderMap.containsKey(fieldName)) {
+					String key = moduleSubmodule.concat("_").concat(fieldName);
+					if ("CNSAREA".equals(fieldName) && StringUtils.isNotEmpty((String) extRenderMap.get(fieldName))) {
+						String cnsArea1 = (String) extRenderMap.get(fieldName);
+						cnsArea = new BigDecimal(cnsArea1);
+						cnsArea = cnsArea.multiply(new BigDecimal(100));
+						fieldsandvalues.put(key, cnsArea);
+					} else {
 						fieldsandvalues.put(key, extRenderMap.get(fieldName));
 					}
 				}
+			}
 				if (extRenderMap.containsKey("UNITPRICE")) {
 					unitPrice = (BigDecimal) extRenderMap.get("UNITPRICE");
 				}
 				bankLTV = sampling.getCollateral().getBankLTV();
 				assignPerc = sampling.getCollateral().getAssignPerc();
-				break;
-			}
-
+				
 			amount = BigDecimal.ZERO;
 			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LCRMAXEL);
 			if (ruleCode != null) {
