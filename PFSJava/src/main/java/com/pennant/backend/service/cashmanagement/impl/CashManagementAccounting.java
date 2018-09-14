@@ -46,7 +46,8 @@ public class CashManagementAccounting {
 		
 		AEEvent aeEvent = new AEEvent();
 		if (receiptId > 0) {	// Avance Requirement
-			aeEvent.setPostingId(receiptId);
+			//aeEvent.setPostingId(receiptId);
+			aeEvent.setPostRefId(receiptId);
 		}
 		aeEvent.setAeAmountCodes(new AEAmountCodes());
 		aeEvent.setBranch(postingBranch);
