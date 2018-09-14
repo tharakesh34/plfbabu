@@ -9507,5 +9507,18 @@ UNION ALL
 			<column name="WaiverID" type="bigint" />
 		</addColumn>
 	</changeSet> 
-	
+   <changeSet id="122" author="Siva">
+		<addColumn tableName="FinServiceInstruction">
+			<column name="PftChg" type="decimal(18,0)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="PftChg" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="123" author="Siva">
+		<sql>
+			update FinServiceInstruction set PftChg = 0 where PftChg is null;
+			update FinServiceInstruction_Temp set PftChg = 0 where PftChg is null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -55,6 +55,8 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		FinScheduleData scheduleData = null;
 		Cloner cloner = new Cloner();
 		scheduleData = cloner.deepClone(finScheduleData);
+		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		Date fromDate = finServiceInstruction.getFromDate();
@@ -114,6 +116,11 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		}
 
 		scheduleData.getFinanceMain().setScheduleMethod(oldScheduleMethod);
+		
+		BigDecimal newTotalPft = scheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		scheduleData.setPftChg(pftDiff);
+		
 		scheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return scheduleData;

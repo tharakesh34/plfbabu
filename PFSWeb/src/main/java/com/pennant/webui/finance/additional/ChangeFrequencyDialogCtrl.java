@@ -523,6 +523,18 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			finServiceInstruction.setRemarks(this.remarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -543,6 +555,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// call change frequency method to calculate new schedules
 		setFinScheduleData(changeFrequencyService.doChangeFrequency(getFinScheduleData(), finServiceInstruction));
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
@@ -561,18 +574,6 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 		
-		try {
-			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			finServiceInstruction.setRemarks(this.remarks.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
 		logger.debug("Leaving");
 	}
 

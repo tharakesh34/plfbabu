@@ -467,6 +467,7 @@ public class AdvPftRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		setFinScheduleData(ScheduleCalculator.recalAdvPftRateSchedule(getFinScheduleData()));
 	
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));

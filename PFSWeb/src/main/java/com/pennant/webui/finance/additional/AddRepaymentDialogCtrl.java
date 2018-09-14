@@ -781,13 +781,15 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		}
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGRPY);
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		// Schedule Calculator method calling
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		setFinScheduleData(addRepaymentService.getAddRepaymentDetails(getFinScheduleData(), finServiceInstruction));
 		
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		
 		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));

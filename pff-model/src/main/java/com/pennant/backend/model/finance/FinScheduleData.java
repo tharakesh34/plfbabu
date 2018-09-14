@@ -153,6 +153,7 @@ public class FinScheduleData {
 	List<FinFeeDetail> feeDues = new ArrayList<FinFeeDetail>(1);
 	@XmlElement
 	private BigDecimal outstandingPri = BigDecimal.ZERO;
+	private BigDecimal pftChg = BigDecimal.ZERO; // Using for Every service instruction Profit change
 	
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -575,4 +576,13 @@ public class FinScheduleData {
 	public void setUpfrontAuto(boolean isUpfrontAuto) {
 		this.isUpfrontAuto = isUpfrontAuto;
 	}
+
+	public BigDecimal getPftChg() {
+		return pftChg;
+	}
+
+	public void setPftChg(BigDecimal pftChg) {
+		this.pftChg = pftChg;
+	}
+
 }

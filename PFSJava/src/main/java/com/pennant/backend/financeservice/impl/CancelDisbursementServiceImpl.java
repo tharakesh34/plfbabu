@@ -1,5 +1,7 @@
 package com.pennant.backend.financeservice.impl;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ScheduleCalculator;
@@ -15,8 +17,12 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	public FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData finSchData = ScheduleCalculator.reCalSchd(finScheduleData,"");
 		
+		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finSchData.setPftChg(pftDiff);
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finSchData;

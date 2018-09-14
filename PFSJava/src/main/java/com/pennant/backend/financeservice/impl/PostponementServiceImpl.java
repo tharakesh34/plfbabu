@@ -37,6 +37,8 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	public FinScheduleData doPostponement(FinScheduleData finScheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
 		logger.debug("Entering");
 		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		
 		finScheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
 		finScheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
 		finScheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
@@ -44,6 +46,11 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
 		finScheduleData = ScheduleCalculator.postpone(finScheduleData);
+		
+		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finScheduleData.setPftChg(pftDiff);
+		
 		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -58,6 +65,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	public FinScheduleData doUnPlannedEMIH(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		String scheduleMethod = finScheduleData.getFinanceMain().getScheduleMethod();
 		
 		if(finScheduleData.getFinServiceInstructions() != null) {
@@ -73,6 +81,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		
 		// call schedule calculator
 		finScheduleData = ScheduleCalculator.unPlannedEMIH(finScheduleData, BigDecimal.ZERO, scheduleMethod);
+		
+		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finScheduleData.setPftChg(pftDiff);
 		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -87,6 +99,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	public FinScheduleData doReAging(FinScheduleData finScheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
 		logger.debug("Entering");
 		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		finScheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
 		finScheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
 		finScheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
@@ -94,6 +107,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
 		finScheduleData = ScheduleCalculator.reAging(finScheduleData);
+		
+		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finScheduleData.setPftChg(pftDiff);
 		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finScheduleData;

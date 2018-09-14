@@ -630,7 +630,6 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 		getFinScheduleData().setFeeEvent(moduleDefiner);
 		
 		// Service details calling for Schedule calculation
@@ -645,7 +644,10 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					getFinScheduleData().getFinanceMain().getScheduleMethod()));
 		}
 		
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));

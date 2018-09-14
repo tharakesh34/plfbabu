@@ -410,7 +410,6 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 
 		getFinScheduleData().getErrorDetails().clear();
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 		
 		// call change frequency method to calculate new schedules(Service details calling for Schedule calculation)
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
@@ -421,7 +420,10 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} else {
 			setFinScheduleData(rmvTermsService.getRmvTermsDetails(getFinScheduleData()));
 		}
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		
 		//Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));

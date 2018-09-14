@@ -27,8 +27,12 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 	public FinScheduleData getAddTermsDetails(FinScheduleData finscheduleData,FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 		
+		BigDecimal oldTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
 		finscheduleData = ScheduleCalculator.addTerm(finscheduleData,finServiceInstruction.getTerms());
 
+		BigDecimal newTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finscheduleData.setPftChg(pftDiff);
 		finscheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finscheduleData;

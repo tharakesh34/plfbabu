@@ -41,6 +41,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	public FinScheduleData getRateChangeDetails(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst, String moduleDefiner) {
 		logger.debug("Entering");
 
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		// Profit Days Basis Setting for Calculation Process
@@ -48,7 +49,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		for (FinanceScheduleDetail curSchd : schDetailList) {
 			if (curSchd.getSchDate().compareTo(financeMain.getEventFromDate()) >= 0
 					&& curSchd.getSchDate().compareTo(financeMain.getEventToDate()) < 0 &&
-					!curSchd.getBpiOrHoliday().equals(FinanceConstants.FLAG_BPI)) {
+					!StringUtils.equals(curSchd.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(finServiceInst.getPftDaysBasis());
 			}
 		}
@@ -68,6 +69,9 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin(),
 						finServiceInst.getActualRate() == null ? BigDecimal.ZERO : finServiceInst.getActualRate(), isCalSchedule);
 
+		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finSchData.setPftChg(pftDiff);
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finSchData;

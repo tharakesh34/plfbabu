@@ -52,6 +52,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		Cloner cloner = new Cloner();
 		scheduleData = cloner.deepClone(finScheduleData);
 
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		String frequency = finServiceInst.getRepayFrq();
 		Date fromDate = finServiceInst.getFromDate();
 		
@@ -269,6 +270,9 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			scheduleData.getFinanceMain().setMaturityDate(scheduleData.getFinanceScheduleDetails().get(sdSize-1).getSchDate());
 		}
 
+		BigDecimal newTotalPft = scheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		scheduleData.setPftChg(pftDiff);
 		scheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return scheduleData;

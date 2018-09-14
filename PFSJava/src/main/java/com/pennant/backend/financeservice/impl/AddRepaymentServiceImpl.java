@@ -44,9 +44,14 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
+		BigDecimal oldTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		
 		finSchdData = ScheduleCalculator.changeRepay(finscheduleData, finServiceInstruction.getAmount(), 
 				finServiceInstruction.getSchdMethod());
 
+		BigDecimal newTotalPft = finSchdData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finSchdData.setPftChg(pftDiff);
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 

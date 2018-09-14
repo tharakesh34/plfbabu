@@ -698,7 +698,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDDISB);
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());
-		aFinScheduleData.setFinServiceInstruction(finServiceInstruction);
 		
 		if(this.reCalTypeRow.isVisible()){
 			if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLMDT) ||
@@ -716,10 +715,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			}
 		}
+		
 		// Service details calling for Schedule calculation
 		aFinScheduleData = addDisbursementService.getAddDisbDetails(aFinScheduleData,
 				finServiceInstruction.getAmount(), addingFeeToFinance, this.alwAssetUtilize.isChecked(), moduleDefiner);		
-		aFinScheduleData.getFinanceMain().resetRecalculationFields();	
+		finServiceInstruction.setPftChg(aFinScheduleData.getPftChg());
+		aFinScheduleData.getFinanceMain().resetRecalculationFields();
+		aFinScheduleData.setFinServiceInstruction(finServiceInstruction);
 		
 		// Show Error Details in Schedule Maintenance
 		if (aFinScheduleData.getErrorDetails() != null && !aFinScheduleData.getErrorDetails().isEmpty()) {

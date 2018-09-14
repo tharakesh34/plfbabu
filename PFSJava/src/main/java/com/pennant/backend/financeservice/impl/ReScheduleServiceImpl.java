@@ -64,6 +64,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		// Check Date Status Specifier
 		boolean calFromGrcPeriod = false;
 		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData scheduleData = null;
 		Cloner cloner = new Cloner();
 		scheduleData = cloner.deepClone(finScheduleData);
@@ -458,6 +459,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
+		
+		BigDecimal newTotalPft = scheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		scheduleData.setPftChg(pftDiff);
 		scheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return scheduleData;

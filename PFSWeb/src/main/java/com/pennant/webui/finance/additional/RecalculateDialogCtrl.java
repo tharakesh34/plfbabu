@@ -401,6 +401,18 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
+		try {
+			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			finServiceInstruction.setRemarks(this.remarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RECALCULATE);
 
@@ -469,6 +481,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData()));
 		
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		
 		/*
 		 * Setting Desired Values for the Profit Intact option By Using Change Profit Method Reverse Calculate the total
 		 * Profit Amount on Changing Rate Value
@@ -484,6 +497,8 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData()));
 		}
 
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
+		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		// Show Error Details in Schedule Maintenance
@@ -497,18 +512,6 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 		
-		try {
-			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			finServiceInstruction.setRemarks(this.remarks.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
 		this.window_RecalculateDialog.onClose();
 		logger.debug("Leaving");
 	}

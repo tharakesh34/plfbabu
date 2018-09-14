@@ -51,6 +51,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		FinScheduleData finSchData = null;
 		
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		
 		if(finScheduleData.getFinanceScheduleDetails().size()>0){
 			for(FinanceScheduleDetail finSchd:finScheduleData.getFinanceScheduleDetails()){
 				finSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
@@ -80,7 +82,10 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
 			}
 		}
-
+		
+		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finSchData.setPftChg(pftDiff);
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 

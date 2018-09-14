@@ -205,6 +205,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -12354,26 +12355,58 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		
+		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
+		// On Origination processing based on Service instructions is not required
+		boolean feesExecuted = false;
+		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)){
 
-		prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
+			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 
-		//GST Added		
-		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		HashMap<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail(),
-				branch);
-		if (gstExecutionMap != null) {
-			for (String key : gstExecutionMap.keySet()) {
-				if (StringUtils.isNotBlank(key)) {
-					dataMap.put(key, gstExecutionMap.get(key));
+			//GST Added		
+			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
+			HashMap<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail(),
+					branch);
+			if (gstExecutionMap != null) {
+				for (String key : gstExecutionMap.keySet()) {
+					if (StringUtils.isNotBlank(key)) {
+						dataMap.put(key, gstExecutionMap.get(key));
+					}
 				}
 			}
+
+			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+			aeEvent.setDataMap(dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			accountingSetEntries.addAll(aeEvent.getReturnDataSet());
+
+		}else{
+
+			List<FinServiceInstruction> serviceInsts = getFinanceDetail().getFinScheduleData().getFinServiceInstructions();
+			
+			Cloner cloner = new Cloner();
+			for (FinServiceInstruction inst : serviceInsts) {
+				
+				AEAmountCodes tempAmountCodes = cloner.deepClone(amountCodes);
+				aeEvent.setDataMap(new HashMap<>());
+				
+				if(!feesExecuted){// No segregation of fees based on instruction
+					prepareFeeRulesMap(tempAmountCodes, dataMap);
+				}
+				
+				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)){
+					tempAmountCodes.setDisburse(inst.getAmount());
+				}
+				tempAmountCodes.setPftChg(inst.getPftChg());
+				
+				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
+				aeEvent.setAeAmountCodes(tempAmountCodes);
+				aeEvent.setDataMap(dataMap);
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				accountingSetEntries.addAll(aeEvent.getReturnDataSet());
+			}
 		}
-
-		aeEvent.getAeAmountCodes().getDeclaredFieldValues(dataMap);
-		aeEvent.setDataMap(dataMap);
-
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
-		accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
 		//Disb Instruction Posting
 		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)

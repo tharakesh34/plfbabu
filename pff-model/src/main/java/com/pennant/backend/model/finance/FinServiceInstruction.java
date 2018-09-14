@@ -67,13 +67,13 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private int terms = 0;
 	@XmlElement
-	private List<WSReturnStatus> returnStatus = null;
+	private String 	serviceReqNo;
+	private String	remarks;
 	@XmlElement
 	private String repayFrq;
 	private String repayPftFrq;
 	private String repayRvwFrq;
 	private String repayCpzFrq;
-	
 	private String grcPftFrq;
 	private String grcRvwFrq;
 	private String grcCpzFrq;
@@ -83,6 +83,10 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private Date nextGrcRepayDate;
 	@XmlElement
 	private Date nextRepayDate;
+	private BigDecimal pftChg = BigDecimal.ZERO;
+	
+	@XmlElement
+	private List<WSReturnStatus> returnStatus = null;
 	@XmlElement
 	private int frqDay;
 	@XmlElement
@@ -115,9 +119,6 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private String moduleDefiner;
 	private boolean newRecord;
 	private boolean wif;
-	@XmlElement
-	private String 	serviceReqNo;
-	private String	remarks;
 	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
 
 	// Bean validation purpose
@@ -631,6 +632,14 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 
 	public void setToBranch(String toBranch) {
 		this.toBranch = toBranch;
+	}
+
+	public BigDecimal getPftChg() {
+		return pftChg;
+	}
+
+	public void setPftChg(BigDecimal pftChg) {
+		this.pftChg = pftChg;
 	}
 	
 }

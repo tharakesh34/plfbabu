@@ -990,12 +990,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RATECHG);
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 		
 		// Service details calling for Schedule calculation
 		setFinScheduleData(rateChangeService.getRateChangeDetails(getFinScheduleData(), finServiceInstruction, moduleDefiner));
 		
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));

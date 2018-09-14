@@ -36,9 +36,14 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		
 		//TODO: PV 19JAN17 schdMethod to be added
 		finSchdData = ScheduleCalculator.reCalSchd(finScheduleData, "");
+		
+		BigDecimal newTotalPft = finSchdData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finSchdData.setPftChg(pftDiff);
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 

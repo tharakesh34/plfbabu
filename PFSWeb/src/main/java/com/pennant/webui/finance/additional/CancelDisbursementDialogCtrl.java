@@ -351,7 +351,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CANCELDISB);
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		if (wve.size() > 0) {
 			doRemoveValidation();
@@ -407,7 +406,9 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Service details calling for Schedule calculation
 		setFinScheduleData(cancelDisbursementService.getCancelDisbDetails(getFinScheduleData()));		
+		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 		
 		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {

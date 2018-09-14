@@ -153,6 +153,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -195,6 +196,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
+import com.rits.cloning.Cloner;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
@@ -1629,19 +1631,52 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
 				financeDetail.getFinanceTaxDetails(), financeMain.getFinBranch());
 		
-		if (gstExecutionMap != null) {
-			for (String key : gstExecutionMap.keySet()) {
-				if (StringUtils.isNotBlank(key)) {
-					dataMap.put (key, gstExecutionMap.get(key));
+		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
+		// On Origination processing based on Service instructions is not required
+		boolean feesExecuted = false;
+		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)){
+			
+			if (gstExecutionMap != null) {
+				for (String key : gstExecutionMap.keySet()) {
+					if (StringUtils.isNotBlank(key)) {
+						dataMap.put (key, gstExecutionMap.get(key));
+					}
 				}
 			}
+			
+			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+			aeEvent.setDataMap(dataMap);
+			
+			// Prepared Postings execution 
+			getPostingsPreparationUtil().postAccounting(aeEvent);
+			
+		}else{
+			
+			List<FinServiceInstruction> serviceInsts = financeDetail.getFinScheduleData().getFinServiceInstructions();
+			
+			Cloner cloner = new Cloner();
+			for (FinServiceInstruction inst : serviceInsts) {
+				
+				AEAmountCodes tempAmountCodes = cloner.deepClone(amountCodes);
+				aeEvent.setDataMap(new HashMap<>());
+				
+				if(!feesExecuted){// No segregation of fees based on instruction
+					dataMap = prepareFeeRulesMap(tempAmountCodes, dataMap, financeDetail);
+				}
+				
+				if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)){
+					tempAmountCodes.setDisburse(inst.getAmount());
+				}
+				tempAmountCodes.setPftChg(inst.getPftChg());
+				
+				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
+				aeEvent.setAeAmountCodes(tempAmountCodes);
+				aeEvent.setDataMap(dataMap);
+				
+				// Prepared Postings execution 
+				getPostingsPreparationUtil().postAccounting(aeEvent);
+			}
 		}
-
-		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
-		aeEvent.setDataMap(dataMap);
-
-		// Prepared Postings execution 
-		getPostingsPreparationUtil().postAccounting(aeEvent);
 		
 		// BPI Updation Checking for Deduct from Disbursement case only
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG) &&

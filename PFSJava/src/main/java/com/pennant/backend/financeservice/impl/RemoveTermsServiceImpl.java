@@ -31,8 +31,13 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 	public FinScheduleData getRmvTermsDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData finSchdData = null;
 		finSchdData = ScheduleCalculator.deleteTerm(finScheduleData);
+		
+		BigDecimal newTotalPft = finSchdData.getFinanceMain().getTotalGrossPft();
+		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+		finSchdData.setPftChg(pftDiff);
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 

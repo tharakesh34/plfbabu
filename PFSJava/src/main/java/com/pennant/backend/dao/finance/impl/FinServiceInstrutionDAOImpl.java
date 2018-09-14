@@ -37,12 +37,12 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		insertSql.append(" PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,");
 		insertSql.append(" RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq,");
 		insertSql.append(" NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType,");
-		insertSql.append(" RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks )");
+		insertSql.append(" RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg )");
 		insertSql.append(" Values(:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate,");
 		insertSql.append(" :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate,");
 		insertSql.append(" :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq,");
 		insertSql.append(" :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount,");
-		insertSql.append(" :RecalType, :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks)");
+		insertSql.append(" :RecalType, :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks, :PftChg)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finServiceInstructionList.toArray());
@@ -97,7 +97,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
 		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
 		selectSql.append(
-				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks");
+				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg ");
 		selectSql.append(" From FinServiceInstruction");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference AND FinEvent =:FinEvent ");
