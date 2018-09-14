@@ -1237,7 +1237,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			if(feeCharged.getValidateValue().intValue()!=0 && multiplier.getValue()!=null && multiplier.getValue().intValue()!=0){
 				feeCharge = PennantAppUtil.unFormateAmount(feeCharged.getValidateValue(),2);
 				multiply = multiplier.getValue();
-				feeRecBasisFrq.setValue(PennantAppUtil.formateAmount(feeCharge.divide(new BigDecimal(multiply)),2));
+				feeRecBasisFrq.setValue(PennantAppUtil.formateAmount(feeCharge.divide(new BigDecimal(multiply),BigDecimal.ROUND_HALF_DOWN),2));
 			}
 			listCell.appendChild(feeRecBasisFrq);
 			listCell.setParent(item);
