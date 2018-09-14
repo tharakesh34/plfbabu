@@ -1542,12 +1542,12 @@ public class AgreementGeneration implements Serializable {
 			BigDecimal totalFeeAmount = BigDecimal.ZERO;
 			if (null != detail && null != detail.getFinScheduleData()) {
 				List<FinReceiptDetail> finReceiptDetails = detail.getFinScheduleData().getFinReceiptDetails();
-				if (CollectionUtils.isEmpty(finReceiptDetails)) {
-					finReceiptDetails.forEach(finReceiptDts -> {
+				if (CollectionUtils.isNotEmpty(finReceiptDetails)) {
+					for (FinReceiptDetail finReceiptDts : finReceiptDetails) {
 						if (null != finReceiptDts) {
-							totalFeeAmount.add(finReceiptDts.getAmount());
+							totalFeeAmount = totalFeeAmount.add(finReceiptDts.getAmount());
 						}
-					});
+					}
 					agreement.setTotalReceiptFeeAmount(PennantApplicationUtil.amountFormate(totalFeeAmount, formatter));
 				}
 			}
