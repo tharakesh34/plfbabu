@@ -49,7 +49,6 @@ import com.pennant.backend.model.administration.SecurityOperation;
 public interface SecurityOperationDAO {
 	SecurityOperation getSecurityOperation();
 
-
 	SecurityOperation getSecurityOperationById(long id, String type);
 
 	void update(SecurityOperation securityOperation, String type);

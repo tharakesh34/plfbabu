@@ -46,8 +46,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,70 +66,74 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation> implements SecurityOperationRolesDAO {
-	 private static Logger logger = Logger.getLogger(SecurityOperationRolesDAOImpl .class);
-		
+	private static Logger logger = Logger.getLogger(SecurityOperationRolesDAOImpl.class);
+
 	public SecurityOperationRolesDAOImpl() {
 		super();
 	}
-	
 
 	@Override
 	public SecurityOperationRoles getSecurityOperationRoles() {
 		logger.debug("Entering ");
 		return new SecurityOperationRoles();
 	}
-	
+
 	/**
 	 * This Method selects the records from SecOperationRoles_AView table with UsrID condition
+	 * 
 	 * @param secOperation(secOperation)
 	 * @return List<SecurityOperationRoles>
 	 */
 	@Override
 	public List<SecurityOperationRoles> getSecOperationRolesByOprID(SecurityOperation secOperation, String type) {
 		logger.debug("Entering ");
-		StringBuilder  selectSql = new StringBuilder ();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  OprRoleID,OprID,RoleID,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescRoleCd,lovDescRoleDesc ");
 		}
 		selectSql.append(" FROM SecOperationRoles");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		
+
 		selectSql.append(" where OprID=:OprID");
-		logger.debug("selectSql : " + selectSql.toString());      
+		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secOperation);
 		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityOperationRoles.class);
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+
 	/**
 	 * This method deletes the record from securityOperationRoles with UsrID and RoleID condition
+	 * 
 	 * @param securityOperationRoles(SecurityOperationRoles)
 	 * @throws DataAccessException
 	 */
 	@Override
-	public void delete(SecurityOperationRoles securityOperationRoles,String type) {
-			
+	public void delete(SecurityOperationRoles securityOperationRoles, String type) {
+
 		logger.debug("Entering ");
 		int recordCount = 0;
-		StringBuilder  deleteSql = new StringBuilder ("Delete from SecOperationRoles");
+		StringBuilder deleteSql = new StringBuilder("Delete from SecOperationRoles");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where OprID=:OprID and RoleID =:RoleID");
-		logger.debug("deleteSql:"+deleteSql);
-		
-		try{
+		logger.debug("deleteSql:" + deleteSql);
+
+		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
-			recordCount = this.jdbcTemplate.update( deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
-	}  
+	}
+
 	/**
 	 * Method for Deletion of SecurityOperationRoles Related List of Securityoperation
 	 */
@@ -151,23 +153,25 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+
 	/**
-	 * This method inserts new record into SecOperationRoles table 
-	 * @param  securityOperationRoles(SecurityOperationRoles)
+	 * This method inserts new record into SecOperationRoles table
+	 * 
+	 * @param securityOperationRoles(SecurityOperationRoles)
 	 */
 	@Override
 	public void save(SecurityOperationRoles securityOperationRoles, String type) {
 		logger.debug("Entering ");
 
-		 securityOperationRoles.setId(getNextId("SeqSecOperationRoles"));
-		logger.debug("get NextID:"+ securityOperationRoles.getOprRoleID());
-		StringBuilder  insertSql = new StringBuilder ("INSERT INTO SecOperationRoles");
+		securityOperationRoles.setId(getNextId("SeqSecOperationRoles"));
+		logger.debug("get NextID:" + securityOperationRoles.getOprRoleID());
+		StringBuilder insertSql = new StringBuilder("INSERT INTO SecOperationRoles");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append("(OprRoleID,OprID,RoleID,Version,LastMntBy");
 		insertSql.append(",LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
 		insertSql.append(" Values( :OprRoleID,:OprID,:RoleID,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode");
 		insertSql.append(",:NextRoleCode,:TaskId,:NextTaskId,:RecordType,:WorkflowId) ");
-		logger.debug("insertSql:"+ insertSql.toString());
+		logger.debug("insertSql:" + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
@@ -186,7 +190,7 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	@Override
 	public List<SecurityRole> getRolesByUserId(long roleId, boolean isAssigned) {
 		logger.debug("Entering");
-		
+
 		SecurityOperation operations = new SecurityOperation();
 		String selectSql = "";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(operations);
@@ -203,24 +207,27 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 
 	/**
 	 * This Method selects the records from OperationRoles_AView table with UsrIDand RoleID condition
-	 * @param roleId (long)
+	 * 
+	 * @param roleId
+	 *            (long)
 	 * @return secOperationRoles (SecurityOperationRoles)
 	 */
 	@Override
 	public SecurityOperationRoles getOperationRolesByOprAndRoleIds(long roleId) {
 		logger.debug("Entering ");
 
-		SecurityOperationRoles secOperationRoles =getSecurityOperationRoles();
+		SecurityOperationRoles secOperationRoles = getSecurityOperationRoles();
 		secOperationRoles.setOprID(roleId);
 		secOperationRoles.setRoleID(roleId);
-		
-		StringBuilder  selectSql = new StringBuilder ();
+
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  OprRoleID,OprID,RoleID,Version,LastMntBy,LastMntOn");
 		selectSql.append(",RecordStatus,RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId ");
 		selectSql.append("FROM SecOperationRoles where OprID=:OprID and RoleID=:RoleID");
-		logger.debug("selectSql : " + selectSql.toString());      
+		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secOperationRoles);
-		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityOperationRoles.class);
+		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SecurityOperationRoles.class);
 
 		try {
 			secOperationRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -230,28 +237,31 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		}
 
 		logger.debug("Leaving ");
-		return secOperationRoles;	
+		return secOperationRoles;
 
 	}
 
 	/**
-	 * This method get  RoleIds count from SecOperationRoles_View
-	 * @param RoleId (long)
+	 * This method get RoleIds count from SecOperationRoles_View
+	 * 
+	 * @param RoleId
+	 *            (long)
 	 * @return List<Long RoleIDs>
 	 */
 	@Override
 	public int getRoleIdCount(long roleId) {
 		int status;
 		logger.debug("Entering ");
-		Map<String, Long> namedParamters=Collections.singletonMap("RoleId", roleId);
-		StringBuilder  selectSql = new StringBuilder ("SELECT COUNT(*) FROM SecOperationRoles_View where RoleId=:RoleId ");
-		logger.debug("selectSql: " + selectSql.toString());      
+		Map<String, Long> namedParamters = Collections.singletonMap("RoleId", roleId);
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT COUNT(*) FROM SecOperationRoles_View where RoleId=:RoleId ");
+		logger.debug("selectSql: " + selectSql.toString());
 
-		try{
-			status=this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			status = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			status=0;
+			status = 0;
 		}
 
 		logger.debug("Leaving getRoleIdCount()");
@@ -259,23 +269,25 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	}
 
 	/**
-	 * This method get  UserId count from SecOperationRoles_View
-	 * @param RoleId (long)
+	 * This method get UserId count from SecOperationRoles_View
+	 * 
+	 * @param RoleId
+	 *            (long)
 	 * @return List<Long RoleIDs>
 	 */
 	@Override
 	public int getOprIdCount(long oprID) {
 		int status;
 		logger.debug("Entering ");
-		Map<String, Long> namedParamters=Collections.singletonMap("UsrID", oprID);
-		StringBuilder  selectSql = new StringBuilder ("SELECT COUNT(*) FROM SecOperationRoles_View where OprID=:OprID ");
-		logger.debug("selectSql: " + selectSql.toString());      
+		Map<String, Long> namedParamters = Collections.singletonMap("UsrID", oprID);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM SecOperationRoles_View where OprID=:OprID ");
+		logger.debug("selectSql: " + selectSql.toString());
 
-		try{
-			status=this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			status = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			status=0;
+			status = 0;
 		}
 
 		logger.debug("Leaving getRoleIdCount()");
@@ -283,13 +295,13 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	}
 
 	/**
-	 * This method updates the Record Secoperations or SecOperation_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Security Operations by key UsrID and Version
+	 * This method updates the Record Secoperations or SecOperation_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Security Operations by key UsrID and Version
 	 * 
-	 * @param SecurityOperation (securityOperation)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityOperation
+	 *            (securityOperation)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -298,19 +310,21 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	public void update(SecurityOperationRoles securityOperationRoles, String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
-		
-		StringBuilder   updateSql = new StringBuilder  ("Update SecOperationRoles");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+
+		StringBuilder updateSql = new StringBuilder("Update SecOperationRoles");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set OprID = :OprID, RoleID = :RoleID,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where OprRoleID =:OprRoleID");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql:"+updateSql.toString());
+
+		logger.debug("updateSql:" + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -355,75 +369,77 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 
 	/**
 	 * This method deletes the record from SecOperationRoles with UsrID and RoleID condition
+	 * 
 	 * @param securityOperationRoles(SecurityOperationRoles)
 	 * @throws DataAccessException
 	 */
 	@Override
 	public void delete(SecurityOperationRoles securityOperationRoles) {
-		 logger.debug("Entering ");
-		 int recordCount = 0;
-		 String deleteRoleGroupSql = "Delete from SecOperationRoles  where   OprID=:OprID and RoleID =:RoleID";
-		 logger.debug("deleteSql-:"+deleteRoleGroupSql);
-		 try{
-			 SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);  
-			 recordCount = this.jdbcTemplate.update( deleteRoleGroupSql,beanParameters);
+		logger.debug("Entering ");
+		int recordCount = 0;
+		String deleteRoleGroupSql = "Delete from SecOperationRoles  where   OprID=:OprID and RoleID =:RoleID";
+		logger.debug("deleteSql-:" + deleteRoleGroupSql);
+		try {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
+			recordCount = this.jdbcTemplate.update(deleteRoleGroupSql, beanParameters);
 
-			 if (recordCount <= 0) {
+			if (recordCount <= 0) {
 				throw new ConcurrencyException();
-			 }
-		 }catch(DataAccessException e){
+			}
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
-		 }
-		 logger.debug("Leaving ");
-	 }
+		}
+		logger.debug("Leaving ");
+	}
 
 	/**
 	 * This Method selects the records from SecOperationRoles_AView table with UsrID condition
+	 * 
 	 * @param secOpr(SecOpr)
 	 * @return List<SecurityOperationRoles>
 	 */
 	@Override
-	public List<SecurityOperationRoles> getSecOprRolesByOprID(
-			SecurityUserOperations secUserOpr, String type) {
+	public List<SecurityOperationRoles> getSecOprRolesByOprID(SecurityUserOperations secUserOpr, String type) {
 		logger.debug("Entering ");
-		StringBuilder  selectSql = new StringBuilder ();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  OprRoleID,OprID,RoleID,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescRoleCd,lovDescRoleDesc ");
 		}
 		selectSql.append(" FROM SecOperationRoles");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		
+
 		selectSql.append(" where OprID=:OprID");
-		logger.debug("selectSql : " + selectSql.toString());      
+		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUserOpr);
 		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityOperationRoles.class);
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	// This method is used to get the count from secoperationroles table.
 	@Override
 	public int getOprById(long oprID, String type) {
 		logger.debug("Entering");
-		
-		MapSqlParameterSource source  = null;
+
+		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
-		
+
 		sql = new StringBuilder();
 		sql.append("SELECT count(*) FROM SecOperationRoles");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where OprID = :OprID");
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		source = new MapSqlParameterSource();
 		source.addValue("OprID", oprID);
-		
-		try{
+
+		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		}catch (EmptyResultDataAccessException e) {
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
 			source = null;
@@ -432,7 +448,6 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		}
 		return 0;
 	}
-
 
 	@Override
 	public long getNextValue() {

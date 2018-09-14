@@ -17,56 +17,56 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class SecurityUserPasswordsDAOImpl extends BasicDao<SecurityUser> implements SecurityUserPasswordsDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserPasswordsDAOImpl.class);
-	
+
 	public SecurityUserPasswordsDAOImpl() {
 		super();
 	}
-	 
+
 	/**
 	 * This method inserts record into SecUserPasswords
 	 */
 	public long save(SecurityUser securityUser) {
 		logger.debug("Entering ");
 
-		StringBuilder   insertSql  = new StringBuilder  ("Insert Into SecUserPasswords");
-		insertSql .append(" (UsrID, UsrPwd,UsrToken,LastMntOn) Values(:UsrID,:UsrPwd,:UsrToken,:LastMntOn)");
-		logger.debug("saveRecentPasswordSql:"+insertSql.toString());
+		StringBuilder insertSql = new StringBuilder("Insert Into SecUserPasswords");
+		insertSql.append(" (UsrID, UsrPwd,UsrToken,LastMntOn) Values(:UsrID,:UsrPwd,:UsrToken,:LastMntOn)");
+		logger.debug("saveRecentPasswordSql:" + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return securityUser.getId();
 	}
-	
+
 	/**
-	 * This method selects the List of records from SecUserPasswords as SecurityUser Objects 
+	 * This method selects the List of records from SecUserPasswords as SecurityUser Objects
 	 */
-	public List<SecurityUser> getUserPreviousPasswords(SecurityUser secUser){
+	public List<SecurityUser> getUserPreviousPasswords(SecurityUser secUser) {
 		logger.debug("Entering ");
-		
-		StringBuilder  selectSql = new StringBuilder ();
-		selectSql.append(" SELECT  UsrID, UsrPwd,UsrToken,LastMntOn " );
-		selectSql.append(" FROM SecUserPasswords " );
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT  UsrID, UsrPwd,UsrToken,LastMntOn ");
+		selectSql.append(" FROM SecUserPasswords ");
 		selectSql.append(" where UsrID=:UsrID order by LastMntOn DESC ");
-		
-		logger.debug("selectUserRecentPasswordsSql : " + selectSql.toString());      
+
+		logger.debug("selectUserRecentPasswordsSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	/**
-	 * This method  deletes the record from SecUserPasswords with specific condition
+	 * This method deletes the record from SecUserPasswords with specific condition
 	 */
 	public void delete(SecurityUser securityUser) {
 		logger.debug("Entering ");
 
 		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder ("Delete From SecUserPasswords " );
-		deleteSql.append(" where LastMntOn = (select min(LastMntOn) from SecUserPasswords " );
-		deleteSql.append(" where UsrID =:UsrID) and UsrID =:UsrID ");	
+		StringBuilder deleteSql = new StringBuilder("Delete From SecUserPasswords ");
+		deleteSql.append(" where LastMntOn = (select min(LastMntOn) from SecUserPasswords ");
+		deleteSql.append(" where UsrID =:UsrID) and UsrID =:UsrID ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		logger.debug("deleteOldestPasswordSql:"+deleteSql.toString());
+		logger.debug("deleteOldestPasswordSql:" + deleteSql.toString());
 
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);

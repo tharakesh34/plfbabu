@@ -66,19 +66,18 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleGroupsDAO {
 	private static Logger logger = Logger.getLogger(SecurityRoleGroupsDAOImpl.class);
-	
-	 public SecurityRoleGroupsDAOImpl() {
-		 super();
-	 }
-	 
-	
-	 /**
-	  * This method returns new SecurityRoleGroups Object
-	  */
-	 public SecurityRoleGroups getSecRoleGroups(){
-		 logger.debug("Entering ");
-		 return new SecurityRoleGroups();
-	 }
+
+	public SecurityRoleGroupsDAOImpl() {
+		super();
+	}
+
+	/**
+	 * This method returns new SecurityRoleGroups Object
+	 */
+	public SecurityRoleGroups getSecRoleGroups() {
+		logger.debug("Entering ");
+		return new SecurityRoleGroups();
+	}
 
 	/**
 	 * This method Selects the SecurityRoleGroups records from SecRoleGroups
@@ -118,119 +117,126 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 	 *            (SecurityRoleGroups)
 	 */
 	public void save(SecurityRoleGroups securityRoleGroups) {
-		 logger.debug("Entering");
+		logger.debug("Entering");
 
 		if (securityRoleGroups.getRoleGrpID() == Long.MIN_VALUE) {
-			 securityRoleGroups.setId(getNextId("SeqSecRoleGroups"));
-			 logger.debug("get NextID:"+ securityRoleGroups.getRoleGrpID());
-		 }
+			securityRoleGroups.setId(getNextId("SeqSecRoleGroups"));
+			logger.debug("get NextID:" + securityRoleGroups.getRoleGrpID());
+		}
 
-		 StringBuilder   insertSql = new StringBuilder(" INSERT INTO SecRoleGroups " );
-		 insertSql.append(" ( RoleGrpID , GrpID , RoleID , " );
-		 insertSql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , " );
-		 insertSql.append(" NextRoleCode , TaskId , NextTaskId , RecordType , WorkflowId ) ");
-		 insertSql.append(" VALUES (:RoleGrpID , :GrpID , :RoleID , " );
-		 insertSql.append(" :Version , :LastMntBy , :LastMntOn , :RecordStatus, ");
-		 insertSql.append(" :RoleCode , :NextRoleCode , :TaskId , :NextTaskId , :RecordType , :WorkflowId ) ");
-		 logger.debug("insertSql:" + insertSql.toString());
+		StringBuilder insertSql = new StringBuilder(" INSERT INTO SecRoleGroups ");
+		insertSql.append(" ( RoleGrpID , GrpID , RoleID , ");
+		insertSql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , ");
+		insertSql.append(" NextRoleCode , TaskId , NextTaskId , RecordType , WorkflowId ) ");
+		insertSql.append(" VALUES (:RoleGrpID , :GrpID , :RoleID , ");
+		insertSql.append(" :Version , :LastMntBy , :LastMntOn , :RecordStatus, ");
+		insertSql.append(" :RoleCode , :NextRoleCode , :TaskId , :NextTaskId , :RecordType , :WorkflowId ) ");
+		logger.debug("insertSql:" + insertSql.toString());
 		try {
-			 SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);
-			 this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	 /**
-	  * This method deletes record from SecRoleGroups  with GrpID and RoleID condition
-	  * @param securityRoleGroups (SecurityRoleGroups)
-	  * @throws DataAccessException
-	  * 
-	  */
+
+	/**
+	 * This method deletes record from SecRoleGroups with GrpID and RoleID condition
+	 * 
+	 * @param securityRoleGroups
+	 *            (SecurityRoleGroups)
+	 * @throws DataAccessException
+	 * 
+	 */
 	public void delete(SecurityRoleGroups securityRoleGroups) {
-		 logger.debug("Entering");
+		logger.debug("Entering");
 
-		 int recordCount = 0;
-		 String deleteRoleGroupSql = " Delete from SecRoleGroups where GrpID=:GrpID and RoleID =:RoleID";
-		 logger.debug("deleteSql-:"+deleteRoleGroupSql);
+		int recordCount = 0;
+		String deleteRoleGroupSql = " Delete from SecRoleGroups where GrpID=:GrpID and RoleID =:RoleID";
+		logger.debug("deleteSql-:" + deleteRoleGroupSql);
 		try {
-			 SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);  
-			 recordCount = this.jdbcTemplate.update( deleteRoleGroupSql,beanParameters);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);
+			recordCount = this.jdbcTemplate.update(deleteRoleGroupSql, beanParameters);
 
-			 if (recordCount <= 0) {
+			if (recordCount <= 0) {
 				throw new ConcurrencyException();
-			 }
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
-	 }
-	 /**
-	  * This method deletes record from SecRoleGroups  with RoleID condition
-	  * @throws DataAccessException
-	  * 
-	  */
-	 public  void  deleteByRoleID(SecurityRoleGroups securityRoleGroups){
-		 logger.debug("Entering ");
-		 String deleteUserRolesSql = "Delete from SecRoleGroups where RoleID =:RoleID";
-		 logger.debug("deleteSql:"+deleteUserRolesSql);
-		 try{
-			 SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);  
-			 this.jdbcTemplate.update( deleteUserRolesSql,beanParameters);
-		 }catch(Exception e){
-			 logger.warn("Exception: ", e);
-		 }
+	}
 
-		 logger.debug("Leaving ");
-	 }
+	/**
+	 * This method deletes record from SecRoleGroups with RoleID condition
+	 * 
+	 * @throws DataAccessException
+	 * 
+	 */
+	public void deleteByRoleID(SecurityRoleGroups securityRoleGroups) {
+		logger.debug("Entering ");
+		String deleteUserRolesSql = "Delete from SecRoleGroups where RoleID =:RoleID";
+		logger.debug("deleteSql:" + deleteUserRolesSql);
+		try {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);
+			this.jdbcTemplate.update(deleteUserRolesSql, beanParameters);
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+		}
 
-	 /**
-	  * This method get  RoleIds count from SecRoleGroups_view
-	  * @param RoleId (long)
-	  * @return int
-	  */
-	 public int getRoleIdCount(long roleId){
-		 int status;
-		 logger.debug("Entering ");
-		 Map<String, Long> namedParamters=Collections.singletonMap("RoleId", roleId);
-		 String selectSql = "SELECT COUNT(*) FROM SecRoleGroups_view where RoleId=:RoleId ";
-		 logger.debug("selectSql: " + selectSql);      
+		logger.debug("Leaving ");
+	}
 
-		 try{
-			 status=this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
-		 }catch (EmptyResultDataAccessException e) {
-			 logger.warn("Exception: ", e);
-			 status=0;
-		 }
+	/**
+	 * This method get RoleIds count from SecRoleGroups_view
+	 * 
+	 * @param RoleId
+	 *            (long)
+	 * @return int
+	 */
+	public int getRoleIdCount(long roleId) {
+		int status;
+		logger.debug("Entering ");
+		Map<String, Long> namedParamters = Collections.singletonMap("RoleId", roleId);
+		String selectSql = "SELECT COUNT(*) FROM SecRoleGroups_view where RoleId=:RoleId ";
+		logger.debug("selectSql: " + selectSql);
 
-		 logger.debug("Leaving ");
-		 return status;
-	 }
+		try {
+			status = this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			status = 0;
+		}
 
-	 /**
-	  * This method get  GroupIds count from SecRoleGroups_view
-	  * @return int
-	  */
-	 public int getGroupIdCount(long groupId){
-		 int status;
-		 logger.debug("Entering ");
-		 Map<String, Long> namedParamters=Collections.singletonMap("GrpID", groupId);
+		logger.debug("Leaving ");
+		return status;
+	}
 
-		 String selectSql = "SELECT COUNT(*) FROM SecRoleGroups_view where GrpID=:GrpID ";
-		 logger.debug("selectSql:" + selectSql);      
+	/**
+	 * This method get GroupIds count from SecRoleGroups_view
+	 * 
+	 * @return int
+	 */
+	public int getGroupIdCount(long groupId) {
+		int status;
+		logger.debug("Entering ");
+		Map<String, Long> namedParamters = Collections.singletonMap("GrpID", groupId);
 
-		 try{
-			 status=this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
-		 }catch (EmptyResultDataAccessException e) {
-			 logger.warn("Exception: ", e);
-			 status=0;
-		 }
+		String selectSql = "SELECT COUNT(*) FROM SecRoleGroups_view where GrpID=:GrpID ";
+		logger.debug("selectSql:" + selectSql);
 
-		 logger.debug("Leaving ");
-		 return status;
-	 }
+		try {
+			status = this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			status = 0;
+		}
+
+		logger.debug("Leaving ");
+		return status;
+	}
 
 	/**
 	 * This method fetches the records from secGroups_View a) if isAssigned is "true" fetches assigned roles from
@@ -285,8 +291,7 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 				.newInstance(SecurityRoleGroups.class);
 
 		try {
-			secRolesGroups = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			secRolesGroups = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			secRolesGroups = null;

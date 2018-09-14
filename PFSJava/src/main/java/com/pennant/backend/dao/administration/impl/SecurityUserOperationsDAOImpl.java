@@ -48,8 +48,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,10 +66,9 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> implements
-		SecurityUserOperationsDAO {
+public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> implements SecurityUserOperationsDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserOperationsDAOImpl.class);
-	
+
 	/**
 	 * This method returns new SecurityUserOperations Object
 	 */
@@ -81,8 +78,8 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	}
 
 	/**
-	 * This method get the module from method getBillerDetail() and set the new
-	 * record flag as true and return BillerDetail()
+	 * This method get the module from method getBillerDetail() and set the new record flag as true and return
+	 * BillerDetail()
 	 * 
 	 * @return BillerDetail
 	 */
@@ -95,43 +92,38 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		return securityUserOperations;
 	}
 
-	
 	/**
-	 * This Method selects the records from SecUserOperations_AView table with
-	 * UsrID condition
+	 * This Method selects the records from SecUserOperations_AView table with UsrID condition
 	 * 
 	 * @param secuser
 	 *            (SecUser)
-	 * @return List<SecurityUserOperations>**/
-	 
-	public List<SecurityUserOperations> getSecUserOperationsByUsrID(
-			SecurityUser secUser, String type) {
+	 * @return List<SecurityUserOperations>
+	 **/
+
+	public List<SecurityUserOperations> getSecUserOperationsByUsrID(SecurityUser secUser, String type) {
 		logger.debug("Entering ");
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  UsrOprID,UsrID,OprID,");
-		selectSql
-				.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql
-					.append(",lovDescFirstName,lovDescMiddleName,lovDescLastName,lovDescOprCd,lovDescOprDesc, lovDescUsrFName,lovDescUsrMName,lovDescUsrLName ");
+			selectSql.append(
+					",lovDescFirstName,lovDescMiddleName,lovDescLastName,lovDescOprCd,lovDescOprDesc, lovDescUsrFName,lovDescUsrMName,lovDescUsrLName ");
 		}
 		selectSql.append(" FROM SecUserOperations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 
 		selectSql.append(" where UsrID=:UsrID");
 		logger.debug("selectSql : " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				secUser);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
 		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
-	 * This Method selects the records from UserOperations_AView table with
-	 * UsrIDand RoleID condition
+	 * This Method selects the records from UserOperations_AView table with UsrIDand RoleID condition
 	 * 
 	 * @param userId
 	 *            (long)
@@ -147,21 +139,16 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		secUserOperations.setOprID(oprId);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append("SELECT  UsrOprID,UsrID,OprID,Version,LastMntBy,LastMntOn");
-		selectSql
-				.append(",RecordStatus,RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId ");
-		selectSql
-				.append("FROM SecUserOperations where UsrID=:UsrID and RoleID=:RoleID");
+		selectSql.append("SELECT  UsrOprID,UsrID,OprID,Version,LastMntBy,LastMntOn");
+		selectSql.append(",RecordStatus,RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId ");
+		selectSql.append("FROM SecUserOperations where UsrID=:UsrID and RoleID=:RoleID");
 		logger.debug("selectSql : " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				secUserOperations);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUserOperations);
 		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 
 		try {
-			secUserOperations = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);
+			secUserOperations = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			secUserOperations = null;
@@ -172,28 +159,23 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	}
 
 	/**
-	 * This method deletes the record from SecUserOperations with UsrID and
-	 * RoleID condition
+	 * This method deletes the record from SecUserOperations with UsrID and RoleID condition
 	 * 
 	 * @param securityUserOperations
 	 *            (SecurityUserOperations)
 	 * @throws DataAccessException
 	 */
-	public void delete(SecurityUserOperations securityUserOperations,
-			String type) {
+	public void delete(SecurityUserOperations securityUserOperations, String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder(
-				"Delete from SecUserOperations");
+		StringBuilder deleteSql = new StringBuilder("Delete from SecUserOperations");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where UsrID=:UsrID and OprID =:OprID");
 		logger.debug("deleteSql:" + deleteSql);
 
 		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-					securityUserOperations);
-			recordCount = this.jdbcTemplate.update(
-					deleteSql.toString(), beanParameters);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserOperations);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -204,8 +186,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	}
 
 	/**
-	 * Method for Deletion of SecurityUserOperations Related List of
-	 * SecurityUser
+	 * Method for Deletion of SecurityUserOperations Related List of SecurityUser
 	 */
 	public void deleteById(final long usrID, String type) {
 		logger.debug("Entering");
@@ -218,10 +199,8 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		deleteSql.append(" Where UsrID =:UsrID");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				userOperations);
-		this.jdbcTemplate.update(deleteSql.toString(),
-				beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userOperations);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -239,26 +218,23 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 			logger.debug("get NextID:" + securityUserOperations.getId());
 		}
 
-		StringBuilder sql = new StringBuilder(
-				"INSERT INTO SecUserOperations");
+		StringBuilder sql = new StringBuilder("INSERT INTO SecUserOperations");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(UsrOprID,UsrID,OprID,Version,LastMntBy");
 		sql.append(",LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
 		sql.append(" Values( :UsrOprID,:UsrID,:OprID,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode");
 		sql.append(",:NextRoleCode,:TaskId,:NextTaskId,:RecordType,:WorkflowId) ");
 		logger.debug("insertSql:" + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserOperations);
-		this.jdbcTemplate.update(sql.toString(),
-				beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return securityUserOperations.getId();
 	}
 
 	/**
-	 * This method updates the Record SecUsers or SecUsers_Temp. if Record not
-	 * updated then throws DataAccessException with error 41004. update Security
-	 * Users by key UsrID and Version
+	 * This method updates the Record SecUsers or SecUsers_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Security Users by key UsrID and Version
 	 * 
 	 * @param SecurityUsers
 	 *            (securityUser)
@@ -268,31 +244,25 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void update(SecurityUserOperations securityUserOperations,
-			String type) {
+	public void update(SecurityUserOperations securityUserOperations, String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
 
 		StringBuilder sql = new StringBuilder("Update SecUserOperations");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql
-		.append(" Set UsrID = :UsrID, OprID = :OprID,  ");
-		sql
-		.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		sql
-		.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
-		sql
-		.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		sql.append(" Set UsrID = :UsrID, OprID = :OprID,  ");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		sql.append(" Where UsrOprID =:UsrOprID");
 		if (!type.endsWith("_Temp")) {
 			sql.append(" AND Version= :Version-1");
 		}
 
 		logger.debug("updateSql:" + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				securityUserOperations);
-		recordCount = this.jdbcTemplate.update(
-				sql.toString(), beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserOperations);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -316,8 +286,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			count = this.jdbcTemplate
-					.queryForObject(selectSql.toString(), namedParamters, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -353,10 +322,8 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	}
 
 	/**
-	 * This method fetches the records from SecOperations_View a) if isAssigned
-	 * is "true" fetches assigned Operations from SecOperations_View b) if
-	 * isAssigned is "false" fetches unassigned Operations from
-	 * SecOperations_View
+	 * This method fetches the records from SecOperations_View a) if isAssigned is "true" fetches assigned Operations
+	 * from SecOperations_View b) if isAssigned is "false" fetches unassigned Operations from SecOperations_View
 	 * 
 	 * @param userId
 	 *            (long)
@@ -366,35 +333,29 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	 * 
 	 */
 	@Override
-	public List<SecurityOperation> getOperationsByUserId(long userId,
-			boolean isAssigned) {
+	public List<SecurityOperation> getOperationsByUserId(long userId, boolean isAssigned) {
 		logger.debug("Entering ");
 		List<SecurityOperation> secOperationsList = new ArrayList<SecurityOperation>();
 		SecurityUser user = new SecurityUser();
 		user.setUsrID(userId);
 		StringBuilder selectSql = new StringBuilder();
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				user);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(user);
 		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityOperation.class);
 
 		if (isAssigned) {
 			selectSql.append("select * from SecOperations_View where OprID in");
-			selectSql
-					.append(" (select RoleID from UserRoles_AView where UsrID = :UsrID)");
+			selectSql.append(" (select RoleID from UserRoles_AView where UsrID = :UsrID)");
 		} else {
-			selectSql
-					.append("select * from SecOperations_View where OprID not in");
-			selectSql
-					.append(" (select RoleID from UserRoles_AView where UsrID = :UsrID)");
+			selectSql.append("select * from SecOperations_View where OprID not in");
+			selectSql.append(" (select RoleID from UserRoles_AView where UsrID = :UsrID)");
 		}
 		logger.debug("selectSql:" + selectSql);
-		secOperationsList = this.jdbcTemplate.query(
-				selectSql.toString(), beanParameters, typeRowMapper);
+		secOperationsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving ");
 		return secOperationsList;
 	}
-	
+
 	@Override
 	public int getOprById(long oprID, String type) {
 		logger.debug("Entering");
@@ -482,7 +443,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		List<String> listAsString = Arrays.asList(roleIds.split(","));
 		source.addValue("RoleCds", listAsString);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT DISTINCT UsrEmail from UserOperationRoles_View ");
 		selectSql.append(" WHERE RoleCd IN (:RoleCds) AND COALESCE(UsrEmail, ' ') <> ' '  ");
 

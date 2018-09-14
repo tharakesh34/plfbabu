@@ -69,35 +69,34 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleDAO {
 	private static Logger logger = Logger.getLogger(SecurityRoleDAOImpl.class);
 
-
 	public SecurityRoleDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new SecurityRole 
+	 * This method set the Work Flow id based on the module name and return the new SecurityRole
+	 * 
 	 * @return SecurityRole
 	 */
 	@Override
 	public SecurityRole getSecurityRole() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("SecurityRole");
-		SecurityRole securityRole= new SecurityRole();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("SecurityRole");
+		SecurityRole securityRole = new SecurityRole();
+		if (workFlowDetails != null) {
 			securityRole.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return securityRole;
 	}
 
-	
-
 	/**
-	 * Fetch the Record  SecurityRole details by key field
+	 * Fetch the Record SecurityRole details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SecurityRole
 	 */
 	@Override
@@ -105,27 +104,25 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		logger.debug("Entering");
 		SecurityRole secRoles = new SecurityRole();
 		secRoles.setId(id);
-		
-		StringBuilder   selectSql = new StringBuilder  ("Select RoleID, RoleApp, RoleCd, " );
-		selectSql.append(" RoleDesc, RoleCategory , "  );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+
+		StringBuilder selectSql = new StringBuilder("Select RoleID, RoleApp, RoleCd, ");
+		selectSql.append(" RoleDesc, RoleCategory , ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" ,lovDescRoleAppName ");	
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(" ,lovDescRoleAppName ");
 		}
-		
+
 		selectSql.append(" From SecRoles");
-		selectSql.append(StringUtils.trimToEmpty(type) );
+		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where RoleID =:RoleID");
-		
+
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				SecurityRole.class);
-		try{
-			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		try {
+			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			secRoles = null;
 		}
@@ -136,9 +133,10 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	/**
 	 * Fetch the Record SecurityRole details by key field
 	 * 
-	 * @param roleCode (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param roleCode
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SecurityRole
 	 */
 	@Override
@@ -147,28 +145,26 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		SecurityRole secRoles = new SecurityRole();
 		secRoles.setRoleCd(roleCd);
 
-		StringBuilder   selectSql = new StringBuilder  ("Select RoleID, RoleApp, " );
-		selectSql.append(" RoleCd, RoleDesc, RoleCategory , " );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
+		StringBuilder selectSql = new StringBuilder("Select RoleID, RoleApp, ");
+		selectSql.append(" RoleCd, RoleDesc, RoleCategory , ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" ,lovDescRoleAppName ");	
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(" ,lovDescRoleAppName ");
 		}
-		
+
 		selectSql.append(" From SecRoles");
-		selectSql.append(StringUtils.trimToEmpty(type) );
+		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where RoleCd =:RoleCd");
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 
-		try{
-			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			secRoles = null;
 		}
@@ -176,28 +172,25 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		return secRoles;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the SecRoles or SecRoles_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete SecurityRole by key RoleID
+	 * This method Deletes the Record from the SecRoles or SecRoles_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete SecurityRole by key RoleID
 	 * 
-	 * @param SecurityRole (securityRole)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityRole
+	 *            (securityRole)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void delete(SecurityRole secRoles,String type) {
+	public void delete(SecurityRole secRoles, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		String deleteSql = 	"Delete From SecRoles" + StringUtils.trimToEmpty(type) +
-		" Where RoleID =:RoleID";
+		String deleteSql = "Delete From SecRoles" + StringUtils.trimToEmpty(type) + " Where RoleID =:RoleID";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		recordCount = this.jdbcTemplate.update(deleteSql, beanParameters);
-		logger.debug("deleteSql:"+deleteSql);
+		logger.debug("deleteSql:" + deleteSql);
 		try {
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -209,34 +202,35 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	}
 
 	/**
-	 * This method insert new Records into SecRoles or SecRoles_Temp.
-	 * it fetches the available Sequence form SeqSecRoles by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into SecRoles or SecRoles_Temp. it fetches the available Sequence form SeqSecRoles
+	 * by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save SecurityRole 
+	 * save SecurityRole
 	 * 
-	 * @param SecurityRole (securityRole)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityRole
+	 *            (securityRole)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 */
-	public long save(SecurityRole secRoles,String type) {
+	public long save(SecurityRole secRoles, String type) {
 		logger.debug("Entering");
-		if (secRoles.getId()==Long.MIN_VALUE){
+		if (secRoles.getId() == Long.MIN_VALUE) {
 			secRoles.setId(getNextId("SeqSecRoles"));
-			logger.debug("get NextID:"+secRoles.getId());
+			logger.debug("get NextID:" + secRoles.getId());
 		}
 
-		StringBuilder   insertSql = new StringBuilder("Insert Into SecRoles" );
+		StringBuilder insertSql = new StringBuilder("Insert Into SecRoles");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (RoleID, RoleApp, RoleCd, RoleDesc, RoleCategory, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:RoleID, :RoleApp, :RoleCd, :RoleDesc, :RoleCategory, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		logger.debug("insertSql:"+insertSql);
-		
+		logger.debug("insertSql:" + insertSql);
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -245,13 +239,13 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	}
 
 	/**
-	 * This method updates the Record SecRoles or SecRoles_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update SecurityRole by key RoleID and Version
+	 * This method updates the Record SecRoles or SecRoles_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update SecurityRole by key RoleID and Version
 	 * 
-	 * @param SecurityRole (securityRole)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityRole
+	 *            (securityRole)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -260,23 +254,23 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	public void update(SecurityRole secRoles, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder updateSql =new StringBuilder("Update SecRoles"); 
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set RoleApp = :RoleApp, RoleCd = :RoleCd, " );
+
+		StringBuilder updateSql = new StringBuilder("Update SecRoles");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set RoleApp = :RoleApp, RoleCd = :RoleCd, ");
 		updateSql.append(" RoleDesc = :RoleDesc, RoleCategory = :RoleCategory , ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where RoleID =:RoleID");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql:"+updateSql.toString());
-		
+
+		logger.debug("updateSql:" + updateSql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -289,9 +283,10 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	/**
 	 * Fetch the Record SecurityRole details by key field
 	 * 
-	 * @param roleCode (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param roleCode
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SecurityRole
 	 */
 	@Override
@@ -300,11 +295,12 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		String type = "_View"; //AView
 		SecurityRole secRoles = getSecurityRole();
 
-		StringBuilder   selectSql = new StringBuilder  ("Select RoleID, RoleApp, RoleCd, RoleDesc, RoleCategory" );
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" ,lovDescRoleAppName ");	
+		StringBuilder selectSql = new StringBuilder("Select RoleID, RoleApp, RoleCd, RoleDesc, RoleCategory");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(" ,lovDescRoleAppName ");
 		}
 		selectSql.append(" From SecRoles_View"); //SecRoles_AView
 
@@ -313,30 +309,30 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 		logger.debug("Leaving");
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
-    public List<SecurityRole> getSecurityRole(String roleCode) {
+	public List<SecurityRole> getSecurityRole(String roleCode) {
 		logger.debug("Entering");
-		
+
 		SecurityRole secRoles = new SecurityRole();
 		secRoles.setRoleCd(roleCode);
-		
-		StringBuilder   selectSql = new StringBuilder  ("Select RoleDesc  From SecRoles " );
+
+		StringBuilder selectSql = new StringBuilder("Select RoleDesc  From SecRoles ");
 		selectSql.append(" Where RoleCd =:RoleCd");
-		
+
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-    }
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
 
 	/**
-	 * Fetch the Record  SecurityRole details by key field
-	 * 			          
+	 * Fetch the Record SecurityRole details by key field
+	 * 
 	 * @return SecurityRole
 	 */
 	@Override
@@ -355,25 +351,25 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		} catch (EmptyResultDataAccessException e) {
 			logger.debug(e);
 		}
-       return null;
+		return null;
 	}
-	
+
 	/**
-	 * Fetch the Record  SecurityRole details by key field
-	 * 			          
+	 * Fetch the Record SecurityRole details by key field
+	 * 
 	 * @return SecurityRole
 	 */
 	@Override
 	public List<SecurityRole> getSecurityRolesByRoleCodes(List<String> strings) {
 		logger.debug("Entering");
-		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("Rolecds", strings);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT * FROM SecRoles where rolecd in (:Rolecds) ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
-		
+
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

@@ -49,6 +49,8 @@ import com.pennant.backend.model.administration.SecurityUser;
 public interface SecurityUserPasswordsDAO {
 
 	long save(SecurityUser securityUser);
+
 	List<SecurityUser> getUserPreviousPasswords(SecurityUser secUser);
+
 	void delete(SecurityUser securityUser);
 }

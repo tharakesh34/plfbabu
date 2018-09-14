@@ -66,7 +66,6 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements MandateStatusDAO {
    private static Logger logger = Logger.getLogger(MandateStatusDAOImpl.class);
 	
-	
 	public MandateStatusDAOImpl(){
 		super();
 	}

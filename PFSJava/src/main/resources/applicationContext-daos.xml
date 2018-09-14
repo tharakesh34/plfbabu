@@ -7308,7 +7308,7 @@
 	<bean id="ddaPaymentResponseDAO" class="com.pennant.backend.dao.ddapayments.impl.DDAPaymentResponseDAOImpl" parent="extBasicDao"/>
 		
 	<!-- DDA Representment Details -->
-	<bean id="ddaPaymentResponseDAO" class="com.pennant.backend.dao.ddapayments.impl.DDAPaymentResponseDAOImpl" parent="extBasicDao"/>
+	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="extBasicDao"/>
 	
 	<bean id="ddaRepresentmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

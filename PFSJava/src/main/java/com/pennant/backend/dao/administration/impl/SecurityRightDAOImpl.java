@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements SecurityRightDAO {
-	private static Logger logger	= Logger.getLogger(SecurityRightDAOImpl.class);
+	private static Logger logger = Logger.getLogger(SecurityRightDAOImpl.class);
 
 	public SecurityRightDAOImpl() {
 		super();
@@ -79,7 +79,7 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 		sql.append(" inner join SecGroupRights GR on GR.GrpID = RG.GrpID");
 		sql.append(" inner join SecRights RT on RT.RightID = GR.RightID ");
 		sql.append(" where UO.UsrID = :UsrID and R.RoleApp = :LoginAppId and RT.RightType = 0 ");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(user);
@@ -157,7 +157,7 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 		logger.debug(Literal.ENTERING);
 		return right.getId();
 	}
-	
+
 	@Override
 	public void updateSeqSecRights() {
 		logger.debug(Literal.ENTERING);

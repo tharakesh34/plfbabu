@@ -40,7 +40,7 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-package com.pennant.backend.dao.administration ;
+package com.pennant.backend.dao.administration;
 
 import java.util.List;
 
@@ -49,13 +49,22 @@ import com.pennant.backend.model.administration.SecurityRole;
 public interface SecurityRoleDAO {
 
 	SecurityRole getSecurityRole();
+
 	SecurityRole getSecurityRoleById(long id, String type);
+
 	void update(SecurityRole secRole, String type);
+
 	void delete(SecurityRole secRole, String type);
+
 	long save(SecurityRole secRole, String type);
+
 	SecurityRole getSecurityRoleByRoleCd(final String roleCd, String type);
+
 	List<SecurityRole> getApprovedSecurityRole();
+
 	List<SecurityRole> getSecurityRole(String roleCode);
+
 	List<SecurityRole> getApprovedSecurityRoles();
+
 	List<SecurityRole> getSecurityRolesByRoleCodes(List<String> strings);
 }

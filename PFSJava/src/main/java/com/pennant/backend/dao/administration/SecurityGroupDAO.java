@@ -47,8 +47,12 @@ import com.pennant.backend.model.administration.SecurityGroup;
 public interface SecurityGroupDAO {
 
 	SecurityGroup getSecurityGroupById(long id, String type);
+
 	void update(SecurityGroup securityGroup, String type);
+
 	void delete(SecurityGroup securityGroup, String type);
+
 	long save(SecurityGroup securityGroup, String type);
+
 	SecurityGroup getSecurityGroupByCode(final String grpCode, String type);
 }

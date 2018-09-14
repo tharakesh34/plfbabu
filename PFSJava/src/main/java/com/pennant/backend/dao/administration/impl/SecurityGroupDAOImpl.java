@@ -43,8 +43,6 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -70,14 +68,14 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	public SecurityGroupDAOImpl() {
 		super();
 	}
-	
-	
+
 	/**
-	 * Fetch the Record  SecurityGroup details by key field
+	 * Fetch the Record SecurityGroup details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SecurityGroup
 	 */
 	@Override
@@ -86,22 +84,20 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setId(id);
 
-		StringBuilder   selectSql = new StringBuilder("Select GrpID, GrpCode, GrpDesc , ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
+		StringBuilder selectSql = new StringBuilder("Select GrpID, GrpCode, GrpDesc , ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" From SecGroups");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GrpID =:GrpID");
 		logger.debug("selectSql: " + selectSql.toString());
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
-		RowMapper<SecurityGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				SecurityGroup.class);
 
-		try{
-			securityGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
+		RowMapper<SecurityGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityGroup.class);
+
+		try {
+			securityGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			securityGroup = null;
 		}
@@ -110,23 +106,23 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	}
 
 	/**
-	 * Fetch the Record  SecurityGroup details by key field
+	 * Fetch the Record SecurityGroup details by key field
 	 * 
-	 * @param  String(grpCode),
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param String(grpCode),
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SecurityGroup
 	 */
 	@Override
-	public SecurityGroup getSecurityGroupByCode(final String  grpCode, String type) {
+	public SecurityGroup getSecurityGroupByCode(final String grpCode, String type) {
 
 		logger.debug("Entering ");
 
 		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setGrpCode(grpCode);
 
-		StringBuilder selectSql = 	new StringBuilder("Select GrpID, GrpCode, GrpDesc, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
+		StringBuilder selectSql = new StringBuilder("Select GrpID, GrpCode, GrpDesc, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" From SecGroups");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -134,13 +130,11 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
-		RowMapper<SecurityGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				SecurityGroup.class);
+		RowMapper<SecurityGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityGroup.class);
 
-		try{
-			securityGroup = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			securityGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			securityGroup = null;
 		}
@@ -148,30 +142,29 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 		return securityGroup;
 	}
 
-
 	/**
-	 * This method Deletes the Record from the SecGroups or SecGroups_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete SecurityGroup by key GrpID
+	 * This method Deletes the Record from the SecGroups or SecGroups_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete SecurityGroup by key GrpID
 	 * 
-	 * @param SecurityGroup (securityGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityGroup
+	 *            (securityGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void delete(SecurityGroup securityGroup,String type) {
+	public void delete(SecurityGroup securityGroup, String type) {
 
 		logger.debug("Entering ");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From SecGroups");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where GrpID =:GrpID");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
@@ -188,38 +181,38 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	}
 
 	/**
-	 * This method insert new Records into SecGroups or SecGroups_Temp.
-	 * it fetches the available Sequence form SeqSecGroups by using 
-	 * getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into SecGroups or SecGroups_Temp. it fetches the available Sequence form
+	 * SeqSecGroups by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save SecurityGroup 
+	 * save SecurityGroup
 	 * 
-	 * @param SecurityGroup (securityGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityGroup
+	 *            (securityGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(SecurityGroup securityGroup,String type) {
+	public long save(SecurityGroup securityGroup, String type) {
 		logger.debug("Entering ");
-		
-		if (securityGroup.getId()==Long.MIN_VALUE){
+
+		if (securityGroup.getId() == Long.MIN_VALUE) {
 			securityGroup.setId(getNextId("SeqSecGroups"));
-			logger.debug("get NextID:"+securityGroup.getId());
+			logger.debug("get NextID:" + securityGroup.getId());
 		}
 
-		StringBuilder insertSql =new StringBuilder("Insert Into SecGroups");
+		StringBuilder insertSql = new StringBuilder("Insert Into SecGroups");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (GrpID, GrpCode, GrpDesc, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
 		insertSql.append(" Values(:GrpID, :GrpCode, :GrpDesc, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -228,36 +221,36 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	}
 
 	/**
-	 * This method updates the Record SecGroups or SecGroups_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update SecurityGroup by key GrpID and Version
+	 * This method updates the Record SecGroups or SecGroups_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update SecurityGroup by key GrpID and Version
 	 * 
-	 * @param SecurityGroup (securityGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param SecurityGroup
+	 *            (securityGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(SecurityGroup securityGroup,String type) {
+	public void update(SecurityGroup securityGroup, String type) {
 		int recordCount = 0;
 		logger.debug("Entering ");
-		StringBuilder updateSql =new StringBuilder("Update SecGroups");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update SecGroups");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set GrpCode = :GrpCode, GrpDesc = :GrpDesc, ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where GrpID =:GrpID");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
