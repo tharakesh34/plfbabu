@@ -67,8 +67,7 @@ import com.pennanttech.pff.core.TableType;
  */
 
 public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> implements FeeWaiverDetailDAO {
-
-	private static Logger				logger	= Logger.getLogger(FeeWaiverDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(FeeWaiverDetailDAOImpl.class);
 
 	public FeeWaiverDetailDAOImpl() {
 		super();

@@ -2,8 +2,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -11,7 +9,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -20,28 +17,15 @@ import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
-
+public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements FinFlagDetailsDAO {
 	private static Logger logger = Logger.getLogger(FinFlagDetailsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinFlagDetailsDAOImpl() {
 		super();
 	}
 	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinanceFlag
 	 * 
@@ -104,7 +88,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -131,7 +115,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				FinFlagsDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	/**
 	 * Fetch the Record  Finance Flags details by key field
@@ -162,7 +146,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 				FinFlagsDetail.class);
 		
 		try{
-			finFlagsDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			finFlagsDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -196,7 +180,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -225,7 +209,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -240,7 +224,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
 	
 	@Override
@@ -260,7 +244,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(finFlagsDetail.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -280,7 +264,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finFlagsDetail.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	    
@@ -306,7 +290,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		
@@ -333,7 +317,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 
 		int rcdCount = 0;
 		try {
-			rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(dae);
 			rcdCount = 0;

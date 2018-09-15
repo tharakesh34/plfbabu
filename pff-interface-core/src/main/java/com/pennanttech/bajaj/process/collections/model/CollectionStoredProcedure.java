@@ -15,12 +15,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.StoredProcedure;
 
 public class CollectionStoredProcedure extends StoredProcedure {
+	private Logger logger = Logger.getLogger(CollectionStoredProcedure.class); 
 
-	private Logger logger = Logger.getLogger(CollectionStoredProcedure.class);
+	protected NamedParameterJdbcTemplate jdbcTemplate;
 
-	protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	Map<String, Long> inputParameters = new HashMap<String, Long>();
+	Map<String, Long> inputParameters = new HashMap<>();
 
 	/**
 	 * Constructor for CollectionStoredProcedure
@@ -76,6 +75,6 @@ public class CollectionStoredProcedure extends StoredProcedure {
 	 *            the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

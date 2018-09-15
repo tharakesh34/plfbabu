@@ -31,21 +31,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentSummary;
@@ -54,18 +50,15 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Commitment model</b> class.<br>
  * 
  */
 
-public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements CommitmentDAO {
-
+public class CommitmentDAOImpl extends BasicDao<Commitment> implements CommitmentDAO {
 	private static Logger logger = Logger.getLogger(CommitmentDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public CommitmentDAOImpl() {
 		super();
@@ -144,7 +137,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, typeRowMapper);
+			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(),beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commitment = null;
@@ -179,7 +172,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commitment = null;
@@ -216,7 +209,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commitment = null;
@@ -259,17 +252,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		RowMapper<AvailCommitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailCommitment.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -297,7 +280,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 					beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -327,7 +310,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -364,7 +347,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return commitment.getId();
@@ -406,7 +389,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -432,7 +415,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			status = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			status = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					namedParamters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -465,7 +448,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 
 		logger.debug("Leaving");
 
-		return  this.namedParameterJdbcTemplate.queryForMap(selectSql.toString(), namedParamters);
+		return  this.jdbcTemplate.queryForMap(selectSql.toString(), namedParamters);
 	}
 	/**
 	 * This method get Commitment Amount Summary
@@ -492,7 +475,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		RowMapper<CommitmentSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentSummary.class);
 
 		logger.debug("Leaving");
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return  this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
 	}
 
 	public boolean updateCommitmentAmounts(String cmtReference, BigDecimal postingAmount, Date cmtExpDate){
@@ -521,7 +504,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 
 		logger.debug("updateSql:"+updateSql.toString());
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), namedParameters);
+			recordCount = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 		}catch(Exception e){
 			logger.error("Exception: ", e);
 		}
@@ -550,7 +533,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 
 		try{
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		}catch(Exception e){
 			logger.error("Exception: ", e);
 		}
@@ -579,7 +562,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;

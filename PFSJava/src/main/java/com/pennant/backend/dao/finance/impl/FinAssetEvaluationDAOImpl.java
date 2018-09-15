@@ -44,38 +44,31 @@
 package com.pennant.backend.dao.finance.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinAssetEvaluationDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinAssetEvaluation model</b> class.<br>
  */
-public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> implements FinAssetEvaluationDAO {
-
+public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> implements FinAssetEvaluationDAO {
 	private static Logger logger = Logger.getLogger(FinAssetEvaluationDAOImpl.class);
 	
 	public FinAssetEvaluationDAOImpl() {
 		super();
 	}
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	
 	/**
 	 * Fetch the Record Equipment Loan Details details by key field
@@ -112,7 +105,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 				.newInstance(FinAssetEvaluation.class);
 		
 		try{
-			finAssetEvaluation = this.namedParameterJdbcTemplate.queryForObject(
+			finAssetEvaluation = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -121,15 +114,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		logger.debug("Leaving");
 		return finAssetEvaluation;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the FinAssetEvaluation or
 	 * FinAssetEvaluation_Temp. if Record not deleted then throws
@@ -156,7 +141,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 
@@ -200,7 +185,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return finAssetEvaluation.getId();
@@ -245,7 +230,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

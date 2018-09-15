@@ -46,37 +46,30 @@ package com.pennant.backend.dao.finance.commodity.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.commodity.CommodityDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CommodityDetail model</b> class.<br>
  * 
  */
 
-public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implements CommodityDetailDAO {
-
+public class CommodityDetailDAOImpl extends BasicDao<CommodityDetail> implements CommodityDetailDAO {
 	private static Logger logger = Logger.getLogger(CommodityDetailDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CommodityDetailDAOImpl() {
 		super();
 	}
@@ -113,22 +106,13 @@ public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implem
 		RowMapper<CommodityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityDetail.class);
 		
 		try{
-			commodityDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			commodityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commodityDetail = null;
 		}
 		logger.debug("Leaving");
 		return commodityDetail;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -155,7 +139,7 @@ public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityDetail);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -194,7 +178,7 @@ public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implem
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return commodityDetail.getId();
 	}
@@ -231,7 +215,7 @@ public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implem
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -262,7 +246,7 @@ public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implem
 		RowMapper<BrokerCommodityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BrokerCommodityDetail.class);
 		
 		logger.debug("Leaving");
-		List<BrokerCommodityDetail> commList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<BrokerCommodityDetail> commList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		if(commList.size() > 0){
 			return true;
 		}else{

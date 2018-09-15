@@ -44,7 +44,6 @@
 package com.pennant.backend.dao.solutionfactory.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,28 +51,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.solutionfactory.DeviationParamDAO;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>DeviationParam model</b> class.<br>
  * 
  */
 
-public class DeviationParamDAOImpl extends BasisCodeDAO<DeviationParam> implements DeviationParamDAO {
-
+public class DeviationParamDAOImpl extends BasicDao<DeviationParam> implements DeviationParamDAO {
 	private static Logger logger = Logger.getLogger(DeviationParamDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public DeviationParamDAOImpl() {
 		super();
 	}
@@ -108,22 +102,13 @@ public class DeviationParamDAOImpl extends BasisCodeDAO<DeviationParam> implemen
 		RowMapper<DeviationParam> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DeviationParam.class);
 		
 		try{
-			deviationParam = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			deviationParam = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			deviationParam = null;
 		}
 		logger.debug("Leaving");
 		return deviationParam;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -150,7 +135,7 @@ public class DeviationParamDAOImpl extends BasisCodeDAO<DeviationParam> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationParam);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -187,7 +172,7 @@ public class DeviationParamDAOImpl extends BasisCodeDAO<DeviationParam> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationParam);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return deviationParam.getId();
 	}
@@ -222,7 +207,7 @@ public class DeviationParamDAOImpl extends BasisCodeDAO<DeviationParam> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationParam);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

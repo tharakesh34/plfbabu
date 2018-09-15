@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.TransactionCodeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,12 +67,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>TransactionCode model</b> class.<br>
  * 
  */
-public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implements TransactionCodeDAO {
-
+public class TransactionCodeDAOImpl extends BasicDao<TransactionCode> implements TransactionCodeDAO {
 	private static Logger logger = Logger.getLogger(TransactionCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public TransactionCodeDAOImpl() {
 		super();
@@ -109,7 +103,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implem
 				.newInstance(TransactionCode.class);
 
 		try {
-			transactionCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), paramSource,
+			transactionCode = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -145,7 +139,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implem
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("TranCode", tranCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -174,7 +168,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implem
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(transactionCode);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -200,7 +194,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implem
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionCode);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -226,7 +220,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implem
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -237,15 +231,6 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> implem
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 }

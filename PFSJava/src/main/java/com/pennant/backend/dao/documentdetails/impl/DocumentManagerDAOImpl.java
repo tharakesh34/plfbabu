@@ -14,6 +14,9 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> implements DocumentManagerDAO {
 	private static Logger logger = Logger.getLogger(DocumentManagerDAOImpl.class);
 
+	public DocumentManagerDAOImpl() {
+		super();
+	}
 	
 	@Override
 	public long save(DocumentManager documentManager) {

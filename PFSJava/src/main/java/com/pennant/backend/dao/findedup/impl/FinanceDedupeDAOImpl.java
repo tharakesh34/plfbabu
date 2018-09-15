@@ -45,41 +45,31 @@ package com.pennant.backend.dao.findedup.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.model.finance.FinanceDedup;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinanceDedup model</b> class.<br>
  * 
  */
-public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
-
+public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements FinanceDedupeDAO {
 	private static Logger logger = Logger.getLogger(FinanceDedupeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FinanceDedupeDAOImpl() {
 		super();
 	}
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
     public void saveList(List<FinanceDedup> dedups,String type) {
 		logger.debug("Entering");
@@ -94,7 +84,7 @@ public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
 		insertSql.append(" :ProfitAmount , :Stage , :DedupeRule, :OverrideUser,:FinLimitRef)");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dedups.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
     }
@@ -115,7 +105,7 @@ public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
 		logger.debug("insertSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(dedups.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	    
     }
@@ -140,7 +130,7 @@ public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
 		RowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDedup.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 
 	@Override
@@ -154,7 +144,7 @@ public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 
@@ -174,7 +164,7 @@ public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
 	        selectSql.append(" WHERE FinReference = :FinReference ");
 	        
 	        RowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDedup.class);
-	        List<FinanceDedup> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
+	        List<FinanceDedup> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
 	        
 	        if (list!=null && !list.isEmpty()) {
 	        	saveList(list,suffix);

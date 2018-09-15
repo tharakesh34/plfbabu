@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,15 +50,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,10 +65,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>Entity</code> with set of CRUD operations.
  */
-public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
-	private static Logger				logger	= Logger.getLogger(EntityDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
+	private static Logger logger = Logger.getLogger(EntityDAOImpl.class);
 
 	public EntityDAOImpl() {
 		super();
@@ -103,7 +98,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		RowMapper<Entity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
 
 		try {
-			entity = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			entity = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			entity = null;
@@ -133,7 +128,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -163,7 +158,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -189,7 +184,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -200,16 +195,6 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	@Override
 	public boolean  count(String entityCode, String pANNumber, TableType tableType){
@@ -241,7 +226,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -277,7 +262,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		paramSource.addValue("pANNumber", pANNumber);
 		paramSource.addValue("entityCode", entityCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -311,7 +296,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		RowMapper<Entity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
 		Entity entity = null;
 		try {
-			entity = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			entity = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			entity = null;

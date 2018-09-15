@@ -3,31 +3,24 @@ package com.pennant.backend.dao.dashboard.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dashboard.DetailStatisticsHeaderDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.dashboard.DetailStatisticsHeader;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatisticsHeader> implements DetailStatisticsHeaderDAO{
+public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHeader> implements DetailStatisticsHeaderDAO{
 	private static Logger logger = Logger.getLogger(DetailStatisticsHeaderDAOImpl .class);
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public DetailStatisticsHeaderDAOImpl() {
 		super();
-	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	@Override
@@ -42,7 +35,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatisticsHeader);
 		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DetailStatisticsHeader.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 
 	@Override
@@ -57,7 +50,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatisticsHeader);
 		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DetailStatisticsHeader.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
 	@Override
@@ -68,7 +61,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 		insert.append(" :ModuleName,:RoleCode,:RecordCount)" );
 		logger.debug("updateSql: "+ insert.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatisticsHeader);
-		this.namedParameterJdbcTemplate.update(insert.toString(), beanParameters);
+		this.jdbcTemplate.update(insert.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -80,7 +73,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 		selectSql.append(" Where ModuleName=:ModuleName AND RoleCode=:RoleCode" );
 		logger.debug("updateSql: "+ selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatisticsHeader);
-		int count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		int count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		if(count!=0){
 			return true;
 		}
@@ -105,7 +98,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statisticsHeader);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -118,7 +111,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
 		try {
-			list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			list = null;
@@ -140,7 +133,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasisCodeDAO<DetailStatistics
 		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
 		try {
-			list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			list = null;

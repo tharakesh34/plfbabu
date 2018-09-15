@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.bmtmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,27 +49,22 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.bmtmasters.Product;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Product model</b> class.<br>
  * 
  */
-public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO {
-
+public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	private static Logger logger	= Logger.getLogger(ProductDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	public ProductDAOImpl() {
 		super();
 	}
@@ -105,7 +99,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		RowMapper<Product> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Product.class);
 
 		try {
-			product = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			product = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			product = null;
@@ -137,7 +131,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
 		RowMapper<Product> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Product.class);
 		try {
-			product = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			product = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			product = null;
@@ -160,23 +154,13 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		
 		String productCtg = null;
 		try {
-			productCtg = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			productCtg = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			productCtg = null;
 		}
 		logger.debug("Leaving");
 		return productCtg;
-	}
-
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -204,7 +188,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -240,7 +224,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		insertSql.append(" Values(:ProductCode, :ProductDesc, :ProductCategory, :Version , :LastMntBy, :LastMntOn,");
 		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AllowDeviation)");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return product.getId();
@@ -277,7 +261,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		}
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

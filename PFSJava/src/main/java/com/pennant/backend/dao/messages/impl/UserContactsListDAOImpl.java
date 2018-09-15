@@ -42,29 +42,25 @@
  **/
 package com.pennant.backend.dao.messages.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.messages.UserContactsListDAO;
 import com.pennant.backend.model.messages.UserContactsList;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * @author s057
  *
  */
-public class UserContactsListDAOImpl implements UserContactsListDAO {
+public class UserContactsListDAOImpl extends BasicDao<UserContactsList> implements UserContactsListDAO {
 	Logger logger=Logger.getLogger(UserContactsListDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	public UserContactsListDAOImpl() {
 		super();
 	}
@@ -88,7 +84,7 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 				.newInstance(UserContactsList.class);
 		logger.debug("Leaving ");
 		try{
-			userContactsList = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
+			userContactsList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -106,7 +102,7 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 		insertSql.append(" Values(:UsrID, :Type, :ContactsList, :GroupName)" );		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource  beanParameters =  new BeanPropertySqlParameterSource(userContactsList);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -122,7 +118,7 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 		logger.debug("updateSql:"+updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -140,15 +136,8 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

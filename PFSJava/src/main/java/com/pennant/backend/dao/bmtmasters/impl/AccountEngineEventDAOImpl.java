@@ -42,36 +42,29 @@
  */
 package com.pennant.backend.dao.bmtmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.AccountEngineEventDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>AccountEngineEvent model</b> class.<br>
  * 
  */
-public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	implements AccountEngineEventDAO {
-
+public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	implements AccountEngineEventDAO {
 	private static Logger logger = Logger.getLogger(AccountEngineEventDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public AccountEngineEventDAOImpl() {
 		super();
@@ -137,21 +130,13 @@ public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	
 		RowMapper<AccountEngineEvent> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountEngineEvent.class);
 
 		try {
-			accountEngineEvent = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
+			accountEngineEvent = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accountEngineEvent = null;
 		}
 		logger.debug("Leaving");
 		return accountEngineEvent;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -181,7 +166,7 @@ public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -221,7 +206,7 @@ public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return accountEngineEvent.getId();
@@ -259,7 +244,7 @@ public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

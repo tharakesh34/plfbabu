@@ -46,44 +46,28 @@ package com.pennant.backend.dao.rulefactory.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinFeeScheduleDetailDAOImpl extends BasisCodeDAO<FeeRule> implements FinFeeScheduleDetailDAO {
-
-private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements FinFeeScheduleDetailDAO {
+	private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.class);
+		
 	public FinFeeScheduleDetailDAOImpl() {
 		super();
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
-
+		
 	/**
 	 * Method for saving Fee schedule Details list
 	 */
@@ -103,7 +87,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(feeScheduleList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -128,7 +112,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -158,7 +142,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 			parameter = new MapSqlParameterSource();
 			parameter.addValue("FinReference", finReference);
 
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), parameter);
+			this.jdbcTemplate.update(selectSql.toString(), parameter);
 		} catch (Exception e) {
 			// logger.error("Exception: ", e);
 		} finally {
@@ -191,7 +175,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 	
 	/**
@@ -217,7 +201,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeSchdList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<FinFeeScheduleDetail> feeSchdList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return feeSchdList;
 	}
@@ -232,7 +216,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateFeeList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -251,7 +235,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return feeList;
 	}
@@ -271,7 +255,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return feeList;
 	}
@@ -293,7 +277,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		
 		logger.debug("Leaving");
 		return feeList;
@@ -309,7 +293,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateFeeList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	

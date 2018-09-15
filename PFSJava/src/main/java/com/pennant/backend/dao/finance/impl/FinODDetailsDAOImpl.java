@@ -49,49 +49,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinODDetails model</b> class.<br>
  * 
  */
-public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements FinODDetailsDAO {
-
-	private static Logger	logger	= Logger.getLogger(FinODDetailsDAOImpl.class);
+public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinODDetailsDAO {
+	private static Logger logger = Logger.getLogger(FinODDetailsDAOImpl.class);
 
 	public FinODDetailsDAOImpl() {
 		super();
 	}
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 
 	/**
 	 * Method for get the FinODDetails Object by Key finReference
@@ -115,7 +100,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finODDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -139,7 +124,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -162,7 +147,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -183,7 +168,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -199,7 +184,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -215,7 +200,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -231,7 +216,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -260,7 +245,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -282,7 +267,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -299,7 +284,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 			logger.debug("selectSql: " + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 			logger.debug("Leaving");
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -335,7 +320,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finODDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
@@ -369,7 +354,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 		try {
-			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finODDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
@@ -395,7 +380,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			finODDetails = null;
@@ -422,7 +407,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -449,7 +434,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 
 		try {
-			overdueCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			overdueCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -471,7 +456,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(returnAcList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -511,7 +496,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		List<FinODDetails> finODDetailsList = null;
 
 		try {
-			finODDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+			finODDetailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 		}
@@ -537,7 +522,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		selectSql.append("' AND FinOdSchdDate IN (:PastSchDates) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		this.namedParameterJdbcTemplate.update(selectSql.toString(), map);
+		this.jdbcTemplate.update(selectSql.toString(), map);
 		logger.debug("Leaving");
 	}
 
@@ -554,7 +539,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		deleteSql.append("' AND FinOdSchdDate IN (:PastSchDates) ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), map);
+		this.jdbcTemplate.update(deleteSql.toString(), map);
 		logger.debug("Leaving");
 	}
 
@@ -584,7 +569,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			maxODDays = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), map, Integer.class);
+			maxODDays = this.jdbcTemplate.queryForObject(selectSql.toString(), map, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			maxODDays = 0;
@@ -607,7 +592,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), map, Date.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), map, Date.class);
 	}
 
 	/**
@@ -632,7 +617,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finODDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -654,7 +639,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -675,7 +660,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -697,7 +682,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -719,7 +704,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finODDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -747,7 +732,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		BigDecimal totalPenaltyBal = null;
 
 		try {
-			totalPenaltyBal = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,
+			totalPenaltyBal = this.jdbcTemplate.queryForObject(selectSql.toString(), source,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -775,7 +760,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		BigDecimal totalPenaltyBal = null;
 
 		try {
-			totalPenaltyBal = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,
+			totalPenaltyBal = this.jdbcTemplate.queryForObject(selectSql.toString(), source,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -810,7 +795,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finODDetails = null;
@@ -836,7 +821,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finODDetails = null;
@@ -870,7 +855,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finOdDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -887,7 +872,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		deleteSql.append(" AND FinOdSchdDate >= :FinOdSchdDate ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 	
@@ -924,7 +909,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finODDetails = null;
@@ -932,5 +917,4 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Leaving");
 		return null;
 	}
-
 }

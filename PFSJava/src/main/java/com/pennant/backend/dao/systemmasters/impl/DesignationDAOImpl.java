@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,11 +66,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * DAO methods implementation for the <b>Designation model</b> class.<br>
  */
-public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements DesignationDAO {
-	private static Logger				logger	= Logger.getLogger(DesignationDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class DesignationDAOImpl extends BasicDao<Designation> implements DesignationDAO {
+	private static Logger logger = Logger.getLogger(DesignationDAOImpl.class);
 
 	public DesignationDAOImpl() {
 		super();
@@ -106,7 +101,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		RowMapper<Designation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Designation.class);
 
 		try {
-			designation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			designation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -141,7 +136,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("designationCode", designationCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -170,7 +165,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		logger.trace(Literal.SQL + insertSql.toString());
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -198,7 +193,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		logger.debug(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
 
-		int recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -223,7 +218,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -234,13 +229,5 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

@@ -44,7 +44,6 @@
 package com.pennant.backend.dao.configuration.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,28 +52,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
  
 /**
  * DAO methods implementation for the <b>VASConfiguration model</b> class.<br>
  * 
  */
 
-public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> implements VASConfigurationDAO {
-
+public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implements VASConfigurationDAO {
 	private static Logger logger = Logger.getLogger(VASConfigurationDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	
 	public VASConfigurationDAOImpl() {
 		super();
@@ -141,7 +134,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		source.addValue("ProductCode", productCode);
 		RowMapper<VASConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASConfiguration.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		} finally {
@@ -150,15 +143,6 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		}
 		logger.debug("Leaving");
 		return null;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -186,7 +170,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -225,7 +209,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vASConfiguration.getId();
 	}
@@ -263,7 +247,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -288,7 +272,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		source = new MapSqlParameterSource();
 		source.addValue("ProductType", productType);
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -317,7 +301,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		source.addValue("FeeAccounting", feeAccountId);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

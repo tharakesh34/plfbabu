@@ -1,27 +1,22 @@
 package com.pennanttech.pff.logging.dao.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.logging.model.InterfaceLogDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
-public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
+public class InterfaceLoggingDAOImpl extends BasicDao<InterfaceLogDetail> implements InterfaceLoggingDAO {
+	private static final Logger logger = Logger.getLogger(InterfaceLoggingDAOImpl.class);
 	
-	private static final Logger			logger		= Logger.getLogger(InterfaceLoggingDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 	protected DefaultTransactionDefinition	transDef;
 	private PlatformTransactionManager	transactionManager;
 		
@@ -46,7 +41,7 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			//commit
 			transactionManager.commit(txStatus);
 		} catch (Exception dee) {
@@ -71,7 +66,7 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 		paramMap.addValue("REFERENCE", reference);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectsql.toString(), paramMap, String.class);
+			return this.jdbcTemplate.queryForObject(selectsql.toString(), paramMap, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception {}", e);
 			return null;
@@ -84,15 +79,6 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 			logger.debug(Literal.LEAVING);
 		}
 
-	}
-	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

@@ -45,7 +45,6 @@ package com.pennant.backend.dao.configuration.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,30 +53,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>VASRecording model</b> class.<br>
  * 
  */
 
-public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements VASRecordingDAO {
-
+public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRecordingDAO {
 	private static Logger logger = Logger.getLogger(VASRecordingDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public VASRecordingDAOImpl() {
 		super();
 	}
@@ -141,7 +135,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		source = new MapSqlParameterSource();
 		source.addValue("VasReference", vasReference);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		} finally {
@@ -185,17 +179,9 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 
 		source = new MapSqlParameterSource();
 		source.addValue("PrimaryLinkRef", primaryLinkRef);
-		vasRecordingList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		vasRecordingList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return vasRecordingList;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -223,7 +209,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -257,7 +243,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		deleteSql.append(" Where PrimaryLinkRef =:PrimaryLinkRef");
 	
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 	
@@ -290,7 +276,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vASRecording.getVasReference();
 	}
@@ -325,7 +311,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -351,7 +337,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		source = new MapSqlParameterSource();
 		source.addValue("VasReference", reference);
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -382,7 +368,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		source.addValue("oldReference", oldReference);
 
 		try {
-			if (this.namedParameterJdbcTemplate.update(sql.toString(), source) == 1) {
+			if (this.jdbcTemplate.update(sql.toString(), source) == 1) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -425,7 +411,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 				
 				RowMapper<VasCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VasCustomer.class);
 				
-				vasCustomer = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+				vasCustomer = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 			}
 		} catch (Exception e) {
 			logger.error(e);

@@ -50,7 +50,7 @@ public class GlobalVariable implements java.io.Serializable {
 	private String code;
 	private String name;
 	private String value;
-	private String Type;
+	private String type;
 
 	public long getId() {
 		return id;
@@ -85,10 +85,10 @@ public class GlobalVariable implements java.io.Serializable {
 	}
 
 	public String getType() {
-		return Type;
+		return type;
 	}
 
 	public void setType(String type) {
-		Type = type;
+		this.type = type;
 	}
 }

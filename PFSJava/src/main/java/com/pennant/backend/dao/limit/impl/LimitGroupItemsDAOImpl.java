@@ -2,7 +2,6 @@ package com.pennant.backend.dao.limit.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -11,25 +10,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.limit.LimitGroupItemsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitGroupItems;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implements LimitGroupItemsDAO {
-
+public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements LimitGroupItemsDAO {
 	private static Logger logger = Logger.getLogger(LimitGroupItemsDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitGroupItems 
 	 * @return LimitGroupItems
@@ -92,7 +87,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		
 		RowMapper<LimitGroupItems> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupItems.class);
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -101,15 +96,6 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 			logger.debug("Leaving");
 		}
 		return null;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -139,7 +125,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		source.addValue("LimitGroupCode", limitGroupCode);
 
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+			this.jdbcTemplate.update(deleteSql.toString(), source);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -172,7 +158,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitGroupItems.getId();
 	}
@@ -210,7 +196,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -236,7 +222,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -271,7 +257,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		source.addValue("LimitGroupCode", limitGroupCode);
 		
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -303,7 +289,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		RowMapper<LimitGroupItems> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupItems.class);
 		
 		logger.debug("Leaving");
-			return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			return  this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		
 	}
 	
@@ -322,7 +308,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		
 		try {
 			
-			recordCount = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -350,7 +336,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {

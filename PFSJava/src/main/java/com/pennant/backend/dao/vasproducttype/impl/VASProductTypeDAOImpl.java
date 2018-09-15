@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.vasproducttype.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,29 +50,24 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.vasproducttype.VASProductTypeDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>VASProductType model</b> class.<br>
  * 
  */
 
-public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implements VASProductTypeDAO {
-
-	private static Logger				logger	= Logger.getLogger(VASProductTypeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements VASProductTypeDAO {
+	private static Logger logger = Logger.getLogger(VASProductTypeDAOImpl.class);
+	
 	/**
 	 * This method set the Work Flow id based on the module name and return the new VASProductType
 	 * 
@@ -131,7 +125,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		RowMapper<VASProductType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASProductType.class);
 
 		try {
-			vASProductType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			vASProductType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -139,15 +133,6 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		}
 		logger.debug("Leaving");
 		return vASProductType;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -175,7 +160,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductType);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -214,7 +199,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductType);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vASProductType.getId();
 	}
@@ -250,7 +235,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -274,7 +259,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;

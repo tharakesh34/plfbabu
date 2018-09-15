@@ -3,7 +3,6 @@ package com.pennant.backend.dao.limit.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,25 +11,20 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitGroupLines;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implements LimitGroupLinesDAO {
-
+public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements LimitGroupLinesDAO {
 	private static Logger logger = Logger.getLogger(LimitGroupLinesDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public LimitGroupLinesDAOImpl() {
 		super();
 	}
@@ -97,7 +91,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		
 		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -106,15 +100,6 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 			logger.debug("Leaving");
 		}
 		return null;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -144,7 +129,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		source.addValue("LimitGroupCode", limitGroupCode);
 
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+			this.jdbcTemplate.update(deleteSql.toString(), source);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -177,7 +162,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitGroupItems.getId();
 	}
@@ -215,7 +200,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -241,7 +226,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -276,7 +261,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		source.addValue("LimitGroupCode", limitGroupCode);
 		
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -308,7 +293,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		
 		logger.debug("Leaving");
-			return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			return  this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		
 	}
 	
@@ -327,7 +312,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		
 		try {
 			
-			recordCount = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -355,7 +340,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -392,7 +377,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		logger.debug("Leaving");
 		try {
-			record = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			record = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 			for (LimitGroupLines gCode : record) {
 				if(groupCode==null){
 					groupCode ="'" + gCode.getLimitGroupCode() + "'";
@@ -437,7 +422,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		logger.debug("Leaving");
 		try {
-			return	 this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);	
+			return	 this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);	
 			
 
 		} catch (EmptyResultDataAccessException e) {
@@ -472,7 +457,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
@@ -505,7 +490,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
@@ -552,7 +537,7 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItemsItems);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	

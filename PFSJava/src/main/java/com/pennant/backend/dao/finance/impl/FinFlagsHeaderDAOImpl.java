@@ -1,15 +1,12 @@
 package com.pennant.backend.dao.finance.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -18,28 +15,15 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
-
+public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinFlagsHeaderDAO {
 	private static Logger logger = Logger.getLogger(FinFlagsHeaderDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinFlagsHeaderDAOImpl() {
 		super();
 	}
 	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinanceFlags
 	 * 
@@ -104,7 +88,7 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -140,7 +124,7 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -174,7 +158,7 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 		        .newInstance(FinanceFlag.class);
 
 		try {
-			financeFlags = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			financeFlags = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -205,7 +189,7 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

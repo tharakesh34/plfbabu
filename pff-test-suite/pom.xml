@@ -8,7 +8,7 @@
 		<version>4.10</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
-	
+
 	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-test-suite</artifactId>
 	<version>${pff.version}</version>
@@ -34,13 +34,24 @@
 			<artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-test</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc8</artifactId>
 			<version>12.2.0.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>2.2.4</version>
 		</dependency>
 	</dependencies>
 
@@ -57,7 +68,7 @@
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
-		
+
 		<pluginManagement>
 			<plugins>
 				<plugin>

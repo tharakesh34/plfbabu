@@ -43,11 +43,9 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class InterfaceDAOImpl implements InterfaceDAO {
-
 	private static Logger logger = Logger.getLogger(InterfaceDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate; 
 
 	public InterfaceDAOImpl() {
 		super();

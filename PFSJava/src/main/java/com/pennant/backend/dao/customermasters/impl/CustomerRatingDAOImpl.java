@@ -44,35 +44,28 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerRating model</b> class.<br>
  * 
  */
-public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implements CustomerRatingDAO {
-
+public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements CustomerRatingDAO {
 	private static Logger logger = Logger.getLogger(CustomerRatingDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public CustomerRatingDAOImpl() {
 		super();
 	}
@@ -109,7 +102,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 				CustomerRating.class);
 
 		try{
-			customerRating = this.namedParameterJdbcTemplate.queryForObject(
+			customerRating = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -142,7 +135,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
-		List<CustomerRating> customerRatings = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
+		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
 		logger.debug("Leaving");
 		return customerRatings;
 	}
@@ -166,17 +159,10 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
-		List<CustomerRating> customerRatings = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
+		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
 
 		logger.debug("Leaving");
 		return customerRatings;
-	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -204,7 +190,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -229,7 +215,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -261,7 +247,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerRating.getId();
@@ -301,7 +287,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

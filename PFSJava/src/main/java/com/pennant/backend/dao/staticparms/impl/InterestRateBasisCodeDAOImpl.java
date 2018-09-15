@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,27 +50,22 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.InterestRateBasisCodeDAO;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>InterestRateBasisCode model</b> class.<br>
  * 
  */
-public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasisCode> implements InterestRateBasisCodeDAO {
-
+public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode> implements InterestRateBasisCodeDAO {
 	private static Logger logger = Logger.getLogger(InterestRateBasisCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public InterestRateBasisCodeDAOImpl() {
 		super();
 	}
@@ -106,21 +100,13 @@ public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasis
 		RowMapper<InterestRateBasisCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterestRateBasisCode.class);
 
 		try {
-			interestRateBasisCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
+			interestRateBasisCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			interestRateBasisCode = null;
 		}
 		logger.debug("Leaving");
 		return interestRateBasisCode;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -151,7 +137,7 @@ public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasis
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -192,7 +178,7 @@ public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasis
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return interestRateBasisCode.getId();
@@ -232,7 +218,7 @@ public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasis
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

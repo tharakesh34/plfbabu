@@ -3,30 +3,22 @@ package com.pennant.eod.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
-
-	private static Logger				logger	= Logger.getLogger(PaymentRecoveryDetailDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail> implements PaymentRecoveryDetailDAO {
+	private static Logger logger = Logger.getLogger(PaymentRecoveryDetailDAOImpl.class);
 
 	@Override
 	public void save(List<PaymentRecoveryDetail> detail) {
@@ -40,7 +32,7 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 		insertSql.append(":FinanceReference, :CustomerReference, :DebitCurrency, :CreditCurrency, :PaymentAmount, :TransactionPurpose, :FinanceBranch, ");
 		insertSql.append(":FinanceType, :FinancePurpose, :SysTranRef, :PrimaryAcDebitAmt, :SecondaryAcDebitAmt, :PaymentStatus,:Priority,:FinRpyFor,:FinEvent)");
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detail.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 	}
 
@@ -51,7 +43,7 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 		insertSql.append(" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt, SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
 		insertSql.append(" PaymentStatus=:PaymentStatus where TransactionReference=:TransactionReference");
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detail.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 	}
 	@Override
@@ -61,7 +53,7 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 		insertSql.append(" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt,SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
 		insertSql.append("PaymentStatus=:PaymentStatus where TransactionReference=:TransactionReference");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 	}
 
@@ -78,7 +70,7 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -103,7 +95,7 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 		
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -124,7 +116,7 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 		
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

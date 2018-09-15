@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,28 +53,24 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>HolidayMaster model</b> class.<br>
  * 
  */
-public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements HolidayMasterDAO {
+public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements HolidayMasterDAO {
 	private static Logger logger = Logger.getLogger(HolidayMasterDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public HolidayMasterDAOImpl() {
 		super();
 	}
@@ -112,7 +107,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		try {
-			holidayMaster = this.namedParameterJdbcTemplate.queryForObject(selectListSql.toString(), beanParameters,
+			holidayMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			holidayMaster = null;
@@ -156,7 +151,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -193,7 +188,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -229,18 +224,10 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
 		
-		List<HolidayMaster> holidayMasters = this.namedParameterJdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper); 
+		List<HolidayMaster> holidayMasters = this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper); 
 		
 		logger.debug("Leaving");
 		return holidayMasters;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -270,7 +257,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -315,7 +302,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 				.append(" :Version , :LastMntBy, :LastMntOn,:RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,:RecordType, :WorkflowId )");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return holidayMaster.getId();
@@ -352,7 +339,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		updateSql.append(" Where HolidayCode =:HolidayCode AND HolidayYear = :HolidayYear ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

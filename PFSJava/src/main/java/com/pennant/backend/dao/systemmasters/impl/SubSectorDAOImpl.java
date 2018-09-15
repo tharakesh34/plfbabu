@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,13 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>SubSector model</b> class.<br>
  * 
  */
-public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSectorDAO {
-
+public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDAO {
 	private static Logger logger = Logger.getLogger(SubSectorDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public SubSectorDAOImpl() {
 		super();
 	}
@@ -113,7 +107,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		RowMapper<SubSector> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSector.class);
 
 		try {
-			subSector = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			subSector = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			subSector = null;
@@ -146,7 +140,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		RowMapper<SubSector> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSector.class);
 
 		try {
-			subSector = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			subSector = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			subSector = null;
@@ -181,7 +175,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("sectorCode", sectorCode);
 		paramSource.addValue("subSectorCode", subSectorCode);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -211,7 +205,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subSector);
 		
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -238,7 +232,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subSector);
-		int recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -264,7 +258,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -275,14 +269,6 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 

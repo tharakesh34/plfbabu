@@ -3,33 +3,24 @@ package com.pennant.backend.dao.FinRepayQueue.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements FinRepayQueueDAO {
+public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements FinRepayQueueDAO {
 	private static Logger logger = Logger.getLogger(FinRepayQueueDAOImpl.class);
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FinRepayQueueDAOImpl() {
 		super();
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -57,7 +48,7 @@ public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finRepayQueueList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	/**
@@ -91,7 +82,7 @@ public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayQueue);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -111,7 +102,7 @@ public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements
 		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinRpyQueue");
 		logger.debug("updateSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new FinRepayQueue());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 	
@@ -125,7 +116,7 @@ public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements
 		deleteSql.append(" where CustomerID=:CustomerID");
 		logger.debug("updateSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayQueue);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -160,7 +151,7 @@ public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements
 		RowMapper<FinRepayQueue> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayQueue.class);
 
 		try {
-			finRepayQueue = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			finRepayQueue = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);

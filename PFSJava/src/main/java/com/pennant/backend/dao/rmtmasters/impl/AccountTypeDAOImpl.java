@@ -46,36 +46,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>AccountType model</b> class.<br>
  * 
  */
-public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
-					AccountTypeDAO {
-	
+public class AccountTypeDAOImpl extends BasicDao<AccountType> implements AccountTypeDAO {
 	private static Logger logger = Logger.getLogger(AccountTypeDAOImpl.class);
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public AccountTypeDAOImpl() {
 		super();
 	}
@@ -114,7 +107,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 				.newInstance(AccountType.class);
 
 		try {
-			accountType = this.namedParameterJdbcTemplate.queryForObject(
+			accountType = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -122,15 +115,6 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		}
 		logger.debug("Leaving");
 		return accountType;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
 	}
 
 	/**
@@ -160,7 +144,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 				accountType);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 					beanParameters);
 
 			if (recordCount <= 0) {
@@ -204,7 +188,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				accountType);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return accountType.getId();
@@ -246,7 +230,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				accountType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),
 				beanParameters);
 
 		if (recordCount <= 0) {
@@ -279,7 +263,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), params, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), params, typeRowMapper);
 	}
 
 	@Override
@@ -296,7 +280,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
 	@Override
@@ -313,7 +297,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }
 	

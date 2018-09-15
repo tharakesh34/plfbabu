@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,13 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>City model</b> class.<br>
  * 
  */
-public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
-
+public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	private static Logger logger = Logger.getLogger(CityDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CityDAOImpl() {
 		super();
 	}
@@ -113,7 +106,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 				.newInstance(City.class);
 		
 		try{
-			city = this.namedParameterJdbcTemplate.queryForObject(
+			city = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -122,14 +115,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		logger.debug(Literal.LEAVING);
 		return city;
 	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the RMTProvinceVsCity or
 	 * RMTProvinceVsCity_Temp. if Record not deleted then throws
@@ -156,7 +142,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -199,7 +185,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -237,7 +223,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -273,7 +259,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		paramSource.addValue("state", state);
 		paramSource.addValue("city", city);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -300,7 +286,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		source.addValue("PCProvince", pcProvince);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

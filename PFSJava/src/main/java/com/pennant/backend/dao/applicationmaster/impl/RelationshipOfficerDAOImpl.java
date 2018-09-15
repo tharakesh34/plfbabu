@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,13 +66,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>RelationshipOfficer</code> with set of CRUD operations.
  */
-public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer> implements RelationshipOfficerDAO {
-
+public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> implements RelationshipOfficerDAO {
 	private static Logger logger = Logger.getLogger(RelationshipOfficerDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public RelationshipOfficerDAOImpl() {
 		super();
 	}
@@ -109,7 +103,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		RowMapper<RelationshipOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RelationshipOfficer.class);
 		
 		try{
-			relationshipOfficer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			relationshipOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			relationshipOfficer = null;
@@ -143,7 +137,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("ROfficerCode", rOfficerCode);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -173,7 +167,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -199,7 +193,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -225,7 +219,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -235,15 +229,6 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		}
 		
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 }

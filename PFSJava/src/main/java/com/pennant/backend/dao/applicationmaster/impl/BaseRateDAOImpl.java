@@ -45,8 +45,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,15 +53,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -72,12 +69,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>BaseRate model</b> class.<br>
  * 
  */
-public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateDAO {
-	private static Logger	 logger	= Logger.getLogger(BaseRateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
+	private static Logger logger = Logger.getLogger(BaseRateDAOImpl.class);
+	
 	public BaseRateDAOImpl() {
 		super();
 	}
@@ -114,7 +108,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		try {
-			baseRate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -152,7 +146,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		paramSource.addValue("bREffDate", bREffDate);
 		paramSource.addValue("currency", currency);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -182,7 +176,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -209,7 +203,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -235,7 +229,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -246,14 +240,6 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -281,7 +267,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		
-		List<BaseRate> baseRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		
 		logger.debug("Leaving");
 		return baseRates;
@@ -304,7 +290,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		
-		List<BaseRate> baseRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
 		
 		logger.debug("Leaving");
 		return baseRates;
@@ -336,7 +322,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		
 		try {
-			baseRate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -408,7 +394,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		
-		List<BaseRate> baseRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
 		logger.debug("Leaving");
 		return baseRates;
 	}
@@ -433,7 +419,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -463,7 +449,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn("Warning", dae);
 			recordCount = 0;

@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DepartmentDAO;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,12 +67,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Department model</b> class.<br>
  * 
  */
-public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements DepartmentDAO {
-
+public class DepartmentDAOImpl extends BasicDao<Department> implements DepartmentDAO {
 	private static Logger logger = Logger.getLogger(DepartmentDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public DepartmentDAOImpl() {
 		super();
@@ -108,21 +101,13 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 		RowMapper<Department> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Department.class);
 
 		try {
-			department = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			department = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			department = null;
 		}
 		logger.debug("Leaving getDepartmentByID()");
 		return department;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -152,7 +137,7 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -196,7 +181,7 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -235,7 +220,7 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -276,7 +261,7 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("departmentCode", departmentCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

@@ -2,8 +2,6 @@ package com.pennant.backend.dao.custdedup.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -11,21 +9,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CustomerDedupDAOImpl implements CustomerDedupDAO {
-
+public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements CustomerDedupDAO {
 	private static Logger logger = Logger.getLogger(CustomerDedupDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public CustomerDedupDAOImpl() {
 		super();
 	}
@@ -47,7 +41,7 @@ public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(insertList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	    
     }
@@ -66,7 +60,7 @@ public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 
@@ -94,7 +88,7 @@ public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 	
 	
@@ -121,21 +115,13 @@ public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 					.newInstance(CustomerDedup.class);
 
 		try{
-			rowTypes = this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters,typeRowMapper);
+			rowTypes = this.jdbcTemplate.query(selectSql.toString(),beanParameters,typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			dedup = null;
 		}
 		logger.debug("Leaving");
 		return rowTypes;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -155,7 +141,7 @@ public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 	        selectSql.append(" WHERE FinReference = :FinReference ");
 	        
 	        RowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDedup.class);
-	        List<CustomerDedup> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
+	        List<CustomerDedup> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
 	        
 	        if (list!=null && !list.isEmpty()) {
 	        	saveList(list,suffix);

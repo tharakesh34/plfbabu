@@ -47,8 +47,6 @@ package com.pennant.backend.dao.lmtmasters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,32 +54,27 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinanceWorkFlow model</b> class.<br>
  * 
  */
-public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implements FinanceWorkFlowDAO {
-
+public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements FinanceWorkFlowDAO {
 	private static Logger logger = Logger.getLogger(FinanceWorkFlowDAOImpl.class);
 	
 	public FinanceWorkFlowDAOImpl() {
 		super();
 	}
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	/**
 	 * Fetch the Record  Finance Work Flow Definition details by key field
@@ -116,7 +109,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 
 		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		} finally {
@@ -155,7 +148,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		String workflowType = null;
 		try {
-			workflowType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			workflowType = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workflowType = null;
@@ -199,7 +192,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		List<FinanceWorkFlow> returnList = null;
 		try{
-			returnList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			returnList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			returnList = new ArrayList<>();
@@ -207,16 +200,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		logger.debug("Leaving");
 		return returnList;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -241,7 +225,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -279,7 +263,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeWorkFlow.getId();
 	}
@@ -302,7 +286,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeWorkFlowList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -336,7 +320,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -359,7 +343,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		selectSql.append(" WorkFlowDetails WD ON FWD.WorkFlowType = WD.WorkFlowType ");
 		selectSql.append(" Where FWD.ModuleName=:ModuleName and FWD.FinEvent =:FinEvent ");
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(),source,String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(),source,String.class);
 	}
 	
 
@@ -375,7 +359,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		selectSql.append(" Where FinType=:FinType AND ModuleName=:ModuleName");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		int rcdCount =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
@@ -396,7 +380,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductCode);
 
 		try {
-			 count= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+			 count= this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -425,7 +409,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 
 		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(FinanceWorkFlow.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		} finally {

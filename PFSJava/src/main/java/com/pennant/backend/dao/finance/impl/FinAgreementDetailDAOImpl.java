@@ -45,29 +45,22 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinAgreementDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinAgreementDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail> implements FinAgreementDetailDAO{
-
+public class FinAgreementDetailDAOImpl  extends BasicDao<FinAgreementDetail> implements FinAgreementDetailDAO{
 	private static Logger logger = Logger.getLogger(FinAgreementDetailDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
 	public FinAgreementDetailDAOImpl(){
 		super();
 	}
@@ -96,14 +89,6 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		return agreementDetail;
 	}
 	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 	@Override
 	public FinAgreementDetail getFinAgreementDetailById(String finReference, long agrId, String type) {
 		logger.debug("Entering");
@@ -127,7 +112,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		RowMapper<FinAgreementDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAgreementDetail.class);
 
 		try {
-			finAgreementDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finAgreementDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finAgreementDetail = null;
@@ -164,7 +149,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAgreementDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finAgreementDetail.getAgrId();
 	}
@@ -195,7 +180,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAgreementDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -217,7 +202,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAgreementDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -240,7 +225,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAgreementDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -280,7 +265,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDetail);
 		RowMapper<FinAgreementDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAgreementDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 
 	@Override
@@ -303,7 +288,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDetail);
 		RowMapper<FinAgreementDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAgreementDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
     }
 
 }

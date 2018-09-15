@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -42,7 +40,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -50,7 +47,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
@@ -66,6 +62,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -75,11 +72,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
  */
-public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements FinanceMainDAO {
-	private static Logger				logger	= Logger.getLogger(FinanceMainDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements FinanceMainDAO {
+	private static Logger logger = Logger.getLogger(FinanceMainDAOImpl.class);
+	
 	public FinanceMainDAOImpl() {
 		super();
 	}
@@ -148,7 +143,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		List<String> firstTaskOwnerList = new ArrayList<String>();
 
 		try {
-			firstTaskOwnerList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source,
+			firstTaskOwnerList = this.jdbcTemplate.queryForList(selectSql.toString(), source,
 					String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.debug(e);
@@ -240,7 +235,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -337,7 +332,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -375,7 +370,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -414,7 +409,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		FinanceMain finMain = new FinanceMain();
 
 		try {
-			finMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			finMain = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finMain = null;
 		}
@@ -449,7 +444,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeMain = null;
@@ -494,7 +489,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -527,18 +522,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
 
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -597,7 +582,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeMain.getId();
 	}
@@ -711,7 +696,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -822,7 +807,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -855,7 +840,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -926,7 +911,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -960,7 +945,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		String finReference = null;
 		try {
-			finReference = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finReference = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1057,7 +1042,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeMain.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -1077,7 +1062,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1109,7 +1094,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (DataAccessException e) {
 			// TODO Auto-generated catch block
@@ -1163,7 +1148,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1198,7 +1183,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 	}
 
@@ -1217,7 +1202,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1240,7 +1225,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1257,7 +1242,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
 	}
 
 	@Override
@@ -1277,7 +1262,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		FinanceSummary summary = new FinanceSummary();
 		try {
-			summary = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			summary = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -1311,7 +1296,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				.newInstance(BulkProcessDetails.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -1337,7 +1322,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				.newInstance(BulkDefermentChange.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -1388,14 +1373,14 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" WHERE FinReference = :FinReference ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	private void saveRejectedChildDetail(String insertSql, FinanceMain financeMain) {
 		logger.debug("Entering");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(insertSql, beanParameters);
+		this.jdbcTemplate.update(insertSql, beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -1517,7 +1502,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeMain.getId();
 	}
@@ -1551,7 +1536,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<AvailFinance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailFinance.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -1574,7 +1559,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -1603,7 +1588,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1631,7 +1616,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TIMEINTERVAL", timeInterval);
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -1652,7 +1637,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(" where FinReference = :FinReference");
 		logger.debug("updateSql: " + sql.toString());
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -1671,7 +1656,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + sql.toString());
 
 		try {
-			nextRoleCode = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			nextRoleCode = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			nextRoleCode = null;
@@ -1714,7 +1699,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			updateSql.append(" Where FinReference =:FinReference");
 			logger.debug("updateSql: " + updateSql.toString());
 
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), finRefMap);
+			this.jdbcTemplate.update(updateSql.toString(), finRefMap);
 		}
 
 		logger.debug("Leaving");
@@ -1734,7 +1719,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -1757,7 +1742,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
 	}
 
 	/**
@@ -1788,7 +1773,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -1819,7 +1804,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -1838,7 +1823,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
 
 	/**
@@ -1859,7 +1844,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
 
 	/**
@@ -1881,7 +1866,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, Date.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Date.class);
 	}
 
 	/**
@@ -1914,7 +1899,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				.newInstance(RolledoverFinanceDetail.class);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -1950,7 +1935,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1986,7 +1971,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<DDAPayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAPayments.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -2045,7 +2030,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -2070,7 +2055,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -2093,7 +2078,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -2113,7 +2098,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -2136,7 +2121,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" WHERE FinReference=:FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		String repayMethod = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		String repayMethod = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		if (StringUtils.isBlank(repayMethod)) {
 			repayMethod = null;
 		}
@@ -2164,7 +2149,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		String finCcy = null;
 		try {
-			finCcy = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			finCcy = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finCcy = null;
@@ -2188,7 +2173,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -2203,7 +2188,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
 
 	/**
@@ -2219,7 +2204,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			maSqlParameterSource.addValue("newNumber", newNumber);
 
 			String updateSql = "UPDATE  SeqFinReference  SET Seqno = :newNumber Where Seqno = :oldNumber";
-			int result = this.namedParameterJdbcTemplate.update(updateSql, maSqlParameterSource);
+			int result = this.jdbcTemplate.update(updateSql, maSqlParameterSource);
 			if (result == 1) {
 				valUpdated = true;
 			}
@@ -2255,7 +2240,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -2292,7 +2277,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -2316,7 +2301,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -2338,7 +2323,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -2369,7 +2354,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			return 0;
@@ -2398,7 +2383,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 		return recordCount;
@@ -2436,7 +2421,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -2469,7 +2454,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			recordCount = 0;
@@ -2500,7 +2485,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
 	}
 
 	/**
@@ -2535,7 +2520,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -2566,7 +2551,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		List<FinanceMain> financeMainList = new ArrayList<FinanceMain>();
 		try {
-			financeMainList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+			financeMainList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
@@ -2599,7 +2584,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		List<FinanceMain> financeMainList = new ArrayList<FinanceMain>();
 		try {
-			financeMainList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			financeMainList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			return Collections.emptyList();
@@ -2629,7 +2614,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		List<String> finReferencesList = new ArrayList<String>();
 		try {
-			finReferencesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,
+			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,
 					String.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
@@ -2666,7 +2651,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		List<String> finReferencesList = new ArrayList<String>();
 		try {
-			finReferencesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,
+			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,
 					String.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
@@ -2689,7 +2674,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where FinReference =:FinReference");
 		logger.debug("selectSql: " + selectSql.toString());
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
 	}
 
 	@Override
@@ -2709,7 +2694,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 //		paramSource.addValue("FinReference", finReference);
 //
 //		logger.debug(Literal.LEAVING);
-//		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+//		return jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
 		return BigDecimal.ZERO;
 	}
 	
@@ -2729,7 +2714,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -2773,7 +2758,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		
-		List<FinanceMain> finMains = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper); 
+		List<FinanceMain> finMains = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper); 
 		
 		logger.debug("Leaving");
 		return finMains;
@@ -2818,7 +2803,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	@Override
@@ -2837,7 +2822,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
 	@Override
@@ -2873,7 +2858,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -2934,7 +2919,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -2964,7 +2949,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		FinanceMain financeMain = null;
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeMain = null;
@@ -2991,7 +2976,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(" where FinReference =:FinReference");
 		logger.debug("updateSql: " + sql.toString());
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -3018,7 +3003,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		long mandateId = Long.MIN_VALUE;
 		try {
-			mandateId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			mandateId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mandateId = Long.MIN_VALUE;
@@ -3047,7 +3032,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -3084,7 +3069,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		paramSource.addValue("ApplicationNo", applicationNo);
 		paramSource.addValue("FinIsActive", 1);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(selectSql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(selectSql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -3106,7 +3091,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + sql.toString());
 
 		try {
-			applicationNo = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			applicationNo = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			applicationNo = null;
@@ -3139,7 +3124,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		List<String> finReferencesList = new ArrayList<String>();
 		try {
-			finReferencesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,
+			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,
 					String.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
@@ -3171,7 +3156,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
@@ -3201,7 +3186,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		
 		try {
 			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-			finMains = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			finMains = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finMains = new ArrayList<FinanceMain>();
 		}
@@ -3233,7 +3218,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
@@ -3255,7 +3240,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + sql.toString());
 
 		try {
-			alwEarlyPayMethods = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			alwEarlyPayMethods = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			alwEarlyPayMethods = null;

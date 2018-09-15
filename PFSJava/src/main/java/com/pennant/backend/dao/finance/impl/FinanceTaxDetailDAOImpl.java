@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.finance.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,15 +50,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,11 +65,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>FinanceTaxDetail</code> with set of CRUD operations.
  */
-public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> implements FinanceTaxDetailDAO {
-	private static Logger				logger	= Logger.getLogger(FinanceTaxDetailDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implements FinanceTaxDetailDAO {
+	private static Logger logger = Logger.getLogger(FinanceTaxDetailDAOImpl.class);
+	
 	public FinanceTaxDetailDAOImpl() {
 		super();
 	}
@@ -104,7 +99,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		RowMapper<FinanceTaxDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceTaxDetail.class);
 
 		try {
-			financeTaxDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			financeTaxDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeTaxDetail = null;
@@ -134,7 +129,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -164,7 +159,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -190,7 +185,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -220,7 +215,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		source.addValue("TaxNumber", taxNumber);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -244,7 +239,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		source.addValue("FinReference", finReference);
 		source.addValue("CustCif", custCif);
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -256,15 +251,4 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		}
 		return false;
 	}
-	
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 }	

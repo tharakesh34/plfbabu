@@ -45,7 +45,6 @@ package com.pennant.backend.dao.smtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,29 +52,24 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>WeekendMaster model</b> class.<br>
  * 
  */
-public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements WeekendMasterDAO {
-
+public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements WeekendMasterDAO {
 	private static Logger logger = Logger.getLogger(WeekendMasterDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public WeekendMasterDAOImpl() {
 		super();
@@ -108,7 +102,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 		RowMapper<WeekendMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
 		try {
-			weekendMaster = this.namedParameterJdbcTemplate.queryForObject(selectListSql.toString(), beanParameters,
+			weekendMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -135,7 +129,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
 		RowMapper<WeekendMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
-		List<WeekendMaster> list = this.namedParameterJdbcTemplate.query(selectListSql.toString(), beanParameters,
+		List<WeekendMaster> list = this.jdbcTemplate.query(selectListSql.toString(), beanParameters,
 				typeRowMapper);
 		if (list == null || list.isEmpty()) {
 			weekendMaster = null;
@@ -166,14 +160,6 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 	}
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
 	 * This method Deletes the Record from the SMTWeekendMaster or
 	 * SMTWeekendMaster_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Weekend Details by key
@@ -200,7 +186,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -243,7 +229,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return weekendMaster.getId();
@@ -278,7 +264,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

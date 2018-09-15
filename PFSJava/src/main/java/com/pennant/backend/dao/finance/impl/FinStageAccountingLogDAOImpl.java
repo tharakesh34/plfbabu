@@ -45,39 +45,24 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>ReturnDataSet model</b> class.<br>
  */
-public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountingLog> implements FinStageAccountingLogDAO {
-
+public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog> implements FinStageAccountingLogDAO {
 	private static Logger logger = Logger.getLogger(FinStageAccountingLogDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public FinStageAccountingLogDAOImpl() {
 		super();
 	}
 	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
     public long getLinkedTranId(String finReference, String finEvent, String roleCode) {
 		logger.debug("Entering");
@@ -96,7 +81,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		long linkedTranId = 0;
 		try {
-			linkedTranId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			linkedTranId = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 		} catch (Exception e) {
 			logger.info(e);
 			linkedTranId = 0;
@@ -125,7 +110,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
 		
-		List<Long> linkedTranIdList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
+		List<Long> linkedTranIdList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 		logger.debug("Leaving");
 		return linkedTranIdList;
 	}
@@ -141,7 +126,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 
@@ -160,7 +145,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 /*
@@ -183,7 +168,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStageAccountLog);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -205,7 +190,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
 		
-		int tranCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		int tranCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		logger.debug("Leaving");
 		return tranCount;
 	}
@@ -221,7 +206,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStageAccountLog);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -244,7 +229,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
 		
-		List<Long> linkedTranIdList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
+		List<Long> linkedTranIdList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 		logger.debug("Leaving");
 		return linkedTranIdList;
 	}
@@ -262,7 +247,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 

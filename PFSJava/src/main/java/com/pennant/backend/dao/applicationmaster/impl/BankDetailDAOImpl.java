@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,15 +50,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,12 +66,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>BankDetail model</b> class.<br>
  * 
  */
-public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankDetailDAO {
-
+public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetailDAO {
 	private static Logger logger = Logger.getLogger(BankDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public BankDetailDAOImpl() {
 		super();
@@ -107,7 +100,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		RowMapper<BankDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankDetail.class);
 
 		try {
-			bankDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			bankDetail = null;
@@ -142,7 +135,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("bankCode", bankCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -170,7 +163,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -196,7 +189,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -222,7 +215,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -233,14 +226,6 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	@Override
@@ -260,7 +245,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			return 0;
@@ -283,7 +268,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			return null;

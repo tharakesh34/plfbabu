@@ -46,38 +46,31 @@ package com.pennant.backend.dao.dedup.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>DedupFields model</b> class.<br>
  * 
  */
-public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements DedupFieldsDAO {
-
+public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFieldsDAO {
 	private static Logger logger = Logger.getLogger(DedupFieldsDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public DedupFieldsDAOImpl() {
 		super();
 	}
@@ -143,7 +136,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 				.newInstance(DedupFields.class);
 		
 		try{
-			dedupFields = this.namedParameterJdbcTemplate.queryForObject(
+			dedupFields = this.jdbcTemplate.queryForObject(
 					selectListSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -152,17 +145,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 		logger.debug("Leaving");
 		return dedupFields;
 	}
-	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
-	}
-	
+
 	/**
 	 * This method Deletes the Record from the DedupFields or DedupFields_Temp.
 	 * if Record not deleted then throws DataAccessException with error 41003.
@@ -187,7 +170,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -226,7 +209,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return dedupFields.getId();
 	}
@@ -263,7 +246,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -291,7 +274,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 
 
 		try {
-			fieldList = this.namedParameterJdbcTemplate.getJdbcOperations()
+			fieldList = this.jdbcTemplate.getJdbcOperations()
 					.query(selectListSql, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);

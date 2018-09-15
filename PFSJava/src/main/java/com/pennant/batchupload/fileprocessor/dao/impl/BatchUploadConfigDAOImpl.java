@@ -44,25 +44,21 @@ package com.pennant.batchupload.fileprocessor.dao.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.batchupload.fileprocessor.dao.BatchUploadConfigDAO;
 import com.pennant.batchupload.model.BatchUploadConfig;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * Data access layer implementation for <code>BatchUploadConfig</code> with set of CRUD operations.
  */
-public class BatchUploadConfigDAOImpl implements BatchUploadConfigDAO {
-	private static Logger				logger	= Logger.getLogger(BatchUploadConfigDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class BatchUploadConfigDAOImpl extends BasicDao<BatchUploadConfig> implements BatchUploadConfigDAO {
+	private static Logger logger = Logger.getLogger(BatchUploadConfigDAOImpl.class);
+	
 	public BatchUploadConfigDAOImpl() {
 		super();
 	}
@@ -81,17 +77,6 @@ public class BatchUploadConfigDAOImpl implements BatchUploadConfigDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(batchUploadConfig);
 
 		logger.debug("leaving");
-		return namedParameterJdbcTemplate.query(sql.toString(), beanParameters, ParameterizedBeanPropertyRowMapper.newInstance(BatchUploadConfig.class));
+		return jdbcTemplate.query(sql.toString(), beanParameters, ParameterizedBeanPropertyRowMapper.newInstance(BatchUploadConfig.class));
 	}
-	
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

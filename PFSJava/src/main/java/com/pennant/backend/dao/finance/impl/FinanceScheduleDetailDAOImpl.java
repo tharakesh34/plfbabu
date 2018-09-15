@@ -48,8 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,7 +55,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -65,7 +62,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
@@ -73,17 +69,14 @@ import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.ScheduleMapDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b> class.<br>
  */
-public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDetail> implements
-		FinanceScheduleDetailDAO {
-
-	private static Logger				logger	= Logger.getLogger(FinanceScheduleDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail>
+		implements FinanceScheduleDetailDAO {
+	private static Logger logger = Logger.getLogger(FinanceScheduleDetailDAOImpl.class);
 
 	public FinanceScheduleDetailDAOImpl() {
 		super();
@@ -138,7 +131,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			wIFFinanceScheduleDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			wIFFinanceScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -146,16 +139,6 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		}
 		logger.debug("Leaving");
 		return wIFFinanceScheduleDetail;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -192,7 +175,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -228,7 +211,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -309,7 +292,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return wIFFinanceScheduleDetail.getId();
 	}
@@ -377,7 +360,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeScheduleDetail.toArray());
 		try {
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			throw e;
@@ -452,7 +435,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -474,7 +457,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -494,7 +477,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -516,7 +499,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeScheduleDetail.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -567,7 +550,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceScheduleDetail.class);
 
-		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(selectSql.toString(),
 				beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return finSchdDetails;
@@ -615,7 +598,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceScheduleDetail.class);
 		
-		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(selectSql.toString(),
 				source, typeRowMapper);
 		logger.debug("Leaving");
 		return finSchdDetails;
@@ -662,7 +645,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -686,7 +669,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -708,7 +691,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			schdDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			schdDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -742,7 +725,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("selectSql: " + selectSql.toString());
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -770,7 +753,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("selectSql: " + selectSql.toString());
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
 	}
 
 	/**
@@ -790,7 +773,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectQry.append(" Where FinReference = :FinReference ");
 		logger.debug("selectSql: " + selectQry.toString());
 
-		int recordCount = this.namedParameterJdbcTemplate.queryForObject(selectQry.toString(), mapSqlParameterSource,
+		int recordCount = this.jdbcTemplate.queryForObject(selectQry.toString(), mapSqlParameterSource,
 				Integer.class);
 		logger.debug("Leaving");
 		return recordCount;
@@ -817,7 +800,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		BigDecimal suspAmount = BigDecimal.ZERO;
 		try {
-			suspAmount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			suspAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -831,7 +814,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("selectSql: " + selectSql.toString());
 		BigDecimal cpzTillNow = BigDecimal.ZERO;
 		try {
-			cpzTillNow = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			cpzTillNow = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -870,7 +853,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		RowMapper<FinanceSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
 
 		try {
-			summary = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			summary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -898,7 +881,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		BigDecimal repayAmount = BigDecimal.ZERO;
 		try {
-			repayAmount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			repayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -927,7 +910,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		BigDecimal priAmt = BigDecimal.ZERO;
 		try {
-			priAmt = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			priAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -955,7 +938,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		BigDecimal pftAmt = BigDecimal.ZERO;
 		try {
-			pftAmt = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			pftAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -992,7 +975,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceWriteoff.class);
 
 		try {
-			financeWriteoff = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeWriteoff = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1020,7 +1003,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		Date firstRepayDate = null;
 		try {
-			firstRepayDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			firstRepayDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					Date.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1034,7 +1017,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 			selectSql.append(" (RepayOnSchDate = 1 OR (PftOnSchDate = 1 AND RepayAmount > 0)) ");
 
 			try {
-				firstRepayDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+				firstRepayDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 						Date.class);
 			} catch (EmptyResultDataAccessException e) {
 				logger.warn("Exception: ", e);
@@ -1074,7 +1057,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(AccountHoldStatus.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -1110,7 +1093,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -1147,7 +1130,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -1182,7 +1165,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			wIFFinanceScheduleDetail = null;
@@ -1233,7 +1216,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			financeScheduleDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1262,7 +1245,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			financeScheduleDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1292,7 +1275,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			financeScheduleDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1332,7 +1315,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			recordCount = 0;
@@ -1364,7 +1347,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		BigDecimal schdPriPaid = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
+		BigDecimal schdPriPaid = this.jdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
 		if (schdPriPaid == null) {
 			schdPriPaid = BigDecimal.ZERO;
 		}
@@ -1391,7 +1374,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		
-		BigDecimal outStandingFeeBal = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
+		BigDecimal outStandingFeeBal = this.jdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
 		if (outStandingFeeBal == null) {
 			outStandingFeeBal = BigDecimal.ZERO;
 		}

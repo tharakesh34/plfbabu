@@ -42,38 +42,25 @@
 */
 package com.pennant.backend.dao.masters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.MasterDef;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>MasterDef model</b> class.<br>
  * 
  */
-public class MasterDefDAOImpl implements MasterDefDAO {
-
+public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDAO {
 	private static Logger logger = Logger.getLogger(MasterDefDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public MasterDefDAOImpl() {
 		super();
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -100,7 +87,7 @@ public class MasterDefDAOImpl implements MasterDefDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 	}
 	
 	/**
@@ -127,7 +114,7 @@ public class MasterDefDAOImpl implements MasterDefDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}

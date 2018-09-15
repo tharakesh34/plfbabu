@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,15 +52,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,13 +68,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Province model</b> class.<br>
  * 
  */
-public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceDAO {
-
+public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 	private static Logger logger = Logger.getLogger(ProvinceDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public ProvinceDAOImpl() {
 		super();
 	}
@@ -112,7 +106,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
 
 		try {
-			province = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
+			province = this.jdbcTemplate.queryForObject(selectSql.toString(), 
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -120,14 +114,6 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		}
 		logger.debug(Literal.LEAVING);
 		return province;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -156,7 +142,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -201,7 +187,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				province);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -243,7 +229,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				province);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -276,7 +262,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
 		String dftCPProvince = "";
 		try {
-			dftCPProvince = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			dftCPProvince = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
         } catch (Exception e) {
         	logger.warn("Exception: ", e);
         	dftCPProvince = "";
@@ -312,7 +298,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		paramSource.addValue("cPCountry", cPCountry);
 		paramSource.addValue("cPProvince", cPProvince);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -348,7 +334,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		paramSource.addValue("taxStateCode", taxStateCode);
 		paramSource.addValue("cPProvince", cPProvince);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -376,7 +362,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		source.addValue("BusinessArea", businessAreaValue);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -403,7 +389,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		source.addValue("CPPROVINCE", cpProvince);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -436,7 +422,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
 
 		try {
-			province = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
+			province = this.jdbcTemplate.queryForObject(selectSql.toString(), 
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);

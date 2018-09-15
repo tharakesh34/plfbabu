@@ -16,14 +16,13 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class ApprovalStatusEnquiryDAOImpl implements ApprovalStatusEnquiryDAO {
+public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail> implements ApprovalStatusEnquiryDAO {
 	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterAuditJdbcTemplate;
-	
+	private NamedParameterJdbcTemplate auditJdbcTemplate;
+
 	public ApprovalStatusEnquiryDAOImpl() {
 		super();
 	}
@@ -56,7 +55,7 @@ public class ApprovalStatusEnquiryDAOImpl implements ApprovalStatusEnquiryDAO {
 		RowMapper<CustomerFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerFinanceDetail.class);
 		
 		try {
-			customerFinanceDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerFinanceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -102,16 +101,11 @@ public class ApprovalStatusEnquiryDAOImpl implements ApprovalStatusEnquiryDAO {
 		RowMapper<AuditTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuditTransaction.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterAuditJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-   
+		return this.auditJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	public void setAuditDataSource(DataSource auditDataSource) {
-		this.namedParameterAuditJdbcTemplate = new NamedParameterJdbcTemplate(auditDataSource);
+		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(auditDataSource);
 	}
 	
 }

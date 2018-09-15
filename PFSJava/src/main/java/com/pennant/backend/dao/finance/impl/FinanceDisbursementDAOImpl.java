@@ -46,8 +46,6 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,30 +53,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinanceDisbursement model</b> class.<br>
  * 
  */
 
-public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement> implements FinanceDisbursementDAO {
-
-	private static Logger				logger	= Logger.getLogger(FinanceDisbursementDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> implements FinanceDisbursementDAO {
+	private static Logger logger = Logger.getLogger(FinanceDisbursementDAOImpl.class);
+	
 	public FinanceDisbursementDAOImpl() {
 		super();
 	}
@@ -128,7 +121,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 				.newInstance(FinanceDisbursement.class);
 
 		try {
-			financeDisbursement = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			financeDisbursement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -136,16 +129,6 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		}
 		logger.debug("Leaving");
 		return financeDisbursement;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -182,7 +165,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -217,7 +200,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -277,7 +260,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeDisbursement.getId();
 	}
@@ -338,7 +321,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeDisbursement.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -388,7 +371,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -408,7 +391,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -441,7 +424,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -493,7 +476,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -545,7 +528,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -568,7 +551,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);
 
-		List<FinanceDisbursement> todayDisbs = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,
+		List<FinanceDisbursement> todayDisbs = this.jdbcTemplate.query(selectSql.toString(), source,
 				typeRowMapper);
 		logger.debug("Leaving");
 		return todayDisbs;

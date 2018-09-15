@@ -42,35 +42,28 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CorpRelationCodeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CorpRelationCode model</b> class.<br>
  * 
  */
-public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	implements CorpRelationCodeDAO {
-
+public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implements CorpRelationCodeDAO {
 	private static Logger logger = Logger.getLogger(CorpRelationCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CorpRelationCodeDAOImpl() {
 		super();
 	}
@@ -103,7 +96,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 		RowMapper<CorpRelationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CorpRelationCode.class);
 
 		try {
-			corpRelationCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			corpRelationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			corpRelationCode = null;
@@ -111,15 +104,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 		logger.debug("Leaving");
 		return corpRelationCode;
 	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	/**
 	 * This method Deletes the Record from the BMTCorpRelationCodes or
 	 * BMTCorpRelationCodes_Temp. if Record not deleted then throws
@@ -147,7 +132,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -188,7 +173,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return corpRelationCode.getId();
@@ -228,7 +213,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

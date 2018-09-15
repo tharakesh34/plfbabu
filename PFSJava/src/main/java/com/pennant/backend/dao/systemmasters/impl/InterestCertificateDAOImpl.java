@@ -46,39 +46,28 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
-public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
+public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> implements InterestCertificateDAO {
 	private static Logger logger = Logger.getLogger(InterestCertificateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public InterestCertificateDAOImpl() {
 		super();
-	}
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	@Override
 	public InterestCertificate getInterestCertificateDetails(String finReference ) throws ParseException{
@@ -99,7 +88,7 @@ public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
 
 		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterestCertificate.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -135,7 +124,7 @@ public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
 
 		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterestCertificate.class);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -158,7 +147,7 @@ public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
 		source.addValue("Reference", finReference);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -179,7 +168,7 @@ public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
 		source.addValue("COLLATERALREF", collateralRef);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -202,7 +191,7 @@ public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
 		source.addValue("INTERFACEFIELD", field);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -233,7 +222,7 @@ public class InterestCertificateDAOImpl  implements InterestCertificateDAO {
 		source.addValue("REFERENCE", reference);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}

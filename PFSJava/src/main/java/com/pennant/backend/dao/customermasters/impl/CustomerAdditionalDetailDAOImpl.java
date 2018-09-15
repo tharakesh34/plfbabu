@@ -42,36 +42,29 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerAdditionalDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerAdditionalDetail model</b> class.<br>
  * 
  */
-public class CustomerAdditionalDetailDAOImpl extends
-		BasisCodeDAO<CustomerAdditionalDetail> implements CustomerAdditionalDetailDAO {
-
+public class CustomerAdditionalDetailDAOImpl extends BasicDao<CustomerAdditionalDetail>
+		implements CustomerAdditionalDetailDAO {
 	private static Logger logger = Logger.getLogger(CustomerAdditionalDetailDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
 	public CustomerAdditionalDetailDAOImpl() {
 		super();
 	}
@@ -107,7 +100,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 		RowMapper<CustomerAdditionalDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAdditionalDetail.class);
 		
 		try{
-			customerAdditionalDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);	
+			customerAdditionalDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerAdditionalDetail = null;
@@ -115,14 +108,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 		logger.debug("Leaving ");
 		return customerAdditionalDetail;
 	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the CustAdditionalDetails or CustAdditionalDetails_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -149,7 +135,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
 		
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -188,7 +174,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving ");
 		return customerAdditionalDetail.getId();
@@ -226,7 +212,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

@@ -44,8 +44,6 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,38 +51,27 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerChequeInfo;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerChequeInfo model</b> class.<br>
  * 
  */
-public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> implements CustomerChequeInfoDAO {
-
+public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> implements CustomerChequeInfoDAO {
 	private static Logger logger = Logger.getLogger(CustomerChequeInfoDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public CustomerChequeInfoDAOImpl() {
 		super();
 	}
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	/**
 	 * Fetch the Record  Customer EMails details by key field
 	 * 
@@ -116,7 +103,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 				CustomerChequeInfo.class);
 
 		try{
-			customerChequeInfo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerChequeInfo = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -151,7 +138,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerChequeInfo.class);
 		
-		List<CustomerChequeInfo> custCheques = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerChequeInfo> custCheques = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving");
 		return custCheques;
 	}	
@@ -181,7 +168,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -213,7 +200,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -245,7 +232,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerChequeInfo.getId();
@@ -283,7 +270,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -315,7 +302,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			recordCount = 0;

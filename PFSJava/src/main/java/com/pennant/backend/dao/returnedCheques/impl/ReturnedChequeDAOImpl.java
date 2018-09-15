@@ -2,7 +2,6 @@ package com.pennant.backend.dao.returnedCheques.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,16 +11,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.returnedCheques.ReturnedChequeDAO;
 import com.pennant.backend.model.returnedcheques.ReturnedChequeDetails;
 import com.pennant.backend.model.returnedcheques.ReturnedCheques;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -29,12 +27,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>ReturnedChequeDetails</code> with set of CRUD operations.
  */
-public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> implements ReturnedChequeDAO {
-
+public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> implements ReturnedChequeDAO {
 	private static Logger logger = Logger.getLogger(ReturnedChequeDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public ReturnedChequeDAOImpl() {
 		super();
 	}
@@ -72,7 +67,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 				.newInstance(ReturnedChequeDetails.class);
 
 		try {
-			returnCheque = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanparameters,
+			returnCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanparameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -109,7 +104,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 		paramSource.addValue("ChequeNo", chequeNo);
 		paramSource.addValue("CustCIF", custCIF);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -138,7 +133,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 				.newInstance(ReturnedCheques.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -160,7 +155,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(returnedChequeDetails);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -188,7 +183,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(returnedChequeDetails);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -215,7 +210,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -226,15 +221,5 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

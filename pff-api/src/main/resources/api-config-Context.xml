@@ -11,11 +11,7 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
 	<!-- Security -->
-
-	<bean id="serverAuthDAO" class="com.pennanttech.ws.auth.dao.impl.ServerAuthDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
+	<bean id="serverAuthDAO" class="com.pennanttech.ws.auth.dao.impl.ServerAuthDAOImpl" parent="secBasicDao"/>
 
 	<bean id="serverAuthService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -41,10 +37,8 @@
 		class="com.pennanttech.ws.auth.service.impl.ServerAuthServiceImpl">
 		<property name="serverAuthDAO" ref="serverAuthDAO" />
 	</bean>
-	<bean id="userAuthDAO" class="com.pennanttech.ws.auth.dao.impl.UserAuthDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
+	
+	<bean id="userAuthDAO" class="com.pennanttech.ws.auth.dao.impl.UserAuthDAOImpl"  parent="secBasicDao"/>
 
 	<bean id="userAuthService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -168,9 +162,6 @@
 	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController"
 		autowire="byName" scope="prototype">
 	</bean>
-	 <bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
 	
+	<bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl" parent="secBasicDao"/>
 </beans>

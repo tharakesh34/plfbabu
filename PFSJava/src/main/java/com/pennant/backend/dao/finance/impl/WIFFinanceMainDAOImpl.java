@@ -44,7 +44,6 @@
 package com.pennant.backend.dao.finance.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,28 +51,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.WIFFinanceMainDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
  * 
  */
 
-public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements WIFFinanceMainDAO {
-
+public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFFinanceMainDAO {
 	private static Logger logger = Logger.getLogger(WIFFinanceMainDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public WIFFinanceMainDAOImpl() {
 		super();
 	}
@@ -123,7 +117,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		
 		try{
-			wIFFinanceMain = this.namedParameterJdbcTemplate.queryForObject(
+			wIFFinanceMain = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -131,15 +125,6 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		}
 		logger.debug("Leaving");
 		return wIFFinanceMain;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -166,7 +151,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceMain);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -224,7 +209,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceMain);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return wIFFinanceMain.getId();
 	}
@@ -281,7 +266,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

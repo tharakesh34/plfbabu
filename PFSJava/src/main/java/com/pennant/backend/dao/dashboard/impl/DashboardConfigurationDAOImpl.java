@@ -45,8 +45,6 @@ package com.pennant.backend.dao.dashboard.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,30 +52,26 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dashboard.DashboardConfigurationDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.dashboarddetail.DashboardPosition;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>DashboardConfiguration model</b> class.<br>
  * 
  */
-public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfiguration> implements
-		DashboardConfigurationDAO {
+public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfiguration>
+		implements DashboardConfigurationDAO {
 	private static Logger logger = Logger.getLogger(DashboardConfigurationDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public DashboardConfigurationDAOImpl() {
 		super();
 	}
@@ -130,7 +124,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		.newInstance(DashboardConfiguration.class);
 
 		try {
-			dashboardConfiguration = this.namedParameterJdbcTemplate.queryForObject(
+			dashboardConfiguration = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -167,7 +161,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				dashboardConfiguration);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 					beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -212,7 +206,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				dashboardConfiguration);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return dashboardConfiguration.getId();
@@ -251,7 +245,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				dashboardConfiguration);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),
 				beanParameters);
 
 		if (recordCount <= 0) {
@@ -259,16 +253,6 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 			
 		}
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
 	}
 
 	/**
@@ -292,7 +276,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				dashboardPosition);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -323,7 +307,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		List<DashboardPosition> positions = new ArrayList<>();
 
 		try {
-			positions = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			positions = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -352,7 +336,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				dashboardPosition);
 		
-		 this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+		 this.jdbcTemplate.update(deleteSql.toString(),
 					beanParameters);
 
 		logger.debug("Leaving");
@@ -382,7 +366,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		List<DashboardConfiguration> dashboards = new ArrayList<>();
 
 		try {
-			dashboards = this.namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+			dashboards = this.jdbcTemplate.query(sql.toString(), rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -405,7 +389,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 		ParameterizedBeanPropertyRowMapper<ChartSetElement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 		.newInstance(ChartSetElement.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql,
+		return this.jdbcTemplate.query(selectSql,
 				beanParameters, typeRowMapper);
 	}
 }

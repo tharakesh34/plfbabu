@@ -45,7 +45,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,26 +53,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>SplRate model</b> class.<br>
  * 
  */
-public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO {
+public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	private static Logger logger = Logger.getLogger(SplRateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public SplRateDAOImpl() {
 		super();
 	}
@@ -110,7 +105,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
 
 		try {
-			splRate = this.namedParameterJdbcTemplate.queryForObject(
+			splRate = this.jdbcTemplate.queryForObject(
 					 selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -118,15 +113,6 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		}
 		logger.debug("Leaving");
 		return splRate;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
 	}
 
 	/**
@@ -155,7 +141,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 					beanParameters);
 
 			if (recordCount <= 0) {
@@ -196,7 +182,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -232,7 +218,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -289,7 +275,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	public List<SplRate> getSplRateHistByType(String sRType, Date sREffDate) {
@@ -309,7 +295,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
 		
-		List<SplRate> splRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		List<SplRate> splRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
 		
 		logger.debug("Leaving");
 		return splRates;
@@ -332,7 +318,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -374,7 +360,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -401,7 +387,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn("Warning", dae);
 			recordCount = 0;

@@ -3,14 +3,11 @@ package com.pennant.eod.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -19,17 +16,15 @@ import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
-
-	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
+public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerGroupQueuingDAO {
+	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
 	
 	private static final String			START_GRPID_RC	= "UPDATE CustomerGroupQueuing set Progress=:Progress ,StartTime = :StartTime "
 			+ "Where GroupId = :GroupId AND Progress= :ProgressWait";
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	public CustomerGroupQueuingDAOImpl() {
 		super();
 	}
@@ -43,7 +38,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new CustomerQueuing());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -59,17 +54,9 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 
 		logger.debug("updateSql: " + insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -89,7 +76,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		int count = this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		int count = this.jdbcTemplate.update(insertSql.toString(), source);
 
 		logger.debug("Leaving");
 
@@ -107,7 +94,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroupQueuing);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -126,7 +113,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		updateSql.append(" Where GroupId = :GroupId ");
 		logger.debug("updateSql: " + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
 	
@@ -140,7 +127,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroupQueuing);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -157,7 +144,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 
 		try {
 			logger.debug("selectSql: " + START_GRPID_RC);
-			return this.namedParameterJdbcTemplate.update(START_GRPID_RC, source);
+			return this.jdbcTemplate.update(START_GRPID_RC, source);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}
@@ -185,7 +172,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 
 		List<CustomerGroupQueuing> customerGroupQueueingList = null;
 		try {
-			customerGroupQueueingList =  this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			customerGroupQueueingList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception dae) {
 			logger.error("Exception: ", dae);
 		}
@@ -210,7 +197,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		
 		int count =  0;
 		try {
-			count =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (Exception dae) {
 			count =  0;
 		}
@@ -233,7 +220,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		logger.debug("updateSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custGrpQueuing);
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -252,7 +239,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custGrpQueuing);
-		int count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		int count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 
 		logger.debug("Leaving");
 		return count;
@@ -272,7 +259,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		insertSql.append(" SELECT * FROM CustomerGroupQueuing Where GroupId = :GroupId");
 		logger.debug("updateSql: " + insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -289,7 +276,7 @@ public class CustomerGroupQueuingDAOImpl implements CustomerGroupQueuingDAO {
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerGroupQueuing Where GroupId = :GroupId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 }

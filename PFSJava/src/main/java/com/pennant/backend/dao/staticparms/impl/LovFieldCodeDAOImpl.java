@@ -44,7 +44,6 @@
 package com.pennant.backend.dao.staticparms.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,27 +51,22 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.LovFieldCodeDAO;
 import com.pennant.backend.model.staticparms.LovFieldCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>LovFieldCode model</b> class.<br>
  * 
  */
-public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements LovFieldCodeDAO {
-
+public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFieldCodeDAO {
 	private static Logger logger = Logger.getLogger(LovFieldCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public LovFieldCodeDAOImpl() {
 		super();
 	}
@@ -106,21 +100,13 @@ public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements L
 		RowMapper<LovFieldCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LovFieldCode.class);
 
 		try{
-			lovFieldCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			lovFieldCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			lovFieldCode = null;
 		}
 		logger.debug("Leaving");
 		return lovFieldCode;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -148,7 +134,7 @@ public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements L
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -186,7 +172,7 @@ public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements L
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return lovFieldCode.getId();
@@ -225,7 +211,7 @@ public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements L
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

@@ -1,7 +1,6 @@
 package com.pennant.backend.dao.payorderissue.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -9,33 +8,19 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
-
+public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> implements PayOrderIssueHeaderDAO {
 	private static Logger logger = Logger.getLogger(PayOrderIssueHeaderDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public PayOrderIssueHeaderDAOImpl() {
 		super();
-	}
-	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -66,7 +51,7 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(payOrderIssueHeader);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -105,7 +90,7 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(paymentOrderIssue);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -138,7 +123,7 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		        .newInstance(PayOrderIssueHeader.class);
 
 		try {
-			paymentOrderIssue = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			paymentOrderIssue = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -169,7 +154,7 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(paymentOrderIssue);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

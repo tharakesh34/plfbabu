@@ -2,7 +2,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,23 +9,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class OverdraftScheduleDetailDAOImpl extends BasisCodeDAO<OverdraftScheduleDetail> implements OverdraftScheduleDetailDAO {
-
+public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDetail> implements OverdraftScheduleDetailDAO {
 	private static Logger logger = Logger.getLogger(OverdraftScheduleDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public OverdraftScheduleDetailDAOImpl() {
 		super();
 	}
@@ -50,7 +44,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasisCodeDAO<OverdraftSchedu
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(overdraftScheduleDetail.toArray());
 		try {
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		} catch(Exception e) {
 			logger.error("Exception", e);
 			throw e;
@@ -89,7 +83,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasisCodeDAO<OverdraftSchedu
 				.newInstance(OverdraftScheduleDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 	
@@ -118,18 +112,8 @@ public class OverdraftScheduleDetailDAOImpl extends BasisCodeDAO<OverdraftSchedu
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 		        scheduleDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	/**
 	 * Method to save the overdraft movements
@@ -151,7 +135,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasisCodeDAO<OverdraftSchedu
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdraftMovements);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		
 	}
@@ -165,7 +149,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasisCodeDAO<OverdraftSchedu
 		long odSeq= 0;
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			odSeq = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), new MapSqlParameterSource(), Long.class);
+			odSeq = this.jdbcTemplate.queryForObject(selectSql.toString(), new MapSqlParameterSource(), Long.class);
 			
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);

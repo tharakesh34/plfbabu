@@ -3,14 +3,11 @@ package com.pennant.eod.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -22,10 +19,10 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
-
-	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
+public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerQueuingDAO {
+	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
 
 	private static final String			UPDATE_SQL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
 			+ "Where ThreadId = :AcThreadId";
@@ -40,9 +37,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	private static final String			START_CID_RC	= "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
 			+ "Where CustID = :CustID AND Progress=:ProgressWait";
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	public CustomerQueuingDAOImpl() {
 		super();
 	}
@@ -79,7 +74,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		int financeRecords = this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		int financeRecords = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		customerQueuing.setLoanExist(false);
 		
@@ -100,7 +95,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		
 		beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 		
-		int nonFinacerecords = this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		int nonFinacerecords = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -117,7 +112,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 				"SELECT COUNT(CustID) from CustomerQueuing where Progress = :Progress");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		long progressCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+		long progressCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 				Long.class);
 
 		logger.debug("Leaving");
@@ -138,7 +133,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		int records = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+		int records = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 				Integer.class);
 		logger.debug("Leaving");
 
@@ -159,15 +154,15 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 			if (noOfRows == 0) {
 				logger.debug("selectSql: " + UPDATE_SQL);
-				return this.namedParameterJdbcTemplate.update(UPDATE_SQL, source);
+				return this.jdbcTemplate.update(UPDATE_SQL, source);
 
 			} else {
 				if (App.DATABASE == Database.SQL_SERVER) {
 					logger.debug("selectSql: " + UPDATE_SQL_RC);
-					return this.namedParameterJdbcTemplate.update(UPDATE_SQL_RC, source);
+					return this.jdbcTemplate.update(UPDATE_SQL_RC, source);
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.debug("selectSql: " + UPDATE_ORCL_RC);
-					return this.namedParameterJdbcTemplate.update(UPDATE_ORCL_RC, source);
+					return this.jdbcTemplate.update(UPDATE_ORCL_RC, source);
 				}
 
 			}
@@ -194,7 +189,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+			this.jdbcTemplate.update(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}
@@ -214,7 +209,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -234,7 +229,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -253,7 +248,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		updateSql.append(" Where CustID = :CustID ");
 		logger.debug("updateSql: " + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
 	
@@ -267,7 +262,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -281,7 +276,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new CustomerQueuing());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -297,17 +292,9 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -322,7 +309,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		try {
 			logger.debug("selectSql: " + START_CID_RC);
-			return this.namedParameterJdbcTemplate.update(START_CID_RC, source);
+			return this.jdbcTemplate.update(START_CID_RC, source);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}
@@ -354,7 +341,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custQueue);
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 
-		List<Customer> customers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<Customer> customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		return customers;
 	}
@@ -381,13 +368,13 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing Set Progress = :Progress ");
 		updateSql.append(" Where CustId IN (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
 		
 		logger.debug("updateSql: " + updateSql.toString());
-		int count = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		int count = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 		return count;
@@ -407,7 +394,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		updateSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -427,7 +414,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -444,7 +431,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("updateSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -463,7 +450,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		int records = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		int records = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 
 		logger.debug("Leaving");
 		return records;
@@ -483,7 +470,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		insertSql.append(" SELECT * FROM CustomerQueuing Where CustID = :CustID");
 		logger.debug("insertSql: " + insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -500,7 +487,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerQueuing Where CustID = :CustID");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -519,7 +506,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		insertSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
 		logger.debug("insertSql: " + insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -537,7 +524,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		deleteSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 }

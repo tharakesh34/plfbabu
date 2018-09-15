@@ -1,26 +1,20 @@
 package com.pennant.backend.dao.finance.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceMainExtDAO;
 import com.pennant.backend.model.finance.FinanceMainExt;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
-
+public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements FinanceMainExtDAO {
 	private static Logger logger = Logger.getLogger(FinanceMainExtDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FinanceMainExtDAOImpl() {
 		super();
 	}
@@ -40,7 +34,7 @@ public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExt);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -67,7 +61,7 @@ public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
 		RowMapper<FinanceMainExt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMainExt.class);
 
 		try {
-			financeMainExt = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeMainExt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			financeMainExt = null;
@@ -96,7 +90,7 @@ public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExt);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -121,7 +115,7 @@ public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			return null;
@@ -156,7 +150,7 @@ public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
 		RowMapper<FinanceMainExt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMainExt.class);
 
 		try {
-			financeMainExt = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeMainExt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			financeMainExt = null;
@@ -164,15 +158,4 @@ public class FinanceMainExtDAOImpl implements FinanceMainExtDAO {
 		logger.debug("Leaving");
 		return financeMainExt;
 	}
-	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

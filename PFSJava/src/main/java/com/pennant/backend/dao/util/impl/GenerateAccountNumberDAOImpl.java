@@ -43,30 +43,26 @@
 
 package com.pennant.backend.dao.util.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.model.SeqAccountNumber;
 import com.pennant.backend.dao.util.GenerateAccountNumberDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>SeqAccountNumber model</b> class.<br>
  * 
  */
-public class GenerateAccountNumberDAOImpl implements GenerateAccountNumberDAO {
-
+public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> implements GenerateAccountNumberDAO {
 	private static Logger logger = Logger.getLogger(GenerateAccountNumberDAOImpl.class);
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public GenerateAccountNumberDAOImpl() {
 		super();
 	}
@@ -92,7 +88,7 @@ public class GenerateAccountNumberDAOImpl implements GenerateAccountNumberDAO {
 		RowMapper<SeqAccountNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SeqAccountNumber.class);
 
 		try {
-			seqAccountNumber= this.namedParameterJdbcTemplate.queryForObject(selectQry.toString(), beanParameters, typeRowMapper);
+			seqAccountNumber= this.jdbcTemplate.queryForObject(selectQry.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			seqAccountNumber=null;
 			logger.error("Exception: ", e);
@@ -100,15 +96,6 @@ public class GenerateAccountNumberDAOImpl implements GenerateAccountNumberDAO {
 				
 		logger.debug("Leaving");
 		return seqAccountNumber;
-	}
-
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -147,7 +134,7 @@ public class GenerateAccountNumberDAOImpl implements GenerateAccountNumberDAO {
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(seqAccountNumber);
-		int count = this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		int count = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug(count+" for insert");
 		logger.debug("Leaving");
 		
@@ -177,7 +164,7 @@ public class GenerateAccountNumberDAOImpl implements GenerateAccountNumberDAO {
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(seqAccountNumber);
-		int count =  this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		int count =  this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug(count+" for update");
 		logger.debug("Leaving");
 	}

@@ -58,23 +58,18 @@ import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.equation.dao.CoreInterfaceDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
+public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements CoreInterfaceDAO {
 	private static Logger logger = Logger.getLogger(CoreInterfaceDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private NamedParameterJdbcTemplate auditNamedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
 	public CoreInterfaceDAOImpl() {
 		
 	}
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	public void setAuditDataSource(DataSource dataSource) {
-		this.auditNamedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	/**
 	 *  Method for fetching Currency Details
@@ -92,7 +87,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -115,7 +110,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -139,7 +134,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -163,7 +158,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -186,7 +181,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -209,7 +204,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -232,7 +227,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -255,7 +250,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -279,7 +274,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -302,7 +297,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -325,7 +320,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -349,7 +344,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -372,7 +367,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -395,7 +390,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -431,7 +426,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(currencyList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -459,7 +454,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -487,7 +482,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -515,7 +510,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -543,7 +538,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -573,7 +568,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -598,7 +593,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -626,7 +621,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -654,7 +649,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(countryList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -681,7 +676,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(custStsList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -708,7 +703,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(industryList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -740,7 +735,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(branchList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -767,7 +762,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(branchList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -792,7 +787,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -815,7 +810,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		 this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		 this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -839,7 +834,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -862,7 +857,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -887,7 +882,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -912,7 +907,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -938,7 +933,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -962,7 +957,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -985,7 +980,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1008,7 +1003,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1032,7 +1027,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1060,7 +1055,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1084,7 +1079,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1113,7 +1108,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1137,7 +1132,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterMissedDetails);
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1162,7 +1157,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1189,7 +1184,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1217,7 +1212,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1238,7 +1233,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new EquationAbuser());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1259,7 +1254,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1282,7 +1277,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		logger.debug("Leaving");
 		try {
-			return this.auditNamedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.auditJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1302,7 +1297,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1324,7 +1319,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,Long.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,Long.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1345,7 +1340,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1367,7 +1362,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1388,7 +1383,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1411,7 +1406,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		RowMapper<SubSector> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSector.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1434,7 +1429,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStsCode);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1456,7 +1451,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1477,7 +1472,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1498,7 +1493,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1519,7 +1514,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(addressType);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1540,7 +1535,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,Long.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,Long.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1561,7 +1556,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eMailType);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1582,7 +1577,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+			return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1627,7 +1622,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1652,7 +1647,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1677,7 +1672,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1700,7 +1695,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1723,7 +1718,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1744,7 +1739,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1765,7 +1760,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1791,7 +1786,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1813,7 +1808,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(incomeAccountTransaction);
 
 		try {
-			int result = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			int result = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 			logger.debug("Leaving");
 			return result > 0 ? true : false;
 		}catch (Exception e) {
@@ -1839,7 +1834,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(incomeAccountTransactions.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1862,7 +1857,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1885,7 +1880,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			return null;
@@ -1913,7 +1908,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1938,7 +1933,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try{	
-		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		   this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1961,7 +1956,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -1984,7 +1979,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -2007,7 +2002,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -2037,7 +2032,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerAddres.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -2062,7 +2057,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerPhoneNumbers.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -2086,7 +2081,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerEMails.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -2110,7 +2105,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerRatings.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -2122,7 +2117,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		logger.debug("Entering");
 		logger.debug("updateSql: "+ updateQuery);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(object);
-		recordCount = this.namedParameterJdbcTemplate.update(updateQuery, beanParameters);
+		recordCount = this.jdbcTemplate.update(updateQuery, beanParameters);
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
 		}

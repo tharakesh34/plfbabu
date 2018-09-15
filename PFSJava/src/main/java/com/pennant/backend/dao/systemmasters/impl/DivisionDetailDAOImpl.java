@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,13 +68,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 
-public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implements DivisionDetailDAO {
-
+public class DivisionDetailDAOImpl extends BasicDao<DivisionDetail> implements DivisionDetailDAO {
 	private static Logger logger = Logger.getLogger(DivisionDetailDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public DivisionDetailDAOImpl() {
 		super();
 	}
@@ -110,7 +104,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		RowMapper<DivisionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DivisionDetail.class);
 		
 		try{
-			divisionDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			divisionDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			divisionDetail = null;
@@ -144,7 +138,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("divisionCode", divisionCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -171,7 +165,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		logger.trace(Literal.SQL +sql.toString());		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
 		try{
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		jdbcTemplate.update(sql.toString(), paramSource);
 		}catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -196,7 +190,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -222,7 +216,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -257,7 +251,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
@@ -282,21 +276,13 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		logger.debug("insertSql: " + selectSql.toString());
 		String entityCode = null;
 		try {
-			entityCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			entityCode = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 		}
 		logger.debug("Leaving");
 
 		return entityCode;
-	}
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 }

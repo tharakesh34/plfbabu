@@ -2,15 +2,12 @@ package com.pennant.backend.dao.referencedata.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -30,13 +27,10 @@ import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.Segment;
 import com.pennant.webservice.model.ReferenceData;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class ReferenceDataDAOImpl implements ReferenceDataDAO {
-
+public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements ReferenceDataDAO {
 	private static final Logger logger = Logger.getLogger(ReferenceDataDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ReferenceDataDAOImpl() {
 		super();
@@ -66,7 +60,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			return  null;
@@ -98,7 +92,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			return  null;
@@ -121,7 +115,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(saveMasterList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -141,7 +135,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateMasterList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -170,7 +164,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		logger.debug("insertSql: "+ insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(saveCcyMasterList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 	}
@@ -186,7 +180,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		logger.debug("updateSql: "+ updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateCcyMasterList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 	}
@@ -207,7 +201,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -230,7 +224,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -253,7 +247,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -276,7 +270,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(saveMasterList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -295,7 +289,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -319,7 +313,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -339,7 +333,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -359,7 +353,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -384,7 +378,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -404,7 +398,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -424,7 +418,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -447,7 +441,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(countryList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -466,7 +460,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -486,7 +480,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -510,7 +504,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(maritalStsList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -530,7 +524,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -550,7 +544,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -577,7 +571,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(branchList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -596,7 +590,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -616,7 +610,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -640,7 +634,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(salutationList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -659,7 +653,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -679,7 +673,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -702,7 +696,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(languageList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -721,7 +715,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -741,7 +735,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -765,7 +759,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(segmentList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -784,7 +778,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -804,7 +798,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -827,7 +821,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(genDepartmentList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -846,7 +840,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -866,7 +860,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -890,7 +884,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(incomeTypeList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -909,7 +903,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -929,7 +923,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -953,7 +947,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(targetDetailList.toArray());
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -972,18 +966,11 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
-	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -1009,11 +996,10 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			return  null;
 		}
 	}
-
 }

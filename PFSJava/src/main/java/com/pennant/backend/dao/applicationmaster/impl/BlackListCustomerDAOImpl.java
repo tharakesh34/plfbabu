@@ -44,8 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,17 +52,16 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -73,12 +70,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
  * 
  */
-public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> implements BlackListCustomerDAO {
+public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> implements BlackListCustomerDAO {
 	private static Logger logger = Logger.getLogger(BlackListCustomerDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public BlackListCustomerDAOImpl() {
 		super();
 	}
@@ -115,7 +109,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BlackListCustomers.class);
 
 		try {
-			blacklistCustomer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			blacklistCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			blacklistCustomer = null;
@@ -154,7 +148,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(blackList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		
 		logger.debug(Literal.LEAVING);
     }
@@ -180,7 +174,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 	
 	@Override
@@ -201,7 +195,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 
 	@Override
@@ -218,7 +212,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BlackListCustomers.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 
 	@Override
@@ -235,7 +229,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(blackList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		
 		logger.debug(Literal.LEAVING);
 	    
@@ -253,7 +247,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		
 		logger.debug(Literal.LEAVING);
     }
@@ -277,7 +271,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -301,7 +295,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -330,7 +324,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -338,10 +332,6 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		return finBlacklistCustomer.getId();
 	}
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
     public void moveData(String finReference, String suffix) {
 		logger.debug(" Entering ");
@@ -358,7 +348,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 	        selectSql.append(" WHERE FinReference = :FinReference ");
 	        
 	        RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
-	        List<FinBlacklistCustomer> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
+	        List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
 	        
 	        if (list!=null && !list.isEmpty()) {
 	        	saveList(list,suffix);
@@ -395,7 +385,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CustCIF", custCIF);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

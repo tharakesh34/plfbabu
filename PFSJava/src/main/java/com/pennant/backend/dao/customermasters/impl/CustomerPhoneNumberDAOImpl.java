@@ -44,8 +44,6 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,27 +51,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerPhoneNumber model</b> class.<br>
  * 
  */
-public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber> implements CustomerPhoneNumberDAO {
-
+public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> implements CustomerPhoneNumberDAO {
 	private static Logger logger = Logger.getLogger(CustomerPhoneNumberDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CustomerPhoneNumberDAOImpl() {
 		super();
 	}
@@ -112,7 +105,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 				CustomerPhoneNumber.class);
 		
 		try{
-			customerPhoneNumber = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerPhoneNumber = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -120,13 +113,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		}
 		logger.debug("Leaving");
 		return customerPhoneNumber;
-	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -155,7 +141,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
 		
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -194,7 +180,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return customerPhoneNumber.getId();
@@ -234,7 +220,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -266,7 +252,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
 		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
 		return customerPhoneNumbers;
 	}
@@ -292,7 +278,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
 
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
 		return  customerPhoneNumbers;
 	}
@@ -322,7 +308,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -357,7 +343,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
 		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
 		return  customerPhoneNumbers;
 	}
@@ -386,7 +372,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -411,7 +397,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;

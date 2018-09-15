@@ -79,13 +79,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> implements ExtendedFieldDetailDAO {
 	private static Logger logger = Logger.getLogger(ExtendedFieldDetailDAOImpl.class);
 	
+	private NamedParameterJdbcTemplate auditJdbcTemplate;
+	
 	private enum FieldType {
 		TEXT, UPPERTEXT, STATICCOMBO, MULTISTATICCOMBO, EXTENDEDCOMBO, MULTIEXTENDEDCOMBO, DATE, DATETIME, 
 		TIME, INT, LONG, ACTRATE, DECIMAL, CURRENCY, RADIO, PERCENTAGE, BOOLEAN, MULTILINETEXT, 
 		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
 	}
-
-	private NamedParameterJdbcTemplate adtJdbcTemplate;
 
 	public ExtendedFieldDetailDAOImpl() {
 		super();
@@ -405,7 +405,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 			try {
 				if (isAudit) {
-					this.adtJdbcTemplate.getJdbcOperations().update(sql.toString());
+					this.auditJdbcTemplate.getJdbcOperations().update(sql.toString());
 				} else {
 					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
@@ -450,7 +450,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			int recordCount = 0;
 			try {
 				if(isAudit){
-					this.adtJdbcTemplate.getJdbcOperations().update(sql.toString());
+					this.auditJdbcTemplate.getJdbcOperations().update(sql.toString());
 				}else{
 					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
@@ -981,7 +981,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	public List<ExtendedFieldDetail> getExtendedFieldDetailForRule() {
 		logger.debug(Literal.ENTERING);
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
-		extendedFieldDetail.setAllowInRule(true);
+		extendedFieldDetail.setAllowInRule(true); 
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters," );
@@ -1003,6 +1003,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	}
 	
 	public void setAuditDataSource(DataSource dataSource) {
-		this.adtJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

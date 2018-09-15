@@ -44,39 +44,31 @@
 package com.pennant.backend.dao.finance.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.BundledProductsDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>BundledProductsDetail model</b> class.<br>
  */
-public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDetail> implements BundledProductsDetailDAO {
-
+public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail> implements BundledProductsDetailDAO {
 	private static Logger logger = Logger.getLogger(BundledProductsDetailDAOImpl.class);
 	
 	public BundledProductsDetailDAOImpl() {
 		super();
 	}
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	
+		
 	/**
 	 * Fetch the Record Equipment Loan Details details by key field
 	 * 
@@ -111,7 +103,7 @@ public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDe
 				.newInstance(BundledProductsDetail.class);
 		
 		try{
-			bundledProductsDetail = this.namedParameterJdbcTemplate.queryForObject(
+			bundledProductsDetail = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -120,15 +112,7 @@ public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDe
 		logger.debug("Leaving");
 		return bundledProductsDetail;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the BundledProductsDetail or
 	 * BundledProductsDetail_Temp. if Record not deleted then throws
@@ -155,7 +139,7 @@ public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDe
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -196,7 +180,7 @@ public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDe
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return bundledProductsDetail.getId();
@@ -241,7 +225,7 @@ public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDe
 		
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

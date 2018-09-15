@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,27 +49,22 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SalesOfficerDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>SalesOfficer model</b> class.<br>
  * 
  */
-public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements SalesOfficerDAO {
-
+public class SalesOfficerDAOImpl extends BasicDao<SalesOfficer> implements SalesOfficerDAO {
 	private static Logger logger = Logger.getLogger(SalesOfficerDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public SalesOfficerDAOImpl() {
 		super();
 	}
@@ -106,21 +100,13 @@ public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements S
 		RowMapper<SalesOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SalesOfficer.class);
 		
 		try{
-			salesOfficer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			salesOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			salesOfficer = null;
 		}
 		logger.debug("Leaving");
 		return salesOfficer;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -149,7 +135,7 @@ public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements S
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salesOfficer);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -185,7 +171,7 @@ public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements S
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salesOfficer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return salesOfficer.getId();
@@ -224,7 +210,7 @@ public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements S
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salesOfficer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

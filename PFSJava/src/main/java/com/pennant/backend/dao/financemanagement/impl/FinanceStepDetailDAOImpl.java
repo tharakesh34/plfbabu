@@ -2,30 +2,23 @@ package com.pennant.backend.dao.financemanagement.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> implements FinanceStepDetailDAO {
-
+public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> implements FinanceStepDetailDAO {
 	private static Logger logger = Logger.getLogger(FinanceStepDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	public FinanceStepDetailDAOImpl() {
 		super();
 	}
@@ -89,15 +82,7 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 		RowMapper<FinanceStepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceStepPolicyDetail.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * @param dataSource
-	 *         the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -132,7 +117,7 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finStepDetailList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 	}
 
@@ -166,7 +151,7 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepPolicy);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

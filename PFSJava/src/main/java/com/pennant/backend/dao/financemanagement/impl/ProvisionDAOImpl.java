@@ -44,7 +44,6 @@ package com.pennant.backend.dao.financemanagement.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,29 +51,25 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Provision model</b> class.<br>
  * 
  */
-public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements ProvisionDAO {
+public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDAO {
 	private static Logger logger = Logger.getLogger(ProvisionDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public ProvisionDAOImpl() {
 		super();
 	}
@@ -144,22 +139,13 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
 		
 		try{
-			provision = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			provision = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			provision = null;
 		}
 		logger.debug("Leaving");
 		return provision;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -186,7 +172,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -231,7 +217,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return provision.getId();
 	}
@@ -270,7 +256,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -295,7 +281,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -317,7 +303,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		        .newInstance(Provision.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	
 		
@@ -339,7 +325,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.debug(e);
 		}
@@ -363,7 +349,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
 		
 		try{
-			provision = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			provision = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			provision = null;
@@ -384,7 +370,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		 this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		 this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,26 +50,21 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.LanguageDAO;
 import com.pennant.backend.model.staticparms.Language;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Language model</b> class.<br>
  * 
  */
-public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageDAO {
-
+public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	private static Logger logger = Logger.getLogger(LanguageDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public LanguageDAOImpl() {
 		super();
@@ -106,21 +100,13 @@ public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageD
 		RowMapper<Language> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Language.class);
 
 		try {
-			language = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			language = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			language = null;
 		}
 		logger.debug("Leaving");
 		return language;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -150,7 +136,7 @@ public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(language);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -189,7 +175,7 @@ public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageD
 		
 		logger.debug("insertSql: "+ insertSql.toString());	
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(language);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return language.getId();
@@ -227,7 +213,7 @@ public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageD
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(language);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

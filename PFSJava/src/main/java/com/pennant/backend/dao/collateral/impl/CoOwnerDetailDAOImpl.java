@@ -24,8 +24,6 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		super();
 	}
 
-
-
 	/**
 	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Guarantor Details by key CollateralRef

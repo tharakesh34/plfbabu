@@ -44,36 +44,23 @@ package com.pennant.backend.dao.collection.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collection.CollectionDAO;
 import com.pennant.backend.model.collection.Collection;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Collection model</b> class.<br>
  */
-public class CollectionDAOImpl implements CollectionDAO {
-	private static Logger				logger	= Logger.getLogger(CollectionDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class CollectionDAOImpl extends BasicDao<Collection> implements CollectionDAO {
+	private static Logger logger = Logger.getLogger(CollectionDAOImpl.class); 
 
 	public CollectionDAOImpl() {
 		super();
-	}
-
-	/**
-	 * @param dataSource
-	 * the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -90,7 +77,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<Collection> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Collection.class);
-		List<Collection> collections = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<Collection> collections = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");
 
@@ -109,7 +96,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int count =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		int count =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 
 		logger.debug("Leaving");
 		return count;

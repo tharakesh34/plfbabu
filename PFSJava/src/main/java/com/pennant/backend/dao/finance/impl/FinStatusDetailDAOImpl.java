@@ -3,34 +3,24 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
-
+public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements FinStatusDetailDAO {
 	private static Logger logger = Logger.getLogger(FinStatusDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FinStatusDetailDAOImpl() {
 		super();
 	}
 	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
 	public void save(FinStatusDetail finStatusDetail) {
 		logger.debug("Entering");
@@ -42,7 +32,7 @@ public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -58,7 +48,7 @@ public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		this.namedParameterJdbcTemplate.update(selectSql.toString(), beanParameters);
+		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
 		
 		save(finStatusDetail);
 		
@@ -74,7 +64,7 @@ public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
 
 		logger.debug("insertSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		return this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		return this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 	}
 	
 	@Override
@@ -92,7 +82,7 @@ public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
 		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinStatusDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	@Override
@@ -105,7 +95,7 @@ public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(custStatuses.toArray());
 		logger.debug("Leaving");
-		this.namedParameterJdbcTemplate.batchUpdate(selectSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(selectSql.toString(), beanParameters);
     }
 
 }

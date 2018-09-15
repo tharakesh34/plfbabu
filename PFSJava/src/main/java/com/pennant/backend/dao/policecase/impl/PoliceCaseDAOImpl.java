@@ -2,7 +2,6 @@ package com.pennant.backend.dao.policecase.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,31 +11,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements PoliceCaseDAO {
+public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements PoliceCaseDAO {
 	private static Logger logger = Logger.getLogger(PoliceCaseDAOImpl.class);
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public PoliceCaseDAOImpl() {
 		super();
-	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	public void saveList(List<PoliceCase> policeCase,String type) {
 		logger.debug("Entering");
@@ -51,7 +44,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(policeCase.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 
@@ -76,7 +69,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		RowMapper<PoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCase.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		
 		
 
@@ -99,7 +92,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		RowMapper<PoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCase.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 	@Override
 	public List<PoliceCaseDetail> fetchCorePolice(PoliceCaseDetail policecase, String sqlQuery) {
@@ -116,7 +109,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 				.newInstance(PoliceCaseDetail.class);
 
 		try{
-			policeCases = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			policeCases = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			policecase = null;
@@ -136,7 +129,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 			logger.debug("deleteSql: " + deleteSql.toString());
 
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCase);
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			logger.debug("Leaving");
 	    }
 
@@ -156,7 +149,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(policeCase.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	@Override
@@ -182,7 +175,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		RowMapper<PoliceCaseDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCaseDetail.class);
 
 		try {
-			policeCaseDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			policeCaseDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			policeCaseDetail = null;
@@ -216,7 +209,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("custCIF", custCIF);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -246,7 +239,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(policeCaseDetail);
 		
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -274,7 +267,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(policeCaseDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -301,7 +294,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -331,7 +324,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 	        selectSql.append(" WHERE FinReference = :FinReference ");
 	        
 	        RowMapper<PoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCase.class);
-	        List<PoliceCase> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
+	        List<PoliceCase> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
 	        
 	        if (list!=null && !list.isEmpty()) {
 	        	saveList(list,suffix);

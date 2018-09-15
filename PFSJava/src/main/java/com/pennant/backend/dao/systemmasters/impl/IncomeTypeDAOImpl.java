@@ -44,7 +44,6 @@ package com.pennant.backend.dao.systemmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,15 +53,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,13 +68,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * DAO methods implementation for the <b>IncomeType model</b> class.<br>
  */
-public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements IncomeTypeDAO {
-
+public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTypeDAO {
 	private static Logger logger = Logger.getLogger(IncomeTypeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public IncomeTypeDAOImpl() {
 		super();
 	}
@@ -114,7 +108,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		RowMapper<IncomeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeType.class);
 
 		try {
-			incomeType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			incomeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			incomeType = null;
@@ -145,7 +139,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		RowMapper<IncomeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeType.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 	}
 
 	@Override
@@ -176,7 +170,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		paramSource.addValue("incomeExpense", incomeExpense);
 		paramSource.addValue("category", category);
 		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -206,7 +200,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(incomeType);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -232,7 +226,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(incomeType);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -258,7 +252,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
 		}  catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -269,15 +263,5 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

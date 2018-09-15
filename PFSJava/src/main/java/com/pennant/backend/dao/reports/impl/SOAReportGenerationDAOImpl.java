@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,11 +55,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -86,6 +83,7 @@ import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -93,22 +91,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 
-public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount> implements SOAReportGenerationDAO {
-
+public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> implements SOAReportGenerationDAO {
 	private static Logger logger = Logger.getLogger(SOAReportGenerationDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public SOAReportGenerationDAOImpl() {
 		super();
-	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 
@@ -133,7 +120,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			finMain = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finMain = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finMain = null;
 		}
@@ -167,7 +154,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			finSchdDetailsList = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			finSchdDetailsList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finSchdDetailsList = new ArrayList<FinanceScheduleDetail>();
 		}
@@ -201,7 +188,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
 		
 		try {
-			FinAdvancePaymentslist = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			FinAdvancePaymentslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			FinAdvancePaymentslist = new ArrayList<FinAdvancePayments>();
 		}
@@ -238,7 +225,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<PaymentInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
 		
 		try {
-			paymentInstructionsList =  this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			paymentInstructionsList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			paymentInstructionsList = new ArrayList<PaymentInstruction>();
 		}
@@ -270,7 +257,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 		
 		try {
-			finODDetailslist = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			finODDetailslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finODDetailslist = new ArrayList<>();
 		}
@@ -305,7 +292,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 		
 		try {
-			manualAdviseList = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			manualAdviseList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualAdviseList = new ArrayList<ManualAdvise>();
 		}
@@ -341,7 +328,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdviseMovements.class);
 		
 		try {
-			manualAdviseMovementsList =  this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			manualAdviseMovementsList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
 		}
@@ -375,7 +362,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 
 		try {
-			finFeeDetailsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			finFeeDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finFeeDetailsList = new ArrayList<FinFeeDetail>();
 		} finally {
@@ -408,7 +395,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptAllocationDetail.class);
 
 		try {
-			finReceiptAllocationDetailsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			finReceiptAllocationDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finReceiptAllocationDetailsList = new ArrayList<ReceiptAllocationDetail>();
 		} finally {
@@ -441,7 +428,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
 		
 		try {
-			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			list = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			list = new ArrayList<>();
 		}
@@ -471,7 +458,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
 		
 		try {
-			list =  namedParameterJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
+			list =  jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 		} catch (Exception e) {
 			list = new ArrayList<FinReceiptDetail>();
 		}
@@ -507,7 +494,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StatementOfAccount.class);
 
 		try {
-			statementOfAccount = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			statementOfAccount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			statementOfAccount = null;
 		}
@@ -540,7 +527,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
 
 		try {
-			financeProfitDetail = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeProfitDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			financeProfitDetail = null;
 		}
@@ -574,7 +561,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			activeCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			activeCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			activeCount = 0;
 		}
@@ -617,7 +604,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StatementOfAccount.class);
 
 		try {
-			statementOfAccount = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			statementOfAccount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			statementOfAccount = null;
 		}
@@ -650,7 +637,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		try {
 			RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StatementOfAccount.class);
-			statementOfAccount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			statementOfAccount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			statementOfAccount = null;
 		} finally {
@@ -685,7 +672,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
 
 		try {
-			finExcessAmountList = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			finExcessAmountList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finExcessAmountList = new ArrayList<FinExcessAmount>();
 		}
@@ -713,7 +700,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 
 		try {
-			finRepayHeadersList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			finRepayHeadersList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finRepayHeadersList = new ArrayList<FinRepayHeader>();
 		} finally {
@@ -746,7 +733,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		logger.trace(Literal.SQL + selectSql.toString());
 		
 		try {
-			maxSchDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+			maxSchDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 		} catch (Exception e) {
 			maxSchDate = null;
 		} finally {
@@ -781,7 +768,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		
 		try {
-			presentmentDetailsList =  this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			presentmentDetailsList =  this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			presentmentDetailsList = new ArrayList<PresentmentDetail>();
 		}  finally {
@@ -814,7 +801,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
 
 		try {
-			finRepayScheduleDetailsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			finRepayScheduleDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finRepayScheduleDetailsList = new ArrayList<RepayScheduleDetail>();
 		} finally {
@@ -849,7 +836,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		try {
-			vasRecordingsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			vasRecordingsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			vasRecordingsList = new ArrayList<VASRecording>();
 		} finally {
@@ -890,7 +877,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 
 		try {
-			finFeeScheduleDetailsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			finFeeScheduleDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finFeeScheduleDetailsList = new ArrayList<FinFeeScheduleDetail>();
 		} finally {
@@ -919,7 +906,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		try {
 			RowMapper<EventProperties> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EventProperties.class);
-			statementOfAccount = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
+			statementOfAccount = this.jdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
 		} catch (Exception e) {
 			statementOfAccount = null;
 		} finally {
@@ -939,7 +926,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		logger.trace(Literal.SQL + sql.toString());
 		
 		try {
-			list = this.namedParameterJdbcTemplate.queryForList(sql.toString(),new MapSqlParameterSource(),String.class);
+			list = this.jdbcTemplate.queryForList(sql.toString(),new MapSqlParameterSource(),String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION);
 		} finally {
@@ -978,7 +965,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		RowMapper<ApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ApplicantDetail.class);
 
 		try {
-			applicantDetails = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			applicantDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (DataAccessException e) {
 			applicantDetails = new ArrayList<ApplicantDetail>();
 		} finally {
@@ -1018,7 +1005,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 				.newInstance(OtherFinanceDetail.class);
 
 		try {
-			otherFinanceDetails = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			otherFinanceDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (DataAccessException e) {
 			otherFinanceDetails = new ArrayList<OtherFinanceDetail>();
 		} finally {

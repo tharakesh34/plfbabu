@@ -47,8 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -56,14 +54,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -72,11 +69,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 
-public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements ErrorDetailDAO {
+public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDetailDAO {
 	private static Logger log = LogManager.getLogger(ErrorDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ErrorDetailDAOImpl() {
 		super();
@@ -112,23 +106,13 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
 
 		try {
-			errorDetail = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			errorDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			log.warn(Literal.EXCEPTION, e);
 			errorDetail = null;
 		}
 		log.debug(Literal.LEAVING);
 		return errorDetail;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -156,7 +140,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -196,7 +180,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 		log.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		log.debug(Literal.LEAVING);
 		return errorDetail.getId();
 	}
@@ -235,7 +219,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 		log.debug("updateSql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -256,7 +240,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 		namedParameters.put("Code", code);
 
 		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
-		List<ErrorDetail> errorList = namedParameterJdbcTemplate.query(sql.toString(), namedParameters, typeRowMapper);
+		List<ErrorDetail> errorList = jdbcTemplate.query(sql.toString(), namedParameters, typeRowMapper);
 		if (errorList == null || errorList.isEmpty()) {
 			return null;
 		}

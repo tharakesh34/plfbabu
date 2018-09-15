@@ -2,13 +2,10 @@ package com.pennant.backend.dao.ddapayments.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -19,7 +16,6 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implements DDAPaymentInitiateDAO {
      private static Logger logger = Logger.getLogger(DDAPaymentInitiateDAOImpl.class);
-
 
 	public DDAPaymentInitiateDAOImpl() {
 		super();
@@ -119,14 +115,4 @@ public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implemen
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

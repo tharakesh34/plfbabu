@@ -10,11 +10,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class SnapshotService {
+	private static Logger logger = Logger.getLogger(SnapshotService.class);
 
-	private static Logger				logger			= Logger.getLogger(SnapshotService.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	private static final String			snapshotQuery_FinPftDetails	= "INSERT INTO FinPftDetails_SnapShot  "
 			+ "SELECT :AppDate,FINREFERENCE,CUSTID,FINBRANCH,FINTYPE,"

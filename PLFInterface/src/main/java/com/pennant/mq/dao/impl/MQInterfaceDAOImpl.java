@@ -12,7 +12,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 	private static Logger logger = Logger.getLogger(MQInterfaceDAOImpl.class);
 
-	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public MQInterfaceDAOImpl() {

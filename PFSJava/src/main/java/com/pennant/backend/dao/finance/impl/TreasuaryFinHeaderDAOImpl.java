@@ -27,7 +27,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,32 +34,26 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.TreasuaryFinHeaderDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>TreasuaryFinHeader model</b> class.<br>
  * 
  */
 
-public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader> implements
-        TreasuaryFinHeaderDAO {
-
+public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> implements TreasuaryFinHeaderDAO {
 	private static Logger logger = Logger.getLogger(TreasuaryFinHeaderDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public TreasuaryFinHeaderDAOImpl() {
 		super();
 	}
@@ -136,7 +129,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		        .newInstance(InvestmentFinHeader.class);
 
 		try {
-			investmentFinance = this.namedParameterJdbcTemplate.queryForObject(
+			investmentFinance = this.jdbcTemplate.queryForObject(
 			        selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -185,7 +178,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		        .newInstance(InvestmentFinHeader.class);
 
 		try {
-			invHeadeList = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+			invHeadeList = this.jdbcTemplate.query(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -199,16 +192,6 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		}
 		logger.debug("Leaving");
 		return investmentFinHeader;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -235,7 +218,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(investmentFinance);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -284,7 +267,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		beanParameters = new BeanPropertySqlParameterSource(investmentFinance);
 
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -333,7 +316,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		logger.debug("updateSql: " + updateSql.toString());
 
 		beanParameters = new BeanPropertySqlParameterSource(investmentFinance);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -365,7 +348,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -396,7 +379,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			return this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
@@ -420,7 +403,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		logger.debug("selectSql: " + query.toString());
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(query.toString(), beanParameters, Integer.class);
+			count = this.jdbcTemplate.queryForObject(query.toString(), beanParameters, Integer.class);
 
 			if (count == 0) {
 				header.setTotalDealsApproved(true);
@@ -431,7 +414,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 			query.append(" Where InvestmentRef =:InvestmentRef");
 
 			logger.debug("updateSql: " + query.toString());
-			this.namedParameterJdbcTemplate.update(query.toString(), beanParameters);
+			this.jdbcTemplate.update(query.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 		} finally {

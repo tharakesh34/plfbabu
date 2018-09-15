@@ -3,66 +3,53 @@ package com.pennant.backend.dao.mandate.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.mandate.UploadSecondaryMandateDAO;
 import com.pennant.backend.model.mandate.UploadSecondaryMandate;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class UploadSecondaryMandateDAOImpl implements UploadSecondaryMandateDAO {
-	
-	private static Logger				logger	= Logger.getLogger(UploadSecondaryMandateDAOImpl.class);
-	// Spring Named JDBC Template
-		private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-		
-		/**
-		 * To Set dataSource
-		 * 
-		 * @param dataSource
-		 */
+public class UploadSecondaryMandateDAOImpl extends BasicDao<UploadSecondaryMandate>
+		implements UploadSecondaryMandateDAO {
+	private static Logger logger = Logger.getLogger(UploadSecondaryMandateDAOImpl.class);
 
-		public void setDataSource(DataSource dataSource) {
-			this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-		}
+	/**
+	 * 
+	 * save SecondaryMandateStatus
+	 * 
+	 * @param SecondaryMandateStatus
+	 *            (mandateStatus)
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
 
-		/**
-		 * 
-		 * save SecondaryMandateStatus
-		 * 
-		 * @param SecondaryMandateStatus
-		 *            (mandateStatus)
-		 * @return void
-		 * @throws DataAccessException
-		 * 
-		 */
+	@Override
+	public void save(UploadSecondaryMandate mandateStatus) {
+		logger.debug("Entering");
+		StringBuilder insertSql = new StringBuilder("Insert Into UploadSecondaryMandate");
+		insertSql.append(" (UploadId,MandateID,MandateType,AccNumber, AccHolderName,BarCodeNumber,AccType,");
+		insertSql.append(" MICR,BankCode, Status,Reason)");
+		insertSql.append(
+				" Values(:UploadId, :MandateID, :MandateType, :AccNumber, :AccHolderName, :BarCodeNumber, :AccType, ");
+		insertSql.append(":MICR, :BankCode, :Status, :Reason)");
 
-		@Override
-		public void save(UploadSecondaryMandate mandateStatus) {
-			logger.debug("Entering");
-			StringBuilder insertSql = new StringBuilder("Insert Into UploadSecondaryMandate");
-			insertSql.append(" (UploadId,MandateID,MandateType,AccNumber, AccHolderName,BarCodeNumber,AccType,");
-			insertSql.append(" MICR,BankCode, Status,Reason)");
-			insertSql.append(" Values(:UploadId, :MandateID, :MandateType, :AccNumber, :AccHolderName, :BarCodeNumber, :AccType, ");
-			insertSql.append(":MICR, :BankCode, :Status, :Reason)");
+		logger.debug("insertSql: " + insertSql.toString());
 
-			logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-			logger.debug("Leaving");
-		}
-
-		@Override
+	@Override
 	public boolean fileIsExists(String name) {
 		logger.debug("Entering");
 
@@ -74,7 +61,7 @@ public class UploadSecondaryMandateDAOImpl implements UploadSecondaryMandateDAO 
 		logger.debug("selectSql: " + sql.toString());
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -86,7 +73,7 @@ public class UploadSecondaryMandateDAOImpl implements UploadSecondaryMandateDAO 
 		return exists;
 	}
 
-		@Override
+	@Override
 	public List<UploadSecondaryMandate> getReportData(long uploadId, long userId, String module) {
 
 		UploadSecondaryMandate secondaryMandateStatus = new UploadSecondaryMandate();
@@ -108,7 +95,7 @@ public class UploadSecondaryMandateDAOImpl implements UploadSecondaryMandateDAO 
 				.newInstance(UploadSecondaryMandate.class);
 
 		try {
-			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			list = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			list = new ArrayList<>();

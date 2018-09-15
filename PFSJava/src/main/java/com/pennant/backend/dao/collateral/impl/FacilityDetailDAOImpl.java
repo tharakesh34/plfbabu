@@ -26,38 +26,30 @@ package com.pennant.backend.dao.collateral.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.FacilityDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.FacilityDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FacilityDetail model</b> class.<br>
  * 
  */
 
-public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implements
-        FacilityDetailDAO {
-
+public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements FacilityDetailDAO {
 	private static Logger logger = Logger.getLogger(FacilityDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FacilityDetailDAOImpl() {
 		super();
@@ -135,7 +127,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 		        .newInstance(FacilityDetail.class);
 
 		try {
-			facilityDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			facilityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -143,16 +135,6 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 		}
 		logger.debug("Leaving");
 		return facilityDetail;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -179,7 +161,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -231,7 +213,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return facilityDetail.getId();
 	}
@@ -271,7 +253,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -305,7 +287,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 		        .newInstance(FacilityDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -320,7 +302,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);

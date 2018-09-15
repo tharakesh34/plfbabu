@@ -42,122 +42,114 @@
 */
 package com.pennanttech.ws.auth.dao.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.ws.auth.dao.UserAuthDAO;
 import com.pennanttech.ws.auth.model.UserAuthentication;
+
 /**
  * DAO methods implementation for the <b>WebServiceUserSecurity model</b> class.<br>
  * 
  */
-public class UserAuthDAOImpl extends BasisCodeDAO<UserAuthentication> implements UserAuthDAO {
+public class UserAuthDAOImpl extends BasicDao<UserAuthentication> implements UserAuthDAO {
 	private static Logger logger = Logger.getLogger(UserAuthDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	public UserAuthDAOImpl() {
 		super();
 	}
+
 	/**
-	 * Fetch the Record  WebServiceUserSecurity details by key field
+	 * Fetch the Record WebServiceUserSecurity details by key field
 	 * 
-	 * @param tokenId (String)
-	 * @param  expiry (Timestamp)
-	 * 			       
+	 * @param tokenId
+	 *            (String)
+	 * @param expiry
+	 *            (Timestamp)
+	 * 
 	 * @return WebServiceUserSecurity
 	 */
-@Override
-public  UserAuthentication validateSession(String tokenId) {
-	logger.debug("Entering ");
-	UserAuthentication webServiceUserSecurity= new UserAuthentication();
-	webServiceUserSecurity.setTokenId(tokenId);
-	StringBuilder   selectSql = new StringBuilder(" Select UsrLogin, TokenId, Expiry " );
+	@Override
+	public UserAuthentication validateSession(String tokenId) {
+		logger.debug("Entering ");
+		UserAuthentication webServiceUserSecurity = new UserAuthentication();
+		webServiceUserSecurity.setTokenId(tokenId);
+		StringBuilder selectSql = new StringBuilder(" Select UsrLogin, TokenId, Expiry ");
 
+		selectSql.append(" From webServiceUserSecurity");
+		selectSql.append(" Where TokenId =:TokenId");
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
+		RowMapper<UserAuthentication> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(UserAuthentication.class);
 
-	selectSql.append(" From webServiceUserSecurity");
-	selectSql.append(" Where TokenId =:TokenId");
-	logger.debug("selectSql: " + selectSql.toString());
-	SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
-	RowMapper<UserAuthentication> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UserAuthentication.class);
-	
-	try{
-		webServiceUserSecurity = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-	}catch (EmptyResultDataAccessException e) {
-		logger.warn("Exception: ", e);
-		webServiceUserSecurity = null;
+		try {
+			webServiceUserSecurity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			webServiceUserSecurity = null;
+		}
+		logger.debug("Leaving ");
+		return webServiceUserSecurity;
+
 	}
-	logger.debug("Leaving ");
-	return webServiceUserSecurity;
 
-}
-/**
- * @param dataSource the dataSource to set
- */
-public void setDataSource(DataSource dataSource) {
-	this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-}
-/**
- * This method insert new Records into webServiceUserSecurity 
- * 
- * save WebServiceUserSecurity
- * 
- * @param UserAuthentication
- *            (webServiceUserSecurity)
- *
- * @return String(TokenId)
- * @throws DataAccessException
- * 
- */
-@Override
-public String createSession(UserAuthentication webServiceUserSecurity) {
-	
-	
-	StringBuilder insertSql = new StringBuilder("Insert Into webServiceUserSecurity" );
+	/**
+	 * This method insert new Records into webServiceUserSecurity
+	 * 
+	 * save WebServiceUserSecurity
+	 * 
+	 * @param UserAuthentication
+	 *            (webServiceUserSecurity)
+	 *
+	 * @return String(TokenId)
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public String createSession(UserAuthentication webServiceUserSecurity) {
 
-	insertSql.append("( UsrLogin , TokenId, Expiry )" );
-	insertSql.append(" Values(:UsrLogin, :TokenId, :Expiry)" );
+		StringBuilder insertSql = new StringBuilder("Insert Into webServiceUserSecurity");
 
-	SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
-	this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-	
-	return webServiceUserSecurity.getTokenId();
-}
+		insertSql.append("( UsrLogin , TokenId, Expiry )");
+		insertSql.append(" Values(:UsrLogin, :TokenId, :Expiry)");
 
-/**
- * This method update the Records into webServiceUserSecurity 
- * 
- * update WebServiceUserSecurity
- * 
- * @param UserAuthentication
- *            (webServiceUserSecurity)
- *
- * 
- * @throws DataAccessException
- * 
- */
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
-@Override
-public void updateSession(UserAuthentication webServiceUserSecurity) {
-	
-	StringBuilder updateSql = new StringBuilder("update webServiceUserSecurity" );
+		return webServiceUserSecurity.getTokenId();
+	}
 
-	updateSql.append(" Set Expiry =:Expiry" );
-	updateSql.append(" where TokenId =:TokenId");
-	
+	/**
+	 * This method update the Records into webServiceUserSecurity
+	 * 
+	 * update WebServiceUserSecurity
+	 * 
+	 * @param UserAuthentication
+	 *            (webServiceUserSecurity)
+	 *
+	 * 
+	 * @throws DataAccessException
+	 * 
+	 */
 
-	SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
-	this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-	
-}
+	@Override
+	public void updateSession(UserAuthentication webServiceUserSecurity) {
+
+		StringBuilder updateSql = new StringBuilder("update webServiceUserSecurity");
+
+		updateSql.append(" Set Expiry =:Expiry");
+		updateSql.append(" where TokenId =:TokenId");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+	}
 }

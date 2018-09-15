@@ -3,15 +3,12 @@ package com.pennant.backend.dao.finance.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -21,13 +18,10 @@ import com.pennant.backend.model.finance.FinWriteoffPayment;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
-
+public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements FinanceWriteoffDAO {
 	private static Logger logger = Logger.getLogger(FinanceWriteoffDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public FinanceWriteoffDAOImpl() {
 		super();
@@ -63,7 +57,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		RowMapper<FinanceWriteoff> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceWriteoff.class);
 		
 		try{
-			financeWriteoff = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			financeWriteoff = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeWriteoff = null;
@@ -98,21 +92,13 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
 		
 		try{
-			seqNo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			seqNo = 0;
 		}
 		logger.debug("Leaving");
 		return seqNo;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -142,7 +128,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -187,7 +173,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeWriteoff.getFinReference();
 	}
@@ -225,7 +211,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -251,7 +237,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		RowMapper<FinWriteoffPayment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinWriteoffPayment.class);
 		
 		try{
-			finWriteoffPayment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			finWriteoffPayment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finWriteoffPayment = null;
@@ -276,7 +262,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -302,7 +288,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finWriteoffPayment.getFinReference();
 	}
@@ -322,7 +308,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -348,7 +334,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 
 		BigDecimal writeoffAmount = BigDecimal.ZERO;
 		try {
-			writeoffAmount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			writeoffAmount = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -374,7 +360,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		
 		BigDecimal finwriteoffPayAmount = BigDecimal.ZERO;
 		try {
-			finwriteoffPayAmount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			finwriteoffPayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -402,7 +388,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		
 		Date finWriteoffDate = null;
 		try {
-			finWriteoffDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			finWriteoffDate = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, Date.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -429,7 +415,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finwriteoffPayment);
 		
 		try{
-			seqNo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);	
+			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);	
 		} catch (EmptyResultDataAccessException dae) {
 			seqNo =  Long.MIN_VALUE;
 		}
@@ -437,6 +423,4 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("Leaving");
 		return seqNo;
 	}
-
-	
 }

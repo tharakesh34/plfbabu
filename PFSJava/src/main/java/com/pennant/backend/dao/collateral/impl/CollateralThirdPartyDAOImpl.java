@@ -3,8 +3,6 @@ package com.pennant.backend.dao.collateral.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -12,25 +10,19 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CollateralThirdPartyDAOImpl implements CollateralThirdPartyDAO {
-	private static Logger	logger	= Logger.getLogger(CollateralThirdPartyDAOImpl.class);
+public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> implements CollateralThirdPartyDAO {
+	private static Logger logger = Logger.getLogger(CollateralThirdPartyDAOImpl.class);
 
 	public CollateralThirdPartyDAOImpl() {
 		super();
-	}
-
-	private NamedParameterJdbcTemplate	jdbcTemplate;
-
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override

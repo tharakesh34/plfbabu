@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,15 +50,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CostOfFundCodeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.CostOfFundCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,12 +65,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * DAO methods implementation for the <b>CostOfFundCode model</b> class.<br>
  */
-public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implements CostOfFundCodeDAO {
+public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements CostOfFundCodeDAO {
 	private static Logger logger = Logger.getLogger(CostOfFundCodeDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CostOfFundCodeDAOImpl() {
 		super();
 	}
@@ -107,7 +101,7 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 				.newInstance(CostOfFundCode.class);
 		
 		try{
-			costOfFundCode = this.namedParameterJdbcTemplate.queryForObject(
+			costOfFundCode = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -143,7 +137,7 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("cofCode", cofCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -172,7 +166,7 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costOfFundCode);
 		
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -199,7 +193,7 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costOfFundCode);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -225,7 +219,7 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -252,7 +246,7 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 		source = new MapSqlParameterSource();
 		source.addValue("CofCode", cofCode);
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -263,12 +257,5 @@ public class CostOfFundCodeDAOImpl extends BasisCodeDAO<CostOfFundCode> implemen
 			logger.debug("Leaving");
 		}
 		return false;
-	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

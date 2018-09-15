@@ -47,38 +47,24 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>AgreementFieldDetails model</b> class.<br>
  */
-public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
-
+public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> implements FinPlanEmiHolidayDAO {
 	private static Logger logger = Logger.getLogger(FinPlanEmiHolidayDAOImpl.class);
 	
 	public FinPlanEmiHolidayDAOImpl() {
 		super();
-	}
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -97,7 +83,7 @@ public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		List<Integer> planEMIHMonths = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, Integer.class);
+		List<Integer> planEMIHMonths = this.jdbcTemplate.queryForList(selectSql.toString(), source, Integer.class);
 		
 		logger.debug("Leaving");
 		return planEMIHMonths;
@@ -119,7 +105,7 @@ public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		List<Date> planEMIHDates = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, Date.class);
+		List<Date> planEMIHDates = this.jdbcTemplate.queryForList(selectSql.toString(), source, Date.class);
 		
 		logger.debug("Leaving");
 		return planEMIHDates;
@@ -141,7 +127,7 @@ public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		
 		logger.debug("Leaving");
 	}
@@ -162,7 +148,7 @@ public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(planEMIHMonths.toArray());
 		try {
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		} catch(Exception e) {
 			logger.error("Exception", e);
 			throw e;
@@ -187,7 +173,7 @@ public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		
 		logger.debug("Leaving");
 	}
@@ -208,7 +194,7 @@ public class FinPlanEmiHolidayDAOImpl implements FinPlanEmiHolidayDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(planEMIHDates.toArray());
 		try {
-			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		} catch(Exception e) {
 			logger.error("Exception", e);
 			throw e;

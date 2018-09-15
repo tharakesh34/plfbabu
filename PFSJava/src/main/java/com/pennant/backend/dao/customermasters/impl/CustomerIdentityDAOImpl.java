@@ -42,35 +42,28 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerIdentityDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerIdentity;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerIdentity model</b> class.<br>
  * 
  */
-public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> implements CustomerIdentityDAO {
-
+public class CustomerIdentityDAOImpl extends BasicDao<CustomerIdentity> implements CustomerIdentityDAO {
 	private static Logger logger = Logger.getLogger(CustomerIdentityDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CustomerIdentityDAOImpl() {
 		super();
 	}
@@ -104,7 +97,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 		RowMapper<CustomerIdentity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIdentity.class);
 		
 		try{
-			customerIdentity = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customerIdentity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerIdentity = null;
@@ -112,14 +105,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 		logger.debug("Leaving");
 		return customerIdentity;
 	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the CustIdentities or CustIdentities_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -145,7 +131,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
 		
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -182,7 +168,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return customerIdentity.getId();
@@ -221,7 +207,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

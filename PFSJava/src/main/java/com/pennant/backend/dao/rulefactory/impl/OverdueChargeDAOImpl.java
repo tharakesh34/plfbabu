@@ -44,7 +44,6 @@
 package com.pennant.backend.dao.rulefactory.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,30 +51,25 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rulefactory.OverdueChargeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rulefactory.OverdueCharge;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>OverdueCharge model</b> class.<br>
  * 
  */
 
-public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements OverdueChargeDAO {
-
+public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements OverdueChargeDAO {
 	private static Logger logger = Logger.getLogger(OverdueChargeDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public OverdueChargeDAOImpl() {
 		super();
 	}
@@ -145,21 +139,13 @@ public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements
 		RowMapper<OverdueCharge> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OverdueCharge.class);
 		
 		try{
-			overdueCharge = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			overdueCharge = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			overdueCharge = null;
 		}
 		logger.debug("Leaving");
 		return overdueCharge;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -186,7 +172,7 @@ public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -227,7 +213,7 @@ public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return overdueCharge.getId();
 	}
@@ -266,7 +252,7 @@ public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

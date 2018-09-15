@@ -46,38 +46,24 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.finance.UploadFinExpensesDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.expenses.UploadFinExpenses;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>UploadFinExpenses model</b> class.<br>
  * 
  */
-public class UploadFinExpensesDAOImpl extends BasisCodeDAO<UploadFinExpenses> implements UploadFinExpensesDAO {
-
+public class UploadFinExpensesDAOImpl extends BasicDao<UploadFinExpenses> implements UploadFinExpensesDAO {
 	private static Logger logger = Logger.getLogger(UploadFinExpensesDAOImpl.class);
 	
 	public UploadFinExpensesDAOImpl() {
 		super();
-	}
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -96,7 +82,7 @@ public class UploadFinExpensesDAOImpl extends BasisCodeDAO<UploadFinExpenses> im
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(uploadFinExpensesList.toArray());
 		
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}

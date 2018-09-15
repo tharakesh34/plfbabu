@@ -44,8 +44,6 @@ package com.pennant.backend.dao.systemmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,15 +52,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -71,13 +68,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>DocumentType model</b> class.<br>
  * 
  */
-public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements DocumentTypeDAO {
-
+public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements DocumentTypeDAO {
 	private static Logger logger = Logger.getLogger(DocumentTypeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public DocumentTypeDAOImpl() {
 		super();
 	}
@@ -114,7 +107,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
 
 		try {
-			documentType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			documentType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			documentType = null;
@@ -148,7 +141,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("docTypeCode", docTypeCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -178,7 +171,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(documentType);
 		
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -208,7 +201,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(documentType);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -233,7 +226,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -262,14 +255,6 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
 		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

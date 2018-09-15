@@ -3,27 +3,22 @@ package com.pennanttech.bajaj.process.collections.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class CollectionDAOImpl implements CollectionDAO {
-
+public class CollectionDAOImpl extends BasicDao<CollectionFinances> implements CollectionDAO {
 	private static final Logger logger = Logger.getLogger(CollectionDAOImpl.class);
 	
-	protected DataSource dataSource;
-	protected NamedParameterJdbcTemplate namedJdbcTemplate;
 
 	@Override
 	public Date getAppDate() {
@@ -37,7 +32,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 	
 		logger.debug("Leaving");
 
-		return this.namedJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 	}
 	
 	/**
@@ -69,7 +64,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		RowMapper<CollectionFinances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollectionFinances.class);
-		List<CollectionFinances> finReferencesList = this.namedJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<CollectionFinances> finReferencesList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		
 		logger.debug("Leaving");
 		
@@ -105,7 +100,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<CollectionFinances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollectionFinances.class);
-		List<CollectionFinances> finReferencesList = this.namedJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<CollectionFinances> finReferencesList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");
 
@@ -130,7 +125,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataExtractions);
-		this.namedJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		
@@ -151,7 +146,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(collectionFinancesList.toArray());
-		this.namedJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -215,7 +210,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		this.namedJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 
 		logger.debug("Leaving");
 	}
@@ -230,7 +225,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
 		
-		this.namedJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		
 		logger.debug("Leaving");
 	}
@@ -246,13 +241,13 @@ public class CollectionDAOImpl implements CollectionDAO {
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
 	
-		this.namedJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		
 		deleteSql = new StringBuilder("Delete from DataExtractions where ExtractionId = :ExtractionId");
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
 	
-		this.namedJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		
 		logger.debug("Leaving");
 	}
@@ -262,14 +257,9 @@ public class CollectionDAOImpl implements CollectionDAO {
 		
 		StringBuilder selectSql = new StringBuilder("select ").append(seqName).append(".NEXTVAL from DUAL");
 
-		return this.namedJdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Long.class);
+		return this.jdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Long.class);
 	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	@Override
 	public void updateDataExtractionStatus(long extractionId, int progress) {
 		logger.debug("Entering");
@@ -284,7 +274,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
-		this.namedJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		
 		logger.debug("Leaving");
 	}
@@ -307,7 +297,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
-		this.namedJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		
 		logger.debug("Leaving");
 	}
@@ -336,7 +326,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		insertSql.append(" Values(:ExtractionId, :StartTime, :STATUS)");
 		logger.debug("insertSql: " + insertSql.toString());
 
-		this.namedJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -356,7 +346,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + insertSql.toString());
 
 		logger.debug("Leaving");
-		this.namedJdbcTemplate.update(insertSql.toString(), source);;
+		this.jdbcTemplate.update(insertSql.toString(), source);;
 	}
 
 	@Override
@@ -373,7 +363,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		logger.debug("Leaving");
-		return this.namedJdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
 	}
 
 	@Override
@@ -395,7 +385,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<CollectionReceiptExtraction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollectionReceiptExtraction.class);
-		List<CollectionReceiptExtraction> finReferencesList = this.namedJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<CollectionReceiptExtraction> finReferencesList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");
 		return finReferencesList;
@@ -420,7 +410,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 
 		logger.debug("Leaving");
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(receiptExtraction);
-		this.namedJdbcTemplate.update(updateSql.toString(), paramSource);
+		this.jdbcTemplate.update(updateSql.toString(), paramSource);
 	}
 
 	@Override
@@ -440,7 +430,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<CollectionReceiptExtraction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollectionReceiptExtraction.class);
-		List<CollectionReceiptExtraction> finReferencesList = this.namedJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<CollectionReceiptExtraction> finReferencesList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");
 		return finReferencesList;
@@ -465,7 +455,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<CollectionReceiptExtraction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollectionReceiptExtraction.class);
-		List<CollectionReceiptExtraction> finReferencesList = this.namedJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<CollectionReceiptExtraction> finReferencesList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");
 		return finReferencesList;
@@ -483,7 +473,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(extractionReceiptList.toArray());
-		this.namedJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -504,7 +494,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		updateSql.append(" Where ExtractionId = :ExtractionId");
 		logger.debug("updateSql: " + updateSql.toString());
 
-		this.namedJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
 	
@@ -520,7 +510,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		String sysParamValue = this.namedJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		String sysParamValue = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 
 		logger.debug("Leaving");
 		return sysParamValue;
@@ -544,7 +534,7 @@ public class CollectionDAOImpl implements CollectionDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<CollectionFinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollectionFinTypeFees.class);
-		List<CollectionFinTypeFees> finTypeFeesList = this.namedJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		List<CollectionFinTypeFees> finTypeFeesList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");
 		return finTypeFeesList;

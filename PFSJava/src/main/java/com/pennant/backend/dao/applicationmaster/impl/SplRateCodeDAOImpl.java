@@ -45,7 +45,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,28 +52,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SplRateCodeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>SplRateCode model</b> class.<br>
  * 
  */
-public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements SplRateCodeDAO {
-
+public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRateCodeDAO {
 	private static Logger logger = Logger.getLogger(SplRateCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public SplRateCodeDAOImpl() {
 		super();
 	}
@@ -106,7 +100,7 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 						.newInstance(SplRateCode.class);
 
 		try{
-			splRateCode = this.namedParameterJdbcTemplate.queryForObject(
+			splRateCode = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -133,17 +127,10 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		
-		List<BaseRate> baseRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
 		
 		logger.debug("Leaving");
 		return baseRates;
-	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -171,7 +158,7 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -209,7 +196,7 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return splRateCode.getId();
@@ -247,7 +234,7 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

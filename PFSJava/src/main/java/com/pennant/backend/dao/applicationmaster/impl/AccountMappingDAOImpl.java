@@ -44,23 +44,20 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,11 +65,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>AccountMapping</code> with set of CRUD operations.
  */
-public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implements AccountMappingDAO {
-	private static Logger				logger	= Logger.getLogger(AccountMappingDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements AccountMappingDAO {
+	private static Logger logger = Logger.getLogger(AccountMappingDAOImpl.class);
+	
 	public AccountMappingDAOImpl() {
 		super();
 	}
@@ -107,7 +102,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		RowMapper<AccountMapping> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountMapping.class);
 
 		try {
-			accountMapping = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			accountMapping = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			accountMapping = null;
@@ -147,7 +142,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 
 		logger.debug(Literal.LEAVING);
 
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -170,7 +165,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -200,7 +195,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -226,7 +221,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -237,16 +232,6 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -265,7 +250,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

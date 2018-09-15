@@ -42,36 +42,20 @@
  */
 package com.pennant.backend.dao.accounts.impl;
 
-import javax.sql.DataSource;
-
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.accounts.AccountsHistory;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class AccountsHistoryDAOImpl extends BasisCodeDAO<AccountsHistory> implements AccountsHistoryDAO {
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements AccountsHistoryDAO {
+	
 	public AccountsHistoryDAOImpl() {
 		super();
 	}
 	
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
 	public boolean saveOrUpdate(AccountsHistory accountHist) {
 
@@ -94,7 +78,7 @@ public class AccountsHistoryDAOImpl extends BasisCodeDAO<AccountsHistory> implem
 
 		//TRY UPDATE.
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountHist);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount > 0) {
 			return true;
@@ -102,11 +86,11 @@ public class AccountsHistoryDAOImpl extends BasisCodeDAO<AccountsHistory> implem
 
 		//UPDATE FAILS TRY INSERT
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			return true;
 		} catch (DuplicateKeyException e) {
 			//Due to huge transactions hit record j=has been created between update and insert statements. SO update now
-			recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 			if (recordCount > 0) {
 				return true;

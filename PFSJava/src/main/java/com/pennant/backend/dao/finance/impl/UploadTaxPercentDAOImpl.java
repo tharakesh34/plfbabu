@@ -45,43 +45,27 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.UploadTaxPercentDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>UploadTaxPercent model</b> class.<br>
  * 
  */
-public class UploadTaxPercentDAOImpl extends BasisCodeDAO<UploadTaxPercent>
-		implements UploadTaxPercentDAO {
-
+public class UploadTaxPercentDAOImpl extends BasicDao<UploadTaxPercent> implements UploadTaxPercentDAO {
 	private static Logger logger = Logger.getLogger(UploadTaxPercentDAOImpl.class);
 
 	public UploadTaxPercentDAOImpl() {
 		super();
-	}
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -100,7 +84,7 @@ public class UploadTaxPercentDAOImpl extends BasisCodeDAO<UploadTaxPercent>
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(uploadDetailsList.toArray());
 
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -119,7 +103,7 @@ public class UploadTaxPercentDAOImpl extends BasisCodeDAO<UploadTaxPercent>
 		RowMapper<UploadTaxPercent> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadTaxPercent.class);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 
 }

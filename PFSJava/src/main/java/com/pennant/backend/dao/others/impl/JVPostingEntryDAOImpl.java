@@ -45,7 +45,6 @@ package com.pennant.backend.dao.others.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,14 +52,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.others.JVPostingEntry;
@@ -68,17 +65,15 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>JVPostingEntry model</b> class.<br>
  * 
  */
-public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implements JVPostingEntryDAO {
+public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements JVPostingEntryDAO {
 	private static Logger logger = Logger.getLogger(JVPostingEntryDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public JVPostingEntryDAOImpl() {
 		super();
 	}
@@ -145,7 +140,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		try {
-			jVPostingEntry = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -187,7 +182,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -225,18 +220,8 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -264,7 +249,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -322,7 +307,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return jVPostingEntry.getId();
 	}
@@ -358,7 +343,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(aJVPostingEntryList.toArray());
-		int[] cont = this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(),
+		int[] cont = this.jdbcTemplate.batchUpdate(insertSql.toString(),
 		        beanParameters);
 		logger.debug("Leaving Updated Count ==" + cont.length);
 	}
@@ -373,7 +358,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			nextTxnReference = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			nextTxnReference = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, Long.class);
 			nextTxnReference = nextTxnReference + 1;
 		} catch (EmptyResultDataAccessException e) {
@@ -415,7 +400,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -436,7 +421,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -460,7 +445,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -482,7 +467,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -508,7 +493,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(aJVPostingEntryList.toArray());
-		int[] cont = this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(),
+		int[] cont = this.jdbcTemplate.batchUpdate(updateSql.toString(),
 		        beanParameters);
 		logger.debug("Leaving Updated Count ==" + cont.length);
 	}
@@ -527,7 +512,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -548,7 +533,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -566,7 +551,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -589,7 +574,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -627,7 +612,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		try {
-			jVPostingEntry = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -652,7 +637,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -671,7 +656,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -690,7 +675,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -716,7 +701,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
 		        .newInstance(JVPostingEntry.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 		        typeRowMapper);
 	}
 
@@ -736,7 +721,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
 		        .createBatch(aJVPostingEntryList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Entering");
 	}
 
@@ -749,7 +734,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
         } catch (EmptyResultDataAccessException e) {
         	logger.warn("Exception: ", e);
         	count = 0;
@@ -760,14 +745,14 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 			selectSql.append(" Values (:DaySeqDate, :DaySeqNo)");
 			logger.debug("inserttSql: " + selectSql.toString());
 			SqlParameterSource beanParameters1 = new BeanPropertySqlParameterSource(jVPostingEntry);
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), beanParameters1);
+			this.jdbcTemplate.update(selectSql.toString(), beanParameters1);
 
 			selectSql = new StringBuilder(
 			        "Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
 			logger.debug("selectSql: " + selectSql.toString());
 			SqlParameterSource beanParameters2 = new BeanPropertySqlParameterSource(jVPostingEntry);
 			try {
-				count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+				count = this.jdbcTemplate.queryForObject(selectSql.toString(),
 						beanParameters2, Integer.class);
 			} catch (EmptyResultDataAccessException e) {
 				logger.warn("Exception: ", e);
@@ -789,7 +774,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -808,7 +793,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aJVPostingEntry);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -835,7 +820,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		        .newInstance(JVPostingEntry.class);
 
 		try {
-			jVPostingEntry = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);

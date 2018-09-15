@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.OtherBankFinanceTypeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,12 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>OtherBankFinanceType model</b> class.<br>
  * 
  */
-public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceType> implements OtherBankFinanceTypeDAO {
+public class OtherBankFinanceTypeDAOImpl extends BasicDao<OtherBankFinanceType> implements OtherBankFinanceTypeDAO {
 	private static Logger logger = Logger.getLogger(OtherBankFinanceTypeDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public OtherBankFinanceTypeDAOImpl(){
 		super();
 	}
@@ -109,22 +104,13 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 		RowMapper<OtherBankFinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OtherBankFinanceType.class);
 		
 		try{
-			otherBankFinanceType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			otherBankFinanceType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			otherBankFinanceType = null;
 		}
 		logger.debug("Leaving");
 		return otherBankFinanceType;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -153,7 +139,7 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(otherBankFinanceType);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -193,7 +179,7 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(otherBankFinanceType);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -229,7 +215,7 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 		logger.trace(Literal.SQL + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(otherBankFinanceType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -262,7 +248,7 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("FinType", finType);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

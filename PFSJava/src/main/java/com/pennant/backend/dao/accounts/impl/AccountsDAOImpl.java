@@ -45,8 +45,6 @@ package com.pennant.backend.dao.accounts.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,28 +52,24 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.accounts.AccountsDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Accounts model</b> class.<br>
  * 
  */
-public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsDAO {
+public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	private static Logger logger = Logger.getLogger(AccountsDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public AccountsDAOImpl() {
 		super();
@@ -144,7 +138,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
 		
 		try{
-			accounts = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			accounts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accounts = null;
@@ -177,16 +171,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**
@@ -212,7 +197,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -258,7 +243,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return accounts.getAccountId();
 	}
@@ -298,7 +283,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -339,7 +324,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -382,7 +367,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -398,7 +383,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 
@@ -432,7 +417,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 
 		//TRY UPDATE.
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(account);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount > 0) {
 			return true;
@@ -440,11 +425,11 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 
 		//UPDATE FAILS TRY INSERT
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			return true;
 		} catch (DuplicateKeyException e) {
 			//Due to huge transactions hit record j=has been created between update and insert statements. SO update now
-			recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 			if (recordCount > 0) {
 				return true;

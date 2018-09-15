@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,11 +66,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>MandateCheckDigit</code> with set of CRUD operations.
  */
-public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> implements MandateCheckDigitDAO {
-	private static Logger				logger	= Logger.getLogger(MandateCheckDigitDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implements MandateCheckDigitDAO {
+	private static Logger logger = Logger.getLogger(MandateCheckDigitDAOImpl.class);
+	
 	public MandateCheckDigitDAOImpl() {
 		super();
 	}
@@ -105,7 +101,7 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 				.newInstance(MandateCheckDigit.class);
 
 		try {
-			mandateCheckDigit = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			mandateCheckDigit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			mandateCheckDigit = null;
@@ -135,7 +131,7 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(mandateCheckDigit);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -162,7 +158,7 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(mandateCheckDigit);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -188,7 +184,7 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -199,16 +195,6 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -234,7 +220,7 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CheckDigitValue", checkDigitValue);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -262,7 +248,7 @@ public class MandateCheckDigitDAOImpl extends BasisCodeDAO<MandateCheckDigit> im
 
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,27 +50,22 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.SubSegmentDAO;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>SubSegment model</b> class.<br>
  * 
  */
-public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSegmentDAO {
-
+public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmentDAO {
 	private static Logger logger = Logger.getLogger(SubSegmentDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public SubSegmentDAOImpl() {
 		super();
 	}
@@ -109,21 +103,13 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 		RowMapper<SubSegment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSegment.class);
 
 		try {
-			subSegment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			subSegment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			subSegment = null;
 		}
 		logger.debug("Leaving");
 		return subSegment;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -154,7 +140,7 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -195,7 +181,7 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 		
 		logger.debug("insertSql: "+ insertSql.toString());		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -232,7 +218,7 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

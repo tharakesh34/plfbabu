@@ -47,31 +47,24 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinanceRateReview;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>RepayInstruction model</b> class.<br>
  * 
  */
 
-public class FinanceRateReviewDAOImpl extends BasisCodeDAO<FinanceRateReview> implements FinanceRateReviewDAO {
-
-	private static Logger				logger	= Logger.getLogger(FinanceRateReviewDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implements FinanceRateReviewDAO {
+	private static Logger logger = Logger.getLogger(FinanceRateReviewDAOImpl.class);
 
 	public FinanceRateReviewDAOImpl() {
 		super();
@@ -104,23 +97,13 @@ public class FinanceRateReviewDAOImpl extends BasisCodeDAO<FinanceRateReview> im
 				.newInstance(FinanceRateReview.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeRateReview = null;
 		}
 		logger.debug("Leaving");
 		return Collections.emptyList();
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -137,7 +120,7 @@ public class FinanceRateReviewDAOImpl extends BasisCodeDAO<FinanceRateReview> im
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRateReview);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

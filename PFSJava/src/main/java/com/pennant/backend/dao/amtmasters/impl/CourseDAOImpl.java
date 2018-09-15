@@ -42,34 +42,28 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.CourseDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.amtmasters.Course;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Course model</b> class.<br>
  * 
  */
-public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
+public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	private static Logger logger = Logger.getLogger(CourseDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CourseDAOImpl() {
 		super();
 	}
@@ -102,7 +96,7 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 		RowMapper<Course> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Course.class);
 
 		try{
-			course = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
+			course = this.jdbcTemplate.queryForObject(selectSql.toString(), 
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -110,14 +104,6 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 		}
 		logger.debug("Leaving");
 		return course;
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -144,7 +130,7 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(course);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -183,7 +169,7 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 		logger.debug("selectSql: " + insertSql.toString());     
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(course);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return course.getId();
@@ -222,7 +208,7 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(course);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

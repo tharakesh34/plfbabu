@@ -48,33 +48,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> implements FinanceSuspHeadDAO {
-
+public class FinanceSuspHeadDAOImpl  extends BasicDao<FinanceSuspHead> implements FinanceSuspHeadDAO {
 	private static Logger logger = Logger.getLogger(FinanceSuspHeadDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public FinanceSuspHeadDAOImpl() {
 		super();
 	}
@@ -102,15 +95,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("Leaving");
 		return suspHead;
 	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	@Override
 	public FinanceSuspHead getFinanceSuspHeadById(String finReference, String type) {
 		logger.debug("Entering");
@@ -133,7 +118,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		RowMapper<FinanceSuspHead> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSuspHead.class);
 
 		try {
-			financeSuspHead = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeSuspHead = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeSuspHead = null;
@@ -156,7 +141,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		RowMapper<FinanceSuspHead> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSuspHead.class);
 
 		try {
-			financeSuspHead = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeSuspHead = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -178,7 +163,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(),
+		return this.jdbcTemplate.queryForList(selectSql.toString(),
 				new BeanPropertySqlParameterSource(""), String.class);
 	}
 	
@@ -210,7 +195,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeSuspHead.getFinReference();
 	}
@@ -242,7 +227,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
@@ -277,7 +262,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -305,7 +290,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspDetails);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeSuspDetails.getFinReference();
 	}
@@ -331,7 +316,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspDetails);
 		RowMapper<FinanceSuspDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSuspDetails.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
 	/**
@@ -351,7 +336,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		
 		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinStatusDetail.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
 	/**
@@ -371,7 +356,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspHead);
 		try {
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}

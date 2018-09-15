@@ -46,34 +46,27 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
  * 
  */
-public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> implements FinTypeInsuranceDAO{
-
+public class FinTypeInsuranceDAOImpl extends BasicDao<FinTypeInsurances> implements FinTypeInsuranceDAO{
 	private static Logger logger = Logger.getLogger(FinTypeInsuranceDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public FinTypeInsuranceDAOImpl() {
 		super();
@@ -142,7 +135,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		RowMapper<FinTypeInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeInsurances.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	/**
@@ -161,7 +154,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			mandatoryInsurances =  this.namedParameterJdbcTemplate.getJdbcOperations().queryForList(selectSql.toString(), String.class);
+			mandatoryInsurances =  this.jdbcTemplate.getJdbcOperations().queryForList(selectSql.toString(), String.class);
 		} catch (Exception e) {
 			mandatoryInsurances = new ArrayList<>();
 			logger.error("Exception: ", e);
@@ -202,7 +195,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		RowMapper<FinTypeInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeInsurances.class);
 
 		try {
-			finTypeInsurance = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finTypeInsurance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finTypeInsurance = null;
@@ -210,17 +203,6 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		logger.debug("Leaving");
 		return finTypeInsurance;
 	}
-
-
-	/**
-	 * @param dataSource
-	 *         the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 
 	/**
 	 * This method insert new Records into RMTFinanceTypes or RMTFinanceTypes_Temp.
@@ -253,7 +235,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return finTypeInsurance.getId();
 	}
@@ -293,7 +275,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -326,7 +308,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -358,7 +340,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -390,7 +372,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		RowMapper<FinTypeInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeInsurances.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	@Override
@@ -407,7 +389,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
 

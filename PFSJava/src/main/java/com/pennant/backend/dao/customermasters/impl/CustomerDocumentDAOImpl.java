@@ -48,8 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,16 +55,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -74,11 +71,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>CustomerDocument model</b> class.<br>
  * 
  */
-public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	implements CustomerDocumentDAO {
+public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument>	implements CustomerDocumentDAO {
 	private static Logger logger = Logger.getLogger(CustomerDocumentDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public CustomerDocumentDAOImpl() {
 		super();
 	}
@@ -121,7 +116,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 				CustomerDocument.class);
 
 		try {
-			customerDocument = this.namedParameterJdbcTemplate.queryForObject(
+			customerDocument = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
@@ -168,7 +163,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerDocument.class);
 		
-		List<CustomerDocument> customerDocuments =  this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		List<CustomerDocument> customerDocuments =  this.jdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return customerDocuments;
 	}
@@ -195,18 +190,10 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerDocument.class);
 		
-		List<CustomerDocument> customerDocuments =  this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		List<CustomerDocument> customerDocuments =  this.jdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
 		
 		logger.debug("Leaving");
 		return customerDocuments;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -236,7 +223,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -271,7 +258,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -309,7 +296,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerDocument.getId();
@@ -351,7 +338,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -392,7 +379,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
 		
 		try{
-			documentDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			documentDetails = null;
@@ -427,7 +414,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
 		
-		List<DocumentDetails> documentDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);  
+		List<DocumentDetails> documentDetails = this.jdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);  
 		logger.debug("Leaving");
 		return documentDetails;
 	}
@@ -458,7 +445,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
 		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
 		
-		List<DocumentDetails> documentDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		List<DocumentDetails> documentDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 
 		logger.debug("Leaving");
 		return documentDetails;	
@@ -483,7 +470,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 				"CustID != :CustID and CustDocCategory = :CustDocCategory and CustDocTitle = :CustDocTitle");
 
 		logger.trace(Literal.SQL + sql);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		if (count > 0) {
 			exists = true;
@@ -515,7 +502,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			recordCount = 0;
@@ -548,7 +535,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			recordCount = 0;
@@ -578,7 +565,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			recordCount = 0;
@@ -614,7 +601,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.trace(Literal.SQL + selectSql);
 		List<String> duplicateCIFs = new ArrayList<>();
 		try {
-			duplicateCIFs = namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);			
+			duplicateCIFs = jdbcTemplate.queryForList(selectSql.toString(), source, String.class);			
 		} catch (EmptyResultDataAccessException dae) {
 			Collections.emptyList();
 		}

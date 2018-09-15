@@ -44,38 +44,32 @@
 package com.pennant.backend.dao.finance.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.AgreementFieldsDetailDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>AgreementFieldDetails model</b> class.<br>
  */
-public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDetails> implements AgreementFieldsDetailDAO {
-
+public class AgreementFieldsDetailDAOImpl extends BasicDao<AgreementFieldDetails> implements AgreementFieldsDetailDAO {
 	private static Logger logger = Logger.getLogger(AgreementFieldsDetailDAOImpl.class);
 	
 	public AgreementFieldsDetailDAOImpl() {
 		super();
 	}
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	/**
 	 * Fetch the Record Equipment Loan Details details by key field
 	 * 
@@ -110,7 +104,7 @@ public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDet
 				.newInstance(AgreementFieldDetails.class);
 		
 		try{
-			agreementFieldDetails = this.namedParameterJdbcTemplate.queryForObject(
+			agreementFieldDetails = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -119,15 +113,7 @@ public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDet
 		logger.debug("Leaving");
 		return agreementFieldDetails;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the AgreementfieldDetails or
 	 * AgreementfieldDetails_Temp. if Record not deleted then throws
@@ -154,7 +140,7 @@ public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDet
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementFieldDetails);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -196,7 +182,7 @@ public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDet
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementFieldDetails);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return agreementFieldDetails.getId();
@@ -241,7 +227,7 @@ public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDet
 		
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementFieldDetails);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

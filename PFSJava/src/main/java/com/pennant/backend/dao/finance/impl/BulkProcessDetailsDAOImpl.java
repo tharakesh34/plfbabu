@@ -3,43 +3,29 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.BulkProcessDetailsDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetails> implements BulkProcessDetailsDAO{
+public class BulkProcessDetailsDAOImpl extends BasicDao<BulkRateChangeDetails> implements BulkProcessDetailsDAO{
 	private static Logger logger = Logger.getLogger(BulkProcessDetailsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public BulkProcessDetailsDAOImpl() {
 		super();
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -107,7 +93,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -142,7 +128,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		try {
-			bulkRateChangeDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bulkRateChangeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			bulkRateChangeDetails = null;
@@ -182,7 +168,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return bulkRateChangeDetails.getBulkRateChangeRef();
@@ -223,7 +209,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 		throw new ConcurrencyException();
@@ -267,7 +253,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(bulkRateChangeDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -307,7 +293,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(bulkRateChangeDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -339,7 +325,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -364,7 +350,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
@@ -396,7 +382,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
 
@@ -422,7 +408,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
 }

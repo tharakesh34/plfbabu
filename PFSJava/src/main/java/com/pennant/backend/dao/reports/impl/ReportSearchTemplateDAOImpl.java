@@ -44,23 +44,20 @@ package com.pennant.backend.dao.reports.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
+public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> implements ReportSearchTemplateDAO {
 	private static Logger logger = Logger.getLogger(ReportSearchTemplateDAOImpl .class);
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ReportSearchTemplateDAOImpl() {
 		super();
@@ -80,7 +77,7 @@ public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
 			insertSql.append(",:NextRoleCode,:TaskId,:RecordType,:WorkflowId) ");
 			logger.debug("insertSql:"+ insertSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportSearchTemplate);
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			logger.debug("Leaving");
 		}catch (Exception e){
 			logger.debug("Exception: ", e);
@@ -107,7 +104,7 @@ public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
 			RowMapper<ReportSearchTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper
 					.newInstance(ReportSearchTemplate.class);
 			logger.debug("Leaving ");
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		}catch (Exception e){
 			logger.debug("Exception: ", e);
 			return null;
@@ -130,7 +127,7 @@ public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
 		logger.debug("selectSql: " + selectSql.toString());      
 
 		try{
-			status=this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			status=this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		}catch (EmptyResultDataAccessException e) {
 			status=0;
 			logger.error("Exception: ", e);
@@ -154,7 +151,7 @@ public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
 		int recordCount = 0;
 		boolean rcdDeleted = false; 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if(recordCount != 0){
 				rcdDeleted = true;
 			}
@@ -165,13 +162,4 @@ public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
 		logger.debug("Leaving");
 		return rcdDeleted;
 	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {	
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

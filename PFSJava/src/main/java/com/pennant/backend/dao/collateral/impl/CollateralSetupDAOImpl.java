@@ -47,8 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,27 +54,23 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CollateralSetup model</b> class.<br>
  * 
  */
 
-public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implements CollateralSetupDAO {
-
-	private static Logger logger	= Logger.getLogger(CollateralSetupDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	jdbcTemplate;
-
+public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements CollateralSetupDAO {
+	private static Logger logger = Logger.getLogger(CollateralSetupDAOImpl.class);
+	
 	/**
 	 * Fetch the Record CollateralSetup details by key field
 	 * 
@@ -117,16 +111,6 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		}
 		logger.debug("Leaving");
 		return null;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**

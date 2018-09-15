@@ -2,20 +2,16 @@ package com.pennanttech.activity.log;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ActivityLogDAOImpl implements ActivityLogDAO {
+public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLogDAO {
 	private static Logger logger = Logger.getLogger(ActivityLogDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ActivityLogDAOImpl() {
 		super();
@@ -41,7 +37,7 @@ public class ActivityLogDAOImpl implements ActivityLogDAO {
 		RowMapper<Activity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Activity.class);
 
 		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	public List<Activity> getActivities(String tableName, String keyColumn, Object keyValue, long fromAuditId,
@@ -63,10 +59,6 @@ public class ActivityLogDAOImpl implements ActivityLogDAO {
 		RowMapper<Activity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Activity.class);
 
 		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 }

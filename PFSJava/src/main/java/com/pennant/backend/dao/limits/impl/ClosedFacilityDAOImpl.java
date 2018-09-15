@@ -3,24 +3,18 @@ package com.pennant.backend.dao.limits.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.limits.ClosedFacilityDAO;
 import com.pennant.backend.model.limits.ClosedFacilityDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class ClosedFacilityDAOImpl implements ClosedFacilityDAO {
-
+public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implements ClosedFacilityDAO {
 	private static Logger logger = Logger.getLogger(ClosedFacilityDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ClosedFacilityDAOImpl() {
 		super();
@@ -47,7 +41,7 @@ public class ClosedFacilityDAOImpl implements ClosedFacilityDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(closedFacilityDetail);
 
 		try{
-			list = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, ClosedFacilityDetail.class);	
+			list = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, ClosedFacilityDetail.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			list = null;
@@ -68,18 +62,10 @@ public class ClosedFacilityDAOImpl implements ClosedFacilityDAO {
 
 		logger.debug("Leaving");
 		try{	
-			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
-	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

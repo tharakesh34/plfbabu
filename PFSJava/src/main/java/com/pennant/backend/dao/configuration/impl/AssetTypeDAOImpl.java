@@ -44,8 +44,6 @@
 package com.pennant.backend.dao.configuration.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,28 +51,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.AssetTypeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.configuration.AssetType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 /**
  * DAO methods implementation for the <b>AssetType model</b> class.<br>
  * 
  */
 
-public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTypeDAO {
-
+public class AssetTypeDAOImpl extends BasicDao<AssetType> implements AssetTypeDAO {
 	private static Logger logger = Logger.getLogger(AssetTypeDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-
 	public AssetTypeDAOImpl() {
 		super();
 	}
@@ -135,7 +127,7 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 		RowMapper<AssetType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AssetType.class);
 		
 		try{
-			assetType = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
+			assetType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			assetType = null;
@@ -143,16 +135,7 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 		logger.debug("Leaving");
 		return assetType;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the AssetTypes or AssetTypes_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -178,7 +161,7 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -216,7 +199,7 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 		logger.debug("sql: " + sql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return assetType.getId();
 	}
@@ -251,7 +234,7 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 		logger.debug("Sql: " + sql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
-		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -275,7 +258,7 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 		logger.debug("sql: " + sql.toString());
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			assetType = null;

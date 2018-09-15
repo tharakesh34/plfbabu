@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,26 +50,21 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.ScheduleMethodDAO;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>ScheduleMethod model</b> class.<br>
  * 
  */
-public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implements ScheduleMethodDAO {
-
+public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements ScheduleMethodDAO {
 	private static Logger logger = Logger.getLogger(ScheduleMethodDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ScheduleMethodDAOImpl() {
 		super();
@@ -106,22 +100,13 @@ public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implemen
 		RowMapper<ScheduleMethod> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScheduleMethod.class);
 
 		try {
-			scheduleMethod = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			scheduleMethod = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scheduleMethod = null;
 		}
 		logger.debug("Leaving");
 		return scheduleMethod;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -151,7 +136,7 @@ public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleMethod);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -190,7 +175,7 @@ public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implemen
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleMethod);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return scheduleMethod.getId();
@@ -228,7 +213,7 @@ public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implemen
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleMethod);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

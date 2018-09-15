@@ -2,33 +2,24 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetailDAO {
-	
+public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibilityDetail>
+		implements FinanceEligibilityDetailDAO {
 	private static Logger logger = Logger.getLogger(FinanceEligibilityDetailDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	public FinanceEligibilityDetailDAOImpl() {
 		super();
-	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	@Override
@@ -50,7 +41,7 @@ public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetail
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeEligibilityDetail);
 		RowMapper<FinanceEligibilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEligibilityDetail.class);
 		logger.debug("Leaving");
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return  this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	@Override
@@ -64,7 +55,7 @@ public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetail
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeEligibilityDetail);
 		logger.debug("Leaving");
-		return  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return  this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
 	}
 	
 	@Override
@@ -79,7 +70,7 @@ public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetail
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(eligibilityDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -97,7 +88,7 @@ public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetail
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(eligibilityDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -114,7 +105,7 @@ public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetail
 		
 		logger.debug("updateSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	

@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.MaritalStatusCodeDAO;
 import com.pennant.backend.model.systemmasters.MaritalStatusCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,11 +67,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>MaritalStatusCode model</b> class.<br>
  * 
  */
-public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> implements MaritalStatusCodeDAO {
+public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implements MaritalStatusCodeDAO {
 	private static Logger logger = Logger.getLogger(MaritalStatusCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public MaritalStatusCodeDAOImpl() {
 		super();
@@ -106,21 +101,13 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		RowMapper<MaritalStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MaritalStatusCode.class);
 
 		try {
-			maritalStatusCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			maritalStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			maritalStatusCode = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return maritalStatusCode;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -151,7 +138,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -194,7 +181,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		logger.trace(Literal.SQL + insertSql.toString());		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -233,7 +220,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 
 		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -266,7 +253,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
 		String dftMaritalStsCode = "";
 		try {
-			dftMaritalStsCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			dftMaritalStsCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
         } catch (Exception e) {
         	logger.warn("Exception: ", e);
         	dftMaritalStsCode = "";
@@ -300,7 +287,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("maritalStsCode", maritalStsCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

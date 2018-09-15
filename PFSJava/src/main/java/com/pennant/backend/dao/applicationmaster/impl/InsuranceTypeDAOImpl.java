@@ -44,7 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,27 +51,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>InsuranceType model</b> class.<br>
  * 
  */
-public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements InsuranceTypeDAO {
-	private static Logger				logger	= Logger.getLogger(InsuranceTypeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-	
+public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements InsuranceTypeDAO {
+	private static Logger logger = Logger.getLogger(InsuranceTypeDAOImpl.class);
+		
 	public InsuranceTypeDAOImpl() {
 		super();
 	}
@@ -108,7 +103,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		RowMapper<InsuranceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InsuranceType.class);
 
 		try {
-			insuranceType = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters,
+			insuranceType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -138,17 +133,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		RowMapper<InsuranceTypeProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(InsuranceTypeProvider.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -175,7 +160,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceType);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -214,7 +199,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceType);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return insuranceType.getId();
 	}
@@ -251,7 +236,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -282,7 +267,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 				.newInstance(InsuranceTypeProvider.class);
 
 		try {
-			provider = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			provider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -304,7 +289,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insProvider);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -320,7 +305,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		deleteSql.append(" Where InsuranceType =:InsuranceType");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceTypeProvider);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -344,7 +329,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insTypeProvider);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -362,7 +347,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insTypeProvider);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount < 0) {
 				throw new ConcurrencyException();
 			}
@@ -393,6 +378,6 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 				.newInstance(InsuranceTypeProvider.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }

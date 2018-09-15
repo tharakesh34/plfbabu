@@ -21,7 +21,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransactionDetail>
 		implements LimitTransactionDetailsDAO {
-          private static Logger logger = Logger.getLogger(LimitTransactionDetailsDAOImpl.class);
+	private static Logger logger = Logger.getLogger(LimitTransactionDetailsDAOImpl.class);
 
 	public LimitTransactionDetailsDAOImpl() {
 		super();
@@ -171,9 +171,8 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	}
 
 	/**
-	 * This method Deletes the Record from the LIMIT_DETAILS or
-	 * LIMIT_DETAILS_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Limit Details by key DetailId
+	 * This method Deletes the Record from the LIMIT_DETAILS or LIMIT_DETAILS_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Limit Details by key DetailId
 	 * 
 	 * @param Limit
 	 *            Details (limitDetail)
@@ -302,8 +301,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	}
 
 	/**
-	 * Method for delete logged information, When Reserve Limit service called
-	 * from API.
+	 * Method for delete logged information, When Reserve Limit service called from API.
 	 * 
 	 * @param referenceNumber
 	 */

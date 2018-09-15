@@ -60,7 +60,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -72,13 +71,12 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
-	private static Logger				logger	= Logger.getLogger(QueueAssignmentDAOImpl.class);
-
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements QueueAssignmentDAO {
+	private static Logger logger = Logger.getLogger(QueueAssignmentDAOImpl.class);
+	private DataSource dataSource;
+	
 	public QueueAssignmentDAOImpl() {
 		super();
 	}
@@ -96,7 +94,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignment);
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		this.jdbcTemplate.update(sql.toString(), paramSource);
 
 		logger.debug("Leaving");
 	}
@@ -119,7 +117,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignment);
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		this.jdbcTemplate.update(sql.toString(), paramSource);
 
 		logger.debug("Leaving");
 	}
@@ -134,7 +132,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignment);
 
-		long count = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, Long.class);
+		long count = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, Long.class);
 
 		logger.debug("Leaving");
 		return count > 0 ? true : false;
@@ -183,7 +181,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 				.newInstance(QueueAssignment.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			queueAssignment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,
+			queueAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), source,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -219,7 +217,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		logger.debug("updateSql: " + updateincreaseSql.toString());
 
 		SqlParameterSource beanParams = new BeanPropertySqlParameterSource(queue);
-		int increasedCount = this.namedParameterJdbcTemplate.update(updateincreaseSql.toString(), beanParams);
+		int increasedCount = this.jdbcTemplate.update(updateincreaseSql.toString(), beanParams);
 		logger.debug("Increased User Count " + increasedCount);
 
 		//
@@ -240,7 +238,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 			logger.debug("updateSql: " + updateDecreaseSql.toString());
 
 			SqlParameterSource beanParams1 = new BeanPropertySqlParameterSource(queue);
-			int decreasedCount = this.namedParameterJdbcTemplate.update(updateDecreaseSql.toString(), beanParams1);
+			int decreasedCount = this.jdbcTemplate.update(updateDecreaseSql.toString(), beanParams1);
 			logger.debug("Decreased User Count " + decreasedCount);
 		}
 
@@ -302,7 +300,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		RowMapper<QueueAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(QueueAssignment.class);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 	}
 
@@ -320,7 +318,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignment);
 		logger.debug("Leaving");
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}
@@ -359,7 +357,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignment);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -379,7 +377,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -408,7 +406,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 				.newInstance(QueueAssignmentHeader.class);
 
 		try {
-			queueAssignmentHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			queueAssignmentHeader = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -435,7 +433,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignmentHeader);
 		logger.debug("Leaving");
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}
@@ -464,7 +462,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignmentHeader);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -486,7 +484,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignmentHeader);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -521,15 +519,12 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 				.newInstance(QueueAssignment.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
+	
+	@Override
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		super.setDataSource(dataSource);
 		this.dataSource = dataSource;
 	}
 }

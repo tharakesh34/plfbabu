@@ -46,8 +46,6 @@ package com.pennant.backend.dao.collateral.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,31 +53,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CollateralStructure model</b> class.<br>
  * 
  */
 
-public class CollateralStructureDAOImpl extends BasisCodeDAO<CollateralStructure> implements CollateralStructureDAO {
-
+public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> implements CollateralStructureDAO {
 	private static Logger logger = Logger.getLogger(CollateralStructureDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate jdbcTemplate;
-
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	public CollateralStructureDAOImpl() {
 		super();

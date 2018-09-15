@@ -2,42 +2,25 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.model.finance.SecondaryAccount;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class SecondaryAccountDAOImpl implements SecondaryAccountDAO {
-
-	private static Logger logger = Logger
-			.getLogger(SecondaryAccountDAOImpl.class);
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	
-	
+public class SecondaryAccountDAOImpl extends BasicDao<SecondaryAccount> implements SecondaryAccountDAO {
+	private static Logger logger = Logger.getLogger(SecondaryAccountDAOImpl.class);
 
 	public SecondaryAccountDAOImpl() {
 		super();
-	}
-	
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -62,7 +45,7 @@ public class SecondaryAccountDAOImpl implements SecondaryAccountDAO {
 		RowMapper<SecondaryAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecondaryAccount.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -80,7 +63,7 @@ public class SecondaryAccountDAOImpl implements SecondaryAccountDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				secondaryAccount);
-		recordCount = this.namedParameterJdbcTemplate.update(
+		recordCount = this.jdbcTemplate.update(
 				updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
@@ -108,7 +91,7 @@ public class SecondaryAccountDAOImpl implements SecondaryAccountDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(account);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 
@@ -133,7 +116,7 @@ public class SecondaryAccountDAOImpl implements SecondaryAccountDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(secondaryAccount.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

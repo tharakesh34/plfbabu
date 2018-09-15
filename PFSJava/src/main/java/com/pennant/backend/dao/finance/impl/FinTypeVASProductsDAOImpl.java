@@ -20,10 +20,8 @@ import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.util.WorkFlowUtil;
 
 public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
-	
 	private static Logger logger = Logger.getLogger(FinTypeVASProductsDAOImpl.class);
 
-	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinTypeVASProductsDAOImpl() {

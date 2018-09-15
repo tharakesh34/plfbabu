@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,27 +50,22 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.GroupStatusCodeDAO;
 import com.pennant.backend.model.systemmasters.GroupStatusCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>GroupStatusCode model</b> class.<br>
  * 
  */
-public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implements GroupStatusCodeDAO {
-
+public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements GroupStatusCodeDAO {
 	private static Logger logger = Logger.getLogger(GroupStatusCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public GroupStatusCodeDAOImpl() {
 		super();
 	}
@@ -103,21 +97,13 @@ public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implem
 		RowMapper<GroupStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GroupStatusCode.class);
 
 		try {
-			groupStatusCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			groupStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			groupStatusCode = null;
 		}
 		logger.debug("Leaving");
 		return groupStatusCode;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -148,7 +134,7 @@ public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -190,7 +176,7 @@ public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implem
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return groupStatusCode.getId();
@@ -230,7 +216,7 @@ public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implem
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

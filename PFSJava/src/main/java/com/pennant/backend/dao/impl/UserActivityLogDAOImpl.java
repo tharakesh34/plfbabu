@@ -44,34 +44,21 @@ package com.pennant.backend.dao.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.model.UserActivityLog;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class UserActivityLogDAOImpl implements UserActivityLogDAO {
-
+public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements UserActivityLogDAO {
 	private static Logger logger = Logger.getLogger(UserActivityLogDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	public UserActivityLogDAOImpl() {
 		super();
-	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	@Override
@@ -84,7 +71,7 @@ public class UserActivityLogDAOImpl implements UserActivityLogDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userActivityLog);
 		logger.debug("Leaving");
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
     }
 
 	@Override
@@ -98,7 +85,7 @@ public class UserActivityLogDAOImpl implements UserActivityLogDAO {
 		logger.debug("deleteSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userAcitvity);
-		this.namedParameterJdbcTemplate.update(selectSql.toString(), beanParameters);
+		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -113,7 +100,7 @@ public class UserActivityLogDAOImpl implements UserActivityLogDAO {
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userActivityLog);
 				logger.debug("selectSql: " + selectSql.toString());
 				try {
-					serialNo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+					serialNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 				}catch (EmptyResultDataAccessException e) {
 					logger.warn("Exception: ", e);
 				}
@@ -137,7 +124,7 @@ public class UserActivityLogDAOImpl implements UserActivityLogDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userAcitvity);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 

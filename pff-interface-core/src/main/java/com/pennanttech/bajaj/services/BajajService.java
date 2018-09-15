@@ -18,12 +18,11 @@ import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public abstract class BajajService {
-	private static final Logger				logger	= Logger.getLogger(BajajService.class);
+	private static final Logger logger = Logger.getLogger(BajajService.class);
 	
-	
-	protected DataSource					dataSource;
-	protected JdbcTemplate					jdbcTemplate;
-	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
+	protected DataSource dataSource;
+	protected JdbcTemplate jdbcTemplate;
+	protected NamedParameterJdbcTemplate namedJdbcTemplate;
 	
 	protected DataSourceTransactionManager transManager;
 	protected DefaultTransactionDefinition transDef;

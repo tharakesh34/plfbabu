@@ -1,7 +1,5 @@
 package com.pennanttech.util;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -9,18 +7,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.log.model.APILogDetail;
 
-public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements APILogDetailDAO {
+public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILogDetailDAO {
 	private static Logger logger = Logger.getLogger(APILogDetailDAOImpl.class);
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public APILogDetailDAOImpl() {
 		super();
@@ -50,7 +45,7 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(apiLogDetail);
 		logger.trace(Literal.SQL + insertSql.toString());
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -80,8 +75,7 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 		RowMapper<APILogDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APILogDetail.class);
 		APILogDetail apiLogDetail;
 		try {
-			apiLogDetail = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), parameterSource,
-					typeRowMapper);
+			apiLogDetail = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			apiLogDetail = null;
@@ -126,12 +120,4 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

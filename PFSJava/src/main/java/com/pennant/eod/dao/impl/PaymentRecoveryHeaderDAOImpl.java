@@ -1,27 +1,18 @@
 package com.pennant.eod.dao.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class PaymentRecoveryHeaderDAOImpl implements PaymentRecoveryHeaderDAO {
-
-	private static Logger				logger	= Logger.getLogger(PaymentRecoveryHeaderDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader> implements PaymentRecoveryHeaderDAO {
+	private static Logger logger = Logger.getLogger(PaymentRecoveryHeaderDAOImpl.class);
 
 	@Override
 	public void save(PaymentRecoveryHeader header) {
@@ -30,7 +21,7 @@ public class PaymentRecoveryHeaderDAOImpl implements PaymentRecoveryHeaderDAO {
 		insertSql.append("(BatchRefNumber,BatchType,FileName,FileCreationDate,NumberofRecords) Values ");
 		insertSql.append("(:BatchRefNumber, :BatchType, :FileName, :FileCreationDate, :NumberofRecords)");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 	}
 
@@ -41,7 +32,7 @@ public class PaymentRecoveryHeaderDAOImpl implements PaymentRecoveryHeaderDAO {
 		insertSql.append(" set NumberofRecords = (select COUNT(*) from PaymentRecoveryDetail where BatchRefNumber=:BatchRefNumber)  ");
 		insertSql.append(" where BatchRefNumber = :BatchRefNumber");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 	}
 
@@ -59,11 +50,10 @@ public class PaymentRecoveryHeaderDAOImpl implements PaymentRecoveryHeaderDAO {
 		RowMapper<PaymentRecoveryHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryHeader.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
 		return null;
-
 	}
 }

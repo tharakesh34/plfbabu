@@ -48,49 +48,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.commitment.CommitmentRateDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.commitment.CommitmentRate;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 /**
  * DAO methods implementation for the <b>CommitmentRate model</b> class.<br>
  * 
  */
 
-public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implements CommitmentRateDAO {
-
+public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements CommitmentRateDAO {
 	private static Logger logger = Logger.getLogger(CommitmentRateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 
 	public CommitmentRateDAOImpl() {
 		super();
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -160,7 +143,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 		RowMapper<CommitmentRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentRate.class);
 
 		try{
-			commitmentRate = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
+			commitmentRate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commitmentRate = null;
@@ -201,7 +184,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 		RowMapper<CommitmentRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentRate.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(sql.toString(),parameterMap, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(),parameterMap, typeRowMapper);
 	}
 
 	/**
@@ -229,7 +212,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentRate);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -267,7 +250,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentRate);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return commitmentRate.getId();
@@ -306,7 +289,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 		logger.debug("Sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentRate);
-		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -330,7 +313,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 
 		logger.debug("deleteSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentRate);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

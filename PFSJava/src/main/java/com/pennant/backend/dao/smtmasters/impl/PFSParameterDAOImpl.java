@@ -45,7 +45,6 @@ package com.pennant.backend.dao.smtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,28 +52,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 
 /**
  * DAO methods implementation for the <b>PFSParameter model</b> class.<br>
  * 
  */
-public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements PFSParameterDAO {
-
+public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSParameterDAO {
 	private static Logger logger = Logger.getLogger(PFSParameterDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public PFSParameterDAOImpl() {
 		super();
 	}
@@ -109,7 +103,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
 
 		try {
-			parameter = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters,
+			parameter = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -118,15 +112,6 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 
 		//logger.debug("Leaving");
 		return parameter;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
 	}
 
 	/**
@@ -156,7 +141,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 				pFSParameter);
 	
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 					beanParameters);
 
 			if (recordCount <= 0) {
@@ -196,7 +181,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		return pFSParameter.getId();
@@ -237,7 +222,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -266,7 +251,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		updateSql.append(" Where SysParmCode =:SysParmCode");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving ");
 	}
@@ -282,7 +267,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		updateSql.append(" Set SysParmValue = :SysParmValue Where SysParmCode =:SysParmCode " );
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -305,7 +290,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new PFSParameter());
 		
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
-		List<PFSParameter> systemParms = this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);  
+		List<PFSParameter> systemParms = this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);  
 
 		logger.debug("Leaving");
 		return systemParms;
@@ -320,7 +305,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		sql.append(" from GlobalVariables");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new GlobalVariable());
 		RowMapper<GlobalVariable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GlobalVariable.class);
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 	
 }

@@ -6,31 +6,24 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ext.ExtTablesDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.ExtTable;
 import com.pennant.backend.model.finance.salary.FinSalariedPayment;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTablesDAO {
-
-	private static Logger				logger	= Logger.getLogger(ExtTablesDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO {
+	private static Logger logger = Logger.getLogger(ExtTablesDAOImpl.class);
+	
 	public ExtTablesDAOImpl() {
 		super();
 	}
@@ -46,7 +39,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
 		RowMapper<ExtTable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtTable.class);
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -59,7 +52,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 		logger.debug("Sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -74,7 +67,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 		logger.debug("Sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
 
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -88,17 +81,8 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 		logger.debug("Sql: " + sql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(autoHunting.toArray());
 
-		this.namedParameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -117,7 +101,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extTable);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	/**
@@ -136,7 +120,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 		insertSql.append("Update CONTROL_TABLE set STATUS=1 where SYS_CODE=:Sys_Code and COB_DATE= :Cob_Date");
 		
 		logger.debug("insertSql: "+ insertSql.toString());
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -156,7 +140,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extTable);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -173,7 +157,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 
 		try{		
 
-			this.namedParameterJdbcTemplate.getJdbcOperations().execute(
+			this.jdbcTemplate.getJdbcOperations().execute(
 					new CallableStatementCreator() {
 						public CallableStatement createCallableStatement(Connection con) throws SQLException{
 							CallableStatement cs = con.prepareCall(builder.toString());
@@ -220,7 +204,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 
 		logger.debug("insertSql: "+ insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -237,7 +221,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 
 		logger.debug("deleteSql: "+ deleteSql.toString());
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), new MapSqlParameterSource());
+		this.jdbcTemplate.update(deleteSql.toString(), new MapSqlParameterSource());
 		logger.debug("Leaving");
 	}
 	
@@ -256,7 +240,7 @@ public class ExtTablesDAOImpl extends BasisCodeDAO<ExtTable> implements ExtTable
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salariedPayment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

@@ -2,12 +2,9 @@ package com.pennant.backend.dao.cibil;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -23,15 +20,13 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
-public class CIBILDAOImpl implements CIBILDAO {
+public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	private static Logger logger = Logger.getLogger(CIBILDAOImpl.class);
-
-	private DataSource dataSource;
-	private NamedParameterJdbcTemplate namedJdbcTemplate;
-
+	
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId) {
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -40,7 +35,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 			customerDetails.setCustomer(getCustomer(customerId));
 			customerDetails.setCustomerDocumentsList(getCustomerDocuments(customerId));
 			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumbers(customerId));
-			customerDetails.setCustomerEMailList(getCustomerEmails(customerId));
+			customerDetails.setCustomerEMailList(getCustomerEmails(customerId)); 
 			customerDetails.setAddressList(getCustomerAddres(customerId));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -62,7 +57,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("CUSTID", customerId);
 
 		RowMapper<Customer> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
-		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
+		return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -80,7 +75,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		RowMapper<CustomerDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		return this.jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -99,7 +94,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		RowMapper<CustomerPhoneNumber> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CustomerPhoneNumber.class);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		return this.jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -114,7 +109,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		RowMapper<CustomerEMail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		return this.jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -133,7 +128,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("CUSTID", customerId);
 
 		RowMapper<CustomerAddres> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		return this.jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -154,7 +149,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("CUSTID", customerId);
 
 		RowMapper<FinanceEnquiry> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
-		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
+		return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -181,7 +176,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("START_TIME",  DateUtil.getSysDate());
 
 		try {
-			this.namedJdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "id" });
+			this.jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "id" });
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -205,7 +200,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("STATUS", "F");
 
 		try {
-			this.namedJdbcTemplate.update(sql.toString(), paramMap);
+			this.jdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -226,7 +221,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineStatus.class);
 
 		try {
-			dataStatus = namedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), rowMapper);
+			dataStatus = jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), rowMapper);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -256,7 +251,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
 
-			return namedJdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
+			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
 
 		} catch (Exception e) {
 		} finally {
@@ -292,7 +287,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("END_TIME", DateUtil.getSysDate());
 
 		try {
-			this.namedJdbcTemplate.update(sql.toString(), paramMap);
+			this.jdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -304,7 +299,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public void deleteDetails() {
 		logger.debug(Literal.ENTERING);
 		try {
-			namedJdbcTemplate.update("TRUNCATE TABLE CIBIL_CUSTOMER_EXTRACT", new MapSqlParameterSource());
+			jdbcTemplate.update("TRUNCATE TABLE CIBIL_CUSTOMER_EXTRACT", new MapSqlParameterSource());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -323,18 +318,13 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("LATESTRPYDATE", DateUtil.addMonths(DateUtility.getAppDate(), -36));
 
 		try {
-			return namedJdbcTemplate.update(sql.toString(), paramMap);
+			return jdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to insert CIBIL Details");
 		}
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
-	}
-
+	
 	@Override
 	public EventProperties getEventProperties(String configName, String eventType) {
 		RowMapper<EventProperties> rowMapper = null;
@@ -348,7 +338,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EventProperties.class);
 			parameterSource.addValue("NAME", configName);
 			parameterSource.addValue("STORAGE_TYPE", eventType);
-			return namedJdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);
 
 		} catch (Exception e) {
 			logger.warn("Configuration details not available for " + configName);

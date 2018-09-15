@@ -2,7 +2,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,34 +9,21 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeProviderDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProvider> implements
-		InsuranceTypeProviderDAO {
-	private static Logger				logger	= Logger.getLogger(InsuranceTypeProviderDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class InsuranceTypeProviderDAOImpl extends BasicDao<InsuranceTypeProvider>
+		implements InsuranceTypeProviderDAO {
+	private static Logger logger = Logger.getLogger(InsuranceTypeProviderDAOImpl.class);
+	
 	public InsuranceTypeProviderDAOImpl() {
 		super();
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -72,7 +58,7 @@ public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProv
 				.newInstance(InsuranceTypeProvider.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -105,7 +91,7 @@ public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProv
 				.newInstance(InsuranceTypeProvider.class);
 
 		try {
-			insuranceTypeProvider = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			insuranceTypeProvider = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -144,7 +130,7 @@ public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProv
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceTypeProvider);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return insuranceTypeProvider.getId();
 	}
@@ -167,7 +153,7 @@ public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProv
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceTypeProvider);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -188,7 +174,7 @@ public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProv
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceTypeProvider);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount < 0) {
 				throw new ConcurrencyException();
 			}

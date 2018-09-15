@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.EmpStsCodeDAO;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,12 +67,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>EmpStsCode model</b> class.<br>
  * 
  */
-public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpStsCodeDAO {
-
+public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCodeDAO {
 	private static Logger logger = Logger.getLogger(EmpStsCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public EmpStsCodeDAOImpl() {
 		super();
@@ -108,21 +101,13 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 		RowMapper<EmpStsCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmpStsCode.class);
 
 		try {
-			empStsCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			empStsCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			empStsCode = null;
 		}
 		logger.debug("Leaving");
 		return empStsCode;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -153,7 +138,7 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -196,7 +181,7 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 		logger.trace(Literal.SQL +  insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
 		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -235,7 +220,7 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -268,7 +253,7 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("empStsCode", empStsCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

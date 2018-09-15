@@ -43,7 +43,6 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,28 +50,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SukukBondDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmasters.SukukBond;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>SukukBond model</b> class.<br>
  * 
  */
 
-public class SukukBondDAOImpl extends BasisCodeDAO<SukukBond> implements SukukBondDAO {
-
+public class SukukBondDAOImpl extends BasicDao<SukukBond> implements SukukBondDAO {
 	private static Logger logger = Logger.getLogger(SukukBondDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public SukukBondDAOImpl() {
 		super();
 	}
@@ -106,22 +100,13 @@ public class SukukBondDAOImpl extends BasisCodeDAO<SukukBond> implements SukukBo
 		RowMapper<SukukBond> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SukukBond.class);
 		
 		try{
-			sukukBond = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			sukukBond = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			sukukBond = null;
 		}
 		logger.debug("Leaving");
 		return sukukBond;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -148,7 +133,7 @@ public class SukukBondDAOImpl extends BasisCodeDAO<SukukBond> implements SukukBo
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBond);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -185,7 +170,7 @@ public class SukukBondDAOImpl extends BasisCodeDAO<SukukBond> implements SukukBo
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBond);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return sukukBond.getId();
 	}
@@ -219,7 +204,7 @@ public class SukukBondDAOImpl extends BasisCodeDAO<SukukBond> implements SukukBo
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBond);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

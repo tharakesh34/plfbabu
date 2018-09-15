@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
 import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -69,13 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Salutation model</b> class.<br>
  * 
  */
-public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements SalutationDAO {
-
+public class SalutationDAOImpl extends BasicDao<Salutation> implements SalutationDAO {
 	private static Logger logger = Logger.getLogger(SalutationDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public SalutationDAOImpl() {
 		super();
 	}
@@ -108,7 +102,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		RowMapper<Salutation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Salutation.class);
 
 		try {
-			salutation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			salutation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			salutation = null;
@@ -143,7 +137,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("salutationCode", salutationCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -173,7 +167,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(salutation);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -200,7 +194,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(salutation);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -226,7 +220,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -237,15 +231,6 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -265,7 +250,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
 		String dftSalutationCode = "";
 		try {
-			dftSalutationCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			dftSalutationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
         } catch (Exception e) {
         	logger.warn("Exception: ", e);
         	dftSalutationCode = "";
@@ -290,7 +275,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		salutation.setSystemDefault(systemDefault);
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 		
 		logger.debug(Literal.LEAVING);
     }

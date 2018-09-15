@@ -72,7 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader> implements ExtendedFieldHeaderDAO {
 	private static Logger logger = Logger.getLogger(ExtendedFieldHeaderDAOImpl.class);
 	
-	private NamedParameterJdbcTemplate adtJdbcTemplate;
+	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
 	public ExtendedFieldHeaderDAOImpl() {
 		super();
@@ -193,7 +193,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 * @param dataSource
 	 */
 	public void setAuditDataSource(DataSource dataSource) {
-		this.adtJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -454,7 +454,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			try {
 				logger.debug("createsql: " + syntax.toString());
 				if (i == 2 || i == 6) {// Audit DB
-					this.adtJdbcTemplate.getJdbcOperations().update(syntax.toString());
+					this.auditJdbcTemplate.getJdbcOperations().update(syntax.toString());
 				} else {
 					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}

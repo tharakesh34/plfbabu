@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -35,16 +32,14 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.model.interfacemapping.InterfaceMappingDetails;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
-public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
+public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implements CreditInterfaceDAO {
+	private static final Logger logger = Logger.getLogger(CreditInterfaceDAOImpl.class);
 	
-	private static final Logger			logger		= Logger.getLogger(CreditInterfaceDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 	protected DefaultTransactionDefinition	transDef;
 	private PlatformTransactionManager	transactionManager;
 
@@ -74,7 +69,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 			RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 					.newInstance(ExtendedFieldDetail.class);
 			logger.debug(Literal.LEAVING);
-			return this.namedParameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -190,7 +185,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 
 		try {
 			logger.debug("Leaving");
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			throw new InterfaceException("9999", "Unable to Retrive  the CoApplicant Details.");
@@ -227,7 +222,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
 		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
-		List<CustomerAddres> customerAddresses = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<CustomerAddres> customerAddresses = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		logger.debug("Leaving");
 		return customerAddresses;
@@ -256,7 +251,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
 		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
-		List<CustomerEMail> customerEMails = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<CustomerEMail> customerEMails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 
 		logger.debug("Leaving");
@@ -292,7 +287,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
 		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
 		return  customerPhoneNumbers;
 	}
@@ -326,7 +321,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 					CustomerDocument.class);
 			
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return Collections.emptyList();
@@ -356,7 +351,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 				.newInstance(ExtendedFieldHeader.class);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception :", e);
 		}
@@ -375,7 +370,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		source.addValue("Reference", reference);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			renderMap = this.namedParameterJdbcTemplate.queryForMap(selectSql.toString(), source);
+			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exceprtion ", e);
 			renderMap = null;
@@ -412,7 +407,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(serviceTaskDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			//commit
 			transactionManager.commit(txStatus);
 		} catch (DuplicateElementException dee) {
@@ -444,7 +439,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		logger.debug(Literal.LEAVING);
 		try {
 			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(dae);
 			return Collections.emptyList();
@@ -483,7 +478,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(City.class);
 
 		try {
-			city = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			city = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			city = null;
@@ -491,21 +486,6 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		logger.debug(Literal.LEAVING);
 		return city;
 	}
-	
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
-
-	
 	
 	@Override
 	public void saveExtendedDetails(Map<String, Object> mappedValues, String type, String tableName) {
@@ -537,7 +517,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		insertSql.append(" (" + columnames + ") values (" + columnValues + ")");
 		logger.debug("insertSql: " + insertSql.toString());
 		
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
+			this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 			transactionManager.commit(txStatus);
 		} catch(Exception e) {
 			logger.error("Exception", e);
@@ -577,7 +557,7 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), mappedValues);
+			this.jdbcTemplate.update(updateSql.toString(), mappedValues);
 			transactionManager.commit(txStatus);
 		} catch(Exception e) {
 			logger.error("Exception", e);
@@ -600,12 +580,15 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 		logger.debug(Literal.LEAVING);
 		try {
 			RowMapper<InterfaceMappingDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterfaceMappingDetails.class);
-			return (List<InterfaceMappingDetails>) this.namedParameterJdbcTemplate.query(str, paramMap, typeRowMapper);
+			return (List<InterfaceMappingDetails>) this.jdbcTemplate.query(str, paramMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception :", e);
 		}
 		return null;
 	}
-
+	
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
 }
 

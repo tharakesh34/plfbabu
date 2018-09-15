@@ -47,7 +47,6 @@ package com.pennant.backend.dao.financemanagement.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,28 +54,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>ProvisionMovement model</b> class.<br>
  * 
  */
 
-public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> implements ProvisionMovementDAO {
-
+public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implements ProvisionMovementDAO {
 	private static Logger logger = Logger.getLogger(ProvisionMovementDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public ProvisionMovementDAOImpl() {
 		super();
 	}
@@ -115,7 +109,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 		RowMapper<ProvisionMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProvisionMovement.class);
 		
 		try{
-			provisionMovement = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			provisionMovement = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -156,15 +150,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 		RowMapper<ProvisionMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProvisionMovement.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**
@@ -191,7 +177,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -229,7 +215,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return provisionMovement.getId();
 	}
@@ -260,7 +246,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

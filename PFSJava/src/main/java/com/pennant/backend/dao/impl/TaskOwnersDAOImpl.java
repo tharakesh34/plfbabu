@@ -47,8 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,33 +55,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.model.TaskOwners;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class TaskOwnersDAOImpl implements TaskOwnersDAO {
+public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwnersDAO {
 	private static Logger logger = Logger.getLogger(TaskOwnersDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	public TaskOwnersDAOImpl() {
 		super();
 	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	@Override
     public void save(TaskOwners taskOwners) {
 		logger.debug("Entering");
@@ -94,7 +81,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
 		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		}catch(DuplicateKeyException e){
 			logger.debug("Exception: ", e);
 		}
@@ -116,7 +103,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
 		try {
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		}catch(DuplicateKeyException e){
 			logger.debug("Exception: ", e);
 		}
@@ -133,7 +120,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
 		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			logger.debug("Exception: ", e);
 		}
@@ -152,7 +139,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 				insertSql.append(" Values(  :Reference, :RoleCode, :ActualOwner, :CurrentOwner, :Processed)");
 				logger.debug("insertSql: " + insertSql.toString());
 
-				this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+				this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 */				
 				syncRecord(taskOwner);
 				
@@ -163,7 +150,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 				updateSql.append(" WHERE Reference=:Reference AND RoleCode=:RoleCode");
 				logger.debug("updateSql: " + updateSql.toString());
 
-				int recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+				int recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 				if(recordCount <= 0){
 					logger.debug("Unable to update");
 				}
@@ -180,7 +167,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwner);
 		int count =0;
 		try {
-			count= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			count= this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		}catch (EmptyResultDataAccessException e) {
 		}
 		
@@ -190,14 +177,14 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 			insertSql.append(" (Reference, RoleCode, ActualOwner, CurrentOwner, Processed)");
 			insertSql.append(" Values(  :Reference, :RoleCode, :ActualOwner, :CurrentOwner, :Processed)");
 			logger.debug("insertSql: " + insertSql.toString());
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		}else{
 			logger.debug("Update");
 			StringBuilder updateSql = 	new StringBuilder(" UPDATE Task_Owners SET Processed=:Processed,");
 			updateSql.append(" CurrentOwner=:CurrentOwner " );
 			updateSql.append(" WHERE Reference=:Reference AND RoleCode=:RoleCode AND ActualOwner=:ActualOwner");
 			logger.debug("updateSql: " + updateSql.toString());
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -211,7 +198,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParams = SqlParameterSourceUtils.createBatch(taskOwners.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParams);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParams);
 		logger.debug("Leaving");
 
 	}
@@ -229,7 +216,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			taskOwners = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			taskOwners = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -249,13 +236,13 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		StringBuilder selectSql = new StringBuilder("SELECT count(reference) From Task_Owners");
 		selectSql.append(" Where Reference IN (:Reference) AND ActualOwner=:ActualOwner AND RoleCode=:RoleCode");
 		logger.debug("selectSql: " + selectSql.toString());
-		if(this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),parameterMap, Integer.class)>0){
+		if(this.jdbcTemplate.queryForObject(selectSql.toString(),parameterMap, Integer.class)>0){
 			return true;
 		}
 		selectSql = new StringBuilder("SELECT count(reference) From Task_Owners");
 		selectSql.append(" Where Reference IN (:Reference) AND CurrentOwner=:CurrentOwner");
 		logger.debug("selectSql: " + selectSql.toString());
-		if(this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),parameterMap, Integer.class)>0){
+		if(this.jdbcTemplate.queryForObject(selectSql.toString(),parameterMap, Integer.class)>0){
 			return false;
 		}
 		return true;
@@ -275,14 +262,14 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		selectSql.append(" Where Reference=:Reference AND CurrentOwner=:CurrentOwner AND Processed=0");
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			roleCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			roleCode = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			selectSql = new StringBuilder("SELECT RoleCode From (select RoleCode, row_number() over (order by CurrentOwner desc)");
 			selectSql.append("row_num From Task_Owners where Reference=:Reference AND CurrentOwner=0 AND RoleCode in (:UserRoles)) Task Where row_num <= 1 ");
 			logger.debug("selectSql: " + selectSql.toString());
 			try {
-				roleCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+				roleCode = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 			}catch (EmptyResultDataAccessException e1) {
 				logger.warn("Exception: ", e1);
 				return null;
@@ -303,7 +290,7 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		
 		RowMapper<TaskOwners> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaskOwners.class);
 		logger.debug("selectSql: " + selectSql.toString());
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
     }
 
 	@Override
@@ -318,11 +305,11 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		StringBuilder updateSql = new StringBuilder("Update Task_Owners set Processed=:Processed where Reference=:Reference AND RoleCode=:RoleCode ");
 
 		logger.debug("selectSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		StringBuilder deleteSql = new StringBuilder("Delete from Task_Owners where Reference=:Reference AND RoleCode=:NextRoleCode ");
 
 		logger.debug("selectSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 	}
 }

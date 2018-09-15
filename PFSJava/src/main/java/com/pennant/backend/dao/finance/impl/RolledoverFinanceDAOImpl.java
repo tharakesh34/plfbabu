@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -19,20 +17,13 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
-
+public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> implements RolledoverFinanceDAO {
 	private static Logger logger = Logger.getLogger(RolledoverFinanceDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public RolledoverFinanceDAOImpl() {
 		super();
-	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -53,7 +44,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 		        .newInstance(RolledoverFinanceHeader.class);
 
 		try {
-			header = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
+			header = this.jdbcTemplate.queryForObject(selectSql.toString(), 
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -82,7 +73,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 		        .newInstance(RolledoverFinanceDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
     }
 	
 	@Override
@@ -97,7 +88,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -115,7 +106,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 		deleteSql.append(" Where FinReference = :FinReference ");
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), map);	
+		this.jdbcTemplate.update(deleteSql.toString(), map);	
 		logger.debug("Leaving");
     }
 
@@ -131,7 +122,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
     }
@@ -148,7 +139,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(details.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 
@@ -164,7 +155,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
 

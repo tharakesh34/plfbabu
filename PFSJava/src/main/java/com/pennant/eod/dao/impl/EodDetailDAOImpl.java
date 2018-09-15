@@ -2,13 +2,10 @@ package com.pennant.eod.dao.impl;
 
 import java.util.Date;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -16,13 +13,10 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class EodDetailDAOImpl implements EodDetailDAO {
-
-	private static Logger				logger	= Logger.getLogger(EodDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDAO {
+	private static Logger logger = Logger.getLogger(EodDetailDAOImpl.class);
 
 	@Override
 	public void save(EodDetail eodDetail) {
@@ -34,7 +28,7 @@ public class EodDetailDAOImpl implements EodDetailDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -56,7 +50,7 @@ public class EodDetailDAOImpl implements EodDetailDAO {
 
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), beanParameters);
+			this.jdbcTemplate.update(selectSql.toString(), beanParameters);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 		}
@@ -80,7 +74,7 @@ public class EodDetailDAOImpl implements EodDetailDAO {
 
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), beanParameters);
+			this.jdbcTemplate.update(selectSql.toString(), beanParameters);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 		}
@@ -98,19 +92,10 @@ public class EodDetailDAOImpl implements EodDetailDAO {
 			logger.debug("selectSql: " + selectSql.toString());
 			RowMapper<EodDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EodDetail.class);
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
 		}
 	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }

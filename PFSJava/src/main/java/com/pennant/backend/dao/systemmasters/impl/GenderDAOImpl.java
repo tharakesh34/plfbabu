@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.model.systemmasters.Gender;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,13 +66,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>Gender</code> with set of CRUD operations.
  */
-public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
-
+public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 	private static Logger logger = Logger.getLogger(GenderDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public GenderDAOImpl() {
 		super();
 	}
@@ -107,7 +101,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		RowMapper<Gender> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Gender.class);
 
 		try {
-			gender = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			gender = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			gender = null;
@@ -142,7 +136,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("genderCode", genderCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -172,7 +166,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gender);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -198,7 +192,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gender);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -224,7 +218,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -264,7 +258,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 				gender);
 		String dftGenderCode = "";
 		try {
-			dftGenderCode = this.namedParameterJdbcTemplate.queryForObject(
+			dftGenderCode = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -272,14 +266,5 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		}
 		logger.debug("Leaving");
 		return dftGenderCode;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-				dataSource);
 	}
 }

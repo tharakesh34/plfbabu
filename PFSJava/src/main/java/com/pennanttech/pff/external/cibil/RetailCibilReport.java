@@ -13,15 +13,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -36,11 +33,12 @@ import com.pennant.backend.service.cibil.CIBILService;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.service.AmazonS3Bucket;
 
-public class RetailCibilReport {
+public class RetailCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
 
@@ -56,9 +54,6 @@ public class RetailCibilReport {
 	private long processedRecords;
 	private long successCount;
 	private long failedCount;
-
-	private DataSource dataSource;
-	private NamedParameterJdbcTemplate namedJdbcTemplate;
 
 	@Autowired
 	private CIBILService cibilService;
@@ -91,7 +86,7 @@ public class RetailCibilReport {
 
 			StringBuilder sql = new StringBuilder();
 			sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
-			namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
@@ -883,10 +878,5 @@ public class RetailCibilReport {
 			remarks.append(successCount);
 		}
 		return remarks.toString();
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
 	}
 }

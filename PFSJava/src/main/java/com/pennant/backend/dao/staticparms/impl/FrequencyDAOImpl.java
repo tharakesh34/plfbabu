@@ -43,35 +43,28 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.FrequencyDAO;
 import com.pennant.backend.model.staticparms.Frequency;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>Frequency model</b> class.<br>
  * 
  */
-public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements FrequencyDAO {
-
+public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDAO {
 	private static Logger logger = Logger.getLogger(FrequencyDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public FrequencyDAOImpl() {
 		super();
 	}
@@ -106,22 +99,13 @@ public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements Frequen
 		RowMapper<Frequency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Frequency.class);
 
 		try {
-			frequency = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			frequency = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			frequency = null;
 		}
 		logger.debug("Leaving");
 		return frequency;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -151,7 +135,7 @@ public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements Frequen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -192,7 +176,7 @@ public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements Frequen
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return frequency.getId();
@@ -231,7 +215,7 @@ public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements Frequen
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

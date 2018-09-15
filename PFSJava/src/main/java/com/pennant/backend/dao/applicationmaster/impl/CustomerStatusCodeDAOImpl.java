@@ -42,35 +42,29 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>CustomerStatusCode model</b> class.<br>
  * 
  */
-public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	implements CustomerStatusCodeDAO {
+public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode>	implements CustomerStatusCodeDAO {
 	private static Logger logger = Logger.getLogger(CustomerStatusCodeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public CustomerStatusCodeDAOImpl() {
 		super();
 	}
@@ -106,21 +100,13 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		RowMapper<CustomerStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerStatusCode.class);
 
 		try {
-			customerStatusCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			customerStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerStatusCode = null;
 		}
 		logger.debug("Leaving");
 		return customerStatusCode;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -150,7 +136,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -191,7 +177,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerStatusCode.getId();
@@ -231,7 +217,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -256,7 +242,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
 
-		int suspendCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		int suspendCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		if(suspendCount > 0){
 			suspendProfit = true;
 		}
@@ -288,7 +274,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		
 		String custStsCode = null;
 		try {
-			custStsCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,String.class);
+			custStsCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,String.class);
         } catch (Exception e) {
         	logger.warn("Exception: ", e);
         	custStsCode = null;
@@ -316,7 +302,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		RowMapper<CustomerStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerStatusCode.class);
 
 		try {
-			customerStatusCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			customerStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerStatusCode = null;

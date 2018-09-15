@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,11 +66,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
-public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements LoanPurposeDAO {
+public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPurposeDAO {
 	private static Logger logger = Logger.getLogger(LoanPurposeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public LoanPurposeDAOImpl() {
 		super();
@@ -105,7 +100,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		RowMapper<LoanPurpose> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LoanPurpose.class);
 
 		try {
-			loanPurpose = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			loanPurpose = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			loanPurpose = null;
@@ -139,7 +134,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("LoanPurposeCode", loanPurposeCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -168,7 +163,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(loanPurpose);
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -195,7 +190,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(loanPurpose);
-		int recordCount  = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount  = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -223,7 +218,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -234,13 +229,5 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}	
 }

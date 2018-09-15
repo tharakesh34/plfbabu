@@ -46,7 +46,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,28 +53,23 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>ScoringMetrics model</b> class.<br>
  * 
  */
 
-public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implements ScoringMetricsDAO {
-
+public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements ScoringMetricsDAO {
 	private static Logger logger = Logger.getLogger(ScoringMetricsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public ScoringMetricsDAOImpl() {
 		super();
 	}
@@ -109,7 +103,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		try{
-			scoringMetrics = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			scoringMetrics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scoringMetrics = null;
@@ -140,16 +134,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-	}
-
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
 	/**
@@ -176,7 +161,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -199,7 +184,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -231,7 +216,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return String.valueOf(scoringMetrics.getId());
 	}
@@ -267,7 +252,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -290,7 +275,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
 }

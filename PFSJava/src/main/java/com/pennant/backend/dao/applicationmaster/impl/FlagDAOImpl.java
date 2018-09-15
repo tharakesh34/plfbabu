@@ -43,8 +43,6 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,12 +67,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Flag</code> with set of CRUD operations.
  */
 
-public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
-
+public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 	private static Logger logger = Logger.getLogger(FlagDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public FlagDAOImpl() {
 		super();
@@ -111,7 +104,7 @@ public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
 		RowMapper<Flag> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Flag.class);
 		
 		try{
-			flag = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			flag = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			flag = null;
@@ -146,7 +139,7 @@ public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("FlagCode", flagCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -174,7 +167,7 @@ public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -199,7 +192,7 @@ public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -225,7 +218,7 @@ public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -236,14 +229,5 @@ public class FlagDAOImpl extends BasisCodeDAO<Flag> implements FlagDAO {
 		}
 		
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

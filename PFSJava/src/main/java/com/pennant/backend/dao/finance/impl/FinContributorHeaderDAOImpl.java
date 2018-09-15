@@ -43,36 +43,29 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
  * DAO methods implementation for the <b>FinContributorHeader model</b> class.<br>
  * 
  */
-public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHeader> implements FinContributorHeaderDAO {
-
+public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> implements FinContributorHeaderDAO {
 	private static Logger logger = Logger.getLogger(FinContributorHeaderDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinContributorHeaderDAOImpl() {
 		super();
@@ -146,7 +139,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		        .newInstance(FinContributorHeader.class);
 
 		try {
-			contributorHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			contributorHeader = this.jdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -154,16 +147,6 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		}
 		logger.debug("Leaving");
 		return contributorHeader;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -195,7 +178,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);
 		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -243,7 +226,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return contributorHeader.getId();
 	}
@@ -283,7 +266,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

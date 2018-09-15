@@ -45,41 +45,26 @@ package com.pennant.backend.dao.rulefactory.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinFeeChargesDAOImpl extends BasisCodeDAO<FeeRule> implements FinFeeChargesDAO {
-
-private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeChargesDAO {
+	private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
+		
 	public FinFeeChargesDAOImpl() {
 		super();
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * Method for Fetching Fee charge Details list based upon Reference
 	 */
@@ -102,7 +87,7 @@ private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
 		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	/**
@@ -120,7 +105,7 @@ private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		if (recordCount <= 0) {
 			return false;
@@ -148,7 +133,7 @@ private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(chargeList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -174,7 +159,7 @@ private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -212,7 +197,7 @@ private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
 		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 
 	@Override
@@ -237,7 +222,7 @@ private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
 		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
 		
 		try {
-			feeRule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			feeRule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			feeRule = null;
