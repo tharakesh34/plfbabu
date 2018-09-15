@@ -1684,6 +1684,12 @@ UNION ALL
 			select deps_restore_dependencies('plf','documentdetails_view');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="83" author="Vinay">
+		<sql>
+			update master_def set key_type='VTRID',key_code='VTRID' where key_code='VID';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
