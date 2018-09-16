@@ -14,7 +14,6 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
-
 		<!-- Module Dependencies -->
 		<dependency>
 			<groupId>${pff.groupId}</groupId>

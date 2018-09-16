@@ -21,6 +21,7 @@
 		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.5.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
+		<cxf.version>3.1.8</cxf.version>
 	</properties>
 
 	<repositories>
@@ -160,6 +161,11 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
