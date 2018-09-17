@@ -187,6 +187,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean dataFetchComplete = false;
 	private String userAction;
 	private BigDecimal score = BigDecimal.ZERO;
+	private BigDecimal custPOS = BigDecimal.ZERO;
 	private Date valueDate;
 	private int maxAge = 0;
 	private int minAge = 0;
@@ -257,7 +258,7 @@ public class FinanceDetail implements java.io.Serializable {
 	public FinanceDetail() {
 		super();
 	}
-		
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -478,21 +479,7 @@ public class FinanceDetail implements java.io.Serializable {
 		return scoringMetrics;
 	}
 
-	public void setScoringMetrics(Long id, List<ScoringMetrics> scoringMetrics) {
-		if (this.scoringMetrics == null) {
-			this.scoringMetrics = new HashMap<>();
-		} else {
-			if (this.scoringMetrics.containsKey(id)) {
-				this.scoringMetrics.remove(id);
-			}
-		}
-		this.scoringMetrics.put(id, scoringMetrics);
-	}
-
 	public void setScoringMetrics(Map<Long, List<ScoringMetrics>> scoringMetrics) {
-		if (this.scoringMetrics == null) {
-			this.scoringMetrics = new HashMap<>();
-		}
 		this.scoringMetrics = scoringMetrics;
 	}
 
@@ -500,21 +487,7 @@ public class FinanceDetail implements java.io.Serializable {
 		return scoringSlabs;
 	}
 
-	public void setScoringSlabs(Long id, List<ScoringSlab> scoringSlabs) {
-		if (this.scoringSlabs == null) {
-			this.scoringSlabs = new HashMap<>();
-		} else {
-			if (this.scoringSlabs.containsKey(id)) {
-				this.scoringSlabs.remove(id);
-			}
-		}
-		this.scoringSlabs.put(id, scoringSlabs);
-	}
-
 	public void setScoringSlabs(Map<Long, List<ScoringSlab>> scoringSlabs) {
-		if (this.scoringSlabs == null) {
-			this.scoringSlabs = new HashMap<>();
-		}
 		this.scoringSlabs = scoringSlabs;
 	}
 
@@ -836,6 +809,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setScore(BigDecimal score) {
 		this.score = score;
+	}
+
+	public BigDecimal getCustPOS() {
+		return custPOS;
+	}
+
+	public void setCustPOS(BigDecimal custPOS) {
+		this.custPOS = custPOS;
 	}
 
 	public Date getValueDate() {
@@ -1236,5 +1217,35 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setFinBeneficiary(FinBeneficiary finBeneficiary) {
 		this.finBeneficiary = finBeneficiary;
+	}
+
+	// Additional supporting methods
+	public void setScoringMetrics(Long id, List<ScoringMetrics> scoringMetrics) {
+		if (this.scoringMetrics == null) {
+			this.scoringMetrics = new HashMap<>();
+		} else {
+			if (this.scoringMetrics.containsKey(id)) {
+				this.scoringMetrics.remove(id);
+			}
+		}
+		this.scoringMetrics.put(id, scoringMetrics);
+	}
+
+	public void setScoringSlabs(Long id, List<ScoringSlab> scoringSlabs) {
+		if (this.scoringSlabs == null) {
+			this.scoringSlabs = new HashMap<>();
+		} else {
+			if (this.scoringSlabs.containsKey(id)) {
+				this.scoringSlabs.remove(id);
+			}
+		}
+		this.scoringSlabs.put(id, scoringSlabs);
+	}
+
+	public void setLovDescExtendedFieldValues(String string, Object object) {
+		if (lovDescExtendedFieldValues.containsKey(string)) {
+			lovDescExtendedFieldValues.remove(string);
+		}
+		this.lovDescExtendedFieldValues.put(string, object);
 	}
 }
