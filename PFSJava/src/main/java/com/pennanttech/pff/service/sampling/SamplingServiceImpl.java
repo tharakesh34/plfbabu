@@ -703,7 +703,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				}
 			}
 			temp.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(custId, true, "_View"));
-
+			temp.setEligibilityRules(samplingDAO.getEligibilityRules());
 			List<String> collateralTypes = samplingDAO.getCollateralTypes(finReference);
 
 			for (String collateralType : collateralTypes) {
@@ -800,7 +800,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			if (temp.getLoanAmountRequested() == null) {
 				temp.setLoanAmountRequested(BigDecimal.ZERO);
 			}
-			temp.setEligibilityRules(samplingDAO.getEligibilityRules());
 			return temp;
 		}
 		logger.info(Literal.LEAVING);

@@ -575,7 +575,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		// fill the components with the data
 		doWriteBeanToComponents(collateralSetup);
-		if (fromLoan) {
+		if (fromLoan || enqiryModule) {
 			this.btnDelete.setVisible(false);
 			this.btnNotes.setVisible(false);
 			this.window_CollateralSetupDialog.setHeight("80%");
