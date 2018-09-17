@@ -21,8 +21,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements ReasonDetailDAO {
 	private static Logger logger = Logger.getLogger(ReasonDetailDAOImpl.class);
 
-	
-
 	public ReasonDetailDAOImpl() {
 		super();
 	}
@@ -56,6 +54,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 
 		try {
 			if (reasonHeader.getId() == Long.MIN_VALUE) {
+				reasonHeader.setId(getNextId("SeqReasonHeader"));
 			}
 			sql = new StringBuilder("Insert Into  ReasonHeader ");
 			sql.append(" (Id, Module, Reference, Remarks, Rolecode, Activity, ToUser, LogTime)");
