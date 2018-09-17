@@ -917,7 +917,7 @@
 				zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FeeWaiverEnquiryList.zul"
 				rightName="menuItem_Enquiry_FeeWiavers" />
 			<menuItem id="menu_Item_FeeWaiverEnquiry"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeWaiverEnquiryList.zul?enqiryModule=Y" rightName="" />	
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeWaiverEnquiryList.zul?enqiryModule=Y" rightName="menuItem_FeeWiavers_Enquiry" />	
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry"
