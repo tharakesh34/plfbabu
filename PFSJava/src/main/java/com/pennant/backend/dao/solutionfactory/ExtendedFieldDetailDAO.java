@@ -73,13 +73,13 @@ public interface ExtendedFieldDetailDAO {
 	Map<String, Object> retrive(String tableName, String primaryKeyColumn, Serializable id, String type);
 
 	@Deprecated
-	void saveAdditional(final String id, HashMap<String, Object> mappedValues, String type, String tableName);
+	void saveAdditional(final String id, Map<String, Object> mappedValues, String type, String tableName);
 
 	void saveAdditional(String primaryKeyColumn, final Serializable id, HashMap<String, Object> mappedValues,
 			String type, String tableName);
 
 	@Deprecated
-	void updateAdditional(HashMap<String, ?> mappedValues, final String id, String type, String tableName);
+	void updateAdditional(Map<String, ?> mappedValues, final String id, String type, String tableName);
 
 	void updateAdditional(String primaryKeyColumn, final Serializable id, HashMap<String, Object> mappedValues,
 			String type, String tableName);

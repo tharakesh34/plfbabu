@@ -1286,7 +1286,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		aFinanceDetail.setFinScoreHeaderList(scoreHeaderList);
 		
 		processDevaition(scoreHeaderList,getFinanceDetail());
-		sufficientScore=checkScoreisSufficientWithDeviation(financeDetail.getFinScoreHeaderList(),financeDetail.getScoreDetailListMap());
+		sufficientScore=checkScoreisSufficientWithDeviation(financeDetail.getFinScoreHeaderList(), financeDetail.getScoreDetailListMap());
 		aFinanceDetail.setSufficientScore(sufficientScore);
 		
 		//Score Card preparation as Per Calculation Formula
@@ -1389,7 +1389,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * @param financeDetail
 	 * @return
 	 */
-	public boolean checkScoreisSufficientWithDeviation(List<FinanceScoreHeader> financeScoreHeaders, HashMap<Long, List<FinanceScoreDetail>> scoreMap ){
+	public boolean checkScoreisSufficientWithDeviation(List<FinanceScoreHeader> financeScoreHeaders, Map<Long, List<FinanceScoreDetail>> scoreMap ){
 		logger.debug(" Entering ");
 		
 		boolean scoreOk=true;
@@ -1420,7 +1420,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * @param financeDetail
 	 * @return
 	 */
-	public Boolean[] isScoreSufficientWithDeviation(List<FinanceReferenceDetail>  financeScoreHeaders,  HashMap<Long, List<ScoringMetrics>> scoreMap ){
+	public Boolean[] isScoreSufficientWithDeviation(List<FinanceReferenceDetail>  financeScoreHeaders,  Map<Long, List<ScoringMetrics>> scoreMap ){
 		logger.debug(" Entering ");
 		Boolean[] socres=new Boolean[2];
 		

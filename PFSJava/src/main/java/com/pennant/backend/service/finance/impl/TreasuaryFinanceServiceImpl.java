@@ -234,7 +234,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (financeDetail.isNew()) {
+		if (financeDetail.isNewRecord()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 		}else{
 			getFinanceMainDAO().update(financeMain, tableType, false);

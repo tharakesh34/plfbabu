@@ -4415,7 +4415,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		isNew = aFinanceDetail.isNew();
+		isNew = aFinanceDetail.isNewRecord();
 
 		//Finance Fee Details Tab
 		if (finFeeDetailListCtrl != null) {

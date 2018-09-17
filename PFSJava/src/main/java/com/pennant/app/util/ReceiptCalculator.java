@@ -3793,8 +3793,8 @@ public class ReceiptCalculator implements Serializable {
 	public Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail){
 		
 		// Set Tax Details if Already exists
-		if(financeDetail.getFinanceTaxDetails() == null){
-			financeDetail.setFinanceTaxDetails(financeTaxDetailDAO.getFinanceTaxDetail(
+		if(financeDetail.getFinanceTaxDetail() == null){
+			financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(
 					financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
 		}
 		
@@ -3825,7 +3825,7 @@ public class ReceiptCalculator implements Serializable {
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
 		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				financeDetail.getFinanceTaxDetails(), null);
+				financeDetail.getFinanceTaxDetail(), null);
 		
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();

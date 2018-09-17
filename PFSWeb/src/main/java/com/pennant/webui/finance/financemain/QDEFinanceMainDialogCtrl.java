@@ -1415,7 +1415,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 
-		isNew = aFinanceDetail.isNew();
+		isNew = aFinanceDetail.isNewRecord();
 
 		// Finance CheckList Details Tab
 		if (checkListChildWindow != null) {

@@ -25,16 +25,18 @@
 
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class RepayScheduleDetail {
+public class RepayScheduleDetail implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private String finReference = null;
 	private Date schDate;
 	private Date defSchdDate;
 	private String schdFor = "";
-	
+
 	// Profit Amount
 	private BigDecimal profitSchd = BigDecimal.ZERO;
 	private BigDecimal profitSchdPaid = BigDecimal.ZERO;
@@ -42,49 +44,49 @@ public class RepayScheduleDetail {
 	private BigDecimal profitSchdPayNow = BigDecimal.ZERO;
 	private BigDecimal tdsSchdPayNow = BigDecimal.ZERO;
 	private BigDecimal pftSchdWaivedNow = BigDecimal.ZERO;
-	
+
 	// Profit Amount
 	private BigDecimal latePftSchd = BigDecimal.ZERO;
 	private BigDecimal latePftSchdPaid = BigDecimal.ZERO;
 	private BigDecimal latePftSchdBal = BigDecimal.ZERO;
 	private BigDecimal latePftSchdPayNow = BigDecimal.ZERO;
 	private BigDecimal latePftSchdWaivedNow = BigDecimal.ZERO;
-	
+
 	// Principal Amount
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchdPaid = BigDecimal.ZERO;
 	private BigDecimal principalSchdBal = BigDecimal.ZERO;
 	private BigDecimal principalSchdPayNow = BigDecimal.ZERO;
 	private BigDecimal priSchdWaivedNow = BigDecimal.ZERO;
-	
+
 	// Scheduled Fee Amount
 	private BigDecimal schdFee = BigDecimal.ZERO;
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdFeeBal = BigDecimal.ZERO;
 	private BigDecimal schdFeePayNow = BigDecimal.ZERO;
 	private BigDecimal schdFeeWaivedNow = BigDecimal.ZERO;
-	
+
 	// Insurance Amount
 	private BigDecimal schdIns = BigDecimal.ZERO;
 	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 	private BigDecimal schdInsBal = BigDecimal.ZERO;
 	private BigDecimal schdInsPayNow = BigDecimal.ZERO;
 	private BigDecimal schdInsWaivedNow = BigDecimal.ZERO;
-	
+
 	// Supplementary Rent
 	private BigDecimal schdSuplRent = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentBal = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentPayNow = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentWaivedNow = BigDecimal.ZERO;
-	
+
 	// Increased Cost Amount
 	private BigDecimal schdIncrCost = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostPaid = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostBal = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostPayNow = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostWaivedNow = BigDecimal.ZERO;
-	
+
 	private BigDecimal refundMax = BigDecimal.ZERO;
 	private BigDecimal refundReq = BigDecimal.ZERO;
 	private int daysLate = 0;
@@ -93,7 +95,7 @@ public class RepayScheduleDetail {
 	private BigDecimal repayNet = BigDecimal.ZERO;
 	private BigDecimal repayBalance = BigDecimal.ZERO;
 	private int schdIndex = 0;
-	
+
 	private boolean allowWaiver = false;
 	private BigDecimal penaltyAmt = BigDecimal.ZERO;
 	private BigDecimal penaltyPayNow = BigDecimal.ZERO;
@@ -104,17 +106,16 @@ public class RepayScheduleDetail {
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-	
+
 	private String chargeType = "";
 	private long linkedTranId = 0;
 	private long repayID = 0;// Only setting from Repay Header
 	private int repaySchID = 0;
 
-	
 	public RepayScheduleDetail() {
-		
+
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -254,6 +255,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getRepayNet() {
 		return repayNet;
 	}
+
 	public void setRepayNet(BigDecimal repayNet) {
 		this.repayNet = repayNet;
 	}
@@ -261,6 +263,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getRepayBalance() {
 		return repayBalance;
 	}
+
 	public void setRepayBalance(BigDecimal repayBalance) {
 		this.repayBalance = repayBalance;
 	}
@@ -268,52 +271,58 @@ public class RepayScheduleDetail {
 	public int getSchdIndex() {
 		return schdIndex;
 	}
+
 	public void setSchdIndex(int schdIndex) {
 		this.schdIndex = schdIndex;
 	}
 
 	public boolean isAllowWaiver() {
-    	return allowWaiver;
-    }
+		return allowWaiver;
+	}
+
 	public void setAllowWaiver(boolean allowWaiver) {
-    	this.allowWaiver = allowWaiver;
-    }
+		this.allowWaiver = allowWaiver;
+	}
 
 	public BigDecimal getPenaltyAmt() {
-    	return penaltyAmt;
-    }
+		return penaltyAmt;
+	}
+
 	public void setPenaltyAmt(BigDecimal penaltyAmt) {
-    	this.penaltyAmt = penaltyAmt;
-    }
+		this.penaltyAmt = penaltyAmt;
+	}
 
 	public BigDecimal getMaxWaiver() {
-    	return maxWaiver;
-    }
+		return maxWaiver;
+	}
+
 	public void setMaxWaiver(BigDecimal maxWaiver) {
-    	this.maxWaiver = maxWaiver;
-    }
+		this.maxWaiver = maxWaiver;
+	}
 
 	public BigDecimal getWaivedAmt() {
-    	return waivedAmt;
-    }
+		return waivedAmt;
+	}
+
 	public void setWaivedAmt(BigDecimal waivedAmt) {
-    	this.waivedAmt = waivedAmt;
-    }
+		this.waivedAmt = waivedAmt;
+	}
 
 	public String getChargeType() {
-    	return chargeType;
-    }
+		return chargeType;
+	}
+
 	public void setChargeType(String chargeType) {
-    	this.chargeType = chargeType;
-    }
+		this.chargeType = chargeType;
+	}
 
 	public long getLinkedTranId() {
-	    return linkedTranId;
-    }
+		return linkedTranId;
+	}
 
 	public void setLinkedTranId(long linkedTranId) {
-	    this.linkedTranId = linkedTranId;
-    }
+		this.linkedTranId = linkedTranId;
+	}
 
 	public BigDecimal getPenaltyPayNow() {
 		return penaltyPayNow;
@@ -486,6 +495,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getLatePftSchdPayNow() {
 		return latePftSchdPayNow;
 	}
+
 	public void setLatePftSchdPayNow(BigDecimal latePftSchdPayNow) {
 		this.latePftSchdPayNow = latePftSchdPayNow;
 	}
@@ -493,6 +503,7 @@ public class RepayScheduleDetail {
 	public int getRepaySchID() {
 		return repaySchID;
 	}
+
 	public void setRepaySchID(int repaySchID) {
 		this.repaySchID = repaySchID;
 	}
@@ -500,6 +511,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getPftSchdWaivedNow() {
 		return pftSchdWaivedNow;
 	}
+
 	public void setPftSchdWaivedNow(BigDecimal pftSchdWaivedNow) {
 		this.pftSchdWaivedNow = pftSchdWaivedNow;
 	}
@@ -507,6 +519,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getLatePftSchdWaivedNow() {
 		return latePftSchdWaivedNow;
 	}
+
 	public void setLatePftSchdWaivedNow(BigDecimal latePftSchdWaivedNow) {
 		this.latePftSchdWaivedNow = latePftSchdWaivedNow;
 	}
@@ -514,6 +527,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getPriSchdWaivedNow() {
 		return priSchdWaivedNow;
 	}
+
 	public void setPriSchdWaivedNow(BigDecimal priSchdWaivedNow) {
 		this.priSchdWaivedNow = priSchdWaivedNow;
 	}
@@ -521,6 +535,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getSchdFeeWaivedNow() {
 		return schdFeeWaivedNow;
 	}
+
 	public void setSchdFeeWaivedNow(BigDecimal schdFeeWaivedNow) {
 		this.schdFeeWaivedNow = schdFeeWaivedNow;
 	}
@@ -528,6 +543,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getSchdInsWaivedNow() {
 		return schdInsWaivedNow;
 	}
+
 	public void setSchdInsWaivedNow(BigDecimal schdInsWaivedNow) {
 		this.schdInsWaivedNow = schdInsWaivedNow;
 	}
@@ -535,6 +551,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getSchdSuplRentWaivedNow() {
 		return schdSuplRentWaivedNow;
 	}
+
 	public void setSchdSuplRentWaivedNow(BigDecimal schdSuplRentWaivedNow) {
 		this.schdSuplRentWaivedNow = schdSuplRentWaivedNow;
 	}
@@ -542,6 +559,7 @@ public class RepayScheduleDetail {
 	public BigDecimal getSchdIncrCostWaivedNow() {
 		return schdIncrCostWaivedNow;
 	}
+
 	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
 		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
 	}
@@ -585,5 +603,5 @@ public class RepayScheduleDetail {
 	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
 		this.paidPenaltyIGST = paidPenaltyIGST;
 	}
-	
+
 }

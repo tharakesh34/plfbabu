@@ -1501,7 +1501,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.financeTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		financeDetail.setFinanceTaxDetails(this.financeTaxDetail);
+		financeDetail.setFinanceTaxDetail(this.financeTaxDetail);
 		
 		logger.debug("Leaving");
 	}

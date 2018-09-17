@@ -34,6 +34,7 @@
 package com.pennant.backend.util;
 
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This stores all constants required for running the application
@@ -51,10 +52,10 @@ public class PennantConstants {
 	public static final int borderlayoutMainNorth = 100;
 	public static final String mandateSclass = "mandatory";
 	public static final int branchCode_maxValue = 20;
-
+	
 	// Date Formats
-	public static final String dateFormat = "dd/MM/yyyy"; // DateFormat.SHORT_DATE.getPattern()
-	public static final String DBTimeFormat = "HH:mm:ss"; // DateFormat.LONG_TIME.getPattern()
+	public static final String dateFormat = DateFormat.SHORT_DATE.getPattern();
+	public static final String DBTimeFormat = DateFormat.LONG_TIME.getPattern();
 	public static final String monthYearFormat = "MMM/yyyy";
 	public static final String timeFormat = "hh:mm:ss";
 	public static final String dateTimeFormat = "dd/MM/yyyy HH:mm:ss";

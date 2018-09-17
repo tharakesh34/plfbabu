@@ -686,7 +686,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		String rcdStatus = aFinanceDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
 		if (isWorkFlowEnabled()) {
 			if (StringUtils.isBlank(rcdStatus)) {
-				if (aFinanceDetail.isNew()) {
+				if (aFinanceDetail.isNewRecord()) {
 					header.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					header.setRecordType(PennantConstants.RECORD_TYPE_UPD);

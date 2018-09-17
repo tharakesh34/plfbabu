@@ -1200,8 +1200,8 @@ public class AccrualService extends ServiceHelper {
 	private void prepareFinanceDetail(FinanceDetail financeDetail, CustEODEvent custEODEvent) {
 
 		// Set Tax Details if Already exists
-		if (financeDetail.getFinanceTaxDetails() == null) {
-			financeDetail.setFinanceTaxDetails(getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
+		if (financeDetail.getFinanceTaxDetail() == null) {
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
 		}
 
 		CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(financeDetail.getFinScheduleData().getFinanceMain().getCustID(), "");
@@ -1224,8 +1224,8 @@ public class AccrualService extends ServiceHelper {
 	public Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail,String custDftBranch){
 		
 		// Set Tax Details if Already exists
-		if (financeDetail.getFinanceTaxDetails() == null) {
-			financeDetail.setFinanceTaxDetails(getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
+		if (financeDetail.getFinanceTaxDetail() == null) {
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
 		}
 		
 		CustomerAddres addres = null;
@@ -1248,7 +1248,7 @@ public class AccrualService extends ServiceHelper {
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
 		HashMap<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				financeDetail.getFinanceTaxDetails(), null);
+				financeDetail.getFinanceTaxDetail(), null);
 		
 		// TODO : WRITE THIS IN CACHE
 		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");

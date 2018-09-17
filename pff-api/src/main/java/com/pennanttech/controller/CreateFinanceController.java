@@ -744,8 +744,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 		
-		if (financeDetail.getFinanceTaxDetails() != null) {
-			FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetails();
+		if (financeDetail.getFinanceTaxDetail() != null) {
+			FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetail();
 			financeTaxDetail.setFinReference(financeMain.getFinReference());
 			financeTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeTaxDetail.setNewRecord(true);

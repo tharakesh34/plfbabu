@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,7 +78,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 		"vasRecordingList", "outstandingPri", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinScheduleData {
+public class FinScheduleData implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	@XmlElement
 	private String finReference = null;	
 	private boolean schduleGenerated = false;

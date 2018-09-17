@@ -2635,7 +2635,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
 			map.put("fromLoan", true);
 			map.put("panNum", getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
-			FinanceTaxDetail financetaxdetail = getFinanceDetail().getFinanceTaxDetails();
+			FinanceTaxDetail financetaxdetail = getFinanceDetail().getFinanceTaxDetail();
 			if (financetaxdetail == null) {
 				financetaxdetail = new FinanceTaxDetail();
 				financetaxdetail.setNewRecord(true);
@@ -6042,7 +6042,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceMain.setTaskId(this.curTaskId);
 		aFinanceMain.setNextTaskId(this.curNextTaskId);
 		aFinanceMain.setNextUserId(this.curNextUserId);
-		isNew = aFinanceDetail.isNew();
+		isNew = aFinanceDetail.isNewRecord();
 
 		if (!primaryValidations()) {
 			return;
@@ -6579,7 +6579,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
 			financeTaxDetailDialogCtrl.doSave_Tax(aFinanceDetail, taxTab, recSave);
 		} else {
-			aFinanceDetail.setFinanceTaxDetails(null);
+			aFinanceDetail.setFinanceTaxDetail(null);
 		}
 
 		// FI Init Verification Detail
@@ -12661,7 +12661,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
 			financeTaxDetailDialogCtrl.doSave_Tax(getFinanceDetail(), taxTab, recSave);
 		} else {
-			getFinanceDetail().setFinanceTaxDetails(null);
+			getFinanceDetail().setFinanceTaxDetail(null);
 		}
 
 		if (buildEvent) {

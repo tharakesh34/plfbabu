@@ -2099,7 +2099,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setDocumentDetailsList(null);
 		}
 
-		isNew = aFinanceDetail.isNew();
+		isNew = aFinanceDetail.isNewRecord();
 
 		// Collateral Flags
 		fetchFlagDetals();

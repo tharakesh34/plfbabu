@@ -1629,7 +1629,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		
 		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				financeDetail.getFinanceTaxDetails(), financeMain.getFinBranch());
+				financeDetail.getFinanceTaxDetail(), financeMain.getFinBranch());
 		
 		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
 		// On Origination processing based on Service instructions is not required

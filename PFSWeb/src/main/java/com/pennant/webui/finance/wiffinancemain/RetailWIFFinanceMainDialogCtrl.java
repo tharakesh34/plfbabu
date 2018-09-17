@@ -4473,7 +4473,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		isNew = aFinanceDetail.isNew();
+		isNew = aFinanceDetail.isNewRecord();
 
 		//Finance Fee Details Tab
 		if (finFeeDetailListCtrl != null) {

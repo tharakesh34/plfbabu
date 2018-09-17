@@ -659,7 +659,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	}
 
 	@Override
-	public void saveAdditional(final String id, HashMap<String, Object> mappedValues, String type, String tableName) {
+	public void saveAdditional(final String id, Map<String, Object> mappedValues, String type, String tableName) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO "+tableName);
@@ -846,7 +846,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	}
 
 	@Override
-	public void updateAdditional(HashMap<String, ?> mappedValues,final String id, String type,String tableName) {
+	public void updateAdditional(Map<String, ?> mappedValues,final String id, String type,String tableName) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder(" UPDATE "+tableName);

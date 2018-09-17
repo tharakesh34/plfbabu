@@ -481,7 +481,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				FinFeeDetail finFeeDetail = new FinFeeDetail();
 				FinTypeFees finTypeFee = new FinTypeFees();
 				
-				financeDetail.setFinanceTaxDetails(financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
+				financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
 				
@@ -504,7 +504,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				}
 				
 				HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-						financeDetail.getFinanceTaxDetails(), financeMain.getFinBranch());
+						financeDetail.getFinanceTaxDetail(), financeMain.getFinBranch());
 				
 				if (this.adviseAmount.getActualValue() != null) {
 					adviseAmount = (PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));

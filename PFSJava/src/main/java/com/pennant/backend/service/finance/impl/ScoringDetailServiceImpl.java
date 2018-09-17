@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -460,7 +461,7 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		logger.debug("Entering");
 		
 		List<FinanceScoreHeader> scoringHeaderList = financeDetail.getFinScoreHeaderList();
-		HashMap<Long, List<FinanceScoreDetail>> scoreDtlListMap = financeDetail.getScoreDetailListMap();
+		Map<Long, List<FinanceScoreDetail>> scoreDtlListMap = financeDetail.getScoreDetailListMap();
 		List<FinanceScoreDetail> scoreDetailList = null;
 		List<FinanceReferenceDetail> financeReferenceList =  financeDetail.getScoringGroupList();
 		List<ScoringMetrics> scoringMetricsList = null;

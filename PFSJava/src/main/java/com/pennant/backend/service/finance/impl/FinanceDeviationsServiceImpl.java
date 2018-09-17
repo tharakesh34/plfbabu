@@ -2,8 +2,8 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -133,7 +133,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 			List<FinanceScoreDetail> dellist = financeScoreHeaderDAO.getFinScoreDetailList(headerIds, "_View");
 
 			if (dellist != null) {
-				HashMap<Long, List<FinanceScoreDetail>> map = finDetail.getScoreDetailListMap();
+				Map<Long, List<FinanceScoreDetail>> map = finDetail.getScoreDetailListMap();
 				for (FinanceScoreDetail financeScoreDetail : dellist) {
 					if (map.containsKey(financeScoreDetail.getHeaderId())) {
 						map.get(financeScoreDetail.getHeaderId()).add(financeScoreDetail);

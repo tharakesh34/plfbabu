@@ -4497,7 +4497,7 @@ public class FinanceDataValidation {
 	 */
 	private List<ErrorDetail> finTaxDetailValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
+		FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetail();
 		if (finTaxDetail != null) {
 			if (StringUtils.isBlank(finTaxDetail.getApplicableFor())) {
 				String[] valueParm = new String[1];

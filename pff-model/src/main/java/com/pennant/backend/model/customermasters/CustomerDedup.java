@@ -1,5 +1,6 @@
 package com.pennant.backend.model.customermasters;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,8 @@ import org.apache.commons.lang.StringUtils;
 @XmlType(propOrder = { "custCIF", "custCtgCode", "custDftBranch", "custFName","custLName", "custShrtName", "custDOB",
 		"custCRCPR", "custSector"})
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerDedup {
+public class CustomerDedup implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@XmlElement(name="cif")
 	private String custCIF ;
 	private String finReference;

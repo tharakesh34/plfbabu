@@ -735,7 +735,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 			
 			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-					getFinanceDetail().getFinanceTaxDetails(), branch);
+					getFinanceDetail().getFinanceTaxDetail(), branch);
 			
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				
@@ -1606,7 +1606,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 			
 			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-					getFinanceDetail().getFinanceTaxDetails(), branch);
+					getFinanceDetail().getFinanceTaxDetail(), branch);
 			
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				
@@ -2113,7 +2113,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry,
-				getFinanceDetail().getFinanceTaxDetails(), branch);
+				getFinanceDetail().getFinanceTaxDetail(), branch);
 		
 		finFeeDetail.setWaivedAmount(PennantAppUtil.unFormateAmount(waiverBox.getValue(), formatter));
 		finFeeDetail.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
@@ -2253,7 +2253,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 			
 			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry,
-					getFinanceDetail().getFinanceTaxDetails(), branch);
+					getFinanceDetail().getFinanceTaxDetail(), branch);
 			
 			finFeeDetail.setActualAmountOriginal(PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter));
 			
@@ -2826,7 +2826,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 		}
 		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				getFinanceDetail().getFinanceTaxDetails(), branch);
+				getFinanceDetail().getFinanceTaxDetail(), branch);
 		
 		//Calculate Fee Rules
 		calculateFeeRules(finFeeDetailsList, finScheduleData, gstExecutionMap);

@@ -1,45 +1,47 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FinRepayHeader {
+public class FinRepayHeader implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private long repayID = 0;
+	private long receiptSeqID = 0; 
+	private String finReference;
+	private Date valueDate;
+	private String finEvent;
+	private BigDecimal repayAmount = BigDecimal.ZERO;
+	private BigDecimal priAmount = BigDecimal.ZERO;
+	private BigDecimal pftAmount = BigDecimal.ZERO;
+	private BigDecimal latePftAmount = BigDecimal.ZERO;
+	private BigDecimal totalPenalty = BigDecimal.ZERO;
+	private BigDecimal totalRefund = BigDecimal.ZERO;
+	private BigDecimal totalWaiver = BigDecimal.ZERO;
+	private BigDecimal insRefund = BigDecimal.ZERO;
+	private String repayAccountId;
+	private String earlyPayEffMtd;
+	private Date earlyPayDate;
+	private boolean schdRegenerated;
+	private long linkedTranId = 0;
+	private BigDecimal totalIns = BigDecimal.ZERO;
+	private BigDecimal totalSuplRent = BigDecimal.ZERO;
+	private BigDecimal totalIncrCost = BigDecimal.ZERO;
+	private BigDecimal totalSchdFee = BigDecimal.ZERO;
+	private String payApportionment;
+	private BigDecimal realizeUnAmz = BigDecimal.ZERO;
+	private BigDecimal realizeUnLPI = BigDecimal.ZERO;
+	private BigDecimal realizeUnLPIGst = BigDecimal.ZERO;
+	private BigDecimal realizeUnLPP = BigDecimal.ZERO;
+	private BigDecimal realizeUnLPPGst = BigDecimal.ZERO;
 
-	private long						repayID					= 0;										// Auto Generated Sequence
-	private long						receiptSeqID			= 0;										// Only setting from Receipt Details
-	private String						finReference;
-	private Date						valueDate;
-	private String						finEvent;
-	private BigDecimal					repayAmount				= BigDecimal.ZERO;
-	private BigDecimal					priAmount				= BigDecimal.ZERO;
-	private BigDecimal					pftAmount				= BigDecimal.ZERO;
-	private BigDecimal					latePftAmount			= BigDecimal.ZERO;
-	private BigDecimal					totalPenalty			= BigDecimal.ZERO;
-	private BigDecimal					totalRefund				= BigDecimal.ZERO;
-	private BigDecimal					totalWaiver				= BigDecimal.ZERO;
-	private BigDecimal					insRefund				= BigDecimal.ZERO;
-	private String						repayAccountId;
-	private String						earlyPayEffMtd;
-	private Date						earlyPayDate;
-	private boolean						schdRegenerated;
-	private long						linkedTranId			= 0;
-	private BigDecimal					totalIns				= BigDecimal.ZERO;
-	private BigDecimal					totalSuplRent			= BigDecimal.ZERO;
-	private BigDecimal					totalIncrCost			= BigDecimal.ZERO;
-	private BigDecimal					totalSchdFee			= BigDecimal.ZERO;
-	private String						payApportionment;
-	private BigDecimal					realizeUnAmz			= BigDecimal.ZERO;
-	private BigDecimal					realizeUnLPI			= BigDecimal.ZERO;
-	private BigDecimal					realizeUnLPIGst			= BigDecimal.ZERO;
-	private BigDecimal					realizeUnLPP			= BigDecimal.ZERO;
-	private BigDecimal					realizeUnLPPGst			= BigDecimal.ZERO;
-
-	private List<RepayScheduleDetail>	repayScheduleDetails	= new ArrayList<RepayScheduleDetail>(1);
+	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<>(1);
 
 	public FinRepayHeader() {
-		
+		super();
 	}
 
 	// ******************************************************//

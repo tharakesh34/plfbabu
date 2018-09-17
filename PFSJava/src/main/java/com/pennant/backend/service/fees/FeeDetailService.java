@@ -93,7 +93,7 @@ public class FeeDetailService {
 		}
 		
 		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				financeDetail.getFinanceTaxDetails(), branchCode);
+				financeDetail.getFinanceTaxDetail(), branchCode);
 		
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
@@ -404,7 +404,7 @@ public class FeeDetailService {
 		}
 		
 		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				financeDetail.getFinanceTaxDetails(), branchCode);
+				financeDetail.getFinanceTaxDetail(), branchCode);
 		
 		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
 			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,

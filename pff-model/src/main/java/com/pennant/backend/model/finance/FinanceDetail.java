@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.beneficiary.FinBeneficiary;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -72,6 +73,8 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.financemanagement.FinNomineeDetail;
+import com.pennant.backend.model.financemanagement.StorageDetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -79,6 +82,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -101,106 +105,82 @@ public class FinanceDetail implements java.io.Serializable {
 	private String finReference;
 	@XmlElement(name = "financeSchedule")
 	private FinScheduleData finScheduleData = new FinScheduleData();
-
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private FinanceDetail befImage;
 	private boolean lovDescIsQDE;
 	private boolean isExtSource = false;
-
 	@XmlTransient
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>(1);
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>(1);
 	private FinContributorHeader finContributorHeader;
 	private CustomerEligibilityCheck customerEligibilityCheck;
-
 	private IndicativeTermDetail indicativeTermDetail;
-
 	private EtihadCreditBureauDetail etihadCreditBureauDetail;
 	private BundledProductsDetail bundledProductsDetail;
 	private TATDetail tatDetail;
 	private FinAssetEvaluation finAssetEvaluation;
-
-	private List<FinanceCheckListReference> financeCheckList = new ArrayList<FinanceCheckListReference>(1);
-	private List<FinanceReferenceDetail> checkList = new ArrayList<FinanceReferenceDetail>(1);
-	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>(1);
+	private CollateralSetup collSetup;
+	private List<FinanceCheckListReference> financeCheckList = new ArrayList<>(1);
+	private List<FinanceReferenceDetail> checkList = new ArrayList<>(1);
+	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<>(1);
 	private List<FinanceReferenceDetail> finRefDetailsList;
-
-	private List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
-
-	private List<FinanceReferenceDetail> eligibilityRuleList = new ArrayList<FinanceReferenceDetail>(1);
-	private List<FinanceEligibilityDetail> finElgRuleList = new ArrayList<FinanceEligibilityDetail>(1);
-	private List<FinanceEligibilityDetail> elgRuleList = new ArrayList<FinanceEligibilityDetail>(1);
-
-	//Scoring Details Purpose
-	private List<FinanceReferenceDetail> scoringGroupList = new ArrayList<FinanceReferenceDetail>(1);
-	private List<ScoringMetrics> finScoringMetricList = new ArrayList<ScoringMetrics>(1);
-	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<ScoringMetrics>(1);
-	private HashMap<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<Long, List<ScoringMetrics>>(1);
-	private HashMap<Long, List<ScoringSlab>> scoringSlabs = new HashMap<Long, List<ScoringSlab>>(1);
-	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<FinanceScoreHeader>(1);
-	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>(1);
-
-	private List<Rule> feeCharges = new ArrayList<Rule>(1);
-	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
-
+	private List<FinanceReferenceDetail> aggrementList = new ArrayList<>(1);
+	private List<FinanceReferenceDetail> eligibilityRuleList = new ArrayList<>(1);
+	private List<FinanceEligibilityDetail> finElgRuleList = new ArrayList<>(1);
+	private List<FinanceEligibilityDetail> elgRuleList = new ArrayList<>(1);
+	private List<FinanceReferenceDetail> scoringGroupList = new ArrayList<>(1);
+	private List<ScoringMetrics> finScoringMetricList = new ArrayList<>(1);
+	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<>(1);
+	private Map<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<>(1);
+	private Map<Long, List<ScoringSlab>> scoringSlabs = new HashMap<>(1);
+	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<>(1);
+	private Map<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<>(1);
+	private List<Rule> feeCharges = new ArrayList<>(1);
+	private List<FinTypeFees> finTypeFeesList = new ArrayList<>();
 	@XmlElementWrapper(name = "transactions")
 	@XmlElement(name = "transaction")
-	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
-
-	private List<TransactionEntry> cmtFinanceEntries = new ArrayList<TransactionEntry>(1);
-	private List<ReturnDataSet> cmtDataSetList = new ArrayList<ReturnDataSet>(1);
-
-	private List<TransactionEntry> stageTransactionEntries = new ArrayList<TransactionEntry>(1);
-	private List<ReturnDataSet> stageAccountingList = new ArrayList<ReturnDataSet>(1);
-
+	private List<ReturnDataSet> returnDataSetList = new ArrayList<>(1);
+	private List<TransactionEntry> cmtFinanceEntries = new ArrayList<>(1);
+	private List<ReturnDataSet> cmtDataSetList = new ArrayList<>(1);
+	private List<TransactionEntry> stageTransactionEntries = new ArrayList<>(1);
+	private List<ReturnDataSet> stageAccountingList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
-	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>(1);
-
+	private List<DocumentDetails> documentDetailsList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "guarantors")
 	@XmlElement(name = "guarantor")
-	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<GuarantorDetail>(1);
-
+	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "coApplicants")
 	@XmlElement(name = "coApplicant")
-	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
-	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>(1);
-	private List<FinanceDeviations> financeDeviations = new ArrayList<FinanceDeviations>();
-	private List<FinanceDeviations> approvedFinanceDeviations = new ArrayList<FinanceDeviations>();
-	private List<FinanceDeviations> manualDeviations = new ArrayList<FinanceDeviations>();
-	private List<FinanceDeviations> approvedManualDeviations = new ArrayList<FinanceDeviations>();
-
-	private List<FinCollaterals> financeCollaterals = new ArrayList<FinCollaterals>(1);
+	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<>(1);
+	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<>(1);
+	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
+	private List<FinanceDeviations> approvedFinanceDeviations = new ArrayList<>();
+	private List<FinanceDeviations> manualDeviations = new ArrayList<>();
+	private List<FinanceDeviations> approvedManualDeviations = new ArrayList<>();
+	private List<FinCollaterals> financeCollaterals = new ArrayList<>(1);
 	@XmlElementWrapper(name = "collaterals")
 	@XmlElement(name = "collateral")
-	private List<CollateralAssignment> collateralAssignmentList = new ArrayList<CollateralAssignment>(1);
-	private List<FinAssetTypes> finAssetTypesList = new ArrayList<FinAssetTypes>(1);
-	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>(1);
-
-	// Dedupe Check List Details 
-	private List<FinBlacklistCustomer> finBlacklistCustomer = null;
-	private List<FinanceDedup> finDedupDetails = null;
-	private List<PoliceCase> dedupPoliceCaseDetails = null;
-	private List<CustomerDedup> customerDedupList = null;
-
-	// Advance Payments
+	private List<CollateralAssignment> collateralAssignmentList = new ArrayList<>(1);
+	private List<FinAssetTypes> finAssetTypesList = new ArrayList<>(1);
+	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<>(1);
+	private List<FinBlacklistCustomer> finBlacklistCustomer;
+	private List<FinanceDedup> finDedupDetails;
+	private List<PoliceCase> dedupPoliceCaseDetails;
+	private List<CustomerDedup> customerDedupList;
 	@XmlElement(name = "disbursement")
-	private List<FinAdvancePayments> advancePaymentsList = null;
-	private List<FeePaymentDetail> feePaymentDetailList = null;
-
-	// Covenant Types
+	private List<FinAdvancePayments> advancePaymentsList;
+	private List<FeePaymentDetail> feePaymentDetailList;
 	@XmlElementWrapper(name = "covenants")
 	@XmlElement(name = "covenant")
-	private List<FinCovenantType> covenantTypeList = null;
-
-	// Rollover Finance Details
-	private RolledoverFinanceHeader rolledoverFinanceHeader = null;
-
-	// Customer Details
+	private List<FinCovenantType> covenantTypeList;
+	private RolledoverFinanceHeader rolledoverFinanceHeader;
 	@XmlElement(name = "customer")
 	private CustomerDetails customerDetails;
+	private StorageDetail storageDetail;
 	private WIFCustomer customer;
-
+	private Promotion promotion;
+	private FinanceMaintenance financeMaintenance;
 	private String accountingEventCode;
 	private String moduleDefiner = "";
 	private boolean actionSave = false;
@@ -208,60 +188,46 @@ public class FinanceDetail implements java.io.Serializable {
 	private String userAction;
 	private BigDecimal score = BigDecimal.ZERO;
 	private Date valueDate;
-	private boolean directFinalApprove = false; //Direct Approval
-
-	//Additional Fields
-	//**********************************************************************
-	private ExtendedFieldHeader extendedFieldHeader;
+	private int maxAge = 0;
+	private int minAge = 0;
+	private boolean directFinalApprove = false;
+	private boolean repledgeProcess = false;
+	private BigDecimal repledgeAmount = BigDecimal.ZERO;
+	private long uploadReceiptId;
+	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
 	private ExtendedFieldRender extendedFieldRender;
-
-	private HashMap<String, Object> lovDescExtendedFieldValues = new HashMap<String, Object>(1);
-	//WriteoffPayment
+	private transient Map<String, Object> lovDescExtendedFieldValues = new HashMap<>(1);
 	private FinWriteoffPayment finwriteoffPayment;
-
 	private AgreementFieldDetails agreementFieldDetails;
 	private FinRepayHeader finRepayHeader;
-
 	@XmlElement(name = "mandateDetail")
 	private Mandate mandate;
 	@XmlElement(name = "taxDetail")
-	private FinanceTaxDetail financeTaxDetails;
-
+	private FinanceTaxDetail financeTaxDetail;
 	@XmlElementWrapper(name = "financeFlags")
 	@XmlElement(name = "financeFlag")
 	private List<FinFlagsDetail> finFlagsDetails;
 	@XmlElementWrapper(name = "fees")
 	@XmlElement(name = "fee")
-	List<FinFeeDetail> finFeeDetails;
-
+	private List<FinFeeDetail> finFeeDetails;
 	@XmlElement
-	private WSReturnStatus returnStatus = null;
+	private WSReturnStatus returnStatus;
 	@XmlElement
 	private boolean stp = true;
 	@XmlElement
 	private String processStage;
 	@XmlElementWrapper(name = "collateralDetails")
 	@XmlElement(name = "collateralDetail")
-	private List<CollateralSetup> collaterals = null;
-
-	// API Foreclosure letter statement purpose
+	private List<CollateralSetup> collaterals;
 	@XmlElementWrapper(name = "foreClosures")
 	@XmlElement(name = "foreClosure")
 	private List<ForeClosure> foreClosureDetails;
-
-	//API ExtendedDetails
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
-	private List<ExtendedField> extendedDetails = null;
-
-	private ChequeHeader chequeHeader = null;
-
-	// Reason Details
+	private List<ExtendedField> extendedDetails;
+	private ChequeHeader chequeHeader;
 	private ReasonHeader reasonHeader;
-
 	private List<LegalDetail> legalDetailsList;
-
-	//FI Verification module
 	private Verification fiVerification;
 	private Verification tvVerification;
 	private Verification lvVerification;
@@ -276,47 +242,28 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean rcuApprovalTab = false;
 	private boolean rcuInitTab = false;
 	private Map<String, String> showTabDetailMap = new HashMap<>();
-
 	@XmlElement
 	private long receiptId;
-
-	/**
-	 * Sampling variables
-	 */
 	private boolean samplingInitiator;
 	private boolean samplingApprover;
 	private Sampling sampling;
-
-	/**
-	 * Legal Details variables
-	 */
 	private boolean legalInitiator;
 	private Map<String, String> dataMap = new HashMap<>();
+	private boolean sufficientScore;
+	private boolean secondaryDedup = false;
+	private FinNomineeDetail finNomineeDetail;
+	private FinBeneficiary finBeneficiary;
 
 	public FinanceDetail() {
-
+		super();
+	}
+		
+	public String getFinReference() {
+		return finReference;
 	}
 
-	public HashMap<String, Object> getLovDescExtendedFieldValues() {
-		return lovDescExtendedFieldValues;
-	}
-
-	public void setLovDescExtendedFieldValues(String string, Object object) {
-
-		if (lovDescExtendedFieldValues.containsKey(string)) {
-			lovDescExtendedFieldValues.remove(string);
-		}
-		this.lovDescExtendedFieldValues.put(string, object);
-	}
-
-	private boolean sufficientScore;
-
-	//***********************************************************************
-
-	// Getter and Setter methods
-
-	public boolean isNewRecord() {
-		return newRecord;
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
 	}
 
 	public FinScheduleData getFinScheduleData() {
@@ -327,16 +274,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.finScheduleData = finScheduleData;
 	}
 
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
-	}
-
-	public FinanceDetail getBefImage() {
-		return this.befImage;
-	}
-
-	public void setBefImage(FinanceDetail befImage) {
-		this.befImage = befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -347,16 +290,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.userDetails = userDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-		return auditDetailMap;
+	public FinanceDetail getBefImage() {
+		return befImage;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-		this.auditDetailMap = auditDetailMap;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
+	public void setBefImage(FinanceDetail befImage) {
+		this.befImage = befImage;
 	}
 
 	public boolean isLovDescIsQDE() {
@@ -375,6 +314,22 @@ public class FinanceDetail implements java.io.Serializable {
 		this.isExtSource = isExtSource;
 	}
 
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+
+	public FinContributorHeader getFinContributorHeader() {
+		return finContributorHeader;
+	}
+
+	public void setFinContributorHeader(FinContributorHeader finContributorHeader) {
+		this.finContributorHeader = finContributorHeader;
+	}
+
 	public CustomerEligibilityCheck getCustomerEligibilityCheck() {
 		return customerEligibilityCheck;
 	}
@@ -383,28 +338,60 @@ public class FinanceDetail implements java.io.Serializable {
 		this.customerEligibilityCheck = customerEligibilityCheck;
 	}
 
-	public void setFinanceCheckList(List<FinanceCheckListReference> financeCheckList) {
-		this.financeCheckList = financeCheckList;
+	public IndicativeTermDetail getIndicativeTermDetail() {
+		return indicativeTermDetail;
+	}
+
+	public void setIndicativeTermDetail(IndicativeTermDetail indicativeTermDetail) {
+		this.indicativeTermDetail = indicativeTermDetail;
+	}
+
+	public EtihadCreditBureauDetail getEtihadCreditBureauDetail() {
+		return etihadCreditBureauDetail;
+	}
+
+	public void setEtihadCreditBureauDetail(EtihadCreditBureauDetail etihadCreditBureauDetail) {
+		this.etihadCreditBureauDetail = etihadCreditBureauDetail;
+	}
+
+	public BundledProductsDetail getBundledProductsDetail() {
+		return bundledProductsDetail;
+	}
+
+	public void setBundledProductsDetail(BundledProductsDetail bundledProductsDetail) {
+		this.bundledProductsDetail = bundledProductsDetail;
+	}
+
+	public TATDetail getTatDetail() {
+		return tatDetail;
+	}
+
+	public void setTatDetail(TATDetail tatDetail) {
+		this.tatDetail = tatDetail;
+	}
+
+	public FinAssetEvaluation getFinAssetEvaluation() {
+		return finAssetEvaluation;
+	}
+
+	public void setFinAssetEvaluation(FinAssetEvaluation finAssetEvaluation) {
+		this.finAssetEvaluation = finAssetEvaluation;
+	}
+
+	public CollateralSetup getCollSetup() {
+		return collSetup;
+	}
+
+	public void setCollSetup(CollateralSetup collSetup) {
+		this.collSetup = collSetup;
 	}
 
 	public List<FinanceCheckListReference> getFinanceCheckList() {
 		return financeCheckList;
 	}
 
-	public void setFinRefDetailsList(List<FinanceReferenceDetail> finRefDetailsList) {
-		this.finRefDetailsList = finRefDetailsList;
-	}
-
-	public List<FinanceReferenceDetail> getFinRefDetailsList() {
-		return finRefDetailsList;
-	}
-
-	public void setLovDescSelAnsCountMap(Map<Long, Long> lovDescSelAnsCountMap) {
-		this.lovDescSelAnsCountMap = lovDescSelAnsCountMap;
-	}
-
-	public Map<Long, Long> getLovDescSelAnsCountMap() {
-		return lovDescSelAnsCountMap;
+	public void setFinanceCheckList(List<FinanceCheckListReference> financeCheckList) {
+		this.financeCheckList = financeCheckList;
 	}
 
 	public List<FinanceReferenceDetail> getCheckList() {
@@ -415,20 +402,28 @@ public class FinanceDetail implements java.io.Serializable {
 		this.checkList = checkList;
 	}
 
+	public Map<Long, Long> getLovDescSelAnsCountMap() {
+		return lovDescSelAnsCountMap;
+	}
+
+	public void setLovDescSelAnsCountMap(Map<Long, Long> lovDescSelAnsCountMap) {
+		this.lovDescSelAnsCountMap = lovDescSelAnsCountMap;
+	}
+
+	public List<FinanceReferenceDetail> getFinRefDetailsList() {
+		return finRefDetailsList;
+	}
+
+	public void setFinRefDetailsList(List<FinanceReferenceDetail> finRefDetailsList) {
+		this.finRefDetailsList = finRefDetailsList;
+	}
+
 	public List<FinanceReferenceDetail> getAggrementList() {
 		return aggrementList;
 	}
 
 	public void setAggrementList(List<FinanceReferenceDetail> aggrementList) {
 		this.aggrementList = aggrementList;
-	}
-
-	public void setFinContributorHeader(FinContributorHeader finContributorHeader) {
-		this.finContributorHeader = finContributorHeader;
-	}
-
-	public FinContributorHeader getFinContributorHeader() {
-		return finContributorHeader;
 	}
 
 	public List<FinanceReferenceDetail> getEligibilityRuleList() {
@@ -463,13 +458,29 @@ public class FinanceDetail implements java.io.Serializable {
 		this.scoringGroupList = scoringGroupList;
 	}
 
-	public HashMap<Long, List<ScoringMetrics>> getScoringMetrics() {
+	public List<ScoringMetrics> getFinScoringMetricList() {
+		return finScoringMetricList;
+	}
+
+	public void setFinScoringMetricList(List<ScoringMetrics> finScoringMetricList) {
+		this.finScoringMetricList = finScoringMetricList;
+	}
+
+	public List<ScoringMetrics> getNonFinScoringMetricList() {
+		return nonFinScoringMetricList;
+	}
+
+	public void setNonFinScoringMetricList(List<ScoringMetrics> nonFinScoringMetricList) {
+		this.nonFinScoringMetricList = nonFinScoringMetricList;
+	}
+
+	public Map<Long, List<ScoringMetrics>> getScoringMetrics() {
 		return scoringMetrics;
 	}
 
 	public void setScoringMetrics(Long id, List<ScoringMetrics> scoringMetrics) {
 		if (this.scoringMetrics == null) {
-			this.scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
+			this.scoringMetrics = new HashMap<>();
 		} else {
 			if (this.scoringMetrics.containsKey(id)) {
 				this.scoringMetrics.remove(id);
@@ -478,20 +489,20 @@ public class FinanceDetail implements java.io.Serializable {
 		this.scoringMetrics.put(id, scoringMetrics);
 	}
 
-	public void setScoringMetrics(HashMap<Long, List<ScoringMetrics>> scoringMetrics) {
+	public void setScoringMetrics(Map<Long, List<ScoringMetrics>> scoringMetrics) {
 		if (this.scoringMetrics == null) {
-			this.scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
+			this.scoringMetrics = new HashMap<>();
 		}
 		this.scoringMetrics = scoringMetrics;
 	}
 
-	public HashMap<Long, List<ScoringSlab>> getScoringSlabs() {
+	public Map<Long, List<ScoringSlab>> getScoringSlabs() {
 		return scoringSlabs;
 	}
 
 	public void setScoringSlabs(Long id, List<ScoringSlab> scoringSlabs) {
 		if (this.scoringSlabs == null) {
-			this.scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
+			this.scoringSlabs = new HashMap<>();
 		} else {
 			if (this.scoringSlabs.containsKey(id)) {
 				this.scoringSlabs.remove(id);
@@ -500,35 +511,27 @@ public class FinanceDetail implements java.io.Serializable {
 		this.scoringSlabs.put(id, scoringSlabs);
 	}
 
-	public void setScoringSlabs(HashMap<Long, List<ScoringSlab>> scoringSlabs) {
+	public void setScoringSlabs(Map<Long, List<ScoringSlab>> scoringSlabs) {
 		if (this.scoringSlabs == null) {
-			this.scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
+			this.scoringSlabs = new HashMap<>();
 		}
 		this.scoringSlabs = scoringSlabs;
 	}
 
-	public void setActionSave(boolean actionSave) {
-		this.actionSave = actionSave;
+	public List<FinanceScoreHeader> getFinScoreHeaderList() {
+		return finScoreHeaderList;
 	}
 
-	public boolean isActionSave() {
-		return actionSave;
+	public void setFinScoreHeaderList(List<FinanceScoreHeader> finScoreHeaderList) {
+		this.finScoreHeaderList = finScoreHeaderList;
 	}
 
-	public ExtendedFieldHeader getExtendedFieldHeader() {
-		return extendedFieldHeader;
+	public Map<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
+		return scoreDetailListMap;
 	}
 
-	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
-		this.extendedFieldHeader = extendedFieldHeader;
-	}
-
-	public void setStageTransactionEntries(List<TransactionEntry> stageTransactionEntries) {
-		this.stageTransactionEntries = stageTransactionEntries;
-	}
-
-	public List<TransactionEntry> getStageTransactionEntries() {
-		return stageTransactionEntries;
+	public void setScoreDetailListMap(Map<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
+		this.scoreDetailListMap = scoreDetailListMap;
 	}
 
 	public List<Rule> getFeeCharges() {
@@ -571,68 +574,28 @@ public class FinanceDetail implements java.io.Serializable {
 		this.cmtDataSetList = cmtDataSetList;
 	}
 
-	public void setStageAccountingList(List<ReturnDataSet> stageAccountingList) {
-		this.stageAccountingList = stageAccountingList;
+	public List<TransactionEntry> getStageTransactionEntries() {
+		return stageTransactionEntries;
+	}
+
+	public void setStageTransactionEntries(List<TransactionEntry> stageTransactionEntries) {
+		this.stageTransactionEntries = stageTransactionEntries;
 	}
 
 	public List<ReturnDataSet> getStageAccountingList() {
 		return stageAccountingList;
 	}
 
-	public String getAccountingEventCode() {
-		return accountingEventCode;
-	}
-
-	public void setAccountingEventCode(String accountingEventCode) {
-		this.accountingEventCode = accountingEventCode;
-	}
-
-	public void setUserAction(String userAction) {
-		this.userAction = userAction;
-	}
-
-	public String getUserAction() {
-		return userAction;
-	}
-
-	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
-		this.documentDetailsList = documentDetailsList;
+	public void setStageAccountingList(List<ReturnDataSet> stageAccountingList) {
+		this.stageAccountingList = stageAccountingList;
 	}
 
 	public List<DocumentDetails> getDocumentDetailsList() {
 		return documentDetailsList;
 	}
 
-	public void setFinScoringMetricList(List<ScoringMetrics> finScoringMetricList) {
-		this.finScoringMetricList = finScoringMetricList;
-	}
-
-	public List<ScoringMetrics> getFinScoringMetricList() {
-		return finScoringMetricList;
-	}
-
-	public void setNonFinScoringMetricList(List<ScoringMetrics> nonFinScoringMetricList) {
-		this.nonFinScoringMetricList = nonFinScoringMetricList;
-	}
-
-	public List<ScoringMetrics> getNonFinScoringMetricList() {
-		return nonFinScoringMetricList;
-	}
-
-	public void setScoreDetailListMap(HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
-		this.scoreDetailListMap = scoreDetailListMap;
-	}
-
-	public HashMap<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
-		return scoreDetailListMap;
-	}
-
-	public void setFinScoreHeaderList(List<FinanceScoreHeader> finScoreHeaderList) {
-		this.finScoreHeaderList = finScoreHeaderList;
-	}
-
-	public List<FinanceScoreHeader> getFinScoreHeaderList() {
-		return finScoreHeaderList;
+	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
+		this.documentDetailsList = documentDetailsList;
 	}
 
 	public List<GuarantorDetail> getGurantorsDetailList() {
@@ -659,68 +622,68 @@ public class FinanceDetail implements java.io.Serializable {
 		this.contractorAssetDetails = contractorAssetDetails;
 	}
 
-	public boolean isSufficientScore() {
-		return sufficientScore;
+	public List<FinanceDeviations> getFinanceDeviations() {
+		return financeDeviations;
 	}
 
-	public void setSufficientScore(boolean sufficientScore) {
-		this.sufficientScore = sufficientScore;
+	public void setFinanceDeviations(List<FinanceDeviations> financeDeviations) {
+		this.financeDeviations = financeDeviations;
 	}
 
-	public CustomerDetails getCustomerDetails() {
-		return customerDetails;
+	public List<FinanceDeviations> getApprovedFinanceDeviations() {
+		return approvedFinanceDeviations;
 	}
 
-	public void setCustomerDetails(CustomerDetails customerDetails) {
-		this.customerDetails = customerDetails;
+	public void setApprovedFinanceDeviations(List<FinanceDeviations> approvedFinanceDeviations) {
+		this.approvedFinanceDeviations = approvedFinanceDeviations;
 	}
 
-	public WIFCustomer getCustomer() {
-		return customer;
+	public List<FinanceDeviations> getManualDeviations() {
+		return manualDeviations;
 	}
 
-	public void setCustomer(WIFCustomer customer) {
-		this.customer = customer;
+	public void setManualDeviations(List<FinanceDeviations> manualDeviations) {
+		this.manualDeviations = manualDeviations;
 	}
 
-	public void setIndicativeTermDetail(IndicativeTermDetail indicativeTermDetail) {
-		this.indicativeTermDetail = indicativeTermDetail;
+	public List<FinanceDeviations> getApprovedManualDeviations() {
+		return approvedManualDeviations;
 	}
 
-	public IndicativeTermDetail getIndicativeTermDetail() {
-		return indicativeTermDetail;
+	public void setApprovedManualDeviations(List<FinanceDeviations> approvedManualDeviations) {
+		this.approvedManualDeviations = approvedManualDeviations;
 	}
 
-	public void setDataFetchComplete(boolean dataFetchComplete) {
-		this.dataFetchComplete = dataFetchComplete;
+	public List<FinCollaterals> getFinanceCollaterals() {
+		return financeCollaterals;
 	}
 
-	public boolean isDataFetchComplete() {
-		return dataFetchComplete;
+	public void setFinanceCollaterals(List<FinCollaterals> financeCollaterals) {
+		this.financeCollaterals = financeCollaterals;
 	}
 
-	public EtihadCreditBureauDetail getEtihadCreditBureauDetail() {
-		return etihadCreditBureauDetail;
+	public List<CollateralAssignment> getCollateralAssignmentList() {
+		return collateralAssignmentList;
 	}
 
-	public void setEtihadCreditBureauDetail(EtihadCreditBureauDetail etihadCreditBureauDetail) {
-		this.etihadCreditBureauDetail = etihadCreditBureauDetail;
+	public void setCollateralAssignmentList(List<CollateralAssignment> collateralAssignmentList) {
+		this.collateralAssignmentList = collateralAssignmentList;
 	}
 
-	public BundledProductsDetail getBundledProductsDetail() {
-		return bundledProductsDetail;
+	public List<FinAssetTypes> getFinAssetTypesList() {
+		return finAssetTypesList;
 	}
 
-	public void setBundledProductsDetail(BundledProductsDetail bundledProductsDetail) {
-		this.bundledProductsDetail = bundledProductsDetail;
+	public void setFinAssetTypesList(List<FinAssetTypes> finAssetTypesList) {
+		this.finAssetTypesList = finAssetTypesList;
 	}
 
-	public FinAssetEvaluation getFinAssetEvaluation() {
-		return finAssetEvaluation;
+	public List<ExtendedFieldRender> getExtendedFieldRenderList() {
+		return extendedFieldRenderList;
 	}
 
-	public void setFinAssetEvaluation(FinAssetEvaluation finAssetEvaluation) {
-		this.finAssetEvaluation = finAssetEvaluation;
+	public void setExtendedFieldRenderList(List<ExtendedFieldRender> extendedFieldRenderList) {
+		this.extendedFieldRenderList = extendedFieldRenderList;
 	}
 
 	public List<FinBlacklistCustomer> getFinBlacklistCustomer() {
@@ -755,62 +718,6 @@ public class FinanceDetail implements java.io.Serializable {
 		this.customerDedupList = customerDedupList;
 	}
 
-	public BigDecimal getScore() {
-		return score;
-	}
-
-	public void setScore(BigDecimal score) {
-		this.score = score;
-	}
-
-	public List<FinanceDeviations> getFinanceDeviations() {
-		return financeDeviations;
-	}
-
-	public void setFinanceDeviations(List<FinanceDeviations> financeDeviations) {
-		this.financeDeviations = financeDeviations;
-	}
-
-	public List<FinanceDeviations> getApprovedFinanceDeviations() {
-		return approvedFinanceDeviations;
-	}
-
-	public void setApprovedFinanceDeviations(List<FinanceDeviations> approvedfinanceDeviations) {
-		this.approvedFinanceDeviations = approvedfinanceDeviations;
-	}
-
-	public List<FinCollaterals> getFinanceCollaterals() {
-		return financeCollaterals;
-	}
-
-	public void setFinanceCollaterals(List<FinCollaterals> financeCollaterals) {
-		this.financeCollaterals = financeCollaterals;
-	}
-
-	public List<CollateralAssignment> getCollateralAssignmentList() {
-		return collateralAssignmentList;
-	}
-
-	public void setCollateralAssignmentList(List<CollateralAssignment> collateralAssignmentList) {
-		this.collateralAssignmentList = collateralAssignmentList;
-	}
-
-	public String getModuleDefiner() {
-		return moduleDefiner;
-	}
-
-	public void setModuleDefiner(String moduleDefiner) {
-		this.moduleDefiner = moduleDefiner;
-	}
-
-	public RolledoverFinanceHeader getRolledoverFinanceHeader() {
-		return rolledoverFinanceHeader;
-	}
-
-	public void setRolledoverFinanceHeader(RolledoverFinanceHeader rolledoverFinanceHeader) {
-		this.rolledoverFinanceHeader = rolledoverFinanceHeader;
-	}
-
 	public List<FinAdvancePayments> getAdvancePaymentsList() {
 		return advancePaymentsList;
 	}
@@ -835,12 +742,180 @@ public class FinanceDetail implements java.io.Serializable {
 		this.covenantTypeList = covenantTypeList;
 	}
 
-	public TATDetail getTatDetail() {
-		return tatDetail;
+	public RolledoverFinanceHeader getRolledoverFinanceHeader() {
+		return rolledoverFinanceHeader;
 	}
 
-	public void setTatDetail(TATDetail tatDetail) {
-		this.tatDetail = tatDetail;
+	public void setRolledoverFinanceHeader(RolledoverFinanceHeader rolledoverFinanceHeader) {
+		this.rolledoverFinanceHeader = rolledoverFinanceHeader;
+	}
+
+	public CustomerDetails getCustomerDetails() {
+		return customerDetails;
+	}
+
+	public void setCustomerDetails(CustomerDetails customerDetails) {
+		this.customerDetails = customerDetails;
+	}
+
+	public StorageDetail getStorageDetail() {
+		return storageDetail;
+	}
+
+	public void setStorageDetail(StorageDetail storageDetail) {
+		this.storageDetail = storageDetail;
+	}
+
+	public WIFCustomer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(WIFCustomer customer) {
+		this.customer = customer;
+	}
+
+	public Promotion getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
+	}
+
+	public FinanceMaintenance getFinanceMaintenance() {
+		return financeMaintenance;
+	}
+
+	public void setFinanceMaintenance(FinanceMaintenance financeMaintenance) {
+		this.financeMaintenance = financeMaintenance;
+	}
+
+	public String getAccountingEventCode() {
+		return accountingEventCode;
+	}
+
+	public void setAccountingEventCode(String accountingEventCode) {
+		this.accountingEventCode = accountingEventCode;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
+	}
+
+	public boolean isActionSave() {
+		return actionSave;
+	}
+
+	public void setActionSave(boolean actionSave) {
+		this.actionSave = actionSave;
+	}
+
+	public boolean isDataFetchComplete() {
+		return dataFetchComplete;
+	}
+
+	public void setDataFetchComplete(boolean dataFetchComplete) {
+		this.dataFetchComplete = dataFetchComplete;
+	}
+
+	public String getUserAction() {
+		return userAction;
+	}
+
+	public void setUserAction(String userAction) {
+		this.userAction = userAction;
+	}
+
+	public BigDecimal getScore() {
+		return score;
+	}
+
+	public void setScore(BigDecimal score) {
+		this.score = score;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public int getMaxAge() {
+		return maxAge;
+	}
+
+	public void setMaxAge(int maxAge) {
+		this.maxAge = maxAge;
+	}
+
+	public int getMinAge() {
+		return minAge;
+	}
+
+	public void setMinAge(int minAge) {
+		this.minAge = minAge;
+	}
+
+	public boolean isDirectFinalApprove() {
+		return directFinalApprove;
+	}
+
+	public void setDirectFinalApprove(boolean directFinalApprove) {
+		this.directFinalApprove = directFinalApprove;
+	}
+
+	public boolean isRepledgeProcess() {
+		return repledgeProcess;
+	}
+
+	public void setRepledgeProcess(boolean repledgeProcess) {
+		this.repledgeProcess = repledgeProcess;
+	}
+
+	public BigDecimal getRepledgeAmount() {
+		return repledgeAmount;
+	}
+
+	public void setRepledgeAmount(BigDecimal repledgeAmount) {
+		this.repledgeAmount = repledgeAmount;
+	}
+
+	public long getUploadReceiptId() {
+		return uploadReceiptId;
+	}
+
+	public void setUploadReceiptId(long uploadReceiptId) {
+		this.uploadReceiptId = uploadReceiptId;
+	}
+
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public Map<String, Object> getLovDescExtendedFieldValues() {
+		return lovDescExtendedFieldValues;
+	}
+
+	public void setLovDescExtendedFieldValues(Map<String, Object> lovDescExtendedFieldValues) {
+		this.lovDescExtendedFieldValues = lovDescExtendedFieldValues;
 	}
 
 	public FinWriteoffPayment getFinwriteoffPayment() {
@@ -875,44 +950,20 @@ public class FinanceDetail implements java.io.Serializable {
 		this.mandate = mandate;
 	}
 
+	public FinanceTaxDetail getFinanceTaxDetail() {
+		return financeTaxDetail;
+	}
+
+	public void setFinanceTaxDetail(FinanceTaxDetail financeTaxDetail) {
+		this.financeTaxDetail = financeTaxDetail;
+	}
+
 	public List<FinFlagsDetail> getFinFlagsDetails() {
 		return finFlagsDetails;
 	}
 
 	public void setFinFlagsDetails(List<FinFlagsDetail> finFlagsDetails) {
 		this.finFlagsDetails = finFlagsDetails;
-	}
-
-	public String getFinReference() {
-		return finReference;
-	}
-
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
-	}
-
-	public WSReturnStatus getReturnStatus() {
-		return returnStatus;
-	}
-
-	public void setReturnStatus(WSReturnStatus returnStatus) {
-		this.returnStatus = returnStatus;
-	}
-
-	public List<FinAssetTypes> getFinAssetTypesList() {
-		return finAssetTypesList;
-	}
-
-	public void setFinAssetTypesList(List<FinAssetTypes> finAssetTypesList) {
-		this.finAssetTypesList = finAssetTypesList;
-	}
-
-	public List<ExtendedFieldRender> getExtendedFieldRenderList() {
-		return extendedFieldRenderList;
-	}
-
-	public void setExtendedFieldRenderList(List<ExtendedFieldRender> extendedFieldRenderList) {
-		this.extendedFieldRenderList = extendedFieldRenderList;
 	}
 
 	public List<FinFeeDetail> getFinFeeDetails() {
@@ -923,28 +974,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.finFeeDetails = finFeeDetails;
 	}
 
-	public List<CollateralSetup> getCollaterals() {
-		return collaterals;
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
 	}
 
-	public void setCollaterals(List<CollateralSetup> collaterals) {
-		this.collaterals = collaterals;
-	}
-
-	public List<ForeClosure> getForeClosureDetails() {
-		return foreClosureDetails;
-	}
-
-	public void setForeClosureDetails(List<ForeClosure> foreClosureDetails) {
-		this.foreClosureDetails = foreClosureDetails;
-	}
-
-	public FinanceTaxDetail getFinanceTaxDetails() {
-		return financeTaxDetails;
-	}
-
-	public void setFinanceTaxDetails(FinanceTaxDetail financeTaxDetails) {
-		this.financeTaxDetails = financeTaxDetails;
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
 	}
 
 	public boolean isStp() {
@@ -963,19 +998,20 @@ public class FinanceDetail implements java.io.Serializable {
 		this.processStage = processStage;
 	}
 
-	/**
-	 * @return the extendedFieldRender
-	 */
-	public ExtendedFieldRender getExtendedFieldRender() {
-		return extendedFieldRender;
+	public List<CollateralSetup> getCollaterals() {
+		return collaterals;
 	}
 
-	/**
-	 * @param extendedFieldRender
-	 *            the extendedFieldRender to set
-	 */
-	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
-		this.extendedFieldRender = extendedFieldRender;
+	public void setCollaterals(List<CollateralSetup> collaterals) {
+		this.collaterals = collaterals;
+	}
+
+	public List<ForeClosure> getForeClosureDetails() {
+		return foreClosureDetails;
+	}
+
+	public void setForeClosureDetails(List<ForeClosure> foreClosureDetails) {
+		this.foreClosureDetails = foreClosureDetails;
 	}
 
 	public List<ExtendedField> getExtendedDetails() {
@@ -1002,20 +1038,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.reasonHeader = reasonHeader;
 	}
 
-	public List<FinanceDeviations> getManualDeviations() {
-		return manualDeviations;
+	public List<LegalDetail> getLegalDetailsList() {
+		return legalDetailsList;
 	}
 
-	public void setManualDeviations(List<FinanceDeviations> manualDeviations) {
-		this.manualDeviations = manualDeviations;
-	}
-
-	public List<FinanceDeviations> getApprovedManualDeviations() {
-		return approvedManualDeviations;
-	}
-
-	public void setApprovedManualDeviations(List<FinanceDeviations> approvedManualDeviations) {
-		this.approvedManualDeviations = approvedManualDeviations;
+	public void setLegalDetailsList(List<LegalDetail> legalDetailsList) {
+		this.legalDetailsList = legalDetailsList;
 	}
 
 	public Verification getFiVerification() {
@@ -1024,6 +1052,38 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setFiVerification(Verification fiVerification) {
 		this.fiVerification = fiVerification;
+	}
+
+	public Verification getTvVerification() {
+		return tvVerification;
+	}
+
+	public void setTvVerification(Verification tvVerification) {
+		this.tvVerification = tvVerification;
+	}
+
+	public Verification getLvVerification() {
+		return lvVerification;
+	}
+
+	public void setLvVerification(Verification lvVerification) {
+		this.lvVerification = lvVerification;
+	}
+
+	public Verification getRcuVerification() {
+		return rcuVerification;
+	}
+
+	public void setRcuVerification(Verification rcuVerification) {
+		this.rcuVerification = rcuVerification;
+	}
+
+	public PSLDetail getPslDetail() {
+		return pslDetail;
+	}
+
+	public void setPslDetail(PSLDetail pslDetail) {
+		this.pslDetail = pslDetail;
 	}
 
 	public boolean isFiApprovalTab() {
@@ -1056,30 +1116,6 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setTvInitTab(boolean tvInitTab) {
 		this.tvInitTab = tvInitTab;
-	}
-
-	public Verification getTvVerification() {
-		return tvVerification;
-	}
-
-	public void setTvVerification(Verification tvVerification) {
-		this.tvVerification = tvVerification;
-	}
-
-	public Verification getLvVerification() {
-		return lvVerification;
-	}
-
-	public void setLvVerification(Verification lvVerification) {
-		this.lvVerification = lvVerification;
-	}
-
-	public Verification getRcuVerification() {
-		return rcuVerification;
-	}
-
-	public void setRcuVerification(Verification rcuVerification) {
-		this.rcuVerification = rcuVerification;
 	}
 
 	public boolean isLvApprovalTab() {
@@ -1122,6 +1158,14 @@ public class FinanceDetail implements java.io.Serializable {
 		this.showTabDetailMap = showTabDetailMap;
 	}
 
+	public long getReceiptId() {
+		return receiptId;
+	}
+
+	public void setReceiptId(long receiptId) {
+		this.receiptId = receiptId;
+	}
+
 	public boolean isSamplingInitiator() {
 		return samplingInitiator;
 	}
@@ -1154,22 +1198,6 @@ public class FinanceDetail implements java.io.Serializable {
 		this.legalInitiator = legalInitiator;
 	}
 
-	public PSLDetail getPslDetail() {
-		return pslDetail;
-	}
-
-	public void setPslDetail(PSLDetail pslDetail) {
-		this.pslDetail = pslDetail;
-	}
-
-	public Date getValueDate() {
-		return valueDate;
-	}
-
-	public void setValueDate(Date valueDate) {
-		this.valueDate = valueDate;
-	}
-
 	public Map<String, String> getDataMap() {
 		return dataMap;
 	}
@@ -1178,28 +1206,35 @@ public class FinanceDetail implements java.io.Serializable {
 		this.dataMap = dataMap;
 	}
 
-	public boolean isDirectFinalApprove() {
-		return directFinalApprove;
+	public boolean isSufficientScore() {
+		return sufficientScore;
 	}
 
-	public void setDirectFinalApprove(boolean directFinalApprove) {
-		this.directFinalApprove = directFinalApprove;
+	public void setSufficientScore(boolean sufficientScore) {
+		this.sufficientScore = sufficientScore;
 	}
 
-	public List<LegalDetail> getLegalDetailsList() {
-		return legalDetailsList;
+	public boolean isSecondaryDedup() {
+		return secondaryDedup;
 	}
 
-	public void setLegalDetailsList(List<LegalDetail> legalDetailsList) {
-		this.legalDetailsList = legalDetailsList;
+	public void setSecondaryDedup(boolean secondaryDedup) {
+		this.secondaryDedup = secondaryDedup;
 	}
 
-	public long getReceiptId() {
-		return receiptId;
+	public FinNomineeDetail getFinNomineeDetail() {
+		return finNomineeDetail;
 	}
 
-	public void setReceiptId(long receiptId) {
-		this.receiptId = receiptId;
+	public void setFinNomineeDetail(FinNomineeDetail finNomineeDetail) {
+		this.finNomineeDetail = finNomineeDetail;
 	}
 
+	public FinBeneficiary getFinBeneficiary() {
+		return finBeneficiary;
+	}
+
+	public void setFinBeneficiary(FinBeneficiary finBeneficiary) {
+		this.finBeneficiary = finBeneficiary;
+	}
 }

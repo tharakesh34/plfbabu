@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,8 +11,8 @@ import java.util.Set;
  * Model class for the <b>Customer table</b>.<br>
  *
  */
-public class FinanceDedup {
-	
+public class FinanceDedup implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private long custId = Long.MIN_VALUE;
 	private String finReference;
 	private String dupReference;

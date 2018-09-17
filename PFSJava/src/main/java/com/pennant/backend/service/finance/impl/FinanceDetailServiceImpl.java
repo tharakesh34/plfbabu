@@ -545,7 +545,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance Tax Detail
-		financeDetail.setFinanceTaxDetails(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_TView"));
+		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_TView"));
 
 		// Contributor Details
 		if (scheduleData.getFinanceType().isAllowRIAInvestment()) {
@@ -2190,7 +2190,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Save or Update FInance Tax Details
-		FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetails();
+		FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetail();
 		if (taxDetail != null) {
 			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(taxDetail.getFinReference(),
 					"_View");
@@ -3740,7 +3740,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Save FInance Tax Details
-				FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetails();
+				FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetail();
 				if (financeTaxDetail != null) {
 					FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO()
 							.getFinanceTaxDetail(financeTaxDetail.getFinReference(), "_AView");
@@ -4270,11 +4270,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Save FInance Tax Details
-			if (financeDetail.getFinanceTaxDetails() != null) {
+			if (financeDetail.getFinanceTaxDetail() != null) {
 				FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO()
-						.getFinanceTaxDetail(financeDetail.getFinanceTaxDetails().getFinReference(), "_TView");
+						.getFinanceTaxDetail(financeDetail.getFinanceTaxDetail().getFinReference(), "_TView");
 				if (tempTaxDetail != null) {
-					getFinanceTaxDetailDAO().delete(financeDetail.getFinanceTaxDetails(), TableType.TEMP_TAB);
+					getFinanceTaxDetailDAO().delete(financeDetail.getFinanceTaxDetail(), TableType.TEMP_TAB);
 				}
 			}
 
@@ -5597,11 +5597,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
 
 		// Delete Tax Details
-		if (financeDetail.getFinanceTaxDetails() != null) {
+		if (financeDetail.getFinanceTaxDetail() != null) {
 			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO()
-					.getFinanceTaxDetail(financeDetail.getFinanceTaxDetails().getFinReference(), "_TView");
+					.getFinanceTaxDetail(financeDetail.getFinanceTaxDetail().getFinReference(), "_TView");
 			if (tempTaxDetail != null) {
-				getFinanceTaxDetailDAO().delete(financeDetail.getFinanceTaxDetails(), TableType.TEMP_TAB);
+				getFinanceTaxDetailDAO().delete(financeDetail.getFinanceTaxDetail(), TableType.TEMP_TAB);
 			}
 		}
 
@@ -6006,7 +6006,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 
-			FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetails();
+			FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetail();
 
 			if (taxDetail != null) {
 				if (!financeDetail.isActionSave()) {
@@ -10047,7 +10047,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		return getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry,
-				financeDetail.getFinanceTaxDetails(), branchCode);
+				financeDetail.getFinanceTaxDetail(), branchCode);
 	}
 	
 	@Override

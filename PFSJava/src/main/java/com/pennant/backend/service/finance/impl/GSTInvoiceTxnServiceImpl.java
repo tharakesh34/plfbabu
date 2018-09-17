@@ -150,8 +150,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 			
 			// Tax Details fetching
-			if (financeDetail.getFinanceTaxDetails() == null) {
-				financeDetail.setFinanceTaxDetails(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
+			if (financeDetail.getFinanceTaxDetail() == null) {
+				financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
 			}
 
 			// Invoice Transaction Preparation
@@ -209,7 +209,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				}
 			}
 
-			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
+			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetail();
 			Province customerProvince =  null;
 			String country = "";
 			String province = "";
@@ -356,7 +356,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		}
 		
 		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
-				financeDetail.getFinanceTaxDetails(), null);
+				financeDetail.getFinanceTaxDetail(), null);
 
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
