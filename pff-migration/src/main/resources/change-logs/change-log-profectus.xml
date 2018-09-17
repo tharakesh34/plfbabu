@@ -1690,6 +1690,12 @@ UNION ALL
 			update master_def set key_type='VTRID',key_code='VTRID' where key_code='VID';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="84" author="Vinay">
+		<addColumn tableName="RejectDocumentDetails">
+			<column name="remarks" type="varchar(4000)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
 	
 	
