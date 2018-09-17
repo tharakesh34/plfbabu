@@ -72,4 +72,6 @@ public interface FeeWaiverHeaderService {
 	
 	FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finReference,String type);
 	
+	FeeWaiverHeader getFeeWiaverEnquiryList(FeeWaiverHeader feeWaiverHeader);
+	
 }

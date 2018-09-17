@@ -5453,4 +5453,10 @@
 	     parent="basisCtrl" scope="prototype">
 	   <property name="interestCertificateService" ref="interestCertificateService" />
    </bean>
+   
+   	<!-- FeeWaiver Enquiry  -->
+   <bean id="feeWaiverEnquiryListCtrl" class="com.pennant.webui.financemanagement.receipts.FeeWaiverEnquiryListCtrl" parent="basisListCtrl" scope="prototype">
+     	<property name="financeDetailService" ref="financeDetailService" />
+		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
+	</bean>
 </beans>

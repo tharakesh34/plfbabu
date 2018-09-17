@@ -65,8 +65,11 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroup;
+import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -88,12 +91,15 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.financemanagement.receipts.FeeWaiverEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
+
+
 
 /**
  * This is the controller class for the
@@ -118,6 +124,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	private FinanceDetail financeDetail;
 	private FinanceMain financeMain;
 	protected transient FinanceSelectCtrl financeSelectCtrl = null;
+	protected transient FeeWaiverEnquiryListCtrl feeWaiverEnquiryListCtrl = null;
 	private FeeWaiverHeader feeWaiverHeader;
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
@@ -134,6 +141,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 	private int ccyFormatter = 0;
 	private BigDecimal totCurrWaivedAmt = BigDecimal.ZERO;
+	private Row row_valueDate;
+	private Row row_remarks;
+	private Listheader listheader_ValueDate;
 
 	/**
 	 * listheader_Select default constructor.<br>
@@ -168,6 +178,11 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			if (arguments.containsKey("financeSelectCtrl")) {
 				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
 				this.financeMainDialogCtrl = (Object) arguments.get("financeSelectCtrl");
+			}
+			
+			if (arguments.containsKey("feeWaiverEnquiryListCtrl")) {
+				setFeeWaiverEnquiryListCtrl((FeeWaiverEnquiryListCtrl) arguments.get("feeWaiverEnquiryListCtrl"));
+				this.financeMainDialogCtrl = (Object) arguments.get("feeWaiverEnquiryListCtrl");
 			}
 
 			if (arguments.containsKey("moduleDefiner")) {
@@ -512,6 +527,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		}
 
 		if (enqiryModule) {
+			this.row_remarks.setVisible(false);
+			this.row_valueDate.setVisible(false);
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
 		// fill the components with the data
@@ -852,8 +869,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		this.listFeeWaiverDetails.getItems().clear();
 		boolean isReadOnly = true;
-
-		if (getWorkFlow().firstTaskOwner().equals(getRole())) {
+			
+		if (!isEnquiry && getWorkFlow().firstTaskOwner().equals(getRole())) {
 			isReadOnly = false;
 		}
 
@@ -864,7 +881,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		setFeeWaiverDetails(feeWaiverDetails);
 		if (feeWaiverDetails != null && !feeWaiverDetails.isEmpty()) {
 			for (FeeWaiverDetail detail : feeWaiverDetails) {
-				Listitem item;
+				Listitem item = null;
 				Listcell lc;
 				item = new Listitem();
 				lc = new Listcell();
@@ -922,6 +939,13 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
+				
+				if(isEnquiry){	
+					listheader_ValueDate.setVisible(true);
+					lc = new Listcell(DateUtility.formatDate(detail.getValueDate(),DateFormat.LONG_DATE.getPattern()));
+					lc.setStyle("text-align:right;");
+					lc.setParent(item);
+				}
 
 				this.listFeeWaiverDetails.appendChild(item);
 			}
@@ -1147,4 +1171,13 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
 		this.feeWaiverHeaderService = feeWaiverHeaderService;
 	}
+
+	public FeeWaiverEnquiryListCtrl getFeeWaiverEnquiryListCtrl() {
+		return feeWaiverEnquiryListCtrl;
+	}
+
+	public void setFeeWaiverEnquiryListCtrl(FeeWaiverEnquiryListCtrl feeWaiverEnquiryListCtrl) {
+		this.feeWaiverEnquiryListCtrl = feeWaiverEnquiryListCtrl;
+	}
+	
 }

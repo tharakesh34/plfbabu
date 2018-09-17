@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.finance;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 
@@ -50,5 +52,7 @@ public interface FeeWaiverHeaderDAO extends BasicCrudDao<FeeWaiverHeader> {
 	FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finReference, String type);
 	
 	FeeWaiverHeader getFeeWaiverHeaderById(long waiverId, String type);
+	
+	List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type);
 
 }

@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -160,6 +163,37 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		}
 		logger.debug("Leaving");
 		return feeWaiverHeader;
+	}
+	
+	@Override
+	public List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type) {
+		logger.debug("Entering");
+		List<FeeWaiverHeader> feeWaiverHeaderList = new ArrayList<FeeWaiverHeader>();
+
+		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
+		feeWaiverHeader.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select WaiverId, FinReference, Event, Remarks,PostingDate,ValueDate,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,WorkflowId");
+		selectSql.append(" From FeeWaiverHeader");
+		selectSql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);
+		RowMapper<FeeWaiverHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FeeWaiverHeader.class);
+
+		try {
+			feeWaiverHeaderList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			feeWaiverHeaderList = null;
+		}
+		feeWaiverHeader = null;
+		logger.debug("Leaving");
+		return feeWaiverHeaderList;
 	}
 
 	@Override

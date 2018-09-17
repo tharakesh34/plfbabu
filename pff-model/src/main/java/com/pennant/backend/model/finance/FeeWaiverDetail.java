@@ -76,6 +76,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private String				lovValue;
 	private FeeWaiverDetail		befImage;
 	private LoggedInUser		userDetails;
+	private Date				valueDate;
 
 	public FeeWaiverDetail() {
 		super();
@@ -86,6 +87,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("feeTypeDesc");
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("netBalance");
+		excludeFields.add("valueDate");
 
 		return excludeFields;
 	}
@@ -230,4 +232,12 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		this.waiverDetailId = id;
 	}
 
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+	
 }

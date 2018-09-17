@@ -250,6 +250,26 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		return feeWaiverHeader;
 	}
 	
+	public FeeWaiverHeader getFeeWiaverEnquiryList(FeeWaiverHeader feeWaiverHeader) {
+		List<FeeWaiverDetail> details = new ArrayList<>();
+		List<FeeWaiverHeader> feeWaiverHeaderList = feeWaiverHeaderDAO
+				.getFeeWaiverHeaderEnqByFinRef(feeWaiverHeader.getFinReference(), "_AView");
+		if (feeWaiverHeaderList != null && feeWaiverHeaderList.size() > 0) {
+			for (FeeWaiverHeader waiverHeader : feeWaiverHeaderList) {
+				List<FeeWaiverDetail> detail = feeWaiverDetailDAO.getFeeWaiverByWaiverId(waiverHeader.getWaiverId(),
+						"");
+				for (FeeWaiverDetail feeWaiverDetail : detail) {
+					feeWaiverDetail.setValueDate(waiverHeader.getValueDate());
+				}
+				
+				details.addAll(detail);
+
+			}
+			feeWaiverHeader.setFeeWaiverDetails(details);
+		}
+		return feeWaiverHeader;
+	}
+	
 	@Override
 	public FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finreference,String type){		
 		return feeWaiverHeaderDAO.getFeeWaiverHeaderByFinRef(finreference,type);
