@@ -9510,4 +9510,9 @@ UNION ALL
 	<changeSet id="122" author="Vinay">
 		<sqlFile path="change-logs/EligibilityMethod_CreditReviewDetails_New.sql" endDelimiter="DonotStop" encoding="UTF-8"/>
 	</changeSet>
+	<changeSet id="123" author="Vinay">
+		<sql>	
+			update fincreditrevcategory set changedsply=0;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
