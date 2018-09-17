@@ -2896,7 +2896,7 @@
 	</bean>
 
 	<!--============ Extended Field Details ============== -->
-	<bean id="extendedFieldDetailDAO" class="com.pennant.backend.dao.solutionfactory.impl.ExtendedFieldDetailDAOImpl" parent="extBasicDao">
+	<bean id="extendedFieldDetailDAO" class="com.pennant.backend.dao.solutionfactory.impl.ExtendedFieldDetailDAOImpl" parent="basicDao">
 		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 
