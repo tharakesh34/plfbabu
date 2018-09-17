@@ -9507,5 +9507,7 @@ UNION ALL
 			<column name="WaiverID" type="bigint" />
 		</addColumn>
 	</changeSet> 
-
+	<changeSet id="122" author="Vinay">
+		<sqlFile path="change-logs/EligibilityMethod_CreditReviewDetails_New.sql" endDelimiter="DonotStop" encoding="UTF-8"/>
+	</changeSet>
 </databaseChangeLog>
