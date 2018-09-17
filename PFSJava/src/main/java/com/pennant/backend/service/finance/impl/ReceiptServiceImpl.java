@@ -2129,8 +2129,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		for (int i = 0; i < allocateTypes.size(); i++) {
 			allocationDetail = new ReceiptAllocationDetail();
-
+			
 			String allocationType = allocateTypes.get(i);
+
+			// Done consider GST parameters , only setting for display purpose of data
+			if (allocationType.contains("GST")) {
+				continue;
+			}
 			long allocateTo = 0;
 			if(allocateTypes.get(i).contains("_")){
 				allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
