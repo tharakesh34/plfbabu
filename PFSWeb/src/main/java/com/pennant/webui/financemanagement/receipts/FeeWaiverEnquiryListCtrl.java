@@ -166,6 +166,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Button btnNew;
 	private transient FinanceDetailService financeDetailService;
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
+	private boolean isEnquiry = true;
 
 	private FinanceMain financeMain;
 	private String buildedWhereCondition = "";
@@ -349,6 +350,11 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL)) {
 			this.listheader_RecordStatus.setVisible(false);
+		}
+		if (isEnquiry) {
+			this.listheader_FinProduct.setVisible(false);
+			this.listheader_CustCIF.setVisible(false);
+			this.listheader_RequestStage.setVisible(false);
 		}
 
 		logger.debug("Leaving" + event.toString());
