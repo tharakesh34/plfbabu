@@ -229,7 +229,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8, " );
 		selectSql.append(" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5,CustSourceID," );
 		selectSql.append(" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR," );
-		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger, " );
+		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger,applicationNo, " );
 		
 		
 		if(type.contains("View")){
@@ -374,7 +374,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
         insertSql.append(" CustAddlVar6, CustAddlVar7, CustAddlVar8, CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1," );
         insertSql.append(" CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5, CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4,CustAddlInt5," );
         insertSql.append(" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID," );
-        insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer," );
+        insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo," );
         
         insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
         insertSql.append(" ,CasteId, ReligionId, SubCategory,MarginDeviation )" );
@@ -394,7 +394,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
         insertSql.append(" :CustAddlVar8, :CustAddlVar9, :CustAddlVar10, :CustAddlVar11, :CustAddlDec1, :CustAddlDec2, :CustAddlDec3, :CustAddlDec4," );
         insertSql.append(" :CustAddlDec5, :CustAddlInt1, :CustAddlInt2, :CustAddlInt3, :CustAddlInt4, :CustAddlInt5," );
         insertSql.append(" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR,:CustSourceID," );
-        insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer," );
+        insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer, :ApplicationNo," );
         insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
         insertSql.append(" ,:CasteId, :ReligionId, :SubCategory, :MarginDeviation )" );
 
@@ -461,7 +461,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		updateSql.append(" ContactPersonName = :ContactPersonName, EmailID = :EmailID, PhoneNumber = :PhoneNumber, SalariedCustomer = :SalariedCustomer," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory" );
+		updateSql.append(" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo" );
 		updateSql.append(" Where CustID =:CustID");
 		
 		if (!type.endsWith("_Temp")){
@@ -1901,7 +1901,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID," );
 		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
-		selectSql.append(" , CasteId, ReligionId, SubCategory " );
+		selectSql.append(" , CasteId, ReligionId, SubCategory, ApplicationNo " );
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 		

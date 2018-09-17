@@ -258,7 +258,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected ExtendedCombobox custParentCountry; // autowired
 	protected ExtendedCombobox custSubSector; // autowired
 	protected ExtendedCombobox custSubSegment; // autowired
-
+	protected Uppercasebox applicationNo;  // autowired
+	
 	/** Customer Employer Fields **/
 	protected ExtendedCombobox empStatus; // autowired
 	protected ExtendedCombobox empSector; // autowired
@@ -940,7 +941,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custRO1.setValueColumn("DealerName");
 		this.custRO1.setDescColumn("DealerCity");
 		this.custRO1.setValidateColumns(new String[] { "DealerName" });
-
+		
+		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
+		
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
 		} else {
@@ -1107,7 +1110,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setValue(StringUtils.trimToEmpty(aCustomer.getCustFName()));
 		this.custMiddleName.setValue(StringUtils.trimToEmpty(aCustomer.getCustMName()));
 		this.custLastName.setValue(StringUtils.trimToEmpty(aCustomer.getCustLName()));
-
+		this.applicationNo.setValue(aCustomer.getApplicationNo());
 		if (isRetailCustomer) {
 			this.custShrtName.setValue(PennantApplicationUtil.getFullName(aCustomer.getCustFName(),
 					aCustomer.getCustMName(), aCustomer.getCustLName()));
@@ -1382,6 +1385,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		try {
 			aCustomer.setCustLName(this.custLastName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomer.setApplicationNo(this.applicationNo.getValue());
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2288,6 +2297,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 		}
 
+		if (!this.applicationNo.isReadonly()) {
+			this.applicationNo.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_ApplicationNo.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+		
 		// below fields are conditional mandatory
 
 		if (isRetailCustomer) {
@@ -2785,7 +2800,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custRiskCountry.setReadonly(isReadOnly("CustomerDialog_custRiskCountry"));
 				this.custSubSector.setReadonly(isReadOnly("CustomerDialog_custIndustry"));
 				this.custSubSegment.setReadonly(isReadOnly("CustomerDialog_custSubSegment"));
-
+				this.applicationNo.setReadonly(isReadOnly("CustomerDialog_applicationNo"));
+				
 				readOnlyComponent(isReadOnly("CustomerDialog_cast"), this.caste);
 				readOnlyComponent(isReadOnly("CustomerDialog_religion"), this.religion);
 				readOnlyComponent(isReadOnly("CustomerDialog_subCategory"), this.subCategory);
@@ -2898,7 +2914,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custParentCountry.setReadonly(true);
 		this.custSubSector.setReadonly(true);
 		this.custSubSegment.setReadonly(true);
-
+		this.applicationNo.setReadonly(true);
+		
 		// Employee Details
 		this.empStatus.setReadonly(true);
 		this.empSector.setReadonly(true);

@@ -334,7 +334,8 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private boolean marginDeviation=false;
 	private BigDecimal customerAge;
-	
+	@XmlElement
+	private String	applicationNo;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -1932,4 +1933,13 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setCustomerAge(BigDecimal customerAge) {
 		this.customerAge = customerAge;
 	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+	
 }

@@ -135,4 +135,10 @@
 			<column name="InterfaceSequence" type="VARCHAR(100)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet author="Vinay" id="16">
+	<addColumn tableName="AdtCustomers">
+		<column name="ApplicationNo" type="varchar(50)"/>
+	</addColumn>
+	</changeSet>
 	</databaseChangeLog>
