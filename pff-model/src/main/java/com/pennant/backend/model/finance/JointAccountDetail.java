@@ -44,7 +44,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>JountAccountDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId","authoritySignatory","sequence" })
+@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory",
+		"sequence" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class JointAccountDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -53,7 +54,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String finReference;
 	@XmlElement(name = "cif")
 	private String custCIF;
-	@XmlElement(name ="shortName")
+	@XmlElement(name = "shortName")
 	private String lovDescCIFName;
 
 	@XmlElement
@@ -67,11 +68,11 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String status;
 	private String catOfcoApplicant;
 	@XmlElement
-	private boolean					authoritySignatory;
+	private boolean authoritySignatory;
 	@XmlElement
-	private boolean					includeIncome;
+	private boolean includeIncome;
 	@XmlElement
-	private int						sequence;
+	private int sequence;
 
 	private List<FinanceExposure> primaryList = null;
 	private List<FinanceExposure> secoundaryList = null;
@@ -83,12 +84,12 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private LoggedInUser userDetails;
 	private CustomerDetails customerDetails;
 	private List<CustomerIncome> customerIncomeList;
-	private List<CustomerExtLiability>  customerExtLiabilityList;
+	private List<CustomerExtLiability> customerExtLiabilityList;
 	private List<FinanceEnquiry> custFinanceExposureList;
-	
+
 	private long custID;
 	private String auditYear;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -119,7 +120,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("customerExtLiabilityList");
 		excludeFields.add("custFinanceExposureList");
 		excludeFields.add("auditYear");
-		
+
 		return excludeFields;
 	}
 
@@ -357,5 +358,5 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setAuditYear(String auditYear) {
 		this.auditYear = auditYear;
-	}	
+	}
 }
