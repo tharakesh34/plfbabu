@@ -17,5 +17,5 @@
 	<include file="change-logs/change-log-4.9.0-audit.xml" />
 	<include file="change-logs/change-log-4.10.0-audit.xml" />
 	<include file="change-logs/change-log-organizations-audit.xml"/>
-	
+	<include file="change-logs/change-log-AdtCollateral.xml"/>
 </databaseChangeLog>
