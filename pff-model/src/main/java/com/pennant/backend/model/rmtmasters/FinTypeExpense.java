@@ -73,7 +73,7 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 	private boolean				amortReq;
 	private boolean				taxApplicable;
 	private boolean				active;
-	//private String				finEvent			= AccountEventConstants.ACCEVENT_ADDDBSP;
+	private String				finEvent			= "ADDDBSP"; //AccountEventConstants.ACCEVENT_ADDDBSP;
 
 	private boolean				newRecord			= false;
 	private String				lovValue;
@@ -239,12 +239,12 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 
 	}
 	
-	/*public String getFinEvent() {
+	public String getFinEvent() {
 		return finEvent;
 	}
 
 	public void setFinEvent(String finEvent) {
 		this.finEvent = finEvent;
-	}*/
+	}
 
 }
