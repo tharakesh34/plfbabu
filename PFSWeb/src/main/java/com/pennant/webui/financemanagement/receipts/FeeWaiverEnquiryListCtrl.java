@@ -1005,7 +1005,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
 			feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
 			feeWaiverHeader = feeWaiverHeaderService.getFeeWiaverEnquiryList(feeWaiverHeader);
-			if (feeWaiverHeader == null) {
+			if (feeWaiverHeader.getFeeWaiverDetails().isEmpty()) {
 				MessageUtil.showMessage("Waiver is not Initiated for the LAN :" + aFinanceMain.getFinReference());
 				return;
 			}
