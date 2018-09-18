@@ -42,10 +42,6 @@
  */
 package com.pennant.backend.model.systemmasters;
 
-import java.util.Date;
-
-import com.pennant.app.util.DateUtility;
-
 /**
  * Model class for the <b>OtherFinanceDetails table</b>.<br>
  * 
@@ -66,10 +62,6 @@ public class OtherFinanceDetail {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
-	}
-
-	public Date getAppDate() {
-		return DateUtility.getAppDate();
 	}
 
 	public String getFinType() {
