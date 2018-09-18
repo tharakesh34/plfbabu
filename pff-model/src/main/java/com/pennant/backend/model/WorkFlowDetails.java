@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.model;
 
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -61,8 +60,8 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 5638930814989470679L;
 
 	@XmlElement
-	private long workFlowDesignId = 0; // duplicate of workFlowId for API purpose.
-	
+	private long workFlowDesignId = 0;
+
 	@XmlElement
 	private String workFlowType;
 
@@ -80,7 +79,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String firstTaskOwner;
-	
+
 	@XmlElement
 	private boolean workFlowActive;
 
@@ -98,10 +97,10 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	public WorkFlowDetails(){
+	public WorkFlowDetails() {
 		super();
 	}
-	
+
 	public WorkFlowDetails(long id) {
 		super();
 		this.setId(id);
@@ -110,15 +109,15 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public long getWorkFlowDesignId() {
 		return workFlowDesignId;
 	}
@@ -130,13 +129,15 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public long getId() {
 		return super.getWorkflowId();
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		super.setWorkflowId(id);
 	}
 
 	public long getWorkFlowId() {
 		return super.getWorkflowId();
 	}
+
 	public void setWorkFlowId(long workFlowId) {
 		super.setWorkflowId(workFlowId);
 	}
@@ -144,6 +145,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getWorkFlowType() {
 		return workFlowType;
 	}
+
 	public void setWorkFlowType(String workFlowType) {
 		this.workFlowType = workFlowType;
 	}
@@ -151,6 +153,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getWorkFlowSubType() {
 		return workFlowSubType;
 	}
+
 	public void setWorkFlowSubType(String workFlowSubType) {
 		this.workFlowSubType = workFlowSubType;
 	}
@@ -158,6 +161,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getWorkFlowDesc() {
 		return workFlowDesc;
 	}
+
 	public void setWorkFlowDesc(String workFlowDesc) {
 		this.workFlowDesc = workFlowDesc;
 	}
@@ -165,6 +169,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getWorkFlowXml() {
 		return workFlowXml;
 	}
+
 	public void setWorkFlowXml(String workFlowXml) {
 		this.workFlowXml = workFlowXml;
 	}
@@ -172,12 +177,13 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getWorkFlowRoles() {
 		return workFlowRoles;
 	}
+
 	public void setWorkFlowRoles(String workFlowRoles) {
 		this.workFlowRoles = workFlowRoles;
 	}
 
 	public String[] getFlowRoles() {
-		if (workFlowRoles==null){
+		if (workFlowRoles == null) {
 			return null;
 		}
 		return workFlowRoles.split(",");
@@ -186,13 +192,15 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getFirstTaskOwner() {
 		return firstTaskOwner;
 	}
+
 	public void setFirstTaskOwner(String firstTaskOwner) {
 		this.firstTaskOwner = firstTaskOwner;
 	}
-	
+
 	public boolean isWorkFlowActive() {
 		return workFlowActive;
 	}
+
 	public void setWorkFlowActive(boolean workFlowActive) {
 		this.workFlowActive = workFlowActive;
 	}
@@ -200,6 +208,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -207,6 +216,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public WorkFlowDetails getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(WorkFlowDetails befImage) {
 		this.befImage = befImage;
 	}
@@ -214,10 +224,11 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getJsonDesign() {
 		return jsonDesign;
 	}
@@ -225,7 +236,7 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 	public void setJsonDesign(String jsonDesign) {
 		this.jsonDesign = jsonDesign;
 	}
-	
+
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
