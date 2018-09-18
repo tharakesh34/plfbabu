@@ -78,7 +78,6 @@
 				<artifactId>document-generator</artifactId>
 				<version>2.2</version>
 			</dependency>
-			<!-- Data-Engine -->
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
 				<artifactId>data-engine</artifactId>
