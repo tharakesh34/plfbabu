@@ -141,4 +141,11 @@
 		<column name="ApplicationNo" type="varchar(50)"/>
 	</addColumn>
 	</changeSet>
+	
+	<changeSet id="17.5" author="vijaykumar.l"  dbms="postgresql" >
+	 <modifyDataType tableName="AdtCostOfFunds" columnName="delexistingrates" newDataType="smallint" />
+	</changeSet>
+	<changeSet id="18.5" author="vijaykumar.l" dbms="postgresql" >
+	 <modifyDataType tableName="AdtCostOfFundCodes" columnName="active" newDataType="smallint" />
+	</changeSet>
 	</databaseChangeLog>
