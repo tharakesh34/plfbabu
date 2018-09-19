@@ -10438,4 +10438,15 @@ UNION ALL
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
+	 <changeSet id="125" author="vijaykuamr.l">
+	<sql>
+		update ReportList Set moduletype ='System Masters'  Where moduletype ='Sysem Masters';
+	</sql>
+	</changeSet>
+	 <changeSet id="126.1" author="vijaykuamr.l">
+	<sql>
+		Delete   from  reportlist where  module='Industry';
+		INSERT INTO reportlist VALUES ('Industry','Industry','listheader_IndustryCode.label,listheader_IndustryDesc.label,listheader_IndustryIsActive.label','industryCode,industryDesc,industryIsActive','String,String,boolean','','ReportList03',' Industries','System Masters',3,1001,'2015-07-07 16:55:19.247000','Approved','','','','','',0,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
