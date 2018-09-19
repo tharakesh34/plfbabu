@@ -517,7 +517,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.promotionCode.setErrorMessage("");
 
 		Object dataObject = this.promotionCode.getObject();
-		if (dataObject instanceof String) {
+		
+		if (dataObject == null) {
+			this.promotionCode.setValue("");
+			this.promotionCode.setDescription("");
+			CheckScreenCode("");
+		} else if (dataObject instanceof String) {
 			this.promotionCode.setValue(dataObject.toString());
 			this.promotionCode.setDescription("");
 			CheckScreenCode("");
@@ -533,9 +538,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.finType.setValue(details.getLovDescProductName());
 				this.finType.setDescription(details.getLovDescFinTypeName());
 				CheckScreenCode(details.getScreenCode());
-			}else{
-				FinanceType aFinanceType = new FinanceType();
-				this.productCategory = aFinanceType.getProductCategory();
 			}
 		}
 
