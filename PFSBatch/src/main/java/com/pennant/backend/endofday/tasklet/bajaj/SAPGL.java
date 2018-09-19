@@ -1,23 +1,26 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.SAPGLExtract;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.model.external.SAPGLExtract;
 
 public class SAPGL implements Tasklet {
 	private Logger logger = Logger.getLogger(SAPGL.class);
@@ -89,7 +92,7 @@ public class SAPGL implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("SAP-GL Process initiated...");
-				//new SAPGLProcess(dataSource, userId, valueDate, appDate).extractReport();
+				 //new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
