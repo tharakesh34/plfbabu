@@ -27,6 +27,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ControlDumpProcess;
+import com.pennanttech.pff.model.external.controldump.ControlDump;
 
 public class ControlDumpExtract extends DatabaseDataEngine implements ControlDumpProcess {
 	public static final DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CONTROL_DUMP_REQUEST");

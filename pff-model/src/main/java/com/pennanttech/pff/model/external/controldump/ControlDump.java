@@ -1,4 +1,4 @@
-package com.pennanttech.pennapps.pff.external.controldump;
+package com.pennanttech.pff.model.external.controldump;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
