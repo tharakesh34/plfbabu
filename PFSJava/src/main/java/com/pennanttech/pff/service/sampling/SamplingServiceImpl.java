@@ -562,20 +562,23 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			String moduleSubmodule = extHeader.getModuleName().concat("_").concat(extHeader.getSubModuleName());
 			ExtendedFieldRender extFieldRenderMap = sampling.getExtendedFieldRender();
 				Map<String, Object> extRenderMap = extFieldRenderMap.getMapValues();
-			for (String fieldName : fieldNames) {
-				if (extRenderMap.containsKey(fieldName)) {
-					String key = moduleSubmodule.concat("_").concat(fieldName);
-					if ("CNSAREA".equals(fieldName) && StringUtils.isNotEmpty((String) extRenderMap.get(fieldName))) {
-						String cnsArea1 = (String) extRenderMap.get(fieldName);
-						cnsArea = new BigDecimal(cnsArea1);
-						cnsArea = cnsArea.multiply(new BigDecimal(100));
-						fieldsandvalues.put(key, cnsArea);
-					} else {
-						fieldsandvalues.put(key, extRenderMap.get(fieldName));
+			if (extRenderMap != null) {
+				for (String fieldName : fieldNames) {
+					if (extRenderMap.containsKey(fieldName)) {
+						String key = moduleSubmodule.concat("_").concat(fieldName);
+						if ("CNSAREA".equals(fieldName)
+								&& StringUtils.isNotEmpty((String) extRenderMap.get(fieldName))) {
+							String cnsArea1 = (String) extRenderMap.get(fieldName);
+							cnsArea = new BigDecimal(cnsArea1);
+							cnsArea = cnsArea.multiply(new BigDecimal(100));
+							fieldsandvalues.put(key, cnsArea);
+						} else {
+							fieldsandvalues.put(key, extRenderMap.get(fieldName));
+						}
 					}
 				}
 			}
-				if (extRenderMap.containsKey("UNITPRICE")) {
+				if (extRenderMap!=null && extRenderMap.containsKey("UNITPRICE")) {
 					unitPrice = (BigDecimal) extRenderMap.get("UNITPRICE");
 				}
 				bankLTV = sampling.getCollateral().getBankLTV();
