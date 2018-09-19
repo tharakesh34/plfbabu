@@ -75,6 +75,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ALMProcess;
+import com.pennanttech.pff.model.external.alm.ALM;
 
 public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("ALM_REQUEST");

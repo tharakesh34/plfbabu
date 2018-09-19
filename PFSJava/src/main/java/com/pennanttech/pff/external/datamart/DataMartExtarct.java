@@ -27,7 +27,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.external.DataMartProcess;
 
 public class DataMartExtarct extends DatabaseDataEngine implements DataMartProcess {
-	public static final DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
 
 	private long batchID;
 	private Date lastRunDate;

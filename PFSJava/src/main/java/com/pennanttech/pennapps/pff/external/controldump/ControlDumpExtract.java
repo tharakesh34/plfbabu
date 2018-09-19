@@ -30,7 +30,7 @@ import com.pennanttech.pff.external.ControlDumpProcess;
 import com.pennanttech.pff.model.external.controldump.ControlDump;
 
 public class ControlDumpExtract extends DatabaseDataEngine implements ControlDumpProcess {
-	public static final DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CONTROL_DUMP_REQUEST");
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CONTROL_DUMP_REQUEST");
 	
 	private Date appDate = null;
 	private MapSqlParameterSource sqlParameterSource;
