@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.process;
+package com.pennanttech.pff.model.external;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
