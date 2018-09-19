@@ -1,22 +1,19 @@
 package com.pennanttech.pennapps.pff.external.test;
 
-import javax.sql.DataSource;
-
-import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TestDataMart {
-	DataSource dataSource;
+import com.pennanttech.pennapps.core.util.DateUtil;
+
+public class TestTaxDownlaodDetailService {
 
 	@BeforeTest
 	public void start() {
-		ApplicationContext context = null;
+		ApplicationContext context;
 		try {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -25,7 +22,7 @@ public class TestDataMart {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			//new DataMartExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
+			//this.taxDownlaodDetailServiceImpl.sendReqest(new Long(1000), DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

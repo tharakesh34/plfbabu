@@ -8,8 +8,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TestSAPGL {
-	
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.external.datamart.DataMartExtarct;
+
+public class TestDataMart {
 	DataSource dataSource;
 
 	@BeforeTest
@@ -26,10 +28,10 @@ public class TestSAPGL {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			//new SAPGLProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();
+			new DataMartExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
 }

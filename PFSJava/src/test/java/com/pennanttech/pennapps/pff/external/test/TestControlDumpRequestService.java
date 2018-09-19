@@ -1,5 +1,7 @@
 package com.pennanttech.pennapps.pff.external.test;
 
+import java.util.Date;
+
 import javax.sql.DataSource;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
@@ -8,14 +10,18 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TestPosidexRequestService  {
-	
-	private DataSource dataSource;
-	
+import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
+import com.pennanttech.pff.core.util.DateUtil;
+
+public class TestControlDumpRequestService {
+
+	DataSource dataSource;
+
 	@BeforeTest
 	public void start() {
+		ApplicationContext context = null;
 		try {
-			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -25,7 +31,8 @@ public class TestPosidexRequestService  {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			//new PosidexDataExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
+			Date date = DateUtil.getDate(2017, 9, 3);
+			new ControlDumpExtract(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

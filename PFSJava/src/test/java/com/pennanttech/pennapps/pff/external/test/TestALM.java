@@ -1,7 +1,5 @@
 package com.pennanttech.pennapps.pff.external.test;
 
-import java.util.Date;
-
 import javax.sql.DataSource;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
@@ -10,10 +8,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.external.alm.ALMExtarct;
+import com.pennanttech.pff.external.datamart.DataMartExtarct;
 
-public class TestControlDumpRequestService {
-
+public class TestALM {
 	DataSource dataSource;
 
 	@BeforeTest
@@ -30,9 +29,7 @@ public class TestControlDumpRequestService {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			Date date = DateUtil.getDate(2017, 9, 3);
-			//new ControlDumpExtract(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
-
+			new ALMExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
