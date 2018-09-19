@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -825,7 +826,7 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 
 			List<FinInsurances> finInsurances = getFinInsurancesDAO().getInsurancesList(
 					insuranceType.getInsuranceType(), "_view");
-			if (finInsurances != null) {
+			if (CollectionUtils.isNotEmpty(finInsurances)) {
 				String[][] parms = new String[2][1];
 				parms[1][0] = insuranceType.getInsuranceType();
 				parms[0][0] = PennantJavaUtil.getLabel("label_TakafulProviderDialog_TakafulCode.value") + ":"
