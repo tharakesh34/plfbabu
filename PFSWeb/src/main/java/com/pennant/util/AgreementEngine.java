@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.Document;
@@ -75,13 +76,51 @@ public class AgreementEngine {
 		if ((SaveFormat.DOCX) == format) {
 			Filedownload.save(new AMedia(reportName, "msword", "application/msword", stream.toByteArray()));
 		} else {
-
-			Map<String, Object> arg = new HashMap<String, Object>();
+			Map<String, Object> arg = new HashMap<>();
 			arg.put("reportBuffer", stream.toByteArray());
 			arg.put("parentWindow", window);
 			arg.put("reportName", reportName);
 			arg.put("isAgreement", true);
 			arg.put("docFormat", format);
+
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", window, arg);
+		}
+		stream.close();
+		stream = null;
+		logger.debug("Leaving");
+	}
+	
+	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox) throws Exception {
+		logger.debug("Entering ");
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+		if (saved) {
+			InputStream inputStream = new FileInputStream(templateEngine.getDocumentPath());
+			int data;
+
+			while ((data = inputStream.read()) >= 0) {
+				stream.write(data);
+			}
+
+			inputStream.close();
+			inputStream = null;
+		} else {
+			templateEngine.getDocument().save(stream, format);
+		}
+
+		if ((SaveFormat.DOCX) == format) {
+			Filedownload.save(new AMedia(reportName, "msword", "application/msword", stream.toByteArray()));
+		} else {
+			Map<String, Object> arg = new HashMap<>();
+			arg.put("reportBuffer", stream.toByteArray());
+			arg.put("parentWindow", window);
+			arg.put("reportName", reportName);
+			arg.put("isAgreement", true);
+			arg.put("docFormat", format);
+			arg.put("tabbox", tabbox);
+			arg.put("searchClick", false);
+			arg.put("selectTab", tabbox.getSelectedTab());
+			arg.put("dialogWindow", window);
 
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", window, arg);
 		}
