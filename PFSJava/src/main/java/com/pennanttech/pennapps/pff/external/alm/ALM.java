@@ -1,4 +1,4 @@
-package com.pennanttech.pennapps.pff.alm;
+package com.pennanttech.pennapps.pff.external.alm;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -18,11 +18,9 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.alm.ALMExtarct;
-import com.pennanttech.pennapps.pff.controldump.ControlDumpExtract;
+import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.external.ALMProcess;
 import com.pennanttech.pff.external.ControlDumpProcess;
 
 public class ControlDump implements Tasklet {
