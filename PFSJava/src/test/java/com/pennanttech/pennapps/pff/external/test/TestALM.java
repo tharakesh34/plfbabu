@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.external.alm.ALMExtarct;
-import com.pennanttech.pff.external.datamart.DataMartExtarct;
 
 public class TestALM {
 	DataSource dataSource;
