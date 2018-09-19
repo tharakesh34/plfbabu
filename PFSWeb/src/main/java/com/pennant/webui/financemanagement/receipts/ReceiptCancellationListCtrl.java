@@ -44,15 +44,15 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptCancellationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.framework.core.SearchOperator.Operators;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptCancellation/ReceiptCancellationList.zul file.
@@ -234,9 +234,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			}
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_CANCEL);
 			if (App.DATABASE == Database.ORACLE){
-				whereClause = whereClause.append(" AND RecordType IS NOT NULL )) ");
+				whereClause = whereClause.append("' AND RecordType IS NOT NULL )) ");
 			}else{
-				whereClause = whereClause.append(" AND RecordType <> '' )) ");
+				whereClause = whereClause.append("' AND RecordType <> '' )) ");
 			}
 			
 			this.searchObject.addWhereClause(whereClause.toString());
