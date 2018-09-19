@@ -10449,4 +10449,23 @@ UNION ALL
 		INSERT INTO reportlist VALUES ('Industry','Industry','listheader_IndustryCode.label,listheader_IndustryDesc.label,listheader_IndustryIsActive.label','industryCode,industryDesc,industryIsActive','String,String,boolean','','ReportList03',' Industries','System Masters',3,1001,'2015-07-07 16:55:19.247000','Approved','','','','','',0,0);
 	</sql>
 	</changeSet>
+ <changeSet id="127.1" author="vijaykumar.l">
+	<sql>
+	Delete   from  reportlist where  CODE='DSA';
+	Delete   from  reportlist where  CODE='DMA';
+	Delete   from  reportlist where  CODE='TVAGENCY';
+	Delete   from  reportlist where  CODE='RCUVAGENCY';
+	Delete   from  reportlist where  CODE='LVAGENCY';
+	Delete   from  reportlist where  CODE='FIAGENCY';
+	DELETE   from  reportlist where  CODE='CONN';
+	INSERT INTO reportlist  VALUES ('DSA','DSA','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	INSERT INTO reportlist  VALUES ('DMA','DMA','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	INSERT INTO reportlist  VALUES ('TVAGENCY','TVAGENCY','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	INSERT INTO reportlist  VALUES ('RCUVAGENCY','RCUVAGENCY','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	INSERT INTO reportlist  VALUES ('LVAGENCY','LVAGENCY','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	INSERT INTO reportlist  VALUES ('FIAGENCY','FIAGENCY','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	INSERT INTO reportlist  VALUES ('CONN','CONN','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String','','ReportList06','VAS Manufacturer','System Masters',1,1001, '2017-06-15 18:33:20.557000','Approved','',' ',' ',' ',' ',0,0);
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
