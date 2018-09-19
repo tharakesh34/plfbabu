@@ -1,4 +1,4 @@
-package com.pennanttech.service;
+package com.pennanttech.bajaj.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,12 +24,12 @@ import com.pennanttech.clients.JSONClient;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
+import com.pennanttech.pff.external.CustomerDedupService;
 
-public class CustomerDedupService extends BajajService implements com.pennanttech.pff.external.CustomerDedupService {
+public class CustomerDedupServiceImpl extends BajajService implements CustomerDedupService {
+	private static final Logger logger = Logger.getLogger(CustomerDedupServiceImpl.class);
 
-	private static final Logger logger = Logger.getLogger(CustomerDedupService.class);
-
-	public CustomerDedupService() {
+	public CustomerDedupServiceImpl() {
 		super();
 	}
 
