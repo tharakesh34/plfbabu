@@ -445,7 +445,9 @@
 	<bean id="limitDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitDetailDAOImpl" parent="sequenceDao" />
 
 	<bean id="limitHeaderDAO" class="com.pennant.backend.dao.limit.impl.LimitHeaderDAOImpl" parent="sequenceDao" />
-
+	
+	<bean id="limitReferenceMappingDAO" class="com.pennant.backend.dao.limit.impl.LimitReferenceMappingDAOImpl" parent="sequenceDao"/>
+	
 	<bean id="limitTransactionDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitTransactionDetailsDAOImpl" parent="sequenceDao" />
 
 	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basicDao" />

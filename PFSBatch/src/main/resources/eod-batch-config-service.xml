@@ -42,9 +42,9 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	<bean id="paymentRecoveryHeaderDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryHeaderDAOImpl" parent="bacicDao"/>
+	<bean id="paymentRecoveryHeaderDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryHeaderDAOImpl" parent="basicDao"/>
 	
-	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl" parent="bacicDao"/>
+	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl" parent="basicDao"/>
 
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
