@@ -55,7 +55,7 @@ public class ALM implements Tasklet {
 			logger.debug("START: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			DataEngineStatus status = ALMProcess.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new ALMProcessThread(new Long(1000))).start();;
+			new Thread(new ALMProcessThread(1000)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 

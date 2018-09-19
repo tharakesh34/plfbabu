@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.model.alm;
+package com.pennanttech.pennapps.pff.alm;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

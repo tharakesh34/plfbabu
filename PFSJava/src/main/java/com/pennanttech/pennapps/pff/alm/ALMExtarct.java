@@ -70,12 +70,13 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennanttech.bajaj.model.alm.ALM;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.ALMProcess;
 
-public class ALMExtarct extends DatabaseDataEngine implements com.pennanttech.pff.external.ALMProcess {
+public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 	private static final Logger logger = Logger.getLogger(ALMExtarct.class);
 
 	private Date appDate;
@@ -96,8 +97,12 @@ public class ALMExtarct extends DatabaseDataEngine implements com.pennanttech.pf
 	}
 	
 	@Override
-	public void process() throws Exception {
-		process("ALM_REQUEST");
+	public void process() {
+		try {
+			process("ALM_REQUEST");
+		} catch (Exception e) {
+			throw new InterfaceException("CONTROL_DUMP_REQUEST", e.getMessage());
+		}
 	}
 	
 	

@@ -1,23 +1,29 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.ControlDumpProcess;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.alm.ALMExtarct;
+import com.pennanttech.pennapps.pff.controldump.ControlDumpExtract;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.external.ALMProcess;
+import com.pennanttech.pff.external.ControlDumpProcess;
 
 public class ControlDump implements Tasklet {
 	private Logger logger = Logger.getLogger(ControlDump.class);
@@ -88,8 +94,8 @@ public class ControlDump implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				ControlDumpProcess process = new ControlDumpProcess(dataSource, userId, valueDate, appDate);
-				process.process("CONTROL_DUMP_REQUEST");
+				ControlDumpProcess process = new ControlDumpExtract(dataSource, userId, valueDate, appDate);
+				process.process();
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

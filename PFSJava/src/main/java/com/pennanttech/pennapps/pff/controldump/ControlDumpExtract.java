@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.process;
+package com.pennanttech.pennapps.pff.controldump;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,19 +21,18 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.model.ControlDump;
+import com.pennant.app.util.DateUtility;
 import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.ControlDumpProcess;
 
-public class ControlDumpProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(ControlDumpProcess.class);
-	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CONTROL_DUMP_REQUEST");
+public class ControlDumpExtract extends DatabaseDataEngine implements ControlDumpProcess {
+	private static final Logger logger = Logger.getLogger(ControlDumpExtract.class);
 
 	private Date appDate = null;
-	private MapSqlParameterSource filterMap;
+	private MapSqlParameterSource sqlParameterSource;
 	private int batchSize = 50000;
 	private int commitInterval = 1000;
 	private long totalThreads;
@@ -41,7 +40,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	private AtomicLong processedRecords;
 	private AtomicLong successRecords;
 
-	public ControlDumpProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public ControlDumpExtract(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 		this.totalThreads = 0;
@@ -51,13 +50,22 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	@Override
+	public void process() {
+		try {
+			process("CONTROL_DUMP_REQUEST");
+		} catch (Exception e) {
+			throw new InterfaceException("CONTROL_DUMP_REQUEST", e.getMessage());
+		}
+	}
+
+	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 		try {
 
-			filterMap = new MapSqlParameterSource();
-			filterMap.addValue("CLOSINGSTATUS", "C");
-			filterMap.addValue("APPDATE", appDate);
+			sqlParameterSource = new MapSqlParameterSource();
+			sqlParameterSource.addValue("CLOSINGSTATUS", "C");
+			sqlParameterSource.addValue("APPDATE", appDate);
 
 			// Handling retry on same day.
 			deleteData();
@@ -121,11 +129,11 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private List<ControlDump> extractData(long fromSeq, long toSeq) throws Exception {
-		
+
 		MapSqlParameterSource parameter = new MapSqlParameterSource();
 		parameter.addValue("FromSeq", fromSeq);
 		parameter.addValue("ToSeq", toSeq);
-		
+
 		List<ControlDump> details = getDetails(parameter);
 
 		Map<String, ControlDump> bucketDetails = getBucketDetails(parameter);
@@ -141,7 +149,6 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		Map<String, ControlDump> scheduleDetails = getScheduleDetails(parameter);
 		Map<String, ControlDump> futureScheduleDetails = getFutureScheduleDetails(parameter);
 		Map<String, ControlDump> principalAtTerm = getPrincipalAtTerm(parameter);
-		
 
 		for (ControlDump cd : details) {
 			ControlDump obj = null;
@@ -237,7 +244,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setNoOfAdvanceEmis(obj.getNoOfAdvanceEmis());
 					obj = null;
 				}
-				
+
 				// Schedule details
 				obj = scheduleDetails.get(finReference);
 				if (obj != null) {
@@ -249,7 +256,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setEmiReceived(obj.getEmiReceived());
 					obj = null;
 				}
-				
+
 				// Future Schedule details
 				obj = futureScheduleDetails.get(finReference);
 				if (obj != null) {
@@ -257,7 +264,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setPrincipalBalance(obj.getPrincipalBalance());
 					obj = null;
 				}
-				
+
 				// Principal at term
 				obj = principalAtTerm.get(finReference);
 				if (obj != null) {
@@ -291,97 +298,100 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private List<ControlDump> getDetails(MapSqlParameterSource parameter) {
-		List<ControlDump> list = new ArrayList<>();	
-		parameterJdbcTemplate.query("select * from CONTROLDUMP_EXTRACT where seqId between :FromSeq and :ToSeq",  parameter, new RowCallbackHandler() {
-			@Override
-			public void processRow(ResultSet rs) throws SQLException {
-				ControlDump cd = new ControlDump();
+		List<ControlDump> list = new ArrayList<>();
+		parameterJdbcTemplate.query("select * from CONTROLDUMP_EXTRACT where seqId between :FromSeq and :ToSeq",
+				parameter, new RowCallbackHandler() {
+					@Override
+					public void processRow(ResultSet rs) throws SQLException {
+						ControlDump cd = new ControlDump();
 
-				String finReference = rs.getString("FINREFERENCE");
-				String agreementId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
+						String finReference = rs.getString("FINREFERENCE");
+						String agreementId = StringUtils.substring(finReference, finReference.length() - 7,
+								finReference.length());
 
-				cd.setCreatedOn(appDate);
-				cd.setCcyMinorUnits(getAmount(rs, "CCYMINORCCYUNITS"));
-				cd.setAmountScale(rs.getInt("CCYEDITFIELD"));
-				cd.setAgreementNo(finReference);
+						cd.setCreatedOn(appDate);
+						cd.setCcyMinorUnits(getAmount(rs, "CCYMINORCCYUNITS"));
+						cd.setAmountScale(rs.getInt("CCYEDITFIELD"));
+						cd.setAgreementNo(finReference);
 
-				if (StringUtils.isNumeric(agreementId)) {
-					cd.setAgreementId(Long.parseLong(agreementId));
-				} else {
-					cd.setAgreementId(Long.parseLong("0"));
-				}
+						if (StringUtils.isNumeric(agreementId)) {
+							cd.setAgreementId(Long.parseLong(agreementId));
+						} else {
+							cd.setAgreementId(Long.parseLong("0"));
+						}
 
-				cd.setAgreementDate(rs.getDate("FINCONTRACTDATE"));
-				cd.setProductFlag(rs.getString("FINTYPE"));
-				cd.setAmtFin(getAmount(rs, "FINASSETVALUE"));
-				cd.setAssetCost(getAmount(rs, "FINASSETVALUE"));
-				cd.setClosureDate(rs.getDate("MATURITYDATE"));
-				cd.setCurrentBucket(rs.getInt("DUEBUCKET"));
-				cd.setCustomerId(rs.getString("CUSTCIF"));
-				cd.setCustomerName(rs.getString("CUSTSHRTNAME"));
-				cd.setMaturityDate(rs.getDate("MATURITYDATE"));
+						cd.setAgreementDate(rs.getDate("FINCONTRACTDATE"));
+						cd.setProductFlag(rs.getString("FINTYPE"));
+						cd.setAmtFin(getAmount(rs, "FINASSETVALUE"));
+						cd.setAssetCost(getAmount(rs, "FINASSETVALUE"));
+						cd.setClosureDate(rs.getDate("MATURITYDATE"));
+						cd.setCurrentBucket(rs.getInt("DUEBUCKET"));
+						cd.setCustomerId(rs.getString("CUSTCIF"));
+						cd.setCustomerName(rs.getString("CUSTSHRTNAME"));
+						cd.setMaturityDate(rs.getDate("MATURITYDATE"));
 
-				int monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"), true);
-				cd.setSanctionedTenure(monts);
+						int monts;
+						monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"), true);
+						cd.setSanctionedTenure(monts);
 
-				cd.setSchemeId(rs.getInt("PROMOTIONID"));
-				cd.setSchemeName(rs.getString("PROMOTIONDESC"));
+						cd.setSchemeId(rs.getInt("PROMOTIONID"));
+						cd.setSchemeName(rs.getString("PROMOTIONDESC"));
 
-				cd.setFlatRate(getAmount(rs, "REPAYPROFITRATE"));
-				if (cd.getFlatRate().compareTo(new BigDecimal(999)) > 0) {
-					cd.setFlatRate(new BigDecimal(999));
-				}
+						cd.setFlatRate(getAmount(rs, "REPAYPROFITRATE"));
+						if (cd.getFlatRate().compareTo(new BigDecimal(999)) > 0) {
+							cd.setFlatRate(new BigDecimal(999));
+						}
 
-				cd.setEffectiveRate(getAmount(rs, "EFFECTIVERATEOFRETURN"));
-				if (cd.getEffectiveRate().compareTo(new BigDecimal(999)) > 0) {
-					cd.setEffectiveRate(new BigDecimal(999));
-				}
+						cd.setEffectiveRate(getAmount(rs, "EFFECTIVERATEOFRETURN"));
+						if (cd.getEffectiveRate().compareTo(new BigDecimal(999)) > 0) {
+							cd.setEffectiveRate(new BigDecimal(999));
+						}
 
-				// Loan Branch details
-				String branchId = rs.getString("BANKREFNO");
-				if (StringUtils.isNumeric(branchId)) {
-					cd.setBranchId(Long.parseLong(branchId));
-				} else {
-					cd.setBranchId(0);
-				}
+						// Loan Branch details
+						String branchId = rs.getString("BANKREFNO");
+						if (StringUtils.isNumeric(branchId)) {
+							cd.setBranchId(Long.parseLong(branchId));
+						} else {
+							cd.setBranchId(0);
+						}
 
-				cd.setBranchName(rs.getString("BRANCHDESC"));
+						cd.setBranchName(rs.getString("BRANCHDESC"));
 
-				if ("W".equals(rs.getString("CLOSINGSTATUS"))) {
-					cd.setNpaStageId("WRITEOFF");
-				} else {
-					cd.setNpaStageId("REGULAR");
-				}
+						if ("W".equals(rs.getString("CLOSINGSTATUS"))) {
+							cd.setNpaStageId("WRITEOFF");
+						} else {
+							cd.setNpaStageId("REGULAR");
+						}
 
-				if (rs.getBoolean("FINISACTIVE")) {
-					cd.setLoanStatus("A");
-				} else {
-					cd.setLoanStatus("C");
-				}
+						if (rs.getBoolean("FINISACTIVE")) {
+							cd.setLoanStatus("A");
+						} else {
+							cd.setLoanStatus("C");
+						}
 
-				cd.setDisbursedAmount(getAmount(rs, "FINCURRASSETVALUE"));
-				if (cd.getAssetCost().compareTo(cd.getDisbursedAmount()) == 0) {
-					cd.setDisbStatus("FD");
-				} else {
-					cd.setDisbStatus("PD");
-				}
+						cd.setDisbursedAmount(getAmount(rs, "FINCURRASSETVALUE"));
+						if (cd.getAssetCost().compareTo(cd.getDisbursedAmount()) == 0) {
+							cd.setDisbStatus("FD");
+						} else {
+							cd.setDisbStatus("PD");
+						}
 
-				// Instrument Type
-				cd.setInstrument(StringUtils.trimToEmpty(rs.getString("MANDATETYPE")));
-				if ("ECS".equals(cd.getInstrument())) {
-					cd.setInstrument("E");
-				} else if ("DDM".equals(cd.getInstrument())) {
-					cd.setInstrument("A");
-				} else if ("NACH".equals(cd.getInstrument())) {
-					cd.setInstrument("Z");
-				} else {
-					cd.setInstrument("C");
-				}
+						// Instrument Type
+						cd.setInstrument(StringUtils.trimToEmpty(rs.getString("MANDATETYPE")));
+						if ("ECS".equals(cd.getInstrument())) {
+							cd.setInstrument("E");
+						} else if ("DDM".equals(cd.getInstrument())) {
+							cd.setInstrument("A");
+						} else if ("NACH".equals(cd.getInstrument())) {
+							cd.setInstrument("Z");
+						} else {
+							cd.setInstrument("C");
+						}
 
-				list.add(cd);
+						list.add(cd);
 
-			}
-		});
+					}
+				});
 		return list;
 	}
 
@@ -424,7 +434,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
 		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS ");
 
-		totalRecords = parameterJdbcTemplate.update(sql.toString(), filterMap);
+		totalRecords = parameterJdbcTemplate.update(sql.toString(), sqlParameterSource);
 		executionStatus.setTotalRecords(totalRecords);
 	}
 
@@ -498,7 +508,6 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	private Map<String, ControlDump> getOverDueDetails(MapSqlParameterSource parameter) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CDE.FINREFERENCE, MIN(FINODSCHDDATE) FINODSCHDDATE,");
@@ -513,26 +522,27 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		return new HashMap<>();
 	}
 
 	private Map<String, ControlDump> extractOverDueDetails(StringBuilder sql, MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
 							cd.setFirstRepaydueDate(rs.getDate("FINODSCHDDATE"));
 							cd.setLppChargesReceivable(getAmount(rs, "TOTPENALTYAMT"));
 							cd.setLppChargesReceived(getAmount(rs, "TOTPENALTYPAID"));
-							
+
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
-						
+
 						return map;
 					}
 				});
@@ -555,19 +565,20 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractWriteOffAmounts(StringBuilder sql, MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
 							cd.setWriteoffDue(getAmount(rs, "WRITTENOFFPRI"));
 							cd.setWriteoffDue(cd.getWriteoffDue().add(getAmount(rs, "WRITTENOFFPFT")));
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
-						
+
 						return map;
 					}
 				});
@@ -590,18 +601,19 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractWriteOffPayments(StringBuilder sql, MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
 							cd.setWriteoffReceived(getAmount(rs, "WRITEOFFPAYAMOUNT"));
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
-						
+
 						return map;
 					}
 				});
@@ -618,7 +630,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" GROUP BY CDE.FINREFERENCE");
 
 		try {
-			return extractExcesAmounts(sql,parameter);
+			return extractExcesAmounts(sql, parameter);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -629,25 +641,24 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		MapSqlParameterSource parm = new MapSqlParameterSource(parameter.getValues());
 		parm.addValue("TRANTYPE", "C");
 		parm.addValue("AMOUNTTYPE", "A");
-		
+
 		return parameterJdbcTemplate.query(sql.toString(), parm, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
 				ControlDump cd = null;
-				
+
 				while (rs.next()) {
 					cd = new ControlDump();
 					cd.setNoOfAdvanceEmis(rs.getLong("AdvanceEmi"));
 					map.put(rs.getString("FINREFERENCE"), cd);
 				}
-				
+
 				return map;
 			}
 		});
 	}
 
-	
 	private Map<String, ControlDump> getChargeAmounts(MapSqlParameterSource parameter) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CDE.FINREFERENCE, HOSTFEETYPECODE, SUM(ACTUALAMOUNT) ACTUALAMOUNT,");
@@ -671,39 +682,40 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(parameter.getValues());
 		paramMap.addValue("CHRG_CODE_38", "38");
 		paramMap.addValue("CHRG_CODE_74", "74");
-		
-		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
-			@Override
-			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				Map<String, ControlDump> map = new HashMap<>();
-				ControlDump cd = null;
-				String hostTypeCode = null;
-				String key = null;
-				
-				while (rs.next()) {
-					key = rs.getString("FINREFERENCE");
-					
-					cd = map.get(key);
-					if (cd == null) {
-						cd = new ControlDump();
-						map.put(key, cd);
-					}
-					
-					hostTypeCode = StringUtils.trimToEmpty(rs.getString("HOSTFEETYPECODE"));
 
-					if (StringUtils.equals("38", hostTypeCode)) {
-						cd.setForeClosureChargesDue(getAmount(rs, "ACTUALAMOUNT"));
-						cd.setForeClosureChargesReceived(getAmount(rs,"PAIDAMOUNT"));
-					} else if(StringUtils.equals("74", hostTypeCode)) {
-						cd.setPdcSwapChargesReceivable(getAmount(rs, "ACTUALAMOUNT"));
-						cd.setPdcSwapChargesReceived(getAmount(rs,"PAIDAMOUNT"));
+		return parameterJdbcTemplate.query(sql.toString(), paramMap,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
+					@Override
+					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
+						Map<String, ControlDump> map = new HashMap<>();
+						ControlDump cd = null;
+						String hostTypeCode = null;
+						String key = null;
+
+						while (rs.next()) {
+							key = rs.getString("FINREFERENCE");
+
+							cd = map.get(key);
+							if (cd == null) {
+								cd = new ControlDump();
+								map.put(key, cd);
+							}
+
+							hostTypeCode = StringUtils.trimToEmpty(rs.getString("HOSTFEETYPECODE"));
+
+							if (StringUtils.equals("38", hostTypeCode)) {
+								cd.setForeClosureChargesDue(getAmount(rs, "ACTUALAMOUNT"));
+								cd.setForeClosureChargesReceived(getAmount(rs, "PAIDAMOUNT"));
+							} else if (StringUtils.equals("74", hostTypeCode)) {
+								cd.setPdcSwapChargesReceivable(getAmount(rs, "ACTUALAMOUNT"));
+								cd.setPdcSwapChargesReceived(getAmount(rs, "PAIDAMOUNT"));
+							}
+
+						}
+
+						return map;
 					}
-										
-				}
-				
-				return map;
-			}
-		});
+				});
 	}
 
 	private Map<String, ControlDump> getReceiptAmounts(MapSqlParameterSource parameter) {
@@ -717,7 +729,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" GROUP BY CDE.FINREFERENCE, RD.ALLOCATIONTYPE");
 
 		try {
-			return extractReceiptAmounts(sql,parameter);
+			return extractReceiptAmounts(sql, parameter);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -729,15 +741,16 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(parameter.getValues());
 		paramMap.addValue("PRI", "PRI");
 		paramMap.addValue("PFT", "PFT");
-		
-		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+
+		return parameterJdbcTemplate.query(sql.toString(), paramMap,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
 						String allocationType = null;
 						String key = null;
-						
+
 						while (rs.next()) {
 							key = rs.getString("FINREFERENCE");
 
@@ -757,20 +770,20 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 							}
 
 						}
-						
+
 						return map;
 					}
 				});
 	}
-	
+
 	private Map<String, ControlDump> getPrincipalAtTerm(MapSqlParameterSource parameter) {
 		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" select  CDE.FinReference, PrincipalSchd PRINCIPAL_AT_TERM from CONTROLDUMP_EXTRACT CDE"); 
-		sql.append(" INNER JOIN FinScheduleDetails FSD on CDE.FinReference = FSD.Finreference"); 
+
+		sql.append(" select  CDE.FinReference, PrincipalSchd PRINCIPAL_AT_TERM from CONTROLDUMP_EXTRACT CDE");
+		sql.append(" INNER JOIN FinScheduleDetails FSD on CDE.FinReference = FSD.Finreference");
 		sql.append(" WHERE CDE.SEQID between :FromSeq and :ToSeq");
-		sql.append(" AND CDE.ClosingStatus = 'E' AND CDE.MaturityDate = FSD.SchDate Order By CDE.FinReference"); 
-    
+		sql.append(" AND CDE.ClosingStatus = 'E' AND CDE.MaturityDate = FSD.SchDate Order By CDE.FinReference");
+
 		try {
 			return extractPrincipalAtTerm(sql, parameter);
 		} catch (Exception e) {
@@ -783,15 +796,16 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	private Map<String, ControlDump> extractPrincipalAtTerm(StringBuilder sql, MapSqlParameterSource parameter) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(parameter.getValues());
 		paramMap.addValue("RECEIPTPURPOSE", "EarlySettlement");
-				
-		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+
+		return parameterJdbcTemplate.query(sql.toString(), paramMap,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						String key = null;
-						
+
 						while (rs.next()) {
 							key = rs.getString("FINREFERENCE");
 
@@ -803,7 +817,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 
 							cd.setPrincipalAtTerm(getAmount(rs, "PRINCIPAL_AT_TERM"));
 						}
-						
+
 						return map;
 					}
 				});
@@ -820,7 +834,8 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN DPDBUCKETS DPD ON DPD.BUCKETCODE = CDE.FINSTATUS");
 		sql.append(" INNER JOIN RMTFINANCETYPES RFT ON RFT.FINTYPE = CDE.FINTYPE");
 		sql.append(" INNER JOIN DPDBUCKETS DPD ON DPD.BUCKETCODE = CDE.FINSTATUS");
-		sql.append(" INNER JOIN DPDBUCKETSCONFIG DPDC ON DPDC.BUCKETID = DPD.BUCKETID AND RFT.FINCATEGORY = DPDC.PRODUCTCODE");
+		sql.append(
+				" INNER JOIN DPDBUCKETSCONFIG DPDC ON DPDC.BUCKETID = DPD.BUCKETID AND RFT.FINCATEGORY = DPDC.PRODUCTCODE");
 		sql.append(" WHERE CDE.SEQID between :FromSeq and :ToSeq");
 
 		try {
@@ -832,21 +847,22 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractBucketDetails(StringBuilder sql, MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
-							
+
 							if (String.valueOf(rs.getInt("DUEDAYS")) == null) {
 								cd.setDerivedBucket(0);
 							} else {
 								cd.setDerivedBucket(rs.getInt("DUEDAYS"));
 							}
-							
+
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
 						return map;
@@ -879,13 +895,13 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" FUTUREINST,");
 		sql.append(" ACRTILLLBD,");
 		sql.append(" CDE.FINISACTIVE,");
-		sql.append(" PRVMTHACR" );
+		sql.append(" PRVMTHACR");
 		sql.append(" FROM CONTROLDUMP_EXTRACT CDE ");
 		sql.append(" INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = CDE.FINREFERENCE");
 		sql.append(" WHERE CDE.SEQID between :FromSeq and :ToSeq");
 
 		try {
-			return extractProfitDetails(sql,parameter);
+			return extractProfitDetails(sql, parameter);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -893,13 +909,14 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractProfitDetails(StringBuilder sql, MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						boolean active ;
-						
+						boolean active;
+
 						while (rs.next()) {
 							cd = new ControlDump();
 
@@ -915,10 +932,11 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 							cd.setNoOfUnbilledEmi(rs.getInt("FUTUREINST"));
 							cd.setLoanEmi(getAmount(rs, "FIRSTREPAYAMT"));
 							active = rs.getBoolean("FINISACTIVE");
-							if(active){
-								cd.setBalanceUmfc(getAmount(rs, "TOTALPFTSCHD").subtract(getAmount(rs, "TOTALPFTPAID").subtract(getAmount(rs, "PRVMTHACR"))));
-							}else{
-								cd.setBalanceUmfc(BigDecimal.ZERO);	
+							if (active) {
+								cd.setBalanceUmfc(getAmount(rs, "TOTALPFTSCHD")
+										.subtract(getAmount(rs, "TOTALPFTPAID").subtract(getAmount(rs, "PRVMTHACR"))));
+							} else {
+								cd.setBalanceUmfc(BigDecimal.ZERO);
 							}
 
 							map.put(rs.getString("FINREFERENCE"), cd);
@@ -945,9 +963,10 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		return null;
 	}
 
-	private Map<String, ControlDump> extractBalanceAmounts(StringBuilder sql,MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
-			
+	private Map<String, ControlDump> extractBalanceAmounts(StringBuilder sql, MapSqlParameterSource parameter) {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
+
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
@@ -973,7 +992,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 
 							}
 						}
-						
+
 						return map;
 					}
 
@@ -998,31 +1017,33 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractgDisbursementDetails(StringBuilder sql, MapSqlParameterSource parameter) {
-		return parameterJdbcTemplate.query(sql.toString(), parameter, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parameter,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
 							cd.setDisbursalDate(rs.getDate("DISBDATE"));
-							
+
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
-						
+
 						return map;
 					}
 				});
 	}
-	
-	
+
 	private Map<String, ControlDump> getScheduleDetails(MapSqlParameterSource parameter) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT CDE.FINREFERENCE, SUM(PRINCIPALSCHD + PROFITSCHD - PARTIALPAIDAMT) EMI_DUE, SUM(PRINCIPALSCHD+PROFITSCHD-PARTIALPAIDAMT) EMI_OS,");
+		sql.append(
+				" SELECT CDE.FINREFERENCE, SUM(PRINCIPALSCHD + PROFITSCHD - PARTIALPAIDAMT) EMI_DUE, SUM(PRINCIPALSCHD+PROFITSCHD-PARTIALPAIDAMT) EMI_OS,");
 		sql.append(" SUM(SCHDPRIPAID - PARTIALPAIDAMT) PRINCIPAL_RECEIVED,");
 		sql.append(" SUM(PRINCIPALSCHD - PARTIALPAIDAMT) PRINCIPAL_DUE,");
-		sql.append(" SUM(PROFITSCHD) INTEREST_DUE, SUM(SCHDPFTPAID + SCHDPRIPAID - PARTIALPAIDAMT) EMI_RECEIVED, SUM(PARTIALPAIDAMT) BULK_REFUND");
+		sql.append(
+				" SUM(PROFITSCHD) INTEREST_DUE, SUM(SCHDPFTPAID + SCHDPRIPAID - PARTIALPAIDAMT) EMI_RECEIVED, SUM(PARTIALPAIDAMT) BULK_REFUND");
 		sql.append(" FROM CONTROLDUMP_EXTRACT CDE");
 		sql.append(" INNER JOIN  FINSCHEDULEDETAILS FSD ON FSD.FINREFERENCE = CDE.FINREFERENCE");
 		sql.append(" WHERE CDE.SEQID between :FromSeq and :ToSeq");
@@ -1037,17 +1058,17 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		return new HashMap<>();
 	}
 
-
 	private Map<String, ControlDump> extractScheduleDetails(StringBuilder sql, MapSqlParameterSource parameter) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(parameter.getValues());
 		paramMap.addValue("APP_DATE", appDate);
-		
-		return parameterJdbcTemplate.query(sql.toString(), paramMap,new ResultSetExtractor<Map<String, ControlDump>>() {
+
+		return parameterJdbcTemplate.query(sql.toString(), paramMap,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
 							cd.setEmiDue(getAmount(rs, "EMI_DUE"));
@@ -1056,17 +1077,16 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 							cd.setPrincipalDue(getAmount(rs, "PRINCIPAL_DUE"));
 							cd.setInterestDue(getAmount(rs, "INTEREST_DUE"));
 							cd.setEmiReceived(getAmount(rs, "EMI_RECEIVED"));
-							cd.setBulkRefund(getAmount(rs,"BULK_REFUND"));
-							
+							cd.setBulkRefund(getAmount(rs, "BULK_REFUND"));
+
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
-						
+
 						return map;
 					}
 				});
 	}
-	
-	
+
 	private Map<String, ControlDump> getFutureScheduleDetails(MapSqlParameterSource parameter) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CDE.FINREFERENCE,");
@@ -1076,7 +1096,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" WHERE CDE.SEQID between :FromSeq and :ToSeq");
 		sql.append(" AND schdate > :APP_DATE");
 		sql.append(" GROUP BY CDE.FINREFERENCE");
-		
+
 		try {
 			return extractFutureScheduleDetails(sql, parameter);
 		} catch (Exception e) {
@@ -1085,25 +1105,25 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		return new HashMap<>();
 	}
 
-
 	private Map<String, ControlDump> extractFutureScheduleDetails(StringBuilder sql, MapSqlParameterSource parameter) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(parameter.getValues());
 		paramMap.addValue("APP_DATE", appDate);
-		
-		return parameterJdbcTemplate.query(sql.toString(), paramMap,new ResultSetExtractor<Map<String, ControlDump>>() {
+
+		return parameterJdbcTemplate.query(sql.toString(), paramMap,
+				new ResultSetExtractor<Map<String, ControlDump>>() {
 					@Override
 					public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 						Map<String, ControlDump> map = new HashMap<>();
 						ControlDump cd = null;
-						
+
 						while (rs.next()) {
 							cd = new ControlDump();
 							cd.setSohBalance(getAmount(rs, "SOH_BALANCE"));
 							cd.setPrincipalBalance(getAmount(rs, "PRINCIPAL_BALANCE"));
-							
+
 							map.put(rs.getString("FINREFERENCE"), cd);
 						}
-						
+
 						return map;
 					}
 				});
@@ -1325,7 +1345,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 				if (count > 0 && !txnStatus.isCompleted()) {
 					transManager.commit(txnStatus);
 				}
-				
+
 				completedThreads.getAndIncrement();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
