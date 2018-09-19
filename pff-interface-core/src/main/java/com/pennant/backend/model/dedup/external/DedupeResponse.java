@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.model;
+package com.pennant.backend.model.dedup.external;
 
 import java.util.List;
 

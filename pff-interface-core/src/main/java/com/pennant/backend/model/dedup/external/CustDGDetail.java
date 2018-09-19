@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.model;
+package com.pennant.backend.model.dedup.external;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
