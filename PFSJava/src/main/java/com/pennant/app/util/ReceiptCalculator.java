@@ -1949,6 +1949,10 @@ public class ReceiptCalculator implements Serializable {
 					
 					// Calculate TAX Amounts against each TAX Type
 					BigDecimal totalGSTPerc = BigDecimal.ZERO;
+					BigDecimal cgstPerc = BigDecimal.ZERO;
+					BigDecimal sgstPerc = BigDecimal.ZERO;
+					BigDecimal ugstPerc = BigDecimal.ZERO;
+					BigDecimal igstPerc = BigDecimal.ZERO;
 					
 					for (int a = 0; a < adviseIdList.size(); a++) {
 
@@ -1956,9 +1960,12 @@ public class ReceiptCalculator implements Serializable {
 						
 						if((advise.isTaxApplicable() || (feeType != null && feeType.isTaxApplicable())) && taxPercmap == null){
 							taxPercmap = getTaxPercentages(receiptData.getFinanceDetail());
-							if(taxPercmap.containsKey("TOTALGST")){
-								totalGSTPerc = taxPercmap.get("TOTALGST");
-							}
+							
+							cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
+							sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
+							ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
+							igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
+							totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
 						}
 						
 						if (advise != null) {
@@ -1992,8 +1999,27 @@ public class ReceiptCalculator implements Serializable {
 									// In case of GST is Exclusive then GST amount should add before payment collection
 									BigDecimal gstAmount = BigDecimal.ZERO;
 									if(addGSTAmount){
-										gstAmount = (balAdvise.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-										gstAmount = CalculationUtil.roundAmount(gstAmount, taxRoundMode,taxRoundingTarget);
+										if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+											BigDecimal cgst =  (balAdvise.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+											cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
+											gstAmount = gstAmount.add(cgst);
+										}
+										if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+											BigDecimal sgst =  (balAdvise.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+											sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
+											gstAmount = gstAmount.add(sgst);
+										}
+										if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+											BigDecimal ugst =  (balAdvise.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+											ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
+											gstAmount = gstAmount.add(ugst);
+										}
+										if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+											BigDecimal igst =  (balAdvise.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+											igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
+											gstAmount = gstAmount.add(igst);
+										}
+										
 										balAdvise = balAdvise.add(gstAmount);
 									}
 									
