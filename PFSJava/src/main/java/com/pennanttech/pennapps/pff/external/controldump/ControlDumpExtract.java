@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -23,14 +22,15 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.DateUtility;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ControlDumpProcess;
 
 public class ControlDumpExtract extends DatabaseDataEngine implements ControlDumpProcess {
-	private static final Logger logger = Logger.getLogger(ControlDumpExtract.class);
-
+	public static final DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CONTROL_DUMP_REQUEST");
+	
 	private Date appDate = null;
 	private MapSqlParameterSource sqlParameterSource;
 	private int batchSize = 50000;
@@ -50,7 +50,7 @@ public class ControlDumpExtract extends DatabaseDataEngine implements ControlDum
 	}
 
 	@Override
-	public void process() {
+	public void process(Object... objects) {
 		try {
 			process("CONTROL_DUMP_REQUEST");
 		} catch (Exception e) {

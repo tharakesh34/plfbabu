@@ -1,4 +1,4 @@
-package com.pennanttech.service.test;
+package com.pennanttech.pennapps.pff.external.test;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

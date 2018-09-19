@@ -1,4 +1,6 @@
-package com.pennanttech.service.test;
+package com.pennanttech.pennapps.pff.external.test;
+
+import java.util.Date;
 
 import javax.sql.DataSource;
 
@@ -8,7 +10,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TestDataMart {
+import com.pennanttech.pff.core.util.DateUtil;
+
+public class TestControlDumpRequestService {
+
 	DataSource dataSource;
 
 	@BeforeTest
@@ -25,7 +30,9 @@ public class TestDataMart {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			//new DataMartExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
+			Date date = DateUtil.getDate(2017, 9, 3);
+			//new ControlDumpExtract(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

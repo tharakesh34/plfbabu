@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -20,6 +19,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -27,7 +27,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.external.DataMartProcess;
 
 public class DataMartExtarct extends DatabaseDataEngine implements DataMartProcess {
-	private static final Logger logger = Logger.getLogger(DataMartProcess.class);
+	public static final DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
 
 	private long batchID;
 	private Date lastRunDate;
@@ -51,7 +51,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	}
 	
 	@Override
-	public void process() {
+	public void process(Object... objects) {
 		try {
 			process("DATA_MART_REQUEST");
 		} catch (Exception e) {

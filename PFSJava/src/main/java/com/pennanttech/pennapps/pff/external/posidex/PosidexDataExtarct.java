@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.process;
+package com.pennanttech.pennapps.pff.external.posidex;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,17 +26,19 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennanttech.bajaj.model.posidex.PosidexCustomer;
-import com.pennanttech.bajaj.model.posidex.PosidexCustomerAddress;
-import com.pennanttech.bajaj.model.posidex.PosidexCustomerLoan;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.external.PosidexProcess;
+import com.pennanttech.pff.model.external.posidex.PosidexCustomer;
+import com.pennanttech.pff.model.external.posidex.PosidexCustomerAddress;
+import com.pennanttech.pff.model.external.posidex.PosidexCustomerLoan;
 
-public class PosidexRequestProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(PosidexRequestProcess.class);
+public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexProcess {
+	private static final Logger logger = Logger.getLogger(PosidexDataExtarct.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 
 	private Date lastRunDate;
@@ -53,14 +55,22 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private String summary = null;
 	private Map<String, String> parameterCodes = new HashMap<>();
 
-	private int batchSize = 5000;
 	int chunckSize = 100;
 	private MapSqlParameterSource paramMa = null;
 	private boolean localUpdate = true;
 
-	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public PosidexDataExtarct(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
+	}
+
+	@Override
+	public void process(Object... objects) {
+		try {
+			process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
+		} catch (Exception e) {
+			throw new InterfaceException("POSIDEX_CUSTOMER_UPDATE_REQUEST", e.getMessage());
+		}
 	}
 
 	@Override
@@ -68,7 +78,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		paramMa = new MapSqlParameterSource();
-		paramMa.addValue("ROWNUM", batchSize);
 
 		lastRunDate = getLatestRunDate();
 
@@ -80,12 +89,18 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		loadCount();
 
+		loadDescrepancyCount();
+
 		loaddefaults();
 
 		try {
 			do {
 				extractData();
-			} while (totalRecords > 0 && totalRecords != processedCount);
+				if (totalRecords <= processedCount) {
+					return;
+				}
+			} while (totalRecords > 0);
+			logger.debug("Processed Count " + processedCount);
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -124,7 +139,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				EXTRACT_STATUS.setProcessedRecords(processedCount++);
 			}
 		}
-		
+
 		if (count > 0 && !txnStatus.isCompleted()) {
 			transManager.commit(txnStatus);
 		}
@@ -168,7 +183,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			delete(customer);
 		} catch (Exception e) {
 			throw e;
-			
 		}
 	}
 
@@ -183,13 +197,13 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("Insert into ").append(CUSTOMER_DETAILS);
 		sql.append(" values (");
 		sql.append(" :BatchID,");
-		
+
 		if (stage) {
 			sql.append(" :CustomerNo,");
 		} else {
 			sql.append(" :CustomerId,");
 		}
-		
+
 		sql.append(" :SourceSysId,");
 		sql.append(" :FirstName,");
 		sql.append(" :MiddleName,");
@@ -224,7 +238,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" :CaNumber,");
 		sql.append(" :Segment");
 		sql.append(")");
-		
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cusotemr);
 
@@ -309,7 +322,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("INSERT INTO ");
 		sql.append(CUSTOMER_ADDR_DETAILS).append("(");
 		sql.append(" BatchID,");
-		
+
 		sql.append(" CUSTOMER_NO,");
 		sql.append(" SOURCE_SYS_ID,");
 		sql.append(" SEGMENT,");
@@ -337,13 +350,13 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" EOD_BATCH_ID ");
 		sql.append(" ) VALUES (");
 		sql.append(" :BatchID,");
-		
+
 		if (stage) {
 			sql.append(" :CustomerNo,");
 		} else {
 			sql.append(" :CustomerId,");
 		}
-		
+
 		sql.append(" :SourceSysId,");
 		sql.append(" :Segment,");
 		sql.append(" :Addresstype,");
@@ -371,7 +384,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(")");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(address);
-		
+
 		if (stage) {
 			parameterJdbcTemplate.update(sql.toString(), beanParameters);
 		} else {
@@ -413,7 +426,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" WHERE CUSTOMER_NO = :CustomerNo AND ADDRESS_TYPE=:Addresstype");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(addresses);
-		
+
 		parameterJdbcTemplate.update(sql.toString(), beanParameters);
 
 	}
@@ -456,9 +469,9 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 		}
-		
+
 	}
 
 	private void update(PosidexCustomerLoan loan) {
@@ -491,7 +504,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, PosidexCustomer> getCustomers() throws SQLException {
-		Map<String, PosidexCustomer> customers = new HashMap<>(batchSize);
+		Map<String, PosidexCustomer> customers = new HashMap<>();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select C.CUSTID, CUSTCIF, CUSTCOREBANK, CUSTFNAME, CUSTMNAME, CUSTLNAME, CUSTSHRTNAME, CUSTDOB,");
 		sql.append(" CUSTGENDERCODE, CUSTMOTHERMAIDEN, C.CUSTCTGCODE, CUSTDOCTITLE, CUSTDOCCATEGORY,");
@@ -503,89 +516,91 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" LEFT JOIN (select CUSTID, ACCOUNTNUMBER from CUSTOMERBANKINFO");
 		sql.append(" order by BANKID) CBA ON CBA.CUSTID = C.CUSTID AND ROWNUM  =1");
 		sql.append(" LEFT JOIN PSX_DEDUP_EOD_CUST_DEMO_DTL PC ON PC.CUSTOMER_NO = C.CUSTID");
-		sql.append(" WHERE C.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
+		sql.append(" WHERE C.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS)");
 
 		return extractCustomers(customers, sql);
 	}
 
 	private Map<String, PosidexCustomer> extractCustomers(Map<String, PosidexCustomer> customers, StringBuilder sql) {
-		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<String, PosidexCustomer>>() {
-			PosidexCustomer customer = null;
-			@Override
-			public Map<String, PosidexCustomer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				String docType = null;
-				while (rs.next()) {
-					
-					customer = customers.get(rs.getString("CUSTID"));
-					if (customer == null) {
-						customer = new PosidexCustomer();
-						customers.put(rs.getString("CUSTID"), customer);
+		return parameterJdbcTemplate.query(sql.toString(), paramMa,
+				new ResultSetExtractor<Map<String, PosidexCustomer>>() {
+					PosidexCustomer customer = null;
+
+					@Override
+					public Map<String, PosidexCustomer> extractData(ResultSet rs)
+							throws SQLException, DataAccessException {
+						String docType = null;
+						while (rs.next()) {
+
+							customer = customers.get(rs.getString("CUSTID"));
+							if (customer == null) {
+								customer = new PosidexCustomer();
+								customers.put(rs.getString("CUSTID"), customer);
+							}
+
+							customer.setCustomerNo(rs.getString("CUSTID"));
+							customer.setCustomerId(rs.getString("CUSTCIF"));
+							customer.setFirstName(rs.getString("CUSTFNAME"));
+							customer.setMiddleName(rs.getString("CUSTMNAME"));
+							customer.setLastName(rs.getString("CUSTLNAME"));
+
+							customer.setProcessType(rs.getString("PROCESS_TYPE"));
+							customer.setApplicantType(rs.getString("CUSTCTGCODE"));
+							customer.setCustCoreBank(rs.getString("CUSTCOREBANK"));
+
+							if (customer.getProcessType() == null) {
+								customer.setProcessType("I");
+							} else {
+								customer.setProcessType("U");
+							}
+
+							if ("RETAIL".equals(customer.getApplicantType())) {
+								customer.setApplicantType("I");
+								customer.setDob(rs.getDate("CUSTDOB"));
+								customer.setGender(rs.getString("CUSTGENDERCODE"));
+							} else {
+								customer.setDateOfIncorporation(rs.getDate("CUSTDOB"));
+								customer.setApplicantType("C");
+								customer.setFirstName(rs.getString("CUSTSHRTNAME"));
+							}
+
+							// Set Document Details
+							docType = StringUtils.trimToEmpty(rs.getString("CUSTDOCCATEGORY"));
+
+							if ("03".equals(docType)) {
+								customer.setPan(rs.getString("CUSTDOCTITLE"));
+							} else if ("04".equals(docType)) {
+								customer.setDrivingLicenseNumber(rs.getString("CUSTDOCTITLE"));
+							} else if ("05".equals(docType)) {
+								customer.setVoterId(rs.getString("CUSTDOCTITLE"));
+							} else if ("15".equals(docType)) {
+								customer.setTanNo(rs.getString("CUSTDOCTITLE"));
+							} else if ("02".equals(docType)) {
+								customer.setPassportNo(rs.getString("CUSTDOCTITLE"));
+							} else if ("01".equals(docType)) {
+								customer.setAadharNo(rs.getString("CUSTDOCTITLE"));
+							} else if ("16".equals(docType)) {
+								customer.setCin(rs.getString("CUSTDOCTITLE"));
+							} else if ("17".equals(docType)) {
+								customer.setDin(rs.getString("CUSTDOCTITLE"));
+							} else if ("18".equals(docType)) {
+								customer.setRegistrationNo(rs.getString("CUSTDOCTITLE"));
+							} else if ("19".equals(docType)) {
+								customer.setCaNumber(rs.getString("CUSTDOCTITLE"));
+							}
+
+							customer.setEmpoyerName(rs.getString("EMPNAME"));
+							customer.setAccountNumber(rs.getString("ACCOUNTNUMBER"));
+							customer.setBatchID(batchId);
+							customer.setSourceSysId(SOURCE_SYSTEM_ID);
+							customer.setSourceSystem(SOURCE_SYSTEM);
+							customer.setInsertTs(appDate);
+							customer.setSegment("CF");
+						}
+						return customers;
+
 					}
-					
-					customer.setCustomerNo(rs.getString("CUSTID"));
-					customer.setCustomerId(rs.getString("CUSTCIF"));
-					customer.setFirstName(rs.getString("CUSTFNAME"));
-					customer.setMiddleName(rs.getString("CUSTMNAME"));
-					customer.setLastName(rs.getString("CUSTLNAME"));
-					
-					
-					customer.setProcessType(rs.getString("PROCESS_TYPE"));
-					customer.setApplicantType(rs.getString("CUSTCTGCODE"));
-					customer.setCustCoreBank(rs.getString("CUSTCOREBANK"));
-
-					if (customer.getProcessType() == null) {
-						customer.setProcessType("I");
-					} else {
-						customer.setProcessType("U");
-					}
-
-					if ("RETAIL".equals(customer.getApplicantType())) {
-						customer.setApplicantType("I");
-						customer.setDob(rs.getDate("CUSTDOB"));
-						customer.setGender(rs.getString("CUSTGENDERCODE"));
-					} else {
-						customer.setDateOfIncorporation(rs.getDate("CUSTDOB"));
-						customer.setApplicantType("C");
-						customer.setFirstName(rs.getString("CUSTSHRTNAME"));
-					}
-
-					// Set Document Details
-					docType = StringUtils.trimToEmpty(rs.getString("CUSTDOCCATEGORY"));
-
-					if ("03".equals(docType)) {
-						customer.setPan(rs.getString("CUSTDOCTITLE"));
-					} else if ("04".equals(docType)) {
-						customer.setDrivingLicenseNumber(rs.getString("CUSTDOCTITLE"));
-					} else if ("05".equals(docType)) {
-						customer.setVoterId(rs.getString("CUSTDOCTITLE"));
-					} else if ("15".equals(docType)) {
-						customer.setTanNo(rs.getString("CUSTDOCTITLE"));
-					} else if ("02".equals(docType)) {
-						customer.setPassportNo(rs.getString("CUSTDOCTITLE"));
-					} else if ("01".equals(docType)) {
-						customer.setAadharNo(rs.getString("CUSTDOCTITLE"));
-					} else if ("16".equals(docType)) {
-						customer.setCin(rs.getString("CUSTDOCTITLE"));
-					} else if ("17".equals(docType)) {
-						customer.setDin(rs.getString("CUSTDOCTITLE"));
-					} else if ("18".equals(docType)) {
-						customer.setRegistrationNo(rs.getString("CUSTDOCTITLE"));
-					} else if ("19".equals(docType)) {
-						customer.setCaNumber(rs.getString("CUSTDOCTITLE"));
-					}
-
-					customer.setEmpoyerName(rs.getString("EMPNAME"));
-					customer.setAccountNumber(rs.getString("ACCOUNTNUMBER"));
-					customer.setBatchID(batchId);
-					customer.setSourceSysId(SOURCE_SYSTEM_ID);
-					customer.setSourceSystem(SOURCE_SYSTEM);
-					customer.setInsertTs(appDate);
-					customer.setSegment("CF");
-				}
-				return customers;
-
-			}
-		});
+				});
 	}
 
 	private void setAddresses(Map<String, PosidexCustomer> customers) throws SQLException {
@@ -606,7 +621,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" from CUSTOMERADDRESSES CA");
 		sql.append(" LEFT JOIN PSX_DEDUP_EOD_CUST_ADDR_DTL PC ON PC.CUSTOMER_NO = CA.CUSTID");
 		sql.append(" AND PC.ADDRESS_TYPE = CA.CUSTADDRTYPE");
-		sql.append(" WHERE CA.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
+		sql.append(" WHERE CA.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS)");
 		sql.append("ORDER BY CUSTADDRPRIORITY DESC");
 
 		extractAddresses(customers, sql);
@@ -619,7 +634,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			Map<String, List<CustomerEMail>> email = getEmail();
 			PosidexCustomerAddress address = null;
 			PosidexCustomer customer = null;
-			
+
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				customer = customers.get(rs.getString("CUSTID"));
@@ -640,7 +655,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				address.setState(rs.getString("CUSTADDRPROVINCE"));
 				address.setCity(rs.getString("CUSTADDRCITY"));
 				address.setPin(rs.getString("CUSTADDRZIP"));
-				
+
 				if (address.getPin() == null) {
 					address.setPin("0");
 				}
@@ -679,7 +694,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 						}
 						if (address.getEmail() == null) {
 							address.setEmail(eMail.getCustEMail());
-							eMail = null;
 						}
 					}
 				}
@@ -703,7 +717,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT PHONECUSTID, PHONETYPECODE, PHONENUMBER, PHONETYPEPRIORITY");
 		sql.append(" from CUSTOMERPHONENUMBERS");
-		sql.append(" WHERE PHONECUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
+		sql.append(" WHERE PHONECUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS)");
 		sql.append(" ORDER BY PHONETYPEPRIORITY DESC ");
 
 		return extractPhoneNumbers(sql);
@@ -729,7 +743,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 							phoneNumber.setPhoneTypeCode(rs.getString("PHONETYPECODE"));
 							phoneNumber.setPhoneNumber(rs.getString("PHONENUMBER"));
 							phoneNumber.setPhoneTypePriority(rs.getInt("PHONETYPEPRIORITY"));
-							
+
 							list = phoneTypes.get(phoneNumber.getPhoneCustID());
 							if (list == null) {
 								list = new ArrayList<>();
@@ -748,7 +762,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CUSTID, CUSTEMAILTYPECODE, CUSTEMAIL, CUSTEMAILPRIORITY");
 		sql.append(" from CUSTOMEREMAILS");
-		sql.append(" WHERE CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
+		sql.append(" WHERE CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS)");
 		sql.append(" ORDER BY CUSTEMAILPRIORITY DESC ");
 
 		return extractEMails(sql);
@@ -808,7 +822,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(
 				" LEFT JOIN PSX_DEDUP_EOD_CUST_LOAN_DTL PCL ON PCL.CUSTOMER_NO = FM.CUSTID AND PCL.LAN_NO = FM.FINREFERENCE");
 		sql.append(" AND PCL.CUSTOMER_TYPE = FM.CUSTOMER_TYPE ");
-		sql.append(" WHERE FM.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
+		sql.append(" WHERE FM.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS)");
 
 		extractLoans(customers, sql.toString());
 
@@ -861,6 +875,20 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		try {
 			totalRecords = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
+			logger.debug("Total Records " + totalRecords);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+
+	private void loadDescrepancyCount() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT count(*) from POSIDEX_CUSTOMERS where CUST_ID not in (select CUSTID from customers) ");
+
+		try {
+			int descrepancyCount = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+			processedCount = processedCount + descrepancyCount;
+			failedCount = failedCount + descrepancyCount;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -883,34 +911,34 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO POSIDEX_CUSTOMERS");		
+		sql.append(" INSERT INTO POSIDEX_CUSTOMERS");
 		sql.append(" SELECT DISTINCT CUSTID, CUSTCIF, CUSTCTGCODE, :EXTRACTED_ON");
 		sql.append(" FROM (select C.CUSTID, C.CUSTCIF, C.CUSTCTGCODE  from (");
 		sql.append(" select C.CUSTID from CUSTOMERS C");
 		sql.append(" LEFT JOIN FINANCEMAIN FM ON FM.CUSTID = C.CUSTID");
 		sql.append(" LEFT JOIN FINGUARANTORSDETAILS G ON G.GUARANTORCIF = C.CUSTCIF");
 		sql.append(" LEFT JOIN FINJOINTACCOUNTDETAILS J ON J.CUSTCIF = C.CUSTCIF");
-		
+
 		if (lastRunDate != null) {
-			sql.append(" WHERE (C.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T)");  
+			sql.append(" WHERE (C.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T)");
 			sql.append(" OR (FM.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T))");
 			sql.append(" OR (G.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T))");
 			sql.append(" OR (J.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T))");
 			sql.append(" )");
 		}
-		
-		sql.append(" UNION ALL"); 
+
+		sql.append(" UNION ALL");
 		sql.append(" select DISTINCT C.CUSTID from CUSTOMERS C");
 		sql.append(" WHERE C.CUSTID NOT IN (");
 		sql.append(" SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_DEMO_DTL");
 		sql.append(" UNION ALL");
 		sql.append(" SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_LOAN_DTL");
 		sql.append(")");
-		sql.append(" ) T"); 
+		sql.append(" ) T");
 		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = T.CUSTID");
-		sql.append(" WHERE C.CUSTCOREBANK IS NOT NULL) T"); 
+		sql.append(" WHERE C.CUSTCOREBANK IS NOT NULL) T");
 		sql.append(" WHERE CUSTID NOT IN (SELECT CUST_ID FROM POSIDEX_CUSTOMERS)");
-		
+
 		parmMap.addValue("LASTMNTON", lastRunDate);
 		parmMap.addValue("EXTRACTED_ON", appDate);
 

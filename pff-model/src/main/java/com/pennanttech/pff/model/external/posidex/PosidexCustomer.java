@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.model.posidex;
+package com.pennanttech.pff.model.external.posidex;
 
 import java.io.Serializable;
 import java.util.ArrayList;

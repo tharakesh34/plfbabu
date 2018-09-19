@@ -54,7 +54,7 @@ public class ControlDump implements Tasklet {
 		try {
 			logger.debug("START: Control-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
-			DataEngineStatus status = ControlDumpProcess.EXTRACT_STATUS;
+			DataEngineStatus status = ControlDumpExtract.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ControlDumpProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);

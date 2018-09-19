@@ -1,8 +1,7 @@
-package com.pennanttech.service.test;
+package com.pennanttech.pennapps.pff.external.test;
 
-import com.pennanttech.bajaj.process.PosidexRequestProcess;
-import com.pennanttech.pff.core.util.DateUtil;
 import javax.sql.DataSource;
+
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -26,8 +25,7 @@ public class TestPosidexRequestService  {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			PosidexRequestProcess process = new PosidexRequestProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
-			process.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
+			//new PosidexDataExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

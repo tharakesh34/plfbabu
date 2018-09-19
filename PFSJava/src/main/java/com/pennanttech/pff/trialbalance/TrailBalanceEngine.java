@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -24,9 +23,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.TrailBalance;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -37,7 +36,6 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class TrailBalanceEngine extends DataEngineExport {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus();
-	private static final Logger logger = Logger.getLogger(TrailBalanceEngine.class);
 
 	private int batchSize = 1000;
 	private Date appDate = null;

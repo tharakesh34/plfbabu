@@ -55,9 +55,9 @@ public class DataMart implements Tasklet {
 			logger.debug("START: Data-Mart Process for the value date: "
 					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 
-			DataEngineStatus status = DataMartProcess.EXTRACT_STATUS;
+			DataEngineStatus status = DataMartExtarct.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new DataMartProcessThread(new Long(1000))).start();
+			new Thread(new DataMartProcessThread(1000)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
@@ -89,8 +89,6 @@ public class DataMart implements Tasklet {
 				DataMartProcess dataMart = new DataMartExtarct(dataSource, userId, valueDate, appDate);
 				dataMart.process();
 				TimeUnit.SECONDS.sleep(1);
-
-				System.out.println("");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

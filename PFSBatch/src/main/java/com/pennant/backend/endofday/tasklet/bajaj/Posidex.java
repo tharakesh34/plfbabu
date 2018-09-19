@@ -3,9 +3,9 @@ package com.pennant.backend.endofday.tasklet.bajaj;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.PosidexRequestProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.external.posidex.PosidexDataExtarct;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
@@ -50,7 +50,7 @@ public class Posidex implements Tasklet {
 		try {
 			logger.debug("START: Posidex data-extraction Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
-			DataEngineStatus status = PosidexRequestProcess.EXTRACT_STATUS;
+			DataEngineStatus status = PosidexDataExtarct.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new PosidexProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
@@ -87,7 +87,7 @@ public class Posidex implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Posidex Request Service started...");
-				PosidexRequestProcess process = new PosidexRequestProcess(dataSource, userId, valueDate, appDate);
+				PosidexDataExtarct process = new PosidexDataExtarct(dataSource, userId, valueDate, appDate);
 				process.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {

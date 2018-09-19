@@ -87,7 +87,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.bajaj.process.SAPGLProcess;
+import com.pennanttech.bajaj.process.SAPGLExtract;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -302,7 +302,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				trialbal.extractReport(TrailBalanceEngine.Dimension.STATE, new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});
 								
 				if("S".equals(status.getStatus())) {
-					new SAPGLProcess((DataSource) SpringUtil.getBean("dataSource"), getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport(new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});
+					new SAPGLExtract((DataSource) SpringUtil.getBean("dataSource"), getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport(new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});
 				}				
 			} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
 				trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});

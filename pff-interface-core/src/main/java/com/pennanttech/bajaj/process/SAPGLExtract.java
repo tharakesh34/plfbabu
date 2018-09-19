@@ -26,8 +26,9 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.external.SAPGLProcess;
 
-public class SAPGLProcess extends DataEngineExport {
+public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 	public static DataEngineStatus SAP_GL_STATUS = new DataEngineStatus("GL_TRANSACTION_SUMMARY_EXPORT");
 
 	private Map<String, String> parameters = new HashMap<>();
@@ -37,9 +38,16 @@ public class SAPGLProcess extends DataEngineExport {
 	private String entityCode = null;
 	private String entityDescription = null;
 
-	public SAPGLProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public SAPGLExtract(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
 		this.appDate = appDate;
+	}
+	
+
+	@Override
+	public void process(Object... objects) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void extractReport(String[] entityDetails) throws Exception {

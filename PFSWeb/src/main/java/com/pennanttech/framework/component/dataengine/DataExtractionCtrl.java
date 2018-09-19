@@ -23,8 +23,8 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.external.alm.ALMExtarct;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.external.ALMProcess;
 import com.pennanttech.pff.external.cibil.RetailCibilReport;
 import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 
@@ -89,9 +89,9 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			if ("ALM_REQUEST".equals(configName)) {
 				DataEngineStatus status = dataEngineConfig.getLatestExecution("ALM_REQUEST");
 				if (status != null) {
-					BeanUtils.copyProperties(ALMProcess.EXTRACT_STATUS, status);
+					BeanUtils.copyProperties(ALMExtarct.EXTRACT_STATUS, status);
 				}
-				doFillPanel(config, ALMProcess.EXTRACT_STATUS);
+				doFillPanel(config, ALMExtarct.EXTRACT_STATUS);
 			}
 			if ("CONTROL_DUMP_REQUEST".equals(configName)) {
 				ControlDumpProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("CONTROL_DUMP_REQUEST");

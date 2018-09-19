@@ -1,5 +1,5 @@
 package com.pennanttech.pff.external;
 
-public interface DataMartProcess {
+public interface SAPGLProcess {
 	public void process(Object... objects);
 }

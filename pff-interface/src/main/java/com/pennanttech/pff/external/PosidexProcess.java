@@ -1,5 +1,5 @@
 package com.pennanttech.pff.external;
 
-public interface DataMartProcess {
+public interface PosidexProcess {
 	public void process(Object... objects);
 }

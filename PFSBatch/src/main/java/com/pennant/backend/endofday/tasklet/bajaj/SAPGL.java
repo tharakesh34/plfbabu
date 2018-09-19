@@ -3,7 +3,7 @@ package com.pennant.backend.endofday.tasklet.bajaj;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.SAPGLProcess;
+import com.pennanttech.bajaj.process.SAPGLExtract;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -51,7 +51,7 @@ public class SAPGL implements Tasklet {
 						
 			logger.debug("START: SAP-GL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
-			DataEngineStatus status = SAPGLProcess.SAP_GL_STATUS;
+			DataEngineStatus status = SAPGLExtract.SAP_GL_STATUS;
 			status.setStatus("I");
 			new Thread(new SAPGLProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);

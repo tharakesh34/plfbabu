@@ -57,7 +57,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -71,13 +70,14 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ALMProcess;
 
 public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
-	private static final Logger logger = Logger.getLogger(ALMExtarct.class);
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("ALM_REQUEST");
 
 	private Date appDate;
 	private MapSqlParameterSource paramMap = null;
@@ -97,7 +97,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 	}
 	
 	@Override
-	public void process() {
+	public void process(Object... objects) {
 		try {
 			process("ALM_REQUEST");
 		} catch (Exception e) {
