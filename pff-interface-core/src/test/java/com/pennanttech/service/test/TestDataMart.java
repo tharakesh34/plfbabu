@@ -8,11 +8,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.bajaj.process.DataMartProcess;
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.pff.external.DataMartProcess;
+import com.pennanttech.pff.external.datamart.DataMartExtarct;
 
 public class TestDataMart {
-	
 	DataSource dataSource;
 
 	@BeforeTest
@@ -23,14 +23,15 @@ public class TestDataMart {
 			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
-	@Test(enabled=false)
+	@Test(enabled = false)
 	public void process() {
 		try {
-			DataMartProcess requestProcess = new DataMartProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
-			requestProcess.process("DATA_MART_REQUEST");
+			DataMartProcess dataMart = new DataMartExtarct(dataSource, new Long(1000), DateUtil.getSysDate(),
+					DateUtil.getSysDate());
+			dataMart.process();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

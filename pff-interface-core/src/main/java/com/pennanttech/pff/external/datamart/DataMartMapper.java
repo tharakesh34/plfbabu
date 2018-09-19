@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.process.datamart;
+package com.pennanttech.pff.external.datamart;
 
 import java.sql.ResultSet;
 import java.util.Date;
@@ -2117,5 +2117,413 @@ public class DataMartMapper {
 				appDate, rs.getObject("PROCESSED_FLAG"), valueDate, rs.getObject("SEGMENTS"),
 				rs.getObject("RECEIPT_ON_CHARGEOFF"), rs.getObject("BUSINESS_YEAR"), batchId);
 
+	}
+	
+	public static void saveGoldLoanPolicyDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_GOLDLOANPOLICY (");
+		sql.append(" ID");
+		sql.append(",CODE");
+		sql.append(",DESCRIPTION");
+		sql.append(",NSOLIDGOLDPRICEREDUCT");
+		sql.append(",MAXCUSTEXPOSURE");
+		sql.append(",MINLOANAMT");
+		sql.append(",MAXLOANAMT");
+		sql.append(",MAXTENOR");
+		sql.append(",MINAGE");
+		sql.append(",MAILCHANGEMAILTEMP");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(",MAXAGE");
+		sql.append(",MASTERLTV");
+		sql.append(",MAXSTONEWEIGHT");
+		sql.append(",MINSTANDARDWEIGHTDEDUCT");
+		sql.append(",MAXSTANDARDWEIGHTDEDUCT");
+		sql.append(",PRICECHANGEALERT");
+		sql.append(",MAILRECIPIENTS");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("CODE"),
+				rs.getObject("DESCRIPTION"), rs.getObject("NSOLIDGOLDPRICEREDUCT"), rs.getObject("MAXCUSTEXPOSURE"), rs.getObject("MINLOANAMT"),
+				rs.getObject("MAXLOANAMT"), rs.getObject("MAXTENOR"), rs.getObject("MINAGE"),
+				rs.getObject("MAILCHANGEMAILTEMP"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("MAXAGE"),
+				rs.getObject("MASTERLTV"), rs.getObject("MAXSTONEWEIGHT"), rs.getObject("MINSTANDARDWEIGHTDEDUCT"), rs.getObject("MAXSTANDARDWEIGHTDEDUCT"),
+				rs.getObject("PRICECHANGEALERT"), rs.getObject("MAILRECIPIENTS"), batchId);
+	}
+	
+	public static void saveGoldLoanStatePolicyDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_GOLDLOANSTATEPOLICY (");
+		sql.append(" ID");
+		sql.append(",POLICYID");
+		sql.append(",STATECODE");
+		sql.append(",NSOLIDGOLDPRICEREDUCT");
+		sql.append(",MAXCUSTEXPOSURE");
+		sql.append(",MINLOANAMT");
+		sql.append(",MAXLOANAMT");
+		sql.append(",MAXTENOR");
+		sql.append(",MINAGE");
+		sql.append(",ACTIVE");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(",MAXAGE");
+		sql.append(",MASTERLTV");
+		sql.append(",MAXSTONEWEIGHT");
+		sql.append(",MINSTANDARDWEIGHTDEDUCT");
+		sql.append(",MAXSTANDARDWEIGHTDEDUCT");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("POLICYID"),
+				rs.getObject("STATECODE"), rs.getObject("NSOLIDGOLDPRICEREDUCT"), rs.getObject("MAXCUSTEXPOSURE"), rs.getObject("MINLOANAMT"),
+				rs.getObject("MAXLOANAMT"), rs.getObject("MAXTENOR"), rs.getObject("MINAGE"),
+				rs.getObject("ACTIVE"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("MAXAGE"),
+				rs.getObject("MASTERLTV"), rs.getObject("MAXSTONEWEIGHT"), rs.getObject("MINSTANDARDWEIGHTDEDUCT"), rs.getObject("MAXSTANDARDWEIGHTDEDUCT"),batchId);
+	}
+	
+	public static void saveGoldRateDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_GOLDRATE (");
+		sql.append(" ID");
+		sql.append(",EFFECTIVEDATE");
+		sql.append(",DAILYRATE");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(",SOLIDMOVINGAVGRATE");
+		sql.append(",NSOLIDMOVINGAVGRATE");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("ID"),
+				rs.getObject("EFFECTIVEDATE"), rs.getObject("DAILYRATE"),
+				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("SOLIDMOVINGAVGRATE"),
+				rs.getObject("NSOLIDMOVINGAVGRATE"), batchId);
+	}
+	
+	public static void savePromotionDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PROMOTIONS (");
+		sql.append(" PROMOTIONID");
+		sql.append(",PROMOTIONCODE");
+		sql.append(",PROMOTIONDESC");
+		sql.append(",FINTYPE");
+		sql.append(",STARTDATE");
+		sql.append(",ENDDATE");
+		sql.append(",FINISDWPAYREQUIRED");
+		sql.append(",DOWNPAYRULE");
+		sql.append(",ACTUALINTERESTRATE");
+		sql.append(",FINBASERATE");
+		sql.append(",FINSPLRATE");
+		sql.append(",FINMARGIN");
+		sql.append(",APPLYRPYPRICING");
+		sql.append(",RPYPRICINGMETHOD");
+		sql.append(",FINMINTERM");
+		sql.append(",FINMAXTERM");
+		sql.append(",FINMINAMOUNT");
+		sql.append(",FINMAXAMOUNT");
+		sql.append(",FINMINRATE");
+		sql.append(",FINMAXRATE");
+		sql.append(",ACTIVE");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(",SCHEMESCOPE");
+		sql.append(",REPLEDGE");
+		sql.append(",SCHEMEWISELIMIT");
+		sql.append(",TENOR");
+		sql.append(",INTERESTTYPE");
+		sql.append(",MININTERESTPERIOD");
+		sql.append(",MONTHLYCOMPOUNDING");
+		sql.append(",PENALINTERESTTYPE");
+		sql.append(",MODULE");
+		sql.append(",REFERENCEID");
+		sql.append(",REMARKS");
+		sql.append(",LTV");
+		sql.append(",PENALRATE");
+		sql.append(",APPLYODPENALTY");
+		sql.append(",ODINCGRCDAYS");
+		sql.append(",ODCHARGETYPE");
+		sql.append(",ODGRACEDAYS");
+		sql.append(",ODCHARGECALON");
+		sql.append(",ODCHARGEAMTORPERC");
+		sql.append(",ODALLOWWAIVER");
+		sql.append(",ODMAXWAIVERPERC");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("PROMOTIONID"), rs.getObject("PROMOTIONCODE"),
+				rs.getObject("PROMOTIONDESC"), rs.getObject("FINTYPE"), rs.getObject("STARTDATE"), rs.getObject("ENDDATE"),
+				rs.getObject("FINISDWPAYREQUIRED"), rs.getObject("DOWNPAYRULE"), rs.getObject("ACTUALINTERESTRATE"),
+				rs.getObject("FINBASERATE"), rs.getObject("FINSPLRATE"), rs.getObject("FINMARGIN"), rs.getObject("APPLYRPYPRICING"),
+				rs.getObject("RPYPRICINGMETHOD"), rs.getObject("FINMINTERM"), rs.getObject("FINMAXTERM"), rs.getObject("FINMINAMOUNT"),
+				rs.getObject("FINMAXAMOUNT"), rs.getObject("FINMINRATE"), rs.getObject("FINMAXRATE"),
+				rs.getObject("ACTIVE"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("SCHEMESCOPE"),
+				rs.getObject("REPLEDGE"), rs.getObject("SCHEMEWISELIMIT"), rs.getObject("TENOR"), rs.getObject("INTERESTTYPE"),
+				rs.getObject("MININTERESTPERIOD"), rs.getObject("MONTHLYCOMPOUNDING"), rs.getObject("PENALINTERESTTYPE"), rs.getObject("MODULE"),
+				rs.getObject("REFERENCEID"), rs.getObject("REMARKS"), rs.getObject("LTV"), rs.getObject("PENALRATE"),
+				rs.getObject("APPLYODPENALTY"), rs.getObject("ODINCGRCDAYS"), rs.getObject("ODCHARGETYPE"), rs.getObject("ODGRACEDAYS"),
+				rs.getObject("ODCHARGECALON"), rs.getObject("ODCHARGEAMTORPERC"),
+				rs.getObject("ODALLOWWAIVER"), rs.getObject("ODMAXWAIVERPERC"), batchId);
+	}
+	
+	public static void saveGoldPromotionSlabRateDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PROMOTIONALSLABWISERATES (");
+		sql.append(" REFERENCEID");
+		sql.append(",ID");
+		sql.append(",FROMDAYS");
+		sql.append(",TODAYS");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(",RECORDSTATUS");
+		sql.append(",RATE");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("ID"),
+				rs.getObject("FROMDAYS"), rs.getObject("TODAYS"),
+				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("RECORDSTATUS"),
+				rs.getObject("RATE"), batchId);
+	}
+	
+	public static void saveGoldPromotionBranchDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PROMOTIONBRANCHES (");
+		sql.append(" REFERENCEID");
+		sql.append(",BRANCHCODE");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("BRANCHCODE"),
+				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), batchId);
+	}
+	
+	public static void saveGoldPromotionStatesDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PROMOTIONSTATES (");
+		sql.append(" REFERENCEID");
+		sql.append(",STATECODE");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+		
+		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("STATECODE"),
+				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), batchId);
+	}
+	
+	public static void saveOrnamentTypeDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_ORNAMENTTYPE (");
+		sql.append(" ORNAMENTTYPE");
+		sql.append(",ORNAMENTDESCRIPTION");
+		sql.append(",LASTMNTBY");
+		sql.append(",LASTMNTON");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+		
+		jdbcTemplate.update(sql.toString(), rs.getObject("ORNAMENTTYPE"), rs.getObject("ORNAMENTDESCRIPTION"),
+				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), batchId);
+	}
+	
+	public static void saveOrnamentDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_ORNAMENTDETAILS (");
+		sql.append(" APPL_ID");
+		sql.append(",CUSTOMER_ID");
+		sql.append(",CUSTOMER_KEY");
+		sql.append(",REFFERENCE_ID");
+		sql.append(",RATE_PER_GRAM");
+		sql.append(",ORNAMENT_ID");
+		sql.append(",ORNAMENT_KEY");
+		sql.append(",ORNAMENT_REMARKS");
+		sql.append(",NUMBER_OF_ITEMS");
+		sql.append(",STONE_FIX");
+		sql.append(",STONE_FIX_KEY");
+		sql.append(",TESTING_SYSTEM");
+		sql.append(",TESTING_SYSTEM_KEY");
+		sql.append(",SYSTEM_READ");
+		sql.append(",MANUAL_READ");
+		sql.append(",GROSS_WEIGHT");
+		sql.append(",STONE_WEIGHT");
+		sql.append(",NET_WEIGHT");
+		sql.append(",MAX_LA");
+		sql.append(",LOAN_AMOUNT");
+		sql.append(",BUSSINESS_DATE");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPL_ID"), rs.getObject("CUSTOMER_ID"),
+				rs.getObject("CUSTOMER_KEY"), rs.getObject("REFFERENCE_ID"), rs.getObject("RATE_PER_GRAM"), rs.getObject("ORNAMENT_ID"),
+				rs.getObject("ORNAMENT_KEY"), rs.getObject("ORNAMENT_REMARKS"), rs.getObject("NUMBER_OF_ITEMS"),
+				rs.getObject("STONE_FIX"), rs.getObject("STONE_FIX_KEY"), rs.getObject("TESTING_SYSTEM"), rs.getObject("TESTING_SYSTEM_KEY"),
+				rs.getObject("SYSTEM_READ"), rs.getObject("MANUAL_READ"), rs.getObject("GROSS_WEIGHT"), rs.getObject("STONE_WEIGHT"),
+				rs.getObject("NET_WEIGHT"), rs.getObject("MAX_LA"), rs.getObject("LOAN_AMOUNT"), rs.getObject("BUSSINESS_DATE"),batchId);
 	}
 }

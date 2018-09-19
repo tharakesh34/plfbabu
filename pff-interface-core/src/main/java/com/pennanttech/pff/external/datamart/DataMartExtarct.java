@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.process;
+package com.pennanttech.pff.external.datamart;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,18 +19,15 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.TransactionStatus;
 
-import com.pennanttech.bajaj.process.datamart.DataMartMapper;
-import com.pennanttech.bajaj.process.datamart.DataMartTable;
-import com.pennanttech.bajaj.process.datamart.DataMartView;
 import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.external.DataMartProcess;
 
-public class DataMartProcess extends DatabaseDataEngine {
+public class DataMartExtarct extends DatabaseDataEngine implements DataMartProcess {
 	private static final Logger logger = Logger.getLogger(DataMartProcess.class);
-	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
 
 	private long batchID;
 	private Date lastRunDate;
@@ -44,13 +41,22 @@ public class DataMartProcess extends DatabaseDataEngine {
 	private MapSqlParameterSource paramMap = new MapSqlParameterSource();
 	private String lastMntOnReq = null;
 
-	public DataMartProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public DataMartExtarct(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 		this.totalThreads = 0;
 		this.completedThreads = new AtomicLong(0L);
 		this.processedRecords = new AtomicLong(0L);
 		running = true;
+	}
+	
+	@Override
+	public void process() {
+		try {
+			process("DATA_MART_REQUEST");
+		} catch (Exception e) {
+			throw new InterfaceException("DATA_MART_REQUEST", e.getMessage());
+		}
 	}
 
 	@Override
@@ -239,7 +245,63 @@ public class DataMartProcess extends DatabaseDataEngine {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
+		
+		try {
+			new Thread(new GoldLoanPolicyDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		
+		try {
+			new Thread(new GoldLoanStatePolicyDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new GoldRateDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new GoldPromotionDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new GoldPromotionSlabRatesDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new GoldPromotionBranchesDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new GoldPromotionStatesDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new GoldOrnamentTypeDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		try {
+			new Thread(new OrnamentDetailsDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		
 		while (true) {
 			if (totalThreads == completedThreads.get()) {
 				processedCount = this.processedRecords.get();
@@ -437,6 +499,575 @@ public class DataMartProcess extends DatabaseDataEngine {
 							logger.error(Literal.EXCEPTION, e);
 							e.printStackTrace();
 							String keyId = getKeyId("DM_ADDRESS_DETAILS", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+
+	public class GoldLoanPolicyDataMart implements Runnable {
+
+		public GoldLoanPolicyDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_GOLDLOANPOLICY_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_GOLDLOANPOLICY_VIEW");
+			}
+
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+
+		}
+
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "ID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveGoldLoanPolicyDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_GOLDLOANPOLICY", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	
+	public class GoldLoanStatePolicyDataMart implements Runnable {
+
+		public GoldLoanStatePolicyDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_GOLDLOANSTATEPOLICY_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_GOLDLOANSTATEPOLICY_VIEW");
+			}
+
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+
+		}
+
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "POLICYID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveGoldLoanStatePolicyDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_GOLDLOANSTATEPOLICY", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	
+	public class GoldRateDataMart implements Runnable {
+
+		public GoldRateDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_GOLDRATE_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_GOLDRATE_VIEW");
+			}
+
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+
+		}
+
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "ID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveGoldRateDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_GOLDRATE", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	
+	
+	public class GoldPromotionDataMart implements Runnable {
+
+		public GoldPromotionDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PROMOTIONS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PROMOTIONS_VIEW");
+			}
+
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+
+		}
+
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "PROMOTIONID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.savePromotionDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_PROMOTIONS", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	public class GoldPromotionSlabRatesDataMart implements Runnable {
+		
+		public GoldPromotionSlabRatesDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PROMOTIONSLABWISERATES_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PROMOTIONSLABWISERATES_VIEW");
+			}
+			
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+			
+		}
+		
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+				
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+					
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "REFERENCEID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveGoldPromotionSlabRateDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+							
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_PROMOTIONALSLABWISERATES", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	
+public class GoldPromotionBranchesDataMart implements Runnable {
+		
+		public GoldPromotionBranchesDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PROMOTIONBRANCHES_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PROMOTIONBRANCHES_VIEW");
+			}
+			
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+			
+		}
+		
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+				
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+					
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "REFERENCEID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveGoldPromotionBranchDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+							
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_PROMOTIONBRANCHES", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+
+
+	public class GoldPromotionStatesDataMart implements Runnable {
+
+		public GoldPromotionStatesDataMart() {
+		}
+
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PROMOTIONSTATES_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PROMOTIONSTATES_VIEW");
+			}
+
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+
+		}
+
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "REFERENCEID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveGoldPromotionStatesDetails(rs, appDate, valueDate, batchID,
+									jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_PROMOTIONSTATES", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	public class GoldOrnamentTypeDataMart implements Runnable {
+		
+		public GoldOrnamentTypeDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_ORNAMENTTYPE_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_ORNAMENTTYPE_VIEW");
+			}
+			
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+			
+		}
+		
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+				
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+					
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "ORNAMENTTYPE" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveOrnamentTypeDetails(rs, appDate, valueDate, batchID,
+									jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+							
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_ORNAMENTTYPE", rs, keyFields);
+							executionStatus.setFailedRecords(failedCount++);
+							saveBatchLog(keyId, "F", e.getMessage());
+						}
+					}
+					return txnStatus;
+				}
+			});
+		}
+	}
+	public class OrnamentDetailsDataMart implements Runnable {
+		
+		public OrnamentDetailsDataMart() {
+		}
+		
+		@Override
+		public void run() {
+			logger.debug(Literal.ENTERING);
+			StringBuilder sql = new StringBuilder();
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_ORNAMENTDETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_ORNAMENTDETAILS_VIEW");
+			}
+			
+			TransactionStatus txnStatus = null;
+			try {
+				txnStatus = extract(sql, paramMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conclude(txnStatus);
+			}
+			logger.debug(Literal.LEAVING);
+			
+		}
+		
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
+				
+				@Override
+				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
+					TransactionStatus txnStatus = null;
+					int inserted = 0;
+					
+					while (rs.next()) {
+						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
+						String[] keyFields = new String[] { "APPL_ID" , "CUSTOMER_ID" };
+						try {
+							if (inserted == 0) {
+								txnStatus = transManager.getTransaction(transDef);
+							}
+							DataMartMapper.saveOrnamentDetails(rs, appDate, valueDate, batchID,
+									jdbcTemplate);
+							executionStatus.setSuccessRecords(successCount++);
+							
+							if (inserted++ > btachSize) {
+								commit(txnStatus);
+								inserted = 0;
+							}
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_ORNAMENTDETAILS", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
 						}
@@ -1841,6 +2472,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 			logger.debug(Literal.LEAVING);
 		}
+		
+		
 
 		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
 			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
@@ -1939,5 +2572,4 @@ public class DataMartProcess extends DatabaseDataEngine {
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		return null;
 	}
-
 }
