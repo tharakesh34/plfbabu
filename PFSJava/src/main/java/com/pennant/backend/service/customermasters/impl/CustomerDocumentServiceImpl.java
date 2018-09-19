@@ -295,9 +295,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerDocument.setRecordType("");
-				DocumentManager documentManager = new DocumentManager();
-				documentManager.setDocImage(customerDocument.getCustDocImage());
-				customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				if (customerDocument.getCustDocImage() != null && customerDocument.getCustDocImage().length > 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(customerDocument.getCustDocImage());
+					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				}
 				getCustomerDocumentDAO().update(customerDocument, "");
 			}
 		}
