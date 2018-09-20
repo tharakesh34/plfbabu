@@ -844,7 +844,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="9.1" author="lakshmi.n">
+	<changeSet id="9.1.1" author="lakshmi.n">
 		<sql>
 			<![CDATA[
 				delete from secoperationroles where roleid in (select roleid from SecRoles where rolecd in ('ORGANIZATION_SCHOOL_INCOME_EXPENSE_MAKER', 'ORGANIZATION_SCHOOL_INCOME_EXPENSE_APPROVER'));
@@ -915,7 +915,7 @@
 				
 				update SeqSecRoleGroups set SeqNo = ((Select MAX(RoleGrpID) From secRoleGroups));
 				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='ORGANIZATION_SCHOOL_INCOME_EXPENSE_MAKER'),(select RoleID from secRoles where RoleCd='ORGANIZATION_SCHOOL_INCOME_EXPENSE_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
-				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='ORGANIZATION_SCHOOL_INCOME_EXPENSE_APPROVER'),(select RoleID from secRoles where RoleCd='ORGANIZATION_SCHOOL_INCOME_EXPENSE_APPROVER'),0,1000,current_timestamp,'Approved','','','','',0);
+				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='ORGANIZATION_SCHOOL_INCOME_EXPENSE_APPROVER'),(select RoleID from secRoles where RoleCd='ORGANIZATION_SCHOOL_INCOME_EXPENSE_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
 				update SeqSecRoleGroups set SeqNo = ((Select MAX(RoleGrpID) From secRoleGroups));
 			]]>
 		</sql>
