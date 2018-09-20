@@ -15654,10 +15654,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		}
-
-		// Loan Extended Value  
+		// Loan Extended Value
 		if (detail.getExtendedFieldHeader() != null && detail.getExtendedFieldHeader().getExtendedFieldDetails() != null
-				&& detail.getExtendedFieldRender().getMapValues() != null) {
+				&& detail.getExtendedFieldRender() != null && detail.getExtendedFieldRender().getMapValues() != null) {
 
 			for (ExtendedFieldDetail fieldDetail : detail.getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if (fieldDetail.isAllowInRule()) {
