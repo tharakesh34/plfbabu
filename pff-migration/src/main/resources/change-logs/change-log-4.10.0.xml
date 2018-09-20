@@ -6913,16 +6913,16 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 	  <modifyDataType tableName="interfacemapping_temp" columnName="active" newDataType="smallint"/>
 </changeSet>
 	
-<changeSet id="82" author="somasekhar">
+<changeSet id="82.1" author="somasekhar">
 	 <createView replaceIfExists="true" viewName="interfacemapping_aview">
 	  SELECT t1.interfacemappingid,t1.interfaceid,t1.interfacename,t1.interfacefield,t1.mappingvalue,t1.mappingtable,t1.mappingcolumn,
               t1.active,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,
               t1.nexttaskid,t1.recordtype,t1.workflowid
-      FROM interfacemapping t1;
+      FROM interfacemapping t1
 	 </createView>
 </changeSet>
 	
-<changeSet id="83" author="somasekhar">
+<changeSet id="83.1" author="somasekhar">
 	 <createView replaceIfExists="true" viewName="interfacemapping_view">
 	  SELECT t1.interfacemappingid,t1.interfaceid,t1.interfacename,t1.interfacefield,t1.mappingvalue,t1.mappingtable,t1.mappingcolumn,
              t1.active,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
@@ -6937,7 +6937,7 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
    JOIN interface_fields t2 ON t1.interfaceid = t2.interfaceid
     WHERE NOT (EXISTS ( SELECT 1
            FROM interfacemapping_temp
-          WHERE interfacemapping_temp.interfacemappingid = t1.interfacemappingid));
+          WHERE interfacemapping_temp.interfacemappingid = t1.interfacemappingid))
 	 </createView>
 </changeSet>
 	
