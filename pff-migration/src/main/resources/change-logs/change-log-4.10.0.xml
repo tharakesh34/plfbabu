@@ -10141,7 +10141,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode) AS lovdescrequeststage,
+    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     t1.margindeviation,
 	t1.applicationno
    FROM customers_temp t1
@@ -10392,7 +10392,7 @@ UNION ALL
      LEFT JOIN religion t33 ON t1.religionid = t33.religionid
   WHERE NOT (EXISTS ( SELECT 1 AS expr1
            FROM customers_temp
-          WHERE customers_temp.custid = t1.custid))				
+          WHERE customers_temp.custid = t1.custid))			
 		</createView>
 	</changeSet>
 	
