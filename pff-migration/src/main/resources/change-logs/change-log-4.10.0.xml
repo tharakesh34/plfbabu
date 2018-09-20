@@ -6890,9 +6890,6 @@ UNION ALL
 		<addForeignKeyConstraint constraintName="FK_FCRC_Temp_ElgMthdId" referencedTableName="RMTLovFielddetail" baseColumnNames="EligibilityId" baseTableName="FinCreditRevCategory_Temp" referencedColumnNames="fieldcodeid"/>
 </changeSet>
 
- <changeSet id="74.8" author="Vinay">
-	<sqlFile path="change-logs/EligibilityMethod_CreditReviewDetails.sql" endDelimiter="DonotStop" encoding="UTF-8"/>
-</changeSet>
 
 <changeSet id="74.9" author="Vinay" dbms="postgresql">
 	<sql>
