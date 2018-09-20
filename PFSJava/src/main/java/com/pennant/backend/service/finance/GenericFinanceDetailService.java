@@ -1670,6 +1670,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				tempAmountCodes.setPftChg(inst.getPftChg());
 				
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
+				if(inst.getFromDate() != null){
+					aeEvent.setValueDate(inst.getFromDate());
+				}
 				aeEvent.setAeAmountCodes(tempAmountCodes);
 				aeEvent.setDataMap(dataMap);
 				

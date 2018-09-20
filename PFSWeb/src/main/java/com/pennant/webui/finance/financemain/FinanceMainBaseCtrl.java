@@ -12402,6 +12402,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setAeAmountCodes(tempAmountCodes);
+				if(inst.getFromDate() != null){
+					aeEvent.setValueDate(inst.getFromDate());
+				}
 				aeEvent.setDataMap(dataMap);
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				accountingSetEntries.addAll(aeEvent.getReturnDataSet());
