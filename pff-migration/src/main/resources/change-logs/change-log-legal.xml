@@ -1222,11 +1222,6 @@
 		 </addColumn>
 	</changeSet>
 	
-	<changeSet id="60.0" author="">
-		<dropView viewName="LegalDetails_AView"/>
-		<dropView viewName="LegalDetails_View"/>
-	</changeSet>
-	
 	<changeSet id="61" author="Durgaprasad">
 		<modifyDataType tableName="LegalDetails" columnName="Branch" newDataType="varchar(12)"/>
 		<modifyDataType tableName="LegalDetails_Temp" columnName="Branch" newDataType="varchar(12)"/>
@@ -2677,12 +2672,6 @@
 				Inner Join Financemain_View T3 ON T1.LoanReference = T3.FinReference
 			WHERE     NOT EXISTS (SELECT 1 FROM LegalDetails_TEMP WHERE LegalId = T1.LegalId)
 		</createView>
-	</changeSet>
-	
-	<changeSet id="70.0" author="">
-		<dropView viewName="LegalDetails_AView"/>
-		<dropView viewName="LegalDetails_View"/>
-		<dropView viewName="LegalDetails_TView"/>
 	</changeSet>
 	
 	<changeSet id="71" author="Durgaprasad">
