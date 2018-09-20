@@ -56,10 +56,10 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private List<ValueLabel> serverFiles = null;
 
 	private long userId;
-	private DataEngineStatus	DISB_OTHER_IMPORT_STATUS	= new DataEngineStatus("DISB_OTHER_IMPORT");
-	private DataEngineStatus				DISB_STP_IMPORT_STATUS		= new DataEngineStatus("DISB_CITI_IMPORT");
-	
-	@Autowired(required=false)
+	private DataEngineStatus DISB_OTHER_IMPORT_STATUS = new DataEngineStatus("DISB_OTHER_IMPORT");
+	private DataEngineStatus DISB_STP_IMPORT_STATUS = new DataEngineStatus("DISB_CITI_IMPORT");
+
+	@Autowired(required = false)
 	private DisbursementResponse disbursementResponse;
 
 	/**
@@ -111,7 +111,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				}
 			}
 		}
-		
+
 		fillComboBox(fileConfiguration, "", menuList, "");
 
 		logger.debug(Literal.LEAVING);
@@ -241,13 +241,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
-		
+
 		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".TXT"))) {
 			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;
 		}
-		
+
 		fileName.setText(media.getName());
 	}
 
@@ -282,7 +282,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			}
 		}
 	}
-	
+
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
 		ProcessExecution pannel = new ProcessExecution();
 		pannel.setId(config.getName());
