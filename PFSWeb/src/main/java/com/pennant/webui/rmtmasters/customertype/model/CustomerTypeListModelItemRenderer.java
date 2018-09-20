@@ -77,7 +77,7 @@ public class CustomerTypeListModelItemRenderer implements ListitemRenderer<Custo
 		lc.setParent(item);
 		lc = new Listcell(customerType.getCustTypeDesc());
 		lc.setParent(item);
-		if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerType.getCustTypeCtg())) {
+		/*if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerType.getCustTypeCtg())) {
 			lc = new Listcell(Labels.getLabel("label_Corporate"));
 		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerType.getCustTypeCtg())) {
 			lc = new Listcell(Labels.getLabel("label_Individual"));
@@ -85,7 +85,8 @@ public class CustomerTypeListModelItemRenderer implements ListitemRenderer<Custo
 			lc = new Listcell(Labels.getLabel("label_Financial"));
 		} else {
 			lc = new Listcell("");
-		}
+		}*/
+		lc=new Listcell(customerType.getCustctgdesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbCustTypeIsActive = new Checkbox();

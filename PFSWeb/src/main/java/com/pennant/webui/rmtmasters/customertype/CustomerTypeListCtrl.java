@@ -139,7 +139,7 @@ public class CustomerTypeListCtrl extends GFCBaseListCtrl<CustomerType> {
 				Operators.STRING);
 		registerField("custTypeDesc", listheader_CustTypeDesc, SortOrder.NONE, custTypeDesc, sortOperator_custTypeDesc,
 				Operators.STRING);
-		registerField("custTypeCtg", listheader_CustTypeCtg, SortOrder.NONE, custTypeCtg, sortOperator_custTypeCtg,
+		registerField("custctgdesc", listheader_CustTypeCtg, SortOrder.NONE, custTypeCtg, sortOperator_custTypeCtg,
 				Operators.STRING);
 		registerField("custTypeIsActive", listheader_CustTypeIsActive, SortOrder.NONE, custTypeIsActive,
 				sortOperator_custTypeIsActive, Operators.BOOLEAN);

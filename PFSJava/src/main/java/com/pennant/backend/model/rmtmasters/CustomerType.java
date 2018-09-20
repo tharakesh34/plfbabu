@@ -44,6 +44,10 @@ package com.pennant.backend.model.rmtmasters;
 
 import java.sql.Timestamp;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -58,6 +62,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	private String custTypeCode = null;
 	private String custTypeCtg = null;
 	private String custTypeDesc;
+	private String custctgdesc;
 	private boolean custTypeIsActive;
 	private boolean newRecord;
 	private String lovValue;
@@ -75,6 +80,12 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public CustomerType(String id) {
 		super();
 		this.setId(id);
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("custctgdesc");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -97,6 +108,14 @@ public class CustomerType extends AbstractWorkflowEntity {
 
 	public String getCustTypeCtg() {
 		return custTypeCtg;
+	}
+
+	public String getCustctgdesc() {
+		return custctgdesc;
+	}
+
+	public void setCustctgdesc(String custctgdesc) {
+		this.custctgdesc = custctgdesc;
 	}
 
 	public void setCustTypeCtg(String custTypeCtg) {
