@@ -9522,7 +9522,7 @@ UNION ALL
 	</addColumn>
 	</changeSet>
 	
-	<changeSet id="123.2" author="Vinay">
+	<changeSet id="123.2.1" author="Vinay">
 		<createView viewName="customers_aview" replaceIfExists="true">
 			SELECT t1.custid,
     t1.custcif,
@@ -9700,7 +9700,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage,
+    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     t1.margindeviation,
 	t1.applicationno
    FROM customers t1
@@ -9727,7 +9727,7 @@ UNION ALL
      LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
      LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
      LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
-     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
      LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
      LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
      LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
@@ -9739,7 +9739,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="123.3" author="Vinay">
+	<changeSet id="123.3.1" author="Vinay">
 		<createView viewName="customers_tview" replaceIfExists="true">
 			SELECT t1.custid,
     t1.custcif,
@@ -9917,7 +9917,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage,
+    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     t1.margindeviation,
 	t1.applicationno
    FROM customers_temp t1
@@ -9944,7 +9944,7 @@ UNION ALL
      LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
      LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
      LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
-     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
      LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
      LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
      LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
@@ -9963,7 +9963,7 @@ UNION ALL
 	</changeSet>
 	
 	
-	<changeSet id="123.4" author="Vinay">
+	<changeSet id="123.4.1" author="Vinay">
 		<createView viewName="customers_view" replaceIfExists="true">
 			 SELECT t1.custid,
     t1.custcif,
@@ -10141,7 +10141,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage,
+    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode) AS lovdescrequeststage,
     t1.margindeviation,
 	t1.applicationno
    FROM customers_temp t1
@@ -10168,7 +10168,7 @@ UNION ALL
      LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
      LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
      LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
-     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
      LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
      LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
      LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
@@ -10354,7 +10354,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage,
+    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
     t1.margindeviation,
 	t1.applicationno
    FROM customers t1
@@ -10381,7 +10381,7 @@ UNION ALL
      LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
      LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
      LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
-     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
      LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
      LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
      LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
