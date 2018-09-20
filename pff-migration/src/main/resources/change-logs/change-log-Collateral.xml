@@ -40,7 +40,7 @@
 			<column name="finReference" type="VARCHAR2(20)"/>
 		</addColumn>
 	</changeSet>
-	<changeSet id="3" author="Durgaprasad G">
+	<changeSet id="3.1" author="Durgaprasad G">
 		<createView viewName="collateralsetup_view" replaceIfExists="true">
 					SELECT t1.collateralref,
 					t1.finReference,
@@ -117,11 +117,11 @@
 				     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype
 				  WHERE NOT (EXISTS ( SELECT 1
 				           FROM collateralsetup_temp
-				          WHERE collateralsetup_temp.collateralref = t1.collateralref));
+				          WHERE collateralsetup_temp.collateralref = t1.collateralref))
 		</createView>
 	</changeSet>
 	
-	<changeSet id="4" author="Durgaprasad G">
+	<changeSet id="4.1" author="Durgaprasad G">
 	<createView viewName="collateralsetup_aview" replaceIfExists="true">
 		SELECT t1.collateralref,
 	    t1.finReference,
@@ -158,10 +158,10 @@
 	    t2.custshrtname AS depositorname
 	   FROM collateralsetup t1
 	     JOIN customers t2 ON t2.custid = t1.depositorid
-	     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype;
+	     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype
 	</createView>
 	</changeSet>
-	<changeSet id="5" author="Durgaprasad G">
+	<changeSet id="5.1" author="Durgaprasad G">
 	<createView viewName="collateralsetup_tview" replaceIfExists="true">
 		SELECT t1.collateralref,
 	    t1.finReference,
@@ -198,11 +198,11 @@
 	    t2.custshrtname AS depositorname
 	   FROM collateralsetup_temp t1
 	     JOIN customers t2 ON t2.custid = t1.depositorid
-	     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype;
+	     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype
 	</createView>
 	</changeSet>
 	
-	<changeSet id="6" author="Durgaprasad G">
+	<changeSet id="6.1" author="Durgaprasad G">
 		<createView viewName="collateralassignment_CTView" replaceIfExists="true">
 				SELECT ca.module,
 			    ca.reference,
@@ -243,7 +243,7 @@
 			                           FROM collateralassignment_temp
 			                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
 			          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
-			     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference;
+			     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
 	     </createView>
 	</changeSet>
 	
@@ -275,7 +275,7 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="10" author="Durgaprasad G">
+	<changeSet id="10.1" author="Durgaprasad G">
 		<createView viewName="collateralsetup_view" replaceIfExists="true">
 					SELECT t1.collateralref,
 					t1.finReference,
@@ -354,11 +354,11 @@
 				     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype
 				  WHERE NOT (EXISTS ( SELECT 1
 				           FROM collateralsetup_temp
-				          WHERE collateralsetup_temp.collateralref = t1.collateralref));
+				          WHERE collateralsetup_temp.collateralref = t1.collateralref))
 		</createView>
 	</changeSet>
 	
-	<changeSet id="11" author="Durgaprasad G">
+	<changeSet id="11.1" author="Durgaprasad G">
 		<createView viewName="collateralsetup_aview" replaceIfExists="true">
 			SELECT t1.collateralref,
 		    t1.finReference,
@@ -396,11 +396,11 @@
 		    t2.custshrtname AS depositorname
 		   FROM collateralsetup t1
 		     JOIN customers t2 ON t2.custid = t1.depositorid
-		     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype;
+		     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype
 		</createView>
 	</changeSet>
 	
-	<changeSet id="12" author="Durgaprasad G">
+	<changeSet id="12.1" author="Durgaprasad G">
 		<createView viewName="collateralsetup_tview" replaceIfExists="true">
 			SELECT t1.collateralref,
 		    t1.finReference,
@@ -438,7 +438,7 @@
 		    t2.custshrtname AS depositorname
 		   FROM collateralsetup_temp t1
 		     JOIN customers t2 ON t2.custid = t1.depositorid
-		     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype;
+		     JOIN collateralstructure t3 ON t3.collateraltype = t1.collateraltype
 		</createView>
 	</changeSet>
 	 
@@ -556,7 +556,7 @@
 	 	</createView>
 	 </changeSet>
 	 
-	 <changeSet id="14" author="Durgaprasad G">
+	 <changeSet id="14.1" author="Durgaprasad G">
 	 	<createView viewName="verification_lv_view" replaceIfExists="true">
 			SELECT t.verificationid,
 		    t.verificationformname,
@@ -675,11 +675,11 @@
 		             LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
 		          WHERE NOT (EXISTS ( SELECT 1
 		                   FROM verification_lv_temp
-		                  WHERE verification_lv_temp.verificationid = lv.verificationid))) t;
+		                  WHERE verification_lv_temp.verificationid = lv.verificationid))) t
 	 	</createView>
 	 </changeSet>
 	 
-	 <changeSet id="15" author="Durgaprasad G">
+	 <changeSet id="15.1" author="Durgaprasad G">
 		<createView viewName="collateralassignment_CTView" replaceIfExists="true">
 				SELECT ca.module,
 			    ca.reference,
@@ -721,7 +721,7 @@
 			                           FROM collateralassignment_temp
 			                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
 			          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
-			     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference;
+			     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
 	     </createView>
 	</changeSet>
 	
