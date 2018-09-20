@@ -6951,13 +6951,20 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		<modifyDataType tableName="DepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
 	</changeSet> 
 	
-	<changeSet id="86" author="Vinay">
+	<changeSet id="86" author="Vinay" dbms="postgresql">
 		<sql>
 			update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD' and isactive='1');
 			update rmtfinancetypes_temp set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail where fieldcode = 'ELGMETHOD' and isactive='1');
 		</sql>
 	</changeSet>
-	
+	<changeSet id="86" author="Vinay" dbms="oracle">
+		<sql>
+			update rmtfinancetypes set eligibilitymethods = (select cast(LISTAGG(fieldcodeid, ',') WITHIN GROUP (ORDER BY fieldcodeid)  as varchar(500)) from rmtlovfielddetail  
+where fieldcode = 'ELGMETHOD' and isactive='1');
+			update rmtfinancetypes_temp set eligibilitymethods = (select cast(LISTAGG(fieldcodeid, ',') WITHIN GROUP (ORDER BY fieldcodeid)  as varchar(500)) from rmtlovfielddetail  
+where fieldcode = 'ELGMETHOD' and isactive='1');
+		</sql>
+	</changeSet>
 	<changeSet id = "87" author = "Siva">
 		<comment> BPI Claculation on First date or Frequency of Before Installment Interest calculation date </comment>
 		<sql>
@@ -9019,7 +9026,7 @@ UNION ALL
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="103.1" author="Durgaprasad G">
+	<changeSet id="103.1.1" author="Durgaprasad G">
 		<createView viewName="extendedfielddetail_aview" replaceIfExists="true">
 			SELECT t1.moduleid,
 		    t1.fieldname,
@@ -9057,7 +9064,7 @@ UNION ALL
 		    t1.scriptlet,
 		    t1.visible
 		   FROM extendedfielddetail t1
-		     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid;
+		     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
 		</createView>
 	</changeSet>
 	
@@ -9140,11 +9147,11 @@ UNION ALL
 		     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
 		  WHERE NOT (EXISTS ( SELECT 1
 		           FROM extendedfielddetail_temp
-		          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname));
+		          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname))
 		</createView>
 	</changeSet>
 	
-	<changeSet id="105" author="Durgaprasad G">
+	<changeSet id="105.1" author="Durgaprasad G">
 		<createView viewName="extendedfielddetail_view" replaceIfExists="true">
 			SELECT t1.moduleid,
 		    t1.fieldname,
@@ -9223,7 +9230,7 @@ UNION ALL
 		     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
 		  WHERE NOT (EXISTS ( SELECT 1
 		           FROM extendedfielddetail_temp
-		          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname));
+		          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname))
 		</createView>
 	</changeSet>
 	
