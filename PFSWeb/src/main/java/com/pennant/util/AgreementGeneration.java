@@ -2731,7 +2731,9 @@ public class AgreementGeneration implements Serializable {
 									detailCol.setColType(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
 								}
 								detailCol.setExtDtls(new ArrayList<>());
-								Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+								Map<String, Object> mapValues = new HashMap<>();
+								mapValues.putAll(extendedFieldRender.getMapValues());
+								
 								for (String key : mapValues.keySet()) {
 									ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
 									ExtendedFieldDetail extendedFieldDetail = null;
