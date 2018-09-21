@@ -260,7 +260,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		if (!isHeaderContainAuthKey) {
 			getErrorDetails("92001", null);
 		}
-		/*if (!isHeaderContainMsgId) {
+		if (!isHeaderContainMsgId) {
 			getErrorDetails("92006", new String[] { APIHeader.API_MESSAGEID });
 		}
 		if (!isHeaderContainEntityId) {
@@ -277,7 +277,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		}
 		if (!isHeaderContainLanguage) {
 			getErrorDetails("92006", new String[] { APIHeader.API_LANGUAGE });
-		}*/
+		}
 		logger.debug(Literal.LEAVING);
 
 	}

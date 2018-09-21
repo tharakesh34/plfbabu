@@ -2846,7 +2846,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return auditDetail;
 				}
 				
-				
+				receiptDetail.setFavourNumber(receiptDetail.getTransactionRef());
 			} else {
 				if(receiptDetail.getValueDate()!=null) {
 					String[] valueParm = new String[2];
