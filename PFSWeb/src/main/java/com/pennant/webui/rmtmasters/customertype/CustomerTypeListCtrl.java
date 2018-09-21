@@ -65,9 +65,9 @@ import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.rmtmasters.customertype.model.CustomerTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/CustomerType/CustomerTypeList.zul file.
@@ -139,8 +139,9 @@ public class CustomerTypeListCtrl extends GFCBaseListCtrl<CustomerType> {
 				Operators.STRING);
 		registerField("custTypeDesc", listheader_CustTypeDesc, SortOrder.NONE, custTypeDesc, sortOperator_custTypeDesc,
 				Operators.STRING);
-		registerField("custctgdesc", listheader_CustTypeCtg, SortOrder.NONE, custTypeCtg, sortOperator_custTypeCtg,
+		registerField("custtypectg", listheader_CustTypeCtg, SortOrder.NONE, custTypeCtg, sortOperator_custTypeCtg,
 				Operators.STRING);
+		registerField("custctgdesc");
 		registerField("custTypeIsActive", listheader_CustTypeIsActive, SortOrder.NONE, custTypeIsActive,
 				sortOperator_custTypeIsActive, Operators.BOOLEAN);
 
