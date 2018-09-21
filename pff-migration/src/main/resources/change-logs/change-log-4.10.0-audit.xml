@@ -148,4 +148,9 @@
 	<changeSet id="18.5" author="vijaykumar.l" dbms="postgresql" >
 	 <modifyDataType tableName="AdtCostOfFundCodes" columnName="active" newDataType="smallint" />
 	</changeSet>
+	
+	 <changeSet id="19.1" author="vijaykumar.l">
+	 <modifyDataType tableName="AdtCostOfFunds" columnName="active" newDataType="boolean" />
+	</changeSet>
+	
 	</databaseChangeLog>
