@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -31,10 +30,11 @@ import com.pennanttech.bajaj.model.TaxDetail;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.TaxDownloadProcess;
 
-public class TaxDownlaodProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);
+public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloadProcess {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");
 
 	private Date valuedate;
@@ -65,12 +65,21 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
 	private static final String CON_DEBIT = "D"; //
 
-	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate, Date toDate) {
+	public TaxDownlaodExtract(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate, Date toDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.appDate = appDate;
 		this.valuedate = valueDate;
+	}
+	
+	@Override
+	public void process(Object... objects) {
+		try {
+			process("GST_TAXDOWNLOAD_DETAILS");
+		} catch (Exception e) {
+			throw new InterfaceException("GST_TAXDOWNLOAD_DETAILS", e.getMessage());
+		}
 	}
 
 	@Override

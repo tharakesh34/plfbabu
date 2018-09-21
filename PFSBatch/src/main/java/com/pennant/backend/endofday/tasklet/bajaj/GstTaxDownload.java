@@ -13,16 +13,17 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.process.TaxDownlaodProcess;
+import com.pennanttech.bajaj.process.TaxDownlaodExtract;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.external.TaxDownloadProcess;
 
 public class GstTaxDownload implements Tasklet {
 	private Logger						logger	= Logger.getLogger(GstTaxDownload.class);
@@ -55,7 +56,7 @@ public class GstTaxDownload implements Tasklet {
 		try {
 			logger.debug("START: GST-TAX Download Process for the value date: ".concat(DateUtil.format(appDate, DateFormat.LONG_DATE)));
 			
-			DataEngineStatus status = TaxDownlaodProcess.EXTRACT_STATUS;
+			DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new GSTTaxProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
@@ -91,14 +92,14 @@ public class GstTaxDownload implements Tasklet {
 
 		public void run() {
 			try {
-				TaxDownlaodProcess process = null;
+				TaxDownloadProcess process = null;
 
 				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
-					process = new TaxDownlaodProcess(dataSource, userId, valueDate, appDate, appDate, appDate);
+					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, appDate, appDate);
 				} else {
-					process = new TaxDownlaodProcess(dataSource, userId, valueDate, appDate, DateUtility.getMonthStart(appDate), DateUtility.getMonthEnd(appDate));
+					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, DateUtility.getMonthStart(appDate), DateUtility.getMonthEnd(appDate));
 				}
-				process.process("GST_TAXDOWNLOAD_DETAILS");
+				process.process();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

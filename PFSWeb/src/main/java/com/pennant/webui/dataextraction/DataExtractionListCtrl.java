@@ -38,7 +38,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennanttech.bajaj.process.TaxDownlaodProcess;
+import com.pennanttech.bajaj.process.TaxDownlaodExtract;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -202,7 +202,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 
 			switch (configName) {
 			case "GST_TAXDOWNLOAD_DETAILS_TRANASCTION":
-				TaxDownlaodProcess trnPocess = new TaxDownlaodProcess((DataSource) SpringUtil.getBean("dataSource"),
+				TaxDownlaodExtract trnPocess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
 						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
 						DateUtility.getAppDate(), DateUtility.getMonthStart(processDate),
 						DateUtility.getMonthEnd(processDate));
@@ -215,7 +215,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 				trnPocess = null;
 				break;
 			case "GST_TAXDOWNLOAD_DETAILS_SUMMARY":
-				TaxDownlaodProcess summProcess = new TaxDownlaodProcess((DataSource) SpringUtil.getBean("dataSource"),
+				TaxDownlaodExtract summProcess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
 						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
 						DateUtility.getAppDate(), DateUtility.getMonthStart(processDate),
 						DateUtility.getMonthEnd(processDate));
@@ -243,7 +243,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * 
 	 * @throws Exception
 	 */
-	private String saveGstTransactionData(String configName, TaxDownlaodProcess process) throws Exception {
+	private String saveGstTransactionData(String configName, TaxDownlaodExtract process) throws Exception {
 
 		process.clearTables();
 		process.preparePosingsData();
@@ -254,7 +254,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		}
 		process.clearTranasctionDeatils();
 		process.processGstTransactionData();
-		DataEngineStatus status = TaxDownlaodProcess.EXTRACT_STATUS;
+		DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 		return status.getRemarks();
 	}
 
@@ -264,7 +264,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * 
 	 * @throws Exception
 	 */
-	private String downloadGstTransactionData(String configName, TaxDownlaodProcess process) throws Exception {
+	private String downloadGstTransactionData(String configName, TaxDownlaodExtract process) throws Exception {
 
 		long count = process.getGstTrnansactionRecordCount();
 		if (count <= 0) {
@@ -287,7 +287,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * 
 	 * @throws Exception
 	 */
-	private String saveGstSummaryData(String configName, TaxDownlaodProcess process) throws Exception {
+	private String saveGstSummaryData(String configName, TaxDownlaodExtract process) throws Exception {
 
 		process.clearTables();
 		process.preparePosingsData();
@@ -298,7 +298,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		}
 		process.clearSummaryDeatils();
 		process.processGstSummaryData();
-		DataEngineStatus status = TaxDownlaodProcess.EXTRACT_STATUS;
+		DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 		return status.getRemarks();
 	}
 
@@ -411,7 +411,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * 
 	 * @throws Exception
 	 */
-	private String downloadGstSummaryData(String configName, TaxDownlaodProcess process) throws Exception {
+	private String downloadGstSummaryData(String configName, TaxDownlaodExtract process) throws Exception {
 		
 		long count = process.getGSTSummaryRecordCount();
 		if (count <= 0) {
