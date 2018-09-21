@@ -9068,7 +9068,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="104.1" author="Durgaprasad G">
+	<changeSet id="104.2" author="Durgaprasad G">
 		<createView viewName="extendedfielddetail_view" replaceIfExists="true">
 			SELECT t1.moduleid,
 		    t1.fieldname,
@@ -9521,7 +9521,11 @@ UNION ALL
 		<column name="ApplicationNo" type="varchar(50)"/>
 	</addColumn>
 	</changeSet>
-	
+	<changeSet id="123.2.1_Pre" author="Jayant">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','customers_aview');
+		</sql>
+	</changeSet>
 	<changeSet id="123.2.1" author="Vinay">
 		<createView viewName="customers_aview" replaceIfExists="true">
 			SELECT t1.custid,
@@ -9738,7 +9742,11 @@ UNION ALL
      LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd	
 		</createView>
 	</changeSet>
-	
+	<changeSet id="123.2.1_Post" author="Jayant">
+		<sql>
+			select deps_restore_dependencies('plf','customers_aview');
+		</sql>
+	</changeSet>
 	<changeSet id="123.3.1" author="Vinay">
 		<createView viewName="customers_tview" replaceIfExists="true">
 			SELECT t1.custid,
@@ -9956,7 +9964,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="123.4_pre" author="Vinay" dbms="postgresql">
+	<changeSet id="123.4.1_pre" author="Vinay" dbms="postgresql">
 		<sql>
 			select deps_save_and_drop_dependencies('plf','customers_view');
 		</sql>
@@ -10396,7 +10404,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="123.4_post" author="Vinay" dbms="postgresql">
+	<changeSet id="123.4.1_post" author="Vinay" dbms="postgresql">
 		<sql>
 			select deps_restore_dependencies('plf','customers_view');
 		</sql>
