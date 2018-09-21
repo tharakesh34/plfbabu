@@ -33,15 +33,15 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.finance.TaxDownload;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennanttech.bajaj.process.TaxDownlaodExtract;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
+import com.pennanttech.pff.model.external.gst.TaxDownload;
 
 /**
  * This is the controller class for the

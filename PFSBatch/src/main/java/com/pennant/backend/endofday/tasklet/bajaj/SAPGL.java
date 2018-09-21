@@ -20,7 +20,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.model.external.SAPGLExtract;
+import com.pennanttech.pff.external.sapgl.SAPGLExtract;
 
 public class SAPGL implements Tasklet {
 	private Logger logger = Logger.getLogger(SAPGL.class);

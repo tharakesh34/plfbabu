@@ -98,7 +98,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.model.external.SAPGLExtract;
+import com.pennanttech.pff.external.sapgl.SAPGLExtract;
 import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 import com.pennanttech.service.AmazonS3Bucket;
 

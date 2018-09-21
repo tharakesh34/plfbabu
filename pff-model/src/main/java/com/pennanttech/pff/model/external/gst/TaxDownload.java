@@ -1,4 +1,4 @@
-package com.pennant.backend.model.finance;
+package com.pennanttech.pff.model.external.gst;
 
 import java.math.BigDecimal;
 import java.util.Date;

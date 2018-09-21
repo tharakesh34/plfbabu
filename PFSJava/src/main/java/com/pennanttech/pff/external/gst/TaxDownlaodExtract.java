@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.process;
+package com.pennanttech.pff.external.gst;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -22,7 +22,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.model.finance.TaxDownload;
 import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.bajaj.model.Branch;
 import com.pennanttech.bajaj.model.Province;
@@ -33,6 +32,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.TaxDownloadProcess;
+import com.pennanttech.pff.model.external.gst.TaxDownload;
 
 public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloadProcess {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");

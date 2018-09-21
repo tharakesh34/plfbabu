@@ -18,12 +18,12 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.TaxDownlaodExtract;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.external.TaxDownloadProcess;
+import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
 
 public class GstTaxDownload implements Tasklet {
 	private Logger						logger	= Logger.getLogger(GstTaxDownload.class);
