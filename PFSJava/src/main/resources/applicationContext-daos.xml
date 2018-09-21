@@ -9778,5 +9778,22 @@
 	</bean>
 
 	<!-- Finance Overdue Amortization Tax Details -->
+
 	<bean id="finODAmzTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinODAmzTaxDetailDAOImpl" parent="sequenceDao" />
+	
+	
+	<bean id="invokeSysNotifications" class="com.pennanttech.pff.notifications.service.InvokeSysNotifications"  parent="basicDao">
+	</bean>
+	
+	<bean id="processSystemNotifications" class="com.pennanttech.pff.notifications.service.ProcessSystemNotifications"  parent="basicDao">
+	</bean>
+	
+	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">
+	</bean>
+	
+	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl" parent="sequenceDao" >
+	<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
 </beans>

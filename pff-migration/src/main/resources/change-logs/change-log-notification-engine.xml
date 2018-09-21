@@ -282,4 +282,120 @@
 			<column name="messageId" />
 		</createIndex>
 	</changeSet>
+	
+<changeSet id="3" author="Manoj">
+	 <createTable tableName="Sys_Notifications">
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Code"                type="varchar(20)">	
+				<constraints nullable="false"/>
+			</column>
+			<column name="Description"         type="varchar(100)"/>
+			<column name="NotificationType"    type="varchar(10)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="RecipientType"       type="varchar(50)"/>				
+			<column name="Subject"             type="varchar(500)">			
+				<constraints nullable="false"/>
+			</column>
+			<column name="ContentLocation"        type="varchar(100)"/>	
+			<column name="ContentFileName"        type="varchar(50)"/>	
+			<column name="AttachmentLocation"     type="varchar(100)"/>	
+						  
+			<column name="AttachmentFileNames"    type="varchar(250)"/>	
+			<column name="TriggerQuery"           type="varchar(4000)"/>
+			<column name="CriteriaQuery"          type="varchar(1000)"/>	
+			<column name="Active"                 type="smallint"/>	
+			<column name="Version"             	  type="int" defaultValue="0" />
+			<column name="LastMntBy"           	  type="bigint" />
+			<column name="LastMntOn"           	  type="datetime" />
+			<column name="RecordStatus"        	  type="varchar(50)" />
+			<column name="RoleCode"            	  type="varchar(100)" />
+			<column name="NextRoleCode"        	  type="varchar(200)" />
+			<column name="TaskId"              	  type="varchar(50)" />
+			<column name="NextTaskId"          	  type="varchar(200)" />
+			<column name="RecordType"          	  type="varchar(50)" />
+			<column name="WorkflowId"          	  type="bigint" />			
+</createTable>
+</changeSet>
+
+<changeSet id="4" author="Manoj">
+	<createTable tableName="Sys_Notification_Attributes">
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NotificationId"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name = "Name"           type = "varchar(30)"/>
+			<column name = "Type"           type = "varchar(10)"/>
+			<column name = "Format"         type = "varchar(50)"/>
+			<column name = "Attribute"      type = "smallint" defaultValue="0"/>
+</createTable>
+</changeSet>
+
+<changeSet id="5" author="Manoj">
+		<addForeignKeyConstraint constraintName="fk_sys_ntf_det_Id"
+			baseColumnNames="NotificationId" baseTableName="Sys_Notification_Attributes"
+			referencedTableName="Sys_Notifications" referencedColumnNames="Id" />
+</changeSet>
+
+
+
+<changeSet id="6" author="Manoj">
+	<createTable tableName="Sys_Notification_Execution">
+	
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<column name="NotificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+			<column name = "InstanceId"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			
+			
+			<column name="CreateTime"           	 type="datetime" />
+			<column name="StartTime"           	     type="datetime" />
+			<column name="TotalCount"           	 type="bigint"/>
+			<column name="SuccessCount"           	 type="bigint"/>
+			<column name="FailedCount"           	 type="bigint"/>
+			<column name="Status"           	     type="Char(1)"/> 
+			<column name="EndTime"           	     type="datetime" />
+			
+</createTable>
+</changeSet>
+
+<changeSet id="7" author="Manoj">
+	<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
+	
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<column name="ExecutionId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="NotificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="ProcessingFlag"     type="boolean" defaultValue="0"/>
+			<column name="KeyReference"       type="varchar(20)"/>
+			<column name="Email"              type="varchar(500)"/>
+			<column name="MobileNumber"       type="varchar(500)"/>
+			<column name="NotificationData"   type="blob"/>
+			<column name="Attributes"         type="varchar(500)"/>
+			
+</createTable>
+</changeSet>
+	
+	
+	
+	
 </databaseChangeLog>

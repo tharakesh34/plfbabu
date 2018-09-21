@@ -29,6 +29,7 @@ public class NotificationConstants {
 	public static final String MAIL_MODULE_PROVISION = "PRV";
 	public static final String MAIL_MODULE_MANUALSUSPENSE = "MSP";
 	public static final String MAIL_MODULE_POAUTHORIZATION = "POA";
+	public static final String SYSTEM_NOTIFICATION = "SYS_NOTIFICATION";
 
 	// TAT Alert Notification related
 	public static final String TAT_ALT_CNT = "TAT_ALERT_COUNT";
