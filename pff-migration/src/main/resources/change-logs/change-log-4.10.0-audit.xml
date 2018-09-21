@@ -149,7 +149,7 @@
 	 <modifyDataType tableName="AdtCostOfFundCodes" columnName="active" newDataType="smallint" />
 	</changeSet>
 	
-	 <changeSet id="19.1" author="vijaykumar.l">
+	 <changeSet id="19.2" author="vijaykumar.l" dbms="postgresql">
 	 <modifyDataType tableName="AdtCostOfFunds" columnName="active" newDataType="boolean" />
 	</changeSet>
 	
