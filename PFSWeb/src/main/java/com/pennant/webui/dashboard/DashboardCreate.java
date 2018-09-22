@@ -69,19 +69,17 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.webui.util.GFCBaseListCtrl;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/DashboardDetails/DashboardDetail/dashboardDetailDialog.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/DashboardDetails/DashboardDetail/dashboardDetailDialog.zul file.
  */
 
 public class DashboardCreate extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = -4201689911130684236L;
 	private static final Logger logger = Logger.getLogger(DashboardCreate.class);
 	public ChartDetail chartDetail;
-	private int height = getContentAreaHeight() * 85/100 /2;
+	private int height = getContentAreaHeight() * 85 / 100 / 2;
 	ChartUtil chartUtil = new ChartUtil();
 	private DashboardConfigurationService dashboardConfigurationService;
-	
+
 	private Map<String, DashboardConfiguration> chartMap = new HashMap<String, DashboardConfiguration>();
 	boolean isMaximized = false;
 
@@ -95,24 +93,24 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		logger.debug("Entering ");
 
 		Panel panel = new Panel();
-		panel.setId(info.getDashboardCode());		
+		panel.setId(info.getDashboardCode());
 		chartMap.put(panel.getId(), info);
-		
+
 		isMaximized = false;
 		panel.addEventListener(Events.ON_MAXIMIZE, new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				Panel panel = (Panel)event.getTarget();
-				
-				MaximizeEvent  maximizeEvent = (MaximizeEvent)event;
+				Panel panel = (Panel) event.getTarget();
+
+				MaximizeEvent maximizeEvent = (MaximizeEvent) event;
 				isMaximized = maximizeEvent.isMaximized();
-				
+
 				Portalchildren pc = (Portalchildren) event.getTarget().getParent();
-				
+
 				createComponenet(chartMap.get(panel.getId()), pc, panel);
 			}
 		});
-				
+
 		createComponenet(info, portalchildren, panel);
 	}
 
@@ -123,15 +121,15 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		panel.setCollapsible(true);
 		panel.setClosable(true);
 		panel.setMaximizable(true);
-		panel.setHeight(height+ "px");
-		
+		panel.setHeight(height + "px");
+
 		Panelchildren panelchildren = null;
-		if(panel.getFirstChild() != null && panel.getFirstChild() instanceof Panelchildren) {
+		if (panel.getFirstChild() != null && panel.getFirstChild() instanceof Panelchildren) {
 			panelchildren = (Panelchildren) panel.getFirstChild();
 			Portallayout dashBoardsPortalLayout = (Portallayout) portalchildren.getParent();
 			if (isMaximized) { // for single panel maximize issue
-				dashBoardsPortalLayout.setHeight(height + height +(height/13)+ "px");
-				panel.setHeight(height + height + (height/13)+"px");
+				dashBoardsPortalLayout.setHeight(height + height + (height / 13) + "px");
+				panel.setHeight(height + height + (height / 13) + "px");
 			} else {
 				dashBoardsPortalLayout.setHeight(null);
 				panel.setHeight(height + "px");
@@ -141,40 +139,40 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 			panel.appendChild(panelchildren);
 			portalchildren.appendChild(panel);
 		}
-		
+
 		panelchildren.setSclass("panelchildren_style");
 
 		chartDetail = getChartDetail(info);
-	
+
 		String strXML = chartDetail.getStrXML();
 		strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
 		strXML = StringEscapeUtils.escapeJavaScript(strXML);
 
 		chartDetail.setStrXML(strXML);
 		chartDetail.setChartId(info.getDashboardCode());
-		
-		chartDetail.setChartWidth("100%");		
-		if(isMaximized) {
+
+		chartDetail.setChartWidth("100%");
+		if (isMaximized) {
 			chartDetail.setChartHeight(height + 160 + "px");
 		} else {
 			chartDetail.setChartHeight(height - 50 + "px"); // previously height - 80
-		} 
-		
+		}
+
 		chartDetail.setiFrameHeight("100%");
 		chartDetail.setiFrameWidth("100%");
 
 		setChartDetail(chartDetail);
-		
-		if(panelchildren != null && panelchildren.getChildren() != null) {
+
+		if (panelchildren != null && panelchildren.getChildren() != null) {
 			panelchildren.getChildren().clear();
 		}
 
-		Executions.createComponents("/Charts/Chart.zul", panelchildren, Collections.singletonMap("chartDetail", chartDetail));
+		Executions.createComponents("/Charts/Chart.zul", panelchildren,
+				Collections.singletonMap("chartDetail", chartDetail));
 	}
 
 	/**
-	 * This method prepares chart related data to ChartDetail object and returns
-	 * it.
+	 * This method prepares chart related data to ChartDetail object and returns it.
 	 * 
 	 * @param aDBConfig
 	 * @return
@@ -184,18 +182,18 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		String chartStrXML = "";
 		ChartsConfig chartsConfig = new ChartsConfig(aDBConfig.getCaption(), aDBConfig.getSubCaption(), "", "");
 		aDBConfig.setLovDescChartsConfig(chartsConfig);
-		
+
 		if (StringUtils.isBlank(aDBConfig.getDataXML())) {
 			chartStrXML = getLabelAndValues(aDBConfig);
 		} else {
 			chartStrXML = aDBConfig.getDataXML();
 		}
-		
+
 		ChartDetail chartDetail = new ChartDetail();
 		chartDetail.setStrXML(chartStrXML);
 		ChartUtil chartUtil = new ChartUtil();
 		chartDetail.setChartType(chartUtil.getChartType(aDBConfig));
-		
+
 		logger.debug("Leaving ");
 		return chartDetail;
 
@@ -230,8 +228,7 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		}
 	}
 
-	public void setDashboardConfigurationService(
-			DashboardConfigurationService dashboardConfigurationService) {
+	public void setDashboardConfigurationService(DashboardConfigurationService dashboardConfigurationService) {
 		this.dashboardConfigurationService = dashboardConfigurationService;
 	}
 

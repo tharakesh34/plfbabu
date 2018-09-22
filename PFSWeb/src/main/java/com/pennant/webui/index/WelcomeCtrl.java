@@ -76,7 +76,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	private static final long serialVersionUID = 8242094102118374753L;
-	
+
 	private static final Logger logger = Logger.getLogger(WelcomeCtrl.class);
 	protected Window window_Welcome;
 	protected Button addbtn;
@@ -113,7 +113,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	public void onCreate$window_Welcome(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -133,12 +133,12 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		} catch (Exception e) {
 			logger.error("Error on parsing delay time", e);
 		}
-		
+
 		this.refreshTimer.setDelay(delayTime);
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -151,34 +151,32 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 
 	private int initilizeDashBords(boolean isRefresh) {
 		logger.debug("Entering ");
-		
-		int column = 0 ;
-		int dashboardColIndex = 0 ;
-		if(isRefresh){
+
+		int column = 0;
+		int dashboardColIndex = 0;
+		if (isRefresh) {
 			// Initialize widgets collection list
-			DashBoard dashBoard = getDashboardConfigurationService().getDashBoardData(getUserWorkspace().getLoggedInUser().getUserId(), "");
+			DashBoard dashBoard = getDashboardConfigurationService()
+					.getDashBoardData(getUserWorkspace().getLoggedInUser().getUserId(), "");
 			setDashBoard(dashBoard);
 			doFillDashboardList(getDashBoard());
 			List<ValueLabel> dashboardlist = getDashboardslist();
 			setDashboardslist(dashboardlist);
 			dashBoardPosition = getDashBoard().getDashBoardPosition();
 
-		}else{
+		} else {
 			dashBoardPosition = getCurrentDashBordPositions();
 		}
-		
-		
 
 		this.firstPortalChildColumn.getChildren().clear();
 		this.secondPortalChildColumn.getChildren().clear();
 		this.thirdPortalChildColumn.getChildren().clear();
-		
 
 		for (String key : getDashBoard().getDashboardConfigMap().keySet()) {
 			if (dashBoardPosition.containsKey(key)) {
 				column = dashBoardPosition.get(key).getDashboardCol();
 				dashboardColIndex = dashBoardPosition.get(key).getDashboardColIndex();
-				
+
 				Portalchildren pc = (Portalchildren) dashBoardsPortalLayout.getChildren().get(column);
 				dashboardCreate.createPanel(getDashBoard().getDashboardConfigMap().get(key), pc);
 			}
@@ -194,10 +192,12 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		logger.debug("Entering " + event.toString());
 		int selectedColumnIdx = columnSelect.getSelectedIndex();
 		if (cbDashBordsList.getChildren() != null && cbDashBordsList.getChildren().size() > 0) {
-			if (dashBoardsPortalLayout.getFellowIfAny(cbDashBordsList.getSelectedItem().getValue().toString()) == null) {
+			if (dashBoardsPortalLayout
+					.getFellowIfAny(cbDashBordsList.getSelectedItem().getValue().toString()) == null) {
 				if (dashBoardsPortalLayout.getChildren().size() > selectedColumnIdx) {
 					Portalchildren pc = (Portalchildren) dashBoardsPortalLayout.getChildren().get(selectedColumnIdx);
-					dashboardCreate.createPanel(getDashBoard().getDashboardConfigMap().get(this.cbDashBordsList.getSelectedItem().getValue().toString()), pc);
+					dashboardCreate.createPanel(getDashBoard().getDashboardConfigMap()
+							.get(this.cbDashBordsList.getSelectedItem().getValue().toString()), pc);
 				}
 			}
 		}
@@ -211,13 +211,14 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 */
 	public void onClick$savebtn(Event event) {
 		logger.debug("Entering " + event.toString());
-		getDashboardConfigurationService().savePositions(new ArrayList<DashboardPosition>(getCurrentDashBordPositions().values()), getUserWorkspace().getLoggedInUser().getUserId());
+		getDashboardConfigurationService().savePositions(
+				new ArrayList<DashboardPosition>(getCurrentDashBordPositions().values()),
+				getUserWorkspace().getLoggedInUser().getUserId());
 		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
-	 * This Method Returns Current DashBords on the DeskTop .Follows Observer
-	 * Design Pattern
+	 * This Method Returns Current DashBords on the DeskTop .Follows Observer Design Pattern
 	 * 
 	 * @return Map<String,DashboardPosition>
 	 */
@@ -249,14 +250,14 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	}
 
 	private void setDashboardColIndex(DashboardPosition dashboardPosition) {
-		if(singleColumnBtn != null && singleColumnBtn.isDisabled()) {
+		if (singleColumnBtn != null && singleColumnBtn.isDisabled()) {
 			dashboardPosition.setDashboardColIndex(1);
-		} else if(twoColumnBtn != null && twoColumnBtn.isDisabled()) {
+		} else if (twoColumnBtn != null && twoColumnBtn.isDisabled()) {
 			dashboardPosition.setDashboardColIndex(2);
-		} else if(threeColumnBtn != null && threeColumnBtn.isDisabled()) {
+		} else if (threeColumnBtn != null && threeColumnBtn.isDisabled()) {
 			dashboardPosition.setDashboardColIndex(3);
 		}
-		
+
 	}
 
 	/**
@@ -291,7 +292,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		setDashBoardsLayOut(1);
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * When click on Three column button
 	 * 
@@ -304,7 +305,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * When click on Two column button
 	 * 
@@ -315,25 +315,25 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		setDashBoardsLayOut(2);
 		logger.debug("Leaving");
 	}
-	
-	private void setDashBoardsLayOut(int layOutType){
-		
-		Portalchildren firstChild = (Portalchildren)dashBoardsPortalLayout.getChildren().get(0);
-		Portalchildren secondChild = (Portalchildren)dashBoardsPortalLayout.getChildren().get(1);
-		Portalchildren thirdChild = (Portalchildren)dashBoardsPortalLayout.getChildren().get(2);
-		
-		switch(layOutType){
+
+	private void setDashBoardsLayOut(int layOutType) {
+
+		Portalchildren firstChild = (Portalchildren) dashBoardsPortalLayout.getChildren().get(0);
+		Portalchildren secondChild = (Portalchildren) dashBoardsPortalLayout.getChildren().get(1);
+		Portalchildren thirdChild = (Portalchildren) dashBoardsPortalLayout.getChildren().get(2);
+
+		switch (layOutType) {
 		case 1:
-			
+
 			firstChild.setWidth("100%");
 			secondChild.setWidth("100%");
 			thirdChild.setWidth("100%");
-	
+
 			singleColumnBtn.setDisabled(true);
 			twoColumnBtn.setDisabled(false);
 			threeColumnBtn.setDisabled(false);
-			break ;
-			
+			break;
+
 		case 2:
 			firstChild.setWidth("50%");
 			secondChild.setWidth("50%");
@@ -341,23 +341,23 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 			singleColumnBtn.setDisabled(false);
 			twoColumnBtn.setDisabled(true);
 			threeColumnBtn.setDisabled(false);
-			
-			break ;
 
-		case 3:	
-			
+			break;
+
+		case 3:
+
 			firstChild.setWidth("33%");
 			secondChild.setWidth("33%");
 			thirdChild.setWidth("33%");
-	
+
 			singleColumnBtn.setDisabled(false);
 			twoColumnBtn.setDisabled(false);
 			threeColumnBtn.setDisabled(true);
-			break ;
-			
+			break;
+
 		}
 		initilizeDashBords(false);
-		
+
 	}
 
 	/**
@@ -366,11 +366,11 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @param event
 	 */
 	public void onTimer$refreshTimer(Event event) {
-		
-		if(tabbox == null) {
+
+		if (tabbox == null) {
 			return;
 		}
-		
+
 		if ("tab_Home".equals(tabbox.getSelectedTab().getId())) {
 			this.window_Welcome.invalidate();
 			this.cbDashBordsList.getItems().clear();
@@ -381,8 +381,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	/**
 	 * On Select DashBoard Tab
 	 */
-	public synchronized void onDashBoardTabSelected(Event event)
-			throws Exception {
+	public synchronized void onDashBoardTabSelected(Event event) throws Exception {
 		logger.debug("Entering");
 		initilizeDashBords(true);
 		logger.debug("Leaving");
@@ -418,8 +417,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		return dashboardConfigurationService;
 	}
 
-	public void setDashboardConfigurationService(
-			DashboardConfigurationService dashboardConfigurationService) {
+	public void setDashboardConfigurationService(DashboardConfigurationService dashboardConfigurationService) {
 		this.dashboardConfigurationService = dashboardConfigurationService;
 	}
 }

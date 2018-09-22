@@ -2,12 +2,10 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<script type="text/javascript" charset="UTF-8" src="/Charts/FusionCharts/fusioncharts.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="/Charts/FusionCharts/fusioncharts.charts.js"></script>  
+	<script type="text/javascript" charset="UTF-8" src="/Charts/FusionCharts/fusioncharts.charts.js"></script>
 	<window id="window_Welcome" border="none" apply="${welcomeCtrl}" width="100%" height="100%" sizable="false">
 		<borderlayout id="borderlayoutWelcome">
 			<north border="none" style="padding:2px;">
@@ -29,15 +27,15 @@
 										<radio />
 										<image src="/images/icons/layout-r.png" />
 									</hlayout>
-									<button id="addbtn" label="Add" tooltiptext="Add new Dashboard" dir="reverse"  />
-									<button id="savebtn" label = "SAVE" tooltiptext="Save Dashboard positions"   dir="reverse"/>
+									<button id="addbtn" label="Add" tooltiptext="Add new Dashboard" dir="reverse" />
+									<button id="savebtn" label="SAVE" tooltiptext="Save Dashboard positions" dir="reverse" />
 								</hlayout>
 							</groupbox>
 							<groupbox id="second" closable="true" mold="3d">
 								<caption label="Columns" />
-								<hlayout spacing="20px" style="align:center">	
+								<hlayout spacing="20px" style="align:center">
 									<button id="singleColumnBtn" image="/images/icons/layout.png" />
-									<button id="twoColumnBtn"  image="/images/icons/layout-2-equal.png" />
+									<button id="twoColumnBtn" image="/images/icons/layout-2-equal.png" />
 									<button id="threeColumnBtn" image="/images/icons/layout-3.png" />
 								</hlayout>
 							</groupbox>
@@ -53,6 +51,6 @@
 				</portallayout>
 			</center>
 			<south border="none" style="padding:2px;"></south>
-			</borderlayout>
+		</borderlayout>
 	</window>
 </zk>

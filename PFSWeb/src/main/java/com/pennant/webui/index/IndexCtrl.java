@@ -77,22 +77,22 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
  * This is the controller class for the /WEB-INF/pages/index.zul file.
  */
 public class IndexCtrl<T> extends GFCBaseCtrl<T> {
-	private static final long	serialVersionUID			= -3407055074703929527L;
-	private static final Logger	logger						= Logger.getLogger(IndexCtrl.class);
+	private static final long serialVersionUID = -3407055074703929527L;
+	private static final Logger logger = Logger.getLogger(IndexCtrl.class);
 
-	private static final int	CONTENT_AREA_HEIGHT_OFFSET	= 92;
+	private static final int CONTENT_AREA_HEIGHT_OFFSET = 92;
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Menubar			mainMenuBar;
-	protected Label				label_AppName;
-	protected Image				imgsmallLogo;
-	protected Intbox			currentDesktopHeight;
-	protected Intbox			currentDesktopWidth;
+	protected Menubar mainMenuBar;
+	protected Label label_AppName;
+	protected Image imgsmallLogo;
+	protected Intbox currentDesktopHeight;
+	protected Intbox currentDesktopWidth;
 
-	private boolean				homePageDisplayed			= false;
+	private boolean homePageDisplayed = false;
 
 	public IndexCtrl() {
 		super();
@@ -127,7 +127,8 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		logger.info("User Name: " + user.getUserName());
 
 		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LAST_LOGIN_INFO"))) {
-			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true) .publish(new Event("onChangeLastLogin", null, ""));
+			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true)
+					.publish(new Event("onChangeLastLogin", null, ""));
 		}
 
 		logger.debug("Leaving");

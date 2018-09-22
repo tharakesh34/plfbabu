@@ -59,21 +59,19 @@ import com.pennant.webui.dashboard.dashboardconfiguration.DashboardConfiguration
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/BMTMasters/Nationality/chart.zul file.
+ * This is the controller class for the /WEB-INF/pages/BMTMasters/Nationality/chart.zul file.
  */
 public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 	private static final long serialVersionUID = 5012323906026616623L;
 	private static final Logger logger = Logger.getLogger(ChartSimulatorCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_chart_simulator;     // autoWired
+	protected Window window_chart_simulator; // autoWired
 	protected ChartDetail chartDetail; // autoWired
-	protected Div    divFrame;
+	protected Div divFrame;
 	protected Button btnClose;
 	protected DashboardConfigurationDialogCtrl dashboardConfigurationDialogCtrl;
 
@@ -87,11 +85,10 @@ public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Nationality object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Nationality object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -108,34 +105,37 @@ public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 
 		}
 		if (arguments.containsKey("dashboardConfigurationDialogCtrl")) {
-			this.dashboardConfigurationDialogCtrl = (DashboardConfigurationDialogCtrl)arguments.get("dashboardConfigurationDialogCtrl");
+			this.dashboardConfigurationDialogCtrl = (DashboardConfigurationDialogCtrl) arguments
+					.get("dashboardConfigurationDialogCtrl");
 
 		}
-		if(this.chartDetail!=null){
+		if (this.chartDetail != null) {
 			doShowChart(this.chartDetail);
 			this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog.setVisible(false);
-			this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog.appendChild(this.window_chart_simulator);
+			this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog
+					.appendChild(this.window_chart_simulator);
 		}
 		setDialog(DialogType.EMBEDDED);
 		logger.debug("Leaving ");
 	}
 
-	public void doShowChart(ChartDetail chartDetail){
+	public void doShowChart(ChartDetail chartDetail) {
 		logger.debug("Entering ");
 
-		if(this.chartDetail!=null){
-				divFrame.setHeight("100%");
-				// new code to display chart by skipping jsps
-				String strXML = chartDetail.getStrXML(); 
-				strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
-				strXML = StringEscapeUtils.escapeJavaScript(strXML);
-				chartDetail.setStrXML(strXML);
+		if (this.chartDetail != null) {
+			divFrame.setHeight("100%");
+			// new code to display chart by skipping jsps
+			String strXML = chartDetail.getStrXML();
+			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
+			strXML = StringEscapeUtils.escapeJavaScript(strXML);
+			chartDetail.setStrXML(strXML);
 
-				Executions.createComponents("/Charts/Chart.zul", divFrame,
-						Collections.singletonMap("chartDetail", chartDetail));
-			}
-			logger.debug("Leaving ");
+			Executions.createComponents("/Charts/Chart.zul", divFrame,
+					Collections.singletonMap("chartDetail", chartDetail));
+		}
+		logger.debug("Leaving ");
 	}
+
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
@@ -148,14 +148,13 @@ public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 			this.window_chart_simulator.onClose();
 			this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog.setVisible(true);
 			//This code is fix for fire fox .for code mirror became disable after any event .
-			Codemirror remarks=(Codemirror) this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog.getFellow("remarks");
+			Codemirror remarks = (Codemirror) this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog
+					.getFellow("remarks");
 			remarks.setReadonly(false);
 		} catch (final WrongValuesException e) {
 			throw e;
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
 
-} 
+}
