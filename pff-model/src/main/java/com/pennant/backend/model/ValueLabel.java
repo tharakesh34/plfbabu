@@ -42,22 +42,25 @@
 */
 package com.pennant.backend.model;
 
+import java.io.Serializable;
+
 import org.zkoss.util.resource.Labels;
 
-
-public class ValueLabel {
+public class ValueLabel implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String value;
 	private String label;
-	
+
 	public ValueLabel(String newValue, String newLabel) {
-		value = newValue;
-		label = newLabel;
+		this.value = newValue;
+		this.label = newLabel;
 	}
+
 	public ValueLabel() {
-		value = "#";
-		label = Labels.getLabel("common.Select");
+		this.value = "#";
+		this.label = Labels.getLabel("common.Select");
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
@@ -73,5 +76,4 @@ public class ValueLabel {
 	public void setValue(String string) {
 		value = string;
 	}
-
 }

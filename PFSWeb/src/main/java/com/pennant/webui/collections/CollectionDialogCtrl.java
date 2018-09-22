@@ -1,11 +1,11 @@
 package com.pennant.webui.collections;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -28,38 +28,34 @@ import com.pennant.backend.model.collection.Collection;
 import com.pennant.backend.service.collection.CollectionService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennanttech.bajaj.process.collections.CollectionProcess;
 import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.CollectionProcess;
 
 /**
  * This is the controller class for the /WEB-INF/pages/DataExtraction/DataExtractionList.zul file.
  * 
  */
 public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(CollectionDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(CollectionDialogCtrl.class);
 
-	protected Window					window_CollectionDialog;
-	protected Borderlayout				borderLayout_CollectionDialog;
+	protected Window window_CollectionDialog;
+	protected Borderlayout borderLayout_CollectionDialog;
 
-	protected Listbox					listBoxCollections;
-	protected Button					btn_Start;
-	protected Button					btn_Restart;
-	protected Combobox					interfaceName;
-	protected Timer						timer;
-	
-	private   Thread 					thread = null; 
+	protected Listbox listBoxCollections;
+	protected Button btn_Start;
+	protected Button btn_Restart;
+	protected Combobox interfaceName;
+	protected Timer timer;
 
 	private static ArrayList<ValueLabel> collections;
 	private List<ValueLabel> collectionTablesList = getCollectionTableNames();
-
-	private transient CollectionService	collectionService;
-	@Autowired(required=false)
+	private transient CollectionService collectionService;
 	private transient CollectionProcess collectionProcess;
-	
-	
+
 	protected int curOdDays = 0;
 
 	/**
@@ -82,20 +78,24 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	 */
 	public void onCreate$window_CollectionDialog(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		try {
 			setPageComponents(this.window_CollectionDialog);
 
 			fillComboBox(this.interfaceName, CollectionConstants.INTERFACE_COLLECTION, this.collectionTablesList, "");
 			readOnlyComponent(true, this.interfaceName);
 			this.borderLayout_CollectionDialog.setHeight(getBorderLayoutHeight());
-			
+
 			// it will run when we run the EOD
 			int executionCount = doCheckCollectionsExecution();
+			logger.debug("Execution Count " + executionCount);
+			logger.debug("arguments.containsKey " + arguments.containsKey("EOD"));
+
 			if (arguments.containsKey("EOD") && executionCount == 0) {
+				logger.debug("Entgered Collections Process " + executionCount);
 				doStartCollections("EOD");
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showError(e);
@@ -104,14 +104,15 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * timer event
+	 * 
 	 * @param event
 	 */
 	public int doCheckCollectionsExecution() {
 		logger.debug("Entering");
-		
+
 		int count = getCollectionService().getCollectionExecutionSts();
 
 		if (count > 0) {
@@ -123,14 +124,14 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 
 		List<Collection> collectionsList = getCollectionService().getCollectionTablesList();
 		doFillCollectionsList(collectionsList);
-		
+
 		logger.debug("Leaving");
 		return count;
 	}
-	
-		
+
 	/**
 	 * timer event
+	 * 
 	 * @param event
 	 */
 	public void onTimer$timer(Event event) {
@@ -140,15 +141,16 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 
 	/**
 	 * fill the Collection tables list with status
+	 * 
 	 * @param collections
 	 */
 	public void doFillCollectionsList(List<Collection> collections) {
 		logger.debug("Entering");
 
 		this.listBoxCollections.getItems().clear();
-		
+
 		if (collections != null && !collections.isEmpty()) {
-			
+
 			for (Collection collection : collections) {
 				Listitem item = new Listitem();
 				Listcell lc;
@@ -156,7 +158,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 				//Table Name
 				lc = new Listcell(collection.getTableName());
 				lc.setParent(item);
-			
+
 				// Status
 				lc = new Listcell(collection.getStatus());
 				if (StringUtils.equals("FAILED", collection.getStatus())) {
@@ -164,13 +166,13 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 					imgFail.setStyle("cursor:hand;cursor:pointer");
 					imgFail.addForward("onClick", window_CollectionDialog, "onClickError", collection);
 					imgFail.setParent(lc);
-					if(timer.isRunning()){
+					if (timer.isRunning()) {
 						timer.stop();
 					}
 					this.btn_Start.setDisabled(false);
-				} 
+				}
 				lc.setParent(item);
-				
+
 				//Inserted count
 				if (StringUtils.isBlank(collection.getStatus())) {
 					lc = new Listcell("");
@@ -178,17 +180,17 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 					lc = new Listcell(String.valueOf(collection.getInsertCount()));
 				}
 				lc.setParent(item);
-				
+
 				this.listBoxCollections.appendChild(item);
 			}
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClickError(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Collection collections = (Collection) event.getData();
 
 		if (collections != null && collections.getErrorMessage() != null) {
@@ -197,7 +199,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Start the process
 	 */
@@ -207,32 +209,38 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Start the process
 	 */
 	public void doStartCollections(String event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (this.collectionProcess != null) {
 			this.btn_Start.setDisabled(true);
-			
+
 			String interfaceValue = doWriteComponentsToBean();
 			this.timer.start();
-			if(event.equals("EOD")){
-				this.collectionProcess.setAppDate(DateUtility.getLastBusinessdate());
-			}else{
-				this.collectionProcess.setAppDate(DateUtility.getAppDate());
+
+			/**
+			 * Both EOD and Manual Collection Run will get the data based on the LastBusinessdate only Micro EOD
+			 * completed successfully and any Month end activity failed then application date changed </br>
+			 * But Collection Extraction need to be run on LastBusinessdate only.
+			 */
+
+			CollectionProcessThread collectionProcessThread = null;
+			try {
+				collectionProcessThread = new CollectionProcessThread(interfaceValue, this.curOdDays,
+						DateUtility.getLastBusinessdate(), getUserWorkspace().getLoggedInUser().getUserId());
+				new Thread(new CollectionProcessThread(collectionProcessThread)).start();
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				throw new InterfaceException("Collection", e.getMessage());
 			}
-			this.collectionProcess.setInterfaceName(interfaceValue);
-			this.collectionProcess.setCurOdDays(this.curOdDays);
-			this.collectionProcess.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			
-			this.thread = new Thread(this.collectionProcess);
-			this.thread.start();
+
 			this.timer.setDelay(1000);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -241,9 +249,9 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	 */
 	public void onClick$btn_Restart(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		doWriteComponentsToBean();
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -252,13 +260,13 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	 */
 	private String doWriteComponentsToBean() {
 		logger.debug(Literal.ENTERING);
-		
+
 		String collections = null;
 
 		doSetValidations();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			collections = getComboboxValue(this.interfaceName);
 		} catch (WrongValueException we) {
@@ -268,18 +276,18 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
-			
+
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			
+
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
-			
+
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return collections;
 	}
 
@@ -288,9 +296,10 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	 */
 	private void doSetValidations() {
 		logger.debug(Literal.ENTERING);
-		
-		this.interfaceName.setConstraint(new PTListValidator(Labels.getLabel("label_CollectionDialog_InterfaceName.value"), this.collectionTablesList, true));
-		
+
+		this.interfaceName.setConstraint(new PTListValidator(
+				Labels.getLabel("label_CollectionDialog_InterfaceName.value"), this.collectionTablesList, true));
+
 		logger.debug("Leaving");
 
 	}
@@ -300,12 +309,12 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.interfaceName.setConstraint("");
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	public static List<ValueLabel> getCollectionTableNames() {
 		if (collections == null) {
 			collections = new ArrayList<>(1);
@@ -333,4 +342,32 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	public void setCollectionService(CollectionService collectionService) {
 		this.collectionService = collectionService;
 	}
+
+	public CollectionProcess getCollectionProcess() {
+		return collectionProcess;
+	}
+
+	public void setCollectionProcess(CollectionProcess collectionProcess) {
+		this.collectionProcess = collectionProcess;
+	}
+
+	public class CollectionProcessThread implements Runnable {
+		private String interfaceValue;
+		private int curOdDays;
+		private Date appDate;
+		private long lastMntBy;
+
+		public CollectionProcessThread(Object... objects) {
+			this.interfaceValue = (String) objects[0];
+			this.curOdDays = (int) objects[1];
+			this.appDate = (Date) objects[2];
+			this.lastMntBy = (long) objects[3];
+		}
+
+		@Override
+		public void run() {
+			collectionProcess.process(interfaceValue, curOdDays, appDate, lastMntBy);
+		}
+	}
+
 }

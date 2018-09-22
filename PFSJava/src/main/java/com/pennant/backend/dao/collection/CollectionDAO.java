@@ -54,6 +54,6 @@ import com.pennant.backend.model.collection.Collection;
 public interface CollectionDAO {
 
 	List<Collection> getCollectionTablesList();
-	int getCollectionExecutionSts();
 
+	int getCollectionExecutionSts();
 }

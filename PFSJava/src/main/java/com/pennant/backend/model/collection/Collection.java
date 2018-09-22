@@ -49,14 +49,14 @@ package com.pennant.backend.model.collection;
 public class Collection {
 
 	private String tableName;
-	private String status ="";
+	private String status = "";
 	private String errorMessage = "";
 	private long insertCount = 0;
 
 	public Collection() {
 		super();
 	}
-	
+
 	public String getTableName() {
 		return tableName;
 	}
