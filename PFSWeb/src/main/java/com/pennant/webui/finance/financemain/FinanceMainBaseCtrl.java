@@ -195,6 +195,7 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -7122,7 +7123,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				engine.setTemplate("CreditAssessmentSheet" + PennantConstants.DOC_TYPE_WORD_EXT);
 				engine.loadTemplate();
 				engine.mergeFields(agreementGeneration.getAggrementData(getFinanceDetail(),
-						financeReferenceDetail.getLovDescAggImage(), getUserWorkspace().getUserDetails()));
+						financeReferenceDetail.getLovDescAggImage(), getUserWorkspace().getUserDetails(),false));
 
 				details.setDocModule(FinanceConstants.MODULE_NAME);
 				details.setDocCategory("CRASSMNT");
@@ -7496,6 +7497,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for(DocumentDetails docDetail:existingUploadDocList){
 				docCatMap.put(docDetail.getDocCategory(), docDetail);
 			}
+			//story #800
+			// Improve the performance of auto download of agreements
+			AgreementDetail agreementDetail=getAgreementGeneration().getAggrementData(financeDetail, StringUtils.EMPTY,
+					getUserWorkspace().getUserDetails(),true);
+			
 			for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
 				long id = financeReferenceDetail.getFinRefId();
 				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
@@ -7523,7 +7529,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if ("Y".equals(templateValidateMsg)) {
 								if (!isTemplateError) {
 									documentDetails = autoGenerateAgreement(financeReferenceDetail, aFinanceDetail,
-											agreementDefinition, existingUploadDocList, docCatMap);
+											agreementDefinition, existingUploadDocList, docCatMap,agreementDetail);
 								}
 							} else {
 								accMsg = accMsg + "  " + templateValidateMsg;
@@ -18340,7 +18346,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//
 	
 	// tasks #503 Auto Generation of Agreements
-	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata ,FinanceDetail financeDetail,AgreementDefinition agreementDefinition,List<DocumentDetails> existingUploadDocList,Map docCatMap ) throws Exception 
+	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata ,FinanceDetail financeDetail,AgreementDefinition agreementDefinition,List<DocumentDetails> existingUploadDocList,Map docCatMap,AgreementDetail detail) throws Exception 
 	{
 		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
@@ -18362,8 +18368,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				AgreementEngine engine = new AgreementEngine(aggPath);
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
-				engine.mergeFields(getAgreementGeneration().getAggrementData(financeDetail, frefdata.getLovDescAggImage(),
-						getUserWorkspace().getUserDetails()));
+				engine.mergeFields(detail);
 				getAgreementGeneration().setExtendedMasterDescription(financeDetail, engine);
 				getAgreementGeneration().setFeeDetails(financeDetail, engine);
 				

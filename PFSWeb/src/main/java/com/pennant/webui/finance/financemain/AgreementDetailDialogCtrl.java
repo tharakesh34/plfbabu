@@ -439,7 +439,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						engine.setTemplate(templateName);
 						engine.loadTemplate();
 						
-						engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(), getUserWorkspace().getUserDetails()));
+						engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(), getUserWorkspace().getUserDetails(),false));
 						
 						getAgreementGeneration().setExtendedMasterDescription(detail, engine);
 						getAgreementGeneration().setFeeDetails(detail, engine);
