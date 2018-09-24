@@ -95,8 +95,8 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		try {
-			LoggedInUser user = getUserWorkspace().getLoggedInUser();			
-			userName = user.getUserName();			
+			LoggedInUser user = getUserWorkspace().getLoggedInUser();
+			userName = user.getUserName();
 			listSecRoles = getUserWorkspace().getSecurityRoles();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -130,8 +130,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 		getMsgWindow();
 		((Textbox) getMsgWindow().getFellow("tb")).setValue(getMsg());
 	}
-	
-	
+
 	public void onClick$messageBox(Event event) {
 		// 1. Reset to normal image
 		messageBox.setImage("/images/icons/message2_16x16.gif");
@@ -150,16 +149,16 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 		this.messageBox.setTooltiptext(Labels.getLabel("common.Message.Open"));
 		this.messageBox.setStyle("text-decoration:none;color:#385D8A;");
 		this.messageBox.appendChild(new Label(getMsg()));
-			
+
 		if (License.getCopyRight() != null) {
 			copyRight.setValue(License.getCopyRight());
 		} else {
 			copyRight.setValue(App.getVersion());
 		}
 
-		
 		StringBuilder builder = new StringBuilder();
-		List<OfflineUsersMessagesBackup> offlineMessages = messagesService.getOfflineUsersMessagesBackupByUsrId(userName);
+		List<OfflineUsersMessagesBackup> offlineMessages = messagesService
+				.getOfflineUsersMessagesBackupByUsrId(userName);
 		if (offlineMessages != null && offlineMessages.size() > 0) {
 			for (OfflineUsersMessagesBackup offlineMessage : offlineMessages) {
 				builder.append(offlineMessage.getMessage());
@@ -186,13 +185,11 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			msgWindow.setDraggable("false");
 			msgWindow.setId("msgWindow");
 			Style contentStyle = new Style();
-			contentStyle
-					.setContent(".messageWindow .z-window-header {font-size: 13px;font-weight: bold;"
-							+ "font-style: normal;color: white;}");
+			contentStyle.setContent(".messageWindow .z-window-header {font-size: 13px;font-weight: bold;"
+					+ "font-style: normal;color: white;}");
 			contentStyle.setParent(msgWindow);
 			msgWindow.setTitle("Messages");
-			msgWindow
-					.setStyle("padding: 2px;background: #5A87B5;overflow: hidden; border:1px solid #5A87B5;");
+			msgWindow.setStyle("padding: 2px;background: #5A87B5;overflow: hidden; border:1px solid #5A87B5;");
 			msgWindow.setSizable(true);
 			msgWindow.setClosable(true);
 			msgWindow.setWidth("400px");
@@ -201,11 +198,11 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			msgWindow.addEventListener("onClose", new EventListener<Event>() {
 				@Override
 				public void onEvent(Event event) throws Exception {
-					if(msgWindow!=null){
-					msgWindow.detach();
-					msgWindow=null;
+					if (msgWindow != null) {
+						msgWindow.detach();
+						msgWindow = null;
 					}
-					
+
 				}
 			});
 			msgWindow.setPosition("bottom, left");
@@ -222,7 +219,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 		}
 		return msgWindow;
 	}
-	
+
 	/**
 	 * when clicks on "copyRightInfo" hyper link
 	 * 
@@ -230,13 +227,13 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	 */
 	public void onClick$copyRightInfo(Event event) {
 		Map<String, String> arg = new HashedMap<>();
-		
+
 		if (App.NAME.contains("Lending")) {
 			arg.put("productLogo", "images/plf_product_logo.png");
 		} else {
 			arg.put("productLogo", "images/pff_product_logo");
 		}
-		
+
 		Executions.createComponents("~./pages/lic/CopyRight.zul", null, arg);
 	}
 
