@@ -67,21 +67,20 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
  * This is the controller class for the /WEB-INF/loginDialog.zul file.
  */
 public class LoginDialogCtrl extends WindowBaseCtrl {
-	private static final long	serialVersionUID	= -71422545405325060L;
-	private static final Logger	logger				= Logger.getLogger(LoginDialogCtrl.class);
+	private static final long serialVersionUID = -71422545405325060L;
+	private static final Logger logger = Logger.getLogger(LoginDialogCtrl.class);
 
 	protected Window loginwin;
 	protected Textbox txtbox_Username;
 	protected Textbox txtbox_Password;
 	protected Button btnReset;
 	protected Textbox txtbox_randomKey;
-	
+
 	protected Row licenceMessageRow;
 	protected Label licenceMessage;
 	protected A licenceMessageIcon;
 	protected Label copyRight;
 	protected A copyRightInfo;
-	
 
 	/**
 	 * Default constructor.
@@ -110,8 +109,8 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 			logger.warn("Unable to get session attribute 'SATTR_RANDOM_KEY':", ex);
 		}
 
-		txtbox_randomKey.setValue(randomKey);		
-		setLicenceMessage();		
+		txtbox_randomKey.setValue(randomKey);
+		setLicenceMessage();
 		logger.info(Literal.LEAVING);
 	}
 
@@ -123,7 +122,7 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	public void onClick$btnReset(Event event) {
 		Executions.sendRedirect("loginDialog.zul");
 	}
-	
+
 	/**
 	 * when clicks on "copyrightInfo" hyper link
 	 * 
@@ -131,20 +130,19 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	 */
 	public void onClick$copyRightInfo(Event event) {
 		Map<String, String> arg = new HashedMap<>();
-		
+
 		if (App.NAME.contains("Lending")) {
 			arg.put("productLogo", "images/plf_product_logo.png");
 		} else {
 			arg.put("productLogo", "images/pff_product_logo");
 		}
-		
+
 		arg.put("productLogo", "images/plf_product_logo.png");
 		Executions.createComponents("~./pages/lic/CopyRight.zul", this, arg);
 	}
-	
-	
+
 	public void setLicenceMessage() {
-		
+
 		boolean licenseFound = false;
 		try {
 			License.validateLicense();
