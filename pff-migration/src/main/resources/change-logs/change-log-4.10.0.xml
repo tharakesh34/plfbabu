@@ -9521,7 +9521,7 @@ UNION ALL
 		<column name="ApplicationNo" type="varchar(50)"/>
 	</addColumn>
 	</changeSet>
-	<changeSet id="123.2.1_Pre" author="Jayant">
+	<changeSet id="123.2.1_Pre" author="Jayant" dbms="postgresql">
 		<sql>
 			select deps_save_and_drop_dependencies('plf','customers_aview');
 		</sql>
@@ -9742,7 +9742,7 @@ UNION ALL
      LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd	
 		</createView>
 	</changeSet>
-	<changeSet id="123.2.1_Post" author="Jayant">
+	<changeSet id="123.2.1_Post" author="Jayant" dbms="postgresql">
 		<sql>
 			select deps_restore_dependencies('plf','customers_aview');
 		</sql>
