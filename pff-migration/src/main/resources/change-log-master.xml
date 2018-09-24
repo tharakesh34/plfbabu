@@ -16,6 +16,7 @@
 	<include file="change-logs/change-log-4.7.17.xml" />
 	<include file="change-logs/change-log-4.9.0.xml" />
 	<include file="change-logs/change-log-4.10.0.xml"/>
+	<include file="change-logs/change-log-notification-engine.xml"/>
 	<include file="change-logs/change-log-organizations.xml"/>
 	<include file="change-logs/change-log-Collateral.xml"/>
 </databaseChangeLog>
