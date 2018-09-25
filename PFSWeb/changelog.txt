@@ -1,3 +1,38 @@
+pff 4.10.4.7, 2018-09-24
+ --------------
+-bugs #796 Issue while bulk upload, mode is cheque or DD cheque or DD number is Not updated. 
+-Story #426 System Notifications.
+-Story  # 800 Improve the performance of auto download of agreements.
+
+pff 4.10.4.6, 2018-09-20
+ --------------
+-bugs #782 While Delete the Existing record in insurance menu getting "41006 Cannot be deleted" message.
+-bugs #781 Fill all mandatory fields,While Click on save button getting unhandled exception in Cost of Fund Rates menu.
+-bugs #779 Click on Print button in (FI,LI, RCU ,TV, Direct Selling Agent, Direct Market Agent.Getting "Error in Configuring "message.
+-bugs #777 Getting unhandled exception while clicking on print button In Industries menu Disable notifications.
+-bugs #776 Getting Module name as sysem Masters rather than System Masters while clicking on  print button.
+-bugs #775 Populating SME as financial in category after saving a customer type. Disable notifications.
+-bugs #772 Getting unhandled exception while clicking on cancel upfront fee menu.
+-bugs  #759 Getting unhandled exception while adding income details  in Sampling is fixed.
+-bugs #768  When no promotion code is selected while creating a loan, system is not allowing to proceed .
+-bugs #761 GST on Manual Advise.
+-story #758 Application No.
+
+pff 4.10.4.5, 2018-09-19
+ --------------
+-bugs #754 Update Customer Document API Issue.
+-story #752 Remove the dependency of pff-interface-bajaj from core
+    
+pff 4.10.4.4, 2018-09-17
+ --------------
+-bugs #746 Issue in Schedule payment API Service
+-bugs#745 sequence not generating in reason module  
+ 
+pff 4.10.4.3, 2018-09-17
+ --------------
+ -PSD# 128700: DRE Upload File Name 
+ -story #744 Cancel Disbursement Accounting.
+
 pff 4.10.4.2, 2018-09-11
  --------------
 -bug #743   Auto Generate flag is not selected but Document Type Field is in Enable Mode in Agreement Master.
