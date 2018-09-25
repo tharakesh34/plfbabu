@@ -162,6 +162,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label custCOBDesc;
 	protected Label custGenderCodeDesc;
 	protected Label custGenderCodeDescc;
+	protected Label retail_applicationNo;
+	protected Label corp_applicationNo;
 	protected Label noOfDependents;
 	protected Label custCtgCode;
 	protected Checkbox salaryTransferred;
@@ -724,6 +726,12 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				i++;
 			}
 			custGenderCodeDescc.setValue(aCustomer.getLovDescCustGenderCodeName());
+			if (StringUtils.isEmpty(aCustomer.getApplicationNo())) {
+				retail_applicationNo.setValue(aCustomer.getApplicationNo());
+			}else{
+				retail_applicationNo.setStyle("color:orange; font:12px");
+				retail_applicationNo.setValue("- - - - - - - - -");
+			}
 			if (aCustomer.getLovDescCustGenderCodeName() != null) {
 				i++;
 			}
@@ -846,6 +854,12 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			custDftBranchh.setValue(aCustomer.getCustDftBranch());
 			if (aCustomer.getCustDftBranch() != null) {
 				i++;
+			}
+			if (!StringUtils.isEmpty(aCustomer.getApplicationNo())) {
+				corp_applicationNo.setValue(aCustomer.getApplicationNo());
+			}else{
+				corp_applicationNo.setStyle("color:orange; font:12px");
+				corp_applicationNo.setValue("- - - - - - - - -");
 			}
 			custDftBranchh.setValue(aCustomer.getCustDftBranch() + ", ");
 			corpcustDftBranchDesc.setValue(aCustomer.getLovDescCustDftBranchName());

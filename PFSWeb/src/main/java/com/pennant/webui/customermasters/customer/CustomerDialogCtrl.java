@@ -2300,7 +2300,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (!this.applicationNo.isReadonly()) {
 			this.applicationNo.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_CustomerDialog_ApplicationNo.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, false));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
 		}
 		
 		// below fields are conditional mandatory

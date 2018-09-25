@@ -918,12 +918,17 @@
 													<label
 														value="${c:l('label_CustomerDialog_CustGenderCode.value')}"
 														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_ApplicationNo.value')}"
+														sclass="labelfont" />
 												</row>
 												<row>
 													<label
 														id="custSubSegment" sclass="labelweightt" />
 													<label
 														id="custGenderCodeDescc" sclass="labelweightt" />
+													<label
+														id="retail_applicationNo" sclass="labelweightt" />
 												</row>
 												<row>
 													<space />
@@ -1143,6 +1148,9 @@
 													<label
 														value="${c:l('label_CustomerDialog_CustDateOfIncorporation.value')}"
 														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_ApplicationNo.value')}"
+														sclass="labelfont" />
 												</row>
 												<row>
 													<hlayout
@@ -1177,6 +1185,8 @@
 														id="custCRCPR3" sclass="labelweightt" />
 													<label
 														id="corpcustDOBB" sclass="labelweightt" />
+													<label
+														id="corp_applicationNo" sclass="labelweightt" />
 												</row>
 												<row>
 													<space />
