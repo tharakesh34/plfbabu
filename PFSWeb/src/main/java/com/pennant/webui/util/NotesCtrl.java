@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -568,7 +569,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
-						+ note.getRemarks() + " </font> <br>  ";
+						+ StringEscapeUtils.escapeHtml(note.getRemarks()) + " </font> <br>  ";
 				String date = DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + usrAlign + ";'>"
@@ -665,14 +666,9 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				//4
 				lc = new Listcell();
 				Html html = new Html();
-				html.setContent(note.getRemarks());
+				html.setContent(StringEscapeUtils.escapeHtml(note.getRemarks()));
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
-				/*
-				 * Html html = new Html(); String content =
-				 * "<p class='triangle-right left'> <font style='font-weight:bold;'> "
-				 * +note.getRemarks()+" </font> <br>  "; html.setContent(content); lc.appendChild(html);
-				 */
 				lc.setParent(item);
 
 				listboxNotes.appendChild(item);
