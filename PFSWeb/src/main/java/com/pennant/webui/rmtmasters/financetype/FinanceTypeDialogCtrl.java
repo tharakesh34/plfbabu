@@ -1532,7 +1532,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		appendAccountingDetailsTab();
 		appendPartnerBankTab();
 
-		if (this.isOverdraft || ImplementationConstants.ALLOW_INSURANCE) {
+		if (ImplementationConstants.ALLOW_INSURANCE) {
 			appendInsuranceDetailsTab();
 		}
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());

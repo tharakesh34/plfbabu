@@ -696,7 +696,7 @@
 															id="legalRequired" checked="false"/>
 													</hbox>
 												</row>
-												<row id="row_Connector">
+												<row id="row_Connector" visible="false">
 													<label
 														id="label_FinanceMainDialog_Connector"
 														value="${c:l('label_FinanceMainDialog_Connector.value')}" />

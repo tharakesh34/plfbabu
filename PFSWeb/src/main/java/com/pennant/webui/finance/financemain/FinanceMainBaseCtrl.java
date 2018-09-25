@@ -1034,8 +1034,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				LengthConstants.LEN_MASTER_CODE);
 
 		this.finCcy.setProperties("Currency", "CcyCode", "CcyDesc", true, LengthConstants.LEN_CURRENCY);
+		
+		boolean isOverdraft = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			isOverdraft = true;
+		}
 
-		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible)) {
+		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible) && !isOverdraft) {
 			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 4);
 			List<Long> eligibilityIdsList = new ArrayList<>();
 			if(getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods() != null && 
@@ -1366,10 +1371,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(financeType);
 
-		boolean isOverdraft = false;
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-			isOverdraft = true;
-		}
 		if (isOverdraft) {
 			this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 			if (financeType.isDroplineOD() || StringUtils.isNotEmpty(financeMain.getDroplineFrq())) {
@@ -1716,16 +1717,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Advance Payment Detail Tab Addition
 		
-		  if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-		  aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))) ||
-		  StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner) ||
-		  StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
-		   
-		  if (isTabVisible(StageTabConstants.AdvancePayment)) {
+		if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))) ||
+				StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner) ||
+				StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
+
+			if (isTabVisible(StageTabConstants.AdvancePayment)) {
 				appendAdvancePaymentsDetailTab(onLoad);
 			}
-		  }
-		 
+		}
 		
 		//Asset Evaluation Tab Addition
 		if (StringUtils.isEmpty(moduleDefiner) && StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)
