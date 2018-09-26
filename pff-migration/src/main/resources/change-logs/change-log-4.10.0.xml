@@ -10568,5 +10568,11 @@ JOIN BMTCustCategories t2 ON t2.custctgcode = t1.custtypectg
 JOIN BMTCustCategories t2 ON t2.custctgcode = rmtcusttypes.custtypectg
 		</createView>
 		</changeSet>
-	
+<changeSet id="129" author="Ganesh.p">
+	<comment>Cheque or dd Number related error in ManualPayments bulkupload</comment>
+		<sql>
+			delete from ErrorDetails where code ='99018';
+			INSERT INTO ErrorDetails VALUES('99018','EN','E','For paymentMode {0} legth of the Transaction Reference should not be more than {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+</changeSet>
 </databaseChangeLog>
