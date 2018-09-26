@@ -56,6 +56,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -183,6 +184,34 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			feeWaiverDetail = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	@Override
+	public List<FeeWaiverDetail> getFeeWaiverEnqDetailList(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
+		feeWaiverHeader.setFinReference(finReference);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" Select FD.WaiverDetailId, FD.WaiverId, FD.AdviseId, FD.FinODSchdDate, FD.ReceivableAmount,");
+		selectSql.append(" FD.ReceivedAmount, FD.WaivedAmount, FD.BalanceAmount, FD.CurrWaiverAmount, FD.FeeTypeCode,FD.FeeTypeDesc,FH.valueDate,SU.usrFName waivedBy");
+		selectSql.append(" From  FeeWaiverDetails FD inner join FeeWaiverHeader FH  on FH.WAIVERID=FD.WAIVERID ");
+		selectSql.append(" inner join SecUsers SU on FH.lastMntBy=SU.usrid ");
+		selectSql.append(" where FH.WAIVERID in (select WAIVERID from FeeWaiverHeader where FinReference = :FinReference) order by FeeTypeCode ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);
+		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FeeWaiverDetail.class);
+
+		try {
+			return jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			feeWaiverHeader = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return null;

@@ -251,22 +251,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 	
 	public FeeWaiverHeader getFeeWiaverEnquiryList(FeeWaiverHeader feeWaiverHeader) {
-		List<FeeWaiverDetail> details = new ArrayList<>();
-		List<FeeWaiverHeader> feeWaiverHeaderList = feeWaiverHeaderDAO
-				.getFeeWaiverHeaderEnqByFinRef(feeWaiverHeader.getFinReference(), "_AView");
-		if (feeWaiverHeaderList != null && feeWaiverHeaderList.size() > 0) {
-			for (FeeWaiverHeader waiverHeader : feeWaiverHeaderList) {
-				List<FeeWaiverDetail> detail = feeWaiverDetailDAO.getFeeWaiverByWaiverId(waiverHeader.getWaiverId(),
-						"");
-				for (FeeWaiverDetail feeWaiverDetail : detail) {
-					feeWaiverDetail.setValueDate(waiverHeader.getValueDate());
-				}
-				
-				details.addAll(detail);
-
-			}
-			feeWaiverHeader.setFeeWaiverDetails(details);
-		}
+		List<FeeWaiverDetail> details = feeWaiverDetailDAO.getFeeWaiverEnqDetailList(feeWaiverHeader.getFinReference());
+		feeWaiverHeader.setFeeWaiverDetails(details);
 		return feeWaiverHeader;
 	}
 	

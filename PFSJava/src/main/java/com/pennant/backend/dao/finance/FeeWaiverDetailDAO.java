@@ -8,4 +8,6 @@ import com.pennant.backend.model.finance.FeeWaiverDetail;
 public interface FeeWaiverDetailDAO extends BasicCrudDao<FeeWaiverDetail> {
 
 	List<FeeWaiverDetail> getFeeWaiverByWaiverId(long waiverId, String type);
+
+	List<FeeWaiverDetail> getFeeWaiverEnqDetailList(String finReference);
 }

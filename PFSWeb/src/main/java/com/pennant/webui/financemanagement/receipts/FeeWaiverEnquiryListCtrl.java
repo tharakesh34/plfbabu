@@ -996,9 +996,6 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	private void openFeeWaiverHeaderDialog(Listitem item) throws Exception {
 		logger.debug("Entering ");
-		// get the selected FinanceMain object
-
-		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			// Fee Waivers
@@ -1013,7 +1010,6 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
 
 			showFeeWaiverHeaderView(feeWaiverHeader, financeDetail);
-		}
 		logger.debug("Leaving ");
 	}
 
