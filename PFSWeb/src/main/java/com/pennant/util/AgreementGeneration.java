@@ -1054,7 +1054,11 @@ public class AgreementGeneration implements Serializable {
 				agreement = getCollateralDetails(agreement, detail, formatter);
 			}
 			if(CollectionUtils.isEmpty(agreement.getCollateralData())){
-				agreement.getCollateralData().add(agreement.new FinCollaterals());
+				FinCollaterals collateral=agreement.new FinCollaterals();
+				List<ExtendedDetailCollateral> extendedDetailsList = new ArrayList<>();
+				extendedDetailsList.add(agreement.new ExtendedDetailCollateral());
+				collateral.setExtendedDetailsList(extendedDetailsList);
+				agreement.getCollateralData().add(collateral);
 			}
 			
 			//VAS Details
@@ -1543,7 +1547,7 @@ public class AgreementGeneration implements Serializable {
 			BigDecimal totalFeeAmount = BigDecimal.ZERO;
 			if (null != detail && null != detail.getFinScheduleData()) {
 				List<FinReceiptDetail> finReceiptDetails = detail.getFinScheduleData().getFinReceiptDetails();
-				if (!(CollectionUtils.isNotEmpty(finReceiptDetails))) {
+				if (CollectionUtils.isNotEmpty(finReceiptDetails)) {
 					for (FinReceiptDetail finReceiptDts : finReceiptDetails) {
 						if (null != finReceiptDts) {
 							totalFeeAmount = totalFeeAmount.add(finReceiptDts.getAmount());
@@ -2769,6 +2773,10 @@ public class AgreementGeneration implements Serializable {
 								extendedDetailsList.add(detailCol);
 							}
 						}
+					}
+					if(CollectionUtils.isEmpty(extendedDetailsList)){
+						extendedDetailsList = new ArrayList<>();
+						extendedDetailsList.add(agreement.new ExtendedDetailCollateral());
 					}
 					collateralData.setExtendedDetailsList(extendedDetailsList);
 				}
