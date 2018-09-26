@@ -1068,7 +1068,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 			whereClause.append(" AND FinReference IN (Select FinReference from ManualAdvise Where  AdviseType ="
 					+ "'"+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE + "' and AdviseAmount-PaidAmount-WaivedAmount >0)");
-			whereClause.append(" AND FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
+			whereClause.append(" OR FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
 		}
 	
 		//Written Off Finance Reference Details Condition
