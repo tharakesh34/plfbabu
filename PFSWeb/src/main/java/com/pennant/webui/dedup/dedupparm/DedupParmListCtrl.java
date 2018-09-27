@@ -65,10 +65,10 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul file.
@@ -153,7 +153,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 				Operators.STRING);
 		registerField("queryDesc", listheader_QueryDesc, SortOrder.NONE, queryDesc, sortOperator_queryDesc,
 				Operators.STRING);
-		registerField("querySubCode", listheader_CustCtgCode, SortOrder.NONE, querySubCode, sortOperator_queryDesc,
+		registerField("querySubCode", listheader_CustCtgCode, SortOrder.NONE, querySubCode, sortOperator_querySubCode,
 				Operators.STRING);
 		registerField("queryModule", queryModules, SortOrder.NONE, sortOperator_queryModules, Operators.STRING);
 		fillComboBox(this.querySubCode, "", this.collateralTypesList, "");
