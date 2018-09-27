@@ -913,9 +913,6 @@
 			<menuItem id="menu_Item_DepositMovementsEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsList.zul?enqiryModule=Y"
 				rightName="menuItem_DepositMovements_Enquiry" />
 			<!-- Fee Waivers Enwuiry-->	
-			<menuItem id="menu_Item_CovenantsInquiry"
-				zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FeeWaiverEnquiryList.zul"
-				rightName="menuItem_Enquiry_FeeWiavers" />
 			<menuItem id="menu_Item_FeeWaiverEnquiry"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeWaiverEnquiryList.zul?enqiryModule=Y" rightName="menuItem_FeeWiavers_Enquiry" />	
 		</menu>
