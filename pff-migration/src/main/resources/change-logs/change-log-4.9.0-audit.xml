@@ -50,11 +50,11 @@
 		<renameColumn tableName="AdtFinancedeviations" oldColumnName="ManualDeviation" newColumnName="DeviationCategory"/>
 	</changeSet>
 	
-	<changeSet id="13_Pre" author="Jayant" dbms="mssql">
+	<!-- <changeSet id="13_Pre" author="Jayant" dbms="mssql">
 		<sql>
 			alter table AdtFinancedeviations drop constraint DF_Adtfinancedeviations_manualDeviation;
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="13" author="Manoj">
 			<modifyDataType tableName="AdtFinancedeviations" columnName="DeviationCategory" newDataType="Char(1)" />	
 	</changeSet>
