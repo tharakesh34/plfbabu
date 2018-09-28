@@ -311,7 +311,7 @@ public class NotificationService {
 
 			MailTemplate template = null;
 			if (sendNotification) {
-				emailAndMobiles = getEmailsAndMobile(customerDetails, item, data);
+				emailAndMobiles = getEmailsAndMobile(customerDetails, item, data,financeMain);
 
 				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("EMAILS"))) {
 					notification.getEmails().addAll(emailAndMobiles.get("EMAILS"));
@@ -923,7 +923,7 @@ public class NotificationService {
 	}
 
 	public Map<String, List<String>> getEmailsAndMobile(CustomerDetails customerDetails, Notifications notification,
-			Map<String, Object> fieldsAndValues) {
+			Map<String, Object> fieldsAndValues, FinanceMain financeMain) {
 		Map<String, List<String>> map = new HashMap<>();
 		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
 		List<CustomerPhoneNumber> custMobiles = customerDetails.getCustomerPhoneNumList();
@@ -948,6 +948,17 @@ public class NotificationService {
 		} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(templateType)) {
 			long vehicleDealerid = customerDetails.getCustomer().getCustRO1();
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(vehicleDealerid);
+
+			if (vehicleDealer != null) {
+				emails.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
+				mobileNumbers.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
+				fieldsAndValues.putAll(vehicleDealer.getDeclaredFieldValues());
+			}
+		}else if (NotificationConstants.TEMPLATE_FOR_DSAN.equals(templateType)) {
+			VehicleDealer vehicleDealer = null;
+			if(StringUtils.isNotBlank(financeMain.getDsaCode())&& StringUtils.isNumeric(financeMain.getDsaCode())) {
+			 vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(Long.valueOf(financeMain.getDsaCode()));
+			}
 
 			if (vehicleDealer != null) {
 				emails.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));

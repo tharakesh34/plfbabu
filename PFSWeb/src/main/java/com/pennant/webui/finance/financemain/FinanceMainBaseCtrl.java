@@ -6850,6 +6850,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
 					notification.setModule("LOAN_ORG");
 
 					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG

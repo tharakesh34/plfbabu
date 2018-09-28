@@ -1354,6 +1354,8 @@ public class PennantStaticListUtil {
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TAT, Labels.getLabel("label_MailTemplateDialog_TATTemplate")));
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_LIMIT, Labels.getLabel("label_MailTemplateDialog_LimitNotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SP, Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
+			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DSAN, Labels.getLabel("label_MailTemplateDialog_DSANotification")));
+
 		}
 		return templateForList;
 	}
