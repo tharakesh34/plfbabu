@@ -63,10 +63,10 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 	private String feeTypeDesc;
 	private String iRRIDName;
 	private BigDecimal feePercentage = BigDecimal.ZERO;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private IRRFeeType befImage;
-	private  LoggedInUser userDetails;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -81,8 +81,8 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("iRRIDName");
 		excludeFields.add("feeTypeIDName");
 		excludeFields.add("feeTypeIDNameDesc");
@@ -95,18 +95,22 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 		return iRRID;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.iRRID = id;
 	}
+
 	public long getIRRID() {
 		return iRRID;
 	}
+
 	public void setIRRID(long iRRID) {
 		this.iRRID = iRRID;
 	}
+
 	public long getFeeTypeID() {
 		return feeTypeID;
 	}
+
 	public void setFeeTypeID(long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
@@ -127,19 +131,19 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public IRRFeeType getBefImage(){
+	public IRRFeeType getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(IRRFeeType beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(IRRFeeType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

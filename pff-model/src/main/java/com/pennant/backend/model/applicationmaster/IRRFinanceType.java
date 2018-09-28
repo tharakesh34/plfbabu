@@ -58,10 +58,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>IRRFinanceType table</b>.<br>
  *
  */
-@XmlType(propOrder = {"iRRID","finType"})
+@XmlType(propOrder = { "iRRID", "finType" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IRRFinanceType extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private long iRRID = Long.MIN_VALUE;
 	private String finType;
@@ -70,14 +70,14 @@ private static final long serialVersionUID = 1L;
 	private String irrCode;
 	private String irrCodeDesc;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private IRRFinanceType befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -90,45 +90,49 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("iRRIDName");
-			excludeFields.add("finTypeName");
-			excludeFields.add("iRRIDName");
-			excludeFields.add("irrCode");
-			excludeFields.add("irrCodeDesc");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("iRRIDName");
+		excludeFields.add("finTypeName");
+		excludeFields.add("iRRIDName");
+		excludeFields.add("irrCode");
+		excludeFields.add("irrCodeDesc");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return iRRID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.iRRID = id;
 	}
+
 	public long getIRRID() {
 		return iRRID;
 	}
+
 	public void setIRRID(long iRRID) {
 		this.iRRID = iRRID;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
+
 	public String getFinTypeName() {
 		return this.finTypeName;
 	}
 
-	public void setFinTypeName (String finTypeName) {
+	public void setFinTypeName(String finTypeName) {
 		this.finTypeName = finTypeName;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -136,7 +140,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -145,19 +149,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public IRRFinanceType getBefImage(){
+	public IRRFinanceType getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(IRRFinanceType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(IRRFinanceType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -196,5 +200,5 @@ private static final long serialVersionUID = 1L;
 	public void setIrrCodeDesc(String irrCodeDesc) {
 		this.irrCodeDesc = irrCodeDesc;
 	}
-	
+
 }

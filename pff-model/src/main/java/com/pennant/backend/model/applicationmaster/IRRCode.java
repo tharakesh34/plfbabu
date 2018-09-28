@@ -57,18 +57,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class IRRCode extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private long iRRID = Long.MIN_VALUE;
 	private String iRRCode;
 	private String iRRCodeDesc;
 	private boolean active;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private IRRCode befImage;
-	private  LoggedInUser userDetails;
-	private List<IRRFeeType>		irrFeeTypesList	= null;
+	private LoggedInUser userDetails;
+	private List<IRRFeeType> irrFeeTypesList = null;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -81,47 +82,52 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return iRRID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.iRRID = id;
 	}
+
 	public long getIRRID() {
 		return iRRID;
 	}
+
 	public void setIRRID(long iRRID) {
 		this.iRRID = iRRID;
 	}
-	
+
 	public String getIRRCode() {
 		return iRRCode;
 	}
+
 	public void setIRRCode(String iRRCode) {
 		this.iRRCode = iRRCode;
 	}
-	
+
 	public String getIRRCodeDesc() {
 		return iRRCodeDesc;
 	}
+
 	public void setIRRCodeDesc(String iRRCodeDesc) {
 		this.iRRCodeDesc = iRRCodeDesc;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -129,7 +135,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -138,19 +144,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public IRRCode getBefImage(){
+	public IRRCode getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(IRRCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(IRRCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
