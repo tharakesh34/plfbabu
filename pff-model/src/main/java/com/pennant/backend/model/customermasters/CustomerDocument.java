@@ -59,8 +59,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerDocument table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custDocCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn", "custDocExpDate",
-		"docPurpose", "custDocName", "custDocType", "custDocImage", "docUri" })
+@XmlType(propOrder = { "custDocCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn",
+		"custDocExpDate", "docPurpose", "custDocName", "custDocType", "custDocImage", "docUri" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
@@ -87,13 +87,13 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String custDocIssuedCountry;
 	@XmlElement
 	private String docPurpose;
-	@XmlElement(name="docRefId")
+	@XmlElement(name = "docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
 	private boolean custDocIsVerified;
 	private long custDocVerifiedBy;
 	private boolean custDocIsAcrive;
-	@XmlElement(name="docContent")
+	@XmlElement(name = "docContent")
 	private byte[] custDocImage;
 	private long docRefId = Long.MIN_VALUE;
 	private boolean newRecord = false;
@@ -108,14 +108,13 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIdNumMand = false;
 	private boolean docIssuedAuthorityMand = false;
 	private boolean docIsMandatory = false;
-	private boolean docIsPdfExtRequired= false;;
-	private boolean docIsPasswordProtected= false;;
-	private long pdfMappingRef= Long.MIN_VALUE;
-	@XmlElement(name="docPassword")
+	private boolean docIsPdfExtRequired = false;;
+	private boolean docIsPasswordProtected = false;;
+	private long pdfMappingRef = Long.MIN_VALUE;
+	@XmlElement(name = "docPassword")
 	private String pdfPassWord;
 	private String year;
-	
-	
+
 	private String sourceId;
 
 	public boolean isNew() {
@@ -132,7 +131,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	}
 
 	public CustomerDocument(String docCategory, String doctype, String docName, byte[] docImage) {
-		super();	
+		super();
 		this.custDocCategory = docCategory;
 		this.custDocType = doctype;
 		this.custDocTitle = docName;
@@ -279,7 +278,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	public void setDocUri(String docUri) {
 		this.docUri = docUri;
 	}
-	
+
 	public String getLovDescCustDocIssuedCountry() {
 		return this.lovDescCustDocIssuedCountry;
 	}

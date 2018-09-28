@@ -7,16 +7,15 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class FinAssetTypes extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = 1L;
 
-	private static final long	serialVersionUID	= 1L;
-
-	private Long				assetTypeId			= Long.MIN_VALUE;
-	private String				assetType;
-	private String				reference;
-	private int					seqNo				= 0;
-	private boolean				newRecord			= false;
-	private LoggedInUser		userDetails;
-	private FinAssetTypes		befImage;
+	private Long assetTypeId = Long.MIN_VALUE;
+	private String assetType;
+	private String reference;
+	private int seqNo = 0;
+	private boolean newRecord = false;
+	private LoggedInUser userDetails;
+	private FinAssetTypes befImage;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();

@@ -17,54 +17,53 @@ import com.pennant.backend.model.Entity;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinReceiptDetail implements Entity {
 
-	private long						receiptID		= 0;										// Only setting from Receipt Header
-	private long						receiptSeqID	= 0;										// Auto Generated
-	private String						receiptType;
-	private String						paymentTo;
-	private String						paymentType;
-	private long						payAgainstID	= 0;
-	private int							payOrder		= 0;
-	private BigDecimal					amount			= BigDecimal.ZERO;
-	private String						favourNumber;
+	private long receiptID = 0; // Only setting from Receipt Header
+	private long receiptSeqID = 0; // Auto Generated
+	private String receiptType;
+	private String paymentTo;
+	private String paymentType;
+	private long payAgainstID = 0;
+	private int payOrder = 0;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private String favourNumber;
 	@XmlElement
-	private Date						valueDate;
+	private Date valueDate;
 	@XmlElement
-	private String						bankCode;
-	private String						bankCodeDesc;
+	private String bankCode;
+	private String bankCodeDesc;
 	@XmlElement
-	private String						favourName;
-	private Date						depositDate;
-	private String						depositNo;
+	private String favourName;
+	private Date depositDate;
+	private String depositNo;
 	@XmlElement
-	private String						paymentRef;
+	private String paymentRef;
 	@XmlElement
-	private String						transactionRef;
+	private String transactionRef;
 	@XmlElement
-	private String						chequeAcNo;
-	@XmlElement(name="fundingAccount")
-	private long						fundingAc		= 0;
-	private String						fundingAcCode;
-	private String						fundingAcDesc;
+	private String chequeAcNo;
+	@XmlElement(name = "fundingAccount")
+	private long fundingAc = 0;
+	private String fundingAcCode;
+	private String fundingAcDesc;
 	@XmlElement
-	private Date						receivedDate;
-	private String						status;
+	private Date receivedDate;
+	private String status;
 	//API Specific
 	@XmlElement
-	private String						remarks;
-	private long						logKey			= 0;
-	private boolean						delRecord		= false;
-	private String						partnerBankAc;
-	private String						partnerBankAcType;
-	private String						reference;					// only for Fees
-	private String						feeTypeCode;
-	private String						feeTypeDesc;
-	private boolean 					noReserve;
-	private String						receiptPurpose;
-	private ReceiptTaxDetail			receiptTaxDetail;
-	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
-	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
-	
-	
+	private String remarks;
+	private long logKey = 0;
+	private boolean delRecord = false;
+	private String partnerBankAc;
+	private String partnerBankAcType;
+	private String reference; // only for Fees
+	private String feeTypeCode;
+	private String feeTypeDesc;
+	private boolean noReserve;
+	private String receiptPurpose;
+	private ReceiptTaxDetail receiptTaxDetail;
+	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
+	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> receiptDetailMap = new HashMap<String, Object>();
 		getDeclaredFieldValues(receiptDetailMap);
@@ -82,12 +81,11 @@ public class FinReceiptDetail implements Entity {
 			}
 		}
 	}
-	
+
 	public FinReceiptDetail() {
 
 	}
-	
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("noReserve");

@@ -362,7 +362,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	public void setInputSource(String inputSource) {
 		this.inputSource = inputSource;
 	}
-	
+
 	public int getCustType() {
 		return custType;
 	}
@@ -371,9 +371,9 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		this.custType = custType;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 	}
 
 	public String getOtherFinInstitute() {
@@ -383,6 +383,5 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	public void setOtherFinInstitute(String otherFinInstitute) {
 		this.otherFinInstitute = otherFinInstitute;
 	}
-
 
 }

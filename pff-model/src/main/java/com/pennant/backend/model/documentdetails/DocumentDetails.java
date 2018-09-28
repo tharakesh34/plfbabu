@@ -71,7 +71,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	// Verification Fields
 	private int doumentType;
-	
+
 	public DocumentDetails() {
 		super();
 	}
