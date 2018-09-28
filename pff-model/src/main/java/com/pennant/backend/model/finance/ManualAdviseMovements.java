@@ -23,6 +23,9 @@ public class ManualAdviseMovements {
 	private BigDecimal paidUGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
 	
+	private boolean		taxApplicable;
+	private String		taxComponent;
+	
 	// Enquiry Purpose
 	private String receiptMode;
 // ### 24-05-2018  SOA Merging from Bajaj to QC
@@ -147,6 +150,18 @@ public class ManualAdviseMovements {
 	}
 	public void setWaiverID(long waiverID) {
 		this.waiverID = waiverID;
+	}
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
+	}
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
 	}
 	
 }

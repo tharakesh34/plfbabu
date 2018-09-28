@@ -432,11 +432,11 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
 		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST ");
 		if (StringUtils.contains(type, "View")) {
-			selectSql.append(" , FeeTypeCode, FeeTypeDesc ");
+			selectSql.append(" , FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent ");
 		}
 		selectSql.append(" From ManualAdviseMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
+		selectSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID = :ReceiptSeqID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);
