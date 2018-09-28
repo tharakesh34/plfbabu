@@ -1092,7 +1092,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivableAmt, ccyFormatter));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(netBalanceAmt, ccyFormatter));
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 

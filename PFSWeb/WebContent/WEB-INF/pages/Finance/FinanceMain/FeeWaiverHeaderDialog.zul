@@ -154,7 +154,7 @@
 									hflex="min" />
 								<listheader
 									id="listheader_enq_ValueDate"
-									label="${c:l('listheader_ValueDate.label')}" sort="auto"
+									label="${c:l('listheader_ValueDate.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 								<listheader
 									id="listheader_enq_ReceivableAmount"
