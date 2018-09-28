@@ -88,67 +88,66 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.model.EventProperties;
-public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount> implements SOAReportGenerationService{
-	private static Logger logger = Logger.getLogger(SOAReportGenerationServiceImpl .class);
-	
+
+public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
+		implements SOAReportGenerationService {
+	private static Logger logger = Logger.getLogger(SOAReportGenerationServiceImpl.class);
+
 	private static final String inclusive = "*";
 	private static final String exclusive = "^";
-	
+
 	private SOAReportGenerationDAO soaReportGenerationDAO;
-	
-	private Date fixedEndDate = null; 
+
+	private Date fixedEndDate = null;
 
 	public SOAReportGenerationServiceImpl() {
 		super();
 	}
 
-	
 	private FinanceMain getFinanceMain(String finReference) {
 		return this.soaReportGenerationDAO.getFinanceMain(finReference);
 	}
-	
+
 	private List<FinanceScheduleDetail> getFinScheduleDetails(String finReference) {
 		return this.soaReportGenerationDAO.getFinScheduleDetails(finReference);
 	}
-	
-	
+
 	private List<FinAdvancePayments> getFinAdvancePayments(String finReference) {
 		return this.soaReportGenerationDAO.getFinAdvancePayments(finReference);
 	}
-	
+
 	private List<PaymentInstruction> getPaymentInstructions(String finReference) {
 		return this.soaReportGenerationDAO.getPaymentInstructions(finReference);
 	}
-	
+
 	private List<FinODDetails> getFinODDetails(String finReference) {
 		return this.soaReportGenerationDAO.getFinODDetails(finReference);
 	}
-	
+
 	private List<ManualAdvise> getManualAdvise(String finReference) {
 		return this.soaReportGenerationDAO.getManualAdvise(finReference);
 	}
-	
+
 	private List<ManualAdviseMovements> getManualAdviseMovements(String finReference) {
 		return this.soaReportGenerationDAO.getManualAdviseMovements(finReference);
 	}
-	
+
 	private List<ReceiptAllocationDetail> getReceiptAllocationDetailsList(String finReference) {
 		return this.soaReportGenerationDAO.getReceiptAllocationDetailsList(finReference);
 	}
-	
+
 	private List<FinReceiptHeader> getFinReceiptHeaders(String finReference) {
 		return this.soaReportGenerationDAO.getFinReceiptHeaders(finReference);
 	}
-	
+
 	private List<FinReceiptDetail> getFinReceiptDetails(String finReference) {
 		return this.soaReportGenerationDAO.getFinReceiptDetails(finReference);
 	}
-	
-	
+
 	private StatementOfAccount getSOALoanDetails(String finReference) {
 		return this.soaReportGenerationDAO.getSOALoanDetails(finReference);
 	}
-	
+
 	private FinanceProfitDetail getFinanceProfitDetails(String finReference) {
 		return this.soaReportGenerationDAO.getFinanceProfitDetails(finReference);
 	}
@@ -156,27 +155,27 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private int getFinanceProfitDetailActiveCount(long finProfitDetailActiveCount, boolean active) {
 		return this.soaReportGenerationDAO.getFinanceProfitDetailActiveCount(finProfitDetailActiveCount, active);
 	}
-	
+
 	private StatementOfAccount getSOACustomerDetails(long custId) {
 		return this.soaReportGenerationDAO.getSOACustomerDetails(custId);
 	}
-	
+
 	private StatementOfAccount getSOAProductDetails(String finBranch, String finType) {
 		return this.soaReportGenerationDAO.getSOAProductDetails(finBranch, finType);
 	}
-	
+
 	private List<FinExcessAmount> getFinExcessAmountsList(String finReference) {
 		return this.soaReportGenerationDAO.getFinExcessAmountsList(finReference);
 	}
-	
+
 	private List<FinRepayHeader> getFinRepayHeadersList(String finReference) {
 		return this.soaReportGenerationDAO.getFinRepayHeadersList(finReference);
 	}
-	
+
 	private List<FinFeeDetail> getFinFeedetails(String finReference) {
 		return this.soaReportGenerationDAO.getFinFeedetails(finReference);
 	}
-	
+
 	private Date getMaxSchDate(String finReference) {
 		return this.soaReportGenerationDAO.getMaxSchDate(finReference);
 	}
@@ -184,31 +183,31 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private List<PresentmentDetail> getPresentmentDetailsList(String finReference) {
 		return this.soaReportGenerationDAO.getPresentmentDetailsList(finReference);
 	}
-	
+
 	private List<RepayScheduleDetail> getRepayScheduleDetailsList(String finReference) {
 		return this.soaReportGenerationDAO.getRepayScheduleDetailsList(finReference);
 	}
-	
+
 	private List<VASRecording> getVASRecordingsList(String finReference) {
 		return this.soaReportGenerationDAO.getVASRecordingsList(finReference);
 	}
-	
+
 	private List<FinFeeScheduleDetail> getFinFeeScheduleDetailsList(String finReference) {
 		return this.soaReportGenerationDAO.getFinFeeScheduleDetailsList(finReference);
 	}
-	
+
 	private List<ApplicantDetail> getApplicantDetails(String finReference) {
 		return this.soaReportGenerationDAO.getApplicantDetails(finReference);
 	}
-	
+
 	private List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference) {
 		return this.soaReportGenerationDAO.getCustOtherFinDetails(custID, finReference);
 	}
-	
+
 	public void setSoaReportGenerationDAO(SOAReportGenerationDAO soaReportGenerationDAO) {
 		this.soaReportGenerationDAO = soaReportGenerationDAO;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate) {
@@ -218,18 +217,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		List<OtherFinanceDetail> otherFinanceDetails = null;
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
-		
+
 		//get the FinProfitDeatails
 		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
 		//get the finance basic details
 		FinanceMain finMain = getFinanceMain(finReference);
 		int ccyEditField = statementOfAccount.getCcyEditField();
 		if (financeProfitDetail != null) {
-			
+
 			custId = financeProfitDetail.getCustId();
 			int activeCount = getFinanceProfitDetailActiveCount(custId, true);
 			int closeCount = getFinanceProfitDetailActiveCount(custId, false);
-			
+
 			statementOfAccount.setCustID(custId);
 			statementOfAccount.setActiveCnt(activeCount);
 			statementOfAccount.setCloseCnt(closeCount);
@@ -242,33 +241,43 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setCurrentDate(DateUtility.getAppDate());
 			statementOfAccount.setMaturityDate(financeProfitDetail.getMaturityDate());
 			statementOfAccount.setNoPaidInst(financeProfitDetail.getNOPaidInst());
-			statementOfAccount.setTotalPriPaid(PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPriPaid(),ccyEditField));
-			statementOfAccount.setTotalPftPaid(PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftPaid(),ccyEditField));
+			statementOfAccount.setTotalPriPaid(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPriPaid(), ccyEditField));
+			statementOfAccount.setTotalPftPaid(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftPaid(), ccyEditField));
 			BigDecimal paidTotal = financeProfitDetail.getTotalPriPaid().add(financeProfitDetail.getTotalPftPaid());
-			statementOfAccount.setPaidTotal(PennantApplicationUtil.formateAmount(paidTotal,ccyEditField));
-			statementOfAccount.setTotalPriBal(PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPriBal(),ccyEditField));
-			statementOfAccount.setTotalPftBal(PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftBal(),ccyEditField));
-			BigDecimal totalOutStanding = financeProfitDetail.getTotalPriBal().add(financeProfitDetail.getTotalPftBal());
-			statementOfAccount.setTotalOutStanding(PennantApplicationUtil.formateAmount(totalOutStanding,ccyEditField));
-			int futureInst=financeProfitDetail.getNOInst()-financeProfitDetail.getNOPaidInst();
+			statementOfAccount.setPaidTotal(PennantApplicationUtil.formateAmount(paidTotal, ccyEditField));
+			statementOfAccount.setTotalPriBal(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPriBal(), ccyEditField));
+			statementOfAccount.setTotalPftBal(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftBal(), ccyEditField));
+			BigDecimal totalOutStanding = financeProfitDetail.getTotalPriBal()
+					.add(financeProfitDetail.getTotalPftBal());
+			statementOfAccount
+					.setTotalOutStanding(PennantApplicationUtil.formateAmount(totalOutStanding, ccyEditField));
+			int futureInst = financeProfitDetail.getNOInst() - financeProfitDetail.getNOPaidInst();
 			statementOfAccount.setNoOfOutStandInst(futureInst);
-			statementOfAccount.setFinCurrAssetValue(PennantApplicationUtil.formateAmount(finMain.getFinCurrAssetValue(),ccyEditField));
+			statementOfAccount.setFinCurrAssetValue(
+					PennantApplicationUtil.formateAmount(finMain.getFinCurrAssetValue(), ccyEditField));
 			//Next Installment Amount
 			statementOfAccount.setNextRpyDate(financeProfitDetail.getNSchdDate());
-			statementOfAccount.setNextRpyPri(PennantApplicationUtil.formateAmount(financeProfitDetail.getNSchdPri(),ccyEditField));
-			statementOfAccount.setNextRpyPft(PennantApplicationUtil.formateAmount(financeProfitDetail.getNSchdPft(),ccyEditField));
+			statementOfAccount.setNextRpyPri(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getNSchdPri(), ccyEditField));
+			statementOfAccount.setNextRpyPft(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getNSchdPft(), ccyEditField));
 
 			//get the Customer Details
 			StatementOfAccount statementOfAccountCustDetails = getSOACustomerDetails(custId);
-			
+
 			//Co-Applicant/Borrower Details
 			applicantDetails = getApplicantDetails(finReference);
-			
+
 			//Other Finance Details
-			otherFinanceDetails = getCustOtherFinDetails(custId, finReference);	
-			
+			otherFinanceDetails = getCustOtherFinDetails(custId, finReference);
+
 			if (statementOfAccountCustDetails != null) {
-				statementOfAccount.setCustShrtName(StringUtils.capitaliseAllWords(statementOfAccountCustDetails.getCustShrtName()));
+				statementOfAccount.setCustShrtName(
+						StringUtils.capitaliseAllWords(statementOfAccountCustDetails.getCustShrtName()));
 				statementOfAccount.setCustCIF(statementOfAccountCustDetails.getCustCIF());
 				statementOfAccount.setCustAddrHNbr(statementOfAccountCustDetails.getCustAddrHNbr());
 				statementOfAccount.setCustFlatNbr(statementOfAccountCustDetails.getCustFlatNbr());
@@ -285,26 +294,25 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setCustAddrLine2(statementOfAccountCustDetails.getCustAddrLine2());
 				statementOfAccount.setCustAddrZIP(statementOfAccountCustDetails.getCustAddrZIP());
 			}
-			
+
 			//to get the FinType and FinBranch
-			StatementOfAccount statementOfAccountProductDetails = getSOAProductDetails(financeProfitDetail.getFinBranch(), financeProfitDetail.getFinType());
-			
+			StatementOfAccount statementOfAccountProductDetails = getSOAProductDetails(
+					financeProfitDetail.getFinBranch(), financeProfitDetail.getFinType());
+
 			if (statementOfAccountProductDetails != null) {
 				statementOfAccount.setFinType(statementOfAccountProductDetails.getFinType());
 				statementOfAccount.setFinBranch(statementOfAccountProductDetails.getFinBranch());
 			}
 		}
-		
-		
 
 		BigDecimal ccyMinorCcyUnits = statementOfAccount.getCcyMinorCcyUnits();
-		if(startDate==null){
-			startDate=financeProfitDetail.getFinStartDate();
+		if (startDate == null) {
+			startDate = financeProfitDetail.getFinStartDate();
 		}
-		if(endDate == null){
+		if (endDate == null) {
 			endDate = DateUtility.getAppDate();
 		} else { //endDate should be grater than app date then set to the Application date
-			if(DateUtility.compare(endDate, DateUtility.getAppDate())>0){
+			if (DateUtility.compare(endDate, DateUtility.getAppDate()) > 0) {
 				endDate = DateUtility.getAppDate();
 			}
 		}
@@ -312,60 +320,77 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		statementOfAccount.setEndDate(endDate);
 
 		//Formatting the amounts
-		 statementOfAccount.setLoanAmount(PennantApplicationUtil.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
- 		statementOfAccount.setPreferredCardLimit(PennantApplicationUtil.formateAmount(statementOfAccount.getPreferredCardLimit(), ccyEditField));
-		statementOfAccount.setChargeCollCust(PennantApplicationUtil.formateAmount(statementOfAccount.getChargeCollCust(), ccyEditField));
-		statementOfAccount.setUpfrontIntCust(PennantApplicationUtil.formateAmount(statementOfAccount.getUpfrontIntCust(), ccyEditField));
-		statementOfAccount.setLinkedFinRef(PennantApplicationUtil.formateAmount(statementOfAccount.getLinkedFinRef(), ccyEditField));
-		statementOfAccount.setClosedlinkedFinRef(PennantApplicationUtil.formateAmount(statementOfAccount.getClosedlinkedFinRef(), ccyEditField));
-		
-		statementOfAccount.setEmiReceivedPri(PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPri(), ccyEditField));
-		statementOfAccount.setEmiReceivedPft(PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPft(), ccyEditField));
-		
-		statementOfAccount.setPrevInstAmtPri(PennantApplicationUtil.formateAmount(statementOfAccount.getPrevInstAmtPri(), ccyEditField));
-		statementOfAccount.setPrevInstAmtPft(PennantApplicationUtil.formateAmount(statementOfAccount.getPrevInstAmtPft(), ccyEditField));
-		
-		statementOfAccount.setFuturePri1(PennantApplicationUtil.formateAmount(statementOfAccount.getFuturePri1(), ccyEditField));
-		statementOfAccount.setFuturePri2(PennantApplicationUtil.formateAmount(statementOfAccount.getFuturePri2(), ccyEditField));
-		
-		statementOfAccount.setFutureRpyPft1(PennantApplicationUtil.formateAmount(statementOfAccount.getFutureRpyPft1(), ccyEditField));
-		statementOfAccount.setFutureRpyPft2(PennantApplicationUtil.formateAmount(statementOfAccount.getFutureRpyPft2(), ccyEditField));
-		if(statementOfAccount.isFinIsActive()){
+		statementOfAccount
+				.setLoanAmount(PennantApplicationUtil.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
+		statementOfAccount.setPreferredCardLimit(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getPreferredCardLimit(), ccyEditField));
+		statementOfAccount.setChargeCollCust(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getChargeCollCust(), ccyEditField));
+		statementOfAccount.setUpfrontIntCust(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getUpfrontIntCust(), ccyEditField));
+		statementOfAccount.setLinkedFinRef(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getLinkedFinRef(), ccyEditField));
+		statementOfAccount.setClosedlinkedFinRef(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getClosedlinkedFinRef(), ccyEditField));
+
+		statementOfAccount.setEmiReceivedPri(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPri(), ccyEditField));
+		statementOfAccount.setEmiReceivedPft(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPft(), ccyEditField));
+
+		statementOfAccount.setPrevInstAmtPri(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getPrevInstAmtPri(), ccyEditField));
+		statementOfAccount.setPrevInstAmtPft(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getPrevInstAmtPft(), ccyEditField));
+
+		statementOfAccount
+				.setFuturePri1(PennantApplicationUtil.formateAmount(statementOfAccount.getFuturePri1(), ccyEditField));
+		statementOfAccount
+				.setFuturePri2(PennantApplicationUtil.formateAmount(statementOfAccount.getFuturePri2(), ccyEditField));
+
+		statementOfAccount.setFutureRpyPft1(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getFutureRpyPft1(), ccyEditField));
+		statementOfAccount.setFutureRpyPft2(
+				PennantApplicationUtil.formateAmount(statementOfAccount.getFutureRpyPft2(), ccyEditField));
+		if (statementOfAccount.isFinIsActive()) {
 			statementOfAccount.setLatestRpyDate(statementOfAccount.getEndInstallmentDate());
 		}
-	
+
 		//get the Summary Details
-		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference,finMain,financeProfitDetail);
-		
+		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference, finMain, financeProfitDetail);
+
 		for (SOASummaryReport summary : soaSummaryDetailsList) {
 			summary.setFinReference(finReference);
 			summary.setCcyEditField(ccyEditField);
 			summary.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			summary.setAppDate(DateUtility.getAppDate());
 		}
-		
+
 		//get the Transaction Details
-		List<SOATransactionReport> soaTransactionReportsList = getTransactionDetails(finReference, statementOfAccount,finMain);
-		
+		List<SOATransactionReport> soaTransactionReportsList = getTransactionDetails(finReference, statementOfAccount,
+				finMain);
+
 		List<SOATransactionReport> finalSOATransactionReports = new ArrayList<SOATransactionReport>();
-		
+
 		//Transaction Details Filtering
 		for (SOATransactionReport soaTransactionReport : soaTransactionReportsList) {
-			
+
 			if (DateUtility.compare(soaTransactionReport.getTransactionDate(), startDate) >= 0
 					&& DateUtility.compare(soaTransactionReport.getTransactionDate(), endDate) <= 0) {
-				
+
 				soaTransactionReport.setFinReference(finReference);
 				soaTransactionReport.setCcyEditField(statementOfAccount.getCcyEditField());
 				soaTransactionReport.setFromDate(startDate);
 				soaTransactionReport.setToDate(endDate);
 				soaTransactionReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
-				
-				soaTransactionReport.setDebitAmount(PennantApplicationUtil.formateAmount(soaTransactionReport.getDebitAmount(), ccyEditField));
-				soaTransactionReport.setCreditAmount(PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
-				
+
+				soaTransactionReport.setDebitAmount(
+						PennantApplicationUtil.formateAmount(soaTransactionReport.getDebitAmount(), ccyEditField));
+				soaTransactionReport.setCreditAmount(
+						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
+
 				finalSOATransactionReports.add(soaTransactionReport);
-			} 
+			}
 		}
 		//Get the Selected Loan Types are Adding ValueDate and balance for the SOA Report.
 		List<String> soaFinTypes = getSOAFinTypes();
@@ -388,19 +413,19 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 			});
 		}
-		
+
 		BigDecimal balanceAmt = BigDecimal.ZERO;
 		for (SOATransactionReport soaTransactionReport : finalSOATransactionReports) {
-			if(BigDecimal.ZERO.compareTo(soaTransactionReport.getDebitAmount()) != 0 ){
+			if (BigDecimal.ZERO.compareTo(soaTransactionReport.getDebitAmount()) != 0) {
 				balanceAmt = balanceAmt.add(soaTransactionReport.getDebitAmount());
-			}else if(BigDecimal.ZERO.compareTo(soaTransactionReport.getCreditAmount()) != 0 ){
+			} else if (BigDecimal.ZERO.compareTo(soaTransactionReport.getCreditAmount()) != 0) {
 				balanceAmt = balanceAmt.subtract(soaTransactionReport.getCreditAmount());
 			}
 			soaTransactionReport.setBalanceAmount(balanceAmt);
 		}
 		//send the toDate and from Date for Report
-		if(finalSOATransactionReports.isEmpty()){
-			SOATransactionReport sOATransactionReport= new SOATransactionReport();
+		if (finalSOATransactionReports.isEmpty()) {
+			SOATransactionReport sOATransactionReport = new SOATransactionReport();
 			sOATransactionReport.setFromDate(startDate);
 			sOATransactionReport.setToDate(endDate);
 			finalSOATransactionReports.add(sOATransactionReport);
@@ -411,7 +436,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setIntRateType("Fixed and Floating");
 			InterestRateDetail fixedDetail = new InterestRateDetail();
 			fixedDetail.setFormTenure(1);
-			fixedDetail.setToTenure( finMain.getFixedRateTenor() + finMain.getGraceTerms());
+			fixedDetail.setToTenure(finMain.getFixedRateTenor() + finMain.getGraceTerms());
 			fixedDetail.setInterestType("Fixed");
 			fixedDetail.setInterestRate(finMain.getFixedTenorRate());
 			fixedDetail.setNoOfMonths(noOfMonths);
@@ -437,33 +462,35 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//Summary Reports List
 		statementOfAccount.setSoaSummaryReports(soaSummaryDetailsList);
-		
+
 		//Transaction Reports List
 		statementOfAccount.setTransactionReports(finalSOATransactionReports);
-		
+
 		//Other Finance Details
 		statementOfAccount.setOtherFinanceDetails(otherFinanceDetails);
-		
+
 		//Co-Applicant/Borrower Details
 		statementOfAccount.setApplicantDetails(applicantDetails);
-		
+
 		logger.debug("Leaving");
 		return statementOfAccount;
 	}
+
 	/**
 	 * get the Report Summary Details
 	 * 
 	 */
-	private List<SOASummaryReport> getSOASummaryDetails(String finReference,FinanceMain finMain,FinanceProfitDetail financeProfitDetail) {
+	private List<SOASummaryReport> getSOASummaryDetails(String finReference, FinanceMain finMain,
+			FinanceProfitDetail financeProfitDetail) {
 		logger.debug("Enetring");
-		
+
 		SOASummaryReport soaSummaryReport = null;
 		List<SOASummaryReport> soaSummaryReportsList = new ArrayList<SOASummaryReport>();
-		
+
 		//FinanceMain finMain = getFinanceMain(finReference);
-		
+
 		if (finMain != null) {
-			
+
 			List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
 			//FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
 
@@ -474,241 +501,243 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			BigDecimal totalProfitSchd = BigDecimal.ZERO;
 			BigDecimal totalPrincipalSchd = BigDecimal.ZERO;
 			BigDecimal totalFeeschd = BigDecimal.ZERO;
-			
+
 			BigDecimal totalSchdPriPaid = BigDecimal.ZERO;
 			BigDecimal totalSchdPftPaid = BigDecimal.ZERO;
 			BigDecimal totalSchdfeepaid = BigDecimal.ZERO;
 
 			if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
-				
+
 				for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
-					
+
 					if ((DateUtility.compare(finSchdDetail.getSchDate(), DateUtility.getAppDate()) <= 0)) {
-						
+
 						if (finSchdDetail.getProfitSchd() != null) {
 							totalProfitSchd = totalProfitSchd.add(finSchdDetail.getProfitSchd());
 						}
-						
+
 						if (finSchdDetail.getPrincipalSchd() != null) {
 							totalPrincipalSchd = totalPrincipalSchd.add(finSchdDetail.getPrincipalSchd());
 						}
-						
+
 						if (finSchdDetail.getFeeSchd() != null) {
 							totalFeeschd = totalFeeschd.add(finSchdDetail.getFeeSchd());
 						}
-						
+
 						if (finSchdDetail.getSchdPriPaid() != null) {
 							totalSchdPriPaid = totalSchdPriPaid.add(finSchdDetail.getSchdPriPaid());
 						}
-						
+
 						if (finSchdDetail.getSchdPftPaid() != null) {
 							totalSchdPftPaid = totalSchdPftPaid.add(finSchdDetail.getSchdPftPaid());
 						}
-						
+
 						if (finSchdDetail.getSchdFeePaid() != null) {
 							totalSchdfeepaid = totalSchdfeepaid.add(finSchdDetail.getSchdFeePaid());
 						}
 					}
 				}
-				
+
 				due = totalProfitSchd.add(totalPrincipalSchd).add(totalFeeschd);
 				receipt = totalSchdPriPaid.add(totalSchdPftPaid).add(totalSchdfeepaid);
-				
+
 				overDue = due.subtract(receipt);
-				
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Installment Amount");
 				soaSummaryReport.setDue(due);
 				soaSummaryReport.setReceipt(receipt);
 				soaSummaryReport.setOverDue(overDue);
-				
+
 				soaSummaryReportsList.add(soaSummaryReport);
-				
+
 				due = totalPrincipalSchd;
 				receipt = totalSchdPriPaid;
-				
+
 				overDue = due.subtract(receipt);
-				
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Principal Component");
 				soaSummaryReport.setDue(due);
 				soaSummaryReport.setReceipt(receipt);
 				soaSummaryReport.setOverDue(overDue);
-				
+
 				soaSummaryReportsList.add(soaSummaryReport);
-				
+
 				due = totalProfitSchd;
 				receipt = totalSchdPftPaid;
-				
+
 				overDue = due.subtract(receipt);
-				
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Interest Component");
 				soaSummaryReport.setDue(due);
 				soaSummaryReport.setReceipt(receipt);
 				soaSummaryReport.setOverDue(overDue);
-				
+
 				soaSummaryReportsList.add(soaSummaryReport);
 			}
-			
+
 			if (financeProfitDetail != null) {
-				
+
 				List<FinODDetails> finODDetailsList = getFinODDetails(finReference);
-				List<ManualAdvise>  manualAdviseList = getManualAdvise(finReference);
-				List<FinExcessAmount>  finExcessAmountsList = getFinExcessAmountsList(finReference);
-				
+				List<ManualAdvise> manualAdviseList = getManualAdvise(finReference);
+				List<FinExcessAmount> finExcessAmountsList = getFinExcessAmountsList(finReference);
+
 				// FinODDetails
 				if (finODDetailsList != null && !finODDetailsList.isEmpty()) {
-					
+
 					BigDecimal totPenaltyAmt = BigDecimal.ZERO;
 					BigDecimal totwaived = BigDecimal.ZERO;
 					BigDecimal totPenaltyPaid = BigDecimal.ZERO;
-					
+
 					for (FinODDetails finODDetails : finODDetailsList) {
-						
+
 						if (finODDetails.getTotPenaltyAmt() != null) {
 							totPenaltyAmt = totPenaltyAmt.add(finODDetails.getTotPenaltyAmt());
 						}
-						
+
 						if (finODDetails.getTotWaived() != null) {
 							totwaived = totwaived.add(finODDetails.getTotWaived());
 						}
-						
+
 						if (finODDetails.getTotPenaltyPaid() != null) {
 							totPenaltyPaid = totPenaltyPaid.add(finODDetails.getTotPenaltyPaid());
 						}
 					}
-					
+
 					due = totPenaltyAmt.subtract(totwaived);
 					receipt = totPenaltyPaid;
-					
+
 					overDue = due.subtract(receipt);
-					
+
 					soaSummaryReport = new SOASummaryReport();
 					soaSummaryReport.setComponent("Late Payment Penalty");
 					soaSummaryReport.setDue(due);
 					soaSummaryReport.setReceipt(receipt);
 					soaSummaryReport.setOverDue(overDue);
-					
+
 					soaSummaryReportsList.add(soaSummaryReport);
 				}
-				
+
 				BigDecimal bounceDue = BigDecimal.ZERO;
 				BigDecimal bounceRecipt = BigDecimal.ZERO;
-				
+
 				BigDecimal otherReceivableDue = BigDecimal.ZERO;
 				BigDecimal otherReceivableReceipt = BigDecimal.ZERO;
-				
+
 				BigDecimal otherPayableDue = BigDecimal.ZERO;
-				
+
 				//Manual Advise
-				if (manualAdviseList != null && !manualAdviseList.isEmpty())  {
-					
+				if (manualAdviseList != null && !manualAdviseList.isEmpty()) {
+
 					BigDecimal adviseBalanceAmt = BigDecimal.ZERO;
 					BigDecimal bounceZeroAdviseAmount = BigDecimal.ZERO;
 					BigDecimal bounceGreaterZeroAdviseAmount = BigDecimal.ZERO;
 					BigDecimal bounceZeroPaidAmount = BigDecimal.ZERO;
 					BigDecimal bounceGreaterZeroPaidAmount = BigDecimal.ZERO;
-					
+
 					for (ManualAdvise manualAdvise : manualAdviseList) {
 						if (manualAdvise.getAdviseType() == 2 && manualAdvise.getBalanceAmt() != null) {
 							adviseBalanceAmt = adviseBalanceAmt.add(manualAdvise.getBalanceAmt());
-						}  
-						
+						}
+
 						if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
-							
+
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount())
+										.subtract(manualAdvise.getWaivedAmount());
 							}
-							
+
 							if (manualAdvise.getPaidAmount() != null) {
 								bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount());
 							}
-						} 
-						
+						}
+
 						if (manualAdvise.getBounceID() > 0) {
-							
+
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount
+										.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
 							}
-							
+
 							if (manualAdvise.getPaidAmount() != null) {
-								bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount());
+								bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount
+										.add(manualAdvise.getPaidAmount());
 							}
 						}
 					}
-					
+
 					bounceDue = bounceGreaterZeroAdviseAmount;
 					bounceRecipt = bounceGreaterZeroPaidAmount;
-					
-					
+
 					otherReceivableDue = bounceZeroAdviseAmount;
 					otherReceivableReceipt = bounceZeroPaidAmount;
-					
+
 					otherPayableDue = adviseBalanceAmt;
-				} 
-				
+				}
+
 				overDue = bounceDue.subtract(bounceRecipt);
-				
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Bounce Charges");
 				soaSummaryReport.setDue(bounceDue);
 				soaSummaryReport.setReceipt(bounceRecipt);
 				soaSummaryReport.setOverDue(overDue);
-				
+
 				soaSummaryReportsList.add(soaSummaryReport);
-				
+
 				overDue = otherReceivableDue.subtract(otherReceivableReceipt);
-				
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Other Receivables");
 				soaSummaryReport.setDue(otherReceivableDue);
 				soaSummaryReport.setReceipt(otherReceivableReceipt);
 				soaSummaryReport.setOverDue(overDue);
-				
+
 				soaSummaryReportsList.add(soaSummaryReport);
-				
+
 				receipt = BigDecimal.ZERO;
 				overDue = BigDecimal.ZERO;
-				
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Other Payables");
 				soaSummaryReport.setDue(otherPayableDue);
 				soaSummaryReport.setReceipt(receipt);
 				soaSummaryReport.setOverDue(overDue);
-				
+
 				soaSummaryReportsList.add(soaSummaryReport);
-				
+
 				//FinExcess Amount
 				if (finExcessAmountsList != null && !finExcessAmountsList.isEmpty()) {
-					
+
 					BigDecimal balanceAmt = BigDecimal.ZERO;
-					
+
 					for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
 						if (finExcessAmount.getBalanceAmt() != null) {
 							balanceAmt = balanceAmt.add(finExcessAmount.getBalanceAmt());
 						}
 					}
-					
+
 					due = balanceAmt;
 					receipt = BigDecimal.ZERO;
 					overDue = BigDecimal.ZERO;
-					
+
 					soaSummaryReport = new SOASummaryReport();
 					soaSummaryReport.setComponent("Unadjusted Amount");
 					soaSummaryReport.setDue(due);
 					soaSummaryReport.setReceipt(receipt);
 					soaSummaryReport.setOverDue(overDue);
-					
+
 					soaSummaryReportsList.add(soaSummaryReport);
 				} else {
-					
+
 					soaSummaryReport = new SOASummaryReport();
 					soaSummaryReport.setComponent("Unadjusted Amount");
 					soaSummaryReport.setDue(BigDecimal.ZERO);
 					soaSummaryReport.setReceipt(BigDecimal.ZERO);
 					soaSummaryReport.setOverDue(BigDecimal.ZERO);
-					
+
 					soaSummaryReportsList.add(soaSummaryReport);
 				}
 			}
@@ -716,17 +745,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		logger.debug("Leaving");
 		return soaSummaryReportsList;
 	}
-	
+
 	/**
 	 * to get the Report Transaction Details
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public List<SOATransactionReport> getTransactionDetails(String finReference, StatementOfAccount statementOfAccount,FinanceMain finMain) {
-		
+	public List<SOATransactionReport> getTransactionDetails(String finReference, StatementOfAccount statementOfAccount,
+			FinanceMain finMain) {
+
 		logger.debug("Enetring");
-		
+
 		//Fin Schedule details
 		String finSchedulePayable = "Amount Financed - Payable ";//Add Disbursement  1
 
@@ -739,7 +769,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String advancePayment = "Amount Paid Vide "; //Amount Paid Vide  2
 
 		//Payment Instructions
-		String paymentInstrucionEvent = "Amount Paid Vide ";//"STLMNT"; 7
+		String payInsEvent = "Amount Paid Vide ";//"STLMNT"; 7
 
 		//FinODDetails
 		String penality = "Penalty Due Created for Past due till date "; //16
@@ -753,347 +783,356 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String manualAdvPrentmentIn = ""; // 11
 
 		//Receipt Header
-		String receiptHeaderEventExcess = "Payment Received vide ";
-		String receiptHeaderTdsAdjust = "TDS Adjustment"; //17
-		String receiptHeaderPaymentBouncedFor = "Payment Bounced For "; //9
-		String receiptHeaderTdsAdjustReversal = "TDS Adjustment Reversal "; //18
+		String rHEventExcess = "Payment Received vide ";
+		String rHTdsAdjust = "TDS Adjustment"; //17
+		String rHPaymentBouncedFor = "Payment Bounced For "; //9
+		String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
 
 		//FinFeeDetails
 		String finFeeDetailOrgination = "- Due "; //14
 		String finFeeDetailNotInDISBorPOSP = "- Due "; //15
 		String finFeeDetailEvent = "- Due "; //4
 		String finRef = "";//"(" + finReference + ")";
-		String receiptHeaderPftWaived = "Interest from customer Waived Off ";
-		String receiptHeaderPriWaived = "Principal from customer Waived Off ";
-		String receiptHeaderPenaltyWaived = "Penalty from customer Waived Off ";
-		
-		
-		SOATransactionReport soaTransactionReport = null;
+		String rHPftWaived = "Interest from customer Waived Off ";
+		String rHPriWaived = "Principal from customer Waived Off ";
+		String rHPenaltyWaived = "Penalty from customer Waived Off ";
+
+		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
-		
+
 		//FinanceMain finMain = getFinanceMain(finReference);
-		
+
 		if (finMain != null) {
-			
+
 			//Finance Schedule Details
-			List<FinanceScheduleDetail>  finSchdDetList = getFinScheduleDetails(finReference);
+			List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
 			Date maxSchDate = getMaxSchDate(finReference);
-			
+
 			//Finance Advance Payment Details
-			List<FinAdvancePayments>  finAdvancePaymentsList = getFinAdvancePayments(finReference);
-			
+			List<FinAdvancePayments> finAdvancePaymentsList = getFinAdvancePayments(finReference);
+
 			//Payment Instruction Details
-			List<PaymentInstruction>  paymentInstructionsList = getPaymentInstructions(finReference);
-			
+			List<PaymentInstruction> paymentInstructionsList = getPaymentInstructions(finReference);
+
 			//FinODDetails
-			List<FinODDetails>  finODDetailsList = getFinODDetails(finReference);
-			
+			List<FinODDetails> finODDetailsList = getFinODDetails(finReference);
+
 			//Manual Advise Movements List
-			List<ManualAdviseMovements>  manualAdviseMovementsList = getManualAdviseMovements(finReference);
-			
+			List<ManualAdviseMovements> manualAdviseMovementsList = getManualAdviseMovements(finReference);
+
 			//Manual Advise List
-			List<ManualAdvise>  manualAdviseList = getManualAdvise(finReference);
-			
+			List<ManualAdvise> manualAdviseList = getManualAdvise(finReference);
+
 			//PresentmentDetails
 			List<PresentmentDetail> PresentmentDetailsList = getPresentmentDetailsList(finReference);
-			
+
 			//Fin Receipt Header
-			List<FinReceiptHeader>  finReceiptHeadersList = getFinReceiptHeaders(finReference);
-			
+			List<FinReceiptHeader> finReceiptHeadersList = getFinReceiptHeaders(finReference);
+
 			//Fin Fee Details
 			List<FinFeeDetail> finFeedetailsList = getFinFeedetails(finReference);
-						
+
 			//Finance Schedule Details
+			String closingStatus = finMain.getClosingStatus();
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
-				
-				if (StringUtils.isBlank(finMain.getClosingStatus())
-						|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")){
-					
+
+				String bpiOrHoliday = finSchdDetail.getBpiOrHoliday();
+				BigDecimal repayAmount = finSchdDetail.getRepayAmount();
+
+				if (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C")) {
+
 					//Add disbursement
 					if (finSchdDetail.isDisbOnSchDate()) {
-						
+
 						BigDecimal transactionAmount = BigDecimal.ZERO;
-						
+
 						if (finSchdDetail.getDisbAmount() != null) {
 							transactionAmount = finSchdDetail.getDisbAmount();
 						}
-						
+
 						if (DateUtility.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
 							transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
 						}
-						
-						soaTransactionReport = new SOATransactionReport();
-						soaTransactionReport.setEvent(finSchedulePayable+finRef);
-						soaTransactionReport.setTransactionDate(finMain.getFinApprovedDate());
-						soaTransactionReport.setValueDate(finMain.getFinStartDate());
-						soaTransactionReport.setCreditAmount(transactionAmount);
-						soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-						soaTransactionReport.setPriority(1);
-						
-						soaTransactionReports.add(soaTransactionReport);
-					}
-					
-					//Broken Period Interest Receivable- Due
-					if (StringUtils.equalsIgnoreCase("B", finSchdDetail.getBpiOrHoliday()) 
-							&& finSchdDetail.getRepayAmount() != null
-							&& finSchdDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-						soaTransactionReport = new SOATransactionReport();
-						soaTransactionReport.setEvent(brokenPeriodEvent+finRef);
-						soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
-						soaTransactionReport.setValueDate(finSchdDetail.getSchDate());
-						soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-						soaTransactionReport.setDebitAmount(finSchdDetail.getRepayAmount());
-						soaTransactionReport.setPriority(8);
 
-						soaTransactionReports.add(soaTransactionReport);
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(finSchedulePayable + finRef);
+						soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
+						soaTranReport.setValueDate(finMain.getFinStartDate());
+						soaTranReport.setCreditAmount(transactionAmount);
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+						soaTranReport.setPriority(1);
+
+						soaTransactionReports.add(soaTranReport);
+					}
+
+					//Broken Period Interest Receivable- Due
+					if (StringUtils.equalsIgnoreCase("B", bpiOrHoliday) && repayAmount != null
+							&& repayAmount.compareTo(BigDecimal.ZERO) > 0) {
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(brokenPeriodEvent + finRef);
+						soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
+						soaTranReport.setValueDate(finSchdDetail.getSchDate());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(repayAmount);
+						soaTranReport.setPriority(8);
+
+						soaTransactionReports.add(soaTranReport);
 					}
 				}
-				
+
 				//fore closure Amount 
+				BigDecimal partialPaidAmt = finSchdDetail.getPartialPaidAmt();
 				if (maxSchDate != null && DateUtility.compare(maxSchDate, finSchdDetail.getSchDate()) == 0) {
-					soaTransactionReport = new SOATransactionReport();
-					soaTransactionReport.setEvent(foreclosureAmount+finRef);
-					soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
-					soaTransactionReport.setValueDate(finSchdDetail.getSchDate());
-					soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-					soaTransactionReport.setDebitAmount(finSchdDetail.getRepayAmount().subtract(finSchdDetail.getPartialPaidAmt()));
-					soaTransactionReport.setPriority(23);
-					soaTransactionReports.add(soaTransactionReport);
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(foreclosureAmount + finRef);
+					soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
+					soaTranReport.setValueDate(finSchdDetail.getSchDate());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setDebitAmount(repayAmount.subtract(partialPaidAmt));
+					soaTranReport.setPriority(23);
+					soaTransactionReports.add(soaTranReport);
 				}
-				
+
 				if ((DateUtility.compare(finSchdDetail.getSchDate(), DateUtility.getAppDate()) <= 0)) {
 
 					// Partial Prepayment Amount
-					if (finSchdDetail.getPartialPaidAmt() != null
-							&& finSchdDetail.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
+					if (partialPaidAmt != null && partialPaidAmt.compareTo(BigDecimal.ZERO) > 0) {
 
-						soaTransactionReport = new SOATransactionReport();
-						soaTransactionReport.setEvent(partPrepayment+finRef);
-						soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
-						soaTransactionReport.setValueDate(finSchdDetail.getSchDate());
-						soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-						soaTransactionReport.setDebitAmount(finSchdDetail.getPartialPaidAmt());
-						soaTransactionReport.setPriority(7);
-						soaTransactionReports.add(soaTransactionReport);
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(partPrepayment + finRef);
+						soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
+						soaTranReport.setValueDate(finSchdDetail.getSchDate());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(partialPaidAmt);
+						soaTranReport.setPriority(7);
+						soaTransactionReports.add(soaTranReport);
 					}
-					
+
 					//Due for Installment 
-					if ((StringUtils.isBlank(finMain.getClosingStatus()) || !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C"))
-							&& (!finSchdDetail.isDisbOnSchDate() && DateUtility.compare(maxSchDate, finSchdDetail.getSchDate()) != 0)
-							&& (StringUtils.isBlank(finSchdDetail.getBpiOrHoliday()) 
-									&& !StringUtils.equalsIgnoreCase(finSchdDetail.getBpiOrHoliday(), "H")
-									&& !StringUtils.equalsIgnoreCase(finSchdDetail.getBpiOrHoliday(), "B"))) {
-						
+					if ((StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C"))
+							&& (!finSchdDetail.isDisbOnSchDate()
+									&& DateUtility.compare(maxSchDate, finSchdDetail.getSchDate()) != 0)
+							&& (StringUtils.isBlank(bpiOrHoliday) && !StringUtils.equalsIgnoreCase(bpiOrHoliday, "H")
+									&& !StringUtils.equalsIgnoreCase(bpiOrHoliday, "B"))) {
+
 						BigDecimal transactionAmt = BigDecimal.ZERO;
-						
-						if (finSchdDetail.getRepayAmount() != null) {
-							transactionAmt = finSchdDetail.getRepayAmount();
-						}
-						
-						if (finSchdDetail.getPartialPaidAmt() != null) {
-							transactionAmt = transactionAmt.subtract(finSchdDetail.getPartialPaidAmt());
+
+						if (repayAmount != null) {
+							transactionAmt = repayAmount;
 						}
 
-						soaTransactionReport = new SOATransactionReport();
-						soaTransactionReport.setEvent(dueForInstallment+finSchdDetail.getInstNumber()+finRef);
-						soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
-						soaTransactionReport.setValueDate(finSchdDetail.getSchDate());
-						soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-						soaTransactionReport.setDebitAmount(transactionAmt);
-						soaTransactionReport.setPriority(3);
-						if (soaTransactionReport.getDebitAmount().compareTo(BigDecimal.ZERO) > 0) {
-							soaTransactionReports.add(soaTransactionReport);
+						if (partialPaidAmt != null) {
+							transactionAmt = transactionAmt.subtract(partialPaidAmt);
+						}
+
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(dueForInstallment + finSchdDetail.getInstNumber() + finRef);
+						soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
+						soaTranReport.setValueDate(finSchdDetail.getSchDate());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(transactionAmt);
+						soaTranReport.setPriority(3);
+						if (soaTranReport.getDebitAmount().compareTo(BigDecimal.ZERO) > 0) {
+							soaTransactionReports.add(soaTranReport);
 						}
 					}
 				}
-				if(finSchdDetail.getInstNumber() == finMain.getFixedRateTenor()){
+				if (finSchdDetail.getInstNumber() == finMain.getFixedRateTenor()) {
 					fixedEndDate = null;
 					fixedEndDate = finSchdDetail.getSchDate();
 				}
 			}
-			
+
 			//fin Advance Payments List 
 			if (finAdvancePaymentsList != null && !finAdvancePaymentsList.isEmpty()) {
 				for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
-					advancePayment = "Amount Paid Vide "; 
+					advancePayment = "Amount Paid Vide ";
 					String status = "";
-					if(StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_AWAITCON)){
+					if (StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
 						status = " - Subject to realization";
 					}
-					soaTransactionReport = new SOATransactionReport();
-					if(StringUtils.isNotBlank(finAdvancePayments.getPaymentType())){
-					advancePayment = advancePayment.concat(finAdvancePayments.getPaymentType()+":");
+					soaTranReport = new SOATransactionReport();
+					String paymentType = finAdvancePayments.getPaymentType();
+					if (StringUtils.isNotBlank(paymentType)) {
+						advancePayment = advancePayment.concat(paymentType + ":");
 					}
-					if(StringUtils.equals(finAdvancePayments.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE) ||
-							StringUtils.equals(finAdvancePayments.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)){
-						if ( StringUtils.isNotBlank(finAdvancePayments.getLlReferenceNo())){
-							advancePayment = advancePayment.concat(finAdvancePayments.getLlReferenceNo());
+					if (StringUtils.equals(paymentType, DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+							|| StringUtils.equals(paymentType, DisbursementConstants.PAYMENT_TYPE_DD)) {
+						String llReferenceNo = finAdvancePayments.getLlReferenceNo();
+						if (StringUtils.isNotBlank(llReferenceNo)) {
+							advancePayment = advancePayment.concat(llReferenceNo);
 						}
-						soaTransactionReport.setValueDate(finAdvancePayments.getValueDate());
+						soaTranReport.setValueDate(finAdvancePayments.getValueDate());
 					} else {
-						if ( StringUtils.isNotBlank(finAdvancePayments.getTransactionRef())) {
-							advancePayment = advancePayment.concat(finAdvancePayments.getTransactionRef());
+						String transactionRef = finAdvancePayments.getTransactionRef();
+						if (StringUtils.isNotBlank(transactionRef)) {
+							advancePayment = advancePayment.concat(transactionRef);
 						}
-						soaTransactionReport.setValueDate(finAdvancePayments.getLlDate());
+						soaTranReport.setValueDate(finAdvancePayments.getLlDate());
 					}
-					soaTransactionReport.setEvent(advancePayment+finRef+status);
-					soaTransactionReport.setTransactionDate(finAdvancePayments.getLlDate());
-					soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-					soaTransactionReport.setDebitAmount(finAdvancePayments.getAmtToBeReleased());
-					soaTransactionReport.setPriority(2);
+					soaTranReport.setEvent(advancePayment + finRef + status);
+					soaTranReport.setTransactionDate(finAdvancePayments.getLlDate());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setDebitAmount(finAdvancePayments.getAmtToBeReleased());
+					soaTranReport.setPriority(2);
 
-					soaTransactionReports.add(soaTransactionReport);
+					soaTransactionReports.add(soaTranReport);
 				}
 			}
-			
+
 			//paymentInstructionsList 
-			for (PaymentInstruction paymentInstruction : paymentInstructionsList) {
-				soaTransactionReport = new SOATransactionReport();
-				paymentInstrucionEvent = "Amount Paid Vide ";
-				if (StringUtils.isNotBlank(paymentInstruction.getPaymentType())) {
-					paymentInstrucionEvent = paymentInstrucionEvent.concat(paymentInstruction.getPaymentType() + ":");
+			for (PaymentInstruction payInstruction : paymentInstructionsList) {
+				soaTranReport = new SOATransactionReport();
+				payInsEvent = "Amount Paid Vide ";
+				if (StringUtils.isNotBlank(payInstruction.getPaymentType())) {
+					payInsEvent = payInsEvent.concat(payInstruction.getPaymentType() + ":");
 				}
-				if(StringUtils.equals(paymentInstruction.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE) ||
-						StringUtils.equals(paymentInstruction.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)){
-					if (StringUtils.isNotBlank(paymentInstruction.getFavourNumber())) {
-						paymentInstrucionEvent = paymentInstrucionEvent.concat(paymentInstruction.getFavourNumber());
+				if (StringUtils.equals(payInstruction.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+						|| StringUtils.equals(payInstruction.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+					if (StringUtils.isNotBlank(payInstruction.getFavourNumber())) {
+						payInsEvent = payInsEvent.concat(payInstruction.getFavourNumber());
 					}
-					soaTransactionReport.setValueDate(paymentInstruction.getValueDate());
+					soaTranReport.setValueDate(payInstruction.getValueDate());
 				} else {
-					if (StringUtils.isNotBlank(paymentInstruction.getTransactionRef())) {
-						paymentInstrucionEvent = paymentInstrucionEvent.concat(paymentInstruction.getTransactionRef());
+					if (StringUtils.isNotBlank(payInstruction.getTransactionRef())) {
+						payInsEvent = payInsEvent.concat(payInstruction.getTransactionRef());
 					}
-					soaTransactionReport.setValueDate(paymentInstruction.getPostDate());
+					soaTranReport.setValueDate(payInstruction.getPostDate());
 				}
-				soaTransactionReport.setEvent(paymentInstrucionEvent+finRef);
-				soaTransactionReport.setTransactionDate(paymentInstruction.getPostDate());
-				soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-				soaTransactionReport.setDebitAmount(paymentInstruction.getPaymentAmount());
-				soaTransactionReport.setPriority(9);
+				soaTranReport.setEvent(payInsEvent + finRef);
+				soaTranReport.setTransactionDate(payInstruction.getPostDate());
+				soaTranReport.setCreditAmount(BigDecimal.ZERO);
+				soaTranReport.setDebitAmount(payInstruction.getPaymentAmount());
+				soaTranReport.setPriority(9);
 
-				soaTransactionReports.add(soaTransactionReport);
+				soaTransactionReports.add(soaTranReport);
 			}
-			
+
 			// FinODDetails 
 			if (finODDetailsList != null && !finODDetailsList.isEmpty()
-					&& (StringUtils.isBlank(finMain.getClosingStatus())
-							|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C"))) {
+					&& (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C"))) {
 
 				for (FinODDetails finODDetails : finODDetailsList) {
-					soaTransactionReport = new SOATransactionReport();
-					soaTransactionReport.setEvent(penality+DateUtility.formateDate(finODDetails.getFinODTillDate(), ""));
-					soaTransactionReport.setTransactionDate(finODDetails.getFinODSchdDate());
-					soaTransactionReport.setValueDate(finODDetails.getFinODSchdDate());
-					soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-					soaTransactionReport.setDebitAmount(finODDetails.getTotPenaltyAmt());
-					soaTransactionReport.setPriority(19);
-					soaTransactionReports.add(soaTransactionReport);
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(penality + DateUtility.formateDate(finODDetails.getFinODTillDate(), ""));
+					soaTranReport.setTransactionDate(finODDetails.getFinODSchdDate());
+					soaTranReport.setValueDate(finODDetails.getFinODSchdDate());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setDebitAmount(finODDetails.getTotPenaltyAmt());
+					soaTranReport.setPriority(19);
+					soaTransactionReports.add(soaTranReport);
 				}
 			}
-			
+
 			//Manual Advise Movement List 
 			if (manualAdviseMovementsList != null && !manualAdviseMovementsList.isEmpty()) {
 				for (ManualAdviseMovements manualAdviseMovements : manualAdviseMovementsList) {
-					soaTransactionReport = new SOATransactionReport();
+
+					if (manualAdviseMovements.getWaivedAmount().compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
+					}
+					soaTranReport = new SOATransactionReport();
 					manualAdviseMovementEvent = "Waived Amount ";
 					if (StringUtils.isNotBlank(manualAdviseMovements.getFeeTypeDesc())) {
-						manualAdviseMovementEvent = manualAdviseMovementEvent.concat(manualAdviseMovements.getFeeTypeDesc());
+						manualAdviseMovementEvent = manualAdviseMovementEvent
+								.concat(manualAdviseMovements.getFeeTypeDesc());
 					} else {
 						manualAdviseMovementEvent = manualAdviseMovementEvent.concat("Bounce");
 					}
-					soaTransactionReport.setEvent(manualAdviseMovementEvent.concat(finRef));
-					soaTransactionReport.setTransactionDate(manualAdviseMovements.getMovementDate());
-					soaTransactionReport.setValueDate(manualAdviseMovements.getValueDate());
-					soaTransactionReport.setCreditAmount(manualAdviseMovements.getWaivedAmount());
-					soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-					soaTransactionReport.setPriority(15);
+					soaTranReport.setEvent(manualAdviseMovementEvent.concat(finRef));
+					soaTranReport.setTransactionDate(manualAdviseMovements.getMovementDate());
+					soaTranReport.setValueDate(manualAdviseMovements.getValueDate());
+					soaTranReport.setCreditAmount(manualAdviseMovements.getWaivedAmount());
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(15);
 
-					soaTransactionReports.add(soaTransactionReport);
+					soaTransactionReports.add(soaTranReport);
 				}
 			}
-			
+
 			List<Long> presentmentReceiptIds = new ArrayList<Long>();
-			
+
 			for (PresentmentDetail presentmentDetail : PresentmentDetailsList) {
 				if (!presentmentReceiptIds.contains(presentmentDetail.getReceiptID())) {
 					presentmentReceiptIds.add(presentmentDetail.getReceiptID());
 				}
 			}
-			
+
 			//Manual Advise 
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				manualAdvFeeType = "- Payable"; //12
 				manualAdvPrentmentNotIn = "FeeDesc or Bounce - Due "; //10
 				manualAdvPrentmentIn = " "; // 11
-				 
+
 				if ((manualAdvise.getFeeTypeID() != 0 && manualAdvise.getFeeTypeID() != Long.MIN_VALUE)
 						&& StringUtils.isNotBlank(manualAdvise.getFeeTypeDesc()) && manualAdvise.getAdviseType() == 2
 						&& manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
-					soaTransactionReport = new SOATransactionReport();
-					soaTransactionReport.setEvent(manualAdvise.getFeeTypeDesc()+manualAdvFeeType+finRef);
-					soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
-					soaTransactionReport.setValueDate(manualAdvise.getValueDate());
-					soaTransactionReport.setCreditAmount(manualAdvise.getAdviseAmount());
-					soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-					soaTransactionReport.setPriority(14);
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(manualAdvise.getFeeTypeDesc() + manualAdvFeeType + finRef);
+					soaTranReport.setTransactionDate(manualAdvise.getPostDate());
+					soaTranReport.setValueDate(manualAdvise.getValueDate());
+					soaTranReport.setCreditAmount(manualAdvise.getAdviseAmount());
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(14);
 
-
-					soaTransactionReports.add(soaTransactionReport);
+					soaTransactionReports.add(soaTranReport);
 				}
 				//Bounce/Fee - Due
-				if (manualAdvise.getAdviseType() != 2 
+				if (manualAdvise.getAdviseType() != 2
 						&& manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
-					
+
 					if (!presentmentReceiptIds.contains(manualAdvise.getReceiptID())) {
 
-						soaTransactionReport = new SOATransactionReport();
-						if(manualAdvise.getFeeTypeID()>0){
-							
-							manualAdvPrentmentNotIn= manualAdvise.getFeeTypeDesc()+" - Due";
-							
-							if(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(manualAdvise.getTaxComponent())){
-								manualAdvPrentmentNotIn= manualAdvPrentmentNotIn + inclusive;
-							}else if(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())){
-								manualAdvPrentmentNotIn= manualAdvPrentmentNotIn + exclusive;
+						soaTranReport = new SOATransactionReport();
+						if (manualAdvise.getFeeTypeID() > 0) {
+
+							manualAdvPrentmentNotIn = manualAdvise.getFeeTypeDesc() + " - Due";
+
+							if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(manualAdvise.getTaxComponent())) {
+								manualAdvPrentmentNotIn = manualAdvPrentmentNotIn + inclusive;
+							} else if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
+									.equals(manualAdvise.getTaxComponent())) {
+								manualAdvPrentmentNotIn = manualAdvPrentmentNotIn + exclusive;
 							}
 						} else {
 							manualAdvPrentmentNotIn = "Bounce - Due";
 						}
-						soaTransactionReport.setEvent(manualAdvPrentmentNotIn+finRef);
-						soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
-						soaTransactionReport.setValueDate(manualAdvise.getValueDate());
-						soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-						soaTransactionReport.setDebitAmount(manualAdvise.getAdviseAmount());
-						soaTransactionReport.setPriority(12);
+						soaTranReport.setEvent(manualAdvPrentmentNotIn + finRef);
+						soaTranReport.setTransactionDate(manualAdvise.getPostDate());
+						soaTranReport.setValueDate(manualAdvise.getValueDate());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(manualAdvise.getAdviseAmount());
+						soaTranReport.setPriority(12);
 
-						
-						soaTransactionReports.add(soaTransactionReport);
+						soaTransactionReports.add(soaTranReport);
 					} else {
 						//Bounce created for particular on Installment 
 						if (manualAdvise.getFeeTypeID() == 0) {
-							
+
 							for (PresentmentDetail presentmentDetail : PresentmentDetailsList) {
-								
+
 								if (manualAdvise.getReceiptID() == presentmentDetail.getReceiptID()) {
-									
+
 									for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
-										
-										if (DateUtility.compare(presentmentDetail.getSchDate(), finSchdDetail.getSchDate()) == 0) {
+
+										if (DateUtility.compare(presentmentDetail.getSchDate(),
+												finSchdDetail.getSchDate()) == 0) {
 											manualAdvPrentmentIn = "Bounce Created for " + "'"
 													+ presentmentDetail.getBounceReason() + "'" + " on Installment:";
-											soaTransactionReport = new SOATransactionReport();
+											soaTranReport = new SOATransactionReport();
 											if (finSchdDetail.getInstNumber() > 0) {
-												manualAdvPrentmentIn= manualAdvPrentmentIn.concat(String.valueOf(finSchdDetail.getInstNumber()));
+												manualAdvPrentmentIn = manualAdvPrentmentIn
+														.concat(String.valueOf(finSchdDetail.getInstNumber()));
 											}
-											manualAdvPrentmentIn= manualAdvPrentmentIn.concat(finRef);
-											soaTransactionReport.setEvent(manualAdvPrentmentIn);
-											soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
-											soaTransactionReport.setValueDate(manualAdvise.getValueDate());
-											soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-											soaTransactionReport.setDebitAmount(manualAdvise.getAdviseAmount());
-											soaTransactionReport.setPriority(13);
+											manualAdvPrentmentIn = manualAdvPrentmentIn.concat(finRef);
+											soaTranReport.setEvent(manualAdvPrentmentIn);
+											soaTranReport.setTransactionDate(manualAdvise.getPostDate());
+											soaTranReport.setValueDate(manualAdvise.getValueDate());
+											soaTranReport.setCreditAmount(BigDecimal.ZERO);
+											soaTranReport.setDebitAmount(manualAdvise.getAdviseAmount());
+											soaTranReport.setPriority(13);
 
-											soaTransactionReports.add(soaTransactionReport);
+											soaTransactionReports.add(soaTranReport);
 										}
 									}
 								}
@@ -1102,359 +1141,375 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 				}
 			}
-			
+
 			if (finReceiptHeadersList != null && !finReceiptHeadersList.isEmpty()) {
-				
+
 				//FinReceiptDetails List
-				List<FinReceiptDetail>  finReceiptDetailsList = getFinReceiptDetails(finReference);
-				
+				List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetails(finReference);
+
 				//FinRepayHeaders List
 				List<FinRepayHeader> finRepayHeadersList = getFinRepayHeadersList(finReference);
-				
+
 				//FinRepayscheduledetails List
-				List<RepayScheduleDetail> finRepayScheduleDetailsList = getRepayScheduleDetailsList(finReference);
-				
+				List<RepayScheduleDetail> finRepaySchdDetails = getRepayScheduleDetailsList(finReference);
+
 				//FinReceipt Allocation Details
-				List<ReceiptAllocationDetail> finReceiptAllocationDetailsList = getReceiptAllocationDetailsList(finReference);
-				
+				List<ReceiptAllocationDetail> finReceiptAllocDetails = getReceiptAllocationDetailsList(finReference);
+
 				for (FinReceiptHeader finReceiptHeader : finReceiptHeadersList) {
-					
+
 					for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
-						
-						if (finReceiptDetail.getReceiptID()  == finReceiptHeader.getReceiptID()) {
-							receiptHeaderEventExcess = "Payment Received vide ";
-							if (StringUtils.isBlank(finReceiptHeader.getReceiptModeStatus())
-									|| !StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), "C")) {
-								if (!StringUtils.equals("PAYABLE", finReceiptDetail.getPaymentType())) {
+
+						long receiptID = finReceiptDetail.getReceiptID();
+						long rhReceiptID = finReceiptHeader.getReceiptID();
+						if (receiptID == rhReceiptID) {
+							rHEventExcess = "Payment Received vide ";
+							String rpaymentType = StringUtils.trimToEmpty(finReceiptDetail.getPaymentType());
+							String receiptModeStatus = StringUtils.trimToEmpty(finReceiptHeader.getReceiptModeStatus());
+							Date receiptDate = finReceiptHeader.getReceiptDate();
+							Date receivedDate = finReceiptDetail.getReceivedDate();
+
+							String favourNumber = finReceiptDetail.getFavourNumber();
+							if (StringUtils.isBlank(receiptModeStatus) || !StringUtils.equals(receiptModeStatus, "C")) {
+								if (!StringUtils.equals("PAYABLE", rpaymentType)) {
 									String status = "";
 									String paymentType = "";
 									int instlNo = 0;
-									soaTransactionReport = new SOATransactionReport();
-									soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
-									if (!(StringUtils.equals("EXCESS", finReceiptDetail.getPaymentType())
-											|| StringUtils.equals("CASH", finReceiptDetail.getPaymentType()))) {
-										
+									soaTranReport = new SOATransactionReport();
+									soaTranReport.setTransactionDate(receiptDate);
+									if (!(StringUtils.equals("EXCESS", rpaymentType)
+											|| StringUtils.equals("CASH", rpaymentType))) {
+
 										for (PresentmentDetail presentmentDetail : PresentmentDetailsList) {
-											
-											if (finReceiptDetail.getReceiptID() == presentmentDetail.getReceiptID() 
-													&& StringUtils.equals(finReceiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)){
-													if(StringUtils.equals(presentmentDetail.getStatus(), RepayConstants.PEXC_APPROV)) {
-														status = " - Subject to realization";
-													}
-												instlNo = presentmentDetail.getEmiNo();
-												if(StringUtils.equals(presentmentDetail.getMandateType(), MandateConstants.TYPE_DDM)){
-													paymentType = "Direct Debit";
-												}else {
-													paymentType = presentmentDetail.getMandateType();
+											String mandateType = StringUtils
+													.trimToEmpty(presentmentDetail.getMandateType());
+
+											if (receiptID == presentmentDetail.getReceiptID() && StringUtils
+													.equals(rpaymentType, RepayConstants.RECEIPTMODE_PRESENTMENT)) {
+												if (StringUtils.equals(presentmentDetail.getStatus(),
+														RepayConstants.PEXC_APPROV)) {
+													status = " - Subject to realization";
 												}
-												paymentType = paymentType.concat(" EMI NO.: " + instlNo) ;
+												instlNo = presentmentDetail.getEmiNo();
+
+												if (mandateType.equals(MandateConstants.TYPE_DDM)) {
+													paymentType = "Direct Debit";
+												} else {
+													paymentType = mandateType;
+												}
+												paymentType = paymentType.concat(" EMI NO.: " + instlNo);
 											}
-											
+
 										}
-										
-										if (StringUtils.equals(finReceiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-												&& StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_APPROVED)) {
+
+										if (StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_CHEQUE)
+												&& StringUtils.equals(receiptModeStatus,
+														RepayConstants.PAYSTATUS_APPROVED)) {
 											status = " - Subject to realization";
-										} 
-										
-										if (StringUtils.isNotBlank(finReceiptDetail.getPaymentType())) {
-											
-											if (StringUtils.equals(finReceiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)) {
-												paymentType = StringUtils.capitaliseAllWords(finReceiptDetail.getPaymentType()) + " No.:";
-											} else if (!StringUtils.equals(finReceiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)) {
-												paymentType = finReceiptDetail.getPaymentType() + " No.:";
+										}
+
+										if (StringUtils.isNotBlank(rpaymentType)) {
+
+											if (StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_CHEQUE)) {
+												paymentType = StringUtils.capitaliseAllWords(rpaymentType) + " No.:";
+											} else if (!StringUtils.equals(rpaymentType,
+													RepayConstants.RECEIPTMODE_PRESENTMENT)) {
+												paymentType = rpaymentType + " No.:";
 											}
-											receiptHeaderEventExcess = receiptHeaderEventExcess.concat(paymentType);
+											rHEventExcess = rHEventExcess.concat(paymentType);
 										}
-										if(StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())){
-											receiptHeaderEventExcess= receiptHeaderEventExcess.concat(finReceiptDetail.getTransactionRef());
+										if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
+											rHEventExcess = rHEventExcess.concat(finReceiptDetail.getTransactionRef());
 										}
-										if(StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())){
-											receiptHeaderEventExcess= receiptHeaderEventExcess.concat(finReceiptDetail.getFavourNumber());
+										if (StringUtils.isNotBlank(favourNumber)) {
+											rHEventExcess = rHEventExcess.concat(favourNumber);
 										}
-										receiptHeaderEventExcess = receiptHeaderEventExcess.concat(" "+finRef);
-										
-									} else if (StringUtils.equals("EXCESS", finReceiptDetail.getPaymentType())) {
-										receiptHeaderEventExcess =  "Amount Adjusted " + finRef;
-									} else if(StringUtils.equals("CASH", finReceiptDetail.getPaymentType())){
-										receiptHeaderEventExcess =  "Cash Received Vide Receipt No";
-										if(StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())){
-											receiptHeaderEventExcess = receiptHeaderEventExcess.concat(finReceiptDetail.getPaymentRef() + finRef);
+										rHEventExcess = rHEventExcess.concat(" " + finRef);
+
+									} else if (StringUtils.equals("EXCESS", rpaymentType)) {
+										rHEventExcess = "Amount Adjusted " + finRef;
+									} else if (StringUtils.equals("CASH", rpaymentType)) {
+										rHEventExcess = "Cash Received Vide Receipt No";
+										if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
+											rHEventExcess = rHEventExcess
+													.concat(finReceiptDetail.getPaymentRef() + finRef);
 										}
 									}
-									soaTransactionReport.setValueDate(finReceiptDetail.getReceivedDate());
-									soaTransactionReport.setEvent(receiptHeaderEventExcess + status);
-									soaTransactionReport.setCreditAmount(finReceiptDetail.getAmount());
-									
-									if (StringUtils.equals(finReceiptDetail.getPaymentType(), "EXCESS")) {
-										soaTransactionReport.setDebitAmount(finReceiptDetail.getAmount());
+									soaTranReport.setValueDate(receivedDate);
+									soaTranReport.setEvent(rHEventExcess + status);
+									soaTranReport.setCreditAmount(finReceiptDetail.getAmount());
+
+									if (StringUtils.equals(rpaymentType, "EXCESS")) {
+										soaTranReport.setDebitAmount(finReceiptDetail.getAmount());
 									} else {
-										soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
+										soaTranReport.setDebitAmount(BigDecimal.ZERO);
 									}
-									soaTransactionReport.setPriority(10);
-									
-									soaTransactionReports.add(soaTransactionReport);
+									soaTranReport.setPriority(10);
+
+									soaTransactionReports.add(soaTranReport);
 								}
-								
+
 								//Receipt Allocation Details  
-								for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocationDetailsList) {
-									
-									if (finReceiptHeader.getReceiptID() == finReceiptAllocationDetail.getReceiptID()
-											&& StringUtils.equalsIgnoreCase("TDS", finReceiptAllocationDetail.getAllocationType())) {
-										
-										soaTransactionReport = new SOATransactionReport();
-										soaTransactionReport.setEvent(receiptHeaderTdsAdjust+finRef);
-										soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
-										soaTransactionReport.setValueDate(finReceiptHeader.getReceiptDate());
-										soaTransactionReport.setCreditAmount(finReceiptAllocationDetail.getPaidAmount());
-										soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-										soaTransactionReport.setPriority(21);
-										soaTransactionReports.add(soaTransactionReport);
+								for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
+
+									if (rhReceiptID == finReceiptAllocationDetail.getReceiptID() && StringUtils
+											.equalsIgnoreCase("TDS", finReceiptAllocationDetail.getAllocationType())) {
+
+										soaTranReport = new SOATransactionReport();
+										soaTranReport.setEvent(rHTdsAdjust + finRef);
+										soaTranReport.setTransactionDate(receiptDate);
+										soaTranReport.setValueDate(receiptDate);
+										soaTranReport.setCreditAmount(finReceiptAllocationDetail.getPaidAmount());
+										soaTranReport.setDebitAmount(BigDecimal.ZERO);
+										soaTranReport.setPriority(21);
+										soaTransactionReports.add(soaTranReport);
 									}
 								}
 							}
-							
+
 							//Receipt Header with Manual Advise 
-							if (StringUtils.equals(finReceiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
-								
+							if (StringUtils.equals(finReceiptHeader.getReceiptMode(), rpaymentType)) {
+
 								for (ManualAdvise manualAdvise : manualAdviseList) {
-									receiptHeaderPaymentBouncedFor = "Payment Bounced For "; //9
-									if (finReceiptHeader.getReceiptID()  == manualAdvise.getReceiptID()) {
-										
-										if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), "B")
+									rHPaymentBouncedFor = "Payment Bounced For "; //9
+									if (rhReceiptID == manualAdvise.getReceiptID()) {
+
+										if (StringUtils.equals(receiptModeStatus, "B")
 												&& manualAdvise.getAdviseType() == 1
 												&& manualAdvise.getBounceID() > 0) {
-											
-											soaTransactionReport = new SOATransactionReport();
-											if (!(StringUtils.equals("EXCESS", finReceiptDetail.getPaymentType())
-													|| StringUtils.equals("CASH", finReceiptDetail.getPaymentType()))) {
-												receiptHeaderPaymentBouncedFor= receiptHeaderPaymentBouncedFor.concat(finReceiptDetail.getPaymentType()+"No.:" );
-												if(StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())){
-													receiptHeaderPaymentBouncedFor=receiptHeaderPaymentBouncedFor.concat(finReceiptDetail.getFavourNumber());
-												}
-												receiptHeaderPaymentBouncedFor= receiptHeaderPaymentBouncedFor + finRef;
-											} else if (StringUtils.equals("CASH", finReceiptDetail.getPaymentType())) {
-												receiptHeaderPaymentBouncedFor = "Cash Bounced For Receipt No.";
-												if(StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())){
-												receiptHeaderPaymentBouncedFor= receiptHeaderPaymentBouncedFor.concat(finReceiptDetail.getPaymentRef());
-												}
-												receiptHeaderPaymentBouncedFor =receiptHeaderPaymentBouncedFor.concat(finRef);
-											}
-											soaTransactionReport.setEvent(receiptHeaderPaymentBouncedFor);
-											soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
-											soaTransactionReport.setValueDate(finReceiptHeader.getBounceDate());
-											soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-											soaTransactionReport.setDebitAmount(finReceiptDetail.getAmount());
-											soaTransactionReport.setPriority(11);
 
-											soaTransactionReports.add(soaTransactionReport);
+											soaTranReport = new SOATransactionReport();
+											if (!(StringUtils.equals("EXCESS", rpaymentType)
+													|| StringUtils.equals("CASH", rpaymentType))) {
+												rHPaymentBouncedFor = rHPaymentBouncedFor.concat(rpaymentType + "No.:");
+												if (StringUtils.isNotBlank(favourNumber)) {
+													rHPaymentBouncedFor = rHPaymentBouncedFor.concat(favourNumber);
+												}
+												rHPaymentBouncedFor = rHPaymentBouncedFor + finRef;
+											} else if (StringUtils.equals("CASH", rpaymentType)) {
+												rHPaymentBouncedFor = "Cash Bounced For Receipt No.";
+												if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
+													rHPaymentBouncedFor = rHPaymentBouncedFor
+															.concat(finReceiptDetail.getPaymentRef());
+												}
+												rHPaymentBouncedFor = rHPaymentBouncedFor.concat(finRef);
+											}
+											soaTranReport.setEvent(rHPaymentBouncedFor);
+											soaTranReport.setTransactionDate(receiptDate);
+											soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
+											soaTranReport.setCreditAmount(BigDecimal.ZERO);
+											soaTranReport.setDebitAmount(finReceiptDetail.getAmount());
+											soaTranReport.setPriority(11);
+											soaTransactionReports.add(soaTranReport);
 										}
 									}
 								}
 							}
-							
-							if (StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")) {
-								
-								if (finRepayHeadersList != null && !finRepayHeadersList.isEmpty()) {
-									
-									for (FinRepayHeader finRepayHeader: finRepayHeadersList) {
-										
-										if (finReceiptDetail.getReceiptSeqID() == finRepayHeader.getReceiptSeqID()) {
-											
-											BigDecimal totalTdsSchdPayNow = BigDecimal.ZERO;
-											for (RepayScheduleDetail finRepayScheduleDetail : finRepayScheduleDetailsList) {
-												
-												if (finRepayScheduleDetail.getRepayID() == finRepayHeader.getRepayID()) {
-													
-													if(finRepayScheduleDetail.getTdsSchdPayNow() != null
-															&& finRepayScheduleDetail.getTdsSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
-														totalTdsSchdPayNow = totalTdsSchdPayNow.add(finRepayScheduleDetail.getTdsSchdPayNow());
-														
-													}
-													//Interest from customer Waived Off
-													if (finRepayScheduleDetail.getPftSchdWaivedNow() != null
-															&& finRepayScheduleDetail.getPftSchdWaivedNow().compareTo(BigDecimal.ZERO) > 0) {
-														soaTransactionReport = new SOATransactionReport();
-														soaTransactionReport.setEvent(receiptHeaderPftWaived + finRef);
-														soaTransactionReport.setTransactionDate(finReceiptDetail.getReceivedDate());
-														soaTransactionReport.setValueDate(finReceiptDetail.getValueDate());
-														soaTransactionReport.setCreditAmount(finRepayScheduleDetail.getPftSchdWaivedNow());
-														soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-														soaTransactionReport.setPriority(4);
-														soaTransactionReports.add(soaTransactionReport);
 
-													}
-													//Principal from customer Waived Off
-													if(finRepayScheduleDetail.getPrincipalSchdPayNow() != null
-															&& finRepayScheduleDetail.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
-														soaTransactionReport = new SOATransactionReport();
-														soaTransactionReport.setEvent(receiptHeaderPriWaived+finRef);
-														soaTransactionReport.setTransactionDate(finReceiptDetail.getReceivedDate());
-														soaTransactionReport.setValueDate(finReceiptDetail.getValueDate());
-														soaTransactionReport.setCreditAmount(finRepayScheduleDetail.getPrincipalSchdPayNow());
-														soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-														soaTransactionReport.setPriority(5);
-														soaTransactionReports.add(soaTransactionReport);
-														
-													}
-													//Penalty from customer Waived Off
-													if ((StringUtils.isBlank(finMain.getClosingStatus())
-															|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")) &&
-															finRepayScheduleDetail.getWaivedAmt() != null
-															&& finRepayScheduleDetail.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0) {
-														soaTransactionReport = new SOATransactionReport();
-														soaTransactionReport.setEvent(receiptHeaderPenaltyWaived + finRef);
-														soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
-														soaTransactionReport.setValueDate(finReceiptDetail.getReceivedDate());
-														soaTransactionReport.setCreditAmount(finRepayScheduleDetail.getWaivedAmt());
-														soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-														soaTransactionReport.setPriority(20);
-														soaTransactionReports.add(soaTransactionReport);
-													}
+							if (finRepayHeadersList != null && !finRepayHeadersList.isEmpty()) {
+
+								for (FinRepayHeader finRepayHeader : finRepayHeadersList) {
+
+									if (finReceiptDetail.getReceiptSeqID() == finRepayHeader.getReceiptSeqID()) {
+
+										BigDecimal totalTdsSchdPayNow = BigDecimal.ZERO;
+										for (RepayScheduleDetail finRpySchdDetail : finRepaySchdDetails) {
+
+											if (finRpySchdDetail.getRepayID() == finRepayHeader.getRepayID()) {
+
+												if (finRpySchdDetail.getTdsSchdPayNow() != null && finRpySchdDetail
+														.getTdsSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
+													totalTdsSchdPayNow = totalTdsSchdPayNow
+															.add(finRpySchdDetail.getTdsSchdPayNow());
+
+												}
+												//Interest from customer Waived Off
+												BigDecimal pftSchdWaivedNow = finRpySchdDetail.getPftSchdWaivedNow();
+												if (pftSchdWaivedNow != null
+														&& pftSchdWaivedNow.compareTo(BigDecimal.ZERO) > 0) {
+													soaTranReport = new SOATransactionReport();
+													soaTranReport.setEvent(rHPftWaived + finRef);
+													soaTranReport.setTransactionDate(receivedDate);
+													soaTranReport.setValueDate(finReceiptDetail.getValueDate());
+													soaTranReport.setCreditAmount(pftSchdWaivedNow);
+													soaTranReport.setDebitAmount(BigDecimal.ZERO);
+													soaTranReport.setPriority(4);
+													soaTransactionReports.add(soaTranReport);
+
+												}
+												//Principal from customer Waived Off
+												BigDecimal principalSchdPayNow = finRpySchdDetail
+														.getPrincipalSchdPayNow();
+												if (principalSchdPayNow != null
+														&& principalSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
+													soaTranReport = new SOATransactionReport();
+													soaTranReport.setEvent(rHPriWaived + finRef);
+													soaTranReport.setTransactionDate(receivedDate);
+													soaTranReport.setValueDate(finReceiptDetail.getValueDate());
+													soaTranReport.setCreditAmount(principalSchdPayNow);
+													soaTranReport.setDebitAmount(BigDecimal.ZERO);
+													soaTranReport.setPriority(5);
+													soaTransactionReports.add(soaTranReport);
+
+												}
+												//Penalty from customer Waived Off
+												BigDecimal waivedAmt = finRpySchdDetail.getWaivedAmt();
+												if ((StringUtils.isBlank(closingStatus)
+														|| !StringUtils.equalsIgnoreCase(closingStatus, "C"))
+														&& waivedAmt != null
+														&& waivedAmt.compareTo(BigDecimal.ZERO) > 0) {
+													soaTranReport = new SOATransactionReport();
+													soaTranReport.setEvent(rHPenaltyWaived + finRef);
+													soaTranReport.setTransactionDate(receiptDate);
+													soaTranReport.setValueDate(receivedDate);
+													soaTranReport.setCreditAmount(waivedAmt);
+													soaTranReport.setDebitAmount(BigDecimal.ZERO);
+													soaTranReport.setPriority(20);
+													soaTransactionReports.add(soaTranReport);
 												}
 											}
-											//TDS Adjustment Reversal 
-											if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
-
-												soaTransactionReport = new SOATransactionReport();
-												soaTransactionReport.setEvent(receiptHeaderTdsAdjustReversal+finRef);
-												soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
-												soaTransactionReport.setValueDate(finReceiptHeader.getBounceDate());
-												soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-												soaTransactionReport.setDebitAmount(totalTdsSchdPayNow);
-												soaTransactionReport.setPriority(22);
-												soaTransactionReports.add(soaTransactionReport);
-											}
-											
 										}
-										
+										//TDS Adjustment Reversal 
+										if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
+
+											soaTranReport = new SOATransactionReport();
+											soaTranReport.setEvent(rHTdsAdjustReversal + finRef);
+											soaTranReport.setTransactionDate(receiptDate);
+											soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
+											soaTranReport.setCreditAmount(BigDecimal.ZERO);
+											soaTranReport.setDebitAmount(totalTdsSchdPayNow);
+											soaTranReport.setPriority(22);
+											soaTransactionReports.add(soaTranReport);
+										}
+
 									}
+
 								}
 							}
-							
 						}
 					}
 				}
 			}
-			
-			if (StringUtils.isBlank(finMain.getClosingStatus())
-					|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")) {
+
+			if (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C")) {
 
 				//Fin Fee Details List
 				if (finFeedetailsList != null && !finFeedetailsList.isEmpty()) {
 
 					// VAS Recordings
 					List<VASRecording> VASRecordingsList = getVASRecordingsList(finReference);
-					
+
 					// Fin fee schedule details
 					List<FinFeeScheduleDetail> finFeeScheduleDetailsList = getFinFeeScheduleDetailsList(finReference);
-					
+
 					for (FinFeeDetail finFeeDetail : finFeedetailsList) {
 						finFeeDetailOrgination = " Amount";
 						finFeeDetailNotInDISBorPOSP = " Amount"; //15
-						String vasProduct=null;
-						for(VASRecording vASRecording:VASRecordingsList){
-							if(StringUtils.equals(finReference, vASRecording.getPrimaryLinkRef()) && 
-									StringUtils.equals(finFeeDetail.getVasReference(), vASRecording.getVasReference())){
-								vasProduct=vASRecording.getProductDesc();
+						String vasProduct = null;
+						for (VASRecording vASRecording : VASRecordingsList) {
+							if (StringUtils.equals(finReference, vASRecording.getPrimaryLinkRef()) && StringUtils
+									.equals(finFeeDetail.getVasReference(), vASRecording.getVasReference())) {
+								vasProduct = vASRecording.getProductDesc();
 							}
 						}
 						BigDecimal debitAmount = BigDecimal.ZERO;
 						BigDecimal waivedAmount = BigDecimal.ZERO;
 						//Fee/Vas - Due 
+						BigDecimal paidAmount = finFeeDetail.getPaidAmount();
+						String feeTypeDesc = finFeeDetail.getFeeTypeDesc();
+
 						if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(finFeeDetail.getFeeScheduleMethod())
-								|| CalculationConstants.REMFEE_PART_OF_SALE_PRICE.equals(finFeeDetail.getFeeScheduleMethod())) {
+								|| CalculationConstants.REMFEE_PART_OF_SALE_PRICE
+										.equals(finFeeDetail.getFeeScheduleMethod())) {
 
 							if (finFeeDetail.isOriginationFee()) {
-								
+
 								if (finFeeDetail.getRemainingFee() != null) {
 									debitAmount = finFeeDetail.getRemainingFee();
 								}
 
-								if (finFeeDetail.getPaidAmount() != null) {
-									debitAmount = debitAmount.add(finFeeDetail.getPaidAmount());
+								if (paidAmount != null) {
+									debitAmount = debitAmount.add(paidAmount);
 								}
 
 								if (debitAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-									soaTransactionReport = new SOATransactionReport();
-									if(StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())){
-										
-										finFeeDetailOrgination  = finFeeDetail.getFeeTypeDesc()+" Amount";
-										if(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())){
+									soaTranReport = new SOATransactionReport();
+									if (StringUtils.isNotBlank(feeTypeDesc)) {
+
+										finFeeDetailOrgination = feeTypeDesc + " Amount";
+										String taxComponent = finFeeDetail.getTaxComponent();
+										if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 											finFeeDetailOrgination = finFeeDetailOrgination + inclusive;
-										}else if(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFeeDetail.getTaxComponent())){
+										} else if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 											finFeeDetailOrgination = finFeeDetailOrgination + exclusive;
 										}
 									} else {
-										finFeeDetailOrgination=vasProduct+" Amount";
+										finFeeDetailOrgination = vasProduct + " Amount";
 									}
-									soaTransactionReport.setEvent(finFeeDetailOrgination+finRef);
-									soaTransactionReport.setTransactionDate(finMain.getFinApprovedDate());
-									soaTransactionReport.setValueDate(finMain.getFinStartDate());
-									soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-									soaTransactionReport.setDebitAmount(debitAmount);
-									soaTransactionReport.setPriority(16);
+									soaTranReport.setEvent(finFeeDetailOrgination + finRef);
+									soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
+									soaTranReport.setValueDate(finMain.getFinStartDate());
+									soaTranReport.setCreditAmount(BigDecimal.ZERO);
+									soaTranReport.setDebitAmount(debitAmount);
+									soaTranReport.setPriority(16);
 
-									soaTransactionReports.add(soaTransactionReport);
+									soaTransactionReports.add(soaTranReport);
 								}
 							}
 						} else {
-							if (finFeeDetail.getPaidAmount() != null && finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
-								soaTransactionReport = new SOATransactionReport();
-								if(StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())){
-									finFeeDetailNotInDISBorPOSP  = finFeeDetail.getFeeTypeDesc();
+							if (paidAmount != null && paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+								soaTranReport = new SOATransactionReport();
+								if (StringUtils.isNotBlank(feeTypeDesc)) {
+									finFeeDetailNotInDISBorPOSP = feeTypeDesc;
 								} else {
-									finFeeDetailNotInDISBorPOSP=vasProduct;
+									finFeeDetailNotInDISBorPOSP = vasProduct;
 								}
-								soaTransactionReport.setEvent(finFeeDetailNotInDISBorPOSP+" Amount"+finRef);
-								soaTransactionReport.setTransactionDate(finFeeDetail.getPostDate());
-								soaTransactionReport.setValueDate(finFeeDetail.getPostDate());
-								soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-								soaTransactionReport.setDebitAmount(finFeeDetail.getPaidAmount());
-								soaTransactionReport.setPriority(17);
-								soaTransactionReports.add(soaTransactionReport);
+								soaTranReport.setEvent(finFeeDetailNotInDISBorPOSP + " Amount" + finRef);
+								soaTranReport.setTransactionDate(finFeeDetail.getPostDate());
+								soaTranReport.setValueDate(finFeeDetail.getPostDate());
+								soaTranReport.setCreditAmount(BigDecimal.ZERO);
+								soaTranReport.setDebitAmount(paidAmount);
+								soaTranReport.setPriority(17);
+								soaTransactionReports.add(soaTranReport);
 							}
 						}
 						//Waived amount for Fee/Vas 
-						/*if (finFeeDetail.getWaivedAmount() != null ) {
-							waivedAmount = waivedAmount.add(finFeeDetail.getWaivedAmount());
-						}
-
-						if (waivedAmount.compareTo(BigDecimal.ZERO) > 0 ) {
-
-							soaTransactionReport = new SOATransactionReport();
-							if (StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())) {
-								finFeeDetailOrgination = finFeeDetail.getFeeTypeDesc();
-							} else {
-								finFeeDetailOrgination = vasProduct;
-							}
-							waivedAmountForFee = Labels.getLabel("label_waivedAmountForFee");
-							soaTransactionReport.setEvent(waivedAmountForFee +" " +finFeeDetailOrgination +" "+finRef);
-							soaTransactionReport.setTransactionDate(finFeeDetail.getPostDate());
-							soaTransactionReport.setValueDate(finMain.getFinStartDate());
-							soaTransactionReport.setCreditAmount(waivedAmount);
-							soaTransactionReport.setDebitAmount(BigDecimal.ZERO);
-							soaTransactionReport.setPriority(18);
-
-							soaTransactionReports.add(soaTransactionReport);
-						}*/
+						/*
+						 * if (finFeeDetail.getWaivedAmount() != null ) { waivedAmount =
+						 * waivedAmount.add(finFeeDetail.getWaivedAmount()); }
+						 * 
+						 * if (waivedAmount.compareTo(BigDecimal.ZERO) > 0 ) {
+						 * 
+						 * soaTransactionReport = new SOATransactionReport(); if
+						 * (StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())) { finFeeDetailOrgination =
+						 * finFeeDetail.getFeeTypeDesc(); } else { finFeeDetailOrgination = vasProduct; }
+						 * waivedAmountForFee = Labels.getLabel("label_waivedAmountForFee");
+						 * soaTransactionReport.setEvent(waivedAmountForFee +" " +finFeeDetailOrgination +" "+finRef);
+						 * soaTransactionReport.setTransactionDate(finFeeDetail.getPostDate());
+						 * soaTransactionReport.setValueDate(finMain.getFinStartDate());
+						 * soaTransactionReport.setCreditAmount(waivedAmount);
+						 * soaTransactionReport.setDebitAmount(BigDecimal.ZERO); soaTransactionReport.setPriority(18);
+						 * 
+						 * soaTransactionReports.add(soaTransactionReport); }
+						 */
 					}
-					
+
 					//Fin Fee Schedule Details List 
 					if (finFeeScheduleDetailsList != null && !finFeeScheduleDetailsList.isEmpty()) {
-						
+
 						for (FinFeeScheduleDetail finFeeScheduleDetail : finFeeScheduleDetailsList) {
-							
-							soaTransactionReport = new SOATransactionReport();
-							soaTransactionReport.setEvent(finFeeScheduleDetail.getFeeTypeDesc()+finFeeDetailEvent+finRef);
-							soaTransactionReport.setTransactionDate(finFeeScheduleDetail.getSchDate());
-							soaTransactionReport.setValueDate(finFeeScheduleDetail.getSchDate());
-							soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
-							soaTransactionReport.setDebitAmount(finFeeScheduleDetail.getSchAmount());
-							soaTransactionReport.setPriority(6);
-							
-							soaTransactionReports.add(soaTransactionReport);
+
+							soaTranReport = new SOATransactionReport();
+							String feeTypeDesc = StringUtils.trimToEmpty(finFeeScheduleDetail.getFeeTypeDesc());
+							soaTranReport.setEvent(feeTypeDesc + finFeeDetailEvent + finRef);
+							soaTranReport.setTransactionDate(finFeeScheduleDetail.getSchDate());
+							soaTranReport.setValueDate(finFeeScheduleDetail.getSchDate());
+							soaTranReport.setCreditAmount(BigDecimal.ZERO);
+							soaTranReport.setDebitAmount(finFeeScheduleDetail.getSchAmount());
+							soaTranReport.setPriority(6);
+
+							soaTransactionReports.add(soaTranReport);
 						}
 					}
 				}
@@ -1464,15 +1519,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		logger.debug("Leaving");
 		return soaTransactionReports;
 	}
-	
+
 	@Override
 	public EventProperties getEventPropertiesList(String configName) {
 		return this.soaReportGenerationDAO.getEventPropertiesList(configName);
 	}
-	
+
 	@Override
 	public List<String> getSOAFinTypes() {
-		
+
 		return soaReportGenerationDAO.getSOAFinTypes();
 	}
 }
