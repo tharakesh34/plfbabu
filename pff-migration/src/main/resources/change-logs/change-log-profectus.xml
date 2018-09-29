@@ -2133,6 +2133,23 @@ UNION ALL
 				     JOIN customers c ON c.custid = o.custid
 			</createView>
 		</changeSet>
+		<changeSet id="86" author="Amarnath.T">
+			<sql>
+				<![CDATA[
+					delete from interface_fields where interfacename='HUNTER_ONLINEMATCHING';
+					
+					INSERT INTO interface_fields (interfaceid, interfacename, tablename, field, datatype, length, module, mappingtype) VALUES (34, 'HUNTER_ONLINEMATCHING', 'HUNTER_ONLINEMATCHING', 'MaritalStatusCode', 'VARCHAR2', 45, 'MaritalStatusCode', 'Master');
+					INSERT INTO interface_fields (interfaceid, interfacename, tablename, field, datatype, length, module, mappingtype) VALUES (35, 'HUNTER_ONLINEMATCHING', 'HUNTER_ONLINEMATCHING', 'Gender', 'VARCHAR2', 40, 'Gender', 'Master');
+					INSERT INTO interface_fields (interfaceid, interfacename, tablename, field, datatype, length, module, mappingtype) VALUES (36, 'HUNTER_ONLINEMATCHING', 'HUNTER_ONLINEMATCHING', 'DocumentType', 'VARCHAR2', 45, 'DocumentType', 'Master');
+					
+					delete from interfacemapping where interfacename='HUNTER_ONLINEMATCHING';
+					
+					INSERT INTO interfacemapping VALUES (42, 34, 'HUNTER_ONLINEMATCHING', 'MaritalStatusCode', '', '', '', 1, 1, 1000,CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+					INSERT INTO interfacemapping VALUES (43, 35, 'HUNTER_ONLINEMATCHING', 'Gender', '', '', '', 1, 1, 1000,CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+					INSERT INTO interfacemapping VALUES (44, 36, 'HUNTER_ONLINEMATCHING', 'DocumentType', '', '', '', 1, 1, 1000,CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				]]>
+			</sql>
+		</changeSet>
 </databaseChangeLog>
 	
 	
