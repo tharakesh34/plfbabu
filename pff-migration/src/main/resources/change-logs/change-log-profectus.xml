@@ -2107,7 +2107,7 @@ UNION ALL
 		</changeSet>
 		
 		<changeSet id="87" author="Vinay">
-			<createView viewName="org_income_expense_header_aview" replaceIfExists="true">
+			<createView viewName="orgincomeexpenseheader_aview" replaceIfExists="true">
 				SELECT h.id,
 				    h.orgid,
 				    h.financialyear,
