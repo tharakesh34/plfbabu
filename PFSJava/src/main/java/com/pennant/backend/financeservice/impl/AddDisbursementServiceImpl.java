@@ -121,20 +121,19 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
-		if (fromDate.compareTo(DateUtility.getAppDate()) < 0 || fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
-			String[] valueParm = new String[3];
+		if (fromDate.compareTo(DateUtility.getAppDate()) != 0) {// || fromDate.compareTo(financeMain.getMaturityDate()) >= 0
+			String[] valueParm = new String[2];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			valueParm[1] = "application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
-			valueParm[2] = "maturity Date:" + DateUtility.formatToShortDate(financeMain.getMaturityDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90282", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 		}
 		
 		// validate from date
-		if (finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
+		/*if (finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(finServiceInstruction.getFromDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91101", valueParm)));
-		}
+		}*/
 
 		// validate disb amount
 		if(finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {

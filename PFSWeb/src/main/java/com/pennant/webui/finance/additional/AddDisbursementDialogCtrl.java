@@ -58,6 +58,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -136,6 +137,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private Date lastPaidDate = null;
 	private BigDecimal grcEndDisbAmount = BigDecimal.ZERO;
 	private String moduleDefiner = "";
+	private boolean isWIF = false;
 
 	// not auto wired vars
 	private FinScheduleData finScheduleData; // overhanded per param
@@ -193,6 +195,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			if (arguments.containsKey("isWIF")) {
+				isWIF = true;
 				this.disbursementAccount.setVisible(false);
 			}
 			if (arguments.containsKey("moduleDefiner")) {
@@ -211,7 +214,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (arguments.containsKey("feeDetailListCtrl")) {
 				setFinFeeDetailListCtrl((FinFeeDetailListCtrl) arguments.get("feeDetailListCtrl"));
 			}
-			
 			
 			if(getFinFeeDetailListCtrl() == null){
 				this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) scheduleDetailDialogCtrl.getClass().
@@ -280,12 +282,18 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		
 
 		if (getFinanceScheduleDetail() != null) {
 			this.disbAmount.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(), 
 					CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy())));
 			this.fromDate.setValue(getFinanceScheduleDetail().getSchDate());
+		}
+		
+		// Future Disbursements not allowed at any case, because with Future Disbursements 
+		// there is an issue with SOA, Disbursement Uploads, Fore Closure Report..etc
+		if(!isWIF){
+			this.fromDate.setValue(DateUtility.getAppDate());
+			this.fromDate.setDisabled(true);
 		}
 		
 		String excludeFields = ",EQUAL,PRI_PFT,PRI,";
@@ -348,6 +356,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			this.disbAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinSchData.getFinanceMain().getDisbAccountId()));
 			changeRecalType();
+		}
+		
+		// We are setting default Value on From Date. So on changing event should be calculate to reset remaining fields
+		if(!isWIF){
+			Events.sendEvent("onChange", fromDate, null);
 		}
 		
 		logger.debug("Leaving");
