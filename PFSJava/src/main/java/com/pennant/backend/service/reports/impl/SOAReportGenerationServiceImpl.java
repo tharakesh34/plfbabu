@@ -57,6 +57,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -174,6 +175,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	private List<FinFeeDetail> getFinFeedetails(String finReference) {
 		return this.soaReportGenerationDAO.getFinFeedetails(finReference);
+	}
+
+	private List<FeeWaiverDetail> getFeeWaiverDetail(String finReference) {
+		return this.soaReportGenerationDAO.getFeeWaiverDetail(finReference);
 	}
 
 	private Date getMaxSchDate(String finReference) {
@@ -796,6 +801,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String rHPftWaived = "Interest from customer Waived Off ";
 		String rHPriWaived = "Principal from customer Waived Off ";
 		String rHPenaltyWaived = "Penalty from customer Waived Off ";
+		String lppWaived = "Penalty from customer Waived Off ";
+		String lpiIWaived = "Penalty Interest from customer Waived Off ";
+		
 
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
@@ -831,6 +839,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Fin Fee Details
 			List<FinFeeDetail> finFeedetailsList = getFinFeedetails(finReference);
+
+			List<FeeWaiverDetail> feeWaiverDetailList = getFeeWaiverDetail(finReference);
 
 			//Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
@@ -1515,7 +1525,33 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 
 			}
+
+			//LPP and LPI waived from the waiver screen
+			if (feeWaiverDetailList != null && !feeWaiverDetailList.isEmpty()) {
+				for (FeeWaiverDetail waiverDetail : feeWaiverDetailList) {
+					String lable = "";
+					if (RepayConstants.ALLOCATION_ODC.equalsIgnoreCase(waiverDetail.getFeeTypeCode())) {
+						lable = lppWaived;
+					} else if (RepayConstants.ALLOCATION_LPFT.equalsIgnoreCase(waiverDetail.getFeeTypeCode())) {
+						lable = lpiIWaived;
+					}
+
+					if (StringUtils.isNotBlank(lable)) {
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(lable + finRef);
+						soaTranReport.setTransactionDate(waiverDetail.getValueDate());
+						soaTranReport.setValueDate(waiverDetail.getValueDate());
+						soaTranReport.setCreditAmount(waiverDetail.getCurrWaiverAmount());
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+						soaTranReport.setPriority(24);
+						soaTransactionReports.add(soaTranReport);
+					}
+
+				}
+			}
+
 		}
+
 		logger.debug("Leaving");
 		return soaTransactionReports;
 	}

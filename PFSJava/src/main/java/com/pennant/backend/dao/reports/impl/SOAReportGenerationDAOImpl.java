@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -757,9 +758,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<PresentmentDetail> presentmentDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Distinct PRD.ReceiptId,SchDate,BR.REASON BounceReason, PRD.Status, M.MandateType, M.MandateRef, ");
+		sql.append(" SELECT Distinct PRD.ReceiptId,PRD.SchDate,BR.REASON BounceReason, PRD.Status, PRH.MandateType, M.MandateRef, ");
 		sql.append(" EMIno FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
 		sql.append(" Left join BOUNCEREASONS BR ON PRD.BOUNCEID  = BR.BOUNCEID ");
+		sql.append(" inner join PRESENTMENTHEADER PRH on PRH.id = PRD.Presentmentid");
 		sql.append(" Where PRD.RECEIPTID != 0 and FinReference = :FinReference");
 
 		
@@ -1015,6 +1017,38 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		return otherFinanceDetails;
+	}
+	
+	@Override
+	public List<FeeWaiverDetail> getFeeWaiverDetail(String finReference) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		List<FeeWaiverDetail> feeWaiverDetails = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select finreference, fwh.valuedate,fwd.CURRWAIVERAMOUNT, fwd.FeetypeCode ");
+		sql.append(" From FEEWAIVERHEADER fwh ");
+		sql.append(" inner join  FEEWAIVERdetails fwd on fwh.WAIVERID=fwd.WAIVERID  ");
+		sql.append(" where   fwh.FinReference =:FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FeeWaiverDetail.class);
+
+		try {
+			feeWaiverDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (DataAccessException e) {
+			feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+		return feeWaiverDetails;
 	}
 	
 }

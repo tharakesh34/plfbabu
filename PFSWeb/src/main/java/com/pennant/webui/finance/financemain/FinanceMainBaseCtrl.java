@@ -75,6 +75,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -7549,8 +7550,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			agenDocList.addAll(aFinanceDetail.getDocumentDetailsList());
 			if(!isTemplateError){
-			aFinanceDetail.setDocumentDetailsList(agenDocList);
-			autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
+				if (!agenDocList.isEmpty()) {
+					Iterator<DocumentDetails> iterator = existingUploadDocList.iterator();
+					while (iterator.hasNext()) {
+						DocumentDetails type = (DocumentDetails) iterator.next();
+						DocumentDetails docDetails = isInAggremnetGenerated(type, agenDocList);
+						if (docDetails != null) {
+							iterator.remove();
+						}
+					}
+					
+					if (aFinanceDetail.getDocumentDetailsList() == null) {
+						aFinanceDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
+					}
+					aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
+				}
+				autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
 			}
 			if(isTemplateError){
 				MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
@@ -7581,6 +7596,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return processCompleted;
 	}
 
+	private DocumentDetails isInAggremnetGenerated(DocumentDetails type, List<DocumentDetails> agenDocList) {
+		if (agenDocList!=null) {
+			for (DocumentDetails documentDetails : agenDocList) {
+				if (StringUtils.equalsIgnoreCase(documentDetails.getDocCategory(), type.getDocCategory())) {
+					return  documentDetails;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Method for Saving Details Record
 	 * 
@@ -18398,6 +18425,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
 					}
 					
+					//since it is an existing document record has to be store in document manager
+					exstDetails.setDocRefId(Long.MIN_VALUE);
 					return exstDetails;
 				}
 			

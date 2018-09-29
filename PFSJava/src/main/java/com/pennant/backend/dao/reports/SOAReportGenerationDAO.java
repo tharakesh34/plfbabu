@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -102,5 +103,5 @@ public interface SOAReportGenerationDAO {
 	List<String> getSOAFinTypes();
 	List<ApplicantDetail> getApplicantDetails(String finReference);
 	List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference);
-	
+	List<FeeWaiverDetail> getFeeWaiverDetail(String finReference);	
 }
