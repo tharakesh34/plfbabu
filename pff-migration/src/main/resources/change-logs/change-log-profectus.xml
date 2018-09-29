@@ -2105,6 +2105,34 @@ UNION ALL
           WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
 			</createView>
 		</changeSet>
+		
+		<changeSet id="87" author="Vinay">
+			<createView viewName="org_income_expense_header_aview" replaceIfExists="true">
+				SELECT h.id,
+				    h.orgid,
+				    h.financialyear,
+				    h.createdby,
+				    h.createdon,
+				    o.code,
+				    o.name,
+				    o.date_incorporation,
+				    c.custcif,
+				    c.custshrtname,
+				    h.version,
+				    h.lastmntby,
+				    h.lastmnton,
+				    h.recordstatus,
+				    h.rolecode,
+				    h.nextrolecode,
+				    h.taskid,
+				    h.nexttaskid,
+				    h.recordtype,
+				    h.workflowid
+				   FROM org_income_expense_header h
+				     JOIN organizations o ON o.id = h.orgid
+				     JOIN customers c ON c.custid = o.custid
+			</createView>
+		</changeSet>
 </databaseChangeLog>
 	
 	
