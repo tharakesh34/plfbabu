@@ -19,23 +19,24 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements CustomerDedupDAO {
 	private static Logger logger = Logger.getLogger(CustomerDedupDAOImpl.class);
-	
+
 	public CustomerDedupDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-    public void saveList(List<CustomerDedup> insertList,String type) {
+	public void saveList(List<CustomerDedup> insertList, String type) {
 		logger.debug("Entering");
-		
-    	StringBuilder insertSql = new StringBuilder();
-    	insertSql.append("Insert Into CustomerDedupDetail");
-    	insertSql.append(StringUtils.trimToEmpty(type));
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append("Insert Into CustomerDedupDetail");
+		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference , CustCIF , CustFName , CustLName , ");
 		insertSql.append(" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ");
 		insertSql.append(" DedupRule , Override , OverrideUser ,Module )");
 		insertSql.append(" Values(:FinReference , :CustCIF , :CustFName , :CustLName , ");
-		insertSql.append(" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber , :CustNationality , ");
+		insertSql.append(
+				" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber , :CustNationality , ");
 		insertSql.append(" :DedupRule , :Override , :OverrideUser, :Module )");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -43,31 +44,33 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(insertList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	    
-    }
+
+	}
 
 	@Override
-    public void updateList(List<CustomerDedup> updateList) {
+	public void updateList(List<CustomerDedup> updateList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update CustomerDedupDetail Set CustFName = :CustFName," );
-		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, " );
-		updateSql.append(" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality," );
-		updateSql.append(" DedupRule = :DedupRule, Override = :Override, OverrideUser = :OverrideUser, Module=:Module " );
+		updateSql.append("Update CustomerDedupDetail Set CustFName = :CustFName,");
+		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, ");
+		updateSql.append(
+				" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality,");
+		updateSql
+				.append(" DedupRule = :DedupRule, Override = :Override, OverrideUser = :OverrideUser, Module=:Module ");
 		updateSql.append(" Where FinReference =:FinReference  AND CustCIF =:CustCIF");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public List<CustomerDedup> fetchOverrideCustDedupData(String finReference, String queryCode,String module) {
+	public List<CustomerDedup> fetchOverrideCustDedupData(String finReference, String queryCode, String module) {
 		logger.debug("Entering");
-		
+
 		CustomerDedup dedup = new CustomerDedup();
 		dedup.setFinReference(finReference);
 		dedup.setDedupRule(queryCode);
@@ -81,27 +84,26 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		selectSql.append(" Where FinReference =:FinReference AND DedupRule LIKE('%");
 		selectSql.append(queryCode);
 		selectSql.append("%') and Module=:Module ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 		RowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDedup.class);
 
 		logger.debug("Leaving");
-		
+
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
-	
-	
+	}
+
 	/**
 	 * Fetched the Dedup Fields if Dedup Exist for a Customer
 	 *
 	 */
-	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery) {
+	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup, String sqlQuery) {
 		List<CustomerDedup> rowTypes = null;
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT * FROM CustomersDedup_View ");
-		if(!StringUtils.isBlank(sqlQuery)) {
+		if (!StringUtils.isBlank(sqlQuery)) {
 			selectSql.append(StringUtils.trimToEmpty(sqlQuery));
 			selectSql.append(" AND");
 		} else {
@@ -109,14 +111,14 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		}
 		selectSql.append(" CustId != :CustId ");
 
-		logger.debug("selectSql: " +  selectSql.toString());
+		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 		ParameterizedBeanPropertyRowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDedup.class);
+				.newInstance(CustomerDedup.class);
 
-		try{
-			rowTypes = this.jdbcTemplate.query(selectSql.toString(),beanParameters,typeRowMapper);
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			dedup = null;
 		}
@@ -125,33 +127,34 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 	}
 
 	@Override
-    public void moveData(String finReference, String suffix) {
+	public void moveData(String finReference, String suffix) {
 
 		logger.debug(" Entering ");
 		try {
-	        if (StringUtils.isBlank(suffix)) {
-	            return;
-	        }
-	        
-	        MapSqlParameterSource map=new MapSqlParameterSource();
-	        map.addValue("FinReference", finReference);
-	        
-	        StringBuilder selectSql = new StringBuilder();
-	        selectSql.append(" SELECT * FROM CustomerDedupDetail");
-	        selectSql.append(" WHERE FinReference = :FinReference ");
-	        
-	        RowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDedup.class);
-	        List<CustomerDedup> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
-	        
-	        if (list!=null && !list.isEmpty()) {
-	        	saveList(list,suffix);
-            }
-	        
-        } catch (DataAccessException e) {
-	     logger.debug(e);
-        }
-	    logger.debug(" Leaving ");
-	    
-    }
+			if (StringUtils.isBlank(suffix)) {
+				return;
+			}
+
+			MapSqlParameterSource map = new MapSqlParameterSource();
+			map.addValue("FinReference", finReference);
+
+			StringBuilder selectSql = new StringBuilder();
+			selectSql.append(" SELECT * FROM CustomerDedupDetail");
+			selectSql.append(" WHERE FinReference = :FinReference ");
+
+			RowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(CustomerDedup.class);
+			List<CustomerDedup> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+
+			if (list != null && !list.isEmpty()) {
+				saveList(list, suffix);
+			}
+
+		} catch (DataAccessException e) {
+			logger.debug(e);
+		}
+		logger.debug(" Leaving ");
+
+	}
 
 }
