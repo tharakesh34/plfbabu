@@ -49,7 +49,6 @@ import java.util.Set;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class FinExpenseDetails extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -7156982149543027619L;
 
 	private long finExpenseId = Long.MIN_VALUE;
@@ -64,11 +63,9 @@ public class FinExpenseDetails extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("expenseTypeCode");
 		excludeFields.add("expenseTypeDesc");
-
 		return excludeFields;
 	}
 
