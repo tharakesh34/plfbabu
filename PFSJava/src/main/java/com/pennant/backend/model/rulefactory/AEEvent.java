@@ -9,59 +9,59 @@ import com.pennant.app.constants.AccountConstants;
 
 public class AEEvent {
 
-	private AEAmountCodes			aeAmountCodes;
-	private String					moduleDefiner;
-	private HashMap<String, Object>	dataMap				= new HashMap<>();
+	private AEAmountCodes aeAmountCodes;
+	private String moduleDefiner;
+	private HashMap<String, Object> dataMap = new HashMap<>();
 
-	private List<Long>				acSetIDList			= new ArrayList<>(1);
-	private List<ReturnDataSet>		returnDataSet		= new ArrayList<ReturnDataSet>(1);
+	private List<Long> acSetIDList = new ArrayList<>(1);
+	private List<ReturnDataSet> returnDataSet = new ArrayList<ReturnDataSet>(1);
 
-	private Date					postDate;
-	private Date					valueDate;
-	private Date					appDate;
-	private Date					appValueDate;
-	private Date					schdDate;
-	private Date					custAppDate;
+	private Date postDate;
+	private Date valueDate;
+	private Date appDate;
+	private Date appValueDate;
+	private Date schdDate;
+	private Date custAppDate;
 
-	private boolean					newRecord			= false;
-	private boolean					createNow			= false;
-	private boolean					wif					= false;
-	private boolean					commitment			= false;
-	private boolean					alwCmtPostings		= false;
-	private boolean					isEOD				= false;
+	private boolean newRecord = false;
+	private boolean createNow = false;
+	private boolean wif = false;
+	private boolean commitment = false;
+	private boolean alwCmtPostings = false;
+	private boolean isEOD = false;
 
-	private boolean					postingSucess		= true;
-	private String					errorMessage;
-	private long					linkedTranId		= Long.MIN_VALUE;
-	private long					postRefId		    = Long.MIN_VALUE;
-	private long					postingId		    = Long.MIN_VALUE;
+	private boolean postingSucess = true;
+	private String errorMessage;
+	private long linkedTranId = Long.MIN_VALUE;
+	private long postRefId = Long.MIN_VALUE;
+	private long postingId = Long.MIN_VALUE;
 
-	private long					custID;
-	private String					custCIF;
-	private String					finReference;
-	private String					cmtReference;
-	private String					finType;
-	private String					promotion;
-	private String					branch;
-	private String					ccy;
-	private String					accountingEvent;
-	private String					disbAccountID;
-	private String					postingUserBranch;
+	private long custID;
+	private String custCIF;
+	private String finReference;
+	private String cmtReference;
+	private String finType;
+	private String promotion;
+	private String branch;
+	private String ccy;
+	private String accountingEvent;
+	private String disbAccountID;
+	private String postingUserBranch;
 
 	//VAS
-	private String					vasPostAgainst;
-	private String					collateralRef;
-	private int						transOrder = 0;
-	
-	private boolean					uAmzExists = false;
-	private boolean					uLpiExists = false;
-	private boolean					uLppExists = false;
-	private boolean					bpiIncomized = false;
-	
-	private String                  entityCode;
-	
+	private String vasPostAgainst;
+	private String collateralRef;
+	private int transOrder = 0;
+
+	private boolean uAmzExists = false;
+	private boolean uLpiExists = false;
+	private boolean uLppExists = false;
+	private boolean bpiIncomized = false;
+
+	private String entityCode;
+
 	//Cash Management
-	private String					postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
+	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 
 	public AEEvent() {
 
@@ -406,6 +406,5 @@ public class AEEvent {
 	public void setBpiIncomized(boolean bpiIncomized) {
 		this.bpiIncomized = bpiIncomized;
 	}
-
 
 }

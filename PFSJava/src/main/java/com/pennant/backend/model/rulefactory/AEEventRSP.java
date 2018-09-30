@@ -5,26 +5,26 @@ import java.util.Date;
 import java.util.List;
 
 public class AEEventRSP {
-	private long				custID;
-	private String				custCIF;
-	private String				finReference;
-	private String				cmtReference;
-	private String				collateralRef;
-	private String				finEvent;
-	private Date				postDate;
-	private Date				valueDate;
-	private Date				schdDate;
-	private boolean				newRecord		= false;
-	private boolean				createNow		= false;
-	private boolean				wif				= false;
-	private boolean				commitment		= false;
-	private boolean				alwCmtPostings	= false;
-	private boolean				isEOD			= false;
-	private boolean				postingSucess	= false;
-	private String				errorMessage;
-	private long				linkedTranId;
+	private long custID;
+	private String custCIF;
+	private String finReference;
+	private String cmtReference;
+	private String collateralRef;
+	private String finEvent;
+	private Date postDate;
+	private Date valueDate;
+	private Date schdDate;
+	private boolean newRecord = false;
+	private boolean createNow = false;
+	private boolean wif = false;
+	private boolean commitment = false;
+	private boolean alwCmtPostings = false;
+	private boolean isEOD = false;
+	private boolean postingSucess = false;
+	private String errorMessage;
+	private long linkedTranId;
 
-	private List<ReturnDataSet>	returnDataSet	= new ArrayList<ReturnDataSet>(1);
+	private List<ReturnDataSet> returnDataSet = new ArrayList<ReturnDataSet>(1);
 
 	public AEEventRSP() {
 
