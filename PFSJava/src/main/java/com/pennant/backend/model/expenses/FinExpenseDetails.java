@@ -50,14 +50,14 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class FinExpenseDetails extends AbstractWorkflowEntity {
 
-	private static final long	serialVersionUID	= -7156982149543027619L;
+	private static final long serialVersionUID = -7156982149543027619L;
 
-	private long				finExpenseId		= Long.MIN_VALUE;
-	private String				finReference		= null;
-	private long				expenseTypeId		= 0;
-	private BigDecimal			amount				= BigDecimal.ZERO;
-	private String				expenseTypeCode;
-	private String				expenseTypeDesc;
+	private long finExpenseId = Long.MIN_VALUE;
+	private String finReference = null;
+	private long expenseTypeId = 0;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private String expenseTypeCode;
+	private String expenseTypeDesc;
 
 	public FinExpenseDetails() {
 		super();
