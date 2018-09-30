@@ -206,7 +206,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	public long saveLimitRuleTransactiondetails(LimitTransactionDetail limitTransactionDetail, String type) {
 		logger.debug("Entering");
 		if (limitTransactionDetail.getId() == Long.MIN_VALUE) {
-			limitTransactionDetail.setId(getNextValue("SeqLimitRuleTransactions"));
+			limitTransactionDetail.setId(getNextId("SeqLimitRuleTransactions"));
 			logger.debug("get NextID:" + limitTransactionDetail.getId());
 		}
 
