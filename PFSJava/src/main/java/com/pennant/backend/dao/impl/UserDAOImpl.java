@@ -85,7 +85,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	}
 
 	public List<SecurityUser> getAlleUser() {
-		 return new ArrayList<SecurityUser>();
+		return new ArrayList<SecurityUser>();
 	}
 
 	public SecurityUser getUserByID(Long usrId) {
@@ -101,8 +101,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	}
 
 	/**
-	 * This method updates UsrInvldLoginTries,UsrEnabled columns of SecUsers
-	 * table
+	 * This method updates UsrInvldLoginTries,UsrEnabled columns of SecUsers table
 	 * 
 	 * @param userName
 	 *            (String)
@@ -115,26 +114,28 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 
 		StringBuilder updateSql = new StringBuilder("Update SecUsers  set ");
 
-		Timestamp  loginTime = new Timestamp(System.currentTimeMillis());
+		Timestamp loginTime = new Timestamp(System.currentTimeMillis());
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
 		namedParameters.put("UsrLogin", userName);
 		if (authPass == 1) {
 			namedParameters.put("LastLoginOn", loginTime);
 			namedParameters.put("LastFailLoginOn", null);
 			namedParameters.put("UsrInvldLoginTries", 0);
-			
-			updateSql.append("LastLoginOn =:LastLoginOn,LastFailLoginOn=:LastFailLoginOn,UsrInvldLoginTries=:UsrInvldLoginTries");
+
+			updateSql.append(
+					"LastLoginOn =:LastLoginOn,LastFailLoginOn=:LastFailLoginOn,UsrInvldLoginTries=:UsrInvldLoginTries");
 			updateSql.append(" Where UsrLogin =:UsrLogin");
 			logger.debug("updateSql:" + updateSql.toString());
 			this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 		} else {
 			//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
-			int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1 ;
+			int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1;
 			namedParameters.put("UsrEnabled", 0);
 			namedParameters.put("LastFailLoginOn", null);
 			namedParameters.put("invalidLogins", invalidLogins);
-			
-			updateSql.append(" UsrInvldLoginTries=(UsrInvldLoginTries+1), UsrEnabled=:UsrEnabled,LastFailLoginOn =:LastFailLoginOn  Where UsrLogin = :UsrLogin");
+
+			updateSql.append(
+					" UsrInvldLoginTries=(UsrInvldLoginTries+1), UsrEnabled=:UsrEnabled,LastFailLoginOn =:LastFailLoginOn  Where UsrLogin = :UsrLogin");
 			updateSql.append(" and UsrInvldLoginTries >= :invalidLogins");
 			logger.debug("updateSql:" + updateSql.toString());
 			int count = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
@@ -163,16 +164,20 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 
 		SecurityUser secUser = new SecurityUser();
 
-		StringBuilder selectSql = new StringBuilder("SELECT T1.UsrID, T1.UsrLogin, T1.UsrPwd, T1.AuthType, T1.UserType, T1.UsrLName, T1.UsrMName,T1.UsrFName,");
-		selectSql.append(" T1.UsrMobile,T1.UsrEmail,T1.UsrEnabled,T1.UsrCanSignonFrom,T1.UsrCanSignonTo,T1.UsrCanOverrideLimits,");
-		selectSql.append(" T1.UsrAcExp, T1.UserStaffID, T1.UsrAcLocked,T1.UsrLanguage,T1.UsrDftAppCode,T1.UsrBranchCode,T1.UsrDeptCode,T1.PwdExpDt,");
-		selectSql.append(" T1.UsrToken, T1.UsrIsMultiBranch,T1.UsrInvldLoginTries,T1.UsrAcExpDt,T1.LastMntOn, T1.LastMntBy,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.LastLoginOn,T1.LastFailLoginOn,");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT T1.UsrID, T1.UsrLogin, T1.UsrPwd, T1.AuthType, T1.UserType, T1.UsrLName, T1.UsrMName,T1.UsrFName,");
+		selectSql.append(
+				" T1.UsrMobile,T1.UsrEmail,T1.UsrEnabled,T1.UsrCanSignonFrom,T1.UsrCanSignonTo,T1.UsrCanOverrideLimits,");
+		selectSql.append(
+				" T1.UsrAcExp, T1.UserStaffID, T1.UsrAcLocked,T1.UsrLanguage,T1.UsrDftAppCode,T1.UsrBranchCode,T1.UsrDeptCode,T1.PwdExpDt,");
+		selectSql.append(
+				" T1.UsrToken, T1.UsrIsMultiBranch,T1.UsrInvldLoginTries,T1.UsrAcExpDt,T1.LastMntOn, T1.LastMntBy,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.LastLoginOn,T1.LastFailLoginOn,");
 		selectSql.append(" T2.branchdesc AS lovdescusrbranchcodename");
 		selectSql.append(" FROM SecUsers T1");
 		selectSql.append(" LEFT JOIN rmtbranches T2 ON T1.usrbranchcode = T2.branchcode ");
 		selectSql.append(" where UsrLogin = :usrLogin");
 		//FIXME Satish : Password should not retrieved to avoid this we have commented out the log printing. 
-//		logger.debug("selectSql: " + selectSql.toString());
+		//		logger.debug("selectSql: " + selectSql.toString());
 		secUser.setUsrLogin(usrLogin);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
@@ -180,7 +185,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		try {
 			secUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-//			logger.warn("Exception: ", e);
+			//			logger.warn("Exception: ", e);
 			secUser = null;
 		}
 
@@ -200,28 +205,25 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		return new ArrayList<SecurityUser>();
 	}
 
-	
 	public List<SecurityUser> getUserListByLogin(String login) {
 		return new ArrayList<SecurityUser>();
 	}
 
 	/**
-	 * This method fetches records from UserOperationRoles_View by UsrID and
-	 * AppCode
+	 * This method fetches records from UserOperationRoles_View by UsrID and AppCode
 	 * 
 	 * @param userID
-	 *            (long)
-	 * {@link List} of {@link SecurityRole}
+	 *            (long) {@link List} of {@link SecurityRole}
 	 * 
 	 */
 	@Override
 	public List<SecurityRole> getUserRolesByUserID(final long userID) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("UsrID", userID);
 		paramSource.addValue("RoleApp", App.ID);
-		
+
 		StringBuilder sql = new StringBuilder("select RoleCd, RoleDesc,RoleCategory ");
 		sql.append(" from SecUserOperations UO  ");
 		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID ");
@@ -232,7 +234,6 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 		logger.debug(Literal.LEAVING);
 
-		
 		return this.jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
@@ -250,16 +251,15 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 
 		StringBuilder updateSql = new StringBuilder(
 				"update SecUsers set UsrLogin=:UsrLogin, UsrPwd=:UsrPwd, UsrFName =:UsrFName, UsrMName=:UsrMName, ");
-		updateSql
-				.append("UsrLName=:UsrLName , UsrMobile =:UsrMobile ,UsrEmail =:UsrEmail,UsrEnabled =:UsrEnabled, UsrCanSignonFrom=:UsrCanSignonFrom,");
-		updateSql
-				.append(" UsrCanSignonTo =:UsrCanSignonTo , UsrCanOverrideLimits =:UsrCanOverrideLimits , UsrAcExp=:UsrAcExp, ");
-		updateSql
-				.append("UsrAcLocked =:UsrAcLocked , UsrLanguage =:UsrLanguage , UsrDftAppCode =:UsrDftAppCode ,");
-		updateSql
-				.append(" UsrBranchCode =:UsrBranchCode , UsrDeptCode =:UsrDeptCode ,UsrToken =:UsrToken , UsrInvldLoginTries =:UsrInvldLoginTries, ");
-		updateSql
-				.append(" Version =:Version, LastMntBy =:LastMntBy , LastMntOn =:LastMntOn ,nextRoleCode=:nextRoleCode,taskId=:TaskId,nextTaskId=:nextTaskId");
+		updateSql.append(
+				"UsrLName=:UsrLName , UsrMobile =:UsrMobile ,UsrEmail =:UsrEmail,UsrEnabled =:UsrEnabled, UsrCanSignonFrom=:UsrCanSignonFrom,");
+		updateSql.append(
+				" UsrCanSignonTo =:UsrCanSignonTo , UsrCanOverrideLimits =:UsrCanOverrideLimits , UsrAcExp=:UsrAcExp, ");
+		updateSql.append("UsrAcLocked =:UsrAcLocked , UsrLanguage =:UsrLanguage , UsrDftAppCode =:UsrDftAppCode ,");
+		updateSql.append(
+				" UsrBranchCode =:UsrBranchCode , UsrDeptCode =:UsrDeptCode ,UsrToken =:UsrToken , UsrInvldLoginTries =:UsrInvldLoginTries, ");
+		updateSql.append(
+				" Version =:Version, LastMntBy =:LastMntBy , LastMntOn =:LastMntOn ,nextRoleCode=:nextRoleCode,taskId=:TaskId,nextTaskId=:nextTaskId");
 		updateSql.append(" where UsrID =:UsrID  ");
 
 		logger.debug("updateSql: " + updateSql.toString());
