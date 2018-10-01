@@ -61,30 +61,30 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-
 /**
  * Data access layer implementation for <code>ReasonTypes</code> with set of CRUD operations.
  */
 public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements ReasonTypesDAO {
-	private static Logger	logger	= Logger.getLogger(ReasonTypesDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ReasonTypesDAOImpl.class);
 
 	public ReasonTypesDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public ReasonTypes getReasonTypes(long id,String type) {
+	public ReasonTypes getReasonTypes(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, code, description, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ReasonTypes");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -103,8 +103,8 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 
 		logger.debug(Literal.LEAVING);
 		return reasonTypes;
-	}		
-	
+	}
+
 	@Override
 	public boolean isDuplicateKey(String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -129,7 +129,7 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("code", code);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -140,25 +140,27 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(ReasonTypes reasonTypes,TableType tableType) {
+	public String save(ReasonTypes reasonTypes, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into ReasonTypes");
+		StringBuilder sql = new StringBuilder(" insert into ReasonTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, code, description, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :code, :description, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the identity sequence number.
 		if (reasonTypes.getId() <= 0) {
 			reasonTypes.setId(getNextId("SeqReasonTypes"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonTypes);
@@ -171,14 +173,14 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(reasonTypes.getId());
-	}	
+	}
 
 	@Override
-	public void update(ReasonTypes reasonTypes,TableType tableType) {
+	public void update(ReasonTypes reasonTypes, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update ReasonTypes" );
+		StringBuilder sql = new StringBuilder("update ReasonTypes");
 		sql.append(tableType.getSuffix());
 		sql.append("  set code = :code, description = :description, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -186,10 +188,10 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonTypes);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -197,7 +199,7 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -230,5 +232,4 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-}	
+}

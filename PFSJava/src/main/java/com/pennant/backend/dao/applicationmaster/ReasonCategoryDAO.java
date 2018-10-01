@@ -46,9 +46,8 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.ReasonCategory;
 import com.pennanttech.pff.core.TableType;
 
-
 public interface ReasonCategoryDAO extends BasicCrudDao<ReasonCategory> {
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,7 +57,8 @@ public interface ReasonCategoryDAO extends BasicCrudDao<ReasonCategory> {
 	 *            The type of the table.
 	 * @return ReasonCategory
 	 */
-	ReasonCategory getReasonCategory(long id,String type);
+	ReasonCategory getReasonCategory(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -70,6 +70,6 @@ public interface ReasonCategoryDAO extends BasicCrudDao<ReasonCategory> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(String code, TableType tableType);	
-	
+	boolean isDuplicateKey(String code, TableType tableType);
+
 }

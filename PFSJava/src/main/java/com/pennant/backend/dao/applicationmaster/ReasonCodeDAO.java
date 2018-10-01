@@ -47,7 +47,7 @@ import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennanttech.pff.core.TableType;
 
 public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -57,7 +57,8 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	 *            The type of the table.
 	 * @return ReasionCode
 	 */
-	ReasonCode getReasonCode(long id,String type);
+	ReasonCode getReasonCode(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -73,11 +74,10 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long reasonTypeCode, long reasonCategoryCode, String code, TableType tableType);	
+	boolean isDuplicateKey(long reasonTypeCode, long reasonCategoryCode, String code, TableType tableType);
+
 	boolean isreasonCategoryIDExists(long rCategoryCode);
+
 	boolean isreasonTypeIDExists(long rTypeCode);
 
-	
-
-	
 }
