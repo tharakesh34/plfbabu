@@ -62,25 +62,44 @@ import com.pennanttech.pennapps.core.InterfaceException;
  * 
  */
 public interface DedupParmService {
-	
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	DedupParm getDedupParmById(String id ,String queryModule,String querySubCode);
-	DedupParm getApprovedDedupParmById(String id,String queryModule,String querySubCode);
+
+	DedupParm getDedupParmById(String id, String queryModule, String querySubCode);
+
+	DedupParm getApprovedDedupParmById(String id, String queryModule, String querySubCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<DedupParm> getDedupParmByModule(String queryModule, String querySubCode, String type);
+
 	@SuppressWarnings("rawtypes")
-	List validate(String resultQuery,CustomerDedup customerDedup);
-	List<CustomerDedup> fetchCustomerDedupDetails(String userRole,CustomerDetails aCustomerDetails);
-	List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup,String curLoginUser,String finType);
-	List<BlackListCustomers> fetchBlackListCustomers(String userRole,String finType,BlackListCustomers customer, String curUser);
-	List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole,String finType,PoliceCaseDetail policeCaseData,String curUser);
-	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail,
-            String queryCode);
-	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws InterfaceException;
-	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws InterfaceException;
-	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail,String finType,String ref) throws Exception; 
+	List validate(String resultQuery, CustomerDedup customerDedup);
+
+	List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDetails aCustomerDetails);
+
+	List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup, String curLoginUser,
+			String finType);
+
+	List<BlackListCustomers> fetchBlackListCustomers(String userRole, String finType, BlackListCustomers customer,
+			String curUser);
+
+	List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole, String finType, PoliceCaseDetail policeCaseData,
+			String curUser);
+
+	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String queryCode);
+
+	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup,
+			String curLoginUser, String finType) throws InterfaceException;
+
+	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList)
+			throws InterfaceException;
+
+	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail, String finType, String ref) throws Exception;
+
 	List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap);
 }
