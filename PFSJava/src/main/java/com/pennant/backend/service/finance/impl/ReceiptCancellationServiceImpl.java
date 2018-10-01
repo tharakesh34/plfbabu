@@ -1172,7 +1172,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				
 				// Profit Details Recalculation Process
 				pftDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), pftDetail, DateUtility.getAppDate());
-				pftDetail = postReceiptCanAdjust(scheduleData, pftDetail);
+				if(unRealizeLpi.compareTo(BigDecimal.ZERO) > 0 || unRealizeLpp.compareTo(BigDecimal.ZERO) > 0){
+					pftDetail = postReceiptCanAdjust(scheduleData, pftDetail);
+				}
 
 				// Check Current Finance Max Status For updation
 				// ============================================
@@ -1370,6 +1372,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, scheduleData.getFinanceScheduleDetails(),
 					AccountEventConstants.ACCEVENT_AMZ, derivedAppDate, derivedAppDate);
+			
+			// UnAccrual amount should not be zero in case of "UMFC" accounting
+			aeEvent.getAeAmountCodes().setdAmz(BigDecimal.ZERO);
 
 			BigDecimal unAmz = aeEvent.getAeAmountCodes().getdAmz();
 			BigDecimal unLPIAmz = aeEvent.getAeAmountCodes().getdLPIAmz();
@@ -1377,7 +1382,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			BigDecimal unGstLPIAmz = aeEvent.getAeAmountCodes().getdGSTLPIAmz();
 			BigDecimal unGstLPPAmz = aeEvent.getAeAmountCodes().getdGSTLPPAmz();
 			
-			if (unAmz.compareTo(BigDecimal.ZERO) != 0 || unLPIAmz.compareTo(BigDecimal.ZERO) != 0) {
+			if (unAmz.compareTo(BigDecimal.ZERO) != 0 || unLPIAmz.compareTo(BigDecimal.ZERO) != 0
+					|| unLPPAmz.compareTo(BigDecimal.ZERO) != 0) {
 				aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 				aeEvent.getAcSetIDList().add(accountingID);
 

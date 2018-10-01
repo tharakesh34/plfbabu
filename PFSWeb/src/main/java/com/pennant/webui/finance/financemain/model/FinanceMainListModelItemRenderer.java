@@ -108,7 +108,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 	  	
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(financeMain.getCalTerms()+financeMain.getAdvEMITerms()));
+		lc = new Listcell(String.valueOf(financeMain.getGraceTerms() + financeMain.getCalTerms()+financeMain.getAdvEMITerms()));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
 		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));

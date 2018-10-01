@@ -877,11 +877,7 @@ public class ReceiptCalculator implements Serializable {
 					if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
 
 						if (advise.getBounceID() > 0) {
-							BigDecimal totalGST = BigDecimal.ZERO;
-							if(receiptData.getAllocationMap().containsKey(RepayConstants.ALLOCATION_BOUNCE +"_GST_E")){
-								totalGST = receiptData.getAllocationMap().get(RepayConstants.ALLOCATION_BOUNCE +"_GST_E");
-							}
-							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE +"_GST_E", totalGST.add(gstAmount));
+							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE +"_GST_E", gstAmount);
 							receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_BOUNCE, "Bounce Charges (Exclusive)");
 						}else{
 							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID()+"_GST_E", gstAmount);
@@ -891,13 +887,7 @@ public class ReceiptCalculator implements Serializable {
 					}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
 
 						if (advise.getBounceID() > 0) {
-							
-							BigDecimal totalGST = BigDecimal.ZERO;
-							if(receiptData.getAllocationMap().containsKey(RepayConstants.ALLOCATION_BOUNCE +"_GST_I")){
-								totalGST = receiptData.getAllocationMap().get(RepayConstants.ALLOCATION_BOUNCE +"_GST_I");
-							}
-							
-							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE +"_GST_I", totalGST.add(gstAmount));
+							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE +"_GST_I", gstAmount);
 							receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_BOUNCE, "Bounce Charges (Inclusive)");
 						}else{
 							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID()+"_GST_I", gstAmount);
@@ -3281,7 +3271,7 @@ public class ReceiptCalculator implements Serializable {
 								BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
 								BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
 
-								// Bounce Tax Details
+								// Penalty Tax Details
 								FeeType lppFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
 
 								// In case of GST is Exclusive then GST amount should add before payment collection
@@ -3544,7 +3534,7 @@ public class ReceiptCalculator implements Serializable {
 							BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
 							BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
 							
-							// Bounce Tax Details
+							// Penalty Tax Details
 							FeeType lppFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
 							
 							// In case of GST is Exclusive then GST amount should add before payment collection

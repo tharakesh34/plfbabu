@@ -603,6 +603,9 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						if(this.grcPeriodEndDate.getValue().compareTo(financeMain.getFinStartDate()) < 0){
 							throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[]{
 									Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"), Labels.getLabel("label_ReScheduleDialog_FinStartDate.value")}));
+						}else if(this.grcPeriodEndDate.getValue().compareTo(fromDate) <= 0){
+							throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("DATE_ALLOWED_MINDATE", new String[]{
+									Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"), DateUtility.formatToLongDate(fromDate)}));
 						}else if(!financeMain.isNewRecord() && 
 								!StringUtils.trimToEmpty(financeMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
 							
@@ -892,7 +895,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 					
-					if(curSchd.isRepayOnSchDate() ||
+					if(curSchd.isRepayOnSchDate() || curSchd.isRvwOnSchDate() ||
 							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) || 
 							fromDate.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
 						if(fromDate.compareTo(curSchd.getSchDate()) == 0){

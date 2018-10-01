@@ -15463,6 +15463,95 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal utilizedAmt = BigDecimal.ZERO;
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		getFinanceDetail().setFinScheduleData(scheduleData);
+		
+		// For Rescheduling data should be re-correct
+		if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RESCHD)){
+			Date grcpftDate = null;
+			FinanceMain main = scheduleData.getFinanceMain();
+			this.gracePeriodEndDate.setText("");
+			this.gracePeriodEndDate_two.setValue(main.getGrcPeriodEndDate());
+			this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
+			
+			this.graceTerms_Two.setValue(main.getGraceTerms());
+			this.oldVar_graceTerms = this.graceTerms_Two.intValue();
+			
+			this.numberOfTerms_two.setValue(main.getCalTerms());
+			this.oldVar_numberOfTerms = this.numberOfTerms_two.intValue();
+			
+			this.nextGrcPftDate.setText("");
+			this.nextGrcCpzDate.setText("");
+			this.nextGrcPftRvwDate.setText("");
+			
+			boolean pftchecked = false;
+			boolean repaychecked = false;
+			boolean rvwchecked = false;
+			boolean cpzchecked = false;
+			List<FinanceScheduleDetail> list = scheduleData.getFinanceScheduleDetails();
+			for (int i = 0; i < list.size(); i++) {
+				FinanceScheduleDetail detail = list.get(i);
+
+				if(main.isAllowGrcPeriod()){
+					if(detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) <= 0){
+						
+						if(DateUtility.compare(main.getFinStartDate(), main.getGrcPeriodEndDate()) == 0){
+							
+							this.nextGrcPftDate.setText("");
+							this.nextGrcCpzDate.setText("");
+							this.nextGrcPftRvwDate.setText("");
+							
+							this.nextGrcPftDate_two.setValue(main.getGrcPeriodEndDate());
+							this.nextGrcCpzDate_two.setValue(main.getGrcPeriodEndDate());
+							this.nextGrcPftRvwDate_two.setValue(main.getGrcPeriodEndDate());
+							
+							this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
+							this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
+							this.oldVar_nextGrcPftRvwDate = this.nextGrcPftRvwDate_two.getValue();
+							
+							this.gb_gracePeriodDetails.setVisible(false);
+						}
+
+						if((grcpftDate == null && detail.isPftOnSchDate())){
+							this.nextGrcPftDate_two.setValue(detail.getSchDate());
+							this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
+							grcpftDate = detail.getSchDate();
+						}
+						continue;
+					}
+				}
+
+				if(detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) >= 0){
+
+					if(!pftchecked && detail.isPftOnSchDate()){
+						this.nextRepayPftDate_two.setValue(detail.getSchDate());
+						pftchecked = true;
+					}
+					if(!repaychecked && detail.isRepayOnSchDate()){
+						this.nextRepayDate_two.setValue(detail.getSchDate());
+						repaychecked= true;
+					}
+					if(!rvwchecked && detail.isRvwOnSchDate()){
+						this.nextRepayRvwDate_two.setValue(detail.getSchDate());
+						rvwchecked = true;
+					}
+					if(!cpzchecked && detail.isCpzOnSchDate()){
+						this.nextRepayCpzDate_two.setValue(detail.getSchDate());
+						cpzchecked = true;
+					}
+
+					if(!main.isAllowRepayRvw()){
+						rvwchecked = true;
+					}
+
+					if(pftchecked && repaychecked && rvwchecked){
+						this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
+						this.oldVar_nextRepayDate = this.nextRepayDate_two.getValue();
+						this.oldVar_nextRepayRvwDate = this.nextRepayRvwDate_two.getValue();
+						this.oldVar_nextRepayCpzDate = this.nextRepayCpzDate_two.getValue();
+						break;
+					}
+				}
+			}
+		}
 
 		//Setting Total Disbursements as of Date
 
