@@ -137,6 +137,8 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	private FinanceScheduleDetail prvSchDetail;
 	private int formatter;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
+	private boolean chartReportLoaded;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -589,6 +591,9 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	/** new code to display chart by skipping jsps code start */
 	public void onSelect$repayGraphTab(Event event) throws InterruptedException {
 		logger.debug("Entering");
+		if (chartReportLoaded) {
+			return;
+		}
 		doShowReportChart(); // new code to display charts on click repayGraphTab
 		for (ChartDetail chartDetail : chartDetailList) {
 			String strXML = chartDetail.getStrXML();
@@ -599,7 +604,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			Executions.createComponents("/Charts/Chart.zul", tabpanel_graph,
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
-		chartDetailList =  new ArrayList<ChartDetail>(); // Resetting 
+		chartReportLoaded = true;
 		logger.debug("Leaving");
 	}
 	/** new code to display chart by skipping jsps code end */

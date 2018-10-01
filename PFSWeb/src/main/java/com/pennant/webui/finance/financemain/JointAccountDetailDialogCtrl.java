@@ -185,6 +185,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		if (arguments.containsKey("financeMain")) {
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
+			ccDecimal = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
 		}
 
 		if (arguments.containsKey("roleCode")) {

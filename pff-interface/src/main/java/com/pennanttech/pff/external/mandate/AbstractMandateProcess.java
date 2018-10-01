@@ -361,7 +361,9 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 					if (finReference != null) {
 						appId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
 						appId = StringUtils.trim(appId);
-						rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
+						if (StringUtils.isNumeric(appId)) {
+							rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
+						}
 					} else {
 						rowMap.put("APPLICATION_NUMBER", null);
 
