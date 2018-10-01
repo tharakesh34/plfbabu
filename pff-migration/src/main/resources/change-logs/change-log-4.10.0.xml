@@ -10574,5 +10574,59 @@ JOIN BMTCustCategories t2 ON t2.custctgcode = rmtcusttypes.custtypectg
 			delete from ErrorDetails where code ='99018';
 			INSERT INTO ErrorDetails VALUES('99018','EN','E','For paymentMode {0} legth of the Transaction Reference should not be more than {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
+</changeSet> 
+<changeSet id="130" author="Srikanth.m">
+		<createView replaceIfExists="true" viewName="financemain_lview">
+SELECT t1.finreference,
+    t1.investmentref,
+    t1.fintype,
+    t1.finccy,
+    t1.finamount,
+    t1.downpayment,
+    t1.feechargeamt,
+    t1.schedulemethod,
+    t1.numberofterms,
+    t1.recordstatus,
+    t1.recordtype,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.finbranch,
+    t1.fincontractdate,
+    t1.linkedfinref,
+    t1.nextuserid,
+    t1.priority,
+    t1.workflowid,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.finpreapprovedref,
+    t1.rcdmaintainsts,
+    t1.insuranceamt,
+    t1.fincurrassetvalue,
+    t1.calterms,
+    t1.deviationapproval,
+    t1.finpurpose,
+    t1.initiatedate,
+    t1.finassetvalue,
+    t2.custcif AS lovdesccustcif,
+    t2.custshrtname AS lovdesccustshrtname,
+    t2.custpassportno AS lovdesccustpassportno,
+    t2.custdob AS lovdesccustdob,
+    t2.custcrcpr AS lovdesccustcrcpr,
+    t2.phonenumber,
+    t3.fincategory AS lovdescproductcodename,
+    t3.findivision AS lovdescfindivision,
+    t3.product AS lovdescfinproduct,
+    t3.fintypedesc AS lovdescfintypename,
+    COALESCE(t4.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
+    t1.samplingrequired,
+     t1.AdvanceEMI, 
+    t1.AdvEMITerms, 
+    t1.bpipftdaysbasis,
+    t1.graceterms
+  	 FROM financemain_temp t1
+     JOIN customers t2 ON t1.custid = t2.custid
+     JOIN rmtfinancetypes t3 ON t3.fintype = t1.fintype
+     LEFT JOIN secroles t4 ON t1.nextrolecode = t4.rolecd
+     </createView>
 </changeSet>
 </databaseChangeLog>
