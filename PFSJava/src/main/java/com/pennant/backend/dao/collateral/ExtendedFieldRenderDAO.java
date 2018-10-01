@@ -24,17 +24,18 @@ public interface ExtendedFieldRenderDAO {
 	Map<String, Object> getExtendedField(String reference, String tableName, String type);
 
 	int validateMasterData(String tableName, String column, String filterColumn, Object fieldValue);
-	
+
 	boolean isExists(String reference, int seqNo, String tableName);
 
 	int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters, String fieldValue);
-	
+
 	List<Map<String, Object>> getExtendedFieldMap(long id, String tableName, String type);
 
 	List<Map<String, Object>> getExtendedFieldMapByVerificationId(long verificationId, String tableName);
 
 	String getCategory(String reference);
-	
+
 	Map<String, Object> getCollateralMap(String reference, String tableName, String type);
+
 	Map<String, Object> getCollateralMap(String reference, int seq, String tableName, String type);
 }
