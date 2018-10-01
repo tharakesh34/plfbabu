@@ -63,8 +63,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
- * DAO methods implementation for the <b>CollateralAssignment model</b>
- * class.<br>
+ * DAO methods implementation for the <b>CollateralAssignment model</b> class.<br>
  * 
  */
 
@@ -76,10 +75,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * This method Deletes the Record from the CollateralAssignment or
-	 * CollateralAssignment_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Collateral Assignment by key
-	 * AssignmentId
+	 * This method Deletes the Record from the CollateralAssignment or CollateralAssignment_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Collateral Assignment by key AssignmentId
 	 * 
 	 * @param Collateral
 	 *            Assignment (collateralAssignment)
@@ -135,8 +132,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * This method insert new Records into CollateralAssignment or
-	 * CollateralAssignment_Temp.
+	 * This method insert new Records into CollateralAssignment or CollateralAssignment_Temp.
 	 *
 	 * save Collateral Assignment
 	 * 
@@ -169,9 +165,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * This method updates the Record CollateralAssignment or
-	 * CollateralAssignment_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004.
+	 * This method updates the Record CollateralAssignment or CollateralAssignment_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004.
 	 * 
 	 * @param Collateral
 	 *            Assignment (collateralAssignment)
@@ -210,9 +205,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * Method for Fetching List of Assigned Collateral to the Reference based on
-	 * Module
-	 */ 
+	 * Method for Fetching List of Assigned Collateral to the Reference based on Module
+	 */
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
@@ -245,8 +239,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * Method for Fetching List of Assigned Collateral to the Reference based on
-	 * Module
+	 * Method for Fetching List of Assigned Collateral to the Reference based on Module
 	 */
 	@Override
 	public List<AssignmentDetails> getCollateralAssignmentByColRef(String collateralRef, String collateralType) {
@@ -286,15 +279,15 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * Method for Fetching List of Assigned Collateral to the Reference based on
-	 * Module and Collateral Reference
+	 * Method for Fetching List of Assigned Collateral to the Reference based on Module and Collateral Reference
 	 */
 	@Override
 	public CollateralAssignment getCollateralAssignmentbyID(CollateralAssignment collateralAssignment, String type) {
 		logger.debug("Entering");
 
 		CollateralAssignment collAssignment = null;
-		StringBuilder selectSql = new StringBuilder(" Select Reference, Module, CollateralRef, AssignPerc, Active, HostReference, ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select Reference, Module, CollateralRef, AssignPerc, Active, HostReference, ");
 		if (type.contains("View")) {
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -319,8 +312,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned Collateral to Different
-	 * Finances/Commitments
+	 * Method for Fetching Count for Assigned Collateral to Different Finances/Commitments
 	 */
 	@Override
 	public int getAssignedCollateralCount(String collateralRef, String type) {
@@ -348,8 +340,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * Method for Fetching List of Assigned Collateral to the Reference based on
-	 * Module and Collateral Reference
+	 * Method for Fetching List of Assigned Collateral to the Reference based on Module and Collateral Reference
 	 */
 	@Override
 	public BigDecimal getAssignedPerc(String collateralRef, String reference, String type) {
@@ -382,8 +373,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	/**
-	 * Method for Delinking Collaterals Details Assigned to Finance after
-	 * Maturity
+	 * Method for Delinking Collaterals Details Assigned to Finance after Maturity
 	 */
 	@Override
 	public void deLinkCollateral(String finReference) {
