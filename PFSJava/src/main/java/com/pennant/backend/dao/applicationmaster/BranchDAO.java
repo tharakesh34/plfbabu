@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -53,7 +54,7 @@ import com.pennanttech.pff.core.TableType;
 public interface BranchDAO extends BasicCrudDao<Branch> {
 
 	Branch getBranchById(String id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -64,9 +65,14 @@ public interface BranchDAO extends BasicCrudDao<Branch> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String branchCode, TableType tableType);
+
 	void updateFinanceBranch(Branch branch, String type);
-	void updateApplicationAccess(String sysParmName,String sysParmValue);
+
+	void updateApplicationAccess(String sysParmName, String sysParmValue);
+
 	boolean isPinCodeExists(String pinCode);
+
 	List<Branch> getBrachDetailsByBranchCode(List<String> finBranches);
+
 	boolean getUnionTerrotory(String cpProvince);
 }
