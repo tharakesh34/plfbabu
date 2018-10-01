@@ -71,59 +71,58 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 	private static Logger logger = Logger.getLogger(BranchDAOImpl.class);
-		
+
 	public BranchDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Branches details by key field
+	 * Fetch the Record Branches details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Branch
 	 */
 	@Override
 	public Branch getBranchById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Branch branch = new Branch();
-		branch.setId(id);		
-	
-		StringBuilder selectSql = new StringBuilder("SELECT  BranchCode, BranchDesc, BranchAddrLine1," );
+		branch.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("SELECT  BranchCode, BranchDesc, BranchAddrLine1,");
 		selectSql.append(" BranchAddrLine2, BranchPOBox, BranchCity, BranchProvince, BranchCountry,");
-		selectSql.append(" BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry," );
-		selectSql.append(" BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo," );
+		selectSql.append(" BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry,");
+		selectSql.append(
+				" BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo,");
 		selectSql.append(" BranchAddrHNbr,BranchFlatNbr,BranchAddrStreet, PinCode,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescBranchCityName,lovDescBranchProvinceName,lovDescBranchCountryName," );
+		if (type.contains("View")) {
+			selectSql.append(" lovDescBranchCityName,lovDescBranchProvinceName,lovDescBranchCountryName,");
 			selectSql.append("lovDescBranchSwiftCountryName,NewBranchDesc,parentBranchDesc, pinAreaDesc,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  RMTBranches");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BranchCode =:BranchCode");
 
-		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
-		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(Branch.class);
-		
-		try{
-			branch = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+
+		try {
+			branch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			branch = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return branch;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String branchCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -159,33 +158,35 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(Branch branch, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into RMTBranches" );
+		StringBuilder sql = new StringBuilder("insert into RMTBranches");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox," );
-		sql.append(" BranchCity, BranchProvince, BranchCountry, BranchFax, BranchTel," );
-		sql.append(" BranchSwiftBankCde, BranchSwiftCountry, BranchSwiftLocCode," );
-		sql.append(" BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo," );
+		sql.append(" (BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox,");
+		sql.append(" BranchCity, BranchProvince, BranchCountry, BranchFax, BranchTel,");
+		sql.append(" BranchSwiftBankCde, BranchSwiftCountry, BranchSwiftLocCode,");
+		sql.append(
+				" BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo,");
 		sql.append(" BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2,");
-		sql.append(" :BranchPOBox, :BranchCity, :BranchProvince, :BranchCountry, :BranchFax," );
-		sql.append(" :BranchTel, :BranchSwiftBankCde, :BranchSwiftCountry, :BranchSwiftLocCode," );
-		sql.append(" :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive, :NewBranchCode, :MiniBranch, :BranchType, :ParentBranch, :Region, :BankRefNo,");
+		sql.append(" :BranchPOBox, :BranchCity, :BranchProvince, :BranchCountry, :BranchFax,");
+		sql.append(" :BranchTel, :BranchSwiftBankCde, :BranchSwiftCountry, :BranchSwiftLocCode,");
+		sql.append(
+				" :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive, :NewBranchCode, :MiniBranch, :BranchType, :ParentBranch, :Region, :BankRefNo,");
 		sql.append(" :BranchAddrHNbr, :BranchFlatNbr, :BranchAddrStreet, :PinCode,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," ); 
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(branch);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
@@ -195,7 +196,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		logger.debug(Literal.LEAVING);
 		return branch.getId();
 	}
-	
+
 	@Override
 	public void update(Branch branch, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -210,9 +211,12 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" BranchFax = :BranchFax,  BranchSwiftCountry = :BranchSwiftCountry,");
 		sql.append(" BranchSwiftBankCde = :BranchSwiftBankCde, BranchTel = :BranchTel,");
 		sql.append(" BranchSwiftLocCode = :BranchSwiftLocCode, BranchSortCode = :BranchSortCode,");
-		sql.append(" BranchSwiftBrnCde = :BranchSwiftBrnCde, BranchIsActive = :BranchIsActive, NewBranchCode = :NewBranchCode,");
-		sql.append(" BranchAddrHNbr = :BranchAddrHNbr, BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet,");
-		sql.append(" MiniBranch = :MiniBranch,BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region, BankRefNo = :BankRefNo,");
+		sql.append(
+				" BranchSwiftBrnCde = :BranchSwiftBrnCde, BranchIsActive = :BranchIsActive, NewBranchCode = :NewBranchCode,");
+		sql.append(
+				" BranchAddrHNbr = :BranchAddrHNbr, BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet,");
+		sql.append(
+				" MiniBranch = :MiniBranch,BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region, BankRefNo = :BankRefNo,");
 		sql.append(" PinCode = :PinCode, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -232,22 +236,22 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(Branch branch, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" delete from RMTBranches" );
+		StringBuilder sql = new StringBuilder(" delete from RMTBranches");
 		sql.append(tableType.getSuffix());
 		sql.append(" where BranchCode =:BranchCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(branch);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -261,9 +265,9 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * Method for updating existing finance branchs with new branch 
+	 * Method for updating existing finance branchs with new branch
 	 * 
 	 * @param branch
 	 * @param type
@@ -272,34 +276,34 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 	@Override
 	public void updateFinanceBranch(Branch branch, String type) {
 		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinanceMain" );
-		updateSql.append(StringUtils.trimToEmpty(type) );
-		updateSql.append(" Set FinBranch = :NewBranchCode  Where FinBranch =:BranchCode " );
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set FinBranch = :NewBranchCode  Where FinBranch =:BranchCode ");
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}	
-	
+	}
+
 	/**
-	 * Method for updating application state  
+	 * Method for updating application state
 	 * 
 	 * @param phaseName
 	 * @param phaseValue
 	 * @return
 	 */
 	@Override
-	public void updateApplicationAccess(String phaseName,String phaseValue) {
+	public void updateApplicationAccess(String phaseName, String phaseValue) {
 		logger.debug("Entering");
 		MapSqlParameterSource mapSource = new MapSqlParameterSource();
 		mapSource.addValue("SysParmCode", phaseName);
 		mapSource.addValue("SysParmValue", phaseValue);
-		
+
 		StringBuilder updateSql = new StringBuilder(" UPDATE SMTparameters SET SysParmValue = :SysParmValue ");
 		updateSql.append(" Where SysParmCode = :SysParmCode  ");
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		this.jdbcTemplate.update(updateSql.toString(), mapSource);
 		logger.debug("Leaving");
 	}
@@ -309,36 +313,35 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PinCode", pinCode);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(PinCode)");
 		selectSql.append(" From RMTBranches_View ");
 		selectSql.append(" Where PinCode=:PinCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		
+		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
-	
 
 	@Override
 	public List<Branch> getBrachDetailsByBranchCode(List<String> finBranches) {
 		logger.debug(Literal.ENTERING);
-	
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finBranches", finBranches);
-	
+
 		List<Branch> finFeeDetailsList = null;
-	
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select BranchCode, BRANCHPROVINCE from RMTBRANCHES");
 		sql.append(" WHERE BranchCode in (:finBranches)");
-	
+
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
-	
+
 		try {
 			finFeeDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -348,24 +351,24 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
-	
+
 		return finFeeDetailsList;
 	}
-	
+
 	@Override
 	public boolean getUnionTerrotory(String cpProvince) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("cpProvince", cpProvince);
-		
+
 		boolean unionterrotory = false;
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select UNIONTERRITORY from RMTCOUNTRYVSPROVINCE where CPPROVINCE = :cpProvince");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		try {
 			unionterrotory = this.jdbcTemplate.queryForObject(sql.toString(), source, Boolean.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -375,7 +378,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
-		
+
 		return unionterrotory;
 	}
 
