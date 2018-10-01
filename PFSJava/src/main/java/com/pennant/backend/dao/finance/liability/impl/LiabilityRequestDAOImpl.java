@@ -76,8 +76,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new LiabilityRequest
+	 * This method set the Work Flow id based on the module name and return the new LiabilityRequest
 	 * 
 	 * @return LiabilityRequest
 	 */
@@ -95,8 +94,8 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 	}
 
 	/**
-	 * This method get the module from method getLiabilityRequest() and set the
-	 * new record flag as true and return LiabilityRequest()
+	 * This method get the module from method getLiabilityRequest() and set the new record flag as true and return
+	 * LiabilityRequest()
 	 * 
 	 * @return LiabilityRequest
 	 */
@@ -196,10 +195,8 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 	}
 
 	/**
-	 * This method Deletes the Record from the FinLiabilityReq or
-	 * FinLiabilityReq_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete LiabilityRequest by key
-	 * FinReference
+	 * This method Deletes the Record from the FinLiabilityReq or FinLiabilityReq_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete LiabilityRequest by key FinReference
 	 * 
 	 * @param LiabilityRequest
 	 *            (liabilityRequest)
@@ -232,8 +229,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 	}
 
 	/**
-	 * This method insert new Records into FinLiabilityReq or
-	 * FinLiabilityReq_Temp.
+	 * This method insert new Records into FinLiabilityReq or FinLiabilityReq_Temp.
 	 *
 	 * save LiabilityRequest
 	 * 
@@ -273,9 +269,8 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 	}
 
 	/**
-	 * This method updates the Record FinLiabilityReq or FinLiabilityReq_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update LiabilityRequest by key FinReference and Version
+	 * This method updates the Record FinLiabilityReq or FinLiabilityReq_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update LiabilityRequest by key FinReference and Version
 	 * 
 	 * @param LiabilityRequest
 	 *            (liabilityRequest)
