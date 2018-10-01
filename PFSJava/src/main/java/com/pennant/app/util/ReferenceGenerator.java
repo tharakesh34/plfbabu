@@ -54,17 +54,17 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class ReferenceGenerator implements Serializable {
-	private static final long		serialVersionUID	= -4965488291173350445L;
-	private static Logger			logger				= Logger.getLogger(ReferenceGenerator.class);
+	private static final long serialVersionUID = -4965488291173350445L;
+	private static Logger logger = Logger.getLogger(ReferenceGenerator.class);
 
 	//private static NextidviewDAO	nextidviewDAO;
-	private static final String		DEFAULT_FORMAT		= "BBBB_PPP_SSSSSSS";
-	private static final String		BRANCH				= "B";
-	private static final String		DIVISION			= "D";
-	private static final String		PRODUCT				= "P";
-	private static final String		LOANTYPE			= "L";
-	private static final String		SEQUENCE			= "S";
-	
+	private static final String DEFAULT_FORMAT = "BBBB_PPP_SSSSSSS";
+	private static final String BRANCH = "B";
+	private static final String DIVISION = "D";
+	private static final String PRODUCT = "P";
+	private static final String LOANTYPE = "L";
+	private static final String SEQUENCE = "S";
+
 	private static SequenceDao<?> sequenceGenetor;
 
 	/**
@@ -171,9 +171,10 @@ public class ReferenceGenerator implements Serializable {
 			return product.concat(branch).concat(sequence);
 		}
 	}
-	
+
 	/**
 	 * Method for Generating Sequence Receipt Number based Sequence Object
+	 * 
 	 * @param isWIF
 	 * @param finDivision
 	 * @return
@@ -184,7 +185,7 @@ public class ReferenceGenerator implements Serializable {
 		// Get the sequence number.
 		long referenceSeqNumber = sequenceGenetor.getNextValue("SeqReceiptNumber");
 		String rcptNo = String.valueOf(referenceSeqNumber);
-		if(rcptNo.length() < 8){
+		if (rcptNo.length() < 8) {
 			rcptNo = StringUtils.leftPad(rcptNo, 8, '0');
 		}
 
