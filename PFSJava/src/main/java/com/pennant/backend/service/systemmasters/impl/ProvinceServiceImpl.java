@@ -75,7 +75,6 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class ProvinceServiceImpl extends GenericService<Province> implements ProvinceService {
-
 	private static final Logger logger = Logger.getLogger(ProvinceServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -83,12 +82,12 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	private TaxDetailDAO taxDetailDAO;
 	private CityDAO cityDAO;
 	private transient TaxDetailService taxDetailService;
-	private GSTInvoiceTxnDAO  gstInvoiceTxnDAO;
-	
+	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
+
 	public ProvinceServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,6 +95,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -103,23 +103,22 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public ProvinceDAO getProvinceDAO() {
 		return provinceDAO;
 	}
+
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
 	}
+
 	public void setTaxDetailDAO(TaxDetailDAO taxDetailDAO) {
 		this.taxDetailDAO = taxDetailDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTCountryVsProvince/RMTCountryVsProvince_Temp by using ProvinceDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using ProvinceDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtRMTCountryVsProvince by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * RMTCountryVsProvince/RMTCountryVsProvince_Temp by using ProvinceDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using ProvinceDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -128,10 +127,10 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-	
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-	
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -147,7 +146,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		if (province.isNew()) {
 			getProvinceDAO().save(province, tableType);
 			auditHeader.getAuditDetail().setModelData(province);
-			auditHeader.setAuditReference(province.getCPCountry() + PennantConstants.KEY_SEPERATOR + province.getCPProvince());
+			auditHeader.setAuditReference(
+					province.getCPCountry() + PennantConstants.KEY_SEPERATOR + province.getCPProvince());
 		} else {
 			getProvinceDAO().update(province, tableType);
 		}
@@ -157,17 +157,15 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			details = processTaxDetails(details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
-	
-	
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Customer Ratings
 	 * 
@@ -244,7 +242,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			if (updateRecord) {
 				taxDetailDAO.update(taxDetail, type);
 			}
-			
+
 			if (deleteRecord) {
 				taxDetailDAO.delete(taxDetail, type);
 			}
@@ -261,24 +259,25 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 		return auditDetails;
 	}
-	
+
 	/**
 	 * Save Sequence Table for GST Invoice Preparation
+	 * 
 	 * @param taxDetail
 	 */
 	private void saveSeqGstInvoice(Province province) {
-		
+
 		if (StringUtils.isBlank(province.getTaxStateCode())) {
 			return;
 		}
-		
+
 		SeqGSTInvoice seqGstInvoice = new SeqGSTInvoice();
 		seqGstInvoice.setSeqNo(0);
 		seqGstInvoice.setGstStateCode(province.getTaxStateCode());
-		
+
 		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 		SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-		
+
 		if (seqGstInvoiceTemp == null) {
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
@@ -292,12 +291,10 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTCountryVsProvince by using ProvinceDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and
-	 * AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTCountryVsProvince by using ProvinceDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -324,8 +321,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	}
 
 	/**
-	 * getProvinceById fetch the details by using ProvinceDAO's getProvinceById
-	 * method.
+	 * getProvinceById fetch the details by using ProvinceDAO's getProvinceById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -336,52 +332,46 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	@Override
 	public Province getProvinceById(String cPCountry, String cPProvince) {
 		logger.debug("Entering");
-		Province province =  getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_View");
-		
+		Province province = getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_View");
+
 		if (province != null) {
 			province.setTaxDetailList(taxDetailService.getTaxDetailbystateCode(province.getCPProvince(), "_View"));
 		}
-		
+
 		logger.debug("");
-		
+
 		return province;
 	}
 
 	/**
-	 * getApprovedProvinceById fetch the details by using ProvinceDAO's
-	 * getProvinceById method . with parameter id and type as blank. it fetches
-	 * the approved records from the RMTCountryVsProvince.
+	 * getApprovedProvinceById fetch the details by using ProvinceDAO's getProvinceById method . with parameter id and
+	 * type as blank. it fetches the approved records from the RMTCountryVsProvince.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return Province
 	 */
 	public Province getApprovedProvinceById(String cPCountry, String cPProvince) {
-		
-		Province province =  getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
-		
+
+		Province province = getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
+
 		if (province != null) {
 			province.setTaxDetailList(taxDetailService.getTaxDetailbystateCode(province.getCPProvince(), "_AView"));
 		}
-		
+
 		return province;
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getProvinceDAO().delete with parameters province,"" b) NEW Add new
-	 * record in to main table by using getProvinceDAO().save with parameters
-	 * province,"" c) EDIT Update record in the main table by using
-	 * getProvinceDAO().update with parameters province,"" 3) Delete the record
-	 * from the workFlow table by using getProvinceDAO().delete with parameters
-	 * province,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and
-	 * AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader)
-	 * based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getProvinceDAO().delete with
+	 * parameters province,"" b) NEW Add new record in to main table by using getProvinceDAO().save with parameters
+	 * province,"" c) EDIT Update record in the main table by using getProvinceDAO().update with parameters province,""
+	 * 3) Delete the record from the workFlow table by using getProvinceDAO().delete with parameters province,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow 5) Audit the record in to AuditHeader and AdtRMTCountryVsProvince by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -393,7 +383,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "Approve");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -402,9 +392,9 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		Province province = new Province();
 		BeanUtils.copyProperties((Province) auditHeader.getAuditDetail().getModelData(), province);
 
-		
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(provinceDAO.getProvinceById(province.getCPCountry(), province.getCPProvince(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(provinceDAO.getProvinceById(province.getCPCountry(), province.getCPProvince(), ""));
 		}
 
 		if (province.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -427,10 +417,10 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				province.setRecordType("");
 				getProvinceDAO().update(province, TableType.MAIN_TAB);
 			}
-			
+
 			// GST Invoice Report Sequence Table insert
 			saveSeqGstInvoice(province);
-			
+
 			if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
 				List<AuditDetail> details = province.getAuditDetailMap().get("TaxDetail");
 				details = processTaxDetails(details, TableType.MAIN_TAB);
@@ -441,28 +431,26 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		getProvinceDAO().delete(province, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(province, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
+
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(province, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(province);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getProvinceDAO().delete with parameters
-	 * province,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getProvinceDAO().delete with parameters province,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtRMTCountryVsProvince by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -480,7 +468,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		Province province = (Province) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getProvinceDAO().delete(province, TableType.TEMP_TAB);
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(province, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(province, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -490,31 +479,27 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,  String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-	
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
-		
+		auditHeader = nextProcess(auditHeader);
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
-	
-	
-	
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
@@ -539,7 +524,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		}
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		
+
 		if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
 			auditDetailMap.put("TaxDetail", setTaxDetailsData(province, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("TaxDetail"));
@@ -551,7 +536,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				}
 			}
 		}
-		
+
 		auditHeader.setErrorList(errorDetails);
 
 		province.setAuditDetailMap(auditDetailMap);
@@ -561,8 +546,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	
+
 	/**
 	 * Common Method for Customers list validation
 	 * 
@@ -587,7 +571,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
 					transType = PennantConstants.TRAN_ADD;
-				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType) || PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType)
+						|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
 					transType = PennantConstants.TRAN_DEL;
 				} else {
 					transType = PennantConstants.TRAN_UPD;
@@ -595,16 +580,16 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 				if (StringUtils.isNotEmpty(transType)) {
 					// check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), taxDetail.getBefImage(), taxDetail));
+					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
+							taxDetail.getBefImage(), taxDetail));
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
-	
-	
+
 	/**
 	 * Method deletion of feeTier list with existing fee type
 	 * 
@@ -613,7 +598,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 */
 	public List<AuditDetail> listDeletion(Province province, TableType tableType, String auditTranType) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
 		if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
@@ -622,17 +607,18 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			for (int i = 0; i < province.getTaxDetailList().size(); i++) {
 				TaxDetail taxDetail = province.getTaxDetailList().get(i);
 				if (StringUtils.isNotEmpty(taxDetail.getRecordType()) || StringUtils.isEmpty(tableType.getSuffix())) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], taxDetail.getBefImage(), taxDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], taxDetail.getBefImage(),
+							taxDetail));
 				}
 				taxDetailDAO.delete(province.getTaxDetailList().get(i), tableType);
 			}
 		}
 
 		logger.debug("Leaving");
-		
+
 		return auditList;
 	}
-	
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -688,19 +674,19 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			taxDetail.setUserDetails(province.getUserDetails());
 			taxDetail.setLastMntOn(province.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], taxDetail.getBefImage(), taxDetail));
+			auditDetails.add(
+					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], taxDetail.getBefImage(), taxDetail));
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditDetails;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getProvinceDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getProvinceDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -713,17 +699,16 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		// Get the model object.
 		Province province = (Province) auditDetail.getModelData();
 		// Check the unique keys.
-		if (province.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())
+		if (province.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())
 				&& provinceDAO.isDuplicateKey(province.getCPCountry(), province.getCPProvince(),
 						province.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_CPCountry") + ":"+ province.getCPCountry();
-			parameters[1] = PennantJavaUtil.getLabel("label_CPProvince") + ":"+ province.getCPProvince();
+			parameters[0] = PennantJavaUtil.getLabel("label_CPCountry") + ":" + province.getCPCountry();
+			parameters[1] = PennantJavaUtil.getLabel("label_CPProvince") + ":" + province.getCPProvince();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		// Duplicate State Code
 		boolean isStateCodeExist = getStateCodeExist(province.getTaxStateCode(), province.getCPProvince(), "_View");
 		if ((province.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
@@ -731,17 +716,17 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				&& isStateCodeExist) {
 			String[] parameters = new String[2];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_TaxStateCode") + ":"+ province.getTaxStateCode();
+			parameters[0] = PennantJavaUtil.getLabel("label_TaxStateCode") + ":" + province.getTaxStateCode();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 		}
 		if (province.isSystemDefault()) {
 			String dftCPProvince = getProvinceDAO().getSystemDefaultCount(province.getCPProvince());
 			if (StringUtils.isNotEmpty(dftCPProvince)) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
-				        new String[]{dftCPProvince,PennantJavaUtil.getLabel("Province")}, null));
+						new String[] { dftCPProvince, PennantJavaUtil.getLabel("Province") }, null));
 			}
-        }
-		
+		}
+
 		if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(province.getRecordType()))) {
 			int count = this.cityDAO.getPCProvinceCount(province.getCPProvince(), "_View");
 			if (count > 0) {
@@ -753,7 +738,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
@@ -777,7 +762,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	@Override
 	public boolean getBusinessAreaExist(String businessAreaValue, String type) {
 		logger.debug("Entering");
-		
+
 		boolean businessArea = false;
 
 		if (getProvinceDAO().getBusinessAreaCount(businessAreaValue, type) != 0) {
@@ -796,7 +781,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public void setTaxDetailService(TaxDetailService taxDetailService) {
 		this.taxDetailService = taxDetailService;
 	}
-	
+
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
 	}

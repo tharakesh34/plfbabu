@@ -65,10 +65,9 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>LoanPurpose</b>.<br>
  * 
  */
-public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implements LoanPurposeService {
+public class LoanPurposeServiceImpl extends GenericService<LoanPurpose> implements LoanPurposeService {
 
-	private static Logger logger = Logger
-			.getLogger(LoanPurposeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(LoanPurposeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private LoanPurposeDAO loanPurposeDAO;
@@ -77,7 +76,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	public LoanPurposeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -90,18 +89,13 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTLoanPurposes/BMTLoanPurposes_Temp by using LoanPurposeDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using LoanPurposeDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTLoanPurposes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTLoanPurposes/BMTLoanPurposes_Temp by using LoanPurposeDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using LoanPurposeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTLoanPurposes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -117,9 +111,8 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
-		LoanPurpose loanPurpose = (LoanPurpose) auditHeader.getAuditDetail()
-				.getModelData();
+
+		LoanPurpose loanPurpose = (LoanPurpose) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
 
 		if (loanPurpose.isWorkflow()) {
@@ -140,12 +133,10 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTLoanPurposes by using LoanPurposeDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtBMTLoanPurposes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTLoanPurposes by using LoanPurposeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTLoanPurposes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -160,8 +151,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		LoanPurpose addressType = (LoanPurpose) auditHeader.getAuditDetail()
-				.getModelData();
+		LoanPurpose addressType = (LoanPurpose) auditHeader.getAuditDetail().getModelData();
 		getLoanPurposeDAO().delete(addressType, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -169,8 +159,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * getLoanPurposeById fetch the details by using LoanPurposeDAO's
-	 * getLoanPurposeById method.
+	 * getLoanPurposeById fetch the details by using LoanPurposeDAO's getLoanPurposeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -184,9 +173,8 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * getApprovedLoanPurposeById fetch the details by using LoanPurposeDAO's
-	 * getLoanPurposeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTLoanPurposes.
+	 * getApprovedLoanPurposeById fetch the details by using LoanPurposeDAO's getLoanPurposeById method . with parameter
+	 * id and type as blank. it fetches the approved records from the BMTLoanPurposes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,19 +185,15 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getLoanPurposeDAO().delete with parameters addressType,"" b) NEW
-	 * Add new record in to main table by using getLoanPurposeDAO().save with
-	 * parameters addressType,"" c) EDIT Update record in the main table by
-	 * using getLoanPurposeDAO().update with parameters addressType,"" 3) Delete
-	 * the record from the workFlow table by using getLoanPurposeDAO().delete
-	 * with parameters addressType,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtBMTLoanPurposes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtBMTLoanPurposes by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getLoanPurposeDAO().delete with
+	 * parameters addressType,"" b) NEW Add new record in to main table by using getLoanPurposeDAO().save with
+	 * parameters addressType,"" c) EDIT Update record in the main table by using getLoanPurposeDAO().update with
+	 * parameters addressType,"" 3) Delete the record from the workFlow table by using getLoanPurposeDAO().delete with
+	 * parameters addressType,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTLoanPurposes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTLoanPurposes
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -226,17 +210,16 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 		}
 
 		LoanPurpose loanPurpose = new LoanPurpose();
-		BeanUtils.copyProperties((LoanPurpose) auditHeader.getAuditDetail()
-				.getModelData(), loanPurpose);
-		
+		BeanUtils.copyProperties((LoanPurpose) auditHeader.getAuditDetail().getModelData(), loanPurpose);
+
 		getLoanPurposeDAO().delete(loanPurpose, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(loanPurpose.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(getLoanPurposeDAO().getLoanPurposeById(loanPurpose.getLoanPurposeCode(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(getLoanPurposeDAO().getLoanPurposeById(loanPurpose.getLoanPurposeCode(), ""));
 		}
-		
-		if (loanPurpose.getRecordType()
-				.equals(PennantConstants.RECORD_TYPE_DEL)) {
+
+		if (loanPurpose.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getLoanPurposeDAO().delete(loanPurpose, TableType.MAIN_TAB);
 		} else {
@@ -246,8 +229,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 			loanPurpose.setNextTaskId("");
 			loanPurpose.setWorkflowId(0);
 
-			if (loanPurpose.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (loanPurpose.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				loanPurpose.setRecordType("");
 				getLoanPurposeDAO().save(loanPurpose, TableType.MAIN_TAB);
@@ -258,7 +240,6 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 			}
 		}
 
-		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -271,13 +252,10 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getLoanPurposeDAO().delete with parameters
-	 * addressType,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTLoanPurposes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getLoanPurposeDAO().delete with parameters addressType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTLoanPurposes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -291,8 +269,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		LoanPurpose addressType = (LoanPurpose) auditHeader.getAuditDetail()
-				.getModelData();
+		LoanPurpose addressType = (LoanPurpose) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getLoanPurposeDAO().delete(addressType, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -301,20 +278,16 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -323,10 +296,9 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getLoanPurposeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getLoanPurposeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -342,18 +314,18 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 		parameters[0] = PennantJavaUtil.getLabel("label_LoanPurposeCode") + ": " + code;
 
 		// Check the unique keys.
-		if (loanPurpose.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(loanPurpose.getRecordType())
-				&& getLoanPurposeDAO().isDuplicateKey(code, loanPurpose.isWorkflow() ? TableType.BOTH_TAB
-						: TableType.MAIN_TAB)) {
+		if (loanPurpose.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(loanPurpose.getRecordType())
+				&& getLoanPurposeDAO().isDuplicateKey(code,
+						loanPurpose.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-		
+
 		if (StringUtils.trimToEmpty(loanPurpose.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			boolean exist = getFinanceMainDAO().isLoanPurposeExits(loanPurpose.getLoanPurposeCode(), "_View");
 			if (exist) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null), usrLanguage));
 			}
 		}
 
@@ -378,7 +350,5 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose>implement
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
-	
 
 }
