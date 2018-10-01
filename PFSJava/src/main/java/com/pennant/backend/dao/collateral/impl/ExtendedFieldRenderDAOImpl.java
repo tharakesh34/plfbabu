@@ -31,18 +31,20 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug("Entering");
 
 		ExtendedFieldRender fieldRender = null;
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("SeqNo", seqNo);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select Reference, SeqNo, ");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
 		selectSql.append(tableName);
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where  Reference =:Reference AND SeqNo = :SeqNo ");
 
-		RowMapper<ExtendedFieldRender> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
+		RowMapper<ExtendedFieldRender> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldRender.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			fieldRender = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -63,9 +65,9 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug(Literal.ENTERING);
 
 		List<Map<String, Object>> renderMap = null;
-		
+
 		type = StringUtils.trimToEmpty(type);
-		
+
 		type = type.toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
@@ -86,7 +88,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			sql.append(" where reference = :reference order by seqno");
 		}
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
 		try {
@@ -99,7 +101,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
-	
+
 	/**
 	 * Get Extended field details Maps by verificationId
 	 */
@@ -131,15 +133,15 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 * Get Extended field details Maps by Reference
 	 */
 	@Override
-	public Map<String,Object> getExtendedField(String reference, String tableName, String type) {
+	public Map<String, Object> getExtendedField(String reference, String tableName, String type) {
 		logger.debug("Entering");
-		
+
 		Map<String, Object> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
-		
-		StringBuilder selectSql =  null;
-		if(StringUtils.startsWithIgnoreCase(type, "_View")){
+
+		StringBuilder selectSql = null;
+		if (StringUtils.startsWithIgnoreCase(type, "_View")) {
 			selectSql = new StringBuilder("Select * from (Select * from ");
 			selectSql.append(tableName);
 			selectSql.append("_Temp");
@@ -149,13 +151,13 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			selectSql.append(tableName);
 			selectSql.append("_Temp");
 			selectSql.append(" where  Reference =T1.Reference)) T WHERE T.Reference = :Reference ");
-		}else{
+		} else {
 			selectSql = new StringBuilder("Select * from ");
 			selectSql.append(tableName);
 			selectSql.append(StringUtils.trimToEmpty(type));
 			selectSql.append(" where  Reference = :Reference ");
 		}
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
@@ -163,11 +165,11 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			logger.error("Exceprtion ", e);
 			renderMap = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return renderMap;
 	}
-	
+
 	@Override
 	public void update(String reference, int seqNo, Map<String, Object> mappedValues, String type, String tableName) {
 		logger.debug("Entering");
@@ -187,7 +189,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		}
 		insertSql.append(query);
 		insertSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo).append("'");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 		logger.debug("Leaving");
@@ -196,11 +198,11 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	@Override
 	public void delete(String reference, int seqNo, String type, String tableName) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("SeqNo", seqNo);
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From ");
 		deleteSql.append(tableName);
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -235,7 +237,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug("insertSql: " + insertSql.toString());
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), mappedValues);
-		} catch(DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			logger.error("Exception", e);
 			throw e;
 		}
@@ -256,13 +258,13 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select  Max(SeqNo) from ");
 		selectSql.append(tableName);
 		selectSql.append(" where  Reference =:Reference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		int maxSeqNo = 0;
 		try {
 			maxSeqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
@@ -274,8 +276,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug("Leaving");
 		return maxSeqNo;
 	}
-
-	
 
 	/**
 	 * This method Deletes the list of extendedfiled Records.
@@ -315,19 +315,19 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	@Override
 	public int validateMasterData(String tableName, String column, String filterColumn, Object fieldValue) {
 		logger.debug("Entering");
-		
+
 		boolean tempFix = false;
-		MapSqlParameterSource source=new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ColumnName", column);
 		source.addValue("Filter", filterColumn);
 		source.addValue("Value", fieldValue);
 		source.addValue("active", true);
 		//FIXME: Need to change the method implementation
-		if(column.equals("CustGrpID") || column.equals("EmpName")) {
-			source.addValue("Value",fieldValue);
+		if (column.equals("CustGrpID") || column.equals("EmpName")) {
+			source.addValue("Value", fieldValue);
 			column = "EmployerId";
 			source.addValue("ColumnName", "EmployerId");
-		} else if(column.equals("DealerName")) {
+		} else if (column.equals("DealerName")) {
 			tempFix = true;
 			source.addValue("Value", fieldValue);
 		}
@@ -336,29 +336,29 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
-		if(tempFix) {
+		if (tempFix) {
 			selectSql.append("DealerId");
 			selectSql.append("= :Value");
 		} else {
 			selectSql.append(column);
 			selectSql.append("= :Value");
-			if(StringUtils.isNotBlank(filterColumn)){
-				selectSql.append(" AND "+filterColumn+"=:active");
+			if (StringUtils.isNotBlank(filterColumn)) {
+				selectSql.append(" AND " + filterColumn + "=:active");
 			}
 		}
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
-		} catch(Exception dae) {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (Exception dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return recordCount;
 	}
-	
+
 	/**
 	 * 
 	 * @param tableName
@@ -368,22 +368,22 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 * @return
 	 */
 	@Override
-	public int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters,String fieldValue) {
+	public int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters, String fieldValue) {
 		logger.debug("Entering");
-		
+
 		String valueColumn = lovField;
 		String filterColumn = filters[0][0].toString();
 		String filterColumnValue = filters[0][2].toString();
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		if(!filterColumn.contains("IsActive")){
-		source.addValue("filterColumnValue", filterColumnValue);
-		}else{
-			try{
+		if (!filterColumn.contains("IsActive")) {
+			source.addValue("filterColumnValue", filterColumnValue);
+		} else {
+			try {
 				source.addValue("filterColumnValue", Integer.parseInt(filterColumnValue));
-			}catch (NumberFormatException e) {
-				logger.debug("Exception: ",e);
+			} catch (NumberFormatException e) {
+				logger.debug("Exception: ", e);
 				source.addValue("filterColumnValue", filterColumnValue);
 			}
 		}
@@ -411,7 +411,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug("Leaving");
 		return recordCount;
 	}
-	
 
 	/**
 	 * Method for check the ExtendedFields with the given reference and seqNo is available or not
@@ -438,7 +437,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug("Leaving");
 		return false;
 	}
-	
+
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMap(long VerificationId, String tableName, String type) {
 		logger.debug("Entering");
@@ -460,7 +459,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			logger.error("Exceprtion ", e);
 			renderMap = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return renderMap;
 	}
@@ -478,7 +477,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
+		}
 		logger.debug(Literal.LEAVING);
 
 		return null;
@@ -521,7 +520,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			return map;
 		}
 	}
-	
+
 	@Override
 	public Map<String, Object> getCollateralMap(String reference, int seqNo, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
