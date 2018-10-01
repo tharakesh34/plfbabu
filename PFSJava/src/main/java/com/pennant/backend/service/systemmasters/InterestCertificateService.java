@@ -53,7 +53,7 @@ import com.pennant.backend.model.agreement.InterestCertificate;
  */
 public interface InterestCertificateService {
 
-	InterestCertificate getInterestCertificateDetails(String value, String startDate, String endDate) throws ParseException;
-
+	InterestCertificate getInterestCertificateDetails(String value, String startDate, String endDate)
+			throws ParseException;
 
 }

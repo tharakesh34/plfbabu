@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.LoanPurpose;
 public interface LoanPurposeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	LoanPurpose getLoanPurposeById(String id);
+
 	LoanPurpose getApprovedLoanPurposeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -65,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode> implements InterestRateBasisCodeDAO {
 	private static Logger logger = Logger.getLogger(InterestRateBasisCodeDAOImpl.class);
-	
+
 	public InterestRateBasisCodeDAOImpl() {
 		super();
 	}
@@ -80,27 +79,30 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 	 * @return InterestRateBasisCode
 	 */
 	@Override
-	public InterestRateBasisCode getInterestRateBasisCodeById(final String id,String type) {
+	public InterestRateBasisCode getInterestRateBasisCodeById(final String id, String type) {
 		logger.debug("Entering");
 		InterestRateBasisCode interestRateBasisCode = new InterestRateBasisCode();
 		interestRateBasisCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select IntRateBasisCode, IntRateBasisDesc, IntRateBasisIsActive,");
-		/*if(type.contains("View")){
-			selectSql.append("");
-		}*/
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		/*
+		 * if(type.contains("View")){ selectSql.append(""); }
+		 */
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTIntRateBasisCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where IntRateBasisCode =:IntRateBasisCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
-		RowMapper<InterestRateBasisCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterestRateBasisCode.class);
+		RowMapper<InterestRateBasisCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterestRateBasisCode.class);
 
 		try {
-			interestRateBasisCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
+			interestRateBasisCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			interestRateBasisCode = null;
@@ -110,10 +112,8 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTIntRateBasisCodes or
-	 * BMTIntRateBasisCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Interest Rate Basis Codes by
-	 * key IntRateBasisCode
+	 * This method Deletes the Record from the BMTIntRateBasisCodes or BMTIntRateBasisCodes_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Interest Rate Basis Codes by key IntRateBasisCode
 	 * 
 	 * @param Interest
 	 *            Rate Basis Codes (interestRateBasisCode)
@@ -132,12 +132,12 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 		deleteSql.append("Delete From BMTIntRateBasisCodes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where IntRateBasisCode =:IntRateBasisCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -149,8 +149,7 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 	}
 
 	/**
-	 * This method insert new Records into BMTIntRateBasisCodes or
-	 * BMTIntRateBasisCodes_Temp.
+	 * This method insert new Records into BMTIntRateBasisCodes or BMTIntRateBasisCodes_Temp.
 	 * 
 	 * save Interest Rate Basis Codes
 	 * 
@@ -170,13 +169,14 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 		insertSql.append("Insert Into BMTIntRateBasisCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (IntRateBasisCode, IntRateBasisDesc, IntRateBasisIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:IntRateBasisCode, :IntRateBasisDesc, :IntRateBasisIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -185,10 +185,8 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 	}
 
 	/**
-	 * This method updates the Record BMTIntRateBasisCodes or
-	 * BMTIntRateBasisCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Interest Rate Basis Codes by
-	 * key IntRateBasisCode and Version
+	 * This method updates the Record BMTIntRateBasisCodes or BMTIntRateBasisCodes_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Interest Rate Basis Codes by key IntRateBasisCode and Version
 	 * 
 	 * @param Interest
 	 *            Rate Basis Codes (interestRateBasisCode)
@@ -208,15 +206,17 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set IntRateBasisDesc = :IntRateBasisDesc,");
 		updateSql.append(" IntRateBasisIsActive = :IntRateBasisIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where IntRateBasisCode =:IntRateBasisCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

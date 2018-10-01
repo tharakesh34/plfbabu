@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.Caste;
 public interface CasteService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Caste getCasteById(long id);
+
 	Caste getApprovedCasteById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

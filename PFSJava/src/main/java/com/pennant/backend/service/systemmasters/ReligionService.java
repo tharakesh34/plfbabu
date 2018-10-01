@@ -48,9 +48,14 @@ import com.pennant.backend.model.systemmasters.Religion;
 public interface ReligionService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Religion getReligion(long religionId);
+
 	Religion getApprovedReligion(long religionId);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }
