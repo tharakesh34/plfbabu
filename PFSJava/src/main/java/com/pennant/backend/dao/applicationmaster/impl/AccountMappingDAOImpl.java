@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements AccountMappingDAO {
 	private static Logger logger = Logger.getLogger(AccountMappingDAOImpl.class);
-	
+
 	public AccountMappingDAOImpl() {
 		super();
 	}
@@ -189,7 +189,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		sql.append(" where account = :account ");
 		if (tableType == TableType.MAIN_TAB) {
 			sql.append(" and Version = :Version - 1");
-		} 
+		}
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

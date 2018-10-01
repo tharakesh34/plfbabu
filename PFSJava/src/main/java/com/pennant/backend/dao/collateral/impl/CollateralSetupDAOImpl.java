@@ -70,7 +70,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements CollateralSetupDAO {
 	private static Logger logger = Logger.getLogger(CollateralSetupDAOImpl.class);
-	
+
 	/**
 	 * Fetch the Record CollateralSetup details by key field
 	 * 
@@ -87,23 +87,26 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		MapSqlParameterSource source = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue, SpecialLTV,");
+		sql.append(
+				" SELECT CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue, SpecialLTV,");
 		sql.append(" CollateralLoc, Valuator, ExpiryDate, ReviewFrequency, NextReviewDate, MultiLoanAssignment,");
 		sql.append(" ThirdPartyAssignment, Remarks, CollateralValue, BankLTV, BankValuation, ");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append("CollateralType, DepositorCif, DepositorName, CollateralTypeName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn  From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralRef = :CollateralRef AND Status is null ");
-		 
+
 		logger.debug("sql: " + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CollateralSetup.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -166,15 +169,22 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (collateralRef,finReference,depositorId,collateralType,collateralCcy,maxCollateralValue,specialLTV,");
+		sql.append(
+				" (collateralRef,finReference,depositorId,collateralType,collateralCcy,maxCollateralValue,specialLTV,");
 		sql.append(" collateralLoc,valuator,expiryDate,reviewFrequency,nextReviewDate,multiLoanAssignment,status,");
-		sql.append(" thirdPartyAssignment,remarks,CollateralValue, BankLTV, BankValuation, Version , LastMntBy, LastMntOn,");
-		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn)");
+		sql.append(
+				" thirdPartyAssignment,remarks,CollateralValue, BankLTV, BankValuation, Version , LastMntBy, LastMntOn,");
+		sql.append(
+				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn)");
 		sql.append(" Values(");
-		sql.append(" :collateralRef,:finReference,:depositorId,:collateralType,:collateralCcy,:maxCollateralValue,:specialLTV,");
-		sql.append(" :collateralLoc,:valuator,:expiryDate,:reviewFrequency,:nextReviewDate,:multiLoanAssignment,:status,");
-		sql.append(" :thirdPartyAssignment,:remarks,:CollateralValue, :BankLTV, :BankValuation, :Version , :LastMntBy, :LastMntOn,");
-		sql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :CreatedBy, :CreatedOn)");
+		sql.append(
+				" :collateralRef,:finReference,:depositorId,:collateralType,:collateralCcy,:maxCollateralValue,:specialLTV,");
+		sql.append(
+				" :collateralLoc,:valuator,:expiryDate,:reviewFrequency,:nextReviewDate,:multiLoanAssignment,:status,");
+		sql.append(
+				" :thirdPartyAssignment,:remarks,:CollateralValue, :BankLTV, :BankValuation, :Version , :LastMntBy, :LastMntOn,");
+		sql.append(
+				" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :CreatedBy, :CreatedOn)");
 
 		logger.debug("sql: " + sql.toString());
 
@@ -205,10 +215,14 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" Set depositorId=:depositorId, collateralType=:collateralType,");
 		sql.append(" collateralCcy=:collateralCcy, maxCollateralValue=:maxCollateralValue, specialLTV=:specialLTV,");
 		sql.append(" collateralLoc=:collateralLoc, valuator=:valuator, expiryDate=:expiryDate,");
-		sql.append(" reviewFrequency=:reviewFrequency, nextReviewDate=:nextReviewDate, multiLoanAssignment=:multiLoanAssignment,");
-		sql.append(" thirdPartyAssignment=:thirdPartyAssignment, remarks=:remarks,CollateralValue=:CollateralValue, BankLTV=:BankLTV, ");
-		sql.append(" BankValuation=:BankValuation, Version=:Version, LastMntBy=:LastMntBy, LastMntOn=:LastMntOn, RecordStatus=:RecordStatus, ");
-		sql.append(" RoleCode=:RoleCode, NextRoleCode=:NextRoleCode,TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId");
+		sql.append(
+				" reviewFrequency=:reviewFrequency, nextReviewDate=:nextReviewDate, multiLoanAssignment=:multiLoanAssignment,");
+		sql.append(
+				" thirdPartyAssignment=:thirdPartyAssignment, remarks=:remarks,CollateralValue=:CollateralValue, BankLTV=:BankLTV, ");
+		sql.append(
+				" BankValuation=:BankValuation, Version=:Version, LastMntBy=:LastMntBy, LastMntOn=:LastMntOn, RecordStatus=:RecordStatus, ");
+		sql.append(
+				" RoleCode=:RoleCode, NextRoleCode=:NextRoleCode,TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId");
 		sql.append(" Where CollateralRef = :CollateralRef");
 		logger.debug("Sql: " + sql.toString());
 
@@ -220,7 +234,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public boolean isCollReferenceExists(String generatedSeqNo, String type) {
 		logger.debug("Entering");
@@ -276,7 +290,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		logger.debug("Leaving");
 		return false;
 	}
-	
+
 	/**
 	 * Get latest version of collateral setup.
 	 * 
@@ -297,7 +311,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
-		
+
 		int recordCount = 0;
 		try {
 			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
@@ -319,13 +333,13 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	@Override
 	public int getCollateralCountByref(String collateralRef, String tableType) {
 		logger.debug("Entering");
-		
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM CollateralSetup");
 		selectSql.append(tableType);
 		selectSql.append(" WHERE CollateralRef = :CollateralRef AND Status is null");
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
@@ -354,22 +368,25 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT collateralRef, depositorId, collateralType, collateralCcy, maxCollateralValue,");
 		selectSql.append(" specialLTV, collateralLoc, valuator, expiryDate, reviewFrequency, nextReviewDate,");
-		selectSql.append(" multiLoanAssignment, thirdPartyAssignment, remarks,CollateralValue, BankLTV, BankValuation,");
+		selectSql
+				.append(" multiLoanAssignment, thirdPartyAssignment, remarks,CollateralValue, BankLTV, BankValuation,");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			selectSql.append("collateralType, depositorCif, depositorName, CollateralTypeName, ");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn");
 		selectSql.append(" From CollateralSetup");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CollateralRef = :CollateralRef AND DepositorId = :DepositorId AND Status is null ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CollateralSetup.class);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 		source.addValue("DepositorId", depositorId);
-		
+
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -388,24 +405,27 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	@Override
 	public List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT collateralRef, depositorId, collateralType, collateralCcy, maxCollateralValue, specialLTV,");
+		sql.append(
+				" SELECT collateralRef, depositorId, collateralType, collateralCcy, maxCollateralValue, specialLTV,");
 		sql.append(" collateralLoc, valuator, expiryDate, reviewFrequency, nextReviewDate, multiLoanAssignment,");
 		sql.append(" thirdPartyAssignment,remarks,CollateralValue, BankLTV, BankValuation,");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append("collateralType, depositorCif, depositorName, CollateralTypeName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where DepositorId = :DepositorId AND Status is null");
 		logger.debug("sql: " + sql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DepositorId", depositorId);
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CollateralSetup.class);
 
 		List<CollateralSetup> collaterals = new ArrayList<CollateralSetup>();
 		try {
@@ -416,6 +436,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		logger.debug("Leaving");
 		return collaterals;
 	}
+
 	/**
 	 * Method for get collateral count by reference.
 	 * 
@@ -426,12 +447,12 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	@Override
 	public int getCountByCollateralRef(String collateralRef) {
 		logger.debug("Entering");
-		
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Count(*) FROM CollateralSetup");
 		selectSql.append(" WHERE CollateralRef = :CollateralRef  AND Status is null");
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
@@ -451,13 +472,15 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		MapSqlParameterSource source = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue, SpecialLTV,");
+		sql.append(
+				" SELECT CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue, SpecialLTV,");
 		sql.append(" CollateralLoc, Valuator, ExpiryDate, ReviewFrequency, NextReviewDate, MultiLoanAssignment,");
 		sql.append(" ThirdPartyAssignment, Remarks, CollateralValue, BankLTV, BankValuation, ");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append("CollateralType, DepositorCif, DepositorName, CollateralTypeName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn  From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = :FinReference AND Status is null");
@@ -466,7 +489,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CollateralSetup.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
