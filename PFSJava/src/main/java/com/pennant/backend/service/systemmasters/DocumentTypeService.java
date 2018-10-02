@@ -50,11 +50,16 @@ import com.pennant.backend.model.systemmasters.DocumentType;
  * 
  */
 public interface DocumentTypeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	DocumentType getDocumentTypeById(String id);
+
 	DocumentType getApprovedDocumentTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }
