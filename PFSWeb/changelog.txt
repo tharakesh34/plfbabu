@@ -1,3 +1,18 @@
+pff 4.11.1, 2018-10-3
+ --------------
+-PPM bug Id 18355 	Application Number is not Populated in the Customer View menu 	
+-PPM bug Id 18356  	In Customers Application No field Validation is [a-z,A-Z,0-9]. But By default taken capital letters only instead of small letters. 	
+-bugs #805 Fixed Stored Cross Site Scripting Vulnerability in Notes Dialog	
+-bugs  #806: Collateral Details Merge Fields Display in Document
+-PPM bug Id (18382) : In GST Invoice report, Transaction amount field shown is including GST amount.
+-story #807 Mail Notifications for DSA Field in Loan origination.bugs #814 Issue in IMD received date.
+-PSD  #128753-Schedule details-900 error in graph reports.
+-PSD  #128766-Co applicant exposure value is populating wrong value.
+-story #817 No Future Disbursements from Loan, Restriction added.
+-bugs #818 Multiple Bounces, calculation of GST showing wrong.
+-bugs #820 Payment mode PDC display added in the SOA.
+-bugs #819 Schedule Rate becomes ZERO on Servicing.
+
 pff 4.10.4.7, 2018-09-24
  --------------
 -bugs #796 Issue while bulk upload, mode is cheque or DD cheque or DD number is Not updated. 
