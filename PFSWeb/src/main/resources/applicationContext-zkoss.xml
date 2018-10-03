@@ -2892,6 +2892,8 @@
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

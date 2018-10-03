@@ -973,6 +973,15 @@ public class RepaymentPostingsUtil implements Serializable {
 		if(rpyQueueHeader.getExtDataMap() != null){
 			dataMap.putAll(rpyQueueHeader.getExtDataMap());
 		}
+		
+		if (rpyQueueHeader.getGstExecutionMap() != null) {
+			for (String key : rpyQueueHeader.getGstExecutionMap().keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					dataMap.put (key, rpyQueueHeader.getGstExecutionMap().get(key));
+				}
+			}
+		}
+		
 		prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, rpyQueueHeader.getPayType());
 		addZeroifNotContainsObj(dataMap, "bounceChargePaid");
 		addZeroifNotContainsObj(dataMap,"bounceCharge_CGST_P");

@@ -109,6 +109,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -235,6 +236,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinPlanEmiHolidayDAO			finPlanEmiHolidayDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
 	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
+	private FinanceTaxDetailDAO				financeTaxDetailDAO;
 
 	// DocumentManagerDAO
 	private DocumentManagerDAO				documentManagerDAO;
@@ -1635,6 +1637,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		// On Origination processing based on Service instructions is not required
 		boolean feesExecuted = false;
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)){
+
+			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			
 			if (gstExecutionMap != null) {
 				for (String key : gstExecutionMap.keySet()) {
@@ -1643,8 +1647,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 			}
-			
-			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			aeEvent.setDataMap(dataMap);
 			
 			// Prepared Postings execution 
@@ -1674,6 +1676,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					aeEvent.setValueDate(inst.getFromDate());
 				}
 				aeEvent.setAeAmountCodes(tempAmountCodes);
+				
+				if (gstExecutionMap != null) {
+					for (String key : gstExecutionMap.keySet()) {
+						if (StringUtils.isNotBlank(key)) {
+							dataMap.put (key, gstExecutionMap.get(key));
+						}
+					}
+				}
+				
 				aeEvent.setDataMap(dataMap);
 				
 				// Prepared Postings execution 
@@ -1853,6 +1864,35 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
+		// GST parameters
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+
+		// Set Tax Details if Already exists
+		if(financeDetail.getFinanceTaxDetail() == null){
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finMain.getFinReference(),""));
+		}
+
+		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
+				financeDetail.getFinanceTaxDetail(), finMain.getFinBranch());
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -1880,6 +1920,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		List<ReturnDataSet> newStageAcEntries = null;
 		try {
 			aeEvent.setDataMap(dataMap);
+			
+			if (gstExecutionMap != null) {
+				for (String key : gstExecutionMap.keySet()) {
+					if (StringUtils.isNotBlank(key)) {
+						dataMap.put (key, gstExecutionMap.get(key));
+					}
+				}
+			}
 			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 			newStageAcEntries = aeEvent.getReturnDataSet();
 		} catch (Exception e) {
@@ -2615,6 +2663,41 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 			}
 		}
+		
+		// GST parameters
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+
+		// Set Tax Details if Already exists
+		if(financeDetail.getFinanceTaxDetail() == null){
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finMain.getFinReference(),""));
+		}
+
+		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(finMain.getFinBranch(),custDftBranch, highPriorityState,highPriorityCountry, 
+				financeDetail.getFinanceTaxDetail(), finMain.getFinBranch());
+
+		if (gstExecutionMap != null) {
+			for (String key : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					dataMap.put (key, gstExecutionMap.get(key));
+				}
+			}
+		}
 		aeEvent.setDataMap(dataMap);
 
 		// Prepare Accounting Set of entries with valid account & Post amounts
@@ -3290,4 +3373,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
 }

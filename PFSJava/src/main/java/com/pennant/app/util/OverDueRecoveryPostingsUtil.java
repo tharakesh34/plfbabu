@@ -164,6 +164,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			}
 		}
 		
+		if (rpyQueueHeader.getGstExecutionMap() != null) {
+			for (String key : rpyQueueHeader.getGstExecutionMap().keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					dataMap.put (key, rpyQueueHeader.getGstExecutionMap().get(key));
+				}
+			}
+		}
+		
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 		aeEvent.setDataMap(dataMap);
 		aeEvent.getAcSetIDList().clear();

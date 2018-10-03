@@ -4511,7 +4511,8 @@
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
-
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>
+		
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<!-- Cash Management (Deposit Details) -->
@@ -4661,6 +4662,8 @@
 		<!-- GST Invoice Changes -->
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -5343,7 +5346,9 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
-
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>	
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>

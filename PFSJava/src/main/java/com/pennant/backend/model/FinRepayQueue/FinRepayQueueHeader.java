@@ -1,6 +1,7 @@
 package com.pennant.backend.model.FinRepayQueue;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public class FinRepayQueueHeader {
 	private long receiptId;
 	
 	private Map<String , BigDecimal> extDataMap = null;
+	private HashMap<String, Object> gstExecutionMap = null;
 	private List<FinRepayQueue> queueList = null;
 	
 	public FinRepayQueueHeader() {
@@ -224,6 +226,14 @@ public class FinRepayQueueHeader {
 
 	public void setReceiptId(long receiptId) {
 		this.receiptId = receiptId;
+	}
+
+	public HashMap<String, Object> getGstExecutionMap() {
+		return gstExecutionMap;
+	}
+
+	public void setGstExecutionMap(HashMap<String, Object> gstExecutionMap) {
+		this.gstExecutionMap = gstExecutionMap;
 	}
 
 

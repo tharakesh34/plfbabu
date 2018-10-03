@@ -29,6 +29,7 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
@@ -42,6 +43,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
@@ -66,6 +68,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
@@ -98,6 +101,8 @@ public class RepaymentProcessUtil {
 	private PostingsPreparationUtil		postingsPreparationUtil;
 	private FinanceMainDAO				financeMainDAO;
 	private PostingsDAO					postingsDAO;
+	private FinFeeDetailService			finFeeDetailService;
+	private FinanceTaxDetailDAO			financeTaxDetailDAO;
 	
 	//GST Invoice Report changes
 	private GSTInvoiceTxnService				gstInvoiceTxnService;
@@ -463,6 +468,35 @@ public class RepaymentProcessUtil {
 		boolean feesExecuted = false;
 		boolean executePftChg = true;
 		
+		// GST parameters
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(financeDetail.getCustomerDetails() != null){
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+
+		// Set Tax Details if Already exists
+		if(financeDetail.getFinanceTaxDetail() == null){
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),""));
+		}
+
+		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
+				financeDetail.getFinanceTaxDetail(), financeMain.getFinBranch());
+		
 		boolean payableLoopProcess = false;
 		Map<String, BigDecimal> extDataMap = new HashMap<>();
 		BigDecimal totPayable = BigDecimal.ZERO;
@@ -660,6 +694,13 @@ public class RepaymentProcessUtil {
 						
 						// Receipt Detail external usage Fields Insertion into DataMap
 						dataMap.putAll(extDataMap);
+						if (gstExecutionMap != null) {
+							for (String key : gstExecutionMap.keySet()) {
+								if (StringUtils.isNotBlank(key)) {
+									dataMap.put (key, gstExecutionMap.get(key));
+								}
+							}
+						}
 						
 						aeEvent.setDataMap(dataMap);
 
@@ -756,7 +797,7 @@ public class RepaymentProcessUtil {
 				String accEvent = getEventCode(repayHeader.getFinEvent());
 				rpyProcessed = true;
 				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, (executeFeesNow ? finFeeDetailList : null), pftDetailTemp, repaySchdList,
-						accEvent, valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch(), executePftChg,extDataMap);
+						accEvent, valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch(), executePftChg,extDataMap, gstExecutionMap);
 				
 				if(StringUtils.equals(accEvent, AccountEventConstants.ACCEVENT_EARLYPAY)){
 					executePftChg = false;
@@ -825,7 +866,7 @@ public class RepaymentProcessUtil {
 					extDataMap.clear();
 				}
 				
-				procManualAdvPostings(receiptDetail, financeMain, movements, receiptHeader.getPostBranch(), extDataMap, valueDate, financeDetail);
+				procManualAdvPostings(receiptDetail, financeMain, movements, receiptHeader.getPostBranch(), extDataMap, valueDate, financeDetail, gstExecutionMap);
 			}
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
@@ -859,7 +900,8 @@ public class RepaymentProcessUtil {
 	 * @throws InterfaceException 
 	 */
 	private void procManualAdvPostings(FinReceiptDetail receiptDetail, FinanceMain financeMain,
-			List<ManualAdviseMovements> movements, String postBranch,Map<String, BigDecimal> extDataMap, Date dateValueDate, FinanceDetail financeDetail) throws InterfaceException, IllegalAccessException, InvocationTargetException{
+			List<ManualAdviseMovements> movements, String postBranch,Map<String, BigDecimal> extDataMap, Date dateValueDate, FinanceDetail financeDetail,
+			HashMap<String, Object> gstExecutionMap) throws InterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
 		// Accounting Postings Process Execution
@@ -901,6 +943,15 @@ public class RepaymentProcessUtil {
 		if(extDataMap != null){
 			dataMap.putAll(extDataMap);
 		}
+		
+		if (gstExecutionMap != null) {
+			for (String key : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					dataMap.put (key, gstExecutionMap.get(key));
+				}
+			}
+		}
+		
 		aeEvent.setDataMap(dataMap);
 
 		// Accounting Entry Execution
@@ -1524,7 +1575,8 @@ public class RepaymentProcessUtil {
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
-			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch, boolean pftChgAccReq, Map<String, BigDecimal> extDataMap) throws IllegalAccessException,
+			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch, boolean pftChgAccReq, Map<String, BigDecimal> extDataMap,
+			HashMap<String, Object> gstExecutionMap) throws IllegalAccessException,
 			InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1592,6 +1644,7 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 			rpyQueueHeader.setPftChgAccReq(pftChgAccReq);
 			rpyQueueHeader.setExtDataMap(extDataMap);
+			rpyQueueHeader.setGstExecutionMap(gstExecutionMap);
 			rpyQueueHeader.setReceiptId(receiptDetail.getReceiptID());
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,profitDetail,
@@ -2045,5 +2098,21 @@ public class RepaymentProcessUtil {
 
 	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
 		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
+	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
 	}
 }

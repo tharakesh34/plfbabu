@@ -52,6 +52,7 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -91,6 +92,8 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
@@ -110,10 +113,12 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -160,6 +165,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinFeeReceiptDAO		finFeeReceiptDAO;
 	private LatePayMarkingService latePayMarkingService; 
 	private FinStageAccountingLogDAO	finStageAccountingLogDAO;
+	private CustomerDetailsService	customerDetailsService;
 	
 	//GST Invoice Report
 	private FinanceDetailService 		financeDetailService;
@@ -840,9 +846,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							&& !StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)
 							&& !StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 						
-						// Accounting Reversals
-						
-
 						// Fetch Excess Amount Details
 						FinExcessAmount excess = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
 								receiptHeader.getExcessAdjustTo());
@@ -1385,6 +1388,43 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			if (unAmz.compareTo(BigDecimal.ZERO) != 0 || unLPIAmz.compareTo(BigDecimal.ZERO) != 0
 					|| unLPPAmz.compareTo(BigDecimal.ZERO) != 0) {
 				aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+				
+				// GST parameters
+				String custDftBranch = null;
+				String highPriorityState = null;
+				String highPriorityCountry = null;
+				
+				// Customer Details			
+				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View");
+				
+				if(customerDetails != null){
+					custDftBranch = customerDetails.getCustomer().getCustDftBranch();
+					List<CustomerAddres> addressList = customerDetails.getAddressList();
+					if (CollectionUtils.isNotEmpty(addressList)) {
+						for (CustomerAddres customerAddres : addressList) {
+							if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+								highPriorityState = customerAddres.getCustAddrProvince();
+								highPriorityCountry = customerAddres.getCustAddrCountry();
+								break;
+							}
+						}
+					}
+				}
+
+				// Set Tax Details if Already exists
+				FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),"");
+
+				HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),custDftBranch, 
+						highPriorityState,highPriorityCountry, taxDetail, financeMain.getFinBranch());
+
+				if (gstExecutionMap != null) {
+					for (String key : gstExecutionMap.keySet()) {
+						if (StringUtils.isNotBlank(key)) {
+							aeEvent.getDataMap().put (key, gstExecutionMap.get(key));
+						}
+					}
+				}
+				
 				aeEvent.getAcSetIDList().add(accountingID);
 
 				// Amortization Difference Postings
@@ -1784,5 +1824,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
 		this.depositDetailsDAO = depositDetailsDAO;
+	}
+	
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
 	}
 }

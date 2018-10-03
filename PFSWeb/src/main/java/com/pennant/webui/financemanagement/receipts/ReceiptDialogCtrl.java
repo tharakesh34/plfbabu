@@ -64,6 +64,7 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -132,6 +133,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -172,7 +174,9 @@ import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
@@ -404,6 +408,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient ManualAdviseService 					manualAdviseService;
 	private transient FeeTypeService						feeTypeService;
 	private transient PartnerBankService					partnerBankService;
+	private transient FinFeeDetailService					finFeeDetailService;
+	private transient FinanceTaxDetailService				financeTaxDetailService;
 
 	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl			= null;
 	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl			= null;
@@ -5374,7 +5380,37 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			pftchg = pftchg.negate();
 		}
 		amountCodes.setPftChg(pftchg);
-
+		
+		// GST parameters
+		String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+		
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if(getFinanceDetail().getCustomerDetails() != null){
+			custDftBranch = getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch();
+			
+			List<CustomerAddres> addressList = getFinanceDetail().getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+		
+		// Set Tax Details if Already exists
+		if(getFinanceDetail().getFinanceTaxDetail() == null){
+			getFinanceDetail().setFinanceTaxDetail(getFinanceTaxDetailService().getApprovedFinanceTaxDetail(
+					getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference()));
+		}
+		
+		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
+				getFinanceDetail().getFinanceTaxDetail(), finMain.getFinBranch());
+		
 		List<ReturnDataSet> returnSetEntries = new ArrayList<>();
 		BigDecimal totRpyPri = BigDecimal.ZERO;
 		boolean feesExecuted = false;
@@ -5534,6 +5570,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					
 					// Receipt Detail external usage Fields Insertion into DataMap
 					dataMap.putAll(extDataMap);
+					
+					if (gstExecutionMap != null) {
+						for (String key : gstExecutionMap.keySet()) {
+							if (StringUtils.isNotBlank(key)) {
+								dataMap.put (key, gstExecutionMap.get(key));
+							}
+						}
+					}
 					
 					aeEvent.setDataMap(dataMap);
 
@@ -5877,6 +5921,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				// Receipt Detail external usage Fields Insertion into DataMap
 				dataMap.putAll(extDataMap);
 				
+				if (gstExecutionMap != null) {
+					for (String key : gstExecutionMap.keySet()) {
+						if (StringUtils.isNotBlank(key)) {
+							dataMap.put (key, gstExecutionMap.get(key));
+						}
+					}
+				}
+				
 				if(!feesExecuted && (StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) ||
 						(!StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
 								StringUtils.equals(getReceiptHeader().getReceiptPurpose(), repayHeader.getFinEvent())))){
@@ -6031,6 +6083,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(receiptDetail.getRepayHeaders() == null || receiptDetail.getRepayHeaders().isEmpty()){
 					dataMap.putAll(extDataMap);
 				}
+				
+				if (gstExecutionMap != null) {
+					for (String key : gstExecutionMap.keySet()) {
+						if (StringUtils.isNotBlank(key)) {
+							dataMap.put (key, gstExecutionMap.get(key));
+						}
+					}
+				}
+				
 				aeEvent.setDataMap(dataMap);
 
 				// Accounting Entry Execution
@@ -7721,6 +7782,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
 		this.feeWaiverHeaderService = feeWaiverHeaderService;
+	}
+	
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public FinanceTaxDetailService getFinanceTaxDetailService() {
+		return financeTaxDetailService;
+	}
+
+	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
+		this.financeTaxDetailService = financeTaxDetailService;
 	}
 	
 }
