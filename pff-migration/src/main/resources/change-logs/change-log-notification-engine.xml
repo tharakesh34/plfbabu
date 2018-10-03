@@ -320,7 +320,7 @@
 </createTable>
 </changeSet>
 
-<changeSet id="4" author="Manoj">
+<changeSet id="4" author="Manoj" dbms="postgresql,oracle">
 	<createTable tableName="Sys_Notification_Attributes">
 			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
 				<constraints primaryKey="true" nullable="false" />
@@ -334,7 +334,25 @@
 			<column name = "Attribute"      type = "smallint" defaultValue="0"/>
 </createTable>
 </changeSet>
-
+<changeSet id="4" author="Manoj" dbms="mssql">
+	<createTable tableName="Sys_Notification_Attributes">
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NotificationId"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name = "Name"           type = "varchar(30)"/>
+			<column name = "Type"           type = "varchar(10)"/>
+			<column name = "Format"         type = "varchar(50)"/>
+			<column name = "Attribute"      type = "smallint"/>
+</createTable>
+</changeSet>
+<changeSet id="4" author="Jayant" dbms="mssql">
+	<sql>
+		alter table Sys_Notification_Attributes add constraint df_S_N_A_attr DEFAULT 0 for Attribute;
+	</sql>
+</changeSet>
 <changeSet id="5" author="Manoj">
 		<addForeignKeyConstraint constraintName="fk_sys_ntf_det_Id"
 			baseColumnNames="NotificationId" baseTableName="Sys_Notification_Attributes"
@@ -370,7 +388,7 @@
 </createTable>
 </changeSet>
 
-<changeSet id="7" author="Manoj">
+<changeSet id="7" author="Manoj" dbms="postgresql,oracle">
 	<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
 	
 			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
@@ -394,8 +412,33 @@
 			
 </createTable>
 </changeSet>
+<changeSet id="7" author="Manoj" dbms="mssql">
+	<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
 	
-	
-	
-	
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<column name="ExecutionId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="NotificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="ProcessingFlag"     type="boolean"/>
+			<column name="KeyReference"       type="varchar(20)"/>
+			<column name="Email"              type="varchar(500)"/>
+			<column name="MobileNumber"       type="varchar(500)"/>
+			<column name="NotificationData"   type="blob"/>
+			<column name="Attributes"         type="varchar(500)"/>
+			
+</createTable>
+</changeSet>	
+<changeSet id="7_Post" author="Jayant" dbms="mssql">
+	<sql>
+		alter table SYS_NOTIFICATION_EXEC_LOG add constraint df_S_N_E_L_ProFlag DEFAULT 0 for ProcessingFlag;
+	</sql>
+</changeSet>
 </databaseChangeLog>

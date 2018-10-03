@@ -271,9 +271,19 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="5.0_Pre" author="mssql">
+		<dropPrimaryKey tableName="BMTLovFieldcode" constraintName="PK_BMTLovFieldCode"/>
+		<dropPrimaryKey tableName="BMTLovFieldcode_temp" constraintName="PK_BMTLovFieldCode_temp"/>
+	</changeSet>
 	<changeSet id="5.0" author="murthy.y">
 		<modifyDataType tableName="BMTLovFieldcode" columnName="fieldcode" newDataType="varchar(50)" />
 		<modifyDataType tableName="BMTLovFieldcode_temp" columnName="fieldcode" newDataType="varchar(50)" />
+	</changeSet>
+	<changeSet id="5.0_Post" author="mssql">
+		<addNotNullConstraint tableName="BMTLovFieldcode" columnName="fieldcode" columnDataType="varchar(50)"/>
+		<addNotNullConstraint tableName="BMTLovFieldcode_temp" columnName="fieldcode" columnDataType="varchar(50)"/>
+		<addPrimaryKey tableName="BMTLovFieldcode" columnNames="fieldcode" constraintName="PK_BMTLovFieldCode"/>
+		<addPrimaryKey tableName="BMTLovFieldcode_temp" columnNames="fieldcode" constraintName="PK_BMTLovFieldCode_temp"/>
 	</changeSet>
 	<changeSet id="5.0_post" author="murthy.y" dbms="postgresql">
 		<sql>
@@ -412,7 +422,7 @@
 			referencedTableName="organizations" referencedColumnNames="id"
 			baseTableName="org_income_expense_header_temp" baseColumnNames="orgId" />
 	</changeSet>
-	<changeSet id="6.4" author="murthy.y">
+	<changeSet id="6.4" author="murthy.y" dbms="oracle,postgresql">
 		<createTable tableName="org_income_expenses">
 			<column name="id" type="bigint">
 				<constraints nullable="false" />
@@ -460,7 +470,61 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="6.5" author="murthy.y">
+	<changeSet id="6.4" author="murthy.y" dbms="mssql">
+		<createTable tableName="org_income_expenses">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="headerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpense" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpenseCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpenseType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="units" type="int" />
+			<column name="unitPrice" type="number(18,0)" />
+			<column name="total" type="number(18,0)" />
+			<column name="frequency" type="varchar(10)" />
+			<column name="loockUpId" type="bigint" />
+			<column name="consider" type="boolean" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="6.4" author="Jayant" dbms="mssql">
+		<sql>
+			alter table org_income_expenses add constraint o_i_e_units DEFAULT 0 for units;
+			alter table org_income_expenses add constraint o_i_e_consider DEFAULT 1 for consider;
+		</sql>
+	</changeSet>
+	<changeSet id="6.5" author="murthy.y" dbms="oracle,postgresql">
 		<createTable tableName="org_income_expenses_temp">
 			<column name="id" type="bigint">
 				<constraints nullable="false" />
@@ -507,6 +571,60 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="6.5" author="murthy.y" dbms="mssql">
+		<createTable tableName="org_income_expenses_temp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="headerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpense" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpenseCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpenseType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="units" type="int"/>
+			<column name="unitPrice" type="number(18,0)" />
+			<column name="total" type="number(18,0)" />
+			<column name="frequency" type="varchar(10)" />
+			<column name="loockUpId" type="bigint" />
+			<column name="consider" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="6.5" author="Jayant" dbms="mssql">
+		<sql>
+			alter table org_income_expenses_temp add constraint o_i_e_t_units DEFAULT 0 for units;
+			alter table org_income_expenses_temp add constraint o_i_e_t_consider DEFAULT 1 for consider;
+		</sql>
 	</changeSet>
 	<changeSet id="6.6" author="murthy.y">
 		<addPrimaryKey tableName="org_income_expenses"
