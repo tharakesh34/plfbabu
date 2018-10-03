@@ -3484,7 +3484,8 @@ public class ScheduleCalculator {
 			 * { break; }
 			 */
 			// Fetch current rates from DB
-			if(curSchd.getSchDate().compareTo(fixedTenorEndDate) < 0){
+			if(curSchd.getSchDate().compareTo(fixedTenorEndDate) < 0 &&
+					DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) >= 0){
 				curSchd.setCalculatedRate(finMain.getFixedTenorRate());
 				fixedRateTenor = fixedRateTenor>0?fixedRateTenor - 1:fixedRateTenor;
 			}else {
