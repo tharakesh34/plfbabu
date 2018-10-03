@@ -271,7 +271,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="5.0_Pre" author="mssql">
+	<changeSet id="5.0_Pre" author="mssql" dbms="mssql">
 		<dropPrimaryKey tableName="BMTLovFieldcode" constraintName="PK_BMTLovFieldCode"/>
 		<dropPrimaryKey tableName="BMTLovFieldcode_temp" constraintName="PK_BMTLovFieldCode_temp"/>
 	</changeSet>
@@ -279,7 +279,7 @@
 		<modifyDataType tableName="BMTLovFieldcode" columnName="fieldcode" newDataType="varchar(50)" />
 		<modifyDataType tableName="BMTLovFieldcode_temp" columnName="fieldcode" newDataType="varchar(50)" />
 	</changeSet>
-	<changeSet id="5.0_Post" author="mssql">
+	<changeSet id="5.0_Post" author="mssql" dbms="mssql">
 		<addNotNullConstraint tableName="BMTLovFieldcode" columnName="fieldcode" columnDataType="varchar(50)"/>
 		<addNotNullConstraint tableName="BMTLovFieldcode_temp" columnName="fieldcode" columnDataType="varchar(50)"/>
 		<addPrimaryKey tableName="BMTLovFieldcode" columnNames="fieldcode" constraintName="PK_BMTLovFieldCode"/>
