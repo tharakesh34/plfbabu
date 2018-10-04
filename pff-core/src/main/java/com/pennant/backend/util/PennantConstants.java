@@ -52,7 +52,7 @@ public class PennantConstants {
 	public static final int borderlayoutMainNorth = 100;
 	public static final String mandateSclass = "mandatory";
 	public static final int branchCode_maxValue = 20;
-	
+
 	// Date Formats
 	public static final String dateFormat = DateFormat.SHORT_DATE.getPattern();
 	public static final String DBTimeFormat = DateFormat.LONG_TIME.getPattern();
@@ -131,7 +131,7 @@ public class PennantConstants {
 	public static final String RCD_STATUS_FINALIZED = "Finalized";
 	public static final String RCD_STATUS_REASSIGNED = "Reassigned";
 	public static final String RCD_STATUS_MANUALASSIGNED = "ManuallyAssigned";
-	public static final String DFT_THREAD_COUNT = "BULKRATECHANGE_DFT_THREAD_COUNT"; 
+	public static final String DFT_THREAD_COUNT = "BULKRATECHANGE_DFT_THREAD_COUNT";
 
 	// List Maintenance Workflow Record Type codes
 	public static final String RCD_ADD = "ADD";
@@ -176,7 +176,7 @@ public class PennantConstants {
 	public static final String method_doCheckCollaterals = "doCheckCollaterals";
 	public static final String method_doCheckDepositProc = "doCheckDeposit";
 	public static final String method_doCheckFurtherWF = "doCheckFurtherWF";
-	
+
 	public static final String method_externalDedup = "executeExperianDedup";
 	public static final String method_hunter = "executeHunter";
 	public static final String method_Experian_Bureau = "executeBureau";
@@ -222,7 +222,12 @@ public class PennantConstants {
 	public static final String YES = "Y";
 	public static final String NO = "N";
 
-	public static final String ALLOW_ACCESS_TO_APP = "ALLOW_ACCESS"; // TODO What are the other options?
+	public static final String ALLOW_ACCESS_TO_APP = "ALLOW_ACCESS"; // TODO
+																		// What
+																		// are
+																		// the
+																		// other
+																		// options?
 
 	// Document Types
 	public static final String DOC_TYPE_IMAGE = "IMG";
@@ -232,9 +237,8 @@ public class PennantConstants {
 	public static final String DOC_TYPE_DOC = "DOC";
 	public static final String DOC_TYPE_DOCX = "DOCX";
 	public static final String DOC_TYPE_EXCEL = "EXCEL";
-	
+
 	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
-	
 
 	public static final String DOC_TYPE_PDF_EXT = ".pdf";
 	public static final String DOC_TYPE_WORD_EXT = ".docx";
@@ -279,7 +283,6 @@ public class PennantConstants {
 	public static final String PASSPORT = "02";
 	public static final String TRADELICENSE = "15";
 	public static final String PANNUMBER = "03";
-	
 
 	// Customer Employment Status Codes
 	public static final String CUSTEMPSTS_EMPLOYED = "EMPLOYED";
@@ -304,7 +307,7 @@ public class PennantConstants {
 	public static final String AGG_COAPPDT = "COAPPDT";
 	public static final String AGG_COLLTRL = "COLLTRL";
 	public static final String AGG_SERVFEE = "SERVFEE";
-	public static final String AGG_VAS     = "VAS";
+	public static final String AGG_VAS = "VAS";
 	public static final String AGG_DIRECDT = "DIRECDT";
 	public static final String AGG_REPAYDT = "REPAYDT";
 	public static final String AGG_CHRGDET = "CHRGDET";
@@ -323,10 +326,10 @@ public class PennantConstants {
 	public static final String AGG_PSLMODL = "PSLMODL";
 	public static final String AGG_SMPMODL = "SMPMODL";
 	public static final String AGG_LNAPPCB = "LNAPPCB";
-	public static final String AGG_KYCDT   = "KYCDT"  ;
+	public static final String AGG_KYCDT = "KYCDT";
 
 	// Workflow definition Constants
-	
+
 	public static final String WORFLOW_MODULE_LOAN = "LOAN";
 	public static final String WORFLOW_MODULE_FINANCE = "FINANCE";
 	public static final String WORFLOW_MODULE_PROMOTION = "PROMOTION";
@@ -602,7 +605,7 @@ public class PennantConstants {
 	public static final String AUTOHUNT_RUNNING = "R";
 	public static final String AUTOHUNT_STOPPED = "S";
 	public static final String AUTOHUNT_BATCH = "B";
-	
+
 	// Insurance Status Details
 	public static final String TAKAFUL_STATUS_APPROVED = "APPROVED";
 	public static final String TAKAFUL_STATUS_DECLINED = "DECLINED";
@@ -615,7 +618,7 @@ public class PennantConstants {
 	public static final String TAKAFUL_PAIDSTATUS_PAID = "PAID";
 	public static final String TAKAFUL_PAIDSTATUS_REJECTED = "REJECTED";
 	public static final String TAKAFUL_PAIDSTATUS_PENDING = "PENDING";
-	
+
 	// Insurance Claim Reason
 	public static final String TAKAFUL_CLAIMREASON_DEATH = "Disease";
 	public static final String TAKAFUL_CLAIMREASON_PTD = "PTD";
@@ -667,119 +670,118 @@ public class PennantConstants {
 	// FinSource Id
 	public static final String FINSOURCE_ID_API = "API";
 
-	//Rates
+	// Rates
 	public static final String RATE_BASE = "BASE";
 	public static final String RATE_SPECIAL = "SPECIAL";
 	public static final String RATE_MARGIN = "MARGIN";
-	
-	
-	//RejectCodes
+
+	// RejectCodes
 	public static final String Reject_Finance = "Finance";
 	public static final String Reject_Payment = "Payment";
-	
+
 	// Branches
 	public static final String Branch_AREAOFC = "AREAOFFICE";
 	public static final String Branch_HEADOFC = "HEADOFFICE";
 	public static final String Branch_REGIONALOFC = "REGIONALOFFICE";
 	public static final String Branch_STATEOFC = "STATEOFFICE";
 	public static final String Branch_SUBBRANCHOFC = "SUBBRANCHOFFICE";
-	
+
 	public static final String Branch_SOUTH = "SOUTH";
 	public static final String Branch_NORTH = "NORTH";
 	public static final String Branch_EAST = "EAST";
 	public static final String Branch_WEST = "WEST";
-	
+
 	public static final String FEE_CALCULATION_TYPE_RULE = "RULE";
 	public static final String FEE_CALCULATION_TYPE_FIXEDAMOUNT = "FIXEDAMT";
 	public static final String FEE_CALCULATION_TYPE_PERCENTAGE = "PERCENTG";
-	
+
 	public static final String FEE_CALCULATEDON_TOTALASSETVALUE = "TOTAST";
-	public static final String FEE_CALCULATEDON_LOANAMOUNT      = "LOANAM";
+	public static final String FEE_CALCULATEDON_LOANAMOUNT = "LOANAM";
 	public static final String FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL = "OUTSPL";
 	public static final String FEE_CALCULATEDON_PAYAMOUNT = "PAYAMT";
 	public static final String FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE = "PRINCFU";
 	// Validation Groups
-	public static final String VLD_CRT_SCHD              	= "CRTSCHD";
-	public static final String VLD_CRT_LOAN					= "CRTLOAN";
-	public static final String VLD_UPD_LOAN					= "UPDLOAN";
-	public static final String VLD_SRV_LOAN					= "SRVLOAN";
-	public static final String NOT_AVAILABLE				= "NAV";
-	
+	public static final String VLD_CRT_SCHD = "CRTSCHD";
+	public static final String VLD_CRT_LOAN = "CRTLOAN";
+	public static final String VLD_UPD_LOAN = "UPDLOAN";
+	public static final String VLD_SRV_LOAN = "SRVLOAN";
+	public static final String NOT_AVAILABLE = "NAV";
+
 	public static final DataEngineStatus BATCH_TYPE_PRESENTMENT_IMPORT = new DataEngineStatus();
 	public static final String FILESTATUS_STARTING = "STARTING";
-	
-	//GST Tax Constants	TaxApplicableFor_PrimaryCustomer
+
+	// GST Tax Constants TaxApplicableFor_PrimaryCustomer
 	public static final String TAXAPPLICABLEFOR_PRIMAYCUSTOMER = "P";
 	public static final String TAXAPPLICABLEFOR_COAPPLICANT = "C";
-	public static final String TAXAPPLICABLEFOR_GUARANTOR= "G";
+	public static final String TAXAPPLICABLEFOR_GUARANTOR = "G";
 
-	//Customer Dedup source sstem
-	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT= "PENNANT";
-	
+	// Customer Dedup source sstem
+	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT = "PENNANT";
+
 	// No objection certificate
-	public static final String NO_OBJECT_CERT= "NOC";
-	
+	public static final String NO_OBJECT_CERT = "NOC";
+
 	public static final String FINANCE_INQUIRY_CUSTOMER = "CUSTOMER";
 	public static final String FINANCE_INQUIRY_LOAN = "LOAN";
 
 	// Expense Uploads
-	public static final String EXPENSE_UPLOAD_LOAN 			= "Loan";
-	public static final String EXPENSE_UPLOAD_LOANTYPE 		= "LoanType";
-	public static final String UPLOAD_INCOMETYPE_EXPENSE 	= "E";
-	public static final String UPLOAD_STATUS_SUCCESS 		= "SUCCESS";
-	public static final String UPLOAD_STATUS_FAIL 			= "FAILED";
-	public static final String EXPENSE_UPLOAD_ADD			= "A";
-	public static final String EXPENSE_UPLOAD_OVERRIDE 		= "O";
-	public static final String EXPENSE_MODE_SCREEN 			= "Screen";
-	public static final String EXPENSE_MODE_UPLOAD 			= "Upload";
+	public static final String EXPENSE_UPLOAD_LOAN = "Loan";
+	public static final String EXPENSE_UPLOAD_LOANTYPE = "LoanType";
+	public static final String UPLOAD_INCOMETYPE_EXPENSE = "E";
+	public static final String UPLOAD_STATUS_SUCCESS = "SUCCESS";
+	public static final String UPLOAD_STATUS_FAIL = "FAILED";
+	public static final String EXPENSE_UPLOAD_ADD = "A";
+	public static final String EXPENSE_UPLOAD_OVERRIDE = "O";
+	public static final String EXPENSE_MODE_SCREEN = "Screen";
+	public static final String EXPENSE_MODE_UPLOAD = "Upload";
 
-	//FinTypeExpenses
-	public static final String EXPENSE_CALCULATEDON_LOAN 	= "LOAN";
+	// FinTypeExpenses
+	public static final String EXPENSE_CALCULATEDON_LOAN = "LOAN";
 	public static final String EXPENSE_CALCULATEDON_ODLIMIT = "ODLIMIT";
 
 	// Sub Category Constants
-	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC";	//Domestic
-	public static final String SUBCATEGORY_NRI 		= "NRI";		//NRI
-	
-	//WorkFlow Fields
-	public static final String WORKFLOW_VERSION 		= "VERSION";
-	public static final String WORKFLOW_LASTMNTBY 		= "LASTMNTBY";
-	public static final String WORKFLOW_LASTMNTON 		= "LASTMNTON";
-	public static final String WORKFLOW_RECORDSTATUS 	= "RECORDSTATUS";
-	public static final String WORKFLOW_RECORDTYPE 		= "RECORDTYPE";
-	public static final String WORKFLOW_ROLECODE 		= "ROLECODE";
-	public static final String WORKFLOW_NEXTROLECODE 	= "NEXTROLECODE";
-	public static final String WORKFLOW_NEXTTASKID 		= "NEXTTASKID";
-	public static final String WORKFLOW_TASKID 			= "TASKID";
-	public static final String WORKFLOW_WORKFLOWID 		= "WORKFLOWID";
-	
-	//Cheque Module Status
-	public static final String				CHEQUESTATUS_NEW						= "NEW";
-	public static final String				CHEQUESTATUS_PRESENT					= "PRESENT";
-	public static final String				CHEQUESTATUS_BOUNCE						= "BOUNCE";
-	public static final String				CHEQUESTATUS_REALISE					= "REALISE";
-	public static final String				CHEQUESTATUS_REALISED					= "REALISED";
-	public static final String				CHEQUE_AC_TYPE_CA						= "11";
-	public static final String				CHEQUE_AC_TYPE_SA						= "10";
-	public static final String				CHEQUE_AC_TYPE_CC						= "12";
-	
+	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC"; // Domestic
+	public static final String SUBCATEGORY_NRI = "NRI"; // NRI
+
+	// WorkFlow Fields
+	public static final String WORKFLOW_VERSION = "VERSION";
+	public static final String WORKFLOW_LASTMNTBY = "LASTMNTBY";
+	public static final String WORKFLOW_LASTMNTON = "LASTMNTON";
+	public static final String WORKFLOW_RECORDSTATUS = "RECORDSTATUS";
+	public static final String WORKFLOW_RECORDTYPE = "RECORDTYPE";
+	public static final String WORKFLOW_ROLECODE = "ROLECODE";
+	public static final String WORKFLOW_NEXTROLECODE = "NEXTROLECODE";
+	public static final String WORKFLOW_NEXTTASKID = "NEXTTASKID";
+	public static final String WORKFLOW_TASKID = "TASKID";
+	public static final String WORKFLOW_WORKFLOWID = "WORKFLOWID";
+
+	// Cheque Module Status
+	public static final String CHEQUESTATUS_NEW = "NEW";
+	public static final String CHEQUESTATUS_PRESENT = "PRESENT";
+	public static final String CHEQUESTATUS_BOUNCE = "BOUNCE";
+	public static final String CHEQUESTATUS_REALISE = "REALISE";
+	public static final String CHEQUESTATUS_REALISED = "REALISED";
+	public static final String CHEQUE_AC_TYPE_CA = "11";
+	public static final String CHEQUE_AC_TYPE_SA = "10";
+	public static final String CHEQUE_AC_TYPE_CC = "12";
+
 	// Sampling Fields
 	public static final String SAMPLING_RESUBMIT_REASON = "SAMPLINGRR";
-	
-	//Query Management
+
+	// Query Management
 	public static final String QUERY_ORIGINATION = "Origination";
 	public static final String QUERY_SAMPLING = "SAMPLING";
 	public static final String QUERY_LEGAL_VERIFICATION = "LEGAL";
 
 	public static final String OTHER_BANK = "OTHER";
-	
-	//GST Invoice Constants
-	public static final String				GST_INVOICE_TRANSACTION_TYPE_DEBIT		= "D";
-	public static final String				GST_INVOICE_TRANSACTION_TYPE_CREDIT		= "C";
-	public static final String				GST_INVOICE_STATUS_INITIATED			= "I";
-	public static final String				GST_INVOICE_STATUS_PRINTED				= "P";
-	public static final String				GST_INVOICE_STATUS_CANCELLED			= "C";
 
-	public static final String COLLATERAL_LTV_CHECK_DISBAMT	= "LTVDISBAMT";		
-	public static final String COLLATERAL_LTV_CHECK_FINAMT	= "LTVFINAMT";	
+	// GST Invoice Constants
+	public static final String GST_INVOICE_TRANSACTION_TYPE_DEBIT = "D";
+	public static final String GST_INVOICE_TRANSACTION_TYPE_CREDIT = "C";
+	public static final String GST_INVOICE_STATUS_INITIATED = "I";
+	public static final String GST_INVOICE_STATUS_PRINTED = "P";
+	public static final String GST_INVOICE_STATUS_CANCELLED = "C";
+
+	public static final String COLLATERAL_LTV_CHECK_DISBAMT = "LTVDISBAMT";
+	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";
 }

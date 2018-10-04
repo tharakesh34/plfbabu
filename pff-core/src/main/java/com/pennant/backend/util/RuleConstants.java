@@ -22,10 +22,11 @@ public class RuleConstants {
 	public static final String MODULE_LTVRULE = "LTVRULE";
 	public static final String MODULE_INSRULE = "INSRULE";
 	public static final String MODULE_BOUNCE = "BOUNCE";
-	public static final String MODULE_GSTRULE = "GSTRULE";	//GST Rules
+	public static final String MODULE_GSTRULE = "GSTRULE"; // GST Rules
 	public static final String MODULE_AMORTIZATIONMETHOD = "AMZMTH";
-	public static final String MODULE_STGACRULE = "STGRULE";	// Stage Accounting Rule
-	
+	public static final String MODULE_STGACRULE = "STGRULE"; // Stage Accounting
+																// Rule
+
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";
 	public static final String EVENT_AGRRULE = "AGRRULE";
@@ -52,7 +53,8 @@ public class RuleConstants {
 	public static final String EVENT_LTVRULE = "LTVRULE";
 	public static final String EVENT_BOUNCE = "BOUNCE";
 	public static final String EVENT_AMORTIZATIONMETHOD = "AMZMTH";
-	public static final String EVENT_STAGEACCOUNTING = "STGRULE";	//Stage Accounting
+	public static final String EVENT_STAGEACCOUNTING = "STGRULE"; // Stage
+																	// Accounting
 
 	public static final String RETURNTYPE_DECIMAL = "D";
 	public static final String RETURNTYPE_STRING = "S";
@@ -113,35 +115,37 @@ public class RuleConstants {
 	public static final String FUNCTION = "FUNCTION";
 	public static final String DBVALUE = "DBVALUE";
 
-	public static final int RULEMODE_SELECTFIELDLIST = 1; // Select from filed list in JavaScriptBuilder
-	
-	public static final String TAB_DESIGN = "DESIGN"; 	
-	public static final String TAB_SCRIPT = "SCRIPT"; 
-	
+	public static final int RULEMODE_SELECTFIELDLIST = 1; // Select from filed
+															// list in
+															// JavaScriptBuilder
+
+	public static final String TAB_DESIGN = "DESIGN";
+	public static final String TAB_SCRIPT = "SCRIPT";
+
 	public static final String fm = "FinanceMain";
 	public static final String ft = "FinanceType";
 	public static final String cust = "Customer";
 	public static final String custEmp = "CustEmployeeDetail";
-	
+
 	public static final String financeMain = "fm";
 	public static final String financeType = "ft";
 	public static final String customer = "ct";
 	public static final String custEmployeeDetail = "custEmp";
-	
-	//JavaScriptBuilder ComponentType Constants
-	public static final String COMPONENTTYPE_COMBOBOX = "Combobox"; 	
-	public static final String COMPONENTTYPE_DECIMAL = "Decimal"; 	
-	public static final String COMPONENTTYPE_INTEGER = "Integer"; 	
-	public static final String COMPONENTTYPE_STRING = "String"; 	
-	public static final String COMPONENTTYPE_PERCENTAGE = "Percentage"; 	
-	public static final String COMPONENTTYPE_EXTENDEDCOMBOBOX = "ExtendedCombobox"; 	
-	
-	//Rule code Constants for GST
-	public static final String CODE_CGST 	= "CGST"; 				// CGST
-	public static final String CODE_IGST 	= "IGST"; 				// IGST
-	public static final String CODE_SGST 	= "SGST"; 				// SGST
-	public static final String CODE_UGST 	= "UGST"; 				// UGST
-	
+
+	// JavaScriptBuilder ComponentType Constants
+	public static final String COMPONENTTYPE_COMBOBOX = "Combobox";
+	public static final String COMPONENTTYPE_DECIMAL = "Decimal";
+	public static final String COMPONENTTYPE_INTEGER = "Integer";
+	public static final String COMPONENTTYPE_STRING = "String";
+	public static final String COMPONENTTYPE_PERCENTAGE = "Percentage";
+	public static final String COMPONENTTYPE_EXTENDEDCOMBOBOX = "ExtendedCombobox";
+
+	// Rule code Constants for GST
+	public static final String CODE_CGST = "CGST"; // CGST
+	public static final String CODE_IGST = "IGST"; // IGST
+	public static final String CODE_SGST = "SGST"; // SGST
+	public static final String CODE_UGST = "UGST"; // UGST
+
 	private RuleConstants() {
 		super();
 	}

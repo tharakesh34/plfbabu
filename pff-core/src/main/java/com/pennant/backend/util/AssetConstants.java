@@ -41,63 +41,63 @@ public class AssetConstants {
 	private AssetConstants() {
 		super();
 	}
-	
+
 	// Extended Field Detail Module Name
-	public static final String 	EXTENDEDFIELDS_MODULE  	= "ASSETTYPE";
+	public static final String EXTENDEDFIELDS_MODULE = "ASSETTYPE";
 
-	//Authorization purpose Module
-	public static final String AUTH_DEFAULT 			= "DEFAULT";
+	// Authorization purpose Module
+	public static final String AUTH_DEFAULT = "DEFAULT";
 
-	public static final String 	UNIQUE_ID_CUSTOMERS 	    = "CUSTOMER";
-	public static final String 	UNIQUE_ID_STEPDETAILS 	    = "STEPDET";
-	public static final String 	UNIQUE_ID_CONTRIBUTOR 	    = "CONTRBTR";
-	public static final String 	UNIQUE_ID_DISBURSMENT 	    = "DISBURSMENT";
-	public static final String 	UNIQUE_ID_CHEQUE 	    	= "CHEQUE";
-	public static final String 	UNIQUE_ID_FEES 	            = "FEES";
-	public static final String 	UNIQUE_ID_FEE 	            = "FEE";
-	public static final String 	UNIQUE_ID_ADVANCEPAYMENTS 	= "ADVNCEPAY";
-	public static final String 	UNIQUE_ID_ASSETEVALUATION 	= "ASTEVAL";
-	public static final String 	UNIQUE_ID_SCHEDULE 	        = "SCHEDULE";
-	public static final String 	UNIQUE_ID_JOINTGUARANTOR 	= "JOINTGUA";
-	public static final String 	UNIQUE_ID_ELIGIBLITY 	    = "ELIGBTY";
-	public static final String 	UNIQUE_ID_SCORING 	        = "SCORING";
-	public static final String 	UNIQUE_ID_AGREEMENT 	    = "AGREEMENT";
-	public static final String 	UNIQUE_ID_CHECKLIST 	    = "CHECKLIST";
-	public static final String 	UNIQUE_ID_RECOMMENDATIONS 	= "RECOMM";
-	public static final String 	UNIQUE_ID_ADDITIONALFIELDS 	= "ADDFLD";
-	public static final String 	UNIQUE_ID_COVENANTTYPE    	= "COVENANT";
-	public static final String 	UNIQUE_ID_DOCUMENTDETAIL    = "DOCDETAIL";
-	public static final String 	UNIQUE_ID_DEVIATION         = "DEVIATION";
-	public static final String 	UNIQUE_ID_MANDATE         	= "MANDATE";
-	public static final String 	UNIQUE_ID_TAX         		= "TAX";
-	public static final String 	UNIQUE_ID_COLLATERAL        = "COLLATERAL";
-	public static final String 	UNIQUE_ID_VAS        		= "VAS";
-	public static final String 	UNIQUE_ID_ETIHADCB          = "ETIHADCB";
-	public static final String 	UNIQUE_ID_BUNDLEDPRODUCTS   = "BUNDLEDP";
-	public static final String 	UNIQUE_ID_AGREEMENTFIELDS   = "AGMNTFLDS";
-	public static final String 	UNIQUE_ID_STAGEACCOUNTING 	= "STAGEACC";
-	public static final String 	UNIQUE_ID_ACCOUNTING 	    = "ACCNTNG";
-	public static final String 	UNIQUE_ID_INSURANCES 	    = "INSURANCES";
-	public static final String 	UNIQUE_ID_PARTNERBANK 	    = "PARTNERBANK";
-	public static final String 	UNIQUE_ID_POSTINGS 	    	= "POSTINGS";
-	public static final String 	UNIQUE_ID_EXTENDED 	    	= "EXTENDED";
-	public static final String 	UNIQUE_ID_CREDITREVIEW 	    = "CREDITREVIEW";
-	public static final String 	UNIQUE_ID_FIN_CREDITREVIEW 	= "FINCREDITREVIEW";
-	public static final String 	UNIQUE_ID_FIINITIATION 		= "FIINIT";
-	public static final String 	UNIQUE_ID_FIAPPROVAL 		= "FIAPPROVAL";
-	public static final String 	UNIQUE_ID_TVINITIATION 		= "TVINIT";
-	public static final String 	UNIQUE_ID_TVAPPROVAL 		= "TVAPPROVAL";
-	public static final String 	UNIQUE_ID_LVINITIATION 		= "LVINIT";
-	public static final String 	UNIQUE_ID_LVAPPROVAL 		= "LVAPPROVAL";
-	public static final String 	UNIQUE_ID_RCUINITIATION 	= "RCUINIT";
-	public static final String 	UNIQUE_ID_RCUAPPROVAL 		= "RCUAPPROVAL";
-	public static final String 	UNIQUE_ID_SAMPLINGAPPROVAL 	= "SAMPLINGAPPROVAL";
-	public static final String 	UNIQUE_ID_QUERY_MGMT 		= "QUERYMGMT";
-	public static final String 	UNIQUE_ID_PSL_DETAILS 		= "PSLDETAILS";
-	public static final String 	UNIQUE_ID_LEGAL_DETAILS 	= "LEGALDETAILS";
+	public static final String UNIQUE_ID_CUSTOMERS = "CUSTOMER";
+	public static final String UNIQUE_ID_STEPDETAILS = "STEPDET";
+	public static final String UNIQUE_ID_CONTRIBUTOR = "CONTRBTR";
+	public static final String UNIQUE_ID_DISBURSMENT = "DISBURSMENT";
+	public static final String UNIQUE_ID_CHEQUE = "CHEQUE";
+	public static final String UNIQUE_ID_FEES = "FEES";
+	public static final String UNIQUE_ID_FEE = "FEE";
+	public static final String UNIQUE_ID_ADVANCEPAYMENTS = "ADVNCEPAY";
+	public static final String UNIQUE_ID_ASSETEVALUATION = "ASTEVAL";
+	public static final String UNIQUE_ID_SCHEDULE = "SCHEDULE";
+	public static final String UNIQUE_ID_JOINTGUARANTOR = "JOINTGUA";
+	public static final String UNIQUE_ID_ELIGIBLITY = "ELIGBTY";
+	public static final String UNIQUE_ID_SCORING = "SCORING";
+	public static final String UNIQUE_ID_AGREEMENT = "AGREEMENT";
+	public static final String UNIQUE_ID_CHECKLIST = "CHECKLIST";
+	public static final String UNIQUE_ID_RECOMMENDATIONS = "RECOMM";
+	public static final String UNIQUE_ID_ADDITIONALFIELDS = "ADDFLD";
+	public static final String UNIQUE_ID_COVENANTTYPE = "COVENANT";
+	public static final String UNIQUE_ID_DOCUMENTDETAIL = "DOCDETAIL";
+	public static final String UNIQUE_ID_DEVIATION = "DEVIATION";
+	public static final String UNIQUE_ID_MANDATE = "MANDATE";
+	public static final String UNIQUE_ID_TAX = "TAX";
+	public static final String UNIQUE_ID_COLLATERAL = "COLLATERAL";
+	public static final String UNIQUE_ID_VAS = "VAS";
+	public static final String UNIQUE_ID_ETIHADCB = "ETIHADCB";
+	public static final String UNIQUE_ID_BUNDLEDPRODUCTS = "BUNDLEDP";
+	public static final String UNIQUE_ID_AGREEMENTFIELDS = "AGMNTFLDS";
+	public static final String UNIQUE_ID_STAGEACCOUNTING = "STAGEACC";
+	public static final String UNIQUE_ID_ACCOUNTING = "ACCNTNG";
+	public static final String UNIQUE_ID_INSURANCES = "INSURANCES";
+	public static final String UNIQUE_ID_PARTNERBANK = "PARTNERBANK";
+	public static final String UNIQUE_ID_POSTINGS = "POSTINGS";
+	public static final String UNIQUE_ID_EXTENDED = "EXTENDED";
+	public static final String UNIQUE_ID_CREDITREVIEW = "CREDITREVIEW";
+	public static final String UNIQUE_ID_FIN_CREDITREVIEW = "FINCREDITREVIEW";
+	public static final String UNIQUE_ID_FIINITIATION = "FIINIT";
+	public static final String UNIQUE_ID_FIAPPROVAL = "FIAPPROVAL";
+	public static final String UNIQUE_ID_TVINITIATION = "TVINIT";
+	public static final String UNIQUE_ID_TVAPPROVAL = "TVAPPROVAL";
+	public static final String UNIQUE_ID_LVINITIATION = "LVINIT";
+	public static final String UNIQUE_ID_LVAPPROVAL = "LVAPPROVAL";
+	public static final String UNIQUE_ID_RCUINITIATION = "RCUINIT";
+	public static final String UNIQUE_ID_RCUAPPROVAL = "RCUAPPROVAL";
+	public static final String UNIQUE_ID_SAMPLINGAPPROVAL = "SAMPLINGAPPROVAL";
+	public static final String UNIQUE_ID_QUERY_MGMT = "QUERYMGMT";
+	public static final String UNIQUE_ID_PSL_DETAILS = "PSLDETAILS";
+	public static final String UNIQUE_ID_LEGAL_DETAILS = "LEGALDETAILS";
 
-	public static final int 	DEFAULT_ITEMNO 			= 1;
-	
-	public static final String 	UNIQUE_ID_EXPENSES 	    	= "EXPENSES";
+	public static final int DEFAULT_ITEMNO = 1;
+
+	public static final String UNIQUE_ID_EXPENSES = "EXPENSES";
 
 }
