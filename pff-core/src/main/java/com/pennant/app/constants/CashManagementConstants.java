@@ -48,16 +48,16 @@ public class CashManagementConstants {
 		super();
 	}
 
-	//Deposit Movement Transaction Types
-	public static final String	DEPOSIT_MOVEMENT_CREDIT					= "C";
-	public static final String	DEPOSIT_MOVEMENT_DEBIT					= "D";
-	public static final String	DEPOSIT_MOVEMENT_REVERSE				= "R";
+	// Deposit Movement Transaction Types
+	public static final String DEPOSIT_MOVEMENT_CREDIT = "C";
+	public static final String DEPOSIT_MOVEMENT_DEBIT = "D";
+	public static final String DEPOSIT_MOVEMENT_REVERSE = "R";
 
-	//Cheque/DD process Accounting Status
-	public static final String	DEPOSIT_CHEQUE_STATUS_APPROVE			= "A";
-	public static final String	DEPOSIT_CHEQUE_STATUS_REVERSE			= "R";
+	// Cheque/DD process Accounting Status
+	public static final String DEPOSIT_CHEQUE_STATUS_APPROVE = "A";
+	public static final String DEPOSIT_CHEQUE_STATUS_REVERSE = "R";
 
-	//Deposit Details Events
-	public static final String	ACCEVENT_DEPOSIT_TYPE_CASH				= "CASH";
-	public static final String	ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD			= "CHQDD";
+	// Deposit Details Events
+	public static final String ACCEVENT_DEPOSIT_TYPE_CASH = "CASH";
+	public static final String ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD = "CHQDD";
 }
