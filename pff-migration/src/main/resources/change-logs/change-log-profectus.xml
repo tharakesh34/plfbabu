@@ -2150,6 +2150,11 @@ UNION ALL
 				]]>
 			</sql>
 		</changeSet>
+		<changeSet id="87" author="Vinay">
+			<sql>
+				update DEDUPFIELDS set fieldname='AadharNumber' where fielddesc='Customer Aadhar ID' and querymodule='RETAILCustomer';
+			</sql>
+		</changeSet>
 </databaseChangeLog>
 	
 	
