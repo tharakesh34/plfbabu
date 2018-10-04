@@ -43,26 +43,26 @@
 package com.pennant.app.constants;
 
 public class LengthConstants {
-	
-	public LengthConstants() {
-	    super();
-    }
 
-	//Lengths of data variables. Which may change by implementation
-	public static final int LEN_BRANCH 						= 9;
-	public static final int LEN_CURRENCY 					= 3;
-	public static final int LEN_ACHEADCODE 					= 4;
-	public static final int LEN_ACCOUNT 					= 50;  
-	public static final int LEN_CIF 						= 8;
-	public static final int LEN_EID 						= 18;
-	public static final int LEN_CORP_ID						= 15;
-	public static final int LEN_MASTER_CODE					= 8;
-	public static final int LEN_REF							= 20;
-	public static final int LEN_AMOUNT						= 18;
-	public static final int LEN_RATE						= 13;
-	public static final int LEN_RATE_SCALE					= 9;
-	public static final int LEN_IBAN						= 23;
-	public static final int LEN_PAN							= 10;
+	public LengthConstants() {
+		super();
+	}
+
+	// Lengths of data variables. Which may change by implementation
+	public static final int LEN_BRANCH = 9;
+	public static final int LEN_CURRENCY = 3;
+	public static final int LEN_ACHEADCODE = 4;
+	public static final int LEN_ACCOUNT = 50;
+	public static final int LEN_CIF = 8;
+	public static final int LEN_EID = 18;
+	public static final int LEN_CORP_ID = 15;
+	public static final int LEN_MASTER_CODE = 8;
+	public static final int LEN_REF = 20;
+	public static final int LEN_AMOUNT = 18;
+	public static final int LEN_RATE = 13;
+	public static final int LEN_RATE_SCALE = 9;
+	public static final int LEN_IBAN = 23;
+	public static final int LEN_PAN = 10;
 	public static final int LEN_AADHAAR = 12;
-	public static final int LEN_MOBILE						= 10;
+	public static final int LEN_MOBILE = 10;
 }
