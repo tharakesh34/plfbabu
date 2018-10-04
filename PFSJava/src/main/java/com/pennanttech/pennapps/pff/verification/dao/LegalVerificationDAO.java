@@ -53,6 +53,6 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 	List<Verification> getCollateralDocumentsStatus(String collateralReference);
 
 	int getCollateralDocumentCount(String collateralRef);
-	
+
 	int getLVDocumentsCount(String collateralRef);
 }

@@ -35,5 +35,4 @@ public enum FIOwnerShipStatus {
 		}
 		return list;
 	}
-
 }

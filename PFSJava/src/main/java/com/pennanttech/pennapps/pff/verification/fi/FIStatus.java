@@ -26,7 +26,7 @@ public enum FIStatus {
 	public String getValue() {
 		return value;
 	}
-	
+
 	public static FIStatus getType(Integer key) {
 		for (FIStatus type : values()) {
 			if (type.getKey() == key) {

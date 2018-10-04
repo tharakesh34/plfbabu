@@ -38,7 +38,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FieldInvestigation</code> with set of CRUD operations.
+ * Data access layer implementation for <code>FieldInvestigation</code> with set
+ * of CRUD operations.
  */
 public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> implements FieldInvestigationDAO {
 	private static Logger logger = LogManager.getLogger(FieldInvestigationDAOImpl.class);
@@ -153,7 +154,8 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verification_fi");
 		sql.append(tableType.getSuffix());
-		sql.append(" set verifiedDate = :verifiedDate, agentcode = :agentCode, agentname = :agentName, status = :status, ");
+		sql.append(
+				" set verifiedDate = :verifiedDate, agentcode = :agentCode, agentname = :agentName, status = :status, ");
 		sql.append(" reason = :reason, summaryremarks = :summaryRemarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -210,10 +212,8 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		sql.append(" Select verificationid, name, addresstype, housenumber,flatnumber, street,");
 		sql.append(
 				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city, countryDesc, ");
-		sql.append(
-				" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, verifiedDate, ");
-		sql.append(
-				" agentcode, agentname, status, reason, summaryremarks,");
+		sql.append(" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, verifiedDate, ");
+		sql.append(" agentcode, agentname, status, reason, summaryremarks,");
 		if ("_view".equalsIgnoreCase(type)) {
 			sql.append("cif, custid, keyreference, createdon, lovrelationdesc, reasoncode, reasondesc,");
 		}

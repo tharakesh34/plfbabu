@@ -32,5 +32,4 @@ public enum FINeighbourHoodFeedBack {
 		}
 		return list;
 	}
-
 }

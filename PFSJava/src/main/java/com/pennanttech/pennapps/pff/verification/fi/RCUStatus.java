@@ -8,9 +8,9 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.backend.model.ValueLabel;
 
 public enum RCUStatus {
-	
+
 	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, "Positive"), NEGATIVE(2, "Negative");
-	
+
 	private final Integer key;
 	private final String value;
 
@@ -26,7 +26,7 @@ public enum RCUStatus {
 	public String getValue() {
 		return value;
 	}
-	
+
 	public static RCUStatus getType(Integer key) {
 		for (RCUStatus type : values()) {
 			if (type.getKey() == key) {
@@ -43,6 +43,5 @@ public enum RCUStatus {
 		}
 		return list;
 	}
-
 
 }

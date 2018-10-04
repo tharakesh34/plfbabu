@@ -38,7 +38,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>TechnicalVerification</code> with set of CRUD operations.
+ * Data access layer implementation for <code>TechnicalVerification</code> with
+ * set of CRUD operations.
  */
 public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerification>
 		implements TechnicalVerificationDAO {
@@ -119,10 +120,10 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		paramSource.addValue("custCif", Arrays.asList(custCif));
 
 		RowMapper<TechnicalVerification> rowMapper = ParameterizedBeanPropertyRowMapper
- 				.newInstance(TechnicalVerification.class);
+				.newInstance(TechnicalVerification.class);
 
 		try {
-  			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -140,7 +141,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		StringBuilder sql = new StringBuilder("insert into collateral_");
 		sql.append(collateralType);
 		sql.append("_ed_tv");
-		
+
 		sql.append(" select :verificationId,* from (select * from collateral_");
 		sql.append(collateralType).append("_ed");
 		sql.append("_temp");
@@ -233,7 +234,8 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(" Select verificationId, agentCode, agentName, type,  verifiedDate, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks,  valuationAmount,");
 		if (type.contains("View")) {
-			sql.append(" cif, custId, custName, keyReference, collateralType, collateralRef,contactNumber1, createdon, ");
+			sql.append(
+					" cif, custId, custName, keyReference, collateralType, collateralRef,contactNumber1, createdon, ");
 			sql.append(" contactNumber2, collateralCcy, collateralLoc, reasonCode, reasonDesc, agencyName, agency,");
 		}
 		sql.append(

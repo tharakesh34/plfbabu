@@ -59,7 +59,8 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on <b>FieldInvestigation</b>.<br>
+ * Service implementation for methods that depends on
+ * <b>FieldInvestigation</b>.<br>
  */
 public class FieldInvestigationServiceImpl extends GenericService<FieldInvestigation>
 		implements FieldInvestigationService {
@@ -92,12 +93,15 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save
+	 * method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using verification_fiDAO's update method 3) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -247,14 +251,17 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 					documentManager.setDocImage(documentDetails.getDocImage());
 					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
 				}
-				// Pass the docRefId here to save this in place of docImage column. Or add another column for now to
+				// Pass the docRefId here to save this in place of docImage
+				// column. Or add another column for now to
 				// save this.
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				// When a document is updated, insert another file into the DocumentManager table's.
-				// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
+				// When a document is updated, insert another file into the
+				// DocumentManager table's.
+				// Get the new DocumentManager.id & set to
+				// documentDetails.getDocRefId()
 				if (documentDetails.getDocRefId() <= 0) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(documentDetails.getDocImage());
@@ -282,10 +289,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table verification_fi by using verification_fiDAO's delete method with
+	 * type as Blank 3) Audit the record in to AuditHeader and
+	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -314,7 +323,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * getverification_fi fetch the details by using verification_fiDAO's getverification_fiById method.
+	 * getverification_fi fetch the details by using verification_fiDAO's
+	 * getverification_fiById method.
 	 * 
 	 * @param id
 	 *            id of the FieldInvestigation.
@@ -338,8 +348,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * getApprovedverification_fiById fetch the details by using verification_fiDAO's getverification_fiById method .
-	 * with parameter id and type as blank. it fetches the approved records from the verification_fi.
+	 * getApprovedverification_fiById fetch the details by using
+	 * verification_fiDAO's getverification_fiById method . with parameter id
+	 * and type as blank. it fetches the approved records from the
+	 * verification_fi.
 	 * 
 	 * @param id
 	 *            id of the FieldInvestigation. (String)
@@ -350,15 +362,20 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using fieldInvestigationDAO.delete with
-	 * parameters fieldInvestigation,"" b) NEW Add new record in to main table by using fieldInvestigationDAO.save with
-	 * parameters fieldInvestigation,"" c) EDIT Update record in the main table by using fieldInvestigationDAO.update
-	 * with parameters fieldInvestigation,"" 3) Delete the record from the workFlow table by using
-	 * fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 4) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using fieldInvestigationDAO.delete with parameters fieldInvestigation,""
+	 * b) NEW Add new record in to main table by using
+	 * fieldInvestigationDAO.save with parameters fieldInvestigation,"" c) EDIT
+	 * Update record in the main table by using fieldInvestigationDAO.update
+	 * with parameters fieldInvestigation,"" 3) Delete the record from the
+	 * workFlow table by using fieldInvestigationDAO.delete with parameters
+	 * fieldInvestigation,"_Temp" 4) Audit the record in to AuditHeader and
+	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and Adtverification_fi by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -461,7 +478,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	}
 
-	// Method for Deleting all records related to FI setup in _Temp/Main tables depend on method type
+	// Method for Deleting all records related to FI setup in _Temp/Main tables
+	// depend on method type
 	public List<AuditDetail> deleteChilds(FieldInvestigation fi, String tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
@@ -502,10 +520,13 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 3) Audit the
-	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using fieldInvestigationDAO.delete with parameters
+	 * fieldInvestigation,"_Temp" 3) Audit the record in to AuditHeader and
+	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -541,8 +562,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -582,11 +605,11 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			details = getDocumentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
-		
+
 		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -594,9 +617,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from fieldInvestigationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * fieldInvestigationDAO.getErrorDetail with Error ID and language as
+	 * parameters. if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -880,7 +904,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 		return false;
 	}
-	
+
 	private boolean isAddressChange(FieldInvestigation oldAddress, FieldInvestigation newAddress) {
 
 		if (oldAddress == null || newAddress == null) {

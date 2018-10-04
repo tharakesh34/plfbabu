@@ -49,5 +49,4 @@ public interface LegalVerificationService {
 	List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
 
 	boolean isCollateralDocumentsChanged(String collateralRef);
-
 }

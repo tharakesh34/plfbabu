@@ -61,12 +61,15 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	private DocumentDetailValidation documentValidation;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * verification_lv/verification_lv_Temp by using verification_lv DAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the
-	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * verification_lv/verification_lv_Temp by using verification_lv DAO's save
+	 * method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using verification_fiDAO's update method 3) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -162,10 +165,12 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table verification_fi by using verification_fiDAO's delete method with
+	 * type as Blank 3) Audit the record in to AuditHeader and
+	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -317,7 +322,8 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		return auditHeader;
 	}
 
-	// Method for Deleting all records related to Legal Verification childs in _Temp/Main tables depend on method type
+	// Method for Deleting all records related to Legal Verification childs in
+	// _Temp/Main tables depend on method type
 	public List<AuditDetail> deleteChilds(LegalVerification lv, String tableType, String auditTranType) {
 		List<AuditDetail> auditList = new ArrayList<>();
 		// Extended field Render Details.
@@ -659,14 +665,17 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 					documentManager.setDocImage(documentDetails.getDocImage());
 					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
 				}
-				// Pass the docRefId here to save this in place of docImage column. Or add another column for now to
+				// Pass the docRefId here to save this in place of docImage
+				// column. Or add another column for now to
 				// save this.
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				// When a document is updated, insert another file into the DocumentManager table's.
-				// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
+				// When a document is updated, insert another file into the
+				// DocumentManager table's.
+				// Get the new DocumentManager.id & set to
+				// documentDetails.getDocRefId()
 				if (documentDetails.getDocRefId() <= 0) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(documentDetails.getDocImage());

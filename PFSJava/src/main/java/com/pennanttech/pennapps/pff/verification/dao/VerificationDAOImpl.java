@@ -43,7 +43,8 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>Verification</code> with set of CRUD operations.
+ * Data access layer implementation for <code>Verification</code> with set of
+ * CRUD operations.
  */
 public class VerificationDAOImpl extends BasicDao<Verification> implements VerificationDAO {
 	private static Logger logger = Logger.getLogger(VerificationDAOImpl.class);
@@ -148,7 +149,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(tableType.getSuffix());
 		sql.append(" set verificationType = :verificationType, module = :module, keyReference = :keyReference, ");
-		sql.append(" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, custId = :custId,");
+		sql.append(
+				" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, custId = :custId,");
 		sql.append(" requestType = :requestType, reinitid = :reinitid, agency = :agency, ");
 		sql.append(" reason = :reason, remarks = :remarks, agencyRemarks = :agencyRemarks, ");
 		sql.append(" agencyReason = :agencyReason, decision = :decision, ");
@@ -437,7 +439,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select id from verifications");
-		sql.append(" where verificationType=:verificationType and keyReference=:keyReference and referencetype=:referencetype");
+		sql.append(
+				" where verificationType=:verificationType and keyReference=:keyReference and referencetype=:referencetype");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("keyReference", finReference);
@@ -452,7 +455,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<Long>();
 	}
-	
+
 	@Override
 	public void updateDocumentId(DocumentDetails detail, Long verificationId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -492,7 +495,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
 
-		sql = new StringBuilder("Update verifications set reference = :reference Where referenceFor = :referenceFor and id = :id ");
+		sql = new StringBuilder(
+				"Update verifications set reference = :reference Where referenceFor = :referenceFor and id = :id ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -504,7 +508,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		try {
 			jdbcTemplate.update(sql.toString(), source);
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			source = null;

@@ -35,5 +35,5 @@ public enum RCUDocStatus {
 		}
 		return list;
 	}
-	
+
 }

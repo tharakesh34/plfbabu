@@ -43,8 +43,8 @@ public interface TechnicalVerificationService {
 	void saveCollateral(String reference, String collateralType, long verificationId);
 
 	List<TechnicalVerification> getList(String keyReference);
-	
+
 	boolean isCollateralChanged(Verification verification);
-	
+
 	TechnicalVerification getVerificationFromRecording(long verificationId);
 }

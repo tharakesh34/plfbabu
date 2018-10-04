@@ -19,15 +19,6 @@ import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 
 public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerification> {
 
-	/**
-	 * Fetch the Record FieldInvestigation by key field
-	 * 
-	 * @param id
-	 *            id of the FieldInvestigation.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return FieldInvestigation
-	 */
 	TechnicalVerification getTechnicalVerification(long id, String type);
 
 	List<TechnicalVerification> getList(String keyReference);

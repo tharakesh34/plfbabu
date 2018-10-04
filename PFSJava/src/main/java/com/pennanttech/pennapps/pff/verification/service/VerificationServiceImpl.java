@@ -509,7 +509,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 
 		List<DocumentDetails> list = null;
-		//Collateral Documents
+		// Collateral Documents
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			list = documentDetailsDAO.getDocumentDetailsByRef(item.getReferenceFor(), CollateralConstants.MODULE_NAME,
 					"", "_View");
@@ -653,10 +653,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * verifications by using verificationsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and Adtverifications by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table verifications by using verificationsDAO's delete method with type
+	 * as Blank 3) Audit the record in to AuditHeader and Adtverifications by
+	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -682,8 +684,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * getApprovedverificationsById fetch the details by using verificationsDAO's getverificationsById method . with
-	 * parameter id and type as blank. it fetches the approved records from the verifications.
+	 * getApprovedverificationsById fetch the details by using
+	 * verificationsDAO's getverificationsById method . with parameter id and
+	 * type as blank. it fetches the approved records from the verifications.
 	 * 
 	 * @param id
 	 *            id of the Verification. (String)
@@ -694,15 +697,19 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using verificationDAO.delete with parameters
-	 * verification,"" b) NEW Add new record in to main table by using verificationDAO.save with parameters
-	 * verification,"" c) EDIT Update record in the main table by using verificationDAO.update with parameters
-	 * verification,"" 3) Delete the record from the workFlow table by using verificationDAO.delete with parameters
-	 * verification,"_Temp" 4) Audit the record in to AuditHeader and Adtverifications by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverifications by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using verificationDAO.delete with parameters verification,"" b) NEW Add
+	 * new record in to main table by using verificationDAO.save with parameters
+	 * verification,"" c) EDIT Update record in the main table by using
+	 * verificationDAO.update with parameters verification,"" 3) Delete the
+	 * record from the workFlow table by using verificationDAO.delete with
+	 * parameters verification,"_Temp" 4) Audit the record in to AuditHeader and
+	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and Adtverifications by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -763,10 +770,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using verificationDAO.delete with parameters verification,"_Temp" 3) Audit the record in to
-	 * AuditHeader and Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using verificationDAO.delete with parameters
+	 * verification,"_Temp" 3) Audit the record in to AuditHeader and
+	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -794,8 +804,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -814,9 +826,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from verificationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * verificationDAO.getErrorDetail with Error ID and language as parameters.
+	 * if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -1042,16 +1055,17 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(verificationId,
 						"_View");
 				// LV Document Details
-				if(null!=legalVerification){
+				if (null != legalVerification) {
 					List<DocumentDetails> lvDocumentList = documentDetailsDAO.getDocumentDetailsByRef(
-							String.valueOf(legalVerification.getVerificationId()), VerificationType.LV.getCode(), "", "_View");
+							String.valueOf(legalVerification.getVerificationId()), VerificationType.LV.getCode(), "",
+							"_View");
 					if (legalVerification.getDocuments() != null && !legalVerification.getDocuments().isEmpty()) {
 						legalVerification.getDocuments().addAll(lvDocumentList);
 					} else {
 						legalVerification.setDocuments(lvDocumentList);
 					}
 				}
-				
+
 				verification.setLegalVerification(legalVerification);
 
 				break;
@@ -1094,9 +1108,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		logger.info(Literal.LEAVING);
 
 	}
-	
+
 	/**
-	 *Update verification stage  tables document id's after saving to database
+	 * Update verification stage tables document id's after saving to database
 	 */
 	private void updateStageTableDocumentIds(FinanceDetail financeDetail) {
 		logger.info(Literal.ENTERING);
@@ -1109,14 +1123,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 				if (collateralSetup.isFromLoan()) {
 					Long verificationId = verificationDAO.getVerificationIdByReferenceFor(
-							collateralSetup.getFinReference(), collateralSetup.getCollateralRef(), VerificationType.LV.getKey());
+							collateralSetup.getFinReference(), collateralSetup.getCollateralRef(),
+							VerificationType.LV.getKey());
 
 					if (verificationId != null) {
 						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(
 								collateralSetup.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
-					
+
 						if (CollectionUtils.isNotEmpty(documentDetailsList)) {
-							
+
 							for (DocumentDetails documentDetails : documentDetailsList) {
 								verificationDAO.updateDocumentId(documentDetails, verificationId, TableType.STAGE_TAB);
 							}
@@ -1127,24 +1142,26 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 		logger.info(Literal.LEAVING);
 	}
-	
+
 	/**
-	 *Update verification stage  tables document id's after saving to database
+	 * Update verification stage tables document id's after saving to database
 	 */
 	private void updateRCUVerificationReference(FinanceDetail financeDetail) {
 		logger.info(Literal.ENTERING);
-		
+
 		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
-		
+
 		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			
+
 			for (CollateralSetup collateralSetup : collateralSetupList) {
-				
+
 				if (collateralSetup.isFromLoan()) {
-					List<Long> verificationIds = verificationDAO.getRCUVerificationId(collateralSetup.getFinReference(), VerificationType.RCU.getKey(), DocumentType.COLLATRL.getValue());
-					
+					List<Long> verificationIds = verificationDAO.getRCUVerificationId(collateralSetup.getFinReference(),
+							VerificationType.RCU.getKey(), DocumentType.COLLATRL.getValue());
+
 					if (CollectionUtils.isNotEmpty(verificationIds)) {
-						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(collateralSetup.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
+						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(
+								collateralSetup.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
 						for (Long verificationId : verificationIds) {
 							if (CollectionUtils.isNotEmpty(documentDetailsList)) {
 								for (DocumentDetails documentDetails : documentDetailsList) {

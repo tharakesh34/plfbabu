@@ -660,5 +660,4 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return 0;
 	}
-
 }

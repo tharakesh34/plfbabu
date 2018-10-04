@@ -24,8 +24,8 @@ import com.pennant.backend.model.ValueLabel;
 public enum RequestType {
 	INITIATE(1, "Initiate"), WAIVE(2, "Waive"), NOT_REQUIRED(3, "Not Required");
 
-	private final Integer	key;
-	private final String	value;
+	private final Integer key;
+	private final String value;
 
 	private RequestType(Integer key, String value) {
 		this.key = key;

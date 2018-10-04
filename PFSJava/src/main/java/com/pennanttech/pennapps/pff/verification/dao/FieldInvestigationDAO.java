@@ -33,5 +33,4 @@ public interface FieldInvestigationDAO extends BasicCrudDao<FieldInvestigation> 
 	List<FieldInvestigation> getList(String keyReference);
 
 	List<FieldInvestigation> getList(String[] cif);
-
 }

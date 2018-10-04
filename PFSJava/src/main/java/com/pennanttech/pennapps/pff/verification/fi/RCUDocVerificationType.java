@@ -35,5 +35,5 @@ public enum RCUDocVerificationType {
 		}
 		return list;
 	}
-	
+
 }

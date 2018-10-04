@@ -24,7 +24,8 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum Decision {
-	SELECT(0, Labels.getLabel("Combo.Select")), APPROVE(1, "Approve"), RE_INITIATE(2, "Re-initiate"), OVERRIDE(3, "Override");
+	SELECT(0, Labels.getLabel("Combo.Select")), APPROVE(1, "Approve"), RE_INITIATE(2, "Re-initiate"), OVERRIDE(3,
+			"Override");
 
 	private final Integer key;
 	private final String value;
@@ -50,7 +51,7 @@ public enum Decision {
 		}
 		return null;
 	}
-	
+
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
 		for (Decision type : values()) {

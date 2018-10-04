@@ -39,7 +39,9 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 	// Save RiskContainmentUnit in verification_rcu Based on tableType.
 	@Override
-	public String save(RiskContainmentUnit rcu, TableType tableType) {// Prepare the SQL.
+	public String save(RiskContainmentUnit rcu, TableType tableType) {// Prepare
+																		// the
+																		// SQL.
 		StringBuilder sql = new StringBuilder(" insert into verification_rcu");
 		sql.append(tableType.getSuffix());
 		sql.append(" (verificationId, verificationDate, agentCode, agentName, status, reason,");
@@ -99,7 +101,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		StringBuilder sql = new StringBuilder("delete from verification_rcu");
 		sql.append(tableType.getSuffix());
 		sql.append(" where verificationId = :verificationId ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -239,7 +241,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		}
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
-			//throw new ConcurrencyException();
+			// throw new ConcurrencyException();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -270,7 +272,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		}
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
-			//throw new ConcurrencyException();
+			// throw new ConcurrencyException();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -568,7 +570,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//logger.error("Exception: ", e);
+			// logger.error("Exception: ", e);
 		} finally {
 			source = null;
 			sql = null;
