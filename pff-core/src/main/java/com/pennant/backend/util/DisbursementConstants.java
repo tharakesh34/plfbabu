@@ -40,30 +40,30 @@ public class DisbursementConstants {
 	}
 
 	// Multi-Party Disbursement Constants
-	public static final String	PAYMENT_DETAIL_VENDOR		= "VD";
-	public static final String	PAYMENT_DETAIL_CUSTOMER		= "CS";
-	public static final String	PAYMENT_DETAIL_THIRDPARTY	= "TP";
+	public static final String PAYMENT_DETAIL_VENDOR = "VD";
+	public static final String PAYMENT_DETAIL_CUSTOMER = "CS";
+	public static final String PAYMENT_DETAIL_THIRDPARTY = "TP";
 
 	// Disbursement Payment Types
-	public static final String	PAYMENT_TYPE_RTGS			= "RTGS";
-	public static final String	PAYMENT_TYPE_NEFT			= "NEFT";
-	public static final String	PAYMENT_TYPE_IMPS			= "IMPS";
-	public static final String	PAYMENT_TYPE_CHEQUE			= "CHEQUE";
-	public static final String	PAYMENT_TYPE_DD				= "DD";
-	public static final String  PAYMENT_TYPE_CASH			= "CASH";
-	public static final String  PAYMENT_TYPE_ESCROW         = "ESCROW";
-	public static final String	PAYMENT_TYPE_IFT			= "IFT";
+	public static final String PAYMENT_TYPE_RTGS = "RTGS";
+	public static final String PAYMENT_TYPE_NEFT = "NEFT";
+	public static final String PAYMENT_TYPE_IMPS = "IMPS";
+	public static final String PAYMENT_TYPE_CHEQUE = "CHEQUE";
+	public static final String PAYMENT_TYPE_DD = "DD";
+	public static final String PAYMENT_TYPE_CASH = "CASH";
+	public static final String PAYMENT_TYPE_ESCROW = "ESCROW";
+	public static final String PAYMENT_TYPE_IFT = "IFT";
 
-	// Disbursement Status	
-	public static final String	STATUS_NEW					= "NEW";
-	public static final String	STATUS_APPROVED				= "APPROVED";
-	public static final String	STATUS_AWAITCON				= "AC";
-	public static final String	STATUS_REJECTED				= "REJECTED";
-	public static final String	STATUS_CANCEL				= "CANCELED";
-	public static final String	STATUS_PAID					= "PAID";
-	
-	//Payment Channels 
-	public static final String	CHANNEL_PAYMENT				= "P";
-	public static final String	CHANNEL_DISBURSEMENT		= "D";
+	// Disbursement Status
+	public static final String STATUS_NEW = "NEW";
+	public static final String STATUS_APPROVED = "APPROVED";
+	public static final String STATUS_AWAITCON = "AC";
+	public static final String STATUS_REJECTED = "REJECTED";
+	public static final String STATUS_CANCEL = "CANCELED";
+	public static final String STATUS_PAID = "PAID";
+
+	// Payment Channels
+	public static final String CHANNEL_PAYMENT = "P";
+	public static final String CHANNEL_DISBURSEMENT = "D";
 
 }
