@@ -122,4 +122,6 @@ public interface FinanceScheduleDetailDAO {
 	BigDecimal getPriPaidAmount(String finReference);
 
 	BigDecimal getOutStandingBalFromFees(String finReference);
+
+	List<FinanceScheduleDetail> getDMFinScheduleDetails(String id, String type);
 }

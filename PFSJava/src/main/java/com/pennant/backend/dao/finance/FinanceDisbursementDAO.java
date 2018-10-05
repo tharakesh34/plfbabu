@@ -59,4 +59,5 @@ public interface FinanceDisbursementDAO {
 	void updateLinkedTranId(String finReference, long linkedTranId, String type);
 	void updateBatchDisb(FinanceDisbursement disbursement, String type);
 	List<FinanceDisbursement> getDisbursementToday(String finRefernce, Date disbDate);
+	List<FinanceDisbursement> getDMFinanceDisbursementDetails(String id, String type);
 }

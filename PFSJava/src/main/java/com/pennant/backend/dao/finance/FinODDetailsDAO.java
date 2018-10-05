@@ -123,6 +123,8 @@ public interface FinODDetailsDAO {
 	void saveList(List<FinODDetails> finOdDetails);
 	
     List<FinODDetails> getFinODPenalityByFinRef(String finReference,boolean ispft,boolean isRender);
+
+	List<FinODDetails> getFinODDetailsByFinRef(String finReference, String type);
     
 
 }

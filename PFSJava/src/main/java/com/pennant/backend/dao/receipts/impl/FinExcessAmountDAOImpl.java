@@ -45,6 +45,7 @@ package com.pennant.backend.dao.receipts.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -474,6 +475,29 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		logger.debug(Literal.LEAVING);
 		return finExcessAmount;
+	}
+	
+	//MIGRATION PURPOSE
+	//Added Table Type
+	
+	@Override
+	public List<FinExcessAmount> getAllExcessAmountsByRef(String finReference, String type) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder("");
+		selectSql.append(" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinExcessAmount.class);
+
+		List<FinExcessAmount> excessList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return excessList;
 	}
 
 }

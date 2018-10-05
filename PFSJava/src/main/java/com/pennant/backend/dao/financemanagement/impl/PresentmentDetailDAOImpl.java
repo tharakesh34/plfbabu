@@ -88,7 +88,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public PresentmentDetailDAOImpl() {
 		super();
 	}
-	
+
 	public void setDataSource(DataSource dataSource) {
 		super.setDataSource(dataSource);
 		this.dataSource = dataSource;
@@ -129,7 +129,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		return presentmentHeader;
 	}
- 
+
 
 	@Override
 	public String save(PresentmentHeader presentmentHeader, TableType tableType) {
@@ -315,7 +315,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				}
 				sql.append("))");
 			}
-			
+
 			if (StringUtils.trimToNull(detailHeader.getEntityCode()) != null) {
 				sql.append(" AND (T7.ENTITYCODE = ?) ");
 			}
@@ -355,7 +355,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				}
 				index = index + i - 1;
 			}
-			
+
 			if (StringUtils.trimToNull(detailHeader.getEntityCode()) != null) {
 				index = index + 1;
 				stmt.setString(index, detailHeader.getEntityCode());
@@ -373,10 +373,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		list.add(rs);
 		list.add(stmt);
-		
+
 		return list;
 	}
-	
+
 
 	@Override
 	public List<Object> getPDCPresentmentDetails(PresentmentHeader presentmentHeader) throws Exception {
@@ -431,7 +431,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				}
 				sql.append("))");
 			}
-			
+
 			if (StringUtils.trimToNull(presentmentHeader.getEntityCode()) != null) {
 				sql.append(" AND (T7.ENTITYCODE = ?) ");
 			}
@@ -469,7 +469,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				}
 				index = index + i - 1;
 			}
-			
+
 			if (StringUtils.trimToNull(presentmentHeader.getEntityCode()) != null) {
 				index = index + 1;
 				stmt.setString(index, presentmentHeader.getEntityCode());
@@ -487,7 +487,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		list.add(rs);
 		list.add(stmt);
-		
+
 		return list;
 	}
 
@@ -673,7 +673,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void deletePresentmentDetails(long presentmentId) {
 		logger.debug(Literal.ENTERING);
@@ -700,7 +700,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			source = null;
 			sql = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -723,7 +723,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-		    jdbcTemplate.update(sql.toString(), source);
+			jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		} finally {
@@ -749,7 +749,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" From PRESENTMENTDETAILS");
 		sql.append(type);
 		sql.append("  WHERE PresentmentRef = :PresentmentRef");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -765,7 +765,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	@Override
 	public List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData) {
 		logger.debug(Literal.ENTERING);
@@ -802,7 +802,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	@Override
 	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
 		logger.debug(Literal.ENTERING);
@@ -826,7 +826,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		source.addValue("CustId", custId);
 		source.addValue("SchDate", schData);
 		source.addValue("STATUS", RepayConstants.PEXC_APPROV);
-		
+
 		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(PresentmentDetail.class);
 		try {
@@ -893,7 +893,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	// Update the presentment status
 	@Override
 	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
@@ -974,5 +974,76 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
+	//MIGRATION PURPOSE
+	@Override
+	public List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+
+		sql.append(" SELECT  id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
+		sql.append(" status, mandateType, loanType, finBranch, schdate, dBStatusId,EntityCode, ");
+		sql.append(" importStatusId, totalRecords, processedRecords, successRecords, failedRecords, ");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From PresentmentHeader");
+		sql.append(type);
+		sql.append(" Where reference = :Reference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		try {
+			RowMapper<PresentmentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(PresentmentHeader.class);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			return null;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	}
+
+	@Override
+	public List<PresentmentDetail> getDMPresentmentDetailsByRef(String finReference, String type) {
+
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT * ");
+		sql.append(" From PresentmentDetails");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where FinReference = :FinReference ORDER by SchDate");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		try {
+			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(PresentmentDetail.class);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			return null;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+	}
+
+
 }

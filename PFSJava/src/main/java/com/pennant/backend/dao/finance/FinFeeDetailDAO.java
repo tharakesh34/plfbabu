@@ -72,4 +72,5 @@ public interface FinFeeDetailDAO {
 	
 	FinFeeDetail getFeeDetailByExtReference(String loanReference, long  feeTypeId, String tableType);
 	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);
+	List<FinFeeDetail> getDMFinFeeDetailByFinRef(String id, String type);
 }

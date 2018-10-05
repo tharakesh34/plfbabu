@@ -61,5 +61,5 @@ public class StartDataMigration {
 	}
 	
 	private static String[] CONFIG_LOCATIONS = new String[] {
-		 "dataMigrationContext.xml" };
+		 "dataMigrationContext.xml", "applicationContext-daos.xml"};
 }

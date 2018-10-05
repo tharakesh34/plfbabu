@@ -82,5 +82,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	String getTaxComponent(long adviseID, String type);
 	List<ManualAdvise> getManualAdvise(String finReference);
 	void updateWaivedAmount(ManualAdvise advise,TableType tableType);
+	List<ManualAdvise> getManualAdvisesByFinRef(String finReference, String type);
+	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type);
 	
 }

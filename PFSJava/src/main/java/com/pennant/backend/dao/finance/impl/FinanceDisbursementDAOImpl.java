@@ -556,5 +556,30 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		logger.debug("Leaving");
 		return todayDisbs;
 	}
+	
+	@Override
+	public List<FinanceDisbursement> getDMFinanceDisbursementDetails(String id, String type) {
+
+		//Copied from getFinanceDisbursementDetails and removed unwanted fields
+		logger.debug("Entering");
+
+		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
+		wIFFinanceDisbursement.setId(id);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinReference, DisbDate, DisbSeq, DisbDesc,FeeChargeAmt,InsuranceAmt, ");
+		selectSql.append(" DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks,");
+		selectSql.append(" DisbStatus, AutoDisb, LastMntBy, LastMntOn");
+		selectSql.append(" From FinDisbursementDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference Order by DisbDate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);
+		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceDisbursement.class);
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
 
 }

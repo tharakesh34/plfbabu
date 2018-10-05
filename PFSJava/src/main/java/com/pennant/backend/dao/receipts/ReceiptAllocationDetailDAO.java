@@ -10,5 +10,6 @@ public interface ReceiptAllocationDetailDAO {
 	List<ReceiptAllocationDetail> getAllocationsByReceiptID(long receiptID, String type);
 	void deleteByReceiptID(long receiptID, TableType tableType);
 	void saveAllocations(List<ReceiptAllocationDetail> allocations, TableType tableType);
+	List<ReceiptAllocationDetail> getDMAllocationsByReference(String reference, String type);
 
 }

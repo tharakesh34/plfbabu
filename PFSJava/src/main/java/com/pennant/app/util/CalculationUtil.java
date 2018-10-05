@@ -284,6 +284,17 @@ public class CalculationUtil implements Serializable {
 				.divide(BigDecimal.valueOf(100));
 		return interest;
 	}
+	
+	public static BigDecimal calInterestWithDaysFactor(BigDecimal daysFactor, BigDecimal principalAmount,
+			BigDecimal rate) {
+		/*
+		 * interest= (Principal * Days Factor * Rate)/100
+		 */
+		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
+		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
+				.divide(BigDecimal.valueOf(100));
+		return interest;
+	}
 
 	public static BigDecimal calInstallment(BigDecimal principle, BigDecimal rate, String paymentFrequency,
 			int noOfTerms) {

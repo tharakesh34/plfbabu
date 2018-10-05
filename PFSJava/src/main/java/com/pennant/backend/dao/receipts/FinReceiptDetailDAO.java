@@ -21,5 +21,6 @@ public interface FinReceiptDetailDAO {
 	List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String finReference);
 	void cancelReceiptDetails(List<Long> receiptID);
 	List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference);
+	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
 	 
 }

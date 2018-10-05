@@ -321,6 +321,7 @@ public class FinanceConstants {
 	public static final String FLAG_REAGE = "A";
 	public static final String FLAG_UNPLANNED = "U";
 	public static final String FLAG_HOLDEMI = "S";
+	public static final String	FLAG_30DAYS_FIXED				= "Z";
 
 	// Recording Fee Type
 	public static final String RECFEETYPE_CASH = "Cash";

@@ -917,4 +917,43 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 		return null;
 	}
+	
+	//MIGRATION PURPOSE
+	//SAME AS getFinODBalByFinRef. Added Table Type
+	
+	/**
+	 * Method for get the FinODDetails Object by Key finReference
+	 */
+	@Override
+	public List<FinODDetails> getFinODDetailsByFinRef(String finReference, String type) {
+		logger.debug("Entering");
+
+		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
+		selectSql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
+		selectSql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
+		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
+		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
+		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		selectSql.append(" FinLMdfDate ");
+		selectSql.append(" From FinODDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
+		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+
+		try {
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			finODDetails = null;
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	
 }

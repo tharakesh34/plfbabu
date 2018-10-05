@@ -755,5 +755,35 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);	
 	}
+	
+	@Override
+	public List<FinFeeDetail> getDMFinFeeDetailByFinRef(String id, String type) {
+
+		//Copied from getFinFeeDetailByFinRef and removed unwanted fields
+		logger.debug("Entering");
+
+		FinFeeDetail finFeeDetail = new FinFeeDetail();
+		finFeeDetail.setFinReference(id);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeSeq, FeeOrder, CalculatedAmount, ActualAmount," );
+		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, RemainingFee, PaymentRef, CalculationType,VasReference,Status, " );
+		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, " );
+		selectSql.append(" LastMntBy, LastMntOn, " );
+		selectSql.append(" PaidAmountGST, " );
+		selectSql.append("Status, PostDate " );
+		selectSql.append(" From FinFeeDetail");
+
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		logger.debug("Leaving");
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+
+	}
 
 }

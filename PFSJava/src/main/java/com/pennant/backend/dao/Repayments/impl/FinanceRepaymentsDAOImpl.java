@@ -573,6 +573,34 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		logger.debug("Leaving");
 	}
 	
+	@Override
+	public List<RepayScheduleDetail> getDMRpySchdList(String finReference, String type) {
+
+		//Copied from getRpySchdList and removed unwanted fields
+		logger.debug("Entering");
+		
+		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
+		scheduleDetail.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder(" Select RepayID, RepaySchID, FinReference , SchDate , SchdFor , ProfitSchdBal , PrincipalSchdBal , " );
+		selectSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , " );
+		selectSql.append(" ProfitSchdPayNow , TdsSchdPayNow, PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
+		selectSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, ");
+		selectSql.append(" LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow, ");
+		selectSql.append(" PftSchdWaivedNow , LatePftSchdWaivedNow, ");
+		selectSql.append(" PriSchdWaivedNow ");
+		selectSql.append(" From FinRepayScheduleDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" where FinReference=:FinReference ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
+		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+    
+	}
 	
 	@Override
 	public void updateFinReference(String finReference, String extReference, String type) {

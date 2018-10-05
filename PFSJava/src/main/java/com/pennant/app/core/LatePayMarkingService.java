@@ -266,7 +266,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return null;
 	}
 
-	private void latePayMarking(FinanceMain finMain, FinODDetails fod, FinODPenaltyRate penaltyRate,
+	public void latePayMarking(FinanceMain finMain, FinODDetails fod, FinODPenaltyRate penaltyRate,
 			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments,
 			FinanceScheduleDetail curSchd, Date valueDate,Date penaltyCalDate) {
 		logger.debug("Entering");
@@ -375,7 +375,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	}
 
-	private FinODDetails createODDetails(FinanceScheduleDetail curSchd, FinanceMain finMain,
+	public FinODDetails createODDetails(FinanceScheduleDetail curSchd, FinanceMain finMain,
 			FinODPenaltyRate penaltyRate, Date valueDate) {
 		logger.debug(" Entering ");
 

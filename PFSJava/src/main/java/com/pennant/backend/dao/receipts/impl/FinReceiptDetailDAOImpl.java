@@ -233,15 +233,15 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug("Leaving");
 		return maxReceivedDate;
 	}
-	
+
 	@Override
 	public void updateFundingAcByReceiptID(long receiptID, long fundingAc, String type) {
 		logger.debug("Entering");
-		
+
 		List<String> paymentTypes = new ArrayList<String>();
 		paymentTypes.add(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
 		paymentTypes.add(DisbursementConstants.PAYMENT_TYPE_DD);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
 		source.addValue("FundingAc", fundingAc);
@@ -254,10 +254,10 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		logger.debug("selectSql: " + updateSql.toString());
 		this.jdbcTemplate.update(updateSql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String extReference) {
 		logger.debug("Entering");
@@ -276,8 +276,8 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
 	}
-	
-	
+
+
 	@Override
 	public void cancelReceiptDetails(List<Long> receiptID) {
 		logger.debug("Entering");
@@ -294,22 +294,63 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug("Leaving");
 	}
 
-	 @Override
+	@Override
 	public List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference) {
-			logger.debug("Entering");
+		logger.debug("Entering");
 
-			StringBuilder selectSql = new StringBuilder();
-			selectSql.append(" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
-			selectSql.append(" From FINRECEIPTHEADER T1");
-			selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
-			selectSql.append(" where Reference = '" + finReference + "'");
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
+		selectSql.append(" From FINRECEIPTHEADER T1");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(" where Reference = '" + finReference + "'");
 
-			BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
+		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
 
-			logger.debug("selectSql: " + selectSql.toString());
-			RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
-			logger.debug("Leaving");
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+		logger.debug("Leaving");
 
-			return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
+	}
+
+	@Override
+	public List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("Status", "C");
+
+		List<FinReceiptDetail> finReceiptDetailsList;
+
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" select T2.receiptid, T2.receiptseqid, T2.receipttype ,T2.paymentto, T2.paymenttype, T2.payagainstid, ");
+		selectSql.append(" T2.amount, T2.favournumber, T2.valuedate, T2.bankcode, T2.favourname, T2.depositdate, ");
+		selectSql.append(" T2.depositno, T2.paymentref, T2.transactionref, T2.chequeacno, T2.fundingac, T2.receiveddate, ");
+		selectSql.append(" T2.status, T2.payorder, T2.logkey ");
+		selectSql.append(" From FINRECEIPTHEADER");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" T1");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" T2 on T1.ReceiptID = T2.ReceiptID");
+		selectSql.append(" where T2.Status <> :Status And T1.Reference = :FinReference");
+		selectSql.append(" Order by T2.receiptid, T2.receiptseqid");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+
+		try {
+			finReceiptDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finReceiptDetailsList = new ArrayList<FinReceiptDetail>();
 		}
+
+		logger.debug("Leaving");
+
+		return finReceiptDetailsList;
+
+	}
 }

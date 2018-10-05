@@ -3250,5 +3250,93 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return alwEarlyPayMethods;
 	}
+	
+	@Override
+	public FinanceMain getDMFinanceMainByRef(String finReference, String type) {
+		//Copied getFinanceMainById and removed unwanted/calculated fields
+		
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("");
+		selectSql.append("SELECT FinReference,GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
+		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, AllowGrcPftRvw,");
+		selectSql.append(" GrcPftRvwFrq, AllowGrcCpz, GrcCpzFrq, RepayBaseRate,");
+		selectSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, RepayPftFrq, ");
+		selectSql.append(" AllowRepayRvw,RepayRvwFrq, AllowRepayCpz, RepayCpzFrq, ");
+		selectSql.append(" MaturityDate, CpzAtGraceEnd, ReqRepayAmount, TotalProfit, ");
+		selectSql.append(" TotalCpz,TotalGrossPft,TotalGracePft,TotalGraceCpz,TotalGrossGrcPft, TotalRepayAmt,");
+		selectSql.append(" FinType, FinRemarks, FinCcy, ScheduleMethod,");
+		selectSql.append(" ProfitDaysBasis, FirstRepay, LastRepay,");
+		selectSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, ");
+		selectSql.append(" FinBranch, FinSourceID, ");
+		selectSql.append(" RecalType, FinAssetValue, FinIsActive, ");
+		selectSql.append(" AllowGrcRepay, GrcSchdMthd,");
+		selectSql.append(" GrcMargin, RepayMargin, FinCurrAssetValue, FinContractDate,");
+		selectSql.append(" ClosingStatus, FinApprovedDate, ");
+		selectSql.append(" AnualizedPercRate,  FinRepayPftOnFrq , GrcProfitDaysBasis, ");
+		selectSql.append(" LinkedFinRef,");
+		selectSql.append(" RpyMinRate, RpyMaxRate, TDSApplicable, FeeChargeAmt, InsuranceAmt, ");
+		selectSql.append(" AlwBPI, BpiTreatment, BpiAmount,");
+		selectSql.append(" CalRoundingMode, RoundingTarget, AlwMultiDisb,");
+		selectSql.append(" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw, PastduePftCalMthd, ");
+		selectSql.append(" RateChgAnyDay, PastduePftMargin,  FinCategory, ProductCategory,");
+		selectSql.append(" LastMntBy, LastMntOn, FinRepayMethod, ScheduleMaintained, ScheduleRegenerated, ");
+		selectSql.append(" JointAccount, JointCustId, MandateID, ");
+		selectSql.append(" LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason, InitiateUser, ");
+		selectSql.append(" BankName, Iban, AccountType, DdaReferenceNo, ");
+		selectSql.append(" AccountsOfficer, DsaCode,");
+		selectSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, ");
+		selectSql.append(" PromotionCode, ApplicationNo ");
+
+		//Fields Required based on source data
+		/*
+		//Planned EMI
+		selectSql.append(" PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz,");
+
+		//Unplanned EMI
+		selectSql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, MaxUnplannedEmi, ");
+		
+		//Reage
+		selectSql.append(" ReAgeCpz, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ");
+		
+		//Drolpline Loan
+		selectSql.append("DroppingMethod, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ");
+		*/
+		
+		selectSql.append(" From FinanceMain");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source.addValue("FinReference", finReference);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		
+		logger.debug("Leaving");
+		return null;
+	
+	}
+	
+	@Override
+	public List<String> getFinanceReferenceList(String type) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference From FinanceMain");
+		selectSql.append(StringUtils.trimToEmpty(type));
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
+		logger.debug("Leaving");
+		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+	}
 
 }

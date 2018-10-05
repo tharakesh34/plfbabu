@@ -24,11 +24,14 @@ public class DataMigration {
 
 			setDetailService((DMTransactionService)mainContext.getBean("dmFinanceDetailService"));
 			
+			String typeMain = "";
+			String typeStage2 = "_STG1";
+			
 			//Fetching List of all Finance Reference Details
-			List<String> finRefList = getDetailService().getFinanceReferenceList();
+			List<String> finRefList = getDetailService().getFinanceReferenceList(typeStage2);
 			
 			for (String finReference : finRefList) {
-				FinScheduleData financeDetails = getDetailService().getFinanceDetails(finReference, "");
+				FinScheduleData financeDetails = null;//getDetailService().getFinanceDetails(finReference, "");
 
 
 				// Process Finances

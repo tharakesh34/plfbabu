@@ -560,6 +560,34 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		return count>0;
 	}
+	
+	@Override
+	public List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type) {
+		logger.debug("Entering");
+
+		FinReceiptHeader header = new FinReceiptHeader();
+		header.setReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
+		selectSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks," );
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append( " ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive ");
+		}
+		selectSql.append(" From FinReceiptHeader");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" Where Reference =:Reference order by ReceiptDate, ReceiptID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
+
+		List<FinReceiptHeader> finReceiptHeaders = this.jdbcTemplate.query(selectSql.toString(),
+				beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+
+		return finReceiptHeaders;
+	}
 
 	@Override
 	public boolean checkInProcessReceipts(String reference) {

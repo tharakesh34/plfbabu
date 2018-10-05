@@ -292,4 +292,8 @@ public interface FinanceMainDAO {
 
 	String getEarlyPayMethodsByFinRefernce(String finReference);
 
+	FinanceMain getDMFinanceMainByRef(String finReference, String type);
+
+	List<String> getFinanceReferenceList(String type);
+
 }

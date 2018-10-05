@@ -31,4 +31,5 @@ public interface FinReceiptHeaderDAO {
 	public void cancelReceipts(String finReference);
 	
 	public boolean isExtRefAssigned(String finReference);
+	List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type);
 }

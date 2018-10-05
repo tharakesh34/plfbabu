@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
@@ -839,62 +839,136 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		return taxComponent;
 	}
 
-	 @Override
-		public List<ManualAdvise> getManualAdvise(String finReference) {
-			logger.debug(Literal.ENTERING);
+	//MIGRATION PURPOSE
+	@Override
+	public List<ManualAdvise> getManualAdvisesByFinRef(String finReference , String type) {
+		logger.debug(Literal.ENTERING);
 
-			StringBuilder sql = null;
-			MapSqlParameterSource source = null;
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
+		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt, BalanceAmt, ");
+		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, ");
+		if (type.contains("View")) {
+			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, ");
+		}
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where FinReference = :FinReference ");
 
-			sql = new StringBuilder();
-			sql.append(" select MA.adviseID,MA.AdviseType,MA.FeeTypeID,MA.Sequence,MA.finReference, MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount balanceAmt,");
-			sql.append(" MA.adviseAmount,MA.PaidAmount, MA.WaivedAmount,MA.ValueDate,MA.PostDate, MA.BounceID,MA.ReceiptID,MA.ReservedAmt,");
-			
-			sql.append(" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId," );
-			sql.append(
-					"FT.feetypecode,FT.FeeTypeDesc from MANUALADVISE_Aview  MA Left join FEETYPES FT on MA.FEETYPEID=FT.FEETYPEID where (MA.advisetype="+FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-			sql.append(" and (MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount) >0) and FinReference = :FinReference");
-			sql.append(" ORDER by MA.adviseID");
-			logger.trace(Literal.SQL + sql.toString());
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
 
-			source = new MapSqlParameterSource();
-			source.addValue("FinReference", finReference);
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
 
-			RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
-			try {
-				return jdbcTemplate.query(sql.toString(), source, rowMapper);
-			} catch (EmptyResultDataAccessException e) {
-				logger.error("Exception: ", e);
-			} finally {
-				source = null;
-				sql = null;
-			}
-			logger.debug(Literal.LEAVING);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		try {
+			List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			return adviseList;
+		} catch (Exception e) {
+			// TODO: handle exception
 			return null;
-		}
-		 
-		/**
-		 * Method for updating Manual advise Payment Details
-		 * 
-		 * @param adviseID
-		 * @param paidAmount
-		 * @param waivedAmount
-		 * @param tableType
-		 */
-		@Override
-		public void updateWaivedAmount(ManualAdvise advise,TableType tableType) {
-			logger.debug(Literal.ENTERING);
+		} finally {
+		}		
+	}
 
-			StringBuilder sql = new StringBuilder("update ManualAdvise");
-			sql.append(tableType.getSuffix());
-			sql.append(" set BalanceAmt = :BalanceAmt ,WaivedAmount=:WaivedAmount");
-			sql.append(" WHERE AdviseID = :AdviseID ");
+	@Override
+	public List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type) {
 
-			// Execute the SQL, binding the arguments.
-			logger.trace(Literal.SQL + sql.toString());
-			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(advise);
-			this.jdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+
+		StringBuilder selectSql = new StringBuilder(" Select T2.MovementID, T2.AdviseID, T2.MovementDate, T2.MovementAmount, T2.PaidAmount, ");
+		selectSql.append(" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST ");
+		selectSql.append(" From ManualAdvise");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" T1");
+		selectSql.append(" Inner Join ManualAdviseMovements");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" T2 on T1.AdviseId = T2.AdviseId");
+		selectSql.append(" Where FinReference = :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		try {
+			RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(ManualAdviseMovements.class);
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			return null;
+		} finally {
+			source = null;
 			logger.debug(Literal.LEAVING);
 		}
-	
+
+	}
+
+	@Override
+	public List<ManualAdvise> getManualAdvise(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" select MA.adviseID,MA.AdviseType,MA.FeeTypeID,MA.Sequence,MA.finReference, MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount balanceAmt,");
+		sql.append(" MA.adviseAmount,MA.PaidAmount, MA.WaivedAmount,MA.ValueDate,MA.PostDate, MA.BounceID,MA.ReceiptID,MA.ReservedAmt,");
+
+		sql.append(" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId," );
+		sql.append(
+				"FT.feetypecode,FT.FeeTypeDesc from MANUALADVISE_Aview  MA Left join FEETYPES FT on MA.FEETYPEID=FT.FEETYPEID where (MA.advisetype="+FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		sql.append(" and (MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount) >0) and FinReference = :FinReference");
+		sql.append(" ORDER by MA.adviseID");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		try {
+			return jdbcTemplate.query(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	/**
+	 * Method for updating Manual advise Payment Details
+	 * 
+	 * @param adviseID
+	 * @param paidAmount
+	 * @param waivedAmount
+	 * @param tableType
+	 */
+	@Override
+	public void updateWaivedAmount(ManualAdvise advise,TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("update ManualAdvise");
+		sql.append(tableType.getSuffix());
+		sql.append(" set BalanceAmt = :BalanceAmt ,WaivedAmount=:WaivedAmount");
+		sql.append(" WHERE AdviseID = :AdviseID ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(advise);
+		this.jdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.LEAVING);
+	}
+
 }	

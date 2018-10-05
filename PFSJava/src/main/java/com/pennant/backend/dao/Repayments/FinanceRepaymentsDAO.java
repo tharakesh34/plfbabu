@@ -36,5 +36,6 @@ public interface FinanceRepaymentsDAO {
 	void deleteByRef(String finReference, TableType tableType);
 	
 	void updateFinReference(String finReference,String extReference,String type);
+	List<RepayScheduleDetail> getDMRpySchdList(String finReference, String type);
 
 }

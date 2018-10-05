@@ -2040,4 +2040,33 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		
 		return count > 0 ? true : false;
 	}
+	
+	@Override
+	public int getCustomerCountByCustID(long custID, String type) {
+		// TODO Auto-generated method stub
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustID(custID);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT COUNT(*) FROM Customers");
+		selectSql.append(StringUtils.trimToEmpty(type) ); 
+		selectSql.append(" WHERE CustID = :CustID");
+
+		logger.debug("SelectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception :", e);
+			recordCount = 0;
+		}
+
+		logger.debug("Leaving");
+		return recordCount;
+	}
+	
 }	

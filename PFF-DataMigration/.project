@@ -3,6 +3,8 @@
 	<name>PFF-DataMigration</name>
 	<comment></comment>
 	<projects>
+		<project>pff-model</project>
+		<project>PFSJava</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
