@@ -488,10 +488,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" Where CustID in (:CustID)");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new CustomerBankInfo());
 		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerBankInfo.class);
 
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
 	}
 }
