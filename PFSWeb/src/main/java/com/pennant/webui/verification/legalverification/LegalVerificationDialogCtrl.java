@@ -414,7 +414,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.reason.setAttribute("ReasonId", null);
 		} else {
 			ReasonCode details = (ReasonCode) dataObject;
-				this.reason.setAttribute("ReasonId", details.getId());
+			this.reason.setAttribute("ReasonId", details.getId());
 		}
 		logger.debug("Leaving");
 	}
@@ -481,13 +481,13 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				Listcell lc;
 				lc = new Listcell(document.getDocModule());
 				lc.setParent(item);
-				if(document.getDocumentType() == DocumentType.COLLATRL.getKey()){
-					Label label=new Label();
+				if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+					Label label = new Label();
 					label.setValue(" - " + document.getReferenceId());
 					lc.appendChild(label);
 					lc.setParent(item);
 				}
-				
+
 				lc = new Listcell();
 				A docLink = new A();
 				docLink.setLabel(document.getDescription());
@@ -495,7 +495,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				docLink.setStyle("text-decoration:underline;");
 				lc.appendChild(docLink);
 				lc.setParent(item);
-				
+
 				lc = new Listcell();
 				lc.setId("RemarksFin".concat(String.valueOf(i)));
 				Textbox remarks1 = new Textbox();
@@ -561,7 +561,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			}
 			Filedownload.save(amedia);
 
-		}else {
+		} else {
 			MessageUtil.showMessage("Document details not available.");
 		}
 		logger.debug(Literal.LEAVING);
@@ -977,8 +977,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 					Labels.getLabel("label_LegalVerificationDialog_Recommendations.value"), LVStatus.getList(), true));
 		}
 		if (!this.reason.isReadonly()) {
-			this.reason.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_LegalVerificationDialog_Reason.value"), null, this.reason.isMandatory(), true));
+			this.reason
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_Reason.value"),
+							null, this.reason.isMandatory(), true));
 		}
 		if (!this.remarks.isReadonly()) {
 			this.remarks

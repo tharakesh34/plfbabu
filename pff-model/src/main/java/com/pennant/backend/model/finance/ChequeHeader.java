@@ -198,5 +198,4 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-
 }

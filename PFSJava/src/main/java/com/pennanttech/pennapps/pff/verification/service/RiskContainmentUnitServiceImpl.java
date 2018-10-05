@@ -865,5 +865,4 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		riskContainmentUnitDAO.delete(rcu, tableType);
 
 	}
-
 }

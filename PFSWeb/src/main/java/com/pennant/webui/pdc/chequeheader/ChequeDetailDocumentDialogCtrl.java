@@ -34,27 +34,26 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
-	private static final long		serialVersionUID	= 6004939933729664895L;
-	private static final Logger		logger				= Logger.getLogger(ChequeDetailDocumentDialogCtrl.class);
+	private static final long serialVersionUID = 6004939933729664895L;
+	private static final Logger logger = Logger.getLogger(ChequeDetailDocumentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window				window_ChequeDetailDocumentDialog;
-	protected Borderlayout			borderlayoutChequeDocument;
-	protected Grid					grid_basicDetails;
+	protected Window window_ChequeDetailDocumentDialog;
+	protected Borderlayout borderlayoutChequeDocument;
+	protected Grid grid_basicDetails;
 
-	protected Textbox				chequeId;
-	protected Textbox				documentName;
-	protected Button				btnUploadDoc;
-	protected Iframe				chequeDocumentDivPdfView;
-	protected Div					chequeDocumentDiv;
+	protected Textbox chequeId;
+	protected Textbox documentName;
+	protected Button btnUploadDoc;
+	protected Iframe chequeDocumentDivPdfView;
+	protected Div chequeDocumentDiv;
 
-	private ChequeDetailDialogCtrl	chequeDetailDialogCtrl;
-	private ChequeDetail			chequeDetail;
-	private DocumentManagerDAO      documentManagerDAO;
-
+	private ChequeDetailDialogCtrl chequeDetailDialogCtrl;
+	private ChequeDetail chequeDetail;
+	private DocumentManagerDAO documentManagerDAO;
 
 	/**
 	 * default constructor.<br>
@@ -129,17 +128,17 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING +event.toString());
-		
+		logger.debug(Literal.ENTERING + event.toString());
+
 		chequeDetail.setDocImage(null);
 		chequeDetail.setDocumentName("");
 		chequeDetail.setDocumentRef(Long.MIN_VALUE);
-		
+
 		closeDialog();
-		
-		logger.debug(Literal.LEAVING +event.toString());
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -148,7 +147,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * Saves the components to table. <br>
 	 * 
@@ -156,12 +155,13 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.trimToNull(this.documentName.getValue()) == null) {
-			throw new WrongValueException(this.documentName,Labels.getLabel("FIELD_IS_MAND" ,new String[]{Labels.getLabel("label_ChequeDetailDocumentDialog_DocumentName.value")})); 
+			throw new WrongValueException(this.documentName, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_ChequeDetailDocumentDialog_DocumentName.value") }));
 		}
-		
-		if(chequeDetailDialogCtrl != null) {
+
+		if (chequeDetailDialogCtrl != null) {
 			chequeDetailDialogCtrl.getChequeDocuments().add(chequeDetail);
 		}
 		closeDialog();
@@ -184,7 +184,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 			doWriteBeanToComponents(chequeDetail);
 			this.window_ChequeDetailDocumentDialog.setHeight("80%");
 			this.window_ChequeDetailDocumentDialog.setWidth("80%");
-			this.window_ChequeDetailDocumentDialog.doModal() ;
+			this.window_ChequeDetailDocumentDialog.doModal();
 		} catch (UiException e) {
 			logger.error(Literal.EXCEPTION, e);
 			this.window_ChequeDetailDocumentDialog.onClose();
@@ -207,14 +207,14 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		this.chequeId.setValue(String.valueOf(chequeDetail.getChequeSerialNo()));
 		this.documentName.setValue(chequeDetail.getDocumentName());
 		this.documentName.setAttribute("data", chequeDetail);
-		
+
 		if (StringUtils.trimToNull(chequeDetail.getDocumentName()) != null && !enqiryModule) {
 			this.btnDelete.setVisible(true);
 		}
 
-		if(chequeDetail.getDocImage() == null && chequeDetail.getDocumentRef() != Long.MIN_VALUE) {
+		if (chequeDetail.getDocImage() == null && chequeDetail.getDocumentRef() != Long.MIN_VALUE) {
 			DocumentManager docManager = documentManagerDAO.getById(chequeDetail.getDocumentRef());
-			if(docManager != null) {
+			if (docManager != null) {
 				chequeDetail.setDocImage(docManager.getDocImage());
 			}
 		}
@@ -291,7 +291,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}

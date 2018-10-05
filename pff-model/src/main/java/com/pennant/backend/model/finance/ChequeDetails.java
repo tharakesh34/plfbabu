@@ -1,6 +1,5 @@
 package com.pennant.backend.model.finance;
 
-
 public class ChequeDetails {
 
 	private String finBranchName;
@@ -11,65 +10,65 @@ public class ChequeDetails {
 	private String finReference;
 	private String repayAmount;
 	private String repayAmountinWords;
-	
+
 	public ChequeDetails() {
-		
+
 	}
-	
+
 	public String getFinBranchName() {
-    	return finBranchName;
-    }
+		return finBranchName;
+	}
 
 	public void setFinBranchName(String finBranchName) {
-    	this.finBranchName = finBranchName;
-    }
+		this.finBranchName = finBranchName;
+	}
 
 	public String getAppDate() {
-    	return appDate;
-    }
+		return appDate;
+	}
 
 	public void setAppDate(String appDate) {
-    	this.appDate = appDate;
-    }
+		this.appDate = appDate;
+	}
 
 	public String getCustName() {
-    	return custName;
-    }
+		return custName;
+	}
 
 	public void setCustName(String custName) {
-    	this.custName = custName;
-    }
+		this.custName = custName;
+	}
 
 	public String getDisbAccountId() {
-    	return disbAccountId;
-    }
+		return disbAccountId;
+	}
 
 	public void setDisbAccountId(String disbAccountId) {
-    	this.disbAccountId = disbAccountId;
-    }
+		this.disbAccountId = disbAccountId;
+	}
 
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
 
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
 
 	public String getRepayAmount() {
-    	return repayAmount;
-    }
+		return repayAmount;
+	}
 
 	public void setRepayAmount(String repayAmount) {
-    	this.repayAmount = repayAmount;
-    }
+		this.repayAmount = repayAmount;
+	}
 
 	public String getRepayAmountinWords() {
-    	return repayAmountinWords;
-    }
+		return repayAmountinWords;
+	}
 
 	public void setRepayAmountinWords(String repayAmountinWords) {
-    	this.repayAmountinWords = repayAmountinWords;
-    }
+		this.repayAmountinWords = repayAmountinWords;
+	}
 
 }

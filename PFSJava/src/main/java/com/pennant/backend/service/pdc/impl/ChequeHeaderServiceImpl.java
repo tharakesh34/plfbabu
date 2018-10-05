@@ -81,15 +81,15 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ChequeHeader</b>.<br>
  */
 public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implements ChequeHeaderService {
-	private static final Logger	logger	= Logger.getLogger(ChequeHeaderServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ChequeHeaderServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
-	private ChequeHeaderDAO		chequeHeaderDAO;
-	private ChequeDetailDAO		chequeDetailDAO;
-	private DocumentManagerDAO	documentManagerDAO;
-	private FinanceMainDAO			financeMainDAO;
-	private FinanceTypeDAO			financeTypeDAO;
-	private CustomerDetailsService	customerDetailsService;
+	private AuditHeaderDAO auditHeaderDAO;
+	private ChequeHeaderDAO chequeHeaderDAO;
+	private ChequeDetailDAO chequeDetailDAO;
+	private DocumentManagerDAO documentManagerDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private CustomerDetailsService customerDetailsService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -235,7 +235,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type, long headerID) {
+	private List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type,
+			long headerID) {
 		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
@@ -250,71 +251,72 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				continue;
 			}
 
-			if (StringUtils.isEmpty(type.getSuffix()) && PennantConstants.RCD_STATUS_CANCELLED.equals(chequeDetail.getRecordStatus())) {
-					getChequeDetailDAO().delete(chequeDetail, type);
-			}  else {
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type.getSuffix())) {
-				approveRec = true;
-				chequeDetail.setRoleCode("");
-				chequeDetail.setNextRoleCode("");
-				chequeDetail.setTaskId("");
-				chequeDetail.setNextTaskId("");
-				chequeDetail.setWorkflowId(0);
-			}
-			chequeDetail.setHeaderID(headerID);
-			if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (chequeDetail.isNewRecord()) {
-				saveRecord = true;
-				if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				deleteRecord = true;
-			}
-			if (approveRec) {
-				rcdType = chequeDetail.getRecordType();
-				recordStatus = chequeDetail.getRecordStatus();
-				chequeDetail.setRecordType("");
-				chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				getChequeDetailDAO().save(chequeDetail, type);
-			}
-
-			if (updateRecord) {
-				getChequeDetailDAO().update(chequeDetail, type);
-			}
-
-			if (deleteRecord) {
+			if (StringUtils.isEmpty(type.getSuffix())
+					&& PennantConstants.RCD_STATUS_CANCELLED.equals(chequeDetail.getRecordStatus())) {
 				getChequeDetailDAO().delete(chequeDetail, type);
-			}
+			} else {
+				saveRecord = false;
+				updateRecord = false;
+				deleteRecord = false;
+				approveRec = false;
+				String rcdType = "";
+				String recordStatus = "";
+				if (StringUtils.isEmpty(type.getSuffix())) {
+					approveRec = true;
+					chequeDetail.setRoleCode("");
+					chequeDetail.setNextRoleCode("");
+					chequeDetail.setTaskId("");
+					chequeDetail.setNextTaskId("");
+					chequeDetail.setWorkflowId(0);
+				}
+				chequeDetail.setHeaderID(headerID);
+				if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					deleteRecord = true;
+				} else if (chequeDetail.isNewRecord()) {
+					saveRecord = true;
+					if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
 
-			if (approveRec) {
-				chequeDetail.setRecordType(rcdType);
-				chequeDetail.setRecordStatus(recordStatus);
+				} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					if (approveRec) {
+						saveRecord = true;
+					} else {
+						updateRecord = true;
+					}
+				} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+					updateRecord = true;
+				} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+					deleteRecord = true;
+				}
+				if (approveRec) {
+					rcdType = chequeDetail.getRecordType();
+					recordStatus = chequeDetail.getRecordStatus();
+					chequeDetail.setRecordType("");
+					chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				}
+				if (saveRecord) {
+					getChequeDetailDAO().save(chequeDetail, type);
+				}
+
+				if (updateRecord) {
+					getChequeDetailDAO().update(chequeDetail, type);
+				}
+
+				if (deleteRecord) {
+					getChequeDetailDAO().delete(chequeDetail, type);
+				}
+
+				if (approveRec) {
+					chequeDetail.setRecordType(rcdType);
+					chequeDetail.setRecordStatus(recordStatus);
+				}
+				auditDetails.get(i).setModelData(chequeDetail);
 			}
-			auditDetails.get(i).setModelData(chequeDetail);
-		  }
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -454,7 +456,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	public ChequeHeader getChequeHeader(long headerId) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(headerId, "_View");
 		if (chequeHeader != null) {
-			chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			chequeHeader
+					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
@@ -470,7 +473,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	public ChequeHeader getChequeHeaderByRef(String finReference) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeaderByRef(finReference, "_View");
 		if (chequeHeader != null) {
-			chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			chequeHeader
+					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
@@ -487,7 +491,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	public ChequeHeader getApprovedChequeHeader(long headerId) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(headerId, "_AView");
 		if (chequeHeader != null) {
-			chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
+			chequeHeader.setChequeDetailList(
+					getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
 		}
 		return chequeHeader;
 	}
@@ -535,7 +540,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			chequeHeader.setWorkflowId(0);
 
 			processDocument(chequeHeader.getChequeDetailList());
-			
+
 			if (chequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				chequeHeader.setRecordType("");
@@ -735,7 +740,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
 		if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
@@ -765,7 +770,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	@Override
 	public FinanceDetail getFinanceDetailById(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finReference);
@@ -774,8 +779,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		scheduleData.setFinanceMain(financeMain);
 		scheduleData.setFinanceType(financeType);
-		financeDetail.setCustomerDetails(customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
-		
+		financeDetail.setCustomerDetails(
+				customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
+
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}

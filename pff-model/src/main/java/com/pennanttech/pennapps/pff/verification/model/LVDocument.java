@@ -272,5 +272,4 @@ public class LVDocument extends AbstractWorkflowEntity {
 	public void setReferenceId(String referenceId) {
 		this.referenceId = referenceId;
 	}
-
 }

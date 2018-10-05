@@ -139,10 +139,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.financeDetail.setFiVerification(this.verification);
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
-		
+
 		if (arguments.containsKey("financeMainBaseCtrl")) {
-				((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFieldVerificationDialogCtrl(this);
-		}else{
+			((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFieldVerificationDialogCtrl(this);
+		} else {
 			finBasicdetails.setVisible(false);
 		}
 
@@ -1142,7 +1142,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.recSave = recSave;
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
-		if(!recSave){
+		if (!recSave) {
 			doSetValidation();
 		}
 

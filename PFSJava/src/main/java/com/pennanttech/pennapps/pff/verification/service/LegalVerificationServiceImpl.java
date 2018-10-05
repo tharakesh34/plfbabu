@@ -61,15 +61,12 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	private DocumentDetailValidation documentValidation;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * verification_lv/verification_lv_Temp by using verification_lv DAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using verification_fiDAO's update method 3) Audit the
-	 * record in to AuditHeader and Adtverification_fi by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * verification_lv/verification_lv_Temp by using verification_lv DAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -165,12 +162,10 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table verification_fi by using verification_fiDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)

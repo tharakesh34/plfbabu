@@ -368,7 +368,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.reason.setAttribute("ReasonId", null);
 		} else {
 			ReasonCode details = (ReasonCode) dataObject;
-				this.reason.setAttribute("ReasonId", details.getId());
+			this.reason.setAttribute("ReasonId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -437,7 +437,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 					lc.appendChild(label);
 					lc.setParent(item);
 				}
-				
+
 				lc = new Listcell();
 				A docLink = new A();
 				docLink.setLabel(document.getDescription());
@@ -445,7 +445,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				docLink.setStyle("text-decoration:underline;");
 				lc.appendChild(docLink);
 				lc.setParent(item);
-               
+
 				lc = new Listcell();
 				lc.setId("VerificationType".concat(String.valueOf(i)));
 				Combobox verificationType = new Combobox();
@@ -518,7 +518,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 		DocumentManager docDetails = riskContainmentUnitService.getDocumentById(details.getDocumentRefId());
 		AMedia amedia = null;
-		if (docDetails!=null && docDetails.getDocImage() != null) {
+		if (docDetails != null && docDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
 			String docName = details.getDocName();
 			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
@@ -531,7 +531,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			}
 			Filedownload.save(amedia);
 
-		}else{
+		} else {
 			MessageUtil.showMessage("Document details not available.");
 		}
 		logger.debug(Literal.LEAVING);
@@ -1010,8 +1010,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 							RCUStatus.getList(), true));
 		}
 		if (!this.reason.isReadonly()) {
-			this.reason.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_RiskContainmentUnitDialog_Reason.value"), null, this.reason.isMandatory(), true));
+			this.reason.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_Reason.value"), null,
+							this.reason.isMandatory(), true));
 		}
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(

@@ -601,6 +601,5 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setSave(boolean save) {
 		this.save = save;
 	}
-	
-	
+
 }

@@ -38,8 +38,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FieldInvestigation</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>FieldInvestigation</code> with set of CRUD operations.
  */
 public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> implements FieldInvestigationDAO {
 	private static Logger logger = LogManager.getLogger(FieldInvestigationDAOImpl.class);

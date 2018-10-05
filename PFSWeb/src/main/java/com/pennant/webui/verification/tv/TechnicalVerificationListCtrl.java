@@ -162,7 +162,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
-		
+
 		this.CreadtedOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}

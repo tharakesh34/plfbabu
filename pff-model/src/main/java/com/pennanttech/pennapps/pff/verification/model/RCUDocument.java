@@ -184,6 +184,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	public void setDecisionRemarks(String decisionRemarks) {
 		this.decisionRemarks = decisionRemarks;
 	}
+
 	public String getDocCategory() {
 		return docCategory;
 	}

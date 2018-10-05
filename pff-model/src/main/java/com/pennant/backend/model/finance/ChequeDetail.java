@@ -381,5 +381,4 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public void setUpload(boolean isUpload) {
 		this.isUpload = isUpload;
 	}
-
 }

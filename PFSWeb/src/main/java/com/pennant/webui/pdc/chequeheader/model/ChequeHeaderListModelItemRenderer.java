@@ -55,7 +55,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -68,23 +67,22 @@ public class ChequeHeaderListModelItemRenderer implements ListitemRenderer<Chequ
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, ChequeHeader chequeHeader, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(chequeHeader.getFinReference());
+		lc = new Listcell(chequeHeader.getFinReference());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formateInt(chequeHeader.getNoOfCheques()));
-	  	lc.setParent(item);
-	    lc = new Listcell(PennantAppUtil.amountFormate(chequeHeader.getTotalAmount(),CurrencyUtil.getFormat("INR")));
+		lc = new Listcell(PennantApplicationUtil.formateInt(chequeHeader.getNoOfCheques()));
 		lc.setParent(item);
-	  	lc = new Listcell(chequeHeader.getRecordStatus());
+		lc = new Listcell(PennantAppUtil.amountFormate(chequeHeader.getTotalAmount(), CurrencyUtil.getFormat("INR")));
+		lc.setParent(item);
+		lc = new Listcell(chequeHeader.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(chequeHeader.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("headerID", chequeHeader.getHeaderID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onChequeHeaderItemDoubleClicked");
 	}
 }

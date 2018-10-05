@@ -7,11 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
- 	<style>
-		.z-groupbox-collapsed{
-		 height: auto !important;
-		}
-	</style>
+	<style>.z-groupbox-collapsed{ height: auto !important; }</style>
 
 	<window id="window_FIVerificationDialog" border="none"
 		apply="${fieldVerificationDialogCtrl}" width="100%" height="100%"
@@ -23,7 +19,7 @@
 					label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
 			</groupbox>
 			<groupbox style="border:none;"
-				contentStyle="border-top-width: 0px;" height="50%" >
+				contentStyle="border-top-width: 0px;" height="50%">
 				<caption label="Verifications" />
 				<listbox id="listBoxFIVerification" width="100%"
 					span="true" style="overflow:auto;"
@@ -88,8 +84,10 @@
 					</listhead>
 				</listbox>
 			</groupbox>
-			<groupbox id="fiInquiry" style="border:none;" contentStyle="border-top-width: 0px;" vflex="true">
-				<caption label="${c:l('label_Verification_recording') }"/>
+			<groupbox id="fiInquiry" style="border:none;"
+				contentStyle="border-top-width: 0px;" vflex="true">
+				<caption
+					label="${c:l('label_Verification_recording') }" />
 			</groupbox>
 		</groupbox>
 

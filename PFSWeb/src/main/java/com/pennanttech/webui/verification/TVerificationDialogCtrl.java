@@ -99,8 +99,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private List<Verification> deletedList = new ArrayList<>();
 
-	
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -129,8 +127,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		if (arguments.containsKey("financeMainBaseCtrl")) {
-				((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).settVerificationDialogCtrl(this);
-		}else{
+			((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).settVerificationDialogCtrl(this);
+		} else {
 			finBasicdetails.setVisible(false);
 		}
 
@@ -226,7 +224,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return item;
 	}
 
-	private List<Verification> getFinalVerifications(List<CollateralAssignment> collaterals, FinanceDetail financeDetails) {
+	private List<Verification> getFinalVerifications(List<CollateralAssignment> collaterals,
+			FinanceDetail financeDetails) {
 		List<Verification> verifications = new ArrayList<>();
 		Map<String, Verification> collateralMap = new HashMap<>();
 		Set<String> deletedSet = new HashSet<>();
@@ -342,9 +341,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private List<Verification> getCollateralDetails(FinanceDetail financeDetails, String[] references) {
 
 		List<Verification> newCollateralDetails = new ArrayList<Verification>();
-		
-		List<Verification> collateralDetails = verificationService.getCollateralDetails(references); 
-		
+
+		List<Verification> collateralDetails = verificationService.getCollateralDetails(references);
+
 		if (financeDetails != null) {
 			List<CollateralSetup> collateralSetupList = financeDetails.getCollaterals();
 			CustomerDetails customerDetails = financeDetails.getCustomerDetails();
@@ -368,7 +367,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 									verification.setReferenceType(collateralSetup.getCollateralType());
 									verification.setReference(customerDetails.getCustomer().getCustCIF());
 									verification.setCustomerName(customerDetails.getCustomer().getCustShrtName());
-									verification.setVerificationReq(collateralSetup.getCollateralStructure().isCollateralValuatorReq());
+									verification.setVerificationReq(
+											collateralSetup.getCollateralStructure().isCollateralValuatorReq());
 									newCollateralDetails.add(verification);
 								}
 							}
@@ -377,7 +377,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 		}
-		
+
 		collateralDetails.addAll(newCollateralDetails);
 		return collateralDetails;
 	}
@@ -1147,12 +1147,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
+			throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
 		this.userAction = userAction;
 		doClearMessage();
-		if(!recSave){
+		if (!recSave) {
 			doSetValidation();
 		}
 

@@ -43,5 +43,4 @@ public enum FIStatus {
 		}
 		return list;
 	}
-
 }

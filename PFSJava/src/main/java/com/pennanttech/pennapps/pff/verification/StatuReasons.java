@@ -23,9 +23,10 @@ import com.pennant.backend.model.ValueLabel;
  */
 public enum StatuReasons {
 
-	FISRES("FISTATUS", "Feild Invetigation Status Reasons"), LVSRES("LVSTATUS",
-			"Legal Verification Status Reasons"), TVSRES("TVSTATUS",
-					"Technical Verification Status Reasons"), RCUSRES("RCUSTATUS", "Risk Control Unit Status Reasons");
+	FISRES("FISTATUS", "Feild Invetigation Status Reasons"),
+	LVSRES("LVSTATUS", "Legal Verification Status Reasons"),
+	TVSRES("TVSTATUS", "Technical Verification Status Reasons"),
+	RCUSRES("RCUSTATUS", "Risk Control Unit Status Reasons");
 
 	private final String key;
 	private final String value;

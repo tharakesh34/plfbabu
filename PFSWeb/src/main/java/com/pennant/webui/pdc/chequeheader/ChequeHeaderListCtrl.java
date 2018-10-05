@@ -72,8 +72,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/pdc/ChequeHeader/ChequeHeaderList.zul file.
+ * This is the controller class for the /WEB-INF/pages/pdc/ChequeHeader/ChequeHeaderList.zul file.
  * 
  */
 public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
@@ -123,8 +122,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -157,8 +155,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -168,8 +165,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -180,8 +176,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -198,8 +193,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -248,7 +243,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("chequeHeader", chequeheader);
 		arg.put("chequeHeaderListCtrl", this);
-		List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO .getFinScheduleDetails(chequeheader.getFinReference(), "_View", false);
+		List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO
+				.getFinScheduleDetails(chequeheader.getFinReference(), "_View", false);
 		arg.put("financeSchedules", finSchduleList);
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul", null, arg);
@@ -261,8 +257,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

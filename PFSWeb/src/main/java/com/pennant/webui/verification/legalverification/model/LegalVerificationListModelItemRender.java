@@ -16,35 +16,36 @@ import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 public class LegalVerificationListModelItemRender implements ListitemRenderer<LegalVerification>, Serializable {
 	private static final long serialVersionUID = 1L;
 
-	List<Long> list=new ArrayList<>();
+	List<Long> list = new ArrayList<>();
+
 	public LegalVerificationListModelItemRender() {
 		super();
 	}
 
 	@Override
 	public void render(Listitem item, LegalVerification lv, int count) throws Exception {
-		
+
 		Listcell lc;
-	    lc = new Listcell(String.valueOf(lv.getCif()));
+		lc = new Listcell(String.valueOf(lv.getCif()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(lv.getCollateralType()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(lv.getReferenceFor()));
 		lc.setParent(item);
 		lc = new Listcell(lv.getKeyReference());
-	  	lc.setParent(item);
+		lc.setParent(item);
 		lc = new Listcell(lv.getAgencyName());
-	  	lc.setParent(item);
+		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(lv.getCreatedOn()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(lv.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(lv.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(lv.getRecordType()));
 		lc.setParent(item);
 
 		item.setAttribute("verificationId", lv.getVerificationId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onLegalVerificationItemDoubleClicked");
 	}
-	
+
 }

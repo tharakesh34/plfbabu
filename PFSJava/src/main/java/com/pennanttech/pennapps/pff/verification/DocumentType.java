@@ -16,11 +16,6 @@ import java.util.List;
 
 import com.pennant.backend.model.ValueLabel;
 
-/**
- * 
- * Enumeration representing the the DocumentType of validation.
- *
- */
 public enum DocumentType {
 	COLLATRL(1, "Collateral"), LOAN(2, "Loan"), CUSTOMER(3, "Customer");
 

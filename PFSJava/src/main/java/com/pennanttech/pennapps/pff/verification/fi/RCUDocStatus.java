@@ -9,8 +9,11 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum RCUDocStatus {
 
-	SELECT(0, Labels.getLabel("Combo.Select")), INITIATED(1, "Initiated"), REFERRED(2, "Referred"), HOLD(3,
-			"Hold"), COMPLETED(4, "Completed");
+	SELECT(0, Labels.getLabel("Combo.Select")),
+	INITIATED(1, "Initiated"),
+	REFERRED(2, "Referred"),
+	HOLD(3, "Hold"),
+	COMPLETED(4, "Completed");
 
 	private final Integer key;
 	private final String value;

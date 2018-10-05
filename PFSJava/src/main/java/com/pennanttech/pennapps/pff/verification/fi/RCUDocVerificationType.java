@@ -9,8 +9,10 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum RCUDocVerificationType {
 
-	SELECT(0, Labels.getLabel("Combo.Select")), SAMPLED(1, "Sampled"), EYEBALLED(2, "Eyeballed"), SCREENED(3,
-			"Screened");
+	SELECT(0, Labels.getLabel("Combo.Select")),
+	SAMPLED(1, "Sampled"),
+	EYEBALLED(2, "Eyeballed"),
+	SCREENED(3, "Screened");
 
 	private final Integer key;
 	private final String value;

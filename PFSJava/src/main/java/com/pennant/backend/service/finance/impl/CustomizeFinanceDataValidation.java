@@ -38,17 +38,16 @@ public class CustomizeFinanceDataValidation {
 
 	private static final Logger logger = Logger.getLogger(CustomizeFinanceDataValidation.class);
 
-	private CustomerDAO					customerDAO;
-	private ExtendedFieldDetailsService	extendedFieldDetailsService;
-	private BankBranchService			bankBranchService;
-	private MandateService				mandateService;
-	private BankDetailService			bankDetailService;
-	private CustomerDetailsService		customerDetailsService;
-
+	private CustomerDAO customerDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private BankBranchService bankBranchService;
+	private MandateService mandateService;
+	private BankDetailService bankDetailService;
+	private CustomerDetailsService customerDetailsService;
 
 	public FinScheduleData financeDataValidation(String vldGroup, FinanceDetail financeDetail, boolean apiFlag) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceType financeType = finScheduleData.getFinanceType();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -112,7 +111,7 @@ public class CustomizeFinanceDataValidation {
 		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 		//### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-				ExtendedFieldConstants.MODULE_LOAN, subModule,FinanceConstants.FINSER_EVENT_ORG);
+				ExtendedFieldConstants.MODULE_LOAN, subModule, FinanceConstants.FINSER_EVENT_ORG);
 		//### 02-05-2018-End
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
@@ -120,7 +119,7 @@ public class CustomizeFinanceDataValidation {
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return finScheduleData;
 	}
 
@@ -412,7 +411,8 @@ public class CustomizeFinanceDataValidation {
 
 				//validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
-					List<ValueLabel> status = PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+					List<ValueLabel> status = PennantStaticListUtil
+							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 					boolean sts = false;
 					for (ValueLabel value : status) {
 						if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
@@ -435,18 +435,18 @@ public class CustomizeFinanceDataValidation {
 					return errorDetails;
 				}
 			}
-			
+
 			if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "docContent";
 				valueParm[1] = "docRefId";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
-			} else if(StringUtils.isBlank(mandate.getDocumentName())) {
+			} else if (StringUtils.isBlank(mandate.getDocumentName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Document Name";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 			}
-			
+
 			if (StringUtils.isNotBlank(mandate.getDocumentName())) {
 				String docName = mandate.getDocumentName().toLowerCase();
 
@@ -468,12 +468,11 @@ public class CustomizeFinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getDocumentName();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
-				} /*else {
-					//TODO: uploaded document {0} is not supported
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getDocumentName();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90407", valueParm)));
-				}*/
+				} /*
+					 * else { //TODO: uploaded document {0} is not supported String[] valueParm = new String[1];
+					 * valueParm[0] = mandate.getDocumentName(); errorDetails.add(ErrorUtil.getErrorDetail(new
+					 * ErrorDetail("90407", valueParm))); }
+					 */
 			}
 		}
 		return errorDetails;
@@ -514,7 +513,7 @@ public class CustomizeFinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						return errorDetails;
 					}
-				}else if(StringUtils.isNotBlank(jointAccDetail.getRepayAccountId())){
+				} else if (StringUtils.isNotBlank(jointAccDetail.getRepayAccountId())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "RepayAccountId";
 					valueParm[1] = "includeRepay";
@@ -553,8 +552,8 @@ public class CustomizeFinanceDataValidation {
 					valueParm[0] = "sequence";
 					valueParm[1] = "authoritySignatory";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
-				}				
-				
+				}
+
 				int duplicateSeqCount = 0;
 				int duplicateCifCount = 0;
 				for (JointAccountDetail detail : jountAccountDetails) {
@@ -577,15 +576,12 @@ public class CustomizeFinanceDataValidation {
 					valueParm[0] = "CIF";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
 				}
-				
 
 			}
-			
+
 		}
 		return errorDetails;
 	}
-
-	
 
 	/**
 	 * Method for validating Finance Schedule details

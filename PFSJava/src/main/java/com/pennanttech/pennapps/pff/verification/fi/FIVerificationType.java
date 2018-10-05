@@ -9,8 +9,10 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum FIVerificationType {
 
-	SELECT(0, Labels.getLabel("Combo.Select")), TELEPHONIC(1, "Telephonic"), FIELD(2, "Field"), NEIGHBORHOOD(3,
-			"Neighborhood");
+	SELECT(0, Labels.getLabel("Combo.Select")),
+	TELEPHONIC(1, "Telephonic"),
+	FIELD(2, "Field"),
+	NEIGHBORHOOD(3, "Neighborhood");
 
 	private final Integer key;
 	private final String value;

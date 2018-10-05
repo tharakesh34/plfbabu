@@ -19,15 +19,6 @@ import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 
 public interface FieldInvestigationDAO extends BasicCrudDao<FieldInvestigation> {
 
-	/**
-	 * Fetch the Record FieldInvestigation by key field
-	 * 
-	 * @param id
-	 *            id of the FieldInvestigation.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return FieldInvestigation
-	 */
 	FieldInvestigation getFieldInvestigation(long id, String type);
 
 	List<FieldInvestigation> getList(String keyReference);

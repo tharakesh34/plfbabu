@@ -304,7 +304,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-	
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

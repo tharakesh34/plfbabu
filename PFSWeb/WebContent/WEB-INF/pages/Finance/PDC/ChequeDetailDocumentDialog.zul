@@ -21,26 +21,26 @@
 							<button id="btnNew"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								sclass="z-toolbarbutton" visible="false"/>
+								sclass="z-toolbarbutton" visible="false" />
 							<button id="btnEdit"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								sclass="z-toolbarbutton" visible="false"/>
+								sclass="z-toolbarbutton" visible="false" />
 							<button id="btnDelete"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								sclass="z-toolbarbutton" visible="false"/>
+								sclass="z-toolbarbutton" visible="false" />
 							<button id="btnSave"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								sclass="z-toolbarbutton"/>
+								sclass="z-toolbarbutton" />
 							<button id="btnCancel"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								sclass="z-toolbarbutton" visible="false"/>
+								sclass="z-toolbarbutton" visible="false" />
 							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								sclass="z-toolbarbutton"/>
+								sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -90,8 +90,8 @@
 										id="label_FinDocumentDetailDialog_DocumnetName"
 										value="${c:l('label_ChequeDetailDocumentDialog_DocumentName.value')}" />
 									<hbox>
-										<space id="space_documnetName" sclass="mandatory"
-											spacing="2px" />
+										<space id="space_documnetName"
+											sclass="mandatory" spacing="2px" />
 										<textbox id="documentName"
 											width="150px" maxlength="200" readonly="true" />
 										<button upload="true"
@@ -103,7 +103,7 @@
 					</groupbox>
 					<div id="chequeDocumentDiv">
 						<iframe id="chequeDocumentDivPdfView"
-							width="100%" height="100%"/>
+							width="100%" height="100%" />
 					</div>
 				</div>
 			</center>

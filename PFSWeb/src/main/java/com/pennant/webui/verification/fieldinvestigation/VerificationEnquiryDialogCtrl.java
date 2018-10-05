@@ -39,7 +39,7 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final Logger logger = LogManager.getLogger(VerificationEnquiryDialogCtrl.class);
 	private static final long serialVersionUID = -7291043288227495026L;
 	protected Window window_VerificationEnquiry;
-    protected Toolbar toolbarHeading;
+	protected Toolbar toolbarHeading;
 	protected Tabs tabsIndexCenter;
 	protected Tab fiDetailTab;
 	protected Tab tvDetailTab;
@@ -75,23 +75,23 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
 		financeDetail = (FinanceDetail) arguments.get("financeDetail");
-		
+
 		if (financeDetail != null && finHeaderList != null) {
 			finReference = String.valueOf(finHeaderList.get(3));
-		}else{
+		} else {
 			finReference = financeDetail.getFinScheduleData().getFinReference();
 		}
-		
+
 		if (arguments.containsKey("financeMainBaseCtrl")) {
-				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+			financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 		}
-		
+
 		enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
-		
-		fiDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
-		tvDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
-		lvDetailTabPAnel.setHeight(getDesktopHeight()-10+"px");
-		rcuDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
+
+		fiDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
+		tvDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
+		lvDetailTabPAnel.setHeight(getDesktopHeight() - 10 + "px");
+		rcuDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
 
 		doShowDialog();
 
@@ -118,19 +118,19 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		boolean isSelected = false;
 		FinanceDetail temp = new FinanceDetail();
-		
+
 		if (StringUtils.isBlank(finReference)) {
 			return;
 		} else {
 			BeanUtils.copyProperties(financeDetail, temp);
 		}
-		
+
 		verificationTypes = verificationService.getVerificationTypes(this.finReference);
 		if (verificationTypes.isEmpty() && financeMainDialogCtrl == null) {
 			window_VerificationEnquiry.onClose();
 			MessageUtil.showMessage("Verifications are not availble");
 		}
-		
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("finHeaderList", finHeaderList);
 		map.put("financeDetail", temp);

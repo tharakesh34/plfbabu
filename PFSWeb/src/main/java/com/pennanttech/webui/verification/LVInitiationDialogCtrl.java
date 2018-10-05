@@ -293,7 +293,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.collateral.setDescColumn("CollateralType");
 		this.collateral.setValidateColumns(new String[] { "CollateralRef" });
 		this.collateral.addForward("onFulfill", self, "onChangeCollateral");
-	
+
 		if (initiation) {
 			this.agency.setMandatoryStyle(true);
 			this.agency.setTextBoxWidth(121);
@@ -301,7 +301,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.agency.setValueColumn("DealerName");
 			this.agency.setDescColumn("DealerCity");
 			this.agency.setValidateColumns(new String[] { "DealerName" });
-			this.agency.setFilters(new Filter[] { new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL) });
+			this.agency
+					.setFilters(new Filter[] { new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL) });
 
 		} else {
 
@@ -324,10 +325,11 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	// Getting the approved collateral setup values from search object and adding the newly created collateral setup list
-	public void setCollateralTypeList(List<CollateralAssignment> collateralAsssignments, List<CollateralSetup> collateralSetupList) {
-		
-		
-		collateralSetupList = getCollateralSetupFetchingService().getResultantCollateralsList(collateralAsssignments, collateralSetupList);
+	public void setCollateralTypeList(List<CollateralAssignment> collateralAsssignments,
+			List<CollateralSetup> collateralSetupList) {
+
+		collateralSetupList = getCollateralSetupFetchingService().getResultantCollateralsList(collateralAsssignments,
+				collateralSetupList);
 
 		StringBuilder whereClause = new StringBuilder();
 		if (collateralRefList.length() > 0) {
@@ -350,7 +352,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		this.collateral.setList(collateralSetupSearchList);
 	}
-		
+
 	public void onChangeCollateral(ForwardEvent event) throws Exception {
 		Object dataObject = this.collateral.getObject();
 		if (dataObject != null) {
@@ -456,7 +458,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		this.collateral.setAttribute("collateralType", aVerification.getReferenceType());
-		
+
 		setCollateralTypeList(getFinanceDetail().getCollateralAssignmentList(), getFinanceDetail().getCollaterals());
 
 		if (initiation) {
@@ -775,7 +777,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(verification);
-			
+
 			getLegalVerificationListCtrl().setLvInitiationDialogCtrl(this);
 
 			doCheckEnquiry();
@@ -1364,6 +1366,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setLegalVerificationListCtrl(LVerificationCtrl lVerificationCtrl) {
 		this.lVerificationCtrl = lVerificationCtrl;
 	}
+
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
@@ -1379,5 +1382,5 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
 	}
-	
+
 }

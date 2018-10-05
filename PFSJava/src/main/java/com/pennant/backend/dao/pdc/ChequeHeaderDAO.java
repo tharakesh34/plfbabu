@@ -46,9 +46,9 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface ChequeHeaderDAO {
-	
+
 	ChequeHeader getChequeHeader(long headerId, String type);
-	
+
 	ChequeHeader getChequeHeader(String finReference, String type);
 
 	String save(ChequeHeader chequeHeader, TableType tableType);
@@ -56,9 +56,9 @@ public interface ChequeHeaderDAO {
 	void update(ChequeHeader chequeHeader, TableType tableType);
 
 	void delete(ChequeHeader chequeHeader, TableType tableType);
-	
+
 	void deleteByFinRef(String finRef, TableType tableType);
-	
+
 	boolean isDuplicateKey(long headerID, String finRef, TableType tableType);
 
 	ChequeHeader getChequeHeaderByRef(String finReference, String type);

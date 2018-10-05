@@ -1381,5 +1381,4 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
-
 }

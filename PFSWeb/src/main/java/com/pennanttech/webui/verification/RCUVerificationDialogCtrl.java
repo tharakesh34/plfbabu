@@ -130,7 +130,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_RCUVerificationDialog);
-		
+
 		if (arguments.get("finHeaderList") != null) {
 			appendFinBasicDetails(arguments.get("finHeaderList"));
 		}
@@ -143,8 +143,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		if (arguments.containsKey("financeMainBaseCtrl")) {
-				((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setRcuVerificationDialogCtrl(this);
-		}else{
+			((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setRcuVerificationDialogCtrl(this);
+		} else {
 			finBasicdetails.setVisible(false);
 		}
 
@@ -185,7 +185,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (collaterls != null) {
-			setDocumentDetails(getCollateralDocuments(collaterls, financeDetail.getCollaterals()), DocumentType.COLLATRL);
+			setDocumentDetails(getCollateralDocuments(collaterls, financeDetail.getCollaterals()),
+					DocumentType.COLLATRL);
 		}
 
 		renderVerifications();
@@ -358,7 +359,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 
 					entrySet.getValue().setDocName(docName);
-					
+
 					//set Last Verification Details
 					if (initType) {
 						verificationService.setLastStatus(entrySet.getValue());
@@ -750,7 +751,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		renderVerifications();
 	}
 
-	public void addCollateralDocuments(List<CollateralAssignment> collaterals, List<CollateralSetup> collateralSetupList) {
+	public void addCollateralDocuments(List<CollateralAssignment> collaterals,
+			List<CollateralSetup> collateralSetupList) {
 		collateralDocuments.clear();
 		if (collaterals != null) {
 			setDocumentDetails(getCollateralDocuments(collaterals, collateralSetupList), DocumentType.COLLATRL);
@@ -769,7 +771,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return loanDocs;
 	}
 
-	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals, List<CollateralSetup> collateralSetupList) {
+	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals,
+			List<CollateralSetup> collateralSetupList) {
 		return getCollateralSetupFetchingService().getCollateralDocuments(collaterals, collateralSetupList, true);
 	}
 
@@ -1425,7 +1428,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		doClearMessage();
-		if(!recSave){
+		if (!recSave) {
 			doSetValidation();
 		}
 
@@ -1512,7 +1515,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					newverifications.add(verification);
 				}
 			}
-			
+
 			//group documents for new verifications by agency
 			for (Verification newVrf : newverifications) {
 				for (Verification vrf : this.verification.getVerifications()) {
@@ -1589,5 +1592,5 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
 	}
-	
+
 }

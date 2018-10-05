@@ -33,7 +33,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> implements LegalVerificationDAO {
-	private static Logger logger = LogManager.getLogger(LegalVerificationDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(LegalVerificationDAOImpl.class);
 
 	public LegalVerificationDAOImpl() {
 		super();

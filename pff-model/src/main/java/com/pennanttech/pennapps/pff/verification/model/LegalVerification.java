@@ -330,5 +330,4 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-
 }

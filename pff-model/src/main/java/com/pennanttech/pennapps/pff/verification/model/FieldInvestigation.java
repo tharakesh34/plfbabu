@@ -57,7 +57,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private String countryDesc;
 	private String provinceDesc;
 	private String cityDesc;
-	
+
 	private Date verifiedDate;
 	private String agentCode;
 	private String agentName;
@@ -74,7 +74,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private Long custId;
 	private Long agencyId;
 	private String agencyName;
-	private List<DocumentDetails> documents					= null;
+	private List<DocumentDetails> documents = null;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -86,7 +86,6 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
 
 	public FieldInvestigation() {
 		super();
@@ -502,5 +501,5 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-	
+
 }

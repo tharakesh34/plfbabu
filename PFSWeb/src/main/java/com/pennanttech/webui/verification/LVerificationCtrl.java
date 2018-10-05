@@ -153,11 +153,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		if (arguments.containsKey("financeMainBaseCtrl")) {
-				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
-		}else{
+			financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		} else {
 			finBasicdetails.setVisible(false);
 		}
-		
+
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
@@ -594,9 +594,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void addCollateralDocuments(List<CollateralAssignment> collateralAsssignments, FinanceDetail financeDetails) {
+	public void addCollateralDocuments(List<CollateralAssignment> collateralAsssignments,
+			FinanceDetail financeDetails) {
 		collateralDocuments.clear();
-		List<DocumentDetails> documents = getCollateralSetupFetchingService().getCollateralDocuments(collateralAsssignments, financeDetails.getCollaterals(), false);
+		List<DocumentDetails> documents = getCollateralSetupFetchingService()
+				.getCollateralDocuments(collateralAsssignments, financeDetails.getCollaterals(), false);
 
 		for (DocumentDetails document : documents) {
 			LVDocument lvDocument = new LVDocument();
@@ -611,10 +613,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 		if (getLvInitiationDialogCtrl() != null) {
 			getLvInitiationDialogCtrl().setCollateralTypeList(collateralAsssignments, financeDetails.getCollaterals());
-			setupdatedFinanceData(collateralAsssignments,financeDetails);
+			setupdatedFinanceData(collateralAsssignments, financeDetails);
 		}
 		if (getCollateralHeaderDialogCtrl() != null) {
-			setupdatedFinanceData(getCollateralHeaderDialogCtrl().getCollateralAssignments(), getCollateralHeaderDialogCtrl().getFinanceDetail());
+			setupdatedFinanceData(getCollateralHeaderDialogCtrl().getCollateralAssignments(),
+					getCollateralHeaderDialogCtrl().getFinanceDetail());
 		}
 	}
 
@@ -1130,7 +1133,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		this.recSave = recSave;
 		this.userAction = userAction;
 		doClearMessage();
-		if(!recSave){
+		if (!recSave) {
 			doSetValidation();
 		}
 
@@ -1280,8 +1283,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		verification.setReference(customer.getCustCIF());
 		verification.setCreatedOn(DateUtility.getAppDate());
 	}
-	
-	private void setupdatedFinanceData(List<CollateralAssignment> collateralAsssignments, FinanceDetail financeDetails) {
+
+	private void setupdatedFinanceData(List<CollateralAssignment> collateralAsssignments,
+			FinanceDetail financeDetails) {
 		this.financeDetail.setCollateralAssignmentList(collateralAsssignments);
 		this.financeDetail.setCollaterals(financeDetails.getCollaterals());
 	}

@@ -40,7 +40,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	// Save RiskContainmentUnit in verification_rcu Based on tableType.
 	@Override
 	public String save(RiskContainmentUnit rcu, TableType tableType) {// Prepare
-																		// the
+																			// the
 																		// SQL.
 		StringBuilder sql = new StringBuilder(" insert into verification_rcu");
 		sql.append(tableType.getSuffix());

@@ -43,8 +43,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>Verification</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>Verification</code> with set of CRUD operations.
  */
 public class VerificationDAOImpl extends BasicDao<Verification> implements VerificationDAO {
 	private static Logger logger = Logger.getLogger(VerificationDAOImpl.class);

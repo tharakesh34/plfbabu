@@ -44,5 +44,4 @@ public enum Module {
 		}
 		return list;
 	}
-
 }

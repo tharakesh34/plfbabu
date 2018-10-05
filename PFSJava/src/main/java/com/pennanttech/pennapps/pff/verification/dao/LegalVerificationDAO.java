@@ -11,15 +11,6 @@ import com.pennanttech.pff.core.TableType;
 
 public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 
-	/**
-	 * Fetch the Record LegalVerification by key field
-	 * 
-	 * @param id
-	 *            id of the LegalVerification.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return LegalVerification
-	 */
 	LegalVerification getLegalVerification(long verificationId, String type);
 
 	List<LVDocument> getLVDocuments(long id, String type);

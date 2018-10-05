@@ -16,7 +16,8 @@ import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
  * Item renderer for listitems in the listbox.
  * 
  */
-public class TechnicalVerificationListModelItemRenderer implements ListitemRenderer<TechnicalVerification>, Serializable {
+public class TechnicalVerificationListModelItemRenderer
+		implements ListitemRenderer<TechnicalVerification>, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public TechnicalVerificationListModelItemRenderer() {
@@ -26,36 +27,36 @@ public class TechnicalVerificationListModelItemRenderer implements ListitemRende
 	@Override
 	public void render(Listitem item, TechnicalVerification tv, int count) throws Exception {
 		Listcell lc;
-		
+
 		String customerName = tv.getCif();
 		if (StringUtils.trimToNull(tv.getCustName()) != null) {
 			customerName = customerName.concat(" - ").concat(tv.getCustName());
 		}
-		
+
 		lc = new Listcell(customerName);
 		lc.setParent(item);
-		
+
 		lc = new Listcell(tv.getCollateralType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(tv.getCollateralRef());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(tv.getKeyReference());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(tv.getAgencyName());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(DateUtility.formatToLongDate(tv.getCreatedOn()));
-	  	lc.setParent(item);
-		
+		lc.setParent(item);
+
 		lc = new Listcell(tv.getRecordStatus());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantJavaUtil.getLabel(tv.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", tv.getId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onTechnicalVerificationItemDoubleClicked");

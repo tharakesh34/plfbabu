@@ -116,7 +116,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -210,9 +210,9 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxRiskContainmentUnit.getSelectedItem();
 		final long verificationId = (long) selectedItem.getAttribute("verificationId");
-		
-		RiskContainmentUnit rcu=new RiskContainmentUnit();
-		
+
+		RiskContainmentUnit rcu = new RiskContainmentUnit();
+
 		rcu.setId(verificationId);
 		rcu = riskContainmentUnitService.getRiskContainmentUnit(rcu, "_View");
 

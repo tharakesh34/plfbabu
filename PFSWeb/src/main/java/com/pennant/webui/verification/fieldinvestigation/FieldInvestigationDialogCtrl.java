@@ -385,7 +385,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.reason.setAttribute("ReasonId", null);
 		} else {
 			ReasonCode details = (ReasonCode) dataObject;
-				this.reason.setAttribute("ReasonId", details.getId());
+			this.reason.setAttribute("ReasonId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -800,8 +800,9 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 					Labels.getLabel("label_FieldInvestigationDialog_Status.value"), FIStatus.getList(), true));
 		}
 		if (!this.reason.isReadonly()) {
-			this.reason.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FieldInvestigationDialog_Reason.value"), null, this.reason.isMandatory(), true));
+			this.reason
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_Reason.value"),
+							null, this.reason.isMandatory(), true));
 		}
 		if (!this.summaryRemarks.isReadonly()) {
 			this.summaryRemarks.setConstraint(

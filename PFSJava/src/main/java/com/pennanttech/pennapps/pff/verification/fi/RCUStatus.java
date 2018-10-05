@@ -43,5 +43,4 @@ public enum RCUStatus {
 		}
 		return list;
 	}
-
 }

@@ -280,5 +280,4 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-
 }
