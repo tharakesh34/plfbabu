@@ -23,55 +23,54 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class FinEODEvent implements Serializable {
-
-	private static final long			serialVersionUID		= 1183720618731771888L;
-	private FinanceMain					financeMain				= new FinanceMain();
-	private FinanceType					finType					= new FinanceType();
-	private List<FinanceScheduleDetail>	financeScheduleDetails	= new ArrayList<FinanceScheduleDetail>(1);
-	private List<RepayInstruction>		RepayInstructions		= new ArrayList<RepayInstruction>(1);
-	private FinanceProfitDetail			finProfitDetail			= new FinanceProfitDetail();
-	private List<FinODDetails>			finODDetails			= new ArrayList<FinODDetails>(1);
-	private List<OverdueChargeRecovery>	odcRecoveries			= new ArrayList<OverdueChargeRecovery>(1);
-	private FinODPenaltyRate			penaltyrate;
-	private List<FinanceDisbursement>	financeDisbursements	= new ArrayList<FinanceDisbursement>(1);
-	private List<FinFeeScheduleDetail>	finFeeScheduleDetails	= new ArrayList<FinFeeScheduleDetail>(1);
-	private List<FinSchFrqInsurance>	finSchFrqInsurances		= new ArrayList<FinSchFrqInsurance>(1);
-	private List<PresentmentDetail>		presentmentDetails		= new ArrayList<PresentmentDetail>(1);
-	private List<ReturnDataSet>			returnDataSet			= new ArrayList<ReturnDataSet>(1);
-	private List<Provision>				provisions				= new ArrayList<Provision>(1);
-	private Date						eventFromDate;
-	private Date						eventToDate;
-	private Date						recalFromDate;
-	private Date						recalToDate;
-	private String						recalType;
-	private String						recalSchdMethod;
-	private String						rateOnChgDate;
-
-	private boolean						rateReviewExist			= false;
-
-	private int							idxPD					= -1;
-	private int							idxGrcCpz				= -1;
-	private int							idxGrcPft				= -1;
-	private int							idxGrcPftRvw			= -1;
-	private int							idxRpyCpz				= -1;
-	private int							idxRpyPft				= -1;
-	private int							idxRpyPftRvw			= -1;
-	private int							idxRpy					= -1;
-	private int							idxDisb					= -1;
-	private int							idxDue					= -1;
-	private int							idxPresentment			= -1;
-
-	private boolean						updFinMain				= false;
-	private boolean						updFinSchdForRateRvw	= false;
-	private boolean						updRepayInstruct		= false;
-	private boolean						updLBDPostings			= false;
-	private boolean						updMonthEndPostings		= false;
-	private List<String>				finMainUpdateFields		= new ArrayList<String>(1);
+	private static final long serialVersionUID = 1183720618731771888L;
 	
-	private String						aMZMethod;
-	List<ProjectedAmortization> 		projectedAMZList 		= new ArrayList<ProjectedAmortization>(1);
-	List<ProjectedAccrual> 				ProjectedAccrualList 	= new ArrayList<ProjectedAccrual>(1);
+	private FinanceMain financeMain = new FinanceMain();
+	private FinanceType finType = new FinanceType();
+	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>(1);
+	private List<RepayInstruction> RepayInstructions = new ArrayList<RepayInstruction>(1);
+	private FinanceProfitDetail finProfitDetail = new FinanceProfitDetail();
+	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(1);
+	private List<OverdueChargeRecovery> odcRecoveries = new ArrayList<OverdueChargeRecovery>(1);
+	private FinODPenaltyRate penaltyrate;
+	private List<FinanceDisbursement> financeDisbursements = new ArrayList<FinanceDisbursement>(1);
+	private List<FinFeeScheduleDetail> finFeeScheduleDetails = new ArrayList<FinFeeScheduleDetail>(1);
+	private List<FinSchFrqInsurance> finSchFrqInsurances = new ArrayList<FinSchFrqInsurance>(1);
+	private List<PresentmentDetail> presentmentDetails = new ArrayList<PresentmentDetail>(1);
+	private List<ReturnDataSet> returnDataSet = new ArrayList<ReturnDataSet>(1);
+	private List<Provision> provisions = new ArrayList<Provision>(1);
+	private Date eventFromDate;
+	private Date eventToDate;
+	private Date recalFromDate;
+	private Date recalToDate;
+	private String recalType;
+	private String recalSchdMethod;
+	private String rateOnChgDate;
 
+	private boolean rateReviewExist = false;
+
+	private int idxPD = -1;
+	private int idxGrcCpz = -1;
+	private int idxGrcPft = -1;
+	private int idxGrcPftRvw = -1;
+	private int idxRpyCpz = -1;
+	private int idxRpyPft = -1;
+	private int idxRpyPftRvw = -1;
+	private int idxRpy = -1;
+	private int idxDisb = -1;
+	private int idxDue = -1;
+	private int idxPresentment = -1;
+
+	private boolean updFinMain = false;
+	private boolean updFinSchdForRateRvw = false;
+	private boolean updRepayInstruct = false;
+	private boolean updLBDPostings = false;
+	private boolean updMonthEndPostings = false;
+	private List<String> finMainUpdateFields = new ArrayList<String>(1);
+
+	private String aMZMethod;
+	List<ProjectedAmortization> projectedAMZList = new ArrayList<ProjectedAmortization>(1);
+	List<ProjectedAccrual> ProjectedAccrualList = new ArrayList<ProjectedAccrual>(1);
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -400,7 +399,7 @@ public class FinEODEvent implements Serializable {
 	public String getAMZMethod() {
 		return aMZMethod;
 	}
-	
+
 	public void setAMZMethod(String aMZMethod) {
 		this.aMZMethod = aMZMethod;
 	}
@@ -412,6 +411,7 @@ public class FinEODEvent implements Serializable {
 	public void setProjectedAMZList(List<ProjectedAmortization> projectedAMZList) {
 		this.projectedAMZList = projectedAMZList;
 	}
+
 	public List<ProjectedAccrual> getProjectedAccrualList() {
 		return ProjectedAccrualList;
 	}
@@ -419,7 +419,7 @@ public class FinEODEvent implements Serializable {
 	public void setProjectedAccrualList(List<ProjectedAccrual> projectedAccrualList) {
 		ProjectedAccrualList = projectedAccrualList;
 	}
-	
+
 	public void destroy() {
 		this.financeMain = null;
 		this.finType = null;
