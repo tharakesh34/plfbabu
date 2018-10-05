@@ -10655,4 +10655,9 @@ SELECT t1.finreference,
      LEFT JOIN secroles t4 ON t1.nextrolecode = t4.rolecd
      </createView>
 </changeSet>
+	<changeSet id="131" author="Sriram">
+		<createTable tableName="SOA_FINTYPES">
+			<column name="FinType" type="Varchar(10)"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
