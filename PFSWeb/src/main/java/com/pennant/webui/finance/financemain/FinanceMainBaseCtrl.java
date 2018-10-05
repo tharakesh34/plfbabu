@@ -12092,16 +12092,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				aFinanceSchData.setFinanceScheduleDetails(sortSchdDetails(aFinanceSchData.getFinanceScheduleDetails()));
-				//Reset Grace period End Date while Change Frequency Option
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
-					for (int i = 0; i < aFinanceSchData.getFinanceScheduleDetails().size(); i++) {
-						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
-						if (curSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
-							aFinanceMain.setGrcPeriodEndDate(curSchd.getSchDate());
-						}
-					}
-				}
-
 			}
 
 			aFinanceMain.setEqualRepay(financeType.isEqualRepayment());
@@ -15582,6 +15572,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
+		}else if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGFRQ)){
+
+			FinanceMain main = scheduleData.getFinanceMain();
+			this.gracePeriodEndDate.setText("");
+			this.gracePeriodEndDate_two.setValue(main.getGrcPeriodEndDate());
+			this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
+			
+			this.graceTerms_Two.setValue(main.getGraceTerms());
+			this.oldVar_graceTerms = this.graceTerms_Two.intValue();
 		}
 
 		//Setting Total Disbursements as of Date

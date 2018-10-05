@@ -3779,7 +3779,6 @@ public class ScheduleCalculator {
 
 		BigDecimal calIntFraction = BigDecimal.ZERO;
 		BigDecimal calInt = BigDecimal.valueOf(0.0);
-		Date derivedMDT = finMain.getMaturityDate();
 		int advEMITerms = finMain.getAdvEMITerms();
 
 		String repayRateBasis = finMain.getRepayRateBasis();
@@ -3789,6 +3788,7 @@ public class ScheduleCalculator {
 
 		List<FinanceScheduleDetail> schdDetails = finScheduleData.getFinanceScheduleDetails();
 		int schdDetailsSize = schdDetails.size();
+		Date derivedMDT = schdDetails.get(schdDetailsSize - 1).getSchDate();
 		
 		// FIND LAST REPAYMENT SCHEDULE DATE
 		int schdIndex = finMain.getSchdIndex();

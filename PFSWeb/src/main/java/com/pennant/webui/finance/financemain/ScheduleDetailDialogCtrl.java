@@ -893,7 +893,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				if (i != 0 && !termsCountCompleted) {
 					if (curSchd.getSchDate().compareTo(grcEndDate) <= 0) {
-						if (curSchd.isPftOnSchDate()) {
+						if (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 							totGrcTerms = totGrcTerms + 1;
 						}
 					} else {
@@ -1009,6 +1009,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (getFinanceMainDialogCtrl() != null) {
 				try {
 
+					aFinSchData.getFinanceMain().setGraceTerms(totGrcTerms);
+					aFinSchData.getFinanceMain().setNumberOfTerms(totRepayTerms);
 					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
 					if (financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)

@@ -121,7 +121,14 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			if(DateUtility.getDaysBetween(newDate.getTime(), prvSchdate) <= 15){
 				newDate.add(Calendar.MONTH,1);
 			}
-			curSchd.setSchDate(DateUtility.getDBDate(DateUtility.formatUtilDate(newDate.getTime(),PennantConstants.DBDateFormat)));
+			
+			Date curSchDate = DateUtility.getDBDate(DateUtility.formatUtilDate(newDate.getTime(),PennantConstants.DBDateFormat));
+			while (prvSchdate.compareTo(curSchDate) >= 0) {
+				newDate.add(Calendar.MONTH,1);
+				curSchDate = DateUtility.getDBDate(DateUtility.formatUtilDate(newDate.getTime(),PennantConstants.DBDateFormat));
+			}
+			
+			curSchd.setSchDate(curSchDate);
 			curSchd.setDefSchdDate(curSchd.getSchDate());
 			curSchd.setDisbOnSchDate(false);
 			curSchd.setDisbAmount(BigDecimal.ZERO);
