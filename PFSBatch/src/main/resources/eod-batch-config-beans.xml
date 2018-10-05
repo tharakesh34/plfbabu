@@ -390,6 +390,9 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>	
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 	</bean>
 	<bean id="repayPostingUtil" class="com.pennant.app.util.RepaymentPostingsUtil" scope="prototype">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />

@@ -24,6 +24,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -44,6 +45,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
@@ -66,6 +68,7 @@ import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -103,6 +106,7 @@ public class RepaymentProcessUtil {
 	private PostingsDAO					postingsDAO;
 	private FinFeeDetailService			finFeeDetailService;
 	private FinanceTaxDetailDAO			financeTaxDetailDAO;
+	private CustomerAddresDAO			customerAddresDAO;
 	
 	//GST Invoice Report changes
 	private GSTInvoiceTxnService				gstInvoiceTxnService;
@@ -126,7 +130,7 @@ public class RepaymentProcessUtil {
 	@SuppressWarnings("unchecked")
 	public void calcualteAndPayReceipt(FinanceMain financeMain, Customer customer,
 			List<FinanceScheduleDetail> scheduleDetails, List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail,
-			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate,Date postDate) throws IllegalAccessException,
+			FinReceiptHeader receiptHeader, FinanceType financeType, Date valuedate,Date postDate) throws IllegalAccessException,
 			InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
@@ -182,7 +186,7 @@ public class RepaymentProcessUtil {
 
 			List<FinRepayHeader> repayHeaderList = new ArrayList<>();
 			List<RepayScheduleDetail> pastdueRpySchdList = new ArrayList<>();
-			char[] rpyOrder = repayHierarchy.replace("CS", "C").toCharArray();
+			char[] rpyOrder = financeType.getRpyHierarchy().replace("CS", "C").toCharArray();
 			BigDecimal totPriPaidNow = BigDecimal.ZERO;
 			BigDecimal totPftPaidNow = BigDecimal.ZERO;
 			BigDecimal totLPftPaidNow = BigDecimal.ZERO;
@@ -371,8 +375,15 @@ public class RepaymentProcessUtil {
 		for (FinReceiptDetail receiptDetail : receiptDetails) {
 			receiptDetail.setReceiptID(receiptId);
 		}
+		
+		FinanceDetail detail = new FinanceDetail();
+		detail.getFinScheduleData().setFinanceMain(financeMain);
+		detail.getFinScheduleData().setFinanceType(financeType);
+		detail.setCustomerDetails(new CustomerDetails());
+		detail.getCustomerDetails().setCustomer(customer);
+		
 		List<Object> returnList = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
-				valuedate,postDate, null);
+				valuedate,postDate, detail);
 		
 		scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(0);
 		
@@ -469,7 +480,7 @@ public class RepaymentProcessUtil {
 		boolean executePftChg = true;
 		
 		// GST parameters
-		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		String fromBranchCode = financeMain.getFinBranch();
 
 		String custDftBranch = null;
 		String highPriorityState = null;
@@ -485,6 +496,13 @@ public class RepaymentProcessUtil {
 						highPriorityCountry = customerAddres.getCustAddrCountry();
 						break;
 					}
+				}
+			}else{
+				// Fetch High priority Address
+				CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(financeMain.getCustID(), "");
+				if(addres != null){
+					highPriorityState = addres.getCustAddrProvince();
+					highPriorityCountry = addres.getCustAddrCountry();
 				}
 			}
 		}
@@ -2114,5 +2132,13 @@ public class RepaymentProcessUtil {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public CustomerAddresDAO getCustomerAddresDAO() {
+		return customerAddresDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 }

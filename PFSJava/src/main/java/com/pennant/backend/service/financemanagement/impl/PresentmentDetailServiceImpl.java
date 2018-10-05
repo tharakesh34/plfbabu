@@ -602,7 +602,7 @@ public void processReceipts(PresentmentDetail presentmentDetail) throws Exceptio
 		FinanceProfitDetail profitDetail=profitDetailsDAO.getFinProfitDetailsById(presentmentDetail.getFinReference());
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null, profitDetail, header,
-				financeType.getRpyHierarchy(), DateUtility.getAppDate(),DateUtility.getAppDate());
+				financeType, DateUtility.getAppDate(),DateUtility.getAppDate());
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}

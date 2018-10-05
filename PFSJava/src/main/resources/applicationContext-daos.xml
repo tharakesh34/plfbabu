@@ -5348,6 +5348,7 @@
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>	
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
