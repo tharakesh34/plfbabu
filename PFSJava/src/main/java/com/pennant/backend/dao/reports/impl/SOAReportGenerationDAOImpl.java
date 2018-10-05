@@ -113,7 +113,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType, FixedRateTenor,");
-		selectSql.append(" FixedTenorRate, NumberOfTerms, RepayProfitRate FROM  FinanceMain Where FinReference = :FinReference");
+		selectSql.append(" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin ");
+		selectSql.append(" FROM  FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		
@@ -145,7 +146,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		
 
 		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, DisbOnSchDate, RepayAmount");
-		selectSql.append(" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ProfitSchd");
+		selectSql.append(" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ProfitSchd, CalculatedRate");
 		selectSql.append(" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid FROM FINSCHEDULEDETAILS");
 		selectSql.append(" Where FinReference = :FinReference");
 

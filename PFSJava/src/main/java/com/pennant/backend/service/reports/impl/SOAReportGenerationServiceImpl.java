@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RateUtil;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
@@ -435,7 +436,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			sOATransactionReport.setToDate(endDate);
 			finalSOATransactionReports.add(sOATransactionReport);
 		}
+		//Displaying Interest Rate And months for LAN.  	
+		BigDecimal calrate = BigDecimal.ZERO;
 		List<InterestRateDetail> interestRateDetails = new ArrayList<>();
+		if(StringUtils.isNotBlank(finMain.getRepayBaseRate())){
+			calrate = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(), 
+					finMain.getRepayMargin(), finMain.getRpyMinRate(), finMain.getRpyMaxRate()).getNetRefRateLoan();
+		}else{
+			calrate = finMain.getRepayProfitRate();
+		}
 		if (finMain.getFixedRateTenor() > 0) {
 			int noOfMonths = DateUtility.getMonthsBetween(finMain.getFinStartDate(), fixedEndDate);
 			statementOfAccount.setIntRateType("Fixed and Floating");
@@ -449,18 +458,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			InterestRateDetail floatDetail = new InterestRateDetail();
 			floatDetail.setFormTenure(finMain.getFixedRateTenor() + 1);
-			floatDetail.setToTenure(finMain.getNumberOfTerms());
+			floatDetail.setToTenure(financeProfitDetail.getNOInst());
 			floatDetail.setInterestType("Float");
-			floatDetail.setInterestRate(finMain.getRepayProfitRate());
+			floatDetail.setInterestRate(calrate);
 			floatDetail.setNoOfMonths(financeProfitDetail.getTotalTenor() - noOfMonths);
 			interestRateDetails.add(floatDetail);
 		} else {
 			statementOfAccount.setIntRateType("Floating");
 			InterestRateDetail detail = new InterestRateDetail();
 			detail.setFormTenure(finMain.getFixedRateTenor() + 1);
-			detail.setToTenure(finMain.getNumberOfTerms());
+			detail.setToTenure(financeProfitDetail.getNOInst());
 			detail.setInterestType("Float");
-			detail.setInterestRate(finMain.getRepayProfitRate());
+			detail.setInterestRate(calrate);
 			detail.setNoOfMonths(financeProfitDetail.getTotalTenor());
 			interestRateDetails.add(detail);
 		}
@@ -477,6 +486,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Co-Applicant/Borrower Details
 		statementOfAccount.setApplicantDetails(applicantDetails);
 
+		//Interest Rate Details
+		statementOfAccount.setInterestRateDetails(interestRateDetails);
+				
+		
 		logger.debug("Leaving");
 		return statementOfAccount;
 	}
@@ -765,7 +778,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Fin Schedule details
 		String finSchedulePayable = "Amount Financed - Payable ";//Add Disbursement  1
 
-		String brokenPeriodEvent = "Broken Period Interest Receivable- Due "; //6
+		String brokenPeriodEvent = "Broken Period Interest Receivable "; //6
 		String foreclosureAmount = "Foreclosure Amount "; //19
 		String dueForInstallment = "Due for Installment "; //3
 		String partPrepayment = "Part Prepayment Amount "; //5
