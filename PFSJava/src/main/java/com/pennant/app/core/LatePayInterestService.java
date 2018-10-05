@@ -34,6 +34,7 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,7 +67,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
-		BigDecimal lpiMargin = pastduePftMargin.divide(new BigDecimal(100));
+		BigDecimal lpiMargin = pastduePftMargin.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
@@ -148,6 +149,7 @@ public class LatePayInterestService extends ServiceHelper {
 			BigDecimal penaltyRate = getPenaltyRate(finScheduleDetails, dateCur, lpiMargin);
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), idb,
 					penaltyRate);
+			penalty = CalculationUtil.roundAmount(penalty, roundingMode, roundingTarget);
 
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
