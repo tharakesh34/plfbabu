@@ -4911,6 +4911,9 @@ public class ScheduleCalculator {
 
 		if (DateUtility.compare(bpiDate, firstSchdDate) >= 0) {
 			finScheduleData.getFinanceScheduleDetails().get(1).setBpiOrHoliday(FinanceConstants.FLAG_BPI);
+			if(StringUtils.isNotEmpty(finMain.getBpiPftDaysBasis())){
+				finScheduleData.getFinanceScheduleDetails().get(1).setPftDaysBasis(finMain.getBpiPftDaysBasis());
+			}
 
 			if (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)) {
 				finScheduleData.getFinanceScheduleDetails().get(1).setPftOnSchDate(false);
