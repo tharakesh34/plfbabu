@@ -71,7 +71,9 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.tax/FinanceTaxDetail/FinanceTaxDetailList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.tax/FinanceTaxDetail/FinanceTaxDetailList.zul
+ * file.
  * 
  */
 public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> {
@@ -97,19 +99,19 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 	// Search Fields
 	protected Textbox finReference; // autowired
-    protected Combobox applicableFor; // autowired
+	protected Combobox applicableFor; // autowired
 	protected Checkbox taxExempted; // autowired
 	protected Textbox taxNumber; // autowired
 	protected Textbox city; // autowired
 	protected Textbox pinCode; // autowired
-	
+
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_ApplicableFor;
 	protected Listbox sortOperator_TaxExempted;
 	protected Listbox sortOperator_TaxNumber;
 	protected Listbox sortOperator_City;
 	protected Listbox sortOperator_PinCode;
-	
+
 	private transient FinanceTaxDetailService financeTaxDetailService;
 
 	/**
@@ -129,7 +131,8 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -137,20 +140,26 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	public void onCreate$window_FinanceTaxDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_FinanceTaxDetailList, borderLayout_FinanceTaxDetailList, listBoxFinanceTaxDetail, pagingFinanceTaxDetailList);
+		setPageComponents(window_FinanceTaxDetailList, borderLayout_FinanceTaxDetailList, listBoxFinanceTaxDetail,
+				pagingFinanceTaxDetailList);
 		setItemRender(new FinanceTaxDetailListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_FinanceTaxDetailList_FinanceTaxDetailSearch);
-		registerButton(button_FinanceTaxDetailList_NewFinanceTaxDetail, "button_FinanceTaxDetailList_NewFinanceTaxDetail", true);
+		registerButton(button_FinanceTaxDetailList_NewFinanceTaxDetail,
+				"button_FinanceTaxDetailList_NewFinanceTaxDetail", true);
 
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
-		registerField("applicableFor", listheader_ApplicableFor, SortOrder.NONE, applicableFor, sortOperator_ApplicableFor, Operators.STRING);
-		registerField("taxExempted", listheader_TaxExempted, SortOrder.NONE, taxExempted, sortOperator_TaxExempted, Operators.BOOLEAN);
-		registerField("taxNumber", listheader_TaxNumber, SortOrder.NONE, taxNumber, sortOperator_TaxNumber, Operators.STRING);
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
+				Operators.STRING);
+		registerField("applicableFor", listheader_ApplicableFor, SortOrder.NONE, applicableFor,
+				sortOperator_ApplicableFor, Operators.STRING);
+		registerField("taxExempted", listheader_TaxExempted, SortOrder.NONE, taxExempted, sortOperator_TaxExempted,
+				Operators.BOOLEAN);
+		registerField("taxNumber", listheader_TaxNumber, SortOrder.NONE, taxNumber, sortOperator_TaxNumber,
+				Operators.STRING);
 		registerField("city", listheader_City, SortOrder.NONE, city, sortOperator_City, Operators.STRING);
 		registerField("pinCode", listheader_PinCode, SortOrder.NONE, pinCode, sortOperator_PinCode, Operators.STRING);
-		
+
 		fillComboBox(applicableFor, "", PennantStaticListUtil.getTaxApplicableFor(), "");
 
 		// Render the page and display the data.
@@ -160,7 +169,8 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -170,7 +180,8 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -181,7 +192,8 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button.
+	 * Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -199,10 +211,9 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
+	 * The framework calls this event handler when user opens a record to view
+	 * it's details. Show the dialog page with the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -210,7 +221,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 	public void onFinanceTaxDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinanceTaxDetail.getSelectedItem();
 		final String finReference = (String) selectedItem.getAttribute("finReference");
@@ -220,13 +231,13 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  FinReference = '");
-		whereCond.append( financetaxdetail.getFinReference());
+		whereCond.append(financetaxdetail.getFinReference());
 		whereCond.append("' AND  version=");
 		whereCond.append(financetaxdetail.getVersion());
-	
+
 		if (doCheckAuthority(financetaxdetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && financetaxdetail.getWorkflowId() == 0) {
@@ -236,10 +247,10 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -252,9 +263,10 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("financeTaxDetail", financetaxdetail);
 		arg.put("financeTaxDetailListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -264,7 +276,8 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
+	 * The framework calls this event handler when user clicks the print button
+	 * to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -282,7 +295,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

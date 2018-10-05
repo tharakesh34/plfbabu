@@ -55,15 +55,24 @@ import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 public interface FinanceTaxDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceTaxDetail getFinanceTaxDetail(String finReference);
+
 	FinanceTaxDetail getApprovedFinanceTaxDetail(String finReference);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);
+
 	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
+
 	Customer getCustomerByID(long id);
+
 	AuditDetail gstNumbeValidation(AuditDetail auditDetail, FinanceTaxDetail financeTaxDetail);
 }

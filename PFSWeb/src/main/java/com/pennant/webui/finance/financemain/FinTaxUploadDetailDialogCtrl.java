@@ -61,39 +61,38 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader> {
 
-	private static final long					serialVersionUID			= 1L;
-	private final static Logger					logger						= Logger
-			.getLogger(FinTaxUploadDetailDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private final static Logger logger = Logger.getLogger(FinTaxUploadDetailDialogCtrl.class);
 
-	private FinTaxUploadDetailListCtrl			finTaxUploadDetailListCtrl	= null;	// over
-	protected Window							window_FinTaxUploadDetail;			// autoWired
-	protected Label								fileUpload;							// autoWired
-	protected Button							btnUpload;							// autoWired
+	private FinTaxUploadDetailListCtrl finTaxUploadDetailListCtrl = null; // over
+	protected Window window_FinTaxUploadDetail; // autoWired
+	protected Label fileUpload; // autoWired
+	protected Button btnUpload; // autoWired
 
-	protected Button							btnSave;							// autowired
-	protected Button							btnCancel;							// autowired
-	protected Textbox							uploadedfileName;
-	protected Grid								grid_UploadedDetails;
-	protected Label								recordStatus;
-	protected Borderlayout						borderLayout_FinTaxUploadDetail;	// autoWired
-	protected Listbox							listBoxFileData;
-	protected Checkbox							select;
+	protected Button btnSave; // autowired
+	protected Button btnCancel; // autowired
+	protected Textbox uploadedfileName;
+	protected Grid grid_UploadedDetails;
+	protected Label recordStatus;
+	protected Borderlayout borderLayout_FinTaxUploadDetail; // autoWired
+	protected Listbox listBoxFileData;
+	protected Checkbox select;
 
-	protected Label								fileName;
-	protected Label								totalNoofRecords;
-	protected Label								batchCreationDate;
-	protected Label								batchApprovedDate;
-	protected Label								status;
-	protected Listheader						listheader_Select;
-	private FinTaxUploadHeader					finTaxUploadHeader;
-	private Media								media;
-	protected Button							button_ErrorDetails;				// autoWired
-	protected Label								label_FinTaxUploadDialog_Errors;
-	private AuditHeader							retAuditHeader;
+	protected Label fileName;
+	protected Label totalNoofRecords;
+	protected Label batchCreationDate;
+	protected Label batchApprovedDate;
+	protected Label status;
+	protected Listheader listheader_Select;
+	private FinTaxUploadHeader finTaxUploadHeader;
+	private Media media;
+	protected Button button_ErrorDetails; // autoWired
+	protected Label label_FinTaxUploadDialog_Errors;
+	private AuditHeader retAuditHeader;
 
-	private transient FinTaxUploadDetailService	finTaxUploadDetailService;
+	private transient FinTaxUploadDetailService finTaxUploadDetailService;
 
-	private boolean								isvalidData					= true;
+	private boolean isvalidData = true;
 
 	@Override
 	protected void doSetProperties() {
@@ -113,7 +112,8 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			this.finTaxUploadDetailListCtrl = (FinTaxUploadDetailListCtrl) arguments.get("finTaxUploadDetailListCtrl");
 
 			/*
-			 * if (this.finTaxUploadHeader == null) { throw new Exception(Labels.getLabel("error.unhandled")); }
+			 * if (this.finTaxUploadHeader == null) { throw new
+			 * Exception(Labels.getLabel("error.unhandled")); }
 			 */
 
 			// Store the before image.
@@ -432,7 +432,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		List<FinTaxUploadDetail> finTaxUploadDetailList = new ArrayList<>();
 		String userAction = this.userAction.getSelectedItem().getLabel();
 
-		//validate  once before save
+		// validate once before save
 		if (this.listBoxFileData.getItems().isEmpty()) {
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
@@ -529,7 +529,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		FinTaxUploadDetail finTaxUploadDetail;
 		int seqno = 0;
 
-		//fill the header data
+		// fill the header data
 		afinTaxUploadHeader.setFileName(this.fileName.getValue());
 		afinTaxUploadHeader.setNumberofRecords(Integer.parseInt(this.totalNoofRecords.getValue()));
 		afinTaxUploadHeader.setBatchCreatedDate(DateUtility.getAppDate());
@@ -556,7 +556,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		} else {
 
-			//Iterate through the list items to set the statuses
+			// Iterate through the list items to set the statuses
 			for (Listitem listitem : Listitems) {
 				finTaxUploadDetail = (FinTaxUploadDetail) listitem.getAttribute("data");
 				finTaxUploadDetail.setRecordType(PennantConstants.RCD_ADD);

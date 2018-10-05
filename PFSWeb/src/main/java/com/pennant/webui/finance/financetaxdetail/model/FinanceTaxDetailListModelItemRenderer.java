@@ -66,28 +66,29 @@ public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<F
 	public FinanceTaxDetailListModelItemRenderer() {
 		super();
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceTaxDetail financeTaxDetail, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(financeTaxDetail.getFinReference());
+		lc = new Listcell(financeTaxDetail.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(financeTaxDetail.getApplicableFor(), PennantStaticListUtil.getTaxApplicableFor()));
-	  	lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.getlabelDesc(financeTaxDetail.getApplicableFor(),
+				PennantStaticListUtil.getTaxApplicableFor()));
+		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbTaxExempted = new Checkbox();
 		cbTaxExempted.setDisabled(true);
 		cbTaxExempted.setChecked(financeTaxDetail.isTaxExempted());
 		lc.appendChild(cbTaxExempted);
 		lc.setParent(item);
-	  	lc = new Listcell(financeTaxDetail.getTaxNumber());
+		lc = new Listcell(financeTaxDetail.getTaxNumber());
 		lc.setParent(item);
-	  	lc = new Listcell(financeTaxDetail.getCity());
+		lc = new Listcell(financeTaxDetail.getCity());
 		lc.setParent(item);
-	  	lc = new Listcell(financeTaxDetail.getPinCode());
+		lc = new Listcell(financeTaxDetail.getPinCode());
 		lc.setParent(item);
-	  	lc = new Listcell(financeTaxDetail.getRecordStatus());
+		lc = new Listcell(financeTaxDetail.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(financeTaxDetail.getRecordType()));
 		lc.setParent(item);

@@ -66,41 +66,41 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
-	@XmlElement(name="applicableFor")
+	@XmlElement(name = "applicableFor")
 	private String applicableFor;
-	private long  	taxCustId;
+	private long taxCustId;
 	private boolean taxExempted;
-	@XmlElement(name="gstNumber")
+	@XmlElement(name = "gstNumber")
 	private String taxNumber;
-	@XmlElement(name="addrLine1")
+	@XmlElement(name = "addrLine1")
 	private String addrLine1;
-	@XmlElement(name="addrLine2")
+	@XmlElement(name = "addrLine2")
 	private String addrLine2;
-	@XmlElement(name="addrLine3")
+	@XmlElement(name = "addrLine3")
 	private String addrLine3;
-	@XmlElement(name="addrLine4")
+	@XmlElement(name = "addrLine4")
 	private String addrLine4;
-	@XmlElement(name="country")
+	@XmlElement(name = "country")
 	private String country;
 	private String countryName;
-	@XmlElement(name="province")
+	@XmlElement(name = "province")
 	private String province;
 	private String provinceName;
-	@XmlElement(name="city")
+	@XmlElement(name = "city")
 	private String city;
 	private String cityName;
-	@XmlElement(name="pinCode")
+	@XmlElement(name = "pinCode")
 	private String pinCode;
 	private String pinCodeName;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private FinanceTaxDetail befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	@XmlElement(name="cif")
+	private LoggedInUser userDetails;
+	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
 
@@ -117,8 +117,8 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("countryName");
 		excludeFields.add("provinceName");
 		excludeFields.add("cityName");
@@ -131,13 +131,15 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
 
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -145,6 +147,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getApplicableFor() {
 		return applicableFor;
 	}
+
 	public void setApplicableFor(String applicableFor) {
 		this.applicableFor = applicableFor;
 	}
@@ -152,6 +155,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public boolean isTaxExempted() {
 		return taxExempted;
 	}
+
 	public void setTaxExempted(boolean taxExempted) {
 		this.taxExempted = taxExempted;
 	}
@@ -159,6 +163,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getTaxNumber() {
 		return taxNumber;
 	}
+
 	public void setTaxNumber(String taxNumber) {
 		this.taxNumber = taxNumber;
 	}
@@ -166,6 +171,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getAddrLine1() {
 		return addrLine1;
 	}
+
 	public void setAddrLine1(String addrLine1) {
 		this.addrLine1 = addrLine1;
 	}
@@ -173,6 +179,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getAddrLine2() {
 		return addrLine2;
 	}
+
 	public void setAddrLine2(String addrLine2) {
 		this.addrLine2 = addrLine2;
 	}
@@ -180,6 +187,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getAddrLine3() {
 		return addrLine3;
 	}
+
 	public void setAddrLine3(String addrLine3) {
 		this.addrLine3 = addrLine3;
 	}
@@ -187,6 +195,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getAddrLine4() {
 		return addrLine4;
 	}
+
 	public void setAddrLine4(String addrLine4) {
 		this.addrLine4 = addrLine4;
 	}
@@ -194,6 +203,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -201,13 +211,15 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getCountryName() {
 		return this.countryName;
 	}
-	public void setCountryName (String countryName) {
+
+	public void setCountryName(String countryName) {
 		this.countryName = countryName;
 	}
 
 	public String getProvince() {
 		return province;
 	}
+
 	public void setProvince(String province) {
 		this.province = province;
 	}
@@ -215,13 +227,15 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getProvinceName() {
 		return this.provinceName;
 	}
-	public void setProvinceName (String provinceName) {
+
+	public void setProvinceName(String provinceName) {
 		this.provinceName = provinceName;
 	}
 
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
@@ -229,13 +243,15 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getCityName() {
 		return this.cityName;
 	}
-	public void setCityName (String cityName) {
+
+	public void setCityName(String cityName) {
 		this.cityName = cityName;
 	}
 
 	public String getPinCode() {
 		return pinCode;
 	}
+
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
 	}
@@ -243,7 +259,8 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public String getPinCodeName() {
 		return this.pinCodeName;
 	}
-	public void setPinCodeName (String pinCodeName) {
+
+	public void setPinCodeName(String pinCodeName) {
 		this.pinCodeName = pinCodeName;
 	}
 
@@ -263,19 +280,19 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public FinanceTaxDetail getBefImage(){
+	public FinanceTaxDetail getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(FinanceTaxDetail beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(FinanceTaxDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -306,5 +323,5 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	public void setTaxCustId(long taxCustId) {
 		this.taxCustId = taxCustId;
 	}
-	
+
 }
