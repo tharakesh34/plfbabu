@@ -67,28 +67,29 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implements FinanceTaxDetailDAO {
 	private static Logger logger = Logger.getLogger(FinanceTaxDetailDAOImpl.class);
-	
+
 	public FinanceTaxDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public FinanceTaxDetail getFinanceTaxDetail(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" finReference, applicableFor,TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
 		sql.append(" addrLine3, addrLine4, country, province, city, pinCode, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("countryName,provinceName,cityName,pinCodeName, custCIF, custShrtName, ");
-		}	
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTaxDetail");
 		sql.append(type);
 		sql.append(" Where finReference = :finReference");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -107,23 +108,25 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 
 		logger.debug(Literal.LEAVING);
 		return financeTaxDetail;
-	}		
-	
+	}
+
 	@Override
-	public String save(FinanceTaxDetail financeTaxDetail,TableType tableType) {
+	public String save(FinanceTaxDetail financeTaxDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into FinTaxDetail");
+		StringBuilder sql = new StringBuilder(" insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(finReference, applicableFor,TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
 		sql.append("addrLine3, addrLine4, country, province, city, pinCode, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :finReference, :applicableFor,:TaxCustId, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
 		sql.append(" :addrLine3, :addrLine4, :country, :province, :city, :pinCode, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
@@ -136,16 +139,17 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(financeTaxDetail.getFinReference());
-	}	
+	}
 
 	@Override
-	public void update(FinanceTaxDetail financeTaxDetail,TableType tableType) {
+	public void update(FinanceTaxDetail financeTaxDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update FinTaxDetail" );
+		StringBuilder sql = new StringBuilder("update FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append("  set applicableFor = :applicableFor,TaxCustId= :TaxCustId, taxExempted = :taxExempted, taxNumber = :taxNumber, ");
+		sql.append(
+				"  set applicableFor = :applicableFor,TaxCustId= :TaxCustId, taxExempted = :taxExempted, taxNumber = :taxNumber, ");
 		sql.append(" addrLine1 = :addrLine1, addrLine2 = :addrLine2, addrLine3 = :addrLine3, ");
 		sql.append(" addrLine4 = :addrLine4, country = :country, province = :province, ");
 		sql.append(" city = :city, pinCode = :pinCode, ");
@@ -154,10 +158,10 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where finReference = :finReference ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -165,7 +169,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -197,7 +201,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public int getGSTNumberCount(long taxCustId, String taxNumber, String type) {
 		logger.debug("Entering");
@@ -251,4 +255,4 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		}
 		return false;
 	}
-}	
+}

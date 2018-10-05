@@ -46,8 +46,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 
 public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -57,10 +56,10 @@ public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
 	 *            The type of the table.
 	 * @return FinanceTaxDetail
 	 */
-	FinanceTaxDetail getFinanceTaxDetail(String finReference,String type);
+	FinanceTaxDetail getFinanceTaxDetail(String finReference, String type);
 
 	int getGSTNumberCount(long taxCustId, String taxNumber, String string);
 
-	boolean isReferenceExists(String finReference,String custCif);
-	
+	boolean isReferenceExists(String finReference, String custCif);
+
 }
