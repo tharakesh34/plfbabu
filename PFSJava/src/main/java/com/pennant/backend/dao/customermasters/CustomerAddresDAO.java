@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -50,16 +51,25 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
  */
 public interface CustomerAddresDAO {
 
+	CustomerAddres getCustomerAddresById(long id, String addType, String type);
 
-	 CustomerAddres getCustomerAddresById(long id,String addType,String type);
-	 List<CustomerAddres> getCustomerAddresByCustomer(final long id,String type);
-	 void update(CustomerAddres customerAddres,String type);
-	 void delete(CustomerAddres customerAddres,String type);
-	 long save(CustomerAddres customerAddres,String type);
-	 void deleteByCustomer(final long id,String type);
-	 int getAddrTypeCount(String addType);
-	 int getVersion(long id, String addrType);
-	 int getcustAddressCount(String addrType);
+	List<CustomerAddres> getCustomerAddresByCustomer(final long id, String type);
+
+	void update(CustomerAddres customerAddres, String type);
+
+	void delete(CustomerAddres customerAddres, String type);
+
+	long save(CustomerAddres customerAddres, String type);
+
+	void deleteByCustomer(final long id, String type);
+
+	int getAddrTypeCount(String addType);
+
+	int getVersion(long id, String addrType);
+
+	int getcustAddressCount(String addrType);
+
 	boolean isServiceable(String pinCode);
+
 	CustomerAddres getHighPriorityCustAddr(long id, String type);
 }

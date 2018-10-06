@@ -90,42 +90,42 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ManualDeviationTriggerDialog.zul file.
  */
 public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(ManualDeviationTriggerDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ManualDeviationTriggerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_ManualDeviationTrigger;
+	protected Window window_ManualDeviationTrigger;
 
-	protected Groupbox					gb_statusDetails;
-	private boolean						enqModule			= false;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
 
-	private ExtendedCombobox			deviationCode;
-	private Combobox					delegationRole;
+	private ExtendedCombobox deviationCode;
+	private Combobox delegationRole;
 
 	// not auto wired vars
-	private FinanceDeviations			financeDeviations;
+	private FinanceDeviations financeDeviations;
 
-	private transient boolean			newFinance;
+	private transient boolean newFinance;
 
 	// ServiceDAOs / Domain Classes
-	private transient PagedListService	pagedListService;
+	private transient PagedListService pagedListService;
 
-	private Object						financeMainDialogCtrl;
-	private DeviationDetailDialogCtrl	deviationDetailDialogCtrl;
-	private boolean						newRecord			= false;
-	private boolean						newCustomer			= false;
-	private Textbox						remarks;
-	private Combobox					status;
-	private Row							row_ApprovelStatus;
+	private Object financeMainDialogCtrl;
+	private DeviationDetailDialogCtrl deviationDetailDialogCtrl;
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
+	private Textbox remarks;
+	private Combobox status;
+	private Row row_ApprovelStatus;
 
-	private List<FinanceDeviations>		financeDeviationsList;
-	private FinanceMain					financeMain;
+	private List<FinanceDeviations> financeDeviationsList;
+	private FinanceMain financeMain;
 	@Autowired
-	private DeviationHelper				deviationHelper;
-	private String						prodCode;
+	private DeviationHelper deviationHelper;
+	private String prodCode;
 	private List<ValueLabel> delegators = new ArrayList<>();
 	ArrayList<ValueLabel> approvalStatuses = PennantStaticListUtil.getApproveStatus();
 	String initDelegationRole = "";
@@ -357,7 +357,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			}
 
 			// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
-			if((getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getUserRole()))) {
+			if ((getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getUserRole()))) {
 				btnDelete.setVisible(true);
 			}
 			// ### 01-05-2018 - End
@@ -435,7 +435,6 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	}
 	// ### 06-05-2018 - End 
 
-
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -487,9 +486,9 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private void doCheckRights() {
 		logger.debug("Entering");
 		if (!enqModule) {
-//			this.btnNew.setVisible(true);
-//			this.btnEdit.setVisible(true);
-//			this.btnDelete.setVisible(true);
+			//			this.btnNew.setVisible(true);
+			//			this.btnEdit.setVisible(true);
+			//			this.btnDelete.setVisible(true);
 			this.btnSave.setVisible(true);
 			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 			readOnlyComponent(true, delegationRole);
@@ -605,8 +604,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 			if (!initDelegationRole.equals(this.delegationRole.getSelectedItem().getValue())
 					&& !PennantConstants.List_Select.equals(this.status.getSelectedItem().getValue())) {
-				throw new WrongValueException(status,
-						"Select either approval status or change approval authority.");
+				throw new WrongValueException(status, "Select either approval status or change approval authority.");
 			}
 			//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
@@ -962,6 +960,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 		logger.debug("Leaving" + event.toString());
 	}
+
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 	private void setDelegatorRoles(long severity) {
 		delegators.clear();
@@ -988,7 +987,6 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		}
 	}
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
-
 
 	/**
 	 * @param aAuthorizedSignatoryRepository

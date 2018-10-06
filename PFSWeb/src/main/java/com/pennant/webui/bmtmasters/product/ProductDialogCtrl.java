@@ -97,18 +97,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/Product/productDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/Product/productDialog.zul file.
  */
 public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private static final long serialVersionUID = -8421583705358772016L;
-	private static final Logger logger = Logger
-			.getLogger(ProductDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProductDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ProductDialog;
 
@@ -148,14 +145,14 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	private List<ProductAsset> productAssetList = new ArrayList<ProductAsset>();
 	private PagedListWrapper<ProductAsset> productAssetPagedListWrapper;
-	
+
 	//Added Manual Deviation Details
 	protected Checkbox allowDeviation;
 	protected Textbox manualDeviations;
 	protected Label label_ProductDialog_ManualDeviations;
 	protected Hbox hbox_Deviations;
 	protected Button btnManualDeviation;
-	
+
 	private List<ProductDeviation> productDeviationDetails = new ArrayList<>();
 
 	/**
@@ -173,9 +170,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Product object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Product object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -202,14 +198,12 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				setProduct(null);
 			}
 
-			doLoadWorkFlow(this.product.isWorkflow(),
-					this.product.getWorkflowId(), this.product.getNextTaskId());
+			doLoadWorkFlow(this.product.isWorkflow(), this.product.getWorkflowId(), this.product.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ProductDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ProductDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -219,8 +213,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			// or
 			// delete product here.
 			if (arguments.containsKey("productListCtrl")) {
-				setProductListCtrl((ProductListCtrl) arguments
-						.get("productListCtrl"));
+				setProductListCtrl((ProductListCtrl) arguments.get("productListCtrl"));
 			} else {
 				setProductListCtrl(null);
 			}
@@ -228,39 +221,23 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			// Set the DialogController Height for listBox
 			getBorderLayoutHeight();
 			grid_Basicdetails.getRows().getVisibleItemCount();
-			int dialogHeight = grid_Basicdetails.getRows()
-					.getVisibleItemCount() * 20 + 100 + 75;
+			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100 + 75;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listboxProductAsset.setHeight(listboxHeight + "px");
 			listRows = Math.round(listboxHeight / 24) - 1;
 
-			this.listheader_ProductAsset_AssetCode
-					.setSortAscending(new FieldComparator("assetCode", true));
-			this.listheader_ProductAsset_AssetCode
-					.setSortDescending(new FieldComparator("assetCode", false));
-			this.listheader_ProductAsset_AssetDesc
-					.setSortAscending(new FieldComparator("assetDesc", true));
-			this.listheader_ProductAsset_AssetDesc
-					.setSortDescending(new FieldComparator("assetDesc", false));
-			this.listheader_ProductAsset_AssetIsActive
-					.setSortAscending(new FieldComparator("assetIsActive", true));
-			this.listheader_ProductAsset_AssetIsActive
-					.setSortDescending(new FieldComparator("assetIsActive",
-							false));
+			this.listheader_ProductAsset_AssetCode.setSortAscending(new FieldComparator("assetCode", true));
+			this.listheader_ProductAsset_AssetCode.setSortDescending(new FieldComparator("assetCode", false));
+			this.listheader_ProductAsset_AssetDesc.setSortAscending(new FieldComparator("assetDesc", true));
+			this.listheader_ProductAsset_AssetDesc.setSortDescending(new FieldComparator("assetDesc", false));
+			this.listheader_ProductAsset_AssetIsActive.setSortAscending(new FieldComparator("assetIsActive", true));
+			this.listheader_ProductAsset_AssetIsActive.setSortDescending(new FieldComparator("assetIsActive", false));
 
 			if (isWorkFlowEnabled()) {
-				this.listheader_ProductAsset_RecordStatus
-						.setSortAscending(new FieldComparator("recordStatus",
-								true));
-				this.listheader_ProductAsset_RecordStatus
-						.setSortDescending(new FieldComparator("recordStatus",
-								false));
-				this.listheader_ProductAsset_RecordType
-						.setSortAscending(new FieldComparator("recordType",
-								true));
-				this.listheader_ProductAsset_RecordType
-						.setSortDescending(new FieldComparator("recordType",
-								false));
+				this.listheader_ProductAsset_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+				this.listheader_ProductAsset_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+				this.listheader_ProductAsset_RecordType.setSortAscending(new FieldComparator("recordType", true));
+				this.listheader_ProductAsset_RecordType.setSortDescending(new FieldComparator("recordType", false));
 			} else {
 				this.listheader_ProductAsset_RecordStatus.setVisible(false);
 				this.listheader_ProductAsset_RecordType.setVisible(false);
@@ -299,21 +276,16 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_ProductDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_ProductDialog_btnEdit"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ProductDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ProductDialog_btnEdit"));
 		this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_ProductDialog_btnDelete")
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_ProductDialog_btnSave"));
-		this.btnNew_ProductAsset.setVisible(getUserWorkspace().isAllowed(
-				"button_ProductDialog_btnNew_ProductAsset"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ProductDialog_btnSave"));
+		this.btnNew_ProductAsset.setVisible(getUserWorkspace().isAllowed("button_ProductDialog_btnNew_ProductAsset"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
@@ -413,7 +385,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.productDesc.setValue(aProduct.getProductDesc());
 		this.recordStatus.setValue(aProduct.getRecordStatus());
 
-		fillComboBox(this.productCategory, aProduct.getProductCategory(), PennantStaticListUtil.getProductCategories(), "");
+		fillComboBox(this.productCategory, aProduct.getProductCategory(), PennantStaticListUtil.getProductCategories(),
+				"");
 		doFillProductAsset(aProduct.getProductAssetList());
 		//Manual Deviations
 		this.allowDeviation.setChecked(aProduct.isAllowDeviation());
@@ -445,8 +418,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		}
 
 		try {
-			aProduct.setProductCategory(this.productCategory.getSelectedItem()
-					.getValue().toString());
+			aProduct.setProductCategory(this.productCategory.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -477,8 +449,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProduct
 	 * @throws Exception
@@ -525,24 +496,21 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.productCode.isReadonly()) {
-			this.productCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ProductDialog_ProductCode.value"), null,
-					true));
+			this.productCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProductDialog_ProductCode.value"), null, true));
 		}
 		if (!this.productDesc.isReadonly()) {
-			this.productDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ProductDialog_ProductDesc.value"), null,
-					true));
+			this.productDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProductDialog_ProductDesc.value"), null, true));
 		}
 		if (!this.productCategory.isDisabled()) {
-			this.productCategory
-					.setConstraint(new StaticListValidator(
-							PennantStaticListUtil.getProductCategories(),
-							Labels.getLabel("label_ProductDialog_ProductCategory.value")));
+			this.productCategory.setConstraint(new StaticListValidator(PennantStaticListUtil.getProductCategories(),
+					Labels.getLabel("label_ProductDialog_ProductCategory.value")));
 		}
 		//Manual Deviation
 		if (!this.btnManualDeviation.isDisabled()) {
-			this.manualDeviations.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductDialog_ManualDeviations.value"), null, true));
+			this.manualDeviations.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProductDialog_ManualDeviations.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -607,11 +575,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_ProductDialog_ProductCode.value")
-				+ " : " + aProduct.getProductCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ProductDialog_ProductCode.value") + " : " + aProduct.getProductCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			doWriteBeanToComponents(aProduct);
 
@@ -730,7 +695,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		doSetValidation();
 		// fill the Product object with the components data
 		doWriteComponentsToBean(aProduct);
-		
+
 		if (CollectionUtils.isNotEmpty(getProductDeviationDetails())) {
 			aProduct.setProductDeviationDetails(getProductDeviationDetails());
 		} else {
@@ -766,8 +731,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 		// save it to database
 		try {
-			if (!aProduct.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			if (!aProduct.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 				if (doProcess(aProduct, tranType)) {
 					refreshList();
 					closeDialog();
@@ -795,16 +759,14 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aProduct.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aProduct.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aProduct.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProduct.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aProduct.setRecordStatus(userAction.getSelectedItem().getValue()
-					.toString());
+			aProduct.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
@@ -856,8 +818,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aProduct,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aProduct, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -892,46 +853,35 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getProductService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getProductService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getProductService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getProductService()
-								.doApprove(auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getProductService().doApprove(auditHeader);
 
-						if (product.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (product.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getProductService().doReject(auditHeader);
 
-						if (product.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (product.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_ProductDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ProductDialog, auditHeader);
 						return processCompleted;
 
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_ProductDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_ProductDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -965,8 +915,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 		if (StringUtils.trimToNull(this.productCode.getValue()) != null) {
 
-			final ProductAsset aProductAsset = getProductService()
-					.getNewProductAsset();
+			final ProductAsset aProductAsset = getProductService().getNewProductAsset();
 			aProductAsset.setNewRecord(true);
 			aProductAsset.setProductCode(getProduct().getProductCode());
 
@@ -979,10 +928,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			map.put("roleCode", getRole());
 
 			try {
-				Executions
-						.createComponents(
-								"/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
-								window_ProductDialog, map);
+				Executions.createComponents("/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
+						window_ProductDialog, map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
@@ -998,11 +945,9 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final ProductAsset productAsset = (ProductAsset) item
-					.getAttribute("data");
+			final ProductAsset productAsset = (ProductAsset) item.getAttribute("data");
 
-			if (productAsset.getRecordStatus().equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			if (productAsset.getRecordStatus().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else if (StringUtils.isBlank(this.productCode.getValue())) {
 				MessageUtil.showError(Labels.getLabel("FIELD_NO_EMPTY",
@@ -1017,10 +962,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 				// call the ZUL-file with the parameters packed in a map
 				try {
-					Executions
-							.createComponents(
-									"/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
-									window_ProductDialog, map);
+					Executions.createComponents("/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
+							window_ProductDialog, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -1047,10 +990,9 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Entering");
 
 		this.btnNew_ProductAsset.setVisible(false);
-		if (!(this.productCode.getValue() == null || StringUtils
-				.isEmpty(this.productCode.getValue()))) {
-			this.btnNew_ProductAsset.setVisible(getUserWorkspace().isAllowed(
-					"button_ProductDialog_btnNew_ProductAsset"));
+		if (!(this.productCode.getValue() == null || StringUtils.isEmpty(this.productCode.getValue()))) {
+			this.btnNew_ProductAsset
+					.setVisible(getUserWorkspace().isAllowed("button_ProductDialog_btnNew_ProductAsset"));
 			// this.productCode.setReadonly(true);
 		}
 		logger.debug("Leaving");
@@ -1059,8 +1001,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	// Product Asset Lists Refreshing
 
 	/**
-	 * Generate the Product Asset Details List in the ProductDialogCtrl and set
-	 * the list in the listboxProductAsset listBox by using Pagination
+	 * Generate the Product Asset Details List in the ProductDialogCtrl and set the list in the listboxProductAsset
+	 * listBox by using Pagination
 	 */
 	public void doFillProductAsset(List<ProductAsset> productAssets) {
 		logger.debug("Entering");
@@ -1068,10 +1010,9 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			setProductAssetList(productAssets);
 			this.pagingProductAsset.setPageSize(listRows);
 			this.pagingProductAsset.setDetailed(true);
-			getProductAssetPagedListWrapper().initList(productAssetList,
-					this.listboxProductAsset, this.pagingProductAsset);
-			this.listboxProductAsset
-					.setItemRenderer(new ProductAssetListModelItemRenderer());
+			getProductAssetPagedListWrapper().initList(productAssetList, this.listboxProductAsset,
+					this.pagingProductAsset);
+			this.listboxProductAsset.setItemRenderer(new ProductAssetListModelItemRenderer());
 		}
 
 		logger.debug("Leaving");
@@ -1089,10 +1030,9 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Product aProduct, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aProduct.getBefImage(), aProduct);
-		return new AuditHeader(String.valueOf(aProduct.getId()), null, null,
-				null, auditDetail, aProduct.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProduct.getBefImage(), aProduct);
+		return new AuditHeader(String.valueOf(aProduct.getId()), null, null, null, auditDetail,
+				aProduct.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1106,10 +1046,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ProductDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_ProductDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1132,7 +1070,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	protected String getReference() {
 		return String.valueOf(this.product.getProductCode());
 	}
-	
+
 	/**
 	 * 
 	 * @param event
@@ -1144,7 +1082,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.manualDeviations.setErrorMessage("");
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_ProductDialog, "ManualDeviation",
 				this.manualDeviations.getValue(), null);
-		
+
 		if (dataObject != null) {
 			String details = (String) dataObject;
 			this.manualDeviations.setValue(details);
@@ -1153,7 +1091,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Leaving  " + event.toString());
 
 	}
-	
+
 	/**
 	 * 
 	 * @param event
@@ -1165,8 +1103,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Leaving  " + event.toString());
 
 	}
-	
-	private void allowManualDeviation(){
+
+	private void allowManualDeviation() {
 		logger.debug("Entering ");
 		if (this.allowDeviation.isChecked()) {
 			readOnlyComponent(isReadOnly("ProductDialog_btnManualDeviation"), this.btnManualDeviation);
@@ -1174,10 +1112,10 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			this.manualDeviations.setValue("");
 			readOnlyComponent(true, this.btnManualDeviation);
 
-			
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Method Used for set list of values been class to components Product Deviation list
 	 * 
@@ -1214,7 +1152,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private void fetchFlagDetals(List<String> deviationList) {
 		logger.debug("Entering");
 		Map<String, ProductDeviation> flagMap = new HashMap<>();
-		
+
 		if (this.productDeviationDetails == null) {
 			this.productDeviationDetails = new ArrayList<>();
 		}
@@ -1313,8 +1251,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		return overideMap;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
@@ -1325,8 +1262,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	@SuppressWarnings("unchecked")
 	public void setProductAssetPagedListWrapper() {
 		if (productAssetPagedListWrapper == null) {
-			this.productAssetPagedListWrapper = (PagedListWrapper<ProductAsset>) SpringUtil
-					.getBean("pagedListWrapper");
+			this.productAssetPagedListWrapper = (PagedListWrapper<ProductAsset>) SpringUtil.getBean("pagedListWrapper");
 			;
 		}
 	}

@@ -8,18 +8,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class ProductDeviation extends AbstractWorkflowEntity {
 
-	private static final long	serialVersionUID	= -2063878715762100939L;
+	private static final long serialVersionUID = -2063878715762100939L;
 
-	private long				productDevID		= Long.MIN_VALUE;
-	private long				deviationID			= Long.MIN_VALUE;
-	private String				productCode;
-	private String				deviationCode;
-	private String				deviationDesc;
-	private long				severity;
-	private boolean				newRecord;
-	private String				lovValue;
-	private Product				befImage;
-	private LoggedInUser		userDetails;
+	private long productDevID = Long.MIN_VALUE;
+	private long deviationID = Long.MIN_VALUE;
+	private String productCode;
+	private String deviationCode;
+	private String deviationDesc;
+	private long severity;
+	private boolean newRecord;
+	private String lovValue;
+	private Product befImage;
+	private LoggedInUser userDetails;
 	private String severityCode;
 	private String severityName;
 

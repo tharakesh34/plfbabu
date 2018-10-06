@@ -68,7 +68,7 @@ public interface ProductDeviationDAO {
 	long save(ProductDeviation productDeviation, String type);
 
 	List<ProductDeviation> getProductDeviationByProdCode(final String prodCode, String type);
-	
+
 	boolean isExistsDeviationID(long deviationID, String type);
 
 }

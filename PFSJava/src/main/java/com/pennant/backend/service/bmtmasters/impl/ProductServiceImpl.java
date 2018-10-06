@@ -86,7 +86,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public ProductServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -94,6 +94,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -101,6 +102,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public ProductDAO getProductDAO() {
 		return productDAO;
 	}
+
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;
 	}
@@ -108,18 +110,19 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public ProductAssetDAO getProductAssetDAO() {
 		return productAssetDAO;
 	}
+
 	public void setProductAssetDAO(ProductAssetDAO productAssetDAO) {
 		this.productAssetDAO = productAssetDAO;
 	}
 
-	public ProductAssetValidation getProductAssetValidation(){
+	public ProductAssetValidation getProductAssetValidation() {
 
-		if(productAssetValidation==null){
+		if (productAssetValidation == null) {
 			this.productAssetValidation = new ProductAssetValidation(productAssetDAO);
 		}
 		return this.productAssetValidation;
 	}
-	
+
 	public ProductDeviationDAO getProductDeviationDAO() {
 		return productDeviationDAO;
 	}
@@ -127,7 +130,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public void setProductDeviationDAO(ProductDeviationDAO productDeviationDAO) {
 		this.productDeviationDAO = productDeviationDAO;
 	}
-	
+
 	public ManualDeviationDAO getManualDeviationDAO() {
 		return manualDeviationDAO;
 	}
@@ -135,15 +138,14 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public void setManualDeviationDAO(ManualDeviationDAO manualDeviationDAO) {
 		this.manualDeviationDAO = manualDeviationDAO;
 	}
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTProduct/BMTProduct_Temp by using ProductDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using ProductDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTProduct/BMTProduct_Temp by
+	 * using ProductDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using ProductDAO's update method 3) Audit the record in to AuditHeader and AdtBMTProduct by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -152,40 +154,40 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		Product product = (Product) auditHeader.getAuditDetail().getModelData();
 
 		if (product.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (product.isNew()) {
-			getProductDAO().save(product,tableType);
-		}else{
-			getProductDAO().update(product,tableType);
+			getProductDAO().save(product, tableType);
+		} else {
+			getProductDAO().update(product, tableType);
 		}
 
-		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
+		if (product.getProductAssetList() != null && product.getProductAssetList().size() > 0) {
 			List<AuditDetail> details = product.getAuditDetailMap().get("ProductAsset");
-			details = processingProductAssetList(details,tableType);
+			details = processingProductAssetList(details, tableType);
 			auditDetails.addAll(details);
 		}
 		//Product Deviation Details
-		if(CollectionUtils.isNotEmpty(product.getProductDeviationDetails())){
+		if (CollectionUtils.isNotEmpty(product.getProductDeviationDetails())) {
 			List<AuditDetail> details = product.getAuditDetailMap().get("ProductDeviation");
-			details = processingProductDeviationList(details,tableType);
+			details = processingProductDeviationList(details, tableType);
 			auditDetails.addAll(details);
 		}
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, product.getBefImage(), product));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, product.getBefImage(), product));
 		auditHeader.setAuditDetails(auditDetails);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -195,12 +197,10 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTProduct by using ProductDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtBMTProduct by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTProduct by using ProductDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -227,8 +227,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	}
 
 	/**
-	 * getProductById fetch the details by using ProductDAO's getProductById
-	 * method.
+	 * getProductById fetch the details by using ProductDAO's getProductById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -240,9 +239,10 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	@Override
 	public Product getProductById(String id, String code) {
 		logger.debug("Entering");
-		Product product = getProductDAO().getProductByID(id,code, "_View");
+		Product product = getProductDAO().getProductByID(id, code, "_View");
 		product.setProductAssetList(getProductAssetDAO().getProductAssetByProdCode(product.getProductCode(), "_View"));
-		product.setProductDeviationDetails(getProductDeviationDAO().getProductDeviationByProdCode(product.getProductCode(), "_View"));
+		product.setProductDeviationDetails(
+				getProductDeviationDAO().getProductDeviationByProdCode(product.getProductCode(), "_View"));
 		logger.debug("Leaving");
 		return product;
 	}
@@ -250,11 +250,11 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	@Override
 	public ProductAsset getNewProductAsset() {
 		return getProductAssetDAO().getNewProductAsset();
-	}	
+	}
+
 	/**
-	 * getApprovedProductById fetch the details by using ProductDAO's
-	 * getProductById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTProduct.
+	 * getApprovedProductById fetch the details by using ProductDAO's getProductById method . with parameter id and type
+	 * as blank. it fetches the approved records from the BMTProduct.
 	 * 
 	 * @param id
 	 *            (String)
@@ -262,31 +262,27 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 */
 
 	public Product getApprovedProductById(String id, String code) {
-		Product product = getProductDAO().getProductByID(id,code, "_AView");
-		product.setProductAssetList(getProductAssetDAO().getProductAssetByProdCode(product.getProductCode(),"_AView"));
-		product.setProductDeviationDetails(getProductDeviationDAO().getProductDeviationByProdCode(product.getProductCode(), "_AView"));
+		Product product = getProductDAO().getProductByID(id, code, "_AView");
+		product.setProductAssetList(getProductAssetDAO().getProductAssetByProdCode(product.getProductCode(), "_AView"));
+		product.setProductDeviationDetails(
+				getProductDeviationDAO().getProductDeviationByProdCode(product.getProductCode(), "_AView"));
 		return product;
 	}
-	
+
 	public String getProductCtgByProduct(String productCode) {
 		return getProductDAO().getProductCtgByProduct(productCode);
 	}
 
-
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getProductDAO().delete with parameters product,"" b) NEW Add new
-	 * record in to main table by using getProductDAO().save with parameters
-	 * product,"" c) EDIT Update record in the main table by using
-	 * getProductDAO().update with parameters product,"" 3) Delete the record
-	 * from the workFlow table by using getProductDAO().delete with parameters
-	 * product,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTProduct
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtBMTProduct by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getProductDAO().delete with parameters
+	 * product,"" b) NEW Add new record in to main table by using getProductDAO().save with parameters product,"" c)
+	 * EDIT Update record in the main table by using getProductDAO().update with parameters product,"" 3) Delete the
+	 * record from the workFlow table by using getProductDAO().delete with parameters product,"_Temp" 4) Audit the
+	 * record in to AuditHeader and AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -328,15 +324,15 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			}
 
 			//Retrieving List of Audit Details For Product Asset related modules
-			if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
+			if (product.getProductAssetList() != null && product.getProductAssetList().size() > 0) {
 				List<AuditDetail> details = product.getAuditDetailMap().get("ProductAsset");
-				details = processingProductAssetList(details,"");
+				details = processingProductAssetList(details, "");
 				auditDetails.addAll(details);
 			}
 			//Product Deviation
-			if(product.getProductDeviationDetails()!=null && product.getProductDeviationDetails().size()>0){
+			if (product.getProductDeviationDetails() != null && product.getProductDeviationDetails().size() > 0) {
 				List<AuditDetail> details = product.getAuditDetailMap().get("ProductDeviation");
-				details = processingProductDeviationList(details,"");
+				details = processingProductDeviationList(details, "");
 				auditDetails.addAll(details);
 			}
 		}
@@ -345,11 +341,11 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		listDeletion(product, "_Temp");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, product.getBefImage(), product));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, product.getBefImage(), product));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, product.getBefImage(), product));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, product.getBefImage(), product));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -358,12 +354,10 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getProductDAO().delete with parameters
-	 * product,"_Temp" 3) Audit the record in to AuditHeader and AdtBMTProduct
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getProductDAO().delete with parameters product,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -393,19 +387,17 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -415,16 +407,16 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		String usrLanguage = product.getUserDetails().getLanguage();
 
 		// ProductAsset Validation
-		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
+		if (product.getProductAssetList() != null && product.getProductAssetList().size() > 0) {
 			List<AuditDetail> details = product.getAuditDetailMap().get("ProductAsset");
 			details = getProductAssetValidation().pAssetListValidation(details, method, usrLanguage);
-			if(details!= null){
-			auditDetails.addAll(details);
+			if (details != null) {
+				auditDetails.addAll(details);
 			}
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
-			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());	
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
 
 		auditHeader = nextProcess(auditHeader);
@@ -433,17 +425,16 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getProductDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getProductDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
@@ -451,35 +442,35 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 		Product tempProduct = null;
 		if (product.isWorkflow()) {
-			tempProduct = getProductDAO().getProductByID(product.getId(),product.getProductCode(),"_Temp");
+			tempProduct = getProductDAO().getProductByID(product.getId(), product.getProductCode(), "_Temp");
 		}
-		Product befProduct = getProductDAO().getProductByID(product.getId(),product.getProductCode(), "");
+		Product befProduct = getProductDAO().getProductByID(product.getId(), product.getProductCode(), "");
 		Product oldProduct = product.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
 		valueParm[0] = product.getProductCode();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
 
 		if (product.isNew()) { // for New record or new record into work flow
 
 			if (!product.isWorkflow()) {// With out Work flow only new records
 				if (befProduct != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm,valueParm),usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 
 				}
 			} else { // with work flow
 				if (product.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befProduct != null || tempProduct != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befProduct == null || tempProduct != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 
@@ -489,38 +480,40 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			if (!product.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befProduct == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41002",errParm, valueParm),usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldProduct != null && !oldProduct.getLastMntOn().equals(befProduct.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempProduct == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005",errParm, valueParm),usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempProduct != null && oldProduct != null && !oldProduct.getLastMntOn().equals(
-						tempProduct.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005",errParm, valueParm),usrLanguage));
+				if (tempProduct != null && oldProduct != null
+						&& !oldProduct.getLastMntOn().equals(tempProduct.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !product.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !product.isWorkflow()) {
 			auditDetail.setBefImage(befProduct);
 		}
 		logger.debug("Leaving");
@@ -529,34 +522,34 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 	/**
 	 * Common Method for Retrieving AuditDetails List
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private AuditHeader getAuditDetails(AuditHeader auditHeader,String method ){
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-
 		Product product = (Product) auditHeader.getAuditDetail().getModelData();
 
-		String auditTranType="";
+		String auditTranType = "";
 
-		if("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method) ){
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (product.isWorkflow()) {
-				auditTranType= PennantConstants.TRAN_WF;
+				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
-		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
-			auditDetailMap.put("ProductAsset", setPAssetAuditData(product,auditTranType,method));
+		if (product.getProductAssetList() != null && product.getProductAssetList().size() > 0) {
+			auditDetailMap.put("ProductAsset", setPAssetAuditData(product, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ProductAsset"));
 		}
 		//Product Deviations
-		if(product.getProductDeviationDetails()!=null && product.getProductDeviationDetails().size()>0){
-			auditDetailMap.put("ProductDeviation", setPDeviationAuditData(product,auditTranType,method));
+		if (product.getProductDeviationDetails() != null && product.getProductDeviationDetails().size() > 0) {
+			auditDetailMap.put("ProductDeviation", setPDeviationAuditData(product, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ProductDeviation"));
 		}
 
@@ -570,37 +563,37 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
 	 * @param Product
 	 * @param auditTranType
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setPAssetAuditData(Product product,String auditTranType,String method) {
+	private List<AuditDetail> setPAssetAuditData(Product product, String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new ProductAsset());
 
-
 		for (int i = 0; i < product.getProductAssetList().size(); i++) {
 			ProductAsset productAsset = product.getProductAssetList().get(i);
-			
-			if(StringUtils.isEmpty(productAsset.getRecordType())){
+
+			if (StringUtils.isEmpty(productAsset.getRecordType())) {
 				continue;
 			}
-			
+
 			productAsset.setWorkflowId(product.getWorkflowId());
 			productAsset.setProductCode(product.getProductCode());
 
-			boolean isRcdType= false;
+			boolean isRcdType = false;
 
 			if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				productAsset.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType=true;
-			}else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				isRcdType = true;
+			} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				productAsset.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType=true;
-			}else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				isRcdType = true;
+			} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				productAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
@@ -608,14 +601,14 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 				productAsset.setNewRecord(true);
 			}
 
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
+					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 						|| productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
@@ -623,14 +616,17 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			productAsset.setLoginDetails(product.getUserDetails());
 			productAsset.setLastMntOn(product.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], productAsset.getBefImage(), productAsset));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], productAsset.getBefImage(),
+					productAsset));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+
 	/**
 	 * Method For Preparing List of AuditDetails for Product Assets
+	 * 
 	 * @param auditDetails
 	 * @param type
 	 * @param custId
@@ -641,8 +637,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
-		boolean approveRec=false;
-
+		boolean approveRec = false;
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 
@@ -650,11 +645,11 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
-			approveRec=false;
-			String rcdType ="";	
-			String recordStatus ="";
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
 			if (StringUtils.isEmpty(type)) {
-				approveRec=true;
+				approveRec = true;
 				productAsset.setRoleCode("");
 				productAsset.setNextRoleCode("");
 				productAsset.setTaskId("");
@@ -664,36 +659,36 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			productAsset.setWorkflowId(0);
 
 			if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord=true;
-			}else  if(productAsset.isNewRecord()){
-				saveRecord=true;
+				deleteRecord = true;
+			} else if (productAsset.isNewRecord()) {
+				saveRecord = true;
 				if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					productAsset.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
+					productAsset.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					productAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					productAsset.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			}else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if(approveRec){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
+			} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
-			}else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord=true;
-			}else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if(approveRec){
-					deleteRecord=true;
-				}else if(productAsset.isNew()){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
+			} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (productAsset.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
 			}
-			if(approveRec){
-				rcdType= productAsset.getRecordType();
+			if (approveRec) {
+				rcdType = productAsset.getRecordType();
 				recordStatus = productAsset.getRecordStatus();
 				productAsset.setRecordType("");
 				productAsset.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -710,7 +705,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 				productAssetDAO.delete(productAsset, type);
 			}
 
-			if(approveRec){
+			if (approveRec) {
 				productAsset.setRecordType(rcdType);
 				productAsset.setRecordStatus(recordStatus);
 			}
@@ -723,35 +718,37 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 	/**
 	 * Method deletion of productAsset list with existing product type
+	 * 
 	 * @param product
 	 * @param tableType
 	 */
 	public void listDeletion(Product product, String tableType) {
 
-		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
+		if (product.getProductAssetList() != null && product.getProductAssetList().size() > 0) {
 			getProductAssetDAO().deleteByProduct(product.getProductAssetList().get(0), tableType);
 		}
 		if (product.getProductDeviationDetails() != null && product.getProductDeviationDetails().size() > 0) {
 			getProductDeviationDAO().deleteByProduct(product.getProductCode(), tableType);
 		}
-	}	
+	}
 
-	/** 
+	/**
 	 * Common Method for Product Asset list validation
+	 * 
 	 * @param list
 	 * @param method
 	 * @param userDetails
 	 * @param lastMntON
 	 * @return
 	 */
-	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list){
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
 		logger.debug("Entering");
-		List<AuditDetail> auditDetailsList =new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
 		if (list != null && list.size() > 0) {
 			for (AuditDetail detail : list) {
 
-				String transType="";
+				String transType = "";
 				String rcdType = "";
 				Object object = detail.getModelData();
 
@@ -761,15 +758,15 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 					rcdType = ((ProductDeviation) object).getRecordType();
 				}
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					transType= PennantConstants.TRAN_ADD;
-				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || 
-						rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					transType= PennantConstants.TRAN_DEL;
-				}else{
-					transType= PennantConstants.TRAN_UPD;
+					transType = PennantConstants.TRAN_ADD;
+				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					transType = PennantConstants.TRAN_DEL;
+				} else {
+					transType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isNotEmpty(transType)){
+				if (StringUtils.isNotEmpty(transType)) {
 					//check and change below line for Complete code
 					auditDetailsList
 							.add(new AuditDetail(transType, detail.getAuditSeq(), detail.getBefImage(), object));
@@ -779,7 +776,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
-	
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -794,7 +791,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		ProductDeviation productDeviation = new ProductDeviation();
 		String[] fields = PennantJavaUtil.getFieldDetails(productDeviation, productDeviation.getExcludeFields());
-		
+
 		for (int i = 0; i < product.getProductDeviationDetails().size(); i++) {
 			ProductDeviation deviationDetail = product.getProductDeviationDetails().get(i);
 			//Get the DeviationId from ManualDeviations by deviationCode
@@ -805,7 +802,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			if (StringUtils.isEmpty(deviationDetail.getRecordType())) {
 				continue;
 			}
-			
+
 			deviationDetail.setWorkflowId(product.getWorkflowId());
 			deviationDetail.setProductCode(product.getProductCode());
 

@@ -53,12 +53,19 @@ import com.pennant.backend.model.rmtmasters.ProductAsset;
  */
 public interface ProductService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Product getProductById(String id, String code);
+
 	Product getApprovedProductById(String id, String code);
+
 	ProductAsset getNewProductAsset();
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	String getProductCtgByProduct(String productCode);
 
 }

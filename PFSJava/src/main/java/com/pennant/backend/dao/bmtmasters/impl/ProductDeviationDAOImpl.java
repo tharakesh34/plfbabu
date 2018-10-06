@@ -74,8 +74,7 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new Product Deviation
+	 * This method set the Work Flow id based on the module name and return the new Product Deviation
 	 * 
 	 * @return Product Deviation
 	 */
@@ -92,8 +91,8 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	}
 
 	/**
-	 * This method get the module from method getProduct Deviation() and set the
-	 * new record flag as true and return Product Deviation()
+	 * This method get the module from method getProduct Deviation() and set the new record flag as true and return
+	 * Product Deviation()
 	 * 
 	 * @return Product Deviation
 	 */
@@ -149,10 +148,8 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	}
 
 	/**
-	 * This method updates the Record ProductDeviations or
-	 * ProductDeviations_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Product Deviation Details by
-	 * key FinType and Version
+	 * This method updates the Record ProductDeviations or ProductDeviations_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Product Deviation Details by key FinType and Version
 	 * 
 	 * @param Product
 	 *            Deviation (productDeviation)
@@ -213,10 +210,8 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	}
 
 	/**
-	 * This method Deletes the Record from the ProductDeviations or
-	 * ProductDeviations_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Product Deviation Details by
-	 * key ProductCode
+	 * This method Deletes the Record from the ProductDeviations or ProductDeviations_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Product Deviation Details by key ProductCode
 	 * 
 	 * @param Product
 	 *            Deviation Details (productDeviation)
@@ -253,8 +248,7 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	}
 
 	/**
-	 * This method insert new Records into ProductDeviations or
-	 * ProductDeviations_Temp.
+	 * This method insert new Records into ProductDeviations or ProductDeviations_Temp.
 	 *
 	 * save Product Deviation Details
 	 * 

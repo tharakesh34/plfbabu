@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -50,13 +51,21 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
  * 
  */
 public interface CustomerEMailDAO {
-	 CustomerEMail getCustomerEMailById(long id,String typeCode,String type);
-	 List<CustomerEMail> getCustomerEmailByCustomer(final long id,String type);
-	 void update(CustomerEMail customerEMail,String type);
-	 void delete(CustomerEMail customerEMail,String type);
-	 void deleteByCustomer(long custID,String type);
-	 long save(CustomerEMail customerEMail,String type);
-	 List<String> getCustEmailsByCustId(long custId);
-	 int getEMailTypeCount(String typeCode);
-	 int getVersion(long id, String typeCode);
+	CustomerEMail getCustomerEMailById(long id, String typeCode, String type);
+
+	List<CustomerEMail> getCustomerEmailByCustomer(final long id, String type);
+
+	void update(CustomerEMail customerEMail, String type);
+
+	void delete(CustomerEMail customerEMail, String type);
+
+	void deleteByCustomer(long custID, String type);
+
+	long save(CustomerEMail customerEMail, String type);
+
+	List<String> getCustEmailsByCustId(long custId);
+
+	int getEMailTypeCount(String typeCode);
+
+	int getVersion(long id, String typeCode);
 }
