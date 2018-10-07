@@ -59,57 +59,58 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerAddres table</b>.<br>
  *
  */
-@XmlType(propOrder = {"custAddrType", "custAddrHNbr", "custFlatNbr", "custAddrStreet" , "custAddrLine1", "custAddrLine2", "custPOBox",
-		"custAddrCity", "custAddrProvince", "custAddrCountry", "custAddrZIP", "custAddrFrom","typeOfResidence","custAddrPriority"})
+@XmlType(propOrder = { "custAddrType", "custAddrHNbr", "custFlatNbr", "custAddrStreet", "custAddrLine1",
+		"custAddrLine2", "custPOBox", "custAddrCity", "custAddrProvince", "custAddrCountry", "custAddrZIP",
+		"custAddrFrom", "typeOfResidence", "custAddrPriority" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -3309604710675073740L;
-	
-	private long custAddressId=Long.MIN_VALUE;
-	private long custID =Long.MIN_VALUE;
+
+	private long custAddressId = Long.MIN_VALUE;
+	private long custID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
-	@XmlElement(name="addrType")
+	@XmlElement(name = "addrType")
 	private String custAddrType;
 	private String lovDescCustAddrTypeName;
-	@XmlElement(name="buildingNo")
+	@XmlElement(name = "buildingNo")
 	private String custAddrHNbr;
-	@XmlElement(name="FlatNo")
+	@XmlElement(name = "FlatNo")
 	private String custFlatNbr;
-	@XmlElement(name="Street")
+	@XmlElement(name = "Street")
 	private String custAddrStreet;
-	@XmlElement(name="addrLine1")
+	@XmlElement(name = "addrLine1")
 	private String custAddrLine1;
-	@XmlElement(name="addrLine2")
+	@XmlElement(name = "addrLine2")
 	private String custAddrLine2;
-	@XmlElement(name="poBox")
+	@XmlElement(name = "poBox")
 	private String custPOBox;
-	@XmlElement(name="country")
+	@XmlElement(name = "country")
 	private String custAddrCountry;
 	private String lovDescCustAddrCountryName;
-	@XmlElement(name="state")
+	@XmlElement(name = "state")
 	private String custAddrProvince;
 	private String lovDescCustAddrProvinceName;
-	@XmlElement(name="city")
+	@XmlElement(name = "city")
 	private String custAddrCity;
 	private String lovDescCustAddrCityName;
-	@XmlElement(name="pinCode")
+	@XmlElement(name = "pinCode")
 	private String custAddrZIP;
 	private String custAddrPhone;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerAddres befImage;
 	private LoggedInUser userDetails;
-	@XmlElement(name="residingFrom")
+	@XmlElement(name = "residingFrom")
 	private Timestamp custAddrFrom;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-	@XmlElement(name="priority")
+	@XmlElement(name = "priority")
 	private int custAddrPriority;
 	@XmlElement
-	private String typeOfResidence ;
-	
+	private String typeOfResidence;
+
 	private String sourceId;
-	
+
 	private String cityRefNo;
 	private String stateRefNo;
 	private String lovDescCustAddrZip;
@@ -130,15 +131,14 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("sourceId");
 		excludeFields.add("cityRefNo");
 		excludeFields.add("stateRefNo");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -146,13 +146,15 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public long getId() {
 		return custID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.custID = id;
 	}
 
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
@@ -160,6 +162,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -167,6 +170,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrType() {
 		return custAddrType;
 	}
+
 	public void setCustAddrType(String custAddrType) {
 		this.custAddrType = custAddrType;
 	}
@@ -174,6 +178,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustAddrTypeName() {
 		return this.lovDescCustAddrTypeName;
 	}
+
 	public void setLovDescCustAddrTypeName(String lovDescCustAddrTypeName) {
 		this.lovDescCustAddrTypeName = lovDescCustAddrTypeName;
 	}
@@ -181,6 +186,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrHNbr() {
 		return custAddrHNbr;
 	}
+
 	public void setCustAddrHNbr(String custAddrHNbr) {
 		this.custAddrHNbr = custAddrHNbr;
 	}
@@ -188,6 +194,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustFlatNbr() {
 		return custFlatNbr;
 	}
+
 	public void setCustFlatNbr(String custFlatNbr) {
 		this.custFlatNbr = custFlatNbr;
 	}
@@ -195,6 +202,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrStreet() {
 		return custAddrStreet;
 	}
+
 	public void setCustAddrStreet(String custAddrStreet) {
 		this.custAddrStreet = custAddrStreet;
 	}
@@ -202,6 +210,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrLine1() {
 		return custAddrLine1;
 	}
+
 	public void setCustAddrLine1(String custAddrLine1) {
 		this.custAddrLine1 = custAddrLine1;
 	}
@@ -209,6 +218,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrLine2() {
 		return custAddrLine2;
 	}
+
 	public void setCustAddrLine2(String custAddrLine2) {
 		this.custAddrLine2 = custAddrLine2;
 	}
@@ -216,6 +226,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustPOBox() {
 		return custPOBox;
 	}
+
 	public void setCustPOBox(String custPOBox) {
 		this.custPOBox = custPOBox;
 	}
@@ -223,6 +234,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrCountry() {
 		return custAddrCountry;
 	}
+
 	public void setCustAddrCountry(String custAddrCountry) {
 		this.custAddrCountry = custAddrCountry;
 	}
@@ -238,6 +250,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrProvince() {
 		return custAddrProvince;
 	}
+
 	public void setCustAddrProvince(String custAddrProvince) {
 		this.custAddrProvince = custAddrProvince;
 	}
@@ -245,6 +258,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustAddrProvinceName() {
 		return this.lovDescCustAddrProvinceName;
 	}
+
 	public void setLovDescCustAddrProvinceName(String lovDescCustAddrProvinceName) {
 		this.lovDescCustAddrProvinceName = lovDescCustAddrProvinceName;
 	}
@@ -252,6 +266,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrCity() {
 		return custAddrCity;
 	}
+
 	public void setCustAddrCity(String custAddrCity) {
 		this.custAddrCity = custAddrCity;
 	}
@@ -259,6 +274,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustAddrCityName() {
 		return this.lovDescCustAddrCityName;
 	}
+
 	public void setLovDescCustAddrCityName(String lovDescCustAddrCityName) {
 		this.lovDescCustAddrCityName = lovDescCustAddrCityName;
 	}
@@ -266,6 +282,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrZIP() {
 		return custAddrZIP;
 	}
+
 	public void setCustAddrZIP(String custAddrZIP) {
 		this.custAddrZIP = custAddrZIP;
 	}
@@ -273,6 +290,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getCustAddrPhone() {
 		return custAddrPhone;
 	}
+
 	public void setCustAddrPhone(String custAddrPhone) {
 		this.custAddrPhone = custAddrPhone;
 	}
@@ -280,6 +298,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public Timestamp getCustAddrFrom() {
 		return custAddrFrom;
 	}
+
 	public void setCustAddrFrom(Timestamp custAddrFrom) {
 		this.custAddrFrom = custAddrFrom;
 	}
@@ -287,6 +306,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -294,20 +314,23 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerAddres getBefImage(){
+	public CustomerAddres getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerAddres beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerAddres beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -315,6 +338,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -322,13 +346,14 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 
 	}
 
@@ -343,6 +368,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public int getCustAddrPriority() {
 		return custAddrPriority;
 	}
+
 	public void setCustAddrPriority(int custAddrPriority) {
 		this.custAddrPriority = custAddrPriority;
 	}
@@ -402,7 +428,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	public void setCustAddrLine4(String custAddrLine4) {
 		this.custAddrLine4 = custAddrLine4;
 	}
-	
+
 	public long getCustAddressId() {
 		return custAddressId;
 	}
