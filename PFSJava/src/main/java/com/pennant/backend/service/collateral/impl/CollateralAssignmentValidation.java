@@ -24,8 +24,7 @@ public class CollateralAssignmentValidation {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -43,10 +42,11 @@ public class CollateralAssignmentValidation {
 		CollateralAssignment collateralAssignment = (CollateralAssignment) auditDetail.getModelData();
 		CollateralAssignment tempAssignment = null;
 		if (collateralAssignment.isWorkflow()) {
-			tempAssignment = getCollateralAssignmentDAO().getCollateralAssignmentbyID(collateralAssignment,"_Temp");
+			tempAssignment = getCollateralAssignmentDAO().getCollateralAssignmentbyID(collateralAssignment, "_Temp");
 		}
 
-		CollateralAssignment befAssignment = getCollateralAssignmentDAO().getCollateralAssignmentbyID(collateralAssignment, "");
+		CollateralAssignment befAssignment = getCollateralAssignmentDAO()
+				.getCollateralAssignmentbyID(collateralAssignment, "");
 		CollateralAssignment oldAssignment = collateralAssignment.getBefImage();
 
 		String[] errParm = new String[2];
@@ -67,13 +67,11 @@ public class CollateralAssignmentValidation {
 
 				if (collateralAssignment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befAssignment != null || tempAssignment != null) { // if records already exists in the main table
-						auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAssignment == null || tempAssignment != null) {
-						auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -85,15 +83,14 @@ public class CollateralAssignmentValidation {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (oldAssignment != null
-							&& !oldAssignment.getLastMntOn().equals(befAssignment.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+					if (oldAssignment != null && !oldAssignment.getLastMntOn().equals(befAssignment.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
