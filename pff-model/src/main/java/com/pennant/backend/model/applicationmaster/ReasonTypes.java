@@ -51,7 +51,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -59,23 +58,23 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ReasonTypes table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","code","description"})
+@XmlType(propOrder = { "id", "code", "description" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ReasonTypes extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class ReasonTypes extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String code;
 	private String description;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ReasonTypes befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -88,34 +87,36 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
-	
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -123,7 +124,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -132,19 +133,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public ReasonTypes getBefImage(){
+	public ReasonTypes getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ReasonTypes beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ReasonTypes beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

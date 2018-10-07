@@ -25,21 +25,20 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		super();
 	}
 
-
 	@Override
 	public long save(ReasonHeader reasonHeader) {
 		logger.debug(Literal.ENTERING);
 		try {
 			long id = saveHeader(reasonHeader);
 			List<ReasonDetails> details = reasonHeader.getDetailsList();
-			
+
 			if (details != null && !details.isEmpty()) {
 				for (ReasonDetails reasonDetails : details) {
 					reasonDetails.setHeaderId(id);
 				}
 				saveDetails(details);
 			}
-			
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -105,7 +104,8 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		MapSqlParameterSource source = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode,SR.RoleDesc, RH.Activity, RC.Code, RC.Description,");
+		sql.append(
+				" Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode,SR.RoleDesc, RH.Activity, RC.Code, RC.Description,");
 		sql.append(" RH.Touser,SU.UsrLogin,SU.Usrfname ,SU.Usrmname ,SU.Usrlname , RH.Logtime ");
 		sql.append(" from ReasonHeader RH inner join ReasonDetails RD ON RH.ID = RD.HeaderId");
 		sql.append(" inner join Reasons RS ON RS.ID = RD.ReasonID");
@@ -119,7 +119,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		try {
-			return this.jdbcTemplate.query(sql.toString(),source, mapper);
+			return this.jdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -129,7 +129,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isreasonCodeExists(long reasonCode) {
 		logger.debug("Entering");

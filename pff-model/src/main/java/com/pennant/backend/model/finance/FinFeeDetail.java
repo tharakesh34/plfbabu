@@ -43,7 +43,6 @@ package com.pennant.backend.model.finance;
  ********************************************************************************************
 */
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +55,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -67,12 +65,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "feeCategory", "schdDate", "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount",
 		"feeScheduleMethod", "terms", "remainingFee" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
+public class FinFeeDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long feeID = Long.MIN_VALUE;
-	private int feeSeq; 
-	
+	private int feeSeq;
+
 	private String finReference;
 	private boolean originationFee;
 	private String finEvent;
@@ -84,41 +82,41 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal actualAmount = BigDecimal.ZERO;
 	private BigDecimal actualAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal actualAmountGST = BigDecimal.ZERO;
-		
+
 	@XmlElement(name = "waiverAmount")
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
-	
+
 	//Paid Amounts
 	private BigDecimal paidAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal paidAmountGST = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal paidAmount = BigDecimal.ZERO;
-	
+
 	//Net Amounts
 	private BigDecimal netAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal netAmountGST = BigDecimal.ZERO;
 	private BigDecimal netAmount = BigDecimal.ZERO;
-		
-	@XmlElement(name= "scheduleTerms")
+
+	@XmlElement(name = "scheduleTerms")
 	private int terms = 0;
-	
+
 	//Remaining Fees
 	private BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
 	private BigDecimal remainingFeeGST = BigDecimal.ZERO;
-	@XmlElement(name= "feeBalance")
+	@XmlElement(name = "feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
 	private BigDecimal taxPercent = BigDecimal.ZERO;
-	
+
 	@XmlElement
 	private String feeCategory;
 	private String paymentRef;
-	
+
 	private int feeOrder;
 	private String finEventDesc;
-	@XmlElement(name= "feeCode")
+	@XmlElement(name = "feeCode")
 	private String feeTypeCode;
 	private String feeTypeDesc;
-	@XmlElement(name="feeMethod")
+	@XmlElement(name = "feeMethod")
 	private String feeScheduleMethod;
 	private String calculationType;
 	private String ruleCode;
@@ -136,20 +134,20 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private boolean rcdVisible = true;
 	@XmlElement
 	private Date schdDate;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinFeeDetail befImage;
 	private LoggedInUser userDetails;
 	private Date postDate;
 	private String transactionId;
-	
+
 	private boolean alwPreIncomization;
 
 	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
-	
+
 	private List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<FinFeeScheduleDetail>(1);
-	
+
 	private FinTaxDetails finTaxDetails = new FinTaxDetails();
 	private boolean taxApplicable;
 	private String taxComponent;
@@ -158,29 +156,29 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal ugst = BigDecimal.ZERO;
 	private BigDecimal sgst = BigDecimal.ZERO;
 	private BigDecimal cgst = BigDecimal.ZERO;
-	
+
 	@XmlElement
-	private List<FinFeeReceipt> finFeeReceipts=new ArrayList<FinFeeReceipt>(1);
-	
-	private boolean feeModified = false;	//Added for rule and percentage auto calculation
+	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>(1);
+
+	private boolean feeModified = false; //Added for rule and percentage auto calculation
 
 	public FinFeeDetail() {
 		super();
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public FinFeeDetail(String finReference) {
 		super();
 		this.setFinReference(finReference);
 	}
 
 	public Set<String> getExcludeFields() {
-		
+
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		excludeFields.add("finEventDesc");
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("feeTypeDesc");
@@ -190,7 +188,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("feeCategory");
 		excludeFields.add("schdDate");
 		excludeFields.add("taxPercent");
-		
+
 		excludeFields.add("finTaxDetails");
 		excludeFields.add("igst");
 		excludeFields.add("ugst");
@@ -199,10 +197,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("feeModified");
 		excludeFields.add("alwPreIncomization");
 		excludeFields.add("finFeeReceipts");
-		
+
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -210,6 +208,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -217,13 +216,15 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isOriginationFee() {
 		return originationFee;
 	}
+
 	public void setOriginationFee(boolean originationFee) {
 		this.originationFee = originationFee;
 	}
-	
+
 	public String getFinEvent() {
 		return finEvent;
 	}
+
 	public void setFinEvent(String finEvent) {
 		this.finEvent = finEvent;
 	}
@@ -231,6 +232,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public int getFeeOrder() {
 		return feeOrder;
 	}
+
 	public void setFeeOrder(int feeOrder) {
 		this.feeOrder = feeOrder;
 	}
@@ -238,6 +240,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getFinEventDesc() {
 		return finEventDesc;
 	}
+
 	public void setFinEventDesc(String finEventDesc) {
 		this.finEventDesc = finEventDesc;
 	}
@@ -245,6 +248,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public long getFeeTypeID() {
 		return feeTypeID;
 	}
+
 	public void setFeeTypeID(long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
@@ -252,6 +256,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getFeeTypeCode() {
 		return feeTypeCode;
 	}
+
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
 	}
@@ -259,13 +264,15 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getFeeTypeDesc() {
 		return feeTypeDesc;
 	}
+
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
 	}
-	
+
 	public BigDecimal getCalculatedAmount() {
 		return calculatedAmount;
 	}
+
 	public void setCalculatedAmount(BigDecimal calculatedAmount) {
 		this.calculatedAmount = calculatedAmount;
 	}
@@ -273,6 +280,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getActualAmount() {
 		return actualAmount;
 	}
+
 	public void setActualAmount(BigDecimal actualAmount) {
 		this.actualAmount = actualAmount;
 	}
@@ -280,6 +288,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getWaivedAmount() {
 		return waivedAmount;
 	}
+
 	public void setWaivedAmount(BigDecimal waivedAmount) {
 		this.waivedAmount = waivedAmount;
 	}
@@ -287,6 +296,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getPaidAmount() {
 		return paidAmount;
 	}
+
 	public void setPaidAmount(BigDecimal paidAmount) {
 		this.paidAmount = paidAmount;
 	}
@@ -294,6 +304,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public int getTerms() {
 		return terms;
 	}
+
 	public void setTerms(int terms) {
 		this.terms = terms;
 	}
@@ -301,6 +312,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getRemainingFee() {
 		return remainingFee;
 	}
+
 	public void setRemainingFee(BigDecimal remainingFee) {
 		this.remainingFee = remainingFee;
 	}
@@ -308,6 +320,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getPaymentRef() {
 		return paymentRef;
 	}
+
 	public void setPaymentRef(String paymentRef) {
 		this.paymentRef = paymentRef;
 	}
@@ -315,6 +328,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getFeeScheduleMethod() {
 		return feeScheduleMethod;
 	}
+
 	public void setFeeScheduleMethod(String feeScheduleMethod) {
 		this.feeScheduleMethod = feeScheduleMethod;
 	}
@@ -322,6 +336,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isAlwModifyFee() {
 		return alwModifyFee;
 	}
+
 	public void setAlwModifyFee(boolean alwModifyFee) {
 		this.alwModifyFee = alwModifyFee;
 	}
@@ -329,6 +344,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isAlwModifyFeeSchdMthd() {
 		return alwModifyFeeSchdMthd;
 	}
+
 	public void setAlwModifyFeeSchdMthd(boolean alwModifyFeeSchdMthd) {
 		this.alwModifyFeeSchdMthd = alwModifyFeeSchdMthd;
 	}
@@ -336,6 +352,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isAlwDeviation() {
 		return alwDeviation;
 	}
+
 	public void setAlwDeviation(boolean alwDeviation) {
 		this.alwDeviation = alwDeviation;
 	}
@@ -343,6 +360,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getMaxWaiverPerc() {
 		return maxWaiverPerc;
 	}
+
 	public void setMaxWaiverPerc(BigDecimal maxWaiverPerc) {
 		this.maxWaiverPerc = maxWaiverPerc;
 	}
@@ -350,6 +368,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getRuleCode() {
 		return ruleCode;
 	}
+
 	public void setRuleCode(String ruleCode) {
 		this.ruleCode = ruleCode;
 	}
@@ -357,6 +376,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getFixedAmount() {
 		return fixedAmount;
 	}
+
 	public void setFixedAmount(BigDecimal fixedAmount) {
 		this.fixedAmount = fixedAmount;
 	}
@@ -364,6 +384,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getCalculationType() {
 		return calculationType;
 	}
+
 	public void setCalculationType(String calculationType) {
 		this.calculationType = calculationType;
 	}
@@ -371,6 +392,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public String getCalculateOn() {
 		return calculateOn;
 	}
+
 	public void setCalculateOn(String calculateOn) {
 		this.calculateOn = calculateOn;
 	}
@@ -378,6 +400,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getPercentage() {
 		return percentage;
 	}
+
 	public void setPercentage(BigDecimal percentage) {
 		this.percentage = percentage;
 	}
@@ -385,27 +408,31 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinFeeDetail getBefImage(){
+	public FinFeeDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinFeeDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinFeeDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -413,6 +440,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isDataModified() {
 		return dataModified;
 	}
+
 	public void setDataModified(boolean dataModified) {
 		this.dataModified = dataModified;
 	}
@@ -420,6 +448,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isRcdVisible() {
 		return rcdVisible;
 	}
+
 	public void setRcdVisible(boolean rcdVisible) {
 		this.rcdVisible = rcdVisible;
 	}
@@ -432,12 +461,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		this.feeID = feeID;
 	}
 
-	@Override
 	public long getId() {
 		return this.feeID;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.feeID = id;
 	}
@@ -465,7 +492,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public void setVasReference(String vasReference) {
 		this.vasReference = vasReference;
 	}
-	
+
 	public String getFeeCategory() {
 		return feeCategory;
 	}
@@ -497,7 +524,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
 	}
-	
+
 	public FinTaxDetails getFinTaxDetails() {
 		return finTaxDetails;
 	}
@@ -633,7 +660,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	public void setCgst(BigDecimal cgst) {
 		this.cgst = cgst;
 	}
-	
+
 	public BigDecimal getTaxPercent() {
 		return taxPercent;
 	}
@@ -674,7 +701,4 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		this.alwPreIncomization = alwPreIncomization;
 	}
 
-
-
 }
-

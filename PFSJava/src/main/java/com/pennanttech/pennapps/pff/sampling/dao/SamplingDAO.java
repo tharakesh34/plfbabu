@@ -35,7 +35,7 @@ public interface SamplingDAO {
 	Map<String, String> getEligibilityRules();
 
 	List<SamplingCollateral> getCollateralTypesBySamplingId(Long samplingId);
-	
+
 	List<SamplingCollateral> getCollateralsBySamplingId(List<String> linkIds, String collateralType);
 
 	ExtendedFieldRender getCollateralExtendedFields(String collReference, String tableName, String type);
@@ -44,32 +44,32 @@ public interface SamplingDAO {
 
 	long getLinkId(Sampling sampling, String collRef, String inputSource);
 
-	boolean isExist(String finReference,String type);
-	
+	boolean isExist(String finReference, String type);
+
 	long getIncomeLinkId(long id, long custId);
 
 	long getLiabilityLinkId(long id, long custId);
 
 	long getCollateralLinkId(long id, String CollateralReference);
-	
-	long getCollateralLinkId(String collateralreference,long samplingId,String type);
+
+	long getCollateralLinkId(String collateralreference, long samplingId, String type);
 
 	BigDecimal getLoanEligibility(String finReference, String eligibilityRule);
-	
+
 	Map<String, Object> getRemarks(long samplingId);
-	
+
 	String getCollateralRef(Sampling sampling, String collRef);
 
 	long getIncomeLinkIdByCustId(long custId, long samplinId);
 
 	long getIncomeSnapLinkId(long samplingId, long custId);
-	
+
 	long getLiabilitySnapLinkId(long samplingId, long custId);
 
 	long getLinkId(long samplingId, String tableName);
-	
+
 	long getCollateralSnapLinkId(long samplingId, String collateralRef);
-	
+
 	void saveIncomes(long samplingId);
 
 	void saveLiabilities(long samplingId);
@@ -87,6 +87,6 @@ public interface SamplingDAO {
 	List<String> getCollateralLinkIds(long samplingId);
 
 	int getNextLiabilitSeq(long linkId);
-	
-	List<CustomerIncome> getIncomesByCustId(long samplingId,long custId, String type);
+
+	List<CustomerIncome> getIncomesByCustId(long samplingId, long custId, String type);
 }

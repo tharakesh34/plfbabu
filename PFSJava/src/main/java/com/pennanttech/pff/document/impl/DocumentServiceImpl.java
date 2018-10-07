@@ -29,20 +29,19 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 
 public class DocumentServiceImpl extends GenericService<DocumentDetails> implements DocumentService {
-	private static Logger		logger	= Logger.getLogger(DocumentServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DocumentServiceImpl.class);
 
-	private DocumentDetailsDAO	documentDetailsDAO;
-	private AuditHeaderDAO		auditHeaderDAO;
-	private DocumentManagerDAO	documentManagerDAO;
-	
+	private DocumentDetailsDAO documentDetailsDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private DocumentManagerDAO documentManagerDAO;
+
 	// services
-	private DocumentTypeService	documentTypeService;
-
+	private DocumentTypeService documentTypeService;
 
 	/**
-	 * Method for validate and do below actions<br>.
-	 *  - Save in case of new record<br>.
-	 *  - Update if already exists.
+	 * Method for validate and do below actions<br>
+	 * . - Save in case of new record<br>
+	 * . - Update if already exists.
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -63,8 +62,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 
 		if (documentDetail.isNew()) {
 			/**
-			 * Save the document (documentDetails object) into DocumentManagerTable 
-			 * using documentManagerDAO.save(?) get the long Id<br>.
+			 * Save the document (documentDetails object) into DocumentManagerTable using documentManagerDAO.save(?) get
+			 * the long Id<br>
+			 * .
 			 * 
 			 * This will be used in the getDocumentDetailsDAO().save, Update & delete methods
 			 */
@@ -81,11 +81,11 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				documentManager.setDocImage(documentDetail.getDocImage());
 				documentDetail.setDocRefId(documentManagerDAO.save(documentManager));
 			}
-			
+
 			// update
 			documentDetailsDAO.update(documentDetail, tableType);
 		}
-		
+
 		auditHeader.getAuditDetail().setModelData(documentDetail);
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -151,13 +151,11 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				if (documentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCustomerDocument != null || tempDocumentDetail != null) {
 						//if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerDocument == null || tempDocumentDetail != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -173,11 +171,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						&& !oldDocumentDetail.getLastMntOn().equals(befCustomerDocument.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 					} else {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 					}
 				}
 			} else {
@@ -200,7 +196,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	/**
 	 * Method for validate Finance document details
 	 * 
@@ -224,7 +220,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90401", valueParm)));
 					return errorDetails;
 				} else {
-					if(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
+					if (DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90408", valueParm)));
@@ -236,15 +232,15 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "custDocExpDate: " +DateUtility.formatDate(detail.getCustDocExpDate(),
-								PennantConstants.XMLDateFormat);
-						valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(detail.getCustDocIssuedOn(),
-								PennantConstants.XMLDateFormat);
+						valueParm[0] = "custDocExpDate: "
+								+ DateUtility.formatDate(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+						valueParm[1] = "custDocIssuedOn: "
+								+ DateUtility.formatDate(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 						return errorDetails;
 					}
 				}
-				
+
 				//docType is mandatory in XML Level
 				if (StringUtils.isNotBlank(detail.getDoctype())) {
 					if (!(StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_PDF)
@@ -297,10 +293,11 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
 						}
 					}
-				}				
-				
+				}
+
 				// validate finance documents
-				if (!(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) && docType.isDocIsMandatory()) {
+				if (!(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode()))
+						&& docType.isDocIsMandatory()) {
 					if (StringUtils.isBlank(detail.getDocUri())) {
 						if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
 							String[] valueParm = new String[2];
@@ -310,7 +307,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						}
 					}
 					if (detail.getDocImage() != null || StringUtils.isNotBlank(detail.getDocUri())) {
-						if( StringUtils.isBlank(detail.getDocName())) {
+						if (StringUtils.isBlank(detail.getDocName())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "docName";
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
@@ -338,7 +335,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}

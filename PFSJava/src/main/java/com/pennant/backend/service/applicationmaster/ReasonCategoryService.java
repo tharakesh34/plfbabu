@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface ReasonCategoryService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ReasonCategory getReasonCategory(long id);
+
 	ReasonCategory getApprovedReasonCategory(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

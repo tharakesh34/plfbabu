@@ -61,59 +61,56 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
-
-
-
 /**
  * Service implementation for methods that depends on <b>ReasonCode</b>.<br>
  */
 public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements ReasonCodeService {
-	private static final  Logger logger = Logger.getLogger(ReasonCodeServiceImpl.class);
-	
+	private static final Logger logger = Logger.getLogger(ReasonCodeServiceImpl.class);
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReasonCodeDAO reasonCodeDAO;
-	private ReasonDetailDAO  reasonDetailDAO;
-
+	private ReasonDetailDAO reasonDetailDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the reasonCodeDAO
 	 */
 	public ReasonCodeDAO getReasonCodeDAO() {
 		return reasonCodeDAO;
 	}
+
 	/**
-	 * @param reasonCodeDAO the reasonCodeDAO to set
+	 * @param reasonCodeDAO
+	 *            the reasonCodeDAO to set
 	 */
 	public void setReasonCodeDAO(ReasonCodeDAO reasonCodeDAO) {
 		this.reasonCodeDAO = reasonCodeDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * Reasons/Reasons_Temp by using ReasonsDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ReasonsDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtReasons by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Reasons/Reasons_Temp by using
+	 * ReasonsDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
+	 * ReasonsDAO's update method 3) Audit the record in to AuditHeader and AdtReasons by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -121,28 +118,28 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);	
-		
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		ReasonCode reasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (reasonCode.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (reasonCode.isNew()) {
-			reasonCode.setId(Long.parseLong(getReasonCodeDAO().save(reasonCode,tableType)));
+			reasonCode.setId(Long.parseLong(getReasonCodeDAO().save(reasonCode, tableType)));
 			auditHeader.getAuditDetail().setModelData(reasonCode);
 			auditHeader.setAuditReference(String.valueOf(reasonCode.getId()));
-		}else{
-			getReasonCodeDAO().update(reasonCode,tableType);
+		} else {
+			getReasonCodeDAO().update(reasonCode, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -152,12 +149,10 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table Reasons by using ReasonsDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtReasons by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * Reasons by using ReasonsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtReasons by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -166,13 +161,13 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		auditHeader = businessValidation(auditHeader,"delete");
+
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		ReasonCode reasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
 		getReasonCodeDAO().delete(reasonCode, TableType.MAIN_TAB);
 
@@ -195,13 +190,11 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	}
 
 	/**
-	 * getApprovedReasonsById fetch the details by using ReasonsDAO's
-	 * getReasonsById method . with parameter id and type as blank. it fetches
-	 * the approved records from the Reasons.
+	 * getApprovedReasonsById fetch the details by using ReasonsDAO's getReasonsById method . with parameter id and type
+	 * as blank. it fetches the approved records from the Reasons.
 	 * 
 	 * @param id
-	 *            id of the ReasonCode.
-	 *            (String)
+	 *            id of the ReasonCode. (String)
 	 * @return Reasons
 	 */
 	public ReasonCode getApprovedReasonCode(long id) {
@@ -209,18 +202,14 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getReasonCodeDAO().delete with parameters reasonCode,"" b) NEW Add new
-	 * record in to main table by using getReasonCodeDAO().save with parameters
-	 * reasonCode,"" c) EDIT Update record in the main table by using
-	 * getReasonCodeDAO().update with parameters reasonCode,"" 3) Delete the record
-	 * from the workFlow table by using getReasonCodeDAO().delete with parameters
-	 * reasonCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtReasons by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtReasons by using
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getReasonCodeDAO().delete with
+	 * parameters reasonCode,"" b) NEW Add new record in to main table by using getReasonCodeDAO().save with parameters
+	 * reasonCode,"" c) EDIT Update record in the main table by using getReasonCodeDAO().update with parameters
+	 * reasonCode,"" 3) Delete the record from the workFlow table by using getReasonCodeDAO().delete with parameters
+	 * reasonCode,"_Temp" 4) Audit the record in to AuditHeader and AdtReasons by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtReasons by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
@@ -230,10 +219,10 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		
+
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -244,7 +233,6 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 
 		getReasonCodeDAO().delete(reasonCode, TableType.TEMP_TAB);
 
-		
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(reasonCodeDAO.getReasonCode(reasonCode.getId(), ""));
 		}
@@ -259,8 +247,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 			reasonCode.setNextTaskId("");
 			reasonCode.setWorkflowId(0);
 
-			if (reasonCode.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (reasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				reasonCode.setRecordType("");
 				getReasonCodeDAO().save(reasonCode, TableType.MAIN_TAB);
@@ -278,21 +265,17 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(reasonCode);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-		
-		}
 
-	
+	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getReasonCodeDAO().delete with parameters
-	 * reasonCode,"_Temp" 3) Audit the record in to AuditHeader and AdtReasons
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getReasonCodeDAO().delete with parameters reasonCode,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtReasons by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -320,10 +303,8 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -342,10 +323,9 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getReasonCodeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getReasonCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -361,7 +341,8 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		// Check the unique keys.
 		if (reasonCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())
 				&& reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeID(), reasonCode.getReasonCategoryID(),
-						reasonCode.getCode().trim(), reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+						reasonCode.getCode().trim(),
+						reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_ReasonTypeID") + ": " + reasonCode.getReasonTypeID();
@@ -383,7 +364,6 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 			}
 		}
 
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
@@ -397,6 +377,5 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
 	}
-	
 
 }

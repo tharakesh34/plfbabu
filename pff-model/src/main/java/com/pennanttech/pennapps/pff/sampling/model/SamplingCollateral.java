@@ -16,7 +16,7 @@ public class SamplingCollateral extends AbstractWorkflowEntity {
 	private String linkId;
 	private BigDecimal bankLTV = BigDecimal.ZERO;
 	private BigDecimal assignPerc = BigDecimal.ZERO;
-	
+
 	public SamplingCollateral() {
 		super();
 	}

@@ -196,7 +196,7 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("queryDetail");
 		excludeFields.add("samplingTolerance");
 		excludeFields.add("samplingDetailsList");
-		
+
 		excludeFields.add("totalCustomerExposre");
 		excludeFields.add("totalCoApplicantsExposre");
 		excludeFields.add("collateralFieldsForRule");
@@ -417,7 +417,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setRepayProfitRate(BigDecimal repayProfitRate) {
 		this.repayProfitRate = repayProfitRate;
 	}
-	
+
 	public BigDecimal getRepayMinRate() {
 		return repayMinRate == null ? BigDecimal.ZERO : repayMinRate;
 	}
@@ -425,7 +425,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setRepayMinRate(BigDecimal repayMinRate) {
 		this.repayMinRate = repayMinRate;
 	}
-	
+
 	public String getRepayBaseRate() {
 		return repayBaseRate;
 	}
@@ -521,7 +521,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setCustomerExtLiabilityList(List<CustomerExtLiability> customerExtLiabilityList) {
 		this.customerExtLiabilityList = customerExtLiabilityList;
 	}
-	
+
 	public List<SamplingCollateral> getCollaterals() {
 		return collaterals;
 	}
@@ -549,7 +549,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	public static String getRuleCodeEmi() {
 		return RULE_CODE_EMI;
 	}
-	
+
 	public SamplingCollateral getCollateral() {
 		return collateral;
 	}
@@ -695,7 +695,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getFoirEligibility() {
-		return foirEligibility == null ? BigDecimal.ZERO:foirEligibility;
+		return foirEligibility == null ? BigDecimal.ZERO : foirEligibility;
 	}
 
 	public void setFoirEligibility(BigDecimal foirEligibility) {
@@ -703,7 +703,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getEmi() {
-		return emi == null ? BigDecimal.ZERO:emi;
+		return emi == null ? BigDecimal.ZERO : emi;
 	}
 
 	public void setEmi(BigDecimal emi) {
@@ -711,7 +711,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getLoanEligibility() {
-		return loanEligibility == null ? BigDecimal.ZERO:loanEligibility;
+		return loanEligibility == null ? BigDecimal.ZERO : loanEligibility;
 	}
 
 	public void setLoanEligibility(BigDecimal loanEligibility) {
@@ -719,7 +719,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getIrrEligibility() {
-		return irrEligibility == null ? BigDecimal.ZERO:irrEligibility;
+		return irrEligibility == null ? BigDecimal.ZERO : irrEligibility;
 	}
 
 	public void setIrrEligibility(BigDecimal irrEligibility) {
@@ -727,7 +727,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getLcrEligibility() {
-		return lcrEligibility == null ? BigDecimal.ZERO:lcrEligibility;
+		return lcrEligibility == null ? BigDecimal.ZERO : lcrEligibility;
 	}
 
 	public void setLcrEligibility(BigDecimal lcrEligibility) {
@@ -735,7 +735,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getLtvEligibility() {
-		return ltvEligibility == null ? BigDecimal.ZERO:ltvEligibility;
+		return ltvEligibility == null ? BigDecimal.ZERO : ltvEligibility;
 	}
 
 	public void setLtvEligibility(BigDecimal ltvEligibility) {
@@ -743,7 +743,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getOriginalTotalIncome() {
-		return originalTotalIncome == null ? BigDecimal.ZERO:originalTotalIncome;
+		return originalTotalIncome == null ? BigDecimal.ZERO : originalTotalIncome;
 	}
 
 	public void setOriginalTotalIncome(BigDecimal originalTotalIncome) {
@@ -751,7 +751,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getOriginalTotalLiability() {
-		return originalTotalLiability == null ? BigDecimal.ZERO:originalTotalLiability;
+		return originalTotalLiability == null ? BigDecimal.ZERO : originalTotalLiability;
 	}
 
 	public void setOriginalTotalLiability(BigDecimal originalTotalLiability) {
@@ -829,5 +829,5 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setIncludeIncome(Set<Long> includeIncome) {
 		this.includeIncome = includeIncome;
 	}
-	
+
 }

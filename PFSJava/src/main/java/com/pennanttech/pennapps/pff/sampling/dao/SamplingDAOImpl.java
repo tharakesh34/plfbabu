@@ -49,15 +49,18 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("insert into sampling");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, keyreference, createdby, createdon,");
-		sql.append(" tenure, interestrate, loanEligibility, foireligibility, irreligibility, lcreligibility, ltveligibility, emi, totalincome,");
+		sql.append(
+				" tenure, interestrate, loanEligibility, foireligibility, irreligibility, lcreligibility, ltveligibility, emi, totalincome,");
 		sql.append(" totalliability, remarks, samplingon, decision, recommendedamount, decisionon, resubmitreason,");
 		sql.append(" totalCustomerIntObligation, totalCoApplicantsIntObligation,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
 		sql.append(" values(");
 		sql.append(" :id, :keyReference, :createdBy, :createdOn,");
-		sql.append(" :tenure, :interestRate, :loanEligibility, :foirEligibility, :irrEligibility, :lcrEligibility, :ltvEligibility, :emi,:totalIncome, ");
-		sql.append(" :totalLiability, :remarks, :samplingOn, :decision, :recommendedAmount, :decisionOn, :resubmitReason,");
+		sql.append(
+				" :tenure, :interestRate, :loanEligibility, :foirEligibility, :irrEligibility, :lcrEligibility, :ltvEligibility, :emi,:totalIncome, ");
+		sql.append(
+				" :totalLiability, :remarks, :samplingOn, :decision, :recommendedAmount, :decisionOn, :resubmitReason,");
 		sql.append(" :totalCustomerIntObligation, :totalCoApplicantsIntObligation,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode, :taskId, :nextTaskId, :recordType, :workflowId)");
@@ -95,7 +98,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		return linkId;
 	}
-	
+
 	@Override
 	public long getIncomeLinkIdByCustId(long custId, long samplinId) {
 		StringBuilder sql = new StringBuilder();
@@ -164,7 +167,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public long getCollateralLinkId(long id, String CollateralReference) {
 		logger.debug(Literal.ENTERING);
 
-		long linkId = getCollateralLinkId(CollateralReference, id,"");
+		long linkId = getCollateralLinkId(CollateralReference, id, "");
 
 		if (linkId > 0) {
 			return linkId;
@@ -213,7 +216,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		StringBuilder query = new StringBuilder();
 		query.append(" update sampling");
 		query.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		query.append(" set tenure =:tenure, interestrate = :interestRate, loanEligibility = :loanEligibility, lcreligibility = :lcrEligibility, ltveligibility = :ltvEligibility,");
+		query.append(
+				" set tenure =:tenure, interestrate = :interestRate, loanEligibility = :loanEligibility, lcreligibility = :lcrEligibility, ltveligibility = :ltvEligibility,");
 		query.append(" totalincome =:totalIncome, totalliability = :totalLiability,");
 		query.append(" foireligibility =:foirEligibility, irreligibility = :irrEligibility, emi = :emi,");
 		query.append(" totalCustomerIntObligation = :totalCustomerIntObligation,");
@@ -238,7 +242,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	@Override
 	public List<SamplingCollateral> getCollateralTypesBySamplingId(Long samplingId) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select cs.collateralref, cs.collateraltype, lsc.linkId from collateralsetup_view cs");
 		sql.append(" inner join link_sampling_collaterals lsc on lsc.collateralReference = cs.collateralref");
@@ -247,7 +251,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingid", samplingId);
-		RowMapper<SamplingCollateral> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class);
+		RowMapper<SamplingCollateral> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SamplingCollateral.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -433,7 +438,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = null;
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append(" select * from sampling").append(type);
 		sql.append(" where keyreference = :keyreference");
 
@@ -468,7 +473,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			return new ArrayList<>();
 		}
 	}
-	
+
 	@Override
 	public List<SamplingCollateral> getCollaterals(String keyreference, String collateralType) {
 		collateralType = collateralType.toLowerCase();
@@ -499,16 +504,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	@Override
 	public Map<String, String> getEligibilityRules() {
 		Map<String, String> rules = new HashMap<>();
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("select rulecode, sqlrule from rules where rulemodule=:rulemodule and rulecode in (:rulecode)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("rulemodule", "ELGRULE");
-		source.addValue("rulecode",
-				Arrays.asList(Sampling.RULE_CODE_FOIRAMT, Sampling.RULE_CODE_IIRMAX, Sampling.RULE_CODE_EMI,
-						Sampling.RULE_CODE_LCRMAXEL, Sampling.RULE_CODE_LTVAMOUN));
+		source.addValue("rulecode", Arrays.asList(Sampling.RULE_CODE_FOIRAMT, Sampling.RULE_CODE_IIRMAX,
+				Sampling.RULE_CODE_EMI, Sampling.RULE_CODE_LCRMAXEL, Sampling.RULE_CODE_LTVAMOUN));
 
 		try {
 			jdbcTemplate.query(sql.toString(), source, new RowCallbackHandler() {
@@ -566,7 +570,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			sql.append(" T  where not exists (select 1 from ");
 			sql.append(tableName);
 			sql.append("_temp");
-			sql.append(" where reference =T.reference)) T where T.reference = :linkid and seqno =:seqno order by seqno");
+			sql.append(
+					" where reference =T.reference)) T where T.reference = :linkid and seqno =:seqno order by seqno");
 		} else {
 			sql.append("select * from ");
 			sql.append(tableName);
@@ -653,7 +658,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		return linkid;
 	}
-		
+
 	@Override
 	public long getLiabilitySnapLinkId(long samplingId, long custId) {
 		logger.debug(Literal.ENTERING);
@@ -696,31 +701,30 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		return linkid;
 	}
-	
+
 	@Override
 	public long getCollateralSnapLinkId(long samplingId, String collateralRef) {
 		logger.debug(Literal.ENTERING);
 
-		long linkId = getCollateralLinkId(collateralRef, samplingId,"_snap");
+		long linkId = getCollateralLinkId(collateralRef, samplingId, "_snap");
 
 		if (linkId > 0) {
 			return linkId;
 		}
-		
+
 		linkId = getNextValue("seqcollaterallink");
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into link_sampling_collaterals_snap values(:samplingId, :collateralRef,:linkId)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("samplingId",samplingId);
+		source.addValue("samplingId", samplingId);
 		source.addValue("collateralRef", collateralRef);
 		source.addValue("linkId", linkId);
 
 		this.jdbcTemplate.update(sql.toString(), source);
 		return linkId;
 	}
-	
 
 	@Override
 	public BigDecimal getLoanEligibility(String finReference, String eligibilityRule) {
@@ -763,6 +767,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
+
 	public String getCollateralRef(Sampling sampling, String linkId) {
 		logger.debug(Literal.ENTERING);
 
@@ -783,7 +788,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.LEAVING);
 		return collReference;
 	}
-	
+
 	@Override
 	public long getLinkId(long samplingId, String tableName) {
 		StringBuilder sql = new StringBuilder();
@@ -818,7 +823,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	@Override
 	public void updateIncomes(Sampling sampling) {
 		StringBuilder sql = new StringBuilder();
@@ -834,11 +839,11 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	@Override
 	public void updateCollaterals(Sampling sampling, String collateralType) {
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append("update verification_");
 		sql.append(StringUtils.trimToEmpty(collateralType));
 		sql.append("_tv_temp");
@@ -846,7 +851,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId,");
 		sql.append(" recordtype=:recordType, workflowid=:workflowId");
 		sql.append(" where reference in  (:reference)");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("lastMntBy", sampling.getLastMntBy());
 		source.addValue("lastMntOn", sampling.getLastMntOn());
@@ -866,7 +871,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	@Override
 	public void saveLiabilities(long samplingId) {
 		StringBuilder sql = new StringBuilder();
@@ -881,7 +886,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	@Override
 	public void updateLiabilities(Sampling sampling) {
 		StringBuilder sql = new StringBuilder();
@@ -897,14 +902,14 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	@Override
 	public void saveCollateral(long samplingId, String collateralType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		List<String> linkIds = getCollateralLinkIds(samplingId);
-				
+
 		StringBuilder sql = new StringBuilder("insert into verification_");
 		sql.append(StringUtils.trimToEmpty(collateralType));
 		sql.append("_tv_temp");
@@ -922,7 +927,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public List<String> getCollateralLinkIds(long samplingId) {
 		logger.debug(Literal.ENTERING);
@@ -971,8 +976,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		} catch (DataAccessException e) {
 			return new ArrayList<>();
 		}
-	}	
-	
+	}
+
 	@Override
 	public int getNextLiabilitSeq(long linkId) {
 		StringBuilder sql = new StringBuilder();
@@ -992,7 +997,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		return seqNo;
 	}
-	
+
 	@Override
 	public List<CustomerIncome> getIncomesByCustId(long samplingId, long custId, String type) {
 		logger.debug(Literal.ENTERING);

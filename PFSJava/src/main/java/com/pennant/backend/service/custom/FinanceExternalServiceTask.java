@@ -52,7 +52,7 @@ import com.pennanttech.pff.external.HoldFinanceService;
 import com.pennanttech.pff.external.LegalDeskService;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
-	private static final Logger				logger	= Logger.getLogger(FinanceExternalServiceTask.class);
+	private static final Logger logger = Logger.getLogger(FinanceExternalServiceTask.class);
 
 	// Open the below commented code once pff-interface configuration setup completed.
 	@Autowired(required = false)
@@ -69,28 +69,28 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	@Autowired(required = false)
 	private BureauScore bureauscore;
-	
-	@Autowired(required = false)
-	private CibilConsumerService cibilConsumerService;
-	
-	@Autowired(required = false)
-	private LegalDeskService legalDeskService;
-	
-	@Autowired(required = false)
-	private HoldFinanceService		holdFinanceService;
-	
-	@Autowired(required = false)
-	private BreService				breService;
 
 	@Autowired(required = false)
-	private Crm				crm;
-	
+	private CibilConsumerService cibilConsumerService;
+
+	@Autowired(required = false)
+	private LegalDeskService legalDeskService;
+
+	@Autowired(required = false)
+	private HoldFinanceService holdFinanceService;
+
+	@Autowired(required = false)
+	private BreService breService;
+
+	@Autowired(required = false)
+	private Crm crm;
+
 	@Autowired(required = false)
 	private LegalDetailService legalDetailService;
-	
-	private CollateralMarkProcess	collateralMarkProcess;
-	private DDAControllerService	ddaControllerService;
-	private ServiceTaskDAO			serviceTaskDAO;
+
+	private CollateralMarkProcess collateralMarkProcess;
+	private DDAControllerService ddaControllerService;
+	private ServiceTaskDAO serviceTaskDAO;
 
 	@Override
 	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask) throws Exception {
@@ -100,7 +100,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		List<ErrorDetail> errors = new ArrayList<>();
 		boolean taskExecuted = true;
 		boolean executed = getServiceTaskStatus(serviceTask, afinanceMain.getFinReference());
-		if(executed) {
+		if (executed) {
 			taskExecuted = true;
 			return taskExecuted;
 		}
@@ -117,14 +117,14 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_doCheckLPOApproval:
 				errors = doCollateralMark(afinanceDetail.getFinanceCollaterals());
-				if(!errors.isEmpty()) {
+				if (!errors.isEmpty()) {
 					auditHeader.getErrorMessage().addAll(errors);
 				}
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_checkDDAResponse:
 				errors = checkDDAResponse(afinanceDetail);
-				if(!errors.isEmpty()) {
+				if (!errors.isEmpty()) {
 					auditHeader.getErrorMessage().addAll(errors);
 				}
 				taskExecuted = true;
@@ -135,7 +135,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_doFundsAvailConfirmed:
 				errors = doFundsAvailConfirmed(afinanceDetail);
-				if(!errors.isEmpty()) {
+				if (!errors.isEmpty()) {
 					auditHeader.getErrorMessage().addAll(errors);
 				}
 				taskExecuted = true;
@@ -150,7 +150,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_sendDDARequest:
 				errors = sendDDARequest(afinanceDetail);
-				if(!errors.isEmpty()) {
+				if (!errors.isEmpty()) {
 					auditHeader.getErrorMessage().addAll(errors);
 				}
 				taskExecuted = true;
@@ -184,7 +184,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_Experian_Bureau:
 				try {
-					auditHeader=experianBureauService.executeExperianBureau(auditHeader);
+					auditHeader = experianBureauService.executeExperianBureau(auditHeader);
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in Experian Bureau:", e);
@@ -195,7 +195,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_Crif_Bureau:
 				try {
-					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
+					auditHeader = criffBureauService.executeCriffBureau(auditHeader);
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in CRIFF Bureau:", e);
@@ -218,7 +218,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					setInstallmentType(auditHeader);
 					setRateOfInst(auditHeader);
-					auditHeader = legalDeskService.executeLegalDesk(auditHeader,PennantConstants.method_LegalDesk);
+					auditHeader = legalDeskService.executeLegalDesk(auditHeader, PennantConstants.method_LegalDesk);
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in LegalDesk:", e);
@@ -258,7 +258,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					logger.error("Exception in CRM:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage());
-				}	
+				}
 				break;
 			case PennantConstants.METHOD_DO_VALIDATE_LEGAL_APPROVAL:
 				auditHeader = getLegalDetailService().isLegalApproved(auditHeader);
@@ -268,7 +268,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					setInstallmentType(auditHeader);
 					setRateOfInst(auditHeader);
-					auditHeader = legalDeskService.executeLegalDesk(auditHeader,PennantConstants.METHOD_OFFERLETTER);
+					auditHeader = legalDeskService.executeLegalDesk(auditHeader, PennantConstants.METHOD_OFFERLETTER);
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in LegalDesk:", e);
@@ -291,7 +291,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		if (auditHeader.getErrorMessage() != null && !auditHeader.getErrorMessage().isEmpty()) {
 			serviceTaskDetail.setStatus("Failed");
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				serviceTaskDetail.setRemarks(errorDetail.getCode()+":"+errorDetail.getMessage());
+				serviceTaskDetail.setRemarks(errorDetail.getCode() + ":" + errorDetail.getMessage());
 			}
 		} else {
 			serviceTaskDetail.setStatus("Success");
@@ -311,7 +311,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			BigDecimal rate = BigDecimal.ZERO;
 			if (finMain.getRepayBaseRate() != null) {
 				RateDetail details = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(),
-						finMain.getRepaySpecialRate(), finMain.getRepayMargin(), finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+						finMain.getRepaySpecialRate(), finMain.getRepayMargin(), finMain.getRpyMinRate(),
+						finMain.getRpyMaxRate());
 				rate = details.getNetRefRateLoan();
 			} else {
 				rate = finMain.getRepayProfitRate();
@@ -340,7 +341,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				String frequencyCode = repayFrq.substring(0, 1);
 				ArrayList<ValueLabel> freequencyList = FrequencyUtil.getFrequency();
 				for (ValueLabel valueLabe : freequencyList) {
-					if (StringUtils.equals(valueLabe.getValue(), frequencyCode) && finDeatil.getExtendedFieldRender() != null) {
+					if (StringUtils.equals(valueLabe.getValue(), frequencyCode)
+							&& finDeatil.getExtendedFieldRender() != null) {
 						finDeatil.getExtendedFieldRender().getMapValues().put("INSTALLMENTTYPE_LEGALDESK",
 								valueLabe.getLabel());
 						break;
@@ -351,7 +353,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			logger.error("Exception", e);
 		}
 	}
-	
+
 	/**
 	 * Method for set Reason code and remarks.
 	 * 
@@ -361,29 +363,30 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 */
 	private void setRemarks(AuditHeader auditHeader, String method, String message) {
 		FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		if(finDeatil.getExtendedFieldRender() != null) {
+		if (finDeatil.getExtendedFieldRender() != null) {
 			Map<String, Object> extendedMap = finDeatil.getExtendedFieldRender().getMapValues();
-			if(message != null && message.length() > 149) {
+			if (message != null && message.length() > 149) {
 				message = message.substring(0, 143);
 			}
-			if(StringUtils.equals(method, PennantConstants.method_Experian_Bureau)) {
+			if (StringUtils.equals(method, PennantConstants.method_Experian_Bureau)) {
 				extendedMap.put("REASONCODE", "9999");
 				extendedMap.put("REMARKSEXPERIANBEA", message);
-			} else if(StringUtils.equals(method, PennantConstants.method_Crif_Bureau)) {
+			} else if (StringUtils.equals(method, PennantConstants.method_Crif_Bureau)) {
 				extendedMap.put("REASONCODECRIF", "9999");
 				extendedMap.put("REMARKSCRIF", message);
-			} else if(StringUtils.equals(method, PennantConstants.method_Cibil_Bureau)) {
-				/*extendedMap.put("REASONCODECRIF", "9999");
-				extendedMap.put("REMARKSCRIF", message);*/
-			} else if(StringUtils.equals(method, PennantConstants.method_externalDedup)) {
+			} else if (StringUtils.equals(method, PennantConstants.method_Cibil_Bureau)) {
+				/*
+				 * extendedMap.put("REASONCODECRIF", "9999"); extendedMap.put("REMARKSCRIF", message);
+				 */
+			} else if (StringUtils.equals(method, PennantConstants.method_externalDedup)) {
 				extendedMap.put("REASONCODEINTERNAL", "9999");
 				extendedMap.put("REMARKSINTERNAL", message);
 				extendedMap.put("EXDREQUESTSEND", true);
-			} else if(StringUtils.equals(method, PennantConstants.method_hunter)) {
+			} else if (StringUtils.equals(method, PennantConstants.method_hunter)) {
 				extendedMap.put("REASONCODEHUNTER", "9999");
 				extendedMap.put("REMARKSHUNTER", message);
 				extendedMap.put("HUNTREQSEND", true);
-			}else if(StringUtils.equals(method, PennantConstants.method_bre)) {
+			} else if (StringUtils.equals(method, PennantConstants.method_bre)) {
 				extendedMap.put("BREREQSEND", true);
 				extendedMap.put("REASONCODEBRE", "9999");
 				extendedMap.put("REMARKSBRE", message);
@@ -401,17 +404,17 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private boolean getServiceTaskStatus(ServiceTask serviceTask, String reference) {
 		logger.debug(Literal.ENTERING);
 		boolean executed = false;
-		if(serviceTask.isRerunnable()) {
+		if (serviceTask.isRerunnable()) {
 			executed = false;
 		} else {
 			String module = FinanceConstants.MODULE_NAME;
 			String serviceTaskName = serviceTask.getOperation();
 			List<ServiceTaskDetail> details = serviceTaskDAO.getServiceTaskDetails(module, reference, serviceTaskName);
-			if(details.isEmpty()) {
+			if (details.isEmpty()) {
 				executed = false;
 			} else {
 				for (ServiceTaskDetail serviceTaskDetail : details) {
-					if(StringUtils.equals(serviceTaskDetail.getStatus(), "Success")) {
+					if (StringUtils.equals(serviceTaskDetail.getStatus(), "Success")) {
 						executed = true;
 						break;
 					} else {
@@ -425,7 +428,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		return executed;
 	}
 
-	private void logServiceTaskDetails(AuditHeader auditHeader, ServiceTask serviceTask, ServiceTaskDetail serviceTaskDetail) {
+	private void logServiceTaskDetails(AuditHeader auditHeader, ServiceTask serviceTask,
+			ServiceTaskDetail serviceTaskDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
@@ -435,7 +439,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		serviceTaskDetail.setServiceTaskName(serviceTask.getOperation());
 		serviceTaskDetail.setUserId(financeDetail.getUserDetails().getUserId());
 		serviceTaskDetail.setExecutedTime(new Timestamp(System.currentTimeMillis()));
-		if(serviceTaskDetail.getRemarks() != null && serviceTaskDetail.getRemarks().length() > 200) {
+		if (serviceTaskDetail.getRemarks() != null && serviceTaskDetail.getRemarks().length() > 200) {
 			serviceTaskDetail.setRemarks(serviceTaskDetail.getRemarks().substring(0, 190));
 		}
 
@@ -478,8 +482,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private void doCheckProspectCustomer(FinanceDetail afinanceDetail) {
 		if (afinanceDetail.getCustomerDetails() != null) {
 			CustEmployeeDetail custempDetail = afinanceDetail.getCustomerDetails().getCustEmployeeDetail();
-			if(custempDetail != null) {
-				if (StringUtils.equalsIgnoreCase(custempDetail.getEmpStatus(),PennantConstants.PFF_CUSTCTG_SME)) {
+			if (custempDetail != null) {
+				if (StringUtils.equalsIgnoreCase(custempDetail.getEmpStatus(), PennantConstants.PFF_CUSTCTG_SME)) {
 					afinanceDetail.getFinScheduleData().getFinanceMain().setSmecustomer(true);
 				}
 			}
@@ -489,8 +493,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private void doCheckSMECustomer(FinanceDetail afinanceDetail) {
 		if (afinanceDetail.getCustomerDetails() != null) {
 			CustEmployeeDetail custempDetail = afinanceDetail.getCustomerDetails().getCustEmployeeDetail();
-			if(custempDetail != null) {
-				if (StringUtils.equalsIgnoreCase(custempDetail.getEmpStatus(),PennantConstants.PFF_CUSTCTG_SME)) {
+			if (custempDetail != null) {
+				if (StringUtils.equalsIgnoreCase(custempDetail.getEmpStatus(), PennantConstants.PFF_CUSTCTG_SME)) {
 					afinanceDetail.getFinScheduleData().getFinanceMain().setSmecustomer(true);
 				}
 			}
@@ -506,13 +510,14 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private List<ErrorDetail> doFundsAvailConfirmed(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errors = new ArrayList<>();
-		String nextRoleCode = StringUtils.trimToEmpty(afinanceDetail.getFinScheduleData().getFinanceMain()
-				.getNextRoleCode());
+		String nextRoleCode = StringUtils
+				.trimToEmpty(afinanceDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
 
 		if (nextRoleCodes.length > 1) {
 			afinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("message.Conformation_Check"), null)));
+			errors.add(ErrorUtil
+					.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("message.Conformation_Check"), null)));
 		} else {
 			afinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
 		}
@@ -603,10 +608,12 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			CollateralMark collateralMarkRply = getCollateralMarkProcess().markCollateral(list);
 			if (collateralMarkRply != null) {
 				if (!StringUtils.equals(collateralMarkRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("9999", collateralMarkRply.getReturnText(), null)));
+					errors.add(ErrorUtil
+							.getErrorDetail(new ErrorDetail("9999", collateralMarkRply.getReturnText(), null)));
 				}
 			} else {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("COLLATERAL_MARK_FAILED"), null)));
+				errors.add(ErrorUtil
+						.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("COLLATERAL_MARK_FAILED"), null)));
 			}
 		}
 		logger.debug(Literal.LEAVING);

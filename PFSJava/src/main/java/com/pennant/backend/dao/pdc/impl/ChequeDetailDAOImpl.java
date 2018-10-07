@@ -66,8 +66,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>ChequeDetail</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>ChequeDetail</code> with set of CRUD operations.
  */
 public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeDetailDAO {
 	private static Logger logger = Logger.getLogger(ChequeDetailDAOImpl.class);
@@ -307,8 +306,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	}
 
 	/**
-	 * Method for Deletion of Cheque Header Related List of chequeDetail for the
-	 * Cheque Header
+	 * Method for Deletion of Cheque Header Related List of chequeDetail for the Cheque Header
 	 */
 	public void deleteByCheqID(final long headerID, String type) {
 		logger.debug("Entering");

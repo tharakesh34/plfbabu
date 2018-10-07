@@ -5,9 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
-
-public class ReasonHeader implements Serializable, Entity {
+public class ReasonHeader implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -92,7 +90,6 @@ public class ReasonHeader implements Serializable, Entity {
 		this.detailsList = detailsList;
 	}
 
-	@Override
 	public boolean isNew() {
 		return false;
 	}

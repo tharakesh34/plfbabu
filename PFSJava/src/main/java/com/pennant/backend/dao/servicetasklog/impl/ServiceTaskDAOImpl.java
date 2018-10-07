@@ -28,20 +28,20 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 		super();
 	}
 
-	protected DefaultTransactionDefinition	transDef;
-	private PlatformTransactionManager	transactionManager;
-	
+	protected DefaultTransactionDefinition transDef;
+	private PlatformTransactionManager transactionManager;
+
 	@Override
 	public void save(ServiceTaskDetail serviceTaskDetail, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
 		// begin transaction
 		txStatus = transactionManager.getTransaction(txDef);
-		
+
 		if (serviceTaskDetail.getId() == Long.MIN_VALUE) {
 			serviceTaskDetail.setId(getNextValue("SeqServiceTaskDetails"));
 		}
@@ -83,19 +83,21 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT TaskExecutionId, ServiceModule, Reference, ServiceTaskId,");
 		selectSql.append(" ServiceTaskName, UserId, ExecutedTime, Status, Remarks From ServiceTaskDetails");
-		selectSql.append(" where ServiceModule=:ServiceModule AND Reference=:Reference AND ServiceTaskName=:ServiceTaskName");
+		selectSql.append(
+				" where ServiceModule=:ServiceModule AND Reference=:Reference AND ServiceTaskName=:ServiceTaskName");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug(Literal.LEAVING);
 		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
+			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(ServiceTaskDetail.class);
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(dae);
 			return Collections.emptyList();
 		}
 	}
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}

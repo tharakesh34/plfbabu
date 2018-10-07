@@ -550,18 +550,18 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		fieldsandvalues.put("Customer_Obligation_Internal", sampling.getTotalCustomerIntObligation());
 		fieldsandvalues.put("reqProduct", sampling.getFinCategory());
 		fieldsandvalues.put("reqFinType", sampling.getFinType());
-    
-	     BigDecimal unitPrice =BigDecimal.ZERO;
-	     BigDecimal bankLTV = BigDecimal.ZERO;
-	 	 BigDecimal assignPerc = BigDecimal.ZERO;
-	 	 BigDecimal cnsArea = BigDecimal.ZERO;
-		
+
+		BigDecimal unitPrice = BigDecimal.ZERO;
+		BigDecimal bankLTV = BigDecimal.ZERO;
+		BigDecimal assignPerc = BigDecimal.ZERO;
+		BigDecimal cnsArea = BigDecimal.ZERO;
+
 		Set<String> fieldNames = sampling.getCollateralFieldsForRule();
 		ExtendedFieldHeader extHeader = sampling.getExtendedFieldHeader();
 		if (extHeader != null) {
 			String moduleSubmodule = extHeader.getModuleName().concat("_").concat(extHeader.getSubModuleName());
 			ExtendedFieldRender extFieldRenderMap = sampling.getExtendedFieldRender();
-				Map<String, Object> extRenderMap = extFieldRenderMap.getMapValues();
+			Map<String, Object> extRenderMap = extFieldRenderMap.getMapValues();
 			if (extRenderMap != null) {
 				for (String fieldName : fieldNames) {
 					if (extRenderMap.containsKey(fieldName)) {
@@ -578,12 +578,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 					}
 				}
 			}
-				if (extRenderMap!=null && extRenderMap.containsKey("UNITPRICE")) {
-					unitPrice = (BigDecimal) extRenderMap.get("UNITPRICE");
-				}
-				bankLTV = sampling.getCollateral().getBankLTV();
-				assignPerc = sampling.getCollateral().getAssignPerc();
-				
+			if (extRenderMap != null && extRenderMap.containsKey("UNITPRICE")) {
+				unitPrice = (BigDecimal) extRenderMap.get("UNITPRICE");
+			}
+			bankLTV = sampling.getCollateral().getBankLTV();
+			assignPerc = sampling.getCollateral().getAssignPerc();
+
 			amount = BigDecimal.ZERO;
 			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LCRMAXEL);
 			if (ruleCode != null) {
@@ -594,11 +594,11 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			}
 			sampling.setLcrEligibility(amount);
 
-			BigDecimal collateralAssignedValue =BigDecimal.ZERO;
+			BigDecimal collateralAssignedValue = BigDecimal.ZERO;
 			collateralAssignedValue = bankLTV.multiply(unitPrice).multiply(assignPerc);
 			collateralAssignedValue = collateralAssignedValue.divide(new BigDecimal(10000));
 			fieldsandvalues.put("Collaterals_Total_Assigned", collateralAssignedValue);
-			
+
 			amount = BigDecimal.ZERO;
 			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_LTVAMOUN);
 			if (ruleCode != null) {
@@ -609,9 +609,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			}
 			sampling.setLtvEligibility(amount);
 		}
-		
-		if ((sampling.getTenure() != null && sampling.getTenure() > 0) && (sampling.getInterestRate() != null
-				&& BigDecimal.ZERO.compareTo(sampling.getInterestRate()) != 0)) {
+
+		if ((sampling.getTenure() != null && sampling.getTenure() > 0)
+				&& (sampling.getInterestRate() != null && BigDecimal.ZERO.compareTo(sampling.getInterestRate()) != 0)) {
 			amount = BigDecimal.ZERO;
 			ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
 			if (ruleCode != null) {
@@ -657,7 +657,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			emi = emi.multiply(new BigDecimal(100));
 			sampling.setEmi(emi);
 		}
-		
+
 		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
 		BigDecimal requestedAmount = sampling.getLoanAmountRequested();
 
@@ -712,7 +712,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			for (String collateralType : collateralTypes) {
 				temp.getCollaterals().addAll(samplingDAO.getCollaterals(finReference, collateralType));
 			}
-			
+
 			temp.setCustomerIncomeList(samplingDAO.getIncomes(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
@@ -786,7 +786,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						extFieldMap.remove("WorkflowId");
 						field.setMapValues(extFieldMap);
 
-						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())), field);
+						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())),
+								field);
 
 					}
 				}

@@ -71,7 +71,6 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	private ReasonTypesDAO reasonTypesDAO;
 	private ReasonCodeDAO reasonCodeDAO;
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -107,14 +106,11 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * ReasonTypes/ReasonTypes_Temp by using ReasonTypesDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ReasonTypesDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtReasonTypes by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table ReasonTypes/ReasonTypes_Temp by
+	 * using ReasonTypesDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using ReasonTypesDAO's update method 3) Audit the record in to AuditHeader and AdtReasonTypes by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -122,24 +118,24 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);	
-		
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		ReasonTypes reasonTypes = (ReasonTypes) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (reasonTypes.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (reasonTypes.isNew()) {
-			reasonTypes.setId(Long.parseLong(getReasonTypesDAO().save(reasonTypes,tableType)));
+			reasonTypes.setId(Long.parseLong(getReasonTypesDAO().save(reasonTypes, tableType)));
 			auditHeader.getAuditDetail().setModelData(reasonTypes);
 			auditHeader.setAuditReference(String.valueOf(reasonTypes.getId()));
 		} else {
@@ -153,12 +149,10 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table ReasonTypes by using ReasonTypesDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtReasonTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * ReasonTypes by using ReasonTypesDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtReasonTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -167,25 +161,24 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		auditHeader = businessValidation(auditHeader,"delete");
+
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		ReasonTypes reasonTypes = (ReasonTypes) auditHeader.getAuditDetail().getModelData();
 		getReasonTypesDAO().delete(reasonTypes, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * getReasonTypes fetch the details by using ReasonTypesDAO's
-	 * getReasonTypesById method.
+	 * getReasonTypes fetch the details by using ReasonTypesDAO's getReasonTypesById method.
 	 * 
 	 * @param id
 	 *            id of the ReasonTypes.
@@ -197,9 +190,8 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	}
 
 	/**
-	 * getApprovedReasonTypesById fetch the details by using ReasonTypesDAO's
-	 * getReasonTypesById method . with parameter id and type as blank. it
-	 * fetches the approved records from the ReasonTypes.
+	 * getApprovedReasonTypesById fetch the details by using ReasonTypesDAO's getReasonTypesById method . with parameter
+	 * id and type as blank. it fetches the approved records from the ReasonTypes.
 	 * 
 	 * @param id
 	 *            id of the ReasonTypes. (String)
@@ -210,19 +202,15 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getReasonTypesDAO().delete with parameters reasonTypes,"" b) NEW
-	 * Add new record in to main table by using getReasonTypesDAO().save with
-	 * parameters reasonTypes,"" c) EDIT Update record in the main table by
-	 * using getReasonTypesDAO().update with parameters reasonTypes,"" 3) Delete
-	 * the record from the workFlow table by using getReasonTypesDAO().delete
-	 * with parameters reasonTypes,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtReasonTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtReasonTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getReasonTypesDAO().delete with
+	 * parameters reasonTypes,"" b) NEW Add new record in to main table by using getReasonTypesDAO().save with
+	 * parameters reasonTypes,"" c) EDIT Update record in the main table by using getReasonTypesDAO().update with
+	 * parameters reasonTypes,"" 3) Delete the record from the workFlow table by using getReasonTypesDAO().delete with
+	 * parameters reasonTypes,"_Temp" 4) Audit the record in to AuditHeader and AdtReasonTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtReasonTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -277,22 +265,17 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(reasonTypes);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-		
-		}
 
-	
+	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getReasonTypesDAO().delete with parameters
-	 * reasonTypes,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtReasonTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getReasonTypesDAO().delete with parameters reasonTypes,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtReasonTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -320,10 +303,8 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -342,10 +323,9 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getReasonTypesDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getReasonTypesDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -369,16 +349,16 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		// If ReasonTypes Code is already utilized in ReasonCode
-				if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, reasonTypes.getRecordType())) {
-					boolean workflowExists = getReasonCodeDAO().isreasonTypeIDExists(reasonTypes.getId());
-					if (workflowExists) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, reasonTypes.getRecordType())) {
+			boolean workflowExists = getReasonCodeDAO().isreasonTypeIDExists(reasonTypes.getId());
+			if (workflowExists) {
 
-						String[] parameters = new String[2];
-						parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonTypes.getCode();
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonTypes.getCode();
 
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
-					}
-				}
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
@@ -393,5 +373,4 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 		this.reasonCodeDAO = reasonCodeDAO;
 	}
 
-	
 }

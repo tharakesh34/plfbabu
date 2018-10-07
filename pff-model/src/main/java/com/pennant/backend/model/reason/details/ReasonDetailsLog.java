@@ -3,9 +3,7 @@ package com.pennant.backend.model.reason.details;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-
-public class ReasonDetailsLog implements Serializable, Entity {
+public class ReasonDetailsLog implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String module;
@@ -135,17 +133,14 @@ public class ReasonDetailsLog implements Serializable, Entity {
 		this.code = code;
 	}
 
-	@Override
 	public boolean isNew() {
 		return false;
 	}
 
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 	}
 }

@@ -45,8 +45,8 @@ public interface SamplingService {
 	long getCollateralLinkId(String collateralRef, long id, String string);
 
 	void saveOnReSubmit(Sampling sampling);
-	
-	List<CustomerIncome> getIncomesByCustId(long samplingId,long custId, String type);
-	
+
+	List<CustomerIncome> getIncomesByCustId(long samplingId, long custId, String type);
+
 	void reCalculate(FinanceDetail financeDetail);
 }
