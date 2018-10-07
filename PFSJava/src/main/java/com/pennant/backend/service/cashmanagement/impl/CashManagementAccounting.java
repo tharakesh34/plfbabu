@@ -15,9 +15,9 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 
 public class CashManagementAccounting {
-	PostingsPreparationUtil postingsPreparationUtil; 
-	private PartnerBankDAO		partnerBankDAO;
-	
+	PostingsPreparationUtil postingsPreparationUtil;
+	private PartnerBankDAO partnerBankDAO;
+
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
@@ -32,20 +32,19 @@ public class CashManagementAccounting {
 
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
-	} 
-	
-	public AEEvent generateAccounting(String eventCode, String userBranch, String postingBranch, 
-			BigDecimal transactionAmount, long partnerBankId,long requestId, String finReference, long receiptId){
-		
+	}
+
+	public AEEvent generateAccounting(String eventCode, String userBranch, String postingBranch,
+			BigDecimal transactionAmount, long partnerBankId, long requestId, String finReference, long receiptId) {
+
 		//Reference
-		StringBuffer buffer= new StringBuffer("CM_");
+		StringBuffer buffer = new StringBuffer("CM_");
 		buffer.append(eventCode);
 		buffer.append(postingBranch);
 		buffer.append(StringUtils.leftPad(String.valueOf(requestId), 10, "0"));
-		
-		
+
 		AEEvent aeEvent = new AEEvent();
-		if (receiptId > 0) {	// Avance Requirement
+		if (receiptId > 0) { // Avance Requirement
 			//aeEvent.setPostingId(receiptId);
 			aeEvent.setPostRefId(receiptId);
 		}
@@ -71,9 +70,9 @@ public class CashManagementAccounting {
 			amountCodes.setPartnerBankAcType(partnerBank.getAcType());
 			amountCodes.setPartnerBankAc(partnerBank.getAccountNo());
 		}
-		
+
 		amountCodes.setTransfer(transactionAmount);
-		
+
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 		aeEvent.getAcSetIDList().clear();
@@ -82,14 +81,14 @@ public class CashManagementAccounting {
 		// Posting details calling
 		return getPostingsPreparationUtil().postAccounting(aeEvent);
 	}
-	
+
 	private long getAccountingSetId(String event) {
 		String parmCode = "GL_CM_GLHEAD_" + event;
 		String id = SysParamUtil.getValueAsString(parmCode);
 		if (StringUtils.isNotBlank(id)) {
 			return Long.parseLong(id);
 		}
-		
+
 		return 0;
 	}
 }

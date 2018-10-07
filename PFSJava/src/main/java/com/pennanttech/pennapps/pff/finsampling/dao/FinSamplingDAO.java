@@ -7,7 +7,6 @@ public interface FinSamplingDAO {
 	void updateSampling(Sampling sampling, TableType tableType);
 
 	void saveOrUpdateRemarks(Sampling sampling, TableType tableType);
-	
-	boolean isSnapExist(long id);
 
+	boolean isSnapExist(long id);
 }

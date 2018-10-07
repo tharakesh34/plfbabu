@@ -82,7 +82,7 @@ public class FinSamplingDAOImpl extends SequenceDao<Sampling> implements FinSamp
 
 	@Override
 	public boolean isSnapExist(long id) {
-		StringBuilder sql = new StringBuilder();	
+		StringBuilder sql = new StringBuilder();
 		sql.append("select count(*) from (");
 		sql.append("select samplingId from link_sampling_incomes_snap ");
 		sql.append("union all ");

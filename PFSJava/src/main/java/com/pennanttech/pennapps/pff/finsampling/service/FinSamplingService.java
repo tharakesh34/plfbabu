@@ -8,7 +8,7 @@ public interface FinSamplingService {
 	AuditDetail saveOrUpdate(FinanceDetail financeDetail, String auditTranType);
 
 	Sampling getSamplingDetails(String finReference, String type);
-	
+
 	Sampling calculateVariance(Sampling sampling);
 
 }

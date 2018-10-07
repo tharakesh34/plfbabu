@@ -36,10 +36,10 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 
 	@Autowired
 	private FinSamplingDAO finSamplingDAO;
-	
+
 	@Autowired
 	private SamplingService samplingService;
-	
+
 	@Autowired
 	private SamplingDAO samplingDAO;
 
@@ -47,19 +47,20 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 	public AuditDetail saveOrUpdate(FinanceDetail financeDetail, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = financeDetail.getSampling();
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(sampling, sampling.getExcludeFields());
 		if (finSamplingDAO.isSnapExist(sampling.getId())) {
 			logger.warn("", new AppException("Snap avilable for sampling details, further updatation not allowed."));
 			return new AuditDetail(auditTranType, 1, fields[0], fields[1], sampling.getBefImage(), sampling);
 		}
-				
-		Sampling samplingRemarks = new Sampling();		
+
+		Sampling samplingRemarks = new Sampling();
 		BeanUtils.copyProperties(sampling, samplingRemarks);
-		
+
 		finSamplingDAO.updateSampling(sampling, TableType.MAIN_TAB);
-		
-		if (sampling.getDecision() == Decision.RESUBMIT.getKey() && !samplingService.isExist(sampling.getKeyReference(), "_temp")) {
+
+		if (sampling.getDecision() == Decision.RESUBMIT.getKey()
+				&& !samplingService.isExist(sampling.getKeyReference(), "_temp")) {
 			samplingService.saveOnReSubmit(sampling);
 		} else if (sampling.getDecision() == Decision.CREDITCAM.getKey() && !financeDetail.isActionSave()) {
 			sampling.setUserDetails(financeDetail.getUserDetails());
@@ -149,7 +150,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			String sequence = String.valueOf(coll.getSeqNo());
 			long originallinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "");
 			long sanpLinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "_snap");
-			
+
 			String linkId = "S".concat(String.valueOf(originallinkId));
 			String snaplinkIdStr;
 			if (sanpLinkId > 0) {
@@ -158,13 +159,12 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			} else {
 				collaterals = samplingService.getCollateralFields(collateralType, linkId, collateralRef);
 			}
-			
+
 			if (MapUtils.isNotEmpty(collaterals)) {
 				sd = new SamplingDetail();
 				sd.setCaption(String.format("%s - %s - %s", collateralRef, collateralType, sequence));
 				sdList.add(sd);
 			}
-			
 
 			for (Entry<String, List<ExtendedFieldData>> field : collaterals.entrySet()) {
 				List<ExtendedFieldData> list = field.getValue();
