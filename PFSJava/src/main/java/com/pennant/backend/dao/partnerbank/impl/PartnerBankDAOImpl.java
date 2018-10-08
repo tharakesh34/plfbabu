@@ -455,8 +455,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 	}
 
 	/**
-	 * Method for get total number of records from PartnerBanks master
-	 * table.<br>
+	 * Method for get total number of records from PartnerBanks master table.<br>
 	 * 
 	 * @param entityCode
 	 * 

@@ -60,15 +60,15 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 
 public class DeviationHelper {
-	private static final Logger			logger	= Logger.getLogger(DeviationHelper.class);
+	private static final Logger logger = Logger.getLogger(DeviationHelper.class);
 
 	@Autowired
-	private SecurityRoleDAO				securityRoleDAO;
+	private SecurityRoleDAO securityRoleDAO;
 	@Autowired
-	private ManualDeviationDAO			manualDeviationDAO;
+	private ManualDeviationDAO manualDeviationDAO;
 
 	@Autowired
-	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 
 	public List<ValueLabel> getRoleAndDesc(long workflowid) {
 		WorkflowEngine workflow = new WorkflowEngine(WorkFlowUtil.getWorkflow(workflowid).getWorkFlowXml());
@@ -83,7 +83,7 @@ public class DeviationHelper {
 		return getRoleAndDesc(list);
 
 	}
-	
+
 	public void setDeviationDetails(FinanceDetail financeDetail, List<FinanceDeviations> finDeviations,
 			List<FinanceDeviations> apprFinDeviations) {
 
@@ -384,8 +384,8 @@ public class DeviationHelper {
 	}
 	// ### 06-05-2018 - End
 
-	public FinanceDeviations createDeviation(String category, String module, String reference, String code,
-			String role, long userId, String approverRole, Object result, String resultType, String desc) {
+	public FinanceDeviations createDeviation(String category, String module, String reference, String code, String role,
+			long userId, String approverRole, Object result, String resultType, String desc) {
 		FinanceDeviations deviation = new FinanceDeviations();
 
 		deviation.setFinReference(reference);

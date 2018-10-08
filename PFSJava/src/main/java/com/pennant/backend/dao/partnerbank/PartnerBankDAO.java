@@ -53,7 +53,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	PartnerBank getPartnerBankById(long id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -63,14 +63,22 @@ public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
+	boolean isDuplicateKey(long partnerBankId, String PartnerBankCode, TableType tableType);
+
+	void saveList(List<PartnerBankModes> list, long id);
+
 	void updateList(List<PartnerBankModes> list);
+
 	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
+
+	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId);
+
 	int geBankCodeCount(String partnerBankCodeValue, String type);
+
 	List<PartnerBranchModes> getPartnerBranchModesId(long id);
+
 	void deletePartnerBranch(PartnerBank partnerBank);
+
 	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
 
 	int getPartnerBankbyBank(String bankCode, String type);
