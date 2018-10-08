@@ -441,7 +441,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		List<InterestRateDetail> interestRateDetails = new ArrayList<>();
 
 		if (finMain.getFixedRateTenor() > 0) {
-			
+
 			if (StringUtils.isNotBlank(finMain.getRepayBaseRate())) {
 				calrate = RateUtil
 						.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(),
@@ -493,8 +493,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//Interest Rate Details
 		statementOfAccount.setInterestRateDetails(interestRateDetails);
-				
-		
+
 		logger.debug("Leaving");
 		return statementOfAccount;
 	}
@@ -821,7 +820,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String rHPenaltyWaived = "Penalty from customer Waived Off ";
 		String lppWaived = "Penalty from customer Waived Off ";
 		String lpiIWaived = "Penalty Interest from customer Waived Off ";
-		
 
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();

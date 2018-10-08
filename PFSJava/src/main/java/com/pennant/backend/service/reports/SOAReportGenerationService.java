@@ -41,7 +41,8 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */package com.pennant.backend.service.reports;
+ */
+package com.pennant.backend.service.reports;
 
 import java.util.Date;
 import java.util.List;
@@ -50,11 +51,11 @@ import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.dataengine.model.EventProperties;
 
 public interface SOAReportGenerationService {
-	
+
 	StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate);
 
 	EventProperties getEventPropertiesList(String configName);
-	
+
 	List<String> getSOAFinTypes();
-	
+
 }
