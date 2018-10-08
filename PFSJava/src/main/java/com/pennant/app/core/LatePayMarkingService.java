@@ -283,7 +283,10 @@ public class LatePayMarkingService extends ServiceHelper {
 				finMain.getCalRoundingMode(), finMain.getRoundingTarget());
 
 		String lpiMethod = finMain.getPastduePftCalMthd();
-
+		if(StringUtils.isEmpty(lpiMethod)){
+			logger.error(" LPFT Method value Not Available for Reference :"+ finMain.getFinReference());
+		}
+		
 		if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
 			latePayInterestService.computeLPI(fod, penaltyCalDate, finMain.getProfitDaysBasis(), finScheduleDetails,
 					repayments, finMain.getPastduePftMargin(), finMain.getCalRoundingMode(),

@@ -471,16 +471,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		financeMain.setId(finReference);
 
 		StringBuilder selectSql = new StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount,");
-		selectSql.append(
-				" DisbAccountid, RepayAccountid, FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef,");
-		selectSql.append(
-				" FinCcy, FinBranch, CustId, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, DownPayAccount, SecurityDeposit, FinType, ");
-		selectSql.append(
-				" FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate,ProductCategory, ");
-		selectSql.append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, ");
-		selectSql.append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason,");
-		selectSql.append(
-				" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate, feeAccountId, MinDownPayPerc, PromotionCode, FinIsActive ");
+		selectSql.append(" DisbAccountid, RepayAccountid, FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef,");
+		selectSql.append(" FinCcy, FinBranch, CustId, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, DownPayAccount, SecurityDeposit, FinType, ");
+		selectSql.append(" FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate,ProductCategory, FinCategory, ");
+		selectSql.append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, RepayFrq, ClosingStatus, DueBucket,CalRoundingMode ,RoundingTarget, ");
+		selectSql.append(" RecordType, Version, ProfitDaysBasis , FinStatus, FinStsReason, PastduePftCalMthd, PastduePftMargin, ");
+		selectSql.append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate, feeAccountId, MinDownPayPerc, PromotionCode, FinIsActive ");
 		selectSql.append(" FROM Financemain");
 		selectSql.append(" Where FinReference =:FinReference");
 
