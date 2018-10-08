@@ -308,7 +308,8 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -330,7 +331,8 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -364,14 +366,14 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 			} else { // with work flow
 				if (beneficiary.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befBeneficiary != null || tempBeneficiary != null) { // if records already exists in the main
-																				// table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
+																					// table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befBeneficiary == null || tempBeneficiary != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -383,14 +385,15 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
-					if (oldBeneficiary != null && !oldBeneficiary.getLastMntOn().equals(befBeneficiary.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
+					if (oldBeneficiary != null
+							&& !oldBeneficiary.getLastMntOn().equals(befBeneficiary.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
@@ -401,13 +404,14 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (tempBeneficiary != null && oldBeneficiary != null && !oldBeneficiary.getLastMntOn().equals(tempBeneficiary.getLastMntOn())) {
+				if (tempBeneficiary != null && oldBeneficiary != null
+						&& !oldBeneficiary.getLastMntOn().equals(tempBeneficiary.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
-		
+
 		//### 31-10-2017 -Ticket ID: 124632 - Start
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(beneficiary.getRecordType())) {
@@ -422,30 +426,32 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 				valueParm1[2] = beneficiary.getCustCIF();
 
 				errParm1[0] = PennantJavaUtil.getLabel("label_AccNumber") + " : " + valueParm1[0];
-				errParm1[1] = PennantJavaUtil.getLabel("label_BeneficiaryDialog_BankBranchID.value") + " : " + valueParm1[1];
+				errParm1[1] = PennantJavaUtil.getLabel("label_BeneficiaryDialog_BankBranchID.value") + " : "
+						+ valueParm1[1];
 				errParm1[2] = PennantJavaUtil.getLabel("label_CustCIF") + " : " + valueParm1[2];
 
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41021", errParm1, valueParm1));
 			}
 		}
 		//### 31-10-2017 -END
-		
+
 		if (beneficiary.isDefaultBeneficiary() && !StringUtils.equals(method, PennantConstants.method_doReject)
 				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(beneficiary.getRecordType())) {
 
-			int countDuplicates = getBeneficiaryDAO().getDefaultsBeneficiary(beneficiary.getCustID(), beneficiary.getBeneficiaryId(), "_View");
+			int countDuplicates = getBeneficiaryDAO().getDefaultsBeneficiary(beneficiary.getCustID(),
+					beneficiary.getBeneficiaryId(), "_View");
 
 			if (countDuplicates > 0) {
 				String[] errParm2 = new String[1];
 				String[] valueParm2 = new String[1];
 				valueParm2[0] = beneficiary.getCustCIF();
-				
+
 				errParm2[0] = PennantJavaUtil.getLabel("label_CustCIF") + " : " + valueParm2[0];
 
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41010", errParm2, valueParm2));
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !beneficiary.isWorkflow()) {
