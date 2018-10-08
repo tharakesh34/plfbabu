@@ -79,6 +79,8 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -135,6 +137,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * component with the same 'id' in the zul-file are getting by our 'extends
 	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
+	protected Tabs tabsIndexCenter;
+	protected Tab queryDetails;
 	protected Window window_QueryDetailDialog;
 	protected ExtendedCombobox finReference;
 	protected Textbox reference;
@@ -309,7 +313,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		if (this.queryDetail != null) {
 			this.finReference.setMandatoryStyle(true);
-			this.finReference.setTextBoxWidth(280);
+			this.finReference.setTextBoxWidth(151);
 			this.finReference.setModuleName("QryFinanceMain");
 			this.finReference.setValueColumn("FinReference");
 			this.finReference.setDescColumn("FinType");
@@ -317,13 +321,17 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 
 		this.qryCategory.setMandatoryStyle(true);
-		this.qryCategory.setTextBoxWidth(280);
+		this.qryCategory.setMaxlength(50);
+		this.qryCategory.setTextBoxWidth(80);
 		this.qryCategory.setModuleName("QueryCategory");
 		this.qryCategory.setValueColumn("Code");
 		this.qryCategory.setDescColumn("Description");
 		this.qryCategory.setValidateColumns(new String[] { "Code" });
+		
 		this.custDocType.setProperties("CustDocumentType", "DocTypeCode", "DocTypeDesc", false, 25);
 		this.custDocType.setValidateColumns(new String[] { "DocTypeCode" });
+		this.custDocType.setMaxlength(50);
+		this.custDocType.setTextBoxWidth(80);
 		// this.qryNotes.setMaxlength(2000);
 		this.assignedRole.setMaxlength(100);
 		this.notifyTo.setMaxlength(1000);
@@ -920,7 +928,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * @param aQueryDetail
 	 */
 	public void doWriteComponentsToBean(QueryDetail aQueryDetail) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 
@@ -1068,6 +1076,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
+			this.queryDetails.setSelected(true);
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
@@ -1085,7 +1094,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(QueryDetail queryDetail) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		String[] roleCodes = new String[1];
 		roleCodes[0] = queryDetail.getAssignedRole();
@@ -1281,7 +1290,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (!this.finReference.isReadonly() || this.finReference.isReadonly()) {
 			this.finReference.setConstraint(
@@ -1354,7 +1363,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		this.finReference.setConstraint("");
 		this.qryCategory.setConstraint("");
@@ -1379,7 +1388,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 */
 
 	private void doSetLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1389,7 +1398,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 */
 
 	private void doRemoveLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1400,7 +1409,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1411,7 +1420,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final QueryDetail aQueryDetail = new QueryDetail();
 		BeanUtils.copyProperties(this.queryDetail, aQueryDetail);
@@ -1454,7 +1463,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.queryDetail.isNewRecord()) {
 			this.btnCancel.setVisible(false);
@@ -1529,7 +1538,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.qryCategory);
