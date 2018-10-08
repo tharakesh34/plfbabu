@@ -68,16 +68,17 @@ public class Product extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	//Allow Manual Deviation 
 	private boolean allowDeviation;
-	
+
 	private List<ProductAsset> productAssetList;
 	private List<ProductDeviation> productDeviationDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("productDeviationDetails");
 		return excludeFields;
 	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -98,6 +99,7 @@ public class Product extends AbstractWorkflowEntity {
 	public String getId() {
 		return productCode;
 	}
+
 	public void setId(String id) {
 		this.productCode = id;
 	}
@@ -105,6 +107,7 @@ public class Product extends AbstractWorkflowEntity {
 	public String getProductCode() {
 		return productCode;
 	}
+
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
 	}
@@ -112,6 +115,7 @@ public class Product extends AbstractWorkflowEntity {
 	public String getProductDesc() {
 		return productDesc;
 	}
+
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
 	}
@@ -119,6 +123,7 @@ public class Product extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -126,6 +131,7 @@ public class Product extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -133,6 +139,7 @@ public class Product extends AbstractWorkflowEntity {
 	public Product getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Product beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -140,6 +147,7 @@ public class Product extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -147,6 +155,7 @@ public class Product extends AbstractWorkflowEntity {
 	public void setProductAssetList(List<ProductAsset> productAssetList) {
 		this.productAssetList = productAssetList;
 	}
+
 	public List<ProductAsset> getProductAssetList() {
 		return productAssetList;
 	}
@@ -154,6 +163,7 @@ public class Product extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
