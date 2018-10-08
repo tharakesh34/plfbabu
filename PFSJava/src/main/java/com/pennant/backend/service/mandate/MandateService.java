@@ -53,25 +53,44 @@ import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface MandateService {
-	
+
 	Mandate getMandate();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Mandate getMandateById(long id);
-	Mandate getMandateStatusUpdateById(long id,String status);
+
+	Mandate getMandateStatusUpdateById(long id, String status);
+
 	Mandate getApprovedMandateById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	void processDownload(Mandate mandate);
+
 	void processFileUpload(Mandate mandate, String status, String reason, long fileID);
+
 	void processStatusUpdate(MandateStatusUpdate mandateStatusUpdate);
+
 	long processStatusSave(MandateStatusUpdate mandateStatusUpdate);
+
 	List<FinanceEnquiry> getMandateFinanceDetailById(long mandateID);
+
 	int getFileCount(String fileName);
-	List<Mandate>getApprovedMandatesByCustomerId(long custID);
+
+	List<Mandate> getApprovedMandatesByCustomerId(long custID);
+
 	void getDocumentImage(Mandate mandate);
+
 	byte[] getDocumentManImage(long mandateRef);
+
 	MandateCheckDigit getLookUpValueByCheckDigit(int rem);
-	List<ErrorDetail>  doValidations(Mandate mandate);
+
+	List<ErrorDetail> doValidations(Mandate mandate);
+
 	int getSecondaryMandateCount(long mandateID);
 }
