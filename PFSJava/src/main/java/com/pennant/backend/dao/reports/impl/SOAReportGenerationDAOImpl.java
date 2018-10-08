@@ -520,7 +520,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		selectSql.append("  Select CustId,FinStartDate,LinkedFinRef,ClosedlinkedFinRef,FinBranch,FinType,FinPurpose,");
 		selectSql.append("  MaturityDate,NoPAIDINST,TotalPFTPAID,TotalPRIPAID,TotalPRIBAL,TotalPFTBAL,NOInst, ");
-		selectSql.append("  NSchdDate,NSchdPri,NSchdPft, TotalTenor FROM  FinPftDetails");
+		selectSql.append("  NSchdDate,NSchdPri,NSchdPft, TotalTenor, CurReducingRate FROM  FinPftDetails");
 		selectSql.append("  Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());

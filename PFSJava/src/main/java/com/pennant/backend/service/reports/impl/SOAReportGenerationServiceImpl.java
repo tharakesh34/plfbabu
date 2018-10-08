@@ -439,13 +439,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Displaying Interest Rate And months for LAN.  	
 		BigDecimal calrate = BigDecimal.ZERO;
 		List<InterestRateDetail> interestRateDetails = new ArrayList<>();
-		if(StringUtils.isNotBlank(finMain.getRepayBaseRate())){
-			calrate = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(), 
-					finMain.getRepayMargin(), finMain.getRpyMinRate(), finMain.getRpyMaxRate()).getNetRefRateLoan();
-		}else{
-			calrate = finMain.getRepayProfitRate();
-		}
+
 		if (finMain.getFixedRateTenor() > 0) {
+			
+			if (StringUtils.isNotBlank(finMain.getRepayBaseRate())) {
+				calrate = RateUtil
+						.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(),
+								finMain.getRepayMargin(), finMain.getRpyMinRate(), finMain.getRpyMaxRate())
+						.getNetRefRateLoan();
+			} else {
+				calrate = finMain.getRepayProfitRate();
+			}
 			int noOfMonths = DateUtility.getMonthsBetween(finMain.getFinStartDate(), fixedEndDate);
 			statementOfAccount.setIntRateType("Fixed and Floating");
 			InterestRateDetail fixedDetail = new InterestRateDetail();
@@ -465,6 +469,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			interestRateDetails.add(floatDetail);
 		} else {
 			statementOfAccount.setIntRateType("Floating");
+			calrate = financeProfitDetail.getCurReducingRate();
 			InterestRateDetail detail = new InterestRateDetail();
 			detail.setFormTenure(finMain.getFixedRateTenor() + 1);
 			detail.setToTenure(financeProfitDetail.getNOInst());
