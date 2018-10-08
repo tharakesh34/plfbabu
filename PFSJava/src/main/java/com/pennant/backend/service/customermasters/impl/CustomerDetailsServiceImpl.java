@@ -658,7 +658,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 		customerDetails.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
 		customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
-		
+
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(id); //F
 		customerDetails.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
@@ -718,11 +718,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerDetails.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
 			customerDetails.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
 			customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
-			
+
 			CustomerExtLiability liability = new CustomerExtLiability();
 			liability.setCustId(id);
-			customerDetails.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
-			
+			customerDetails
+					.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
+
 			customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 		}
 
@@ -1358,7 +1359,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				if (StringUtils.trimToEmpty(liability.getRecordType())
 						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					auditTranType = PennantConstants.TRAN_DEL;
-					
+
 					externalLiabilityDAO.delete(liability.getId(), tableType);
 				} else if (liability.isNewRecord()) {
 					auditTranType = PennantConstants.TRAN_ADD;
@@ -1493,16 +1494,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.add(validation(auditDetail, usrLanguage, method));
 
 			if (postValidationHook != null) {
-				AuditHeader auditHeader = new AuditHeader(String.valueOf(customerDetails.getCustID()), String.valueOf(customerDetails.getCustID()), null, null, auditDetail,customerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				AuditHeader auditHeader = new AuditHeader(String.valueOf(customerDetails.getCustID()),
+						String.valueOf(customerDetails.getCustID()), null, null, auditDetail,
+						customerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 				List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
-				if(CollectionUtils.isNotEmpty(errorDetails)){
-					if(CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())){
-						auditDetail.getErrorDetails().addAll(ErrorUtil.getErrorDetails(errorDetails, usrLanguage));	
-					}else{
+				if (CollectionUtils.isNotEmpty(errorDetails)) {
+					if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
+						auditDetail.getErrorDetails().addAll(ErrorUtil.getErrorDetails(errorDetails, usrLanguage));
+					} else {
 						auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(errorDetails, usrLanguage));
 					}
 				}
-			}	
+			}
 		}
 
 		auditDetails.addAll(getAuditDetail(customerDetails, auditTranType, method, workflowId));
@@ -2195,10 +2198,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 
 				auditDetail.setErrorDetail(validateMasterCode("BankDetail", liability.getLoanBank()));
-				auditDetail
-						.setErrorDetail(validateMasterCode("OtherBankFinanceType", liability.getFinType()));
-				auditDetail
-						.setErrorDetail(validateMasterCode("CustomerStatusCode", liability.getFinStatus()));
+				auditDetail.setErrorDetail(validateMasterCode("OtherBankFinanceType", liability.getFinType()));
+				auditDetail.setErrorDetail(validateMasterCode("CustomerStatusCode", liability.getFinStatus()));
 			}
 		}
 		logger.debug("Leaving");
@@ -2889,7 +2890,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditDetails
-		.addAll(getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType())));
+				.addAll(getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType())));
 
 		getCustomerDAO().delete(customer, "_Temp");
 		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), customer.getExcludeFields());
@@ -3037,16 +3038,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	// ### 19-06-2018  PSD 127035
 	/**
 	 * To handle service level validations before calling service task
 	 * 
 	 */
 	public AuditHeader preValidate(AuditHeader auditHeader) {
-		 return businessValidation(auditHeader, "Validate");
+		return businessValidation(auditHeader, "Validate");
 	}
-	
+
 	// ### 19-06-2018 -End
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
@@ -3104,15 +3105,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			} else { // with work flow
 				if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
-					// is new
+																							// is new
 					if (befCustomer != null || tempCustomer != null) { // if
-																		// records
+																			// records
 																		// already
 																		// exists
 																		// in
-						// the main table
+																		// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -3336,7 +3337,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerEmploymentDetail.setWorkflowId(0);
 			customerEmploymentDetail.setCustID(custId);
 
-			if (customerEmploymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+			if (customerEmploymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)
+					&& !approveRec) {
 				deleteRecord = true;
 			} else if (customerEmploymentDetail.isNewRecord() && !approveRec) {
 				saveRecord = true;
@@ -3408,12 +3410,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
-		
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			CustomerIncome customerIncome = (CustomerIncome) auditDetails.get(i).getModelData();
-			
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -4007,7 +4008,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerExtLiability.setWorkflowId(0);
 			customerExtLiability.setCustId(custId);
 
-			if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+			if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)
+					&& !approveRec) {
 				deleteRecord = true;
 			} else if (customerExtLiability.isNewRecord() && !approveRec) {
 				saveRecord = true;
@@ -4042,7 +4044,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerExtLiability.setRecordType("");
 				customerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
-			
+
 			if (saveRecord) {
 				customerExtLiabilityDAO.setLinkId(customerExtLiability);
 				externalLiabilityDAO.save(customerExtLiability, type);
@@ -4337,9 +4339,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			CustomerIncome custIncome = new CustomerIncome();
 			String[] fields = PennantJavaUtil.getFieldDetails(custIncome, custIncome.getExcludeFields());
-            
-			 long linkId = 0 ;
-			
+
+			long linkId = 0;
+
 			for (int i = 0; i < custDetails.getCustomerIncomeList().size(); i++) {
 				CustomerIncome customerIncome = custDetails.getCustomerIncomeList().get(i);
 				linkId = customerIncome.getLinkId();
@@ -4397,14 +4399,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 			getCustomerChequeInfoDAO().deleteByCustomer(custDetails.getCustID(), tableType);
 		}
-		
+
 		List<CustomerExtLiability> liabilities = custDetails.getCustomerExtLiabilityList();
 		if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(liabilities)) {
 			CustomerExtLiability custExtLiability = new CustomerExtLiability();
 			String[] fields = PennantJavaUtil.getFieldDetails(custExtLiability, custExtLiability.getExcludeFields());
 
 			for (int i = 0; i < custDetails.getCustomerExtLiabilityList().size(); i++) {
-				 custExtLiability = liabilities.get(i);
+				custExtLiability = liabilities.get(i);
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						custExtLiability.getBefImage(), custExtLiability));
 			}
@@ -5175,11 +5177,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		for (int i = 0; i < customerDetails.getCustomerExtLiabilityList().size(); i++) {
 			liability = customerDetails.getCustomerExtLiabilityList().get(i);
-			
-			if(liability.getInputSource() == null){
+
+			if (liability.getInputSource() == null) {
 				liability.setInputSource("customer");
 			}
-			
+
 			if (StringUtils.isEmpty(liability.getRecordType())) {
 				continue;
 			}

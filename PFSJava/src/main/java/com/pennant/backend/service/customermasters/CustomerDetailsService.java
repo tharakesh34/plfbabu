@@ -22,7 +22,7 @@ public interface CustomerDetailsService {
 
 	CustomerDetails getNewCustomer(boolean createNew, CustomerDetails customerDetails);
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException; 
+	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException;
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -41,7 +41,7 @@ public interface CustomerDetailsService {
 	WIFCustomer getWIFCustomerByCIF(long id);
 
 	Customer getCheckCustomerByCIF(String cif);
-	
+
 	String getNewProspectCustomerCIF();
 
 	CustomerStatusCode getCustStatusByMinDueDays();
@@ -65,8 +65,7 @@ public interface CustomerDetailsService {
 
 	CustomerDetails getCustomerDetailsById(long id, boolean reqChildDetails, String type);
 
-	List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method,
-	        String usrLanguage);
+	List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method, String usrLanguage);
 
 	String getEIDNumberById(String eidNumber, String type);
 
@@ -85,17 +84,17 @@ public interface CustomerDetailsService {
 	void updateCorebankCustCIF(String newCoreCustCIF);
 
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
-	
+
 	int getCustomerCountByCIF(String custCIF, String type);
-	
+
 	boolean getCustomerByCoreBankId(String custCoreBank);
 
 	Customer checkCustomerByCIF(String cif, String type);
 
-	int updateCustCRCPR(String custDocTitle,long custID);
-	
+	int updateCustCRCPR(String custDocTitle, long custID);
+
 	Customer getCustomerShrtName(long id);
-	
+
 	CustomerDetails getCustomerAndCustomerDocsById(long id, String type);
 
 	AuditHeader preValidate(AuditHeader auditHeader);
