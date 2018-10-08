@@ -473,6 +473,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row                  			row_accountsOfficer;
 	protected ExtendedCombobox      		accountsOfficer;
 	
+	protected Row                  			row_EligibilityMethod;
+	protected ExtendedCombobox      		eligibilityMethod;
+	
+	
 	private	  CustomerService				customerService;
 	private   FinFlagDetailsDAO             finFlagDetailsDAO;
 	private	  List<FinFlagsDetail>			finFlagsDetailList		= null;
@@ -692,7 +696,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
 					LengthConstants.LEN_MASTER_CODE);
 			this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
-			this.downPayAccount.setAccountDetails(getFinScheduleData().getFinanceMain().getFinType(), AccountConstants.FinanceAccount_DWNP, getFinScheduleData().getFinanceType().getFinCcy());
+			
+			this.eligibilityMethod.setMaxlength(7);
+			this.eligibilityMethod.setModuleName("FinanceMain");
+			this.eligibilityMethod.setValueColumn("FieldCodeValue");
+			this.eligibilityMethod.setDescColumn("ValueDesc");
+			this.eligibilityMethod.setValidateColumns(new String[] { "FieldCodeId" });
+
+            this.downPayAccount.setAccountDetails(getFinScheduleData().getFinanceMain().getFinType(), AccountConstants.FinanceAccount_DWNP, getFinScheduleData().getFinanceType().getFinCcy());
 			this.downPayAccount.setFormatter(formatter);
 			this.downPayAccount.setBranchCode(StringUtils.trimToEmpty(getFinScheduleData().getFinanceMain().getFinBranch()));
 			
@@ -1300,6 +1311,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		this.dsaCode.setValue(aFinanceMain.getDsaCode());
 		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
+		
+		this.eligibilityMethod.setValue(aFinanceMain.getLovEligibilityMethod());
+		this.eligibilityMethod.setDescription(aFinanceMain.getLovDescEligibilityMethod());
 
 		if (aFinanceMain.isManualSchedule()) {
 			this.row_ManualSchedule.setVisible(true);
@@ -1836,6 +1850,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPaySupl.setReadonly(true);
 		this.dsaCode.setReadonly(true);
 		this.accountsOfficer.setReadonly(true);
+		this.eligibilityMethod.setReadonly(true);
 		this.alwPlannedEmiHoliday.setDisabled(true);;
 		this.planEmiMethod.setReadonly(true);
 		this.maxPlanEmiPerAnnum.setReadonly(true);

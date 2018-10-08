@@ -522,6 +522,14 @@
 															id="applicationNo" width="170px" visible="true" />
 													</hbox>
 											</row>
+											<row
+												id="row_EligibilityMethod" visible="true">
+												<label
+													id="label_FinanceMainDialog_EligibilityMethod"
+													value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
+												<extendedcombobox
+													id="eligibilityMethod" width="200px" />
+											</row>
 											<row id="row_LinkedFinRef"
 												visible="false">
 												<label
