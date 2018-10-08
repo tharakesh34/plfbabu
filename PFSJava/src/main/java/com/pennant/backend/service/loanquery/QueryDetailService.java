@@ -67,4 +67,8 @@ public interface QueryDetailService {
 	List<QueryDetail> getQueryDetailsforAgreements(String finReference);
 
 	AuditDetail validate(AuditDetail auditDetail);
+
+	List<QueryDetail> getUnClosedQurysForGivenRole(String finReference, String currentRole);
+	
+	
 }

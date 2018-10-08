@@ -454,6 +454,20 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
 		}
+		
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.pennant.backend.service.loanquery.QueryDetailService#getUnClosedQurysForGivenRole(java.lang.String,
+	 * java.lang.String)
+	 */
+	@Override
+	public List<QueryDetail> getUnClosedQurysForGivenRole(String finReference, String currentRole) {
+		logger.debug(Literal.ENTERING);
+		List<QueryDetail> list = queryDetailDAO.getUnClosedQurysForGivenRole(finReference, currentRole);
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
 
 		public DocumentDetailsDAO getDocumentDetailsDAO() {
 			return documentDetailsDAO;
