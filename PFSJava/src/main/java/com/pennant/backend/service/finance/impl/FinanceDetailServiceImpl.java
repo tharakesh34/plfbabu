@@ -191,6 +191,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.reports.AvailFinance;
@@ -4710,6 +4711,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
+	/**
+	 * Method for check weather the record is going forward or not
+	 *  for Query Management
+	 * @param financeMain
+	 * @return
+	 */
+	public boolean isForwardCase(FinanceMain financeMain) {
+		if (financeMain.getWorkflowId()==0) {
+			return true;
+		}
+		WorkflowEngine engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(financeMain.getWorkflowId()).getWorkFlowXml());
+
+		if (engine.compareTo(financeMain.getTaskId(), financeMain.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
+			return true;
+		}
+		return false;
+	}
+
 	private void setNextTaskDetails(String taskId, FinanceMain financeMain, WorkflowEngine engine, String action,
 			String role) {
 		logger.trace(Literal.ENTERING);
@@ -6325,6 +6344,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				sb.append("_ED");
 				details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, sb.toString());
 				auditDetails.addAll(details);
+			}
+		}
+		// validate QueryModule
+		if (isForwardCase(financeMain)) {
+			String finReference = financeMain.getFinReference();
+			String currentRole = financeMain.getRoleCode();
+			List<QueryDetail> qrysList = getQueryDetailService().getUnClosedQurysForGivenRole(finReference,
+					currentRole);
+			if (CollectionUtils.isNotEmpty(qrysList)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = financeMain.getFinReference();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
+				List<ErrorDetail> errorDetailsList = new ArrayList<ErrorDetail>(1);
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT1", errParm, valueParm), "EN"));
+				errorDetailsList.add(errorDetail);
+				auditHeader.setErrorList(errorDetailsList);
 			}
 		}
 
