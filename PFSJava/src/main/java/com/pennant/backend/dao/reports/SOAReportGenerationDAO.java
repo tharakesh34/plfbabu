@@ -77,31 +77,58 @@ import com.pennanttech.dataengine.model.EventProperties;
  */
 public interface SOAReportGenerationDAO {
 	FinanceMain getFinanceMain(String finReference);
+
 	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference);
+
 	List<FinAdvancePayments> getFinAdvancePayments(String finReference);
+
 	List<PaymentInstruction> getPaymentInstructions(String finReference);
+
 	List<FinODDetails> getFinODDetails(String finReference);
+
 	List<ManualAdvise> getManualAdvise(String finReference);
+
 	StatementOfAccount getSOALoanDetails(String finReference);
+
 	FinanceProfitDetail getFinanceProfitDetails(String finReference);
+
 	int getFinanceProfitDetailActiveCount(long custId, boolean active);
+
 	StatementOfAccount getSOACustomerDetails(long custId);
+
 	StatementOfAccount getSOAProductDetails(String finBranch, String finType);
+
 	List<FinExcessAmount> getFinExcessAmountsList(String finReference);
+
 	List<ReceiptAllocationDetail> getReceiptAllocationDetailsList(String finReference);
-	List<FinReceiptHeader> getFinReceiptHeaders(String finReference);	
+
+	List<FinReceiptHeader> getFinReceiptHeaders(String finReference);
+
 	List<FinReceiptDetail> getFinReceiptDetails(String finReference);
+
 	List<FinRepayHeader> getFinRepayHeadersList(String finReference);
+
 	List<FinFeeDetail> getFinFeedetails(String finReference);
+
 	Date getMaxSchDate(String finReference);
+
 	List<ManualAdviseMovements> getManualAdviseMovements(String finReference);
+
 	List<PresentmentDetail> getPresentmentDetailsList(String finReference);
+
 	List<RepayScheduleDetail> getRepayScheduleDetailsList(String finReference);
+
 	List<VASRecording> getVASRecordingsList(String finReference);
+
 	List<FinFeeScheduleDetail> getFinFeeScheduleDetailsList(String finReference);
+
 	EventProperties getEventPropertiesList(String configName);
+
 	List<String> getSOAFinTypes();
+
 	List<ApplicantDetail> getApplicantDetails(String finReference);
+
 	List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference);
-	List<FeeWaiverDetail> getFeeWaiverDetail(String finReference);	
+
+	List<FeeWaiverDetail> getFeeWaiverDetail(String finReference);
 }

@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -94,11 +93,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> implements SOAReportGenerationDAO {
 	private static Logger logger = Logger.getLogger(SOAReportGenerationDAOImpl.class);
-	
+
 	public SOAReportGenerationDAOImpl() {
 		super();
 	}
-	
 
 	/**
 	 * get the Finance Main records
@@ -106,18 +104,20 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	@Override
 	public FinanceMain getFinanceMain(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceMain finMain = new FinanceMain();
 		finMain.setFinReference(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType, FixedRateTenor,");
-		selectSql.append(" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin ");
+		selectSql.append(
+				" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType, FixedRateTenor,");
+		selectSql.append(
+				" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin ");
 		selectSql.append(" FROM  FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMain);
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
@@ -128,32 +128,34 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return finMain;
 	}
-	
+
 	/**
 	 * get the FinScheduleDetails List
 	 */
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceScheduleDetail finSchdDetail = new FinanceScheduleDetail();
 		finSchdDetail.setFinReference(finReference);
-		
-		List<FinanceScheduleDetail> finSchdDetailsList;
-		
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, DisbOnSchDate, RepayAmount");
-		selectSql.append(" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ProfitSchd, CalculatedRate");
+		List<FinanceScheduleDetail> finSchdDetailsList;
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select FinReference, SchDate, SchSeq, DisbOnSchDate, RepayAmount");
+		selectSql.append(
+				" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ProfitSchd, CalculatedRate");
 		selectSql.append(" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid FROM FINSCHEDULEDETAILS");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchdDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
 
 		try {
 			finSchdDetailsList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -162,145 +164,152 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return finSchdDetailsList;
 	}
-	
+
 	/**
 	 * get the FinAdvancePayments list
 	 */
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePayments(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinAdvancePayments finAdvPayment = new FinAdvancePayments();
 		finAdvPayment.setFinReference(finReference);
-		
+
 		List<FinAdvancePayments> FinAdvancePaymentslist;
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select LlDate,AmtToBeReleased,PaymentType,LlReferenceNo,TransactionRef,ValueDate FROM FinAdvancePayments");
+
+		selectSql.append(
+				" Select LlDate,AmtToBeReleased,PaymentType,LlReferenceNo,TransactionRef,ValueDate FROM FinAdvancePayments");
 		selectSql.append(" Where (Status not in ('CANCELED','REJECTED') or Status is null)");
 		selectSql.append(" And FinReference = :FinReference");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvPayment);
-		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-		
+		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinAdvancePayments.class);
+
 		try {
 			FinAdvancePaymentslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			FinAdvancePaymentslist = new ArrayList<FinAdvancePayments>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return FinAdvancePaymentslist;
 	}
-	
+
 	/**
 	 * get the PaymentInstructions list
 	 */
 	@Override
 	public List<PaymentInstruction> getPaymentInstructions(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		
+
 		List<PaymentInstruction> paymentInstructionsList;
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append(" Select * FROM PaymentInstructions");
-		selectSql.append(" Where PaymentId In (Select PaymentId from PaymentHeader where FinReference = :FinReference)");
+		selectSql
+				.append(" Where PaymentId In (Select PaymentId from PaymentHeader where FinReference = :FinReference)");
 		selectSql.append(" And (Status!='CANCELED' or Status is null)");
 		if (App.DATABASE.name() == Database.SQL_SERVER.name()) {
-		selectSql.append(" And PostDate <= (Select sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
+			selectSql.append(" And PostDate <= (Select sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
 		} else {
-		selectSql.append(" And PostDate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
+			selectSql.append(
+					" And PostDate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
 		}
 		logger.trace(Literal.SQL + selectSql.toString());
-		
-		RowMapper<PaymentInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
-		
+
+		RowMapper<PaymentInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentInstruction.class);
+
 		try {
-			paymentInstructionsList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			paymentInstructionsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			paymentInstructionsList = new ArrayList<PaymentInstruction>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return paymentInstructionsList;
 	}
-	
+
 	/**
 	 * get the FinODDetails List
 	 */
 	@Override
 	public List<FinODDetails> getFinODDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
 		List<FinODDetails> finODDetailslist;
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate FROM FinODDetails");
+
+		selectSql
+				.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate FROM FinODDetails");
 		selectSql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
-		
+
 		try {
 			finODDetailslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finODDetailslist = new ArrayList<>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return finODDetailslist;
 	}
-	
+
 	/**
 	 * get the Manual Advise List
 	 */
 	@Override
 	public List<ManualAdvise> getManualAdvise(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setFinReference(finReference);
 		List<ManualAdvise> manualAdviseList = new ArrayList<ManualAdvise>();
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
+
+		selectSql.append(
+				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent ");
 		selectSql.append(" FROM ManualAdvise T1 Left Join");
 		selectSql.append(" FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId  ");
 		selectSql.append(" Where FinReference = :FinReference");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
 		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
-		
+
 		try {
 			manualAdviseList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualAdviseList = new ArrayList<ManualAdvise>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return manualAdviseList;
 	}
 
@@ -310,36 +319,37 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	@Override
 	public List<ManualAdviseMovements> getManualAdviseMovements(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		
+
 		List<ManualAdviseMovements> manualAdviseMovementsList;
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append(" SELECT T1.Movementdate, T1.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
 		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
 		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
 		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");
 		selectSql.append(" WHERE T2.WaivedAmount > 0 ");
 		selectSql.append(" And  T2.FinReference = :FinReference");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-	
-		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdviseMovements.class);
-		
+
+		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseMovements.class);
+
 		try {
-			manualAdviseMovementsList =  this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			manualAdviseMovementsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return manualAdviseMovementsList;
 	}
-	
+
 	/**
 	 * get the FinFeeDetails List
 	 */
@@ -353,14 +363,16 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<FinFeeDetail> finFeeDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select T1.FinReference, T1.RemainingFee, T1.PaidAmount, T1.Postdate, T1.FeeTypeID, T1.VasReference,");
-		sql.append(" T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc, T1.WaivedAmount, T2.TaxComponent ");
+		sql.append(
+				" Select T1.FinReference, T1.RemainingFee, T1.PaidAmount, T1.Postdate, T1.FeeTypeID, T1.VasReference,");
+		sql.append(
+				" T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc, T1.WaivedAmount, T2.TaxComponent ");
 		sql.append(" From  FinFeeDetail T1");
 		sql.append(" Left Join FeeTypes T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		sql.append(" WHERE T1.FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 
 		try {
@@ -375,7 +387,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return finFeeDetailsList;
 	}
-	
+
 	/**
 	 * get the Receipt Allocation Details List
 	 */
@@ -393,8 +405,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" Where ReceiptId in (Select ReceiptId from FinReceiptHeader where Reference = :FinReference)");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
-		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptAllocationDetail.class);
+
+		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptAllocationDetail.class);
 
 		try {
 			finReceiptAllocationDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -408,92 +421,101 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return finReceiptAllocationDetailsList;
 	}
-	
+
 	/**
 	 * get the FinReceiptHeaders List
 	 */
 	@Override
 	public List<FinReceiptHeader> getFinReceiptHeaders(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
 		finReceiptHeader.setReference(finReference);
 		List<FinReceiptHeader> list;
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT ReceiptID,ReceiptModeStatus,ReceiptDate,ReceiptMode,BounceDate From FinReceiptHeader");
+		selectSql
+				.append(" SELECT ReceiptID,ReceiptModeStatus,ReceiptDate,ReceiptMode,BounceDate From FinReceiptHeader");
 		selectSql.append(" Where Reference = :Reference");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
-		
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinReceiptHeader.class);
+
 		try {
 			list = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			list = new ArrayList<>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return list;
 	}
-	
+
 	/**
 	 * get the FinReceiptDetails List
 	 */
 	@Override
 	public List<FinReceiptDetail> getFinReceiptDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		List<FinReceiptDetail> list;
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("Reference", finReference);
-		selectSql.append(" SELECT ReceiptID,PaymentType,PaymentRef,FavourNumber,Amount,Status,ReceiptSeqID,ReceivedDate,TransactionRef  from FinReceiptDetail");
+		selectSql.append(
+				" SELECT ReceiptID,PaymentType,PaymentRef,FavourNumber,Amount,Status,ReceiptSeqID,ReceivedDate,TransactionRef  from FinReceiptDetail");
 		selectSql.append(" Where ReceiptId in (Select ReceiptId from FINRECEIPTHEADER where Reference = :Reference) ");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
-		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
-		
+
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinReceiptDetail.class);
+
 		try {
-			list =  jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
+			list = jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 		} catch (Exception e) {
 			list = new ArrayList<FinReceiptDetail>();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return list;
 	}
-	
+
 	/**
 	 * get the Statement of Account records
 	 */
 	@Override
 	public StatementOfAccount getSOALoanDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StatementOfAccount statementOfAccount = new StatementOfAccount();
 		statementOfAccount.setFinReference(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select FINREFERENCE, LOANAMOUNT, PLRRATE, VARIANCE, IRR, ROI, TENURE, EMIRECEIVEDPRI, EMIRECEIVEDPFT, PREFERREDCARDLIMIT,");
-		selectSql.append(" PREVINSTAMTPRI, PREVINSTAMTPFT, INTRATETYPE, LASTDISBURSALDATE, FIRSTDUEDATE, ENDINSTALLMENTDATE, ADVINSTAMT, FINISACTIVE,");
-		selectSql.append(" CLOSINGSTATUS, FUTUREINSTNO, FUTUREPRI1, FUTUREPRI2, FUTURERPYPFT1, FUTURERPYPFT2, CHARGE_COLL_CUST CHARGECOLLCUST,");
-		selectSql.append(" UPFRONT_INT_CUST UPFRONTINTCUST, INT_PAID_DEALER_UPFRONT INTPAIDDEALERUPFRONT, PRE_EMI_INT_PAID PREEMIINTPAID, REPO_STATUS REPOSTATUS,");
+		selectSql.append(
+				" Select FINREFERENCE, LOANAMOUNT, PLRRATE, VARIANCE, IRR, ROI, TENURE, EMIRECEIVEDPRI, EMIRECEIVEDPFT, PREFERREDCARDLIMIT,");
+		selectSql.append(
+				" PREVINSTAMTPRI, PREVINSTAMTPFT, INTRATETYPE, LASTDISBURSALDATE, FIRSTDUEDATE, ENDINSTALLMENTDATE, ADVINSTAMT, FINISACTIVE,");
+		selectSql.append(
+				" CLOSINGSTATUS, FUTUREINSTNO, FUTUREPRI1, FUTUREPRI2, FUTURERPYPFT1, FUTURERPYPFT2, CHARGE_COLL_CUST CHARGECOLLCUST,");
+		selectSql.append(
+				" UPFRONT_INT_CUST UPFRONTINTCUST, INT_PAID_DEALER_UPFRONT INTPAIDDEALERUPFRONT, PRE_EMI_INT_PAID PREEMIINTPAID, REPO_STATUS REPOSTATUS,");
 		selectSql.append(" LATESTRPYDATE, CCYMINORCCYUNITS, CCYEDITFIELD");
 		selectSql.append(" FROM  RPT_SOA_LOAN_VIEW");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statementOfAccount);
-		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StatementOfAccount.class);
+		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(StatementOfAccount.class);
 
 		try {
 			statementOfAccount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -502,7 +524,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return statementOfAccount;
 	}
 
@@ -512,10 +534,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	@Override
 	public FinanceProfitDetail getFinanceProfitDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
 		financeProfitDetail.setFinReference(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("  Select CustId,FinStartDate,LinkedFinRef,ClosedlinkedFinRef,FinBranch,FinType,FinPurpose,");
@@ -524,9 +546,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append("  Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetail);
-		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceProfitDetail.class);
 
 		try {
 			financeProfitDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -535,17 +558,17 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return financeProfitDetail;
 	}
-	
+
 	/**
 	 * get the finance Profit Details Active/InActive count
 	 */
 	@Override
 	public int getFinanceProfitDetailActiveCount(long custId, boolean active) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int activeCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinIsActive", 1);
@@ -553,13 +576,13 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From FinPftDetails");
 		selectSql.append(" Where CustID = :CustID");
-		
+
 		if (active) {
 			selectSql.append(" And FinIsActive = :FinIsActive");
 		} else {
 			selectSql.append(" And FinIsActive <> :FinIsActive");
 		}
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
@@ -572,38 +595,40 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return activeCount;
 	}
-	
+
 	/**
 	 * get the Statement of Account Records having customer details
 	 */
 	@Override
 	public StatementOfAccount getSOACustomerDetails(long custId) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		StatementOfAccount statementOfAccount = new StatementOfAccount();
 		statementOfAccount.setCustID(custId);
 
 		selectSql.append(" Select T1.CustShrtname, T1.CustCIF, T1.CustID,");
-		selectSql.append(" T2.CustAddrHNbr, T2.CustFlatNbr, T2.CustAddrStreet, T2.CustPOBox, T2.custaddrline1, T2.custaddrline2, T2.custAddrZip,");
+		selectSql.append(
+				" T2.CustAddrHNbr, T2.CustFlatNbr, T2.CustAddrStreet, T2.CustPOBox, T2.custaddrline1, T2.custaddrline2, T2.custAddrZip,");
 		selectSql.append(" T3.CountryDesc CustAddrCountry,");
 		selectSql.append(" T4.PCCityName CustAddrCity,");
 		selectSql.append(" T5.CpProvinceName CustAddrProvince,");
 		selectSql.append(" T6.PhoneCountryCode, T6.PhoneAreaCode, T6.PhoneNumber,");
 		selectSql.append(" T7.CustEMail");
 		selectSql.append(" From Customers T1");
-		selectSql.append(" Left Join CustomerAddresses T2 ON T1.CustID = T2.CustID and T2.custAddrPriority = 5");		 
+		selectSql.append(" Left Join CustomerAddresses T2 ON T1.CustID = T2.CustID and T2.custAddrPriority = 5");
 		selectSql.append(" Left Join Bmtcountries T3 on T3.CountryCode = T2.CustAddrCountry");
 		selectSql.append(" Left Join RmtProvinceVsCity T4 on T4.PcCity = T2.CustAddrCity");
-		selectSql.append(" Left Join RmtCountryVsProvince T5 on T5.CpProvince = T2.custAddrProvince");		 
+		selectSql.append(" Left Join RmtCountryVsProvince T5 on T5.CpProvince = T2.custAddrProvince");
 		selectSql.append(" Left Join CustomerPhoneNumbers T6 ON T1.CustID = T6.PhoneCustID  and PHONETYPEPRIORITY = 5");
 		selectSql.append(" Left Join CustomerEMails T7 on T7.CustID = T1.CustID and CustEmailPriority = 5");
 		selectSql.append(" Where T1.CustID = :CustID");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statementOfAccount);
-		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StatementOfAccount.class);
+		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(StatementOfAccount.class);
 
 		try {
 			statementOfAccount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -612,7 +637,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return statementOfAccount;
 	}
 
@@ -636,9 +661,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" Where T1.FinType = :FinType");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		try {
-			RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StatementOfAccount.class);
+			RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(StatementOfAccount.class);
 			statementOfAccount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			statementOfAccount = null;
@@ -650,28 +676,29 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return statementOfAccount;
 	}
-	
+
 	/**
 	 * get the FinExcessAmountList
 	 */
 	@Override
 	public List<FinExcessAmount> getFinExcessAmountsList(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinExcessAmount finSchdDetail = new FinExcessAmount();
 		finSchdDetail.setFinReference(finReference);
-		
+
 		List<FinExcessAmount> finExcessAmountList = null;
-		
+
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select BalanceAmt FROM FinExcessAmount");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchdDetail);
-		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
+		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinExcessAmount.class);
 
 		try {
 			finExcessAmountList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -680,7 +707,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return finExcessAmountList;
 	}
 
@@ -698,7 +725,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" WHERE FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 
 		try {
@@ -721,7 +748,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public Date getMaxSchDate(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		Date  maxSchDate = null;
+		Date maxSchDate = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
@@ -733,7 +760,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" group by T1.FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		try {
 			maxSchDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 		} catch (Exception e) {
@@ -753,28 +780,29 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	@Override
 	public List<PresentmentDetail> getPresentmentDetailsList(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		List<PresentmentDetail> presentmentDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Distinct PRD.ReceiptId,PRD.SchDate,BR.REASON BounceReason, PRD.Status, PRH.MandateType, M.MandateRef, ");
+		sql.append(
+				" SELECT Distinct PRD.ReceiptId,PRD.SchDate,BR.REASON BounceReason, PRD.Status, PRH.MandateType, M.MandateRef, ");
 		sql.append(" EMIno FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
 		sql.append(" Left join BOUNCEREASONS BR ON PRD.BOUNCEID  = BR.BOUNCEID ");
 		sql.append(" inner join PRESENTMENTHEADER PRH on PRH.id = PRD.Presentmentid");
 		sql.append(" Where PRD.RECEIPTID != 0 and FinReference = :FinReference");
 
-		
 		logger.trace(Literal.SQL + sql.toString());
-		
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
-		
+
+		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+
 		try {
-			presentmentDetailsList =  this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			presentmentDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			presentmentDetailsList = new ArrayList<PresentmentDetail>();
-		}  finally {
+		} finally {
 			source = null;
 			sql = null;
 			logger.debug(Literal.LEAVING);
@@ -796,12 +824,14 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<RepayScheduleDetail> finRepayScheduleDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT RepayID,TdsSchdPayNow,PftSchdWaivedNow,PriSchdWaivedNow,WaivedAmt FROM FinRepayscheduledetail");
+		sql.append(
+				" SELECT RepayID,TdsSchdPayNow,PftSchdWaivedNow,PriSchdWaivedNow,WaivedAmt FROM FinRepayscheduledetail");
 		sql.append(" WHERE FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
-		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
+
+		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(RepayScheduleDetail.class);
 
 		try {
 			finRepayScheduleDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -835,7 +865,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" WHERE T1.PrimaryLinkRef = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		try {
@@ -871,13 +901,15 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		if (App.DATABASE.name() == Database.SQL_SERVER.name()) {
 			sql.append(" WHERE T1.Schdate <= (Select sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
 		} else {
-			sql.append(" WHERE T1.Schdate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
+			sql.append(
+					" WHERE T1.Schdate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
 		}
 		sql.append(" And T1.SchAmount !=0 And T2.FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
+
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeScheduleDetail.class);
 
 		try {
 			finFeeScheduleDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -891,7 +923,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return finFeeScheduleDetailsList;
 	}
-	
+
 	@Override
 	public EventProperties getEventPropertiesList(String configName) {
 
@@ -906,9 +938,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" Where config_id in (Select Id from DATA_ENGINE_CONFIG where Name = :ConfigName)");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		try {
-			RowMapper<EventProperties> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EventProperties.class);
+			RowMapper<EventProperties> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(EventProperties.class);
 			statementOfAccount = this.jdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
 		} catch (Exception e) {
 			statementOfAccount = null;
@@ -920,6 +953,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return statementOfAccount;
 	}
+
 	@Override
 	public List<String> getSOAFinTypes() {
 
@@ -927,9 +961,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<String> list = null;
 		StringBuilder sql = new StringBuilder("Select FinType from  SOA_FinTypes");
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		try {
-			list = this.jdbcTemplate.queryForList(sql.toString(),new MapSqlParameterSource(),String.class);
+			list = this.jdbcTemplate.queryForList(sql.toString(), new MapSqlParameterSource(), String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION);
 		} finally {
@@ -950,22 +984,25 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<ApplicantDetail> applicantDetails = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select JA.custcif CustCIF, Cust.CustShrtName CustName, PN.Phonenumber PhoneNum, 'Co-Applicant' ApplicantType");
+		sql.append(
+				" Select JA.custcif CustCIF, Cust.CustShrtName CustName, PN.Phonenumber PhoneNum, 'Co-Applicant' ApplicantType");
 		sql.append(" from Financemain FM Inner Join FinJointAccountDetails JA ON FM.Finreference = JA.Finreference");
 		sql.append(" Inner Join Customers Cust ON Cust.CustCIF =  JA.Custcif ");
-		sql.append(" Inner join CustomerPhonenumbers PN ON PN.Phonecustid = Cust.CustID And PN.PhoneTypePriority = 5  ");
+		sql.append(
+				" Inner join CustomerPhonenumbers PN ON PN.Phonecustid = Cust.CustID And PN.PhoneTypePriority = 5  ");
 		sql.append(" where FM.Finreference = :FinReference");
 		sql.append(" Union All");
-		sql.append(" Select GR.guarantorcif CustCIF,Cust.CustShrtName CustName,PN.phonenumber PhoneNum, 'Borrower' ApplicantType");
+		sql.append(
+				" Select GR.guarantorcif CustCIF,Cust.CustShrtName CustName,PN.phonenumber PhoneNum, 'Borrower' ApplicantType");
 		sql.append(" from Financemain FM Inner Join finguarantorsdetails GR ON FM.finreference = GR.finreference");
 		sql.append(" Inner Join Customers Cust ON Cust.CustCIF =  GR.guarantorcif  ");
 		sql.append(" Inner Join CustomerPhonenumbers PN ON PN.PhoneCustid = Cust.custID And PN.PhoneTypePriority = 5");
 		sql.append(" where FM.Finreference = :FinReference");
-		
-		 		
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<ApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ApplicantDetail.class);
+		RowMapper<ApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ApplicantDetail.class);
 
 		try {
 			applicantDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -993,11 +1030,11 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select finReference, FinType, 'Primary Customer' ApplicantType from FinanceMain ");
 		sql.append(" Where CustId = :CustID And Finreference != :FinReference Union All ");
-		
+
 		sql.append(" Select FM.finreference, FM.fintype, 'Co-Applicant' ApplicantType from");
 		sql.append(" FinJointAccountDetails JA Inner Join FinanceMain FM  ON FM.finreference = JA.finreference");
 		sql.append(" where FM.CustID = :CustID Union All ");
-		
+
 		sql.append(" Select FM.Finreference, FM.Fintype, 'Borrower' ApplicantType");
 		sql.append(" from FinGuarantorsDetails GR Inner Join FinanceMain FM ON FM.finreference = GR.finreference ");
 		sql.append(" where FM.CustID = :CustID");
@@ -1019,7 +1056,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return otherFinanceDetails;
 	}
-	
+
 	@Override
 	public List<FeeWaiverDetail> getFeeWaiverDetail(String finReference) {
 
@@ -1051,5 +1088,5 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return feeWaiverDetails;
 	}
-	
+
 }
