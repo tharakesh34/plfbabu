@@ -145,7 +145,20 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91104", "", valueParm), lang));
 			}
 		}
-
+		
+		// Over Draft Loan Type validation for recalType
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			// validate recalType
+			if(StringUtils.isNotBlank(finSrvInst.getRecalType())) {
+				if(!StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+						) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finSrvInst.getRecalType();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91104", "", valueParm), lang));
+				}
+			}
+		}
+		
 		// validate reCalFromDate
 		if(StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT) ||
 				StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {

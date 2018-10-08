@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 
-@XmlType(propOrder = { "applicationNo", "lovDescCustCIF", "finType", "finCcy", "finBranch", "profitDaysBasis", "finAmount", "finAssetValue", "downPayBank", "downPaySupl", "finRepayMethod", "finStartDate", "allowGrcPeriod", "tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance", "alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate", "graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq",
+@XmlType(propOrder = { "applicationNo", "lovDescCustCIF", "finType", "finCcy", "finBranch","finReference", "profitDaysBasis", "finAmount", "finAssetValue", "downPayBank", "downPaySupl", "finRepayMethod", "finStartDate", "firstDroplineDate","allowGrcPeriod", "tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance", "alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate", "graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq",
 		"nextGrcPftDate", "grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd", "grcMinRate", "grcMaxRate", "grcMaxAmount", "grcAdvPftRate", "grcAdvBaseRate", "grcAdvMargin", "numberOfTerms", "reqRepayAmount", "repayRateBasis", "repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq", "nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq", "nextRepayCpzDate",
 		"maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "rpyAdvPftRate", "rpyAdvBaseRate", "rpyAdvMargin", "supplementRent", "increasedCost", "rolloverFrq", "nextRolloverDate", "finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays",
 		"alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate", "stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate" })
@@ -80,7 +80,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// ===========================================
 	// ==========Finance Basic Details============
 	// ===========================================
-
+	@XmlElement
 	private String finReference;
 
 	private String linkedFinRef;
@@ -160,7 +160,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescMMAReference;
 	@XmlElement(name = "tdsApplicable")
 	private boolean tDSApplicable;
+	@XmlElement
 	private String droplineFrq;
+	@XmlElement
 	private Date firstDroplineDate;
 	private boolean pftServicingODLimit;
 
@@ -391,10 +393,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int calGrcTerms;
 	private Date calGrcEndDate;
 	private int calTerms;
+	@XmlElement
 	private Date calMaturity;
 	private BigDecimal firstRepay = BigDecimal.ZERO;
 	private BigDecimal lastRepay = BigDecimal.ZERO;
 	private BigDecimal finRepaymentAmount = BigDecimal.ZERO;
+	@XmlElement
 	private Date eventFromDate;
 	private Date eventToDate;
 	private Date recalFromDate;
@@ -574,6 +578,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String finLimitRef;
 	private String lovDescLimitRefName;
+	@XmlElement
 	private String productCategory;
 
 	/* Mandate */

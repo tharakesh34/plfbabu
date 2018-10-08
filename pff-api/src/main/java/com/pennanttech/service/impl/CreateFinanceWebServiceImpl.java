@@ -14,6 +14,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.OverDraftMaintenance;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -131,6 +132,30 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		} finally {
 			financeDataValidation.setFinanceDetail(null);
 		}
+	}
+	
+	
+	
+	
+	public FinanceDetail getOverDraftMaintenance(OverDraftMaintenance overDraftMaintenance) throws ServiceException{
+		
+		APIErrorHandlerService.logReference(overDraftMaintenance.getFinReference());
+		// service level validations
+		WSReturnStatus returnStatus = validateFinReference(overDraftMaintenance.getFinReference());
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			FinanceDetail financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+		
+		FinanceDetail financeDetail = createFinanceController.getFinInquiryDetails(overDraftMaintenance.getFinReference());
+		financeDetail.getFinScheduleData().setFinanceType(null);
+		financeDetail.setCustomerDetails(null);
+		financeDetail.setMandate(null);
+		
+		return financeDetail;
 	}
 
 	/**

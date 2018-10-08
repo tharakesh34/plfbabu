@@ -84,7 +84,8 @@ public class FinScheduleData implements Serializable{
 	@XmlElement
 	private String finReference = null;	
 	private boolean schduleGenerated = false;
-
+	
+	@XmlElement(name="financeType")
 	private FinanceType financeType;
 
 	@XmlElement(name="financeDetail")
@@ -98,6 +99,8 @@ public class FinScheduleData implements Serializable{
 	@XmlElement(name="schedule")
 	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>(1);
 
+	@XmlElementWrapper(name="odlimitschedules")
+	@XmlElement(name="odlimitschedule")
 	private List<OverdraftScheduleDetail> overdraftScheduleDetails = new ArrayList<OverdraftScheduleDetail>(1);
 	private List<FinanceDisbursement> disbursementDetails = new ArrayList<FinanceDisbursement>(1);
 
@@ -295,11 +298,14 @@ public class FinScheduleData implements Serializable{
 		this.errorDetails = errorDetails;
 	}
 
-	public void setFinanceType(FinanceType financeType) {
-		this.financeType = financeType;
-	}
+	
+
 	public FinanceType getFinanceType() {
 		return financeType;
+	}
+
+	public void setFinanceType(FinanceType financeType) {
+		this.financeType = financeType;
 	}
 
 	public FinanceSummary getFinanceSummary() {
@@ -438,12 +444,14 @@ public class FinScheduleData implements Serializable{
 		}
 	}
 
+	
+
 	public List<OverdraftScheduleDetail> getOverdraftScheduleDetails() {
 		return overdraftScheduleDetails;
 	}
 
-	public void setOverdraftScheduleDetails(List<OverdraftScheduleDetail> overdraftScheduleDetail) {
-		this.overdraftScheduleDetails = overdraftScheduleDetail;
+	public void setOverdraftScheduleDetails(List<OverdraftScheduleDetail> overdraftScheduleDetails) {
+		this.overdraftScheduleDetails = overdraftScheduleDetails;
 	}
 
 	public List<Integer> getPlanEMIHmonths() {

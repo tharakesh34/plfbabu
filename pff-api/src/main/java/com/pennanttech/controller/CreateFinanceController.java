@@ -157,8 +157,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @param financeDetail
 	 * @return
 	 */
+	
+	
 	public FinanceDetail doCreateFinance(FinanceDetail financeDetail, boolean loanWithWIF) {
-		logger.debug("Enteing");
+		logger.debug("Entering");
 
 		String finReference = null;
 
@@ -268,15 +270,27 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (!loanWithWIF) {
 				// call schedule calculator
 				finScheduleData.getFinanceMain().setCalculateRepay(true);
-				finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
-				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-
-					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
-					finScheduleData.setSchduleGenerated(true);
-
-					// process planned EMI details
-					doProcessPlanEMIHDays(finScheduleData);
-					if (finScheduleData.getErrorDetails() != null) {
+				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,	financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())){
+					if (financeDetail.getFinScheduleData().getOverdraftScheduleDetails() != null) {
+						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().clear();
+					}
+						//To Rebuild the overdraft if any fields are changed
+					financeDetail.getFinScheduleData().getFinanceMain().setEventFromDate(
+					financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate());
+					finScheduleData = ScheduleCalculator.buildODSchedule(financeDetail.getFinScheduleData());
+					financeDetail.setFinScheduleData(finScheduleData);
+					financeDetail.getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
+						
+				}else{
+						finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
+						if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
+							finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
+							finScheduleData.setSchduleGenerated(true);
+							// process planned EMI details
+							doProcessPlanEMIHDays(finScheduleData);
+						}
+				}
+				if (finScheduleData.getErrorDetails() != null) {
 						for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
 							FinanceDetail response = new FinanceDetail();
 							doEmptyResponseObject(response);
@@ -284,13 +298,16 @@ public class CreateFinanceController extends SummaryDetailService {
 									errorDetail.getError()));
 							return response;
 						}
-					}
-
-					// fees calculation
-					if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
-						finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
-					}
 				}
+					
+					// fees calculation
+				if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
+						finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
+				}
+				
+				
+				
+				
 			} else {
 				finScheduleData.getFinanceMain().setCalculateRepay(true);
 				finScheduleData.setSchduleGenerated(true);
@@ -327,7 +344,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.setExtSource(false);
 			financeDetail.setAccountingEventCode(PennantApplicationUtil.getEventCode(financeMain.getFinStartDate()));
 			financeDetail.setFinReference(financeMain.getFinReference());
-			financeDetail.setFinScheduleData(finScheduleData);
+			if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,	financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())){
+				financeDetail.setFinScheduleData(finScheduleData);	
+			}
+			
+		
+			
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
@@ -351,8 +373,9 @@ public class CreateFinanceController extends SummaryDetailService {
 					financeMain.setRecordStatus("Saved");
 					role = workFlow.firstTaskOwner();
 				}
+				
 				auditHeader = financeDetailService.executeWorkflowServiceTasks(auditHeader, role, usrAction, workFlow);
-				//auditHeader = financeDetailService.saveOrUpdate(auditHeader, false);
+				
 			}
 
 			FinanceDetail response = null;
@@ -1069,16 +1092,21 @@ public class CreateFinanceController extends SummaryDetailService {
 		finScheduleData.setFinanceMain(financeMain);
 		finScheduleData.setFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 		finScheduleData.setStepPolicyDetails(financeDetail.getFinScheduleData().getStepPolicyDetails());
-		finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
-		response.setFinScheduleData(finScheduleData);
-
-		// set fee paid amounts based on schedule method
-		finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
-
-		// Fetch summary details
-		FinanceSummary summary = getFinanceSummary(financeDetail);
-		response.getFinScheduleData().setFinanceSummary(summary);
-
+		if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());	
+			response.setFinScheduleData(finScheduleData);
+			// set fee paid amounts based on schedule method
+			finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
+			// Fetch summary details
+			FinanceSummary summary = getFinanceSummary(financeDetail);
+			response.getFinScheduleData().setFinanceSummary(summary);
+		}else{
+			finScheduleData.setOverdraftScheduleDetails(financeDetail.getFinScheduleData().getOverdraftScheduleDetails());
+			finScheduleData.setFinanceScheduleDetails(null);
+			response.getFinScheduleData().setFinanceSummary(null);
+		}
+		
+		
 		// nullify the unnecessary object
 		finScheduleData.setDisbursementDetails(null);
 		finScheduleData.setRepayInstructions(null);

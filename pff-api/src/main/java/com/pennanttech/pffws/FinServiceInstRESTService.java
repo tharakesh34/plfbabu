@@ -43,6 +43,10 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/addDisbursement")
 	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	
+	@POST
+	@Path("/loanInstructionService/cancelDisbursement")
+	public FinanceDetail cancelDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 	@POST
 	@Path("/loanInstructionService/partialSettlement")
@@ -72,6 +76,10 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/updateLoanPenaltyDetails")
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 	
+	@POST
+	@Path("/loanInstructionService/getOverDraftMaintenance")
+	public FinanceDetail getOverDraftMaintenance(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+		
 	@POST
 	@Path("/loanInstructionService/scheduleMethodChange")
 	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstRequest) throws ServiceException;

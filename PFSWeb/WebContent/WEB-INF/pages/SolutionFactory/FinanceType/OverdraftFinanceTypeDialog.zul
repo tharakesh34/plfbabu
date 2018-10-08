@@ -478,6 +478,7 @@
 														id="advEMIMinTerms" width="45px" maxlength="3"
 														style="text-align:right" />
 												</hbox>
+
 												<label
 													id="label_FinanceTypeDialog_AdvEMIMaxTerm"
 													value="${c:l('label_FinanceTypeDialog_AdvEMIMaxTerms.value')}" />
@@ -746,7 +747,7 @@
 												</hbox>
 											</row>
 											<row
-												id="row_EligibilityMethod" visible="false">
+												id="row_EligibilityMethod" >
 												<label
 													id="label_FinanceTypeDialog_EligibilityMethod"
 													value="${c:l('label_FinanceTypeDialog_EligibilityMethod.value')}" />
@@ -1314,6 +1315,18 @@
 												</hbox>
 											</row>
 											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_BpiPftDaysBasis"
+													value="${c:l('label_FinanceTypeDialog_BpiPftDaysBasis.value')}" />
+												<hbox>
+													<space
+														id="space_bpiPftDaysBasis" spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="cbBpiPftDaysBasis" width="275px" readonly="true" />
+												</hbox>
+											</row>
+											<row visible="false">
 												<label
 													id="label_FinanceTypeDialog_BpiPftDaysBasis"
 													value="${c:l('label_FinanceTypeDialog_BpiPftDaysBasis.value')}" />

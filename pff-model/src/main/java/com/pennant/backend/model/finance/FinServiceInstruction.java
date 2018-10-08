@@ -25,6 +25,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private long  serviceSeqId =  Long.MIN_VALUE;
 	@XmlElement
 	private String finReference;
+	@XmlElement
 	private String finEvent;
 	@XmlElement
 	private String externalReference;
@@ -68,6 +69,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private int terms = 0;
 	@XmlElement
 	private String 	serviceReqNo;
+	@XmlElement
 	private String	remarks;
 	@XmlElement
 	private String repayFrq;
@@ -84,6 +86,18 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private Date nextRepayDate;
 	private BigDecimal pftChg = BigDecimal.ZERO;
+	
+	@XmlElement
+	private int tenor = 0;
+	@XmlElement
+	private Date maturityDate;
+	@XmlElement
+	private String droplineFrq;
+	@XmlElement
+	private Date droplineDate;
+	@XmlElement
+	private String rateReviewFrq;
+	
 	
 	@XmlElement
 	private List<WSReturnStatus> returnStatus = null;
@@ -641,5 +655,49 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setPftChg(BigDecimal pftChg) {
 		this.pftChg = pftChg;
 	}
+
+	public int getTenor() {
+		return tenor;
+	}
+
+	public void setTenor(int tenor) {
+		this.tenor = tenor;
+	}
+
+	public Date getMaturityDate() {
+		return maturityDate;
+	}
+
+	public void setMaturityDate(Date maturityDate) {
+		this.maturityDate = maturityDate;
+	}
+
+	public String getDroplineFrq() {
+		return droplineFrq;
+	}
+
+	public void setDroplineFrq(String droplineFrq) {
+		this.droplineFrq = droplineFrq;
+	}
+
+	public Date getDroplineDate() {
+		return droplineDate;
+	}
+
+	public void setDroplineDate(Date droplineDate) {
+		this.droplineDate = droplineDate;
+	}
+
+	public String getRateReviewFrq() {
+		return rateReviewFrq;
+	}
+
+	public void setRateReviewFrq(String rateReviewFrq) {
+		this.rateReviewFrq = rateReviewFrq;
+	}
+
+	
+	
+	
 	
 }

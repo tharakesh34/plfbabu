@@ -3,21 +3,44 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
+/**
+ * Model class for the <b>WIFFinanceScheduleDetail table</b>.<br>
+ * 
+ */
+@XmlType(propOrder = { "finReference", "droplineDate", "actualRate", "baseRate", "splRate", "margin", "droplineRate",
+		"limitDrop", "oDLimit", "limitIncreaseAmt" })
+@XmlAccessorType(XmlAccessType.NONE)
 
 public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@XmlElement
 	private String finReference = null;
+	@XmlElement
 	private Date droplineDate;
+	@XmlElement
 	private BigDecimal actualRate = BigDecimal.ZERO;
+	@XmlElement
 	private	String baseRate;
+	@XmlElement
 	private String  splRate;
+	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal droplineRate = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal limitDrop = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal oDLimit = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal limitIncreaseAmt = BigDecimal.ZERO;
 	
 	public OverdraftScheduleDetail(){

@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -129,6 +131,7 @@ import com.pennanttech.pff.document.DocumentService;
 
 public class FinanceDataValidation {
 
+	private static final Logger		logger	= Logger.getLogger(FinanceDataValidation.class);
 	
 	private BaseRateDAO						baseRateDAO;
 	private SplRateDAO						splRateDAO;
@@ -197,12 +200,19 @@ public class FinanceDataValidation {
 
 		// Non Finance validation
 		errorDetails = nonFinanceValidation(vldGroup, finScheduleData, isAPICall);
+		String financeReference=null;
+		if(finScheduleData.getFinReference()!=null){
+			financeReference=finScheduleData.getFinReference();
+		}else{
+			financeReference=finMain.getFinReference();
+		}
 
 		// validate FinReference
-		ErrorDetail error = validateFinReference(finScheduleData.getFinReference(), finScheduleData,vldGroup);
+		//ErrorDetail error = validateFinReference("NFLBR", finScheduleData,vldGroup);
+		/*ErrorDetail error = validateFinReference(financeReference, finScheduleData,vldGroup);
 		if(error != null) {
 			errorDetails.add(error);
-		}
+		} */
 
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
@@ -959,10 +969,21 @@ public class FinanceDataValidation {
 			}
 		}
 		// validate FinReference
-		ErrorDetail error = validateFinReference(financeDetail.getFinScheduleData().getFinReference(), finScheduleData,vldGroup);
+		String financeReference=null;
+		if(financeDetail.getFinScheduleData().getFinReference()!=null){
+			financeReference=financeDetail.getFinScheduleData().getFinReference();
+		}else{
+			financeReference=finMain.getFinReference();
+		}
+	
+		// Temp comment
+		
+		ErrorDetail error = validateFinReference(financeReference, finScheduleData,vldGroup);
 		if(error != null) {
 			errorDetails.add(error);
-		}
+		}  
+		
+		// Temp comment
         // validate external reference
 		if (financeDetail.getFinScheduleData().getExternalReference()!=null && !financeDetail.getFinScheduleData().getExternalReference().isEmpty()){
 			boolean isExtAssigned=finReceiptHeaderDAO.isExtRefAssigned(financeDetail.getFinScheduleData().getExternalReference());
@@ -1129,19 +1150,19 @@ public class FinanceDataValidation {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
-
+			
 			errorDetails = mandateValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
-
+			
 			errorDetails = documentValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
-
+			
 			errorDetails = jointAccountDetailsValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
@@ -1168,7 +1189,7 @@ public class FinanceDataValidation {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
-			
+			 
 			//ExtendedFieldDetails Validation
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			//### 02-05-2018-Start- story #334 Extended fields for loan servicing
@@ -1254,7 +1275,7 @@ public class FinanceDataValidation {
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}
-		}
+		} 
 
 		//Extended Field Details Validation
 		if(financeDetail.getExtendedDetails() != null && !financeDetail.getExtendedDetails().isEmpty()) {
@@ -2717,10 +2738,14 @@ public class FinanceDataValidation {
 		FinanceType financeType = finScheduleData.getFinanceType();
 
 		//Number of Terms & Maturity Date are Mutually Exclusive
-		if (finMain.getNumberOfTerms() > 0 && finMain.getMaturityDate() != null) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
-			return errorDetails;
+		// This is not applicable for OverDraft Web services
+		if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			if (finMain.getNumberOfTerms() > 0 && finMain.getMaturityDate() != null) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
+				return errorDetails;
+			} 
 		}
+		
 
 		//Both Grace Terms & Grace End Date are not present
 		if (finMain.getNumberOfTerms() == 0 && finMain.getMaturityDate() == null) {

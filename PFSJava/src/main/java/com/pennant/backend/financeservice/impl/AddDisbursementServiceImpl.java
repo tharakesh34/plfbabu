@@ -147,7 +147,11 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			isOverdraft = true;
 		}
-
+		if(!isOverdraft && StringUtils.isEmpty(finServiceInstruction.getRecalType())){
+			String[] valueParm = new String[1];
+			valueParm[0] = "Recal Type";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
+		}
 		if (isOverdraft) {
 			List<OverdraftScheduleDetail> odSchdDetail = finScheduleData.getOverdraftScheduleDetails();
 			BigDecimal availableLimit = BigDecimal.ZERO;

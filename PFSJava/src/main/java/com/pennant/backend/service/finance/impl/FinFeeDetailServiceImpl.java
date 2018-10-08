@@ -317,10 +317,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						finFeeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(finFeeDetail, isWIF, tableType) + 1);
 					}
 
-					if (finFeeDetail.isAlwPreIncomization()
-							&& finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
-						FinFeeDetail finFeeDtl = getFinFeeDetailDAO().getFeeDetailByExtReference(
-								finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
+					
+					if ((finFeeDetail.isAlwPreIncomization())&& (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO)>0) ){
+						FinFeeDetail finFeeDtl=getFinFeeDetailDAO().getFeeDetailByExtReference(finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
 						finFeeDetail.setFeeID(finFeeDtl.getFeeID());
 						finFeeDetail.setFeeSeq(finFeeDtl.getFeeSeq());
 						getFinFeeDetailDAO().update(finFeeDetail, false, "");

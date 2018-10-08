@@ -2930,7 +2930,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.MaturityDate, FT.Ratechganyday ");
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.MaturityDate, FT.Ratechganyday, FM.ProductCategory ");
 
 		if (isWIF) {
 			selectSql.append(" From WIFFinanceMain FM");

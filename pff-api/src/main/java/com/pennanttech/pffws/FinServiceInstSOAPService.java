@@ -29,4 +29,8 @@ public interface FinServiceInstSOAPService {
 	@WebResult(name = "finance")
 	public FinanceDetail removeTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
 	
+	@WebResult(name = "finance")
+	public FinanceDetail getOverDraftMaintenance(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	
+	
 }
