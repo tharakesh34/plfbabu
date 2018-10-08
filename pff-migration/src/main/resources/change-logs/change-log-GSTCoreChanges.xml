@@ -2921,7 +2921,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="149" author="Kesav">
+	<changeSet id="149" author="Kesav" dbms="postgresql,mssql">
 		<sql>
 			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'D' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' ';
 			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'C' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' ';
@@ -3083,5 +3083,10 @@ UNION ALL
 			where reportid=(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=2;
 		</sql>
 	</changeSet>
-	
+	<changeSet id="149.1" author="Kesav" dbms="oracle">
+		<sql>
+			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'D' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null  and TaxStateCode != ' ';
+			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'C' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null  and TaxStateCode != ' ';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
