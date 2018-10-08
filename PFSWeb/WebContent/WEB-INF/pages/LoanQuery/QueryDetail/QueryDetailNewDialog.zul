@@ -90,7 +90,7 @@
 									<extendedcombobox id="finReference"
 										readonly="true" />
 								</row>
-								<row id="row10">
+								<row id="row10" visible="false">
 									<label id="label_Reference"
 										value="${c:l('label_QueryDetailDialog_Reference.value')}" />
 									<textbox id="reference"
@@ -131,7 +131,7 @@
 														id="label_QryCategory"
 														value="${c:l('label_QueryDetailDialog_QryCategory.value')}" />
 													<extendedcombobox
-														id="qryCategory" />
+														id="qryCategory"/>
 												</row>
 
 												<row id="row2">
@@ -297,10 +297,10 @@
 											sclass="GridLayoutNoBorder" fixedLayout="true"
 											style="border:0px; padding:0px;">
 											<columns>
-												<column width="150px" />
-												<column />
-												<column width="150px" />
-												<column />
+												<column width="130px" />
+												<column width="600px" />
+												<column width="400px" />
+												<column width="100px"/>
 											</columns>
 											<rows>
 												<row>
