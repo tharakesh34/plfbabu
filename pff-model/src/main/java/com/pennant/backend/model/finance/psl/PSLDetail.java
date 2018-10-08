@@ -83,7 +83,6 @@ public class PSLDetail extends AbstractWorkflowEntity {
 	private String loanPurposeName;
 	private BigDecimal eligibleAmount = BigDecimal.ZERO;
 
-
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -307,7 +306,6 @@ public class PSLDetail extends AbstractWorkflowEntity {
 		this.loanPurpose = loanPurpose;
 	}
 
-
 	public String getLoanPurposeName() {
 		return loanPurposeName;
 	}
@@ -315,7 +313,6 @@ public class PSLDetail extends AbstractWorkflowEntity {
 	public void setLoanPurposeName(String loanPurposeName) {
 		this.loanPurposeName = loanPurposeName;
 	}
-
 
 	public BigDecimal getEligibleAmount() {
 		return eligibleAmount;

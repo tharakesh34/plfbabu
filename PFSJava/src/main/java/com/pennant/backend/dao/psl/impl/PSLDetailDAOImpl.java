@@ -61,8 +61,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>PSLDetail</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>PSLDetail</code> with set of CRUD operations.
  */
 public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDAO {
 	private static Logger logger = Logger.getLogger(PSLDetailDAOImpl.class);
@@ -152,7 +151,8 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 		sql.append(" subCategory = :subCategory, purpose = :purpose, endUse = :endUse, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, LoanPurpose = :LoanPurpose, EligibleAmount = :EligibleAmount");
+		sql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId, LoanPurpose = :LoanPurpose, EligibleAmount = :EligibleAmount");
 		sql.append(" where finReference = :finReference ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -198,7 +198,5 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	
 
 }

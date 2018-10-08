@@ -106,14 +106,12 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * PSLDetails/PSLDetails_Temp by using PSLDetailsDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using PSLDetailsDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtPSLDetails by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table PSLDetails/PSLDetails_Temp by
+	 * using PSLDetailsDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using PSLDetailsDAO's update method 3) Audit the record in to AuditHeader and AdtPSLDetails by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -147,7 +145,7 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		return auditHeader;
 
 	}
-	
+
 	@Override
 	public AuditDetail saveOrUpdate(PSLDetail pslDetail, TableType tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
@@ -167,12 +165,10 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table PSLDetails by using PSLDetailsDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtPSLDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * PSLDetails by using PSLDetailsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtPSLDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -197,7 +193,6 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		return auditHeader;
 	}
 
-	
 	@Override
 	public AuditDetail doApprove(PSLDetail pslDetail, TableType tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
@@ -213,25 +208,23 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		getPSLDetailDAO().save(pslDetail, tableType);
 
 		logger.debug(Literal.LEAVING);
-		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
 	}
-	
+
 	@Override
 	public AuditDetail delete(PSLDetail pslDetail, TableType tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(pslDetail, pslDetail.getExcludeFields());	
+		String[] fields = PennantJavaUtil.getFieldDetails(pslDetail, pslDetail.getExcludeFields());
 
 		getPSLDetailDAO().delete(pslDetail, tableType);
 
 		logger.debug(Literal.LEAVING);
-		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
 	}
-	
-	
+
 	/**
-	 * getPSLDetails fetch the details by using PSLDetailsDAO's
-	 * getPSLDetailsById method.
+	 * getPSLDetails fetch the details by using PSLDetailsDAO's getPSLDetailsById method.
 	 * 
 	 * @param finReference
 	 *            finReference of the PSLDetail.
@@ -243,9 +236,8 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 	}
 
 	/**
-	 * getApprovedPSLDetailsById fetch the details by using PSLDetailsDAO's
-	 * getPSLDetailsById method . with parameter id and type as blank. it
-	 * fetches the approved records from the PSLDetails.
+	 * getApprovedPSLDetailsById fetch the details by using PSLDetailsDAO's getPSLDetailsById method . with parameter id
+	 * and type as blank. it fetches the approved records from the PSLDetails.
 	 * 
 	 * @param finReference
 	 *            finReference of the PSLDetail. (String)
@@ -256,19 +248,15 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getPSLDetailDAO().delete with parameters pSLDetail,"" b) NEW Add
-	 * new record in to main table by using getPSLDetailDAO().save with
-	 * parameters pSLDetail,"" c) EDIT Update record in the main table by using
-	 * getPSLDetailDAO().update with parameters pSLDetail,"" 3) Delete the
-	 * record from the workFlow table by using getPSLDetailDAO().delete with
-	 * parameters pSLDetail,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtPSLDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5) Audit the record in to AuditHeader and AdtPSLDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getPSLDetailDAO().delete with
+	 * parameters pSLDetail,"" b) NEW Add new record in to main table by using getPSLDetailDAO().save with parameters
+	 * pSLDetail,"" c) EDIT Update record in the main table by using getPSLDetailDAO().update with parameters
+	 * pSLDetail,"" 3) Delete the record from the workFlow table by using getPSLDetailDAO().delete with parameters
+	 * pSLDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtPSLDetails by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPSLDetails by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -329,15 +317,11 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 
 	}
 
-	
-	
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getPSLDetailDAO().delete with parameters
-	 * pSLDetail,"_Temp" 3) Audit the record in to AuditHeader and AdtPSLDetails
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getPSLDetailDAO().delete with parameters pSLDetail,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtPSLDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -365,10 +349,8 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -378,16 +360,15 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		logger.debug(Literal.ENTERING);
 
 		auditHeader = doValidation(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getPSLDetailDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getPSLDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -396,11 +377,11 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 
 	private AuditHeader doValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -410,19 +391,17 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		return doValidation(pslDetail, auditTranType, method, usrLanguage);
 	}
 
-	
-	public AuditDetail doValidation(PSLDetail pslDetail, String auditTranType, String method,String  usrLanguage){
+	public AuditDetail doValidation(PSLDetail pslDetail, String auditTranType, String method, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 		String[] fields = PennantJavaUtil.getFieldDetails(pslDetail, pslDetail.getExcludeFields());
-		
-		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
-		
+
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(),
+				pslDetail);
+
 		logger.debug(Literal.LEAVING);
 		return validate(auditDetail, usrLanguage, method);
 	}
-	
-	
-	
+
 	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
@@ -444,15 +423,15 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		if (pslDetail.isNew()) { // for New record or new record into work flow
 
 			if (!pslDetail.isWorkflow()) {// With out Work flow only new
-											// records
+												// records
 				if (befPSLDetail != null) { // Record Already Exists in the
-											// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (pslDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
 																							// is
 																							// new
@@ -472,10 +451,10 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!pslDetail.isWorkflow()) { // With out Work flow for update
-											// and delete
+												// and delete
 
 				if (befPSLDetail == null) { // if records not exists in the
-											// main table
+												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -495,7 +474,7 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 			} else {
 
 				if (tempPslDetails == null) { // if records not exists in
-												// the Work flow table
+													// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

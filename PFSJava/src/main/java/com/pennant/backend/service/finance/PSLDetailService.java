@@ -68,5 +68,4 @@ public interface PSLDetailService {
 	AuditDetail delete(PSLDetail pslDetail, TableType tableType, String auditTranType);
 
 	AuditDetail doApprove(PSLDetail pslDetail, TableType tableType, String auditTranType);
-
 }

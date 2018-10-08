@@ -57,5 +57,4 @@ public interface PSLDetailDAO extends BasicCrudDao<PSLDetail> {
 	 * @return PSLDetail
 	 */
 	PSLDetail getPSLDetail(String finReference, String type);
-
 }
