@@ -48,10 +48,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface EntityService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Entity getEntity(String entityCode);
+
 	Entity getApprovedEntity(String entityCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	Entity getEntityByFinDivision(String divisionCode, String type);
 }
