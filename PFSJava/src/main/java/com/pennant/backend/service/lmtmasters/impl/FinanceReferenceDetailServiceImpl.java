@@ -77,11 +77,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * Service implementation for methods that depends on
- * <b>FinanceReferenceDetail</b>.<br>
+ * Service implementation for methods that depends on <b>FinanceReferenceDetail</b>.<br>
  * 
  */
-public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceReferenceDetail> implements FinanceReferenceDetailService {
+public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceReferenceDetail>
+		implements FinanceReferenceDetailService {
 	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -94,7 +94,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public FinanceReferenceDetailServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -113,6 +113,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public FinTypeFeesDAO getFinTypeFeesDAO() {
 		return finTypeFeesDAO;
 	}
+
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
@@ -120,6 +121,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
 		return finTypeAccountingDAO;
 	}
+
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
@@ -127,6 +129,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public TransactionEntryDAO getTransactionEntryDAO() {
 		return transactionEntryDAO;
 	}
+
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
 	}
@@ -156,7 +159,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 
 	@Override
 	public FinanceReference getFinanceReference(String finType, String finEvent, String moduleName) {
-		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(finType,finEvent,moduleName, "_AView");
+		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(finType, finEvent, moduleName,
+				"_AView");
 		FinanceReference financeReference = new FinanceReference();
 		financeReference.setFinType(finType);
 
@@ -167,21 +171,36 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			financeReference.setLovDescWorkFlowTypeName(financeWorkFlow.getLovDescWorkFlowTypeName());
 			financeReference.setLovDescWorkFlowRolesName(financeWorkFlow.getLovDescWorkFlowRolesName());
 
-			financeReference.setCheckList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent,"", "_TQView"));
-			financeReference.setAggrementList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent,"", "_TAView"));
-			financeReference.setEligibilityRuleList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent,"","_TEView"));
-			financeReference.setScoringGroupList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TSGView"));
-			financeReference.setCorpScoringGroupList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TCSGView"));
-			financeReference.setAccountingList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_TCView"));
-			financeReference.setMailTemplateList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TTView"));
-			financeReference.setFinanceDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TFDView"));
-			financeReference.setCustomerDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TCDView"));
-			financeReference.setBlackListDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent,"","_TBDView"));
-			financeReference.setPoliceDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TPCView"));
-			financeReference.setReturnChequeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TRCView"));
-			financeReference.setLimitCodeDetailList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_ALDView"));
-			financeReference.setTatNotificationList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_TATView"));
-			financeReference.setFinanceTabsList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_TFSView"));
+			financeReference.setCheckList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TQView"));
+			financeReference.setAggrementList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TAView"));
+			financeReference.setEligibilityRuleList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TEView"));
+			financeReference.setScoringGroupList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TSGView"));
+			financeReference.setCorpScoringGroupList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TCSGView"));
+			financeReference.setAccountingList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TCView"));
+			financeReference.setMailTemplateList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TTView"));
+			financeReference.setFinanceDedupeList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TFDView"));
+			financeReference.setCustomerDedupeList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TCDView"));
+			financeReference.setBlackListDedupeList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TBDView"));
+			financeReference.setPoliceDedupeList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TPCView"));
+			financeReference.setReturnChequeList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TRCView"));
+			financeReference.setLimitCodeDetailList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_ALDView"));
+			financeReference.setTatNotificationList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TATView"));
+			financeReference.setFinanceTabsList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TFSView"));
 		}
 
 		return financeReference;
@@ -204,15 +223,12 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * LMTFinRefDetail/LMTFinRefDetail_Temp by using FinanceReferenceDetailDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using FinanceReferenceDetailDAO's update
-	 * method 3) Audit the record in to AuditHeader and AdtLMTFinRefDetail by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * LMTFinRefDetail/LMTFinRefDetail_Temp by using FinanceReferenceDetailDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using FinanceReferenceDetailDAO's update method 3) Audit
+	 * the record in to AuditHeader and AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -228,7 +244,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			return auditHeader;
 		}
 		String tableType = "";
-		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		if (financeReferenceDetail.isWorkflow()) {
 			tableType = "_Temp";
@@ -249,12 +266,10 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table LMTFinRefDetail by using FinanceReferenceDetailDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * LMTFinRefDetail by using FinanceReferenceDetailDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -270,7 +285,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			return auditHeader;
 		}
 
-		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 		getFinanceReferenceDetailDAO().delete(financeReferenceDetail, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -279,8 +295,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * getFinanceReferenceDetailById fetch the details by using
-	 * FinanceReferenceDetailDAO's getFinanceReferenceDetailById method.
+	 * getFinanceReferenceDetailById fetch the details by using FinanceReferenceDetailDAO's
+	 * getFinanceReferenceDetailById method.
 	 * 
 	 * @param id
 	 *            (int)
@@ -295,10 +311,9 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * getApprovedFinanceReferenceDetailById fetch the details by using
-	 * FinanceReferenceDetailDAO's getFinanceReferenceDetailById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * LMTFinRefDetail.
+	 * getApprovedFinanceReferenceDetailById fetch the details by using FinanceReferenceDetailDAO's
+	 * getFinanceReferenceDetailById method . with parameter id and type as blank. it fetches the approved records from
+	 * the LMTFinRefDetail.
 	 * 
 	 * @param id
 	 *            (int)
@@ -310,21 +325,16 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinanceReferenceDetailDAO().delete with parameters
-	 * financeReferenceDetail,"" b) NEW Add new record in to main table by using
-	 * getFinanceReferenceDetailDAO().save with parameters
-	 * financeReferenceDetail,"" c) EDIT Update record in the main table by
-	 * using getFinanceReferenceDetailDAO().update with parameters
-	 * financeReferenceDetail,"" 3) Delete the record from the workFlow table by
-	 * using getFinanceReferenceDetailDAO().delete with parameters
-	 * financeReferenceDetail,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtLMTFinRefDetail by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinanceReferenceDetailDAO().delete
+	 * with parameters financeReferenceDetail,"" b) NEW Add new record in to main table by using
+	 * getFinanceReferenceDetailDAO().save with parameters financeReferenceDetail,"" c) EDIT Update record in the main
+	 * table by using getFinanceReferenceDetailDAO().update with parameters financeReferenceDetail,"" 3) Delete the
+	 * record from the workFlow table by using getFinanceReferenceDetailDAO().delete with parameters
+	 * financeReferenceDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtLMTFinRefDetail by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLMTFinRefDetail
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -340,7 +350,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 		}
 
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
-		BeanUtils.copyProperties((FinanceReferenceDetail) auditHeader.getAuditDetail().getModelData(), financeReferenceDetail);
+		BeanUtils.copyProperties((FinanceReferenceDetail) auditHeader.getAuditDetail().getModelData(),
+				financeReferenceDetail);
 
 		if (financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -380,13 +391,11 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinanceReferenceDetailDAO().delete with
-	 * parameters financeReferenceDetail,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtLMTFinRefDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinanceReferenceDetailDAO().delete with parameters financeReferenceDetail,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -401,7 +410,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			return auditHeader;
 		}
 
-		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFinanceReferenceDetailDAO().delete(financeReferenceDetail, "_Temp");
@@ -413,12 +423,10 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getFinanceReferenceDetailDAO().getErrorDetail with Error ID and language
-	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFinanceReferenceDetailDAO().getErrorDetail with Error
+	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -437,16 +445,18 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		if(auditDetail.getErrorDetails() == null){
+		if (auditDetail.getErrorDetails() == null) {
 			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		}
 		FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) auditDetail.getModelData();
 
 		FinanceReferenceDetail tempFinanceReferenceDetail = null;
 		if (financeReferenceDetail.isWorkflow()) {
-			tempFinanceReferenceDetail = getFinanceReferenceDetailDAO().getFinanceReferenceDetailById(financeReferenceDetail.getId(), "_Temp");
+			tempFinanceReferenceDetail = getFinanceReferenceDetailDAO()
+					.getFinanceReferenceDetailById(financeReferenceDetail.getId(), "_Temp");
 		}
-		FinanceReferenceDetail befFinanceReferenceDetail = getFinanceReferenceDetailDAO().getFinanceReferenceDetailById(financeReferenceDetail.getId(), "");
+		FinanceReferenceDetail befFinanceReferenceDetail = getFinanceReferenceDetailDAO()
+				.getFinanceReferenceDetailById(financeReferenceDetail.getId(), "");
 		FinanceReferenceDetail oldFinanceReferenceDetail = financeReferenceDetail.getBefImage();
 
 		String[] errParm = new String[1];
@@ -455,34 +465,37 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 		errParm[0] = PennantJavaUtil.getLabel("label_FinRefDetailId") + ":" + valueParm[0];
 
 		if (financeReferenceDetail.isNew()) { // for New record or new record
-												// into work flow
+													// into work flow
 
 			if (!financeReferenceDetail.isWorkflow()) {// With out Work flow
-														// only new records
+															// only new records
 				if (befFinanceReferenceDetail != null) { // Record Already
-															// Exists in the
+																// Exists in the
 															// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																										// records
+																											// records
 																										// type
 																										// is
 																										// new
 					if (befFinanceReferenceDetail != null || tempFinanceReferenceDetail != null) { // if
-																									// records
+																										// records
 																									// already
 																									// exists
 																									// in
 																									// the
 																									// main
 																									// table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceReferenceDetail == null || tempFinanceReferenceDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -490,31 +503,41 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!financeReferenceDetail.isWorkflow()) { // With out Work flow
-														// for update and delete
+															// for update and delete
 
 				if (befFinanceReferenceDetail == null) { // if records not
-															// exists in the
+																// exists in the
 															// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldFinanceReferenceDetail != null && !oldFinanceReferenceDetail.getLastMntOn().equals(befFinanceReferenceDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+					if (oldFinanceReferenceDetail != null && !oldFinanceReferenceDetail.getLastMntOn()
+							.equals(befFinanceReferenceDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempFinanceReferenceDetail == null) { // if records not
-															// exists in the
+																// exists in the
 															// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (oldFinanceReferenceDetail != null && !oldFinanceReferenceDetail.getLastMntOn().equals(tempFinanceReferenceDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				if (oldFinanceReferenceDetail != null && !oldFinanceReferenceDetail.getLastMntOn()
+						.equals(tempFinanceReferenceDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -527,53 +550,57 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 
 		return auditDetail;
 	}
-	
-	
+
 	//---------------------------------
 	// Check List Details
 	//---------------------------------
-	
+
 	private CheckListDAO checkListDAO;
 	private CheckListDetailDAO checkListDetailDAO;
 	private FinanceCheckListReferenceDAO FinanceCheckListReferenceDAO;
+
 	/**
 	 * 
 	 * @param id
 	 * @param type
 	 * @return
 	 */
-	public List<FinanceReferenceDetail>  getCheckListByFinRef(final String finType, String finEvent){
+	public List<FinanceReferenceDetail> getCheckListByFinRef(final String finType, String finEvent) {
 		logger.debug("Entering ");
-		List<FinanceReferenceDetail> finRefDetailList =getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent,"", "_TQView");
-		for(FinanceReferenceDetail   finRefDetail:finRefDetailList){
-			finRefDetail.setLovDesccheckListDetail(getCheckListDetailDAO()
-					.getCheckListDetailByChkList(finRefDetail.getFinRefId(), "_AView"));
+		List<FinanceReferenceDetail> finRefDetailList = getFinanceReferenceDetailDAO()
+				.getFinanceReferenceDetail(finType, finEvent, "", "_TQView");
+		for (FinanceReferenceDetail finRefDetail : finRefDetailList) {
+			finRefDetail.setLovDesccheckListDetail(
+					getCheckListDetailDAO().getCheckListDetailByChkList(finRefDetail.getFinRefId(), "_AView"));
 
 		}
 		logger.debug("Leaving ");
 		return finRefDetailList;
 	}
+
 	/**
 	 * 
 	 * @param id
 	 * @param type
 	 * @return
 	 */
-	public List<FinanceCheckListReference> getFinanceCheckListReferenceFinRef(final String id, String type){
+	public List<FinanceCheckListReference> getFinanceCheckListReferenceFinRef(final String id, String type) {
 		return getFinanceCheckListReferenceDAO().getCheckListByFinRef(id, null, type);
 	}
-	
+
 	@Override
-	public List<ValueLabel> getTemplateIdList(String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
+	public List<ValueLabel> getTemplateIdList(String financeType, String finEvent, String roleCode,
+			List<String> lovCodeList) {
 
 		List<ValueLabel> valueLabelList = new ArrayList<ValueLabel>();
-		
-		Map<Long, String> templateMap = getFinanceReferenceDetailDAO().getTemplateIdList(financeType, finEvent, roleCode, lovCodeList);
+
+		Map<Long, String> templateMap = getFinanceReferenceDetailDAO().getTemplateIdList(financeType, finEvent,
+				roleCode, lovCodeList);
 
 		if (templateMap == null) {
 			return valueLabelList;
 		}
-		
+
 		ValueLabel valueLabel = null;
 		for (Long key : templateMap.keySet()) {
 			valueLabel = new ValueLabel();
@@ -583,7 +610,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 		}
 		return valueLabelList;
 	}
-	
+
 	@Override
 	public List<Long> getNotifications(String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
 		List<Long> list = new ArrayList<>();
@@ -630,41 +657,42 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	@Override
-	public FinanceReferenceDetail getTemplateId(String financeType, String finEvent,String roleCode, String lovCodeList) {
-		return getFinanceReferenceDetailDAO().getTemplateId(financeType, finEvent,roleCode, lovCodeList);
+	public FinanceReferenceDetail getTemplateId(String financeType, String finEvent, String roleCode,
+			String lovCodeList) {
+		return getFinanceReferenceDetailDAO().getTemplateId(financeType, finEvent, roleCode, lovCodeList);
 	}
-	
+
 	/**
 	 * Method for Fetching Eligibility Rule List based upon Finance Type
 	 */
 	public List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String finEvent,
-			String mandInputInStage, String type){
-		return getFinanceReferenceDetailDAO().getFinRefDetByRoleAndFinType(financeType, finEvent,
-				mandInputInStage,null, type);
+			String mandInputInStage, String type) {
+		return getFinanceReferenceDetailDAO().getFinRefDetByRoleAndFinType(financeType, finEvent, mandInputInStage,
+				null, type);
 	}
-	
+
 	/**
 	 * Method for Fetching Eligibility Rule List based upon Finance Type
 	 */
-	public List<Long> getRefIdListByFinType(final String financeType, String finEvent, String roleCode, String type){
+	public List<Long> getRefIdListByFinType(final String financeType, String finEvent, String roleCode, String type) {
 		return getFinanceReferenceDetailDAO().getRefIdListByFinType(financeType, finEvent, roleCode, type);
 	}
 
 	@Override
-	public List<Long> getFinTypeAccounting(String finType, List<String> events){
+	public List<Long> getFinTypeAccounting(String finType, List<String> events) {
 		return getFinTypeAccountingDAO().getFinTypeAccounting(finType, events, FinanceConstants.MODULEID_FINTYPE);
 	}
-	
+
 	@Override
 	public List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId) {
-		return getFinTypeFeesDAO().getFinTypeFeesList(finType,finEvents,type, moduleId);
+		return getFinTypeFeesDAO().getFinTypeFeesList(finType, finEvents, type, moduleId);
 	}
-	
+
 	@Override
-	public Map<String,String> getAccountingFeeCodes(List<Long> accountSetId){
-	   return getTransactionEntryDAO().getAccountingFeeCodes(accountSetId);	
+	public Map<String, String> getAccountingFeeCodes(List<Long> accountSetId) {
+		return getTransactionEntryDAO().getAccountingFeeCodes(accountSetId);
 	}
-	
+
 	public void setCheckListDAO(CheckListDAO checkListDAO) {
 		this.checkListDAO = checkListDAO;
 	}
@@ -672,6 +700,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public CheckListDAO getCheckListDAO() {
 		return checkListDAO;
 	}
+
 	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
 		this.checkListDetailDAO = checkListDetailDAO;
 	}
@@ -680,8 +709,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 		return checkListDetailDAO;
 	}
 
-	public void setFinanceCheckListReferenceDAO(
-			FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
+	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
 		FinanceCheckListReferenceDAO = financeCheckListReferenceDAO;
 	}
 
