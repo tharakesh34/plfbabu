@@ -69,18 +69,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custGenderCode", "custMaritalSts",
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
-		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1","subCategory","casteId","religionId", "returnStatus" })
+		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
+		"returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2198471029043076055L;
 
 	private long custID;
 	private String custCIF;
-	
+
 	private String custCoreBank;
-	
+
 	private String custCtgCode;
-	
+
 	private String lovDescCustCtgCodeName;
 	private String lovDescCustCtgType;
 
@@ -103,15 +104,15 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	@XmlElement(name = "shortName")
 	private String custShrtName;
-	
-	@XmlElement(name="motherName")
+
+	@XmlElement(name = "motherName")
 	private String custFNameLclLng;
 	private String custMNameLclLng;
 	private String custLNameLclLng;
 	private String custShrtNameLclLng;
-	
+
 	private String custDftBranch;
-	
+
 	private String lovDescCustDftBranchName;
 
 	@XmlElement(name = "gender")
@@ -214,7 +215,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private boolean custIsRejected;
 	private String custRejectedRsn;
 	private String lovDescCustRejectedRsnName;
-	
+
 	private String custBaseCcy;
 
 	@XmlElement(name = "language")
@@ -273,7 +274,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String phoneNumber;
 	private String phoneAreaCode;
 	private String phoneCountryCode;
-	@XmlElement(name="emiCardEligibilityAmt")
+	@XmlElement(name = "emiCardEligibilityAmt")
 	private BigDecimal custAddlDec1 = BigDecimal.ZERO;
 	private double custAddlDec2;
 	private double custAddlDec3;
@@ -312,19 +313,19 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String branchRefno;
 	private String lovDescRequestStage;
 	private String custSourceID = null;
-	
+
 	@XmlElement
 	private String subCategory;
-	@XmlElement(name="caste")
+	@XmlElement(name = "caste")
 	private long casteId;
-	@XmlElement(name="religion")
+	@XmlElement(name = "religion")
 	private long religionId;
 	private String casteCode;
 	private String religionCode;
 	private String casteDesc;
 	private String religionDesc;
 	private String aadhaarNo;
-	private boolean	includeIncome;
+	private boolean includeIncome;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -332,11 +333,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	@XmlElement
-	private boolean marginDeviation=false;
+	private boolean marginDeviation = false;
 	private BigDecimal customerAge;
 	@XmlElement
-	private String	applicationNo;
-	
+	private String applicationNo;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -1755,7 +1756,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerMap = new HashMap<String, Object>();
-		
+
 		return getDeclaredFieldValues(customerMap);
 	}
 
@@ -1772,7 +1773,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		}
 		return customerMap;
 	}
-	
+
 	public String getRuleCode() {
 		return ruleCode;
 	}
@@ -1828,7 +1829,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setLovDescRequestStage(String lovDescRequestStage) {
 		this.lovDescRequestStage = lovDescRequestStage;
 	}
-	
+
 	public String getCustSourceID() {
 		return custSourceID;
 	}
@@ -1901,7 +1902,6 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.religionCode = religionCode;
 	}
 
-
 	public String getAadhaarNo() {
 		return aadhaarNo;
 	}
@@ -1941,5 +1941,5 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setApplicationNo(String applicationNo) {
 		this.applicationNo = applicationNo;
 	}
-	
+
 }
