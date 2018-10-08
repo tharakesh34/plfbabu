@@ -24,14 +24,14 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldsValidation {
+	private static final Logger logger = Logger.getLogger(ExtendedFieldsValidation.class);
 
-	private static final Logger		logger	= Logger.getLogger(ExtendedFieldsValidation.class);
+	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private SecurityRightDAO securityRightDAO;
 
-	private ExtendedFieldDetailDAO	extendedFieldDetailDAO;
-	private ExtendedFieldHeaderDAO	extendedFieldHeaderDAO;
-	private SecurityRightDAO		securityRightDAO;
-
-	public ExtendedFieldsValidation(ExtendedFieldDetailDAO extendedFieldDetailDAO, ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+	public ExtendedFieldsValidation(ExtendedFieldDetailDAO extendedFieldDetailDAO,
+			ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
@@ -47,6 +47,7 @@ public class ExtendedFieldsValidation {
 	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
 		return extendedFieldDetailDAO;
 	}
+
 	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
 		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
 	}
@@ -54,11 +55,13 @@ public class ExtendedFieldsValidation {
 	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
 		return extendedFieldHeaderDAO;
 	}
+
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
 
-	public List<AuditDetail> extendedFieldsListValidation(List<AuditDetail> auditDetails, String method, String usrLanguage) {
+	public List<AuditDetail> extendedFieldsListValidation(List<AuditDetail> auditDetails, String method,
+			String usrLanguage) {
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
@@ -72,19 +75,20 @@ public class ExtendedFieldsValidation {
 
 	/**
 	 * Method for Validating Extended Field header Details
+	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	public AuditDetail extendedFieldsHeaderValidation(AuditDetail auditDetail,String usrLanguage,String method){
+	public AuditDetail extendedFieldsHeaderValidation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		ExtendedFieldHeader extendedFieldHeader= (ExtendedFieldHeader) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		ExtendedFieldHeader extendedFieldHeader = (ExtendedFieldHeader) auditDetail.getModelData();
 
-		ExtendedFieldHeader tempExtendedFieldHeader= null;
-		if (extendedFieldHeader.isWorkflow()){
+		ExtendedFieldHeader tempExtendedFieldHeader = null;
+		if (extendedFieldHeader.isWorkflow()) {
 			tempExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
 					extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
 					extendedFieldHeader.getEvent(), "_Temp");
@@ -93,7 +97,7 @@ public class ExtendedFieldsValidation {
 				extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
 				extendedFieldHeader.getEvent(), "");
 
-		ExtendedFieldHeader oldExtendedFieldHeader= extendedFieldHeader.getBefImage();
+		ExtendedFieldHeader oldExtendedFieldHeader = extendedFieldHeader.getBefImage();
 
 		String[] errParm = new String[3];
 		String[] valueParm = new String[3];
@@ -103,63 +107,73 @@ public class ExtendedFieldsValidation {
 
 		errParm[0] = PennantJavaUtil.getLabel("label_ModuleName") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SubModuleName") + ":" + valueParm[1];
-		  
+
 		if (extendedFieldHeader.getEvent() != null) {
 			valueParm[2] = StringUtils.trimToEmpty(extendedFieldHeader.getEvent());
-				errParm[2] = PennantJavaUtil.getLabel("label_FinEvent") + ":" + valueParm[2];
-		   }
-		
-		if (extendedFieldHeader.isNew()){ // for New record or new record into work flow
+			errParm[2] = PennantJavaUtil.getLabel("label_FinEvent") + ":" + valueParm[2];
+		}
 
-			if (!extendedFieldHeader.isWorkflow()){// With out Work flow only new records  
-				if (befExtendedFieldHeader !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (extendedFieldHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befExtendedFieldHeader !=null || tempExtendedFieldHeader!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "41008", errParm,valueParm), usrLanguage));
+		if (extendedFieldHeader.isNew()) { // for New record or new record into work flow
+
+			if (!extendedFieldHeader.isWorkflow()) {// With out Work flow only new records  
+				if (befExtendedFieldHeader != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41015", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (extendedFieldHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befExtendedFieldHeader != null || tempExtendedFieldHeader != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befExtendedFieldHeader ==null || tempExtendedFieldHeader!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befExtendedFieldHeader == null || tempExtendedFieldHeader != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!extendedFieldHeader.isWorkflow()){	// With out Work flow for update and delete
+			if (!extendedFieldHeader.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befExtendedFieldHeader ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, 
-							"41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldExtendedFieldHeader!=null && !oldExtendedFieldHeader.getLastMntOn().equals(befExtendedFieldHeader.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, 
-									"41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, 
-									"41004", errParm,valueParm), usrLanguage));
+				if (befExtendedFieldHeader == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldExtendedFieldHeader != null
+							&& !oldExtendedFieldHeader.getLastMntOn().equals(befExtendedFieldHeader.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
 				if (tempExtendedFieldHeader == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (oldExtendedFieldHeader != null && tempExtendedFieldHeader != null && !oldExtendedFieldHeader.getLastMntOn().equals(tempExtendedFieldHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				if (oldExtendedFieldHeader != null && tempExtendedFieldHeader != null
+						&& !oldExtendedFieldHeader.getLastMntOn().equals(tempExtendedFieldHeader.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !extendedFieldHeader.isWorkflow()){
-			auditDetail.setBefImage(befExtendedFieldHeader);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !extendedFieldHeader.isWorkflow()) {
+			auditDetail.setBefImage(befExtendedFieldHeader);
 		}
 		logger.debug("Leaving");
 		return auditDetail;
@@ -167,6 +181,7 @@ public class ExtendedFieldsValidation {
 
 	/**
 	 * Method for validating Extended Field Details
+	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
@@ -179,10 +194,12 @@ public class ExtendedFieldsValidation {
 
 		ExtendedFieldDetail tempExtendedFieldDetail = null;
 		if (details.isWorkflow()) {
-			tempExtendedFieldDetail = getExtendedFieldDetailDAO().getExtendedFieldDetailById(details.getId(), details.getFieldName(), details.getExtendedType(), "_Temp");
+			tempExtendedFieldDetail = getExtendedFieldDetailDAO().getExtendedFieldDetailById(details.getId(),
+					details.getFieldName(), details.getExtendedType(), "_Temp");
 
 		}
-		ExtendedFieldDetail befExtendedFieldDetail = getExtendedFieldDetailDAO().getExtendedFieldDetailById(details.getId(), details.getFieldName(), details.getExtendedType(),  "");
+		ExtendedFieldDetail befExtendedFieldDetail = getExtendedFieldDetailDAO()
+				.getExtendedFieldDetailById(details.getId(), details.getFieldName(), details.getExtendedType(), "");
 
 		ExtendedFieldDetail oldExtendedFieldDetail = details.getBefImage();
 
@@ -195,19 +212,19 @@ public class ExtendedFieldsValidation {
 
 			if (!details.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (details.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befExtendedFieldDetail != null || tempExtendedFieldDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befExtendedFieldDetail == null || tempExtendedFieldDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -216,32 +233,34 @@ public class ExtendedFieldsValidation {
 			if (!details.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befExtendedFieldDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldExtendedFieldDetail != null
 							&& !oldExtendedFieldDetail.getLastMntOn().equals(befExtendedFieldDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempExtendedFieldDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldExtendedFieldDetail != null
 						&& !oldExtendedFieldDetail.getLastMntOn().equals(tempExtendedFieldDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -273,7 +292,8 @@ public class ExtendedFieldsValidation {
 		return auditDetails;
 	}
 
-	public List<AuditDetail> setTechValuationFieldsAuditData(ExtendedFieldHeader extendedFldHeader, String auditTranType, String method,int count) {
+	public List<AuditDetail> setTechValuationFieldsAuditData(ExtendedFieldHeader extendedFldHeader,
+			String auditTranType, String method, int count) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = prepareAuditData(extendedFldHeader,
@@ -301,37 +321,38 @@ public class ExtendedFieldsValidation {
 				extendedFieldDetail.setFieldName(extendedFieldDetail.getFieldName());
 			}
 
-			boolean isRcdType= false;
+			boolean isRcdType = false;
 
 			if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				extendedFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType=true;
-			}else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				isRcdType = true;
+			} else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				extendedFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType=true;
-			}else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				isRcdType = true;
+			} else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				extendedFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if("saveOrUpdate".equals(method) && isRcdType ){
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				extendedFieldDetail.setNewRecord(true);
 			}
 
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
+					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 						|| extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
 			extendedFieldDetail.setRecordStatus(extendedFldHeader.getRecordStatus());
 			extendedFieldDetail.setLastMntOn(extendedFldHeader.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, count++, fields[0], fields[1], extendedFieldDetail.getBefImage(), extendedFieldDetail));
+			auditDetails.add(new AuditDetail(auditTranType, count++, fields[0], fields[1],
+					extendedFieldDetail.getBefImage(), extendedFieldDetail));
 		}
 		logger.debug("Leaving");
 		return auditDetails;
@@ -352,7 +373,7 @@ public class ExtendedFieldsValidation {
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
-		boolean isSeqSecRightsUpdated=false;
+		boolean isSeqSecRightsUpdated = false;
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 
@@ -461,7 +482,7 @@ public class ExtendedFieldsValidation {
 		}
 		logger.debug("Leaving");
 		return auditDetails;
-	
+
 	}
 
 	public List<AuditDetail> processingTechValuationFieldsList(List<AuditDetail> auditDetails, String type) {
@@ -564,7 +585,7 @@ public class ExtendedFieldsValidation {
 	 * otherwise RightName=PageName+"_"FieldType+"_"+FieldName.
 	 * 
 	 * @param detail
-	 * @param rightName 
+	 * @param rightName
 	 * @return securityRight
 	 */
 	private SecurityRight prepareSecRight(ExtendedFieldDetail detail, String rightName) {
