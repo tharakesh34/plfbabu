@@ -726,7 +726,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				i++;
 			}
 			custGenderCodeDescc.setValue(aCustomer.getLovDescCustGenderCodeName());
-			if (StringUtils.isEmpty(aCustomer.getApplicationNo())) {
+			if (!StringUtils.isEmpty(aCustomer.getApplicationNo())) {
 				retail_applicationNo.setValue(aCustomer.getApplicationNo());
 			}else{
 				retail_applicationNo.setStyle("color:orange; font:12px");
