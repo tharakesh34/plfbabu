@@ -52,6 +52,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -300,6 +301,38 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			queryDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return queryDetails;
+	}
+
+	@Override
+	public List<QueryDetail> getUnClosedQurysForGivenRole(String finReference, String assignedRole) {
+		logger.debug(Literal.ENTERING);
+
+		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ID, FINREFERENCE, CATEGORYID, QRYNOTES, ASSIGNEDROLE, ");
+		sql.append(" NOTIFYTO, STATUS, RAISEDBY, RAISEDON, VERSION, LASTMNTBY,WORKFLOWID, MODULE, REFERENCE ");
+		sql.append(" From QUERYDETAIL");
+		sql.append(" Where FinReference = :FinReference AND AssignedRole = :AssignedRole ");
+		sql.append("  AND ( Status != :ClosedStatus AND Status!= :ResolvedStatus) ");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
+		parameterSource.addValue("AssignedRole", assignedRole);
+		parameterSource.addValue("ClosedStatus", "Close");
+		parameterSource.addValue("ResolvedStatus", "Resolve");
+
+		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+
+		try {
+			queryDetails = this.jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
 		}
 
 		logger.debug(Literal.LEAVING);
