@@ -53,21 +53,36 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinAdvancePaymentsService {
-	List<FinAdvancePayments> getFinAdvancePaymentsById(String id,String type);
-	List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
-	List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
+	List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type);
+
+	List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
+			String auditTranType);
+
+	List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
+			String auditTranType);
+
 	List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
+
 	List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePaymentDetails, long workflowId, String method,
 			String auditTranType, String usrLanguage, FinanceDetail financeDetail);
+
 	void processDisbursments(FinanceDetail financeDetail);
+
 	List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
+
 	void doCancel(FinanceDetail financeDetail);
+
 	int getCountByFinReference(String finReference);
+
 	void Update(long paymentId, long linkedTranId);
+
 	int getMaxPaymentSeq(String finReference);
+
 	int getFinAdvCountByRef(String finReference, String type);
+
 	List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
 			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
+
 	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
-	
+
 }

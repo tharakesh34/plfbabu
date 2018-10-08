@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>GuarantorDetail</b>.<br>
  * 
  */
-public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> implements  GuarantorDetailService {
+public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> implements GuarantorDetailService {
 	private static final Logger logger = Logger.getLogger(GuarantorDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -64,7 +64,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	public GuarantorDetailServiceImpl() {
 		super();
 	}
-	
+
 	@Override
 	public GuarantorDetail getGuarantorDetail() {
 		return getGuarantorDetailDAO().getGuarantorDetail();
@@ -78,14 +78,13 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		return getGuarantorDetailDAO().getNewGuarantorDetail();
 	}
 
-	
 	public CustomerDAO getCustomerDAO() {
-    	return customerDAO;
-    }
+		return customerDAO;
+	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
-    	this.customerDAO = customerDAO;
-    }
+		this.customerDAO = customerDAO;
+	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -114,7 +113,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -126,8 +126,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			return auditHeader;
 		}
 		String tableType = "";
-		GuarantorDetail guarantorDetail = (GuarantorDetail) auditHeader.getAuditDetail()
-		.getModelData();
+		GuarantorDetail guarantorDetail = (GuarantorDetail) auditHeader.getAuditDetail().getModelData();
 
 		if (guarantorDetail.isWorkflow()) {
 			tableType = "_Temp";
@@ -167,8 +166,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			return auditHeader;
 		}
 
-		GuarantorDetail guarantorDetail = (GuarantorDetail) auditHeader.getAuditDetail()
-		.getModelData();
+		GuarantorDetail guarantorDetail = (GuarantorDetail) auditHeader.getAuditDetail().getModelData();
 		getGuarantorDetailDAO().delete(guarantorDetail, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -230,8 +228,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		}
 
 		GuarantorDetail guarantorDetail = new GuarantorDetail();
-		BeanUtils.copyProperties((GuarantorDetail) auditHeader.getAuditDetail().getModelData(),
-				guarantorDetail);
+		BeanUtils.copyProperties((GuarantorDetail) auditHeader.getAuditDetail().getModelData(), guarantorDetail);
 
 		if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -288,8 +285,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			return auditHeader;
 		}
 
-		GuarantorDetail guarantorDetail = (GuarantorDetail) auditHeader.getAuditDetail()
-		.getModelData();
+		GuarantorDetail guarantorDetail = (GuarantorDetail) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getGuarantorDetailDAO().delete(guarantorDetail, "_Temp");
@@ -311,15 +307,15 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	 */
 	@Override
 	public List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail) {
-		
+
 		return getGuarantorDetailDAO().getPrimaryExposureList(guarantorDetail);
 	}
-
 
 	/**
 	 * getSecondaryExposureList
 	 * 
-	 * Return the list of secondary finances Exposer List(where the Customer is having joint finances) for the corresponding Guarantor
+	 * Return the list of secondary finances Exposer List(where the Customer is having joint finances) for the
+	 * corresponding Guarantor
 	 * 
 	 * @param GuarantorDetail
 	 *            (guarantorDetail)
@@ -335,7 +331,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	/**
 	 * getGuarantorExposureList
 	 * 
-	 * Return the list of secondary  Gurantor Exposure List finances(where the Customer is Gurantor to others) for the corresponding Guarantor
+	 * Return the list of secondary Gurantor Exposure List finances(where the Customer is Gurantor to others) for the
+	 * corresponding Guarantor
 	 * 
 	 * @param GuarantorDetail
 	 *            (guarantorDetail)
@@ -343,11 +340,9 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	 */
 	@Override
 	public List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail) {
-		
+
 		return getGuarantorDetailDAO().getGuarantorExposureList(guarantorDetail);
 	}
-
-
 
 	/**
 	 * getExposureSummaryDetail
@@ -365,10 +360,10 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		BigDecimal finaceAmout = BigDecimal.ZERO;
 		BigDecimal currentExposer = BigDecimal.ZERO;
 		BigDecimal overDueAmount = BigDecimal.ZERO;
-		
+
 		int dftCurntEdtField = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-		
-		if(exposerList != null && !exposerList.isEmpty()) {
+
+		if (exposerList != null && !exposerList.isEmpty()) {
 			for (FinanceExposure financeExposure : exposerList) {
 				finaceAmout = finaceAmout.add(financeExposure.getFinanceAmtinBaseCCY());
 				currentExposer = currentExposer.add(financeExposure.getCurrentExpoSureinBaseCCY());
@@ -385,32 +380,31 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		return exposerSummaryDetail;
 	}
 
-
-
 	/**
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method,
-			boolean onlineRequest) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method, onlineRequest);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,
+				onlineRequest);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	@Override
-	public List<AuditDetail> validate(List<GuarantorDetail> guarantorDetailList, long workflowId, String method, String auditTranType, String  usrLanguage){
+	public List<AuditDetail> validate(List<GuarantorDetail> guarantorDetailList, long workflowId, String method,
+			String auditTranType, String usrLanguage) {
 		return doValidation(guarantorDetailList, workflowId, method, auditTranType, usrLanguage);
 	}
 
@@ -422,23 +416,22 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
-			boolean onlineRequest) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetail.getModelData();
 
 		GuarantorDetail tempGuarantorDetail = null;
 		if (guarantorDetail.isWorkflow()) {
-			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailById(
-					guarantorDetail.getId(), "_Temp");
+			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailById(guarantorDetail.getId(), "_Temp");
 		}
-		GuarantorDetail befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailById(
-				guarantorDetail.getId(), "");
+		GuarantorDetail befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailById(guarantorDetail.getId(),
+				"");
 
 		GuarantorDetail oldGuarantorDetail = guarantorDetail.getBefImage();
 
@@ -451,21 +444,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befGuarantorDetail != null || tempGuarantorDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-								usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befGuarantorDetail == null || tempGuarantorDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-								usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -474,20 +465,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			if (!guarantorDetail.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befGuarantorDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldGuarantorDetail != null
-							&& !oldGuarantorDetail.getLastMntOn().equals(
-									befGuarantorDetail.getLastMntOn())) {
+							&& !oldGuarantorDetail.getLastMntOn().equals(befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 									usrLanguage));
 						}
 					}
@@ -495,21 +485,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			} else {
 
 				if (tempGuarantorDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldGuarantorDetail != null
-						&& !oldGuarantorDetail.getLastMntOn().equals(
-								tempGuarantorDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						&& !oldGuarantorDetail.getLastMntOn().equals(tempGuarantorDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
-				usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !guarantorDetail.isWorkflow()) {
 			auditDetail.setBefImage(befGuarantorDetail);
@@ -523,12 +511,12 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		return getGuarantorDetailDAO().getGuarantorDetailByFinRef(finReference, type);
 	}
 
-
 	@Override
-	public List<AuditDetail> saveOrUpdate(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType) {
+	public List<AuditDetail> saveOrUpdate(List<GuarantorDetail> guarantorDetailList, String tableType,
+			String auditTranType) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
 			guarantorDetail.setWorkflowId(0);
 
@@ -538,21 +526,21 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 				getGuarantorDetailDAO().update(guarantorDetail, tableType);
 			}
 			String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], guarantorDetail.getBefImage(), guarantorDetail));
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
+					guarantorDetail.getBefImage(), guarantorDetail));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
-	
+
 	@Override
-	public List<AuditDetail> doApprove(List<GuarantorDetail> guarantorDetailList, String tableType, 
+	public List<AuditDetail> doApprove(List<GuarantorDetail> guarantorDetailList, String tableType,
 			String auditTranType, String finSourceId) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
 			GuarantorDetail detail = new GuarantorDetail();
 			BeanUtils.copyProperties(guarantorDetail, detail);
@@ -566,20 +554,21 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 				getGuarantorDetailDAO().save(guarantorDetail, tableType);
 			}
-			if(!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API)) {
+			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API)) {
 				getGuarantorDetailDAO().delete(guarantorDetail, "_Temp");
 			}
-			
+
 			String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
-			auditDetails.add(new  AuditDetail(PennantConstants.TRAN_WF, auditDetails.size()+1, fields[0], fields[1], detail.getBefImage(), detail));
-			auditDetails.add(new  AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], guarantorDetail.getBefImage(), guarantorDetail));
+			auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, auditDetails.size() + 1, fields[0], fields[1],
+					detail.getBefImage(), detail));
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
+					guarantorDetail.getBefImage(), guarantorDetail));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
-	
+
 	@Override
 	public List<AuditDetail> delete(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType) {
 		logger.debug("Entering");
@@ -589,40 +578,40 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		int auditSeq = 1;
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
 			getGuarantorDetailDAO().delete(guarantorDetail, tableType);
-			
+
 			String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
-			auditDetails.add(new  AuditDetail(auditTranType, auditSeq++, fields[0], fields[1], guarantorDetail.getBefImage(), guarantorDetail));
+			auditDetails.add(new AuditDetail(auditTranType, auditSeq++, fields[0], fields[1],
+					guarantorDetail.getBefImage(), guarantorDetail));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
 
-
-	public AuditHeader doValidation(AuditHeader auditHeader, String method){
+	public AuditHeader doValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	public List<AuditDetail> doValidation(List<GuarantorDetail> guarantorDetailList, long workflowId, String method, String auditTranType, String usrLanguage){
+
+	public List<AuditDetail> doValidation(List<GuarantorDetail> guarantorDetailList, long workflowId, String method,
+			String auditTranType, String usrLanguage) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = getAuditDetail(guarantorDetailList, auditTranType, method, workflowId);
 
 		for (AuditDetail auditDetail : auditDetails) {
-			validate(auditDetail, method, usrLanguage); 
+			validate(auditDetail, method, usrLanguage);
 		}
 
 		logger.debug("Leaving");
-		return auditDetails ;
+		return auditDetails;
 	}
-
 
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
@@ -638,18 +627,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		String guarantorIDNumber = guarantorDetail.getGuarantorIDNumber();
 		String keyField = "";
 
-		if(guarantorDetail.isBankCustomer()) {		
+		if (guarantorDetail.isBankCustomer()) {
 			keyField = guarantorCIF;
 		} else {
 			keyField = guarantorIDNumber;
 		}
 
-
 		if (guarantorDetail.isWorkflow()) {
-			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, guarantorDetail.getGuarantorId(), "_Temp");
+			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference,
+					guarantorDetail.getGuarantorId(), "_Temp");
 		}
 
-		befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, guarantorDetail.getGuarantorId(), "");
+		befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference,
+				guarantorDetail.getGuarantorId(), "");
 		oldGuarantorDetail = guarantorDetail.getBefImage();
 
 		String[] errParm = new String[2];
@@ -664,21 +654,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befGuarantorDetail != null || tempGuarantorDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-								usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befGuarantorDetail == null || tempGuarantorDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-								usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -687,20 +675,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			if (!guarantorDetail.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befGuarantorDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldGuarantorDetail != null
-							&& !oldGuarantorDetail.getLastMntOn().equals(
-									befGuarantorDetail.getLastMntOn())) {
+							&& !oldGuarantorDetail.getLastMntOn().equals(befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 									usrLanguage));
 						}
 					}
@@ -708,22 +695,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			} else {
 
 				if (tempGuarantorDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempGuarantorDetail != null
-						&& oldGuarantorDetail != null
-						&& !oldGuarantorDetail.getLastMntOn().equals(
-								tempGuarantorDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				if (tempGuarantorDetail != null && oldGuarantorDetail != null
+						&& !oldGuarantorDetail.getLastMntOn().equals(tempGuarantorDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
-				usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !guarantorDetail.isWorkflow()) {
 			auditDetail.setBefImage(befGuarantorDetail);
@@ -755,13 +739,13 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 		List<GuarantorDetail> guarantorDetailList = getGuarantorDetailByFinRef(finReference, tableType);
 
-		if(guarantorDetailList != null && !guarantorDetailList.isEmpty()) {
-			for (GuarantorDetail detail : guarantorDetailList) {	
+		if (guarantorDetailList != null && !guarantorDetailList.isEmpty()) {
+			for (GuarantorDetail detail : guarantorDetailList) {
 				BigDecimal currentExpoSure = BigDecimal.ZERO;
-				detail=setStatus(detail);
+				detail = setStatus(detail);
 				// set the primary exposer details to Joint Account Details
 				primaryList = getGuarantorDetailDAO().getPrimaryExposureList(detail);
-				currentExpoSure =  doFillExposureDetails(primaryList, detail);
+				currentExpoSure = doFillExposureDetails(primaryList, detail);
 				detail.setPrimaryExposure(String.valueOf(currentExpoSure));
 
 				// set the secondary exposer details to Joint Account 
@@ -771,7 +755,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 				// set the exposer details to Joint Account
 				guarantorList = getGuarantorDetailDAO().getGuarantorExposureList(detail);
-				currentExpoSure =  doFillExposureDetails(guarantorList, detail);
+				currentExpoSure = doFillExposureDetails(guarantorList, detail);
 				detail.setGuarantorExposure(String.valueOf(currentExpoSure));
 
 			}
@@ -780,41 +764,43 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 		return guarantorDetailList;
 	}
-	
-	public GuarantorDetail setStatus(GuarantorDetail detail){
+
+	public GuarantorDetail setStatus(GuarantorDetail detail) {
 		if (detail.isBankCustomer()) {
-            Customer customer = getCustomerDAO().getCustomerByCIF(detail.getGuarantorCIF(),"_AView");
-            if (customer != null) {
-                detail.setStatus(customer.getLovDescCustStsName());
-                detail.setWorstStatus(getWorstStaus(customer.getCustID()));
-            }
-        }
+			Customer customer = getCustomerDAO().getCustomerByCIF(detail.getGuarantorCIF(), "_AView");
+			if (customer != null) {
+				detail.setStatus(customer.getLovDescCustStsName());
+				detail.setWorstStatus(getWorstStaus(customer.getCustID()));
+			}
+		}
 		return detail;
 	}
-	
+
 	@Override
-	public String getWorstStaus(long custID){
+	public String getWorstStaus(long custID) {
 		return getCustomerDAO().getCustWorstStsDesc(custID);
 	}
-	
+
 	@Override
 	public BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, GuarantorDetail detail) {
 		BigDecimal currentExpoSure = BigDecimal.ZERO;
-		if(primaryList != null && !primaryList.isEmpty() )  {
+		if (primaryList != null && !primaryList.isEmpty()) {
 			for (FinanceExposure exposer : primaryList) {
-				if(exposer != null) {
+				if (exposer != null) {
 					String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
-					String  fromCcy = exposer.getFinCCY();
-					currentExpoSure = currentExpoSure.add(CalculationUtil.getConvertedAmount(fromCcy, toCcy, exposer.getCurrentExpoSure()));
+					String fromCcy = exposer.getFinCCY();
+					currentExpoSure = currentExpoSure
+							.add(CalculationUtil.getConvertedAmount(fromCcy, toCcy, exposer.getCurrentExpoSure()));
 				}
 			}
 		}
 		return currentExpoSure;
 	}
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -822,11 +808,13 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	public GuarantorDetailDAO getGuarantorDetailDAO() {
 		return guarantorDetailDAO;
 	}
+
 	public void setGuarantorDetailDAO(GuarantorDetailDAO guarantorDetailDAO) {
 		this.guarantorDetailDAO = guarantorDetailDAO;
 	}
-	
-	private List<AuditDetail> getAuditDetail(List<GuarantorDetail> gurantorsDetailList, String auditTranType, String method, long workflowId) {
+
+	private List<AuditDetail> getAuditDetail(List<GuarantorDetail> gurantorsDetailList, String auditTranType,
+			String method, long workflowId) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		GuarantorDetail object = new GuarantorDetail();
@@ -854,13 +842,10 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (guarantorDetail.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (guarantorDetail.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_DEL)
-						|| guarantorDetail.getRecordType().equalsIgnoreCase(
-								PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -868,10 +853,11 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			}
 
 			if (StringUtils.isNotEmpty(guarantorDetail.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], guarantorDetail.getBefImage(), guarantorDetail));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						guarantorDetail.getBefImage(), guarantorDetail));
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetails;
 	}
