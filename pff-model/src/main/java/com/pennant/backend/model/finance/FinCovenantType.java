@@ -62,7 +62,6 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "covenantType", "alwWaiver", "alwPostpone", "postponeDays", "description" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinCovenantType extends AbstractWorkflowEntity {
-	
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
@@ -85,23 +84,22 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private int postponeDays;
 	private String module;
 
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinCovenantType befImage;
 	private LoggedInUser userDetails;
-	
+
 	private Date receivableDate;
 	private Date docReceivedDate;
 	private String categoryCode;
-	
+
 	private boolean pddFlag;
 	private boolean otcFlag;
-	
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinCovenantType validateCovenantType = this;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -114,7 +112,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("covenantTypeDesc");
@@ -125,24 +123,26 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		excludeFields.add("pddFlag");
 		excludeFields.add("otcFlag");
 		excludeFields.add("module");
-		
+
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String finReference) {
+
+	public void setId(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -150,6 +150,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public String getCovenantType() {
 		return covenantType;
 	}
+
 	public void setCovenantType(String covenantType) {
 		this.covenantType = covenantType;
 	}
@@ -157,6 +158,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public String getCovenantTypeDesc() {
 		return covenantTypeDesc;
 	}
+
 	public void setCovenantTypeDesc(String covenantTypeDesc) {
 		this.covenantTypeDesc = covenantTypeDesc;
 	}
@@ -164,6 +166,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public String getMandRoleDesc() {
 		return mandRoleDesc;
 	}
+
 	public void setMandRoleDesc(String mandRoleDesc) {
 		this.mandRoleDesc = mandRoleDesc;
 	}
@@ -171,6 +174,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -178,6 +182,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public String getMandRole() {
 		return mandRole;
 	}
+
 	public void setMandRole(String mandRole) {
 		this.mandRole = mandRole;
 	}
@@ -185,6 +190,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public boolean isAlwWaiver() {
 		return alwWaiver;
 	}
+
 	public void setAlwWaiver(boolean alwWaiver) {
 		this.alwWaiver = alwWaiver;
 	}
@@ -192,6 +198,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public boolean isAlwPostpone() {
 		return alwPostpone;
 	}
+
 	public void setAlwPostpone(boolean alwPostpone) {
 		this.alwPostpone = alwPostpone;
 	}
@@ -199,6 +206,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public int getPostponeDays() {
 		return postponeDays;
 	}
+
 	public void setPostponeDays(int postponeDays) {
 		this.postponeDays = postponeDays;
 	}
@@ -206,27 +214,31 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinCovenantType getBefImage(){
+	public FinCovenantType getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinCovenantType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinCovenantType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
