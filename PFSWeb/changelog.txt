@@ -1,3 +1,15 @@
+pff 4.11.2, 2018-10-09
+ --------------
+-bugs #821 GST State wise Account Number building Issue.
+-bugs #824 issue in change frequency.
+-bugs #826 SOA Report : Interest Rate Details are displayed.
+-PSD# 129154 : LPFT Calculation, even it is not applicable at Loan Level
+-Story #827 Allow to specify paths when all the active deviations approved or any of the active deviations rejected in Loan Workflow.
+-Parallel Flow with Resubmits – Parallel to Sequential & Sequential to Parallel.
+-PPM #18389 --> While taken Retail Customer. Application Number not populated in   Customer View.(enquiry)
+-PPM #18388 --> Eligibility method field is not populate in the Loan Basic Details (LoanEnquiry).
+-PPM #18399 Issues on Query management 
+
 pff 4.11.1, 2018-10-3
  --------------
 -PPM bug Id 18355 	Application Number is not Populated in the Customer View menu 	
