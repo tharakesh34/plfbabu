@@ -285,6 +285,16 @@ public class AgreementDetail {
 
 	private String totalReceiptFeeAmount = "0.00";
 
+	private String processingFee = "0.00";
+
+	public String getProcessingFee() {
+		return processingFee;
+	}
+
+	public void setProcessingFee(String processingFee) {
+		this.processingFee = processingFee;
+	}
+
 	public String getTotalReceiptFeeAmount() {
 		return totalReceiptFeeAmount;
 	}

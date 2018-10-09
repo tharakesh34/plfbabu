@@ -2020,7 +2020,12 @@ public class AgreementGeneration implements Serializable {
 						JdbcSearchObject<DeviationParam> searchObject = new JdbcSearchObject<DeviationParam>(DeviationParam.class);
 						searchObject.addSortAsc("dataType");
 						loanDeviation.setDeviationDescription(StringUtils.trimToEmpty(deviationHelper.getDeviationDesc(deviations, searchProcessor.getResults(searchObject))));
+						if (deviations.getModule().equalsIgnoreCase(DeviationConstants.TY_CUSTOM)) {
+							loanDeviation
+									.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationDesc()));
+						}
 						loanDeviation.setDeviationCode("-");
+						loanDeviation.setSeverity("-");
 						loanDeviation.setRemarks("-");
 					}
 					loanDeviation.setDeviationApprovedBy(StringUtils.trimToEmpty(deviations.getDelegationRole()));
@@ -2299,6 +2304,10 @@ public class AgreementGeneration implements Serializable {
 				charge.setFeeTreatment(StringUtils.trimToEmpty(finFeeDetail.getFeeScheduleMethod()));
 				charge.setFeeTreatmentDesc(StringUtils.trimToEmpty(PennantStaticListUtil.getlabelDesc(
 						finFeeDetail.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods())));
+				if(null!= finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc()) && 
+						finFeeDetail.getFeeTypeDesc().equals("Processing Fee")){
+					agreement.setProcessingFee(PennantAppUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
+				}
 				agreement.getCusCharges().add(charge);
 			});
 		}
@@ -2754,10 +2763,55 @@ public class AgreementGeneration implements Serializable {
 									}
 
 									extendedDetail.setKey(StringUtils.trimToEmpty(key));
+									String desc = null;
+									if (extendedFieldDetail != null
+											&& StringUtils.equalsIgnoreCase("EXTENDEDCOMBO",
+													extendedFieldDetail.getFieldType())
+											&& StringUtils.isNotEmpty(extendedFieldDetail.getFieldList())) {
+										try {
+											ModuleMapping moduleMapping = PennantJavaUtil
+													.getModuleMap(extendedFieldDetail.getFieldList());
+											Search search = new Search();
+											search.setSearchClass(moduleMapping.getModuleClass());
+											List<Filter> filters = new ArrayList<>();
+											if (moduleMapping.getLovFilters() != null) {
+												Object[][] condArray = moduleMapping.getLovFilters();
+												Filter filter1;
+												for (int i = 0; i < condArray.length; i++) {
+													String property = (String) condArray[i][0];
+													Object value = condArray[i][2];
+													int filtertype = Integer.parseInt((String) condArray[i][1]);
+													filter1 = new Filter(property, value, filtertype);
+													filters.add(filter1);
+												}
+											}
+
+											if (moduleMapping.getLovFields() != null) {
+												String[] condArray = moduleMapping.getLovFields();
+												Filter filter1;
+												String fieldName = extendedFieldDetail.getFieldName();
+												filter1 = new Filter((String) condArray[0], mapValues.get(fieldName),
+														Filter.OP_EQUAL);
+												filters.add(filter1);
+												search.setFilters(filters);
+												List<Object> result = searchProcessor.getResults(search);
+												for (Object object2 : result) {
+													String descMethod = "get" + condArray[1];
+													desc = object2.getClass().getMethod(descMethod).invoke(object2)
+															.toString();
+
+												}
+											}
+										} catch (Exception e) {
+										}
+									}
 									if (null != mapValues.get(key)) {
 										extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 										if (extendedFieldDetail != null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())) {
 											extendedDetail.setValue(PennantAppUtil.amountFormate((BigDecimal) mapValues.get(key), colCcyFormat));
+										} else if (StringUtils.isNotBlank(desc)
+												&& !extendedFieldDetail.getFieldList().equalsIgnoreCase("PinCode")) {
+											extendedDetail.setValue(StringUtils.trimToEmpty(desc));
 										} else {
 											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 										}
