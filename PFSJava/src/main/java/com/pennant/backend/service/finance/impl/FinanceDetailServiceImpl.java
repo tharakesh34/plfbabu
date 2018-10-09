@@ -1,5 +1,5 @@
 /********************************************************************************************************************
-\ * Copyright 2011 - Pennant Technologies																			*
+ * Copyright 2011 - Pennant Technologies																			*
  * 																													*
  * This file is part of Pennant Java Application Framework and related Products. All								*			
  * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant	*
@@ -246,6 +246,7 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.Operation;
 import com.pennanttech.pennapps.core.engine.workflow.ProcessUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
@@ -4526,32 +4527,42 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String taskId = engine.getUserTaskId(role);
 		String finishedTasks = "";
 
-		// String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
+		// Execute service tasks.
 		List<ServiceTask> serviceTasks = engine.getServiceTasks(taskId, afinanceMain);
+		String finalOperation = null;
 		auditHeader.setProcessCompleted(false);
-		if (serviceTasks != null && !serviceTasks.isEmpty()) {
-			for (ServiceTask task : serviceTasks) {
-				auditHeader = execute(auditHeader, task, role, usrAction, engine);
 
-				// Check whether to proceed with next service tasks.
-				auditHeader = nextProcess(auditHeader);
+		for (ServiceTask task : serviceTasks) {
+			if (ProcessUtil.isPersistentTask(task)) {
+				finalOperation = task.getOperation();
 
-				if (!auditHeader.isNextProcess()) {
-					break;
-				}
-
-				finishedTasks = task.getOperation() + ";" + finishedTasks;
-				serviceTasks = getRemainingServiceTasks(serviceTasks, engine, taskId, afinanceMain, finishedTasks);
-				if (serviceTasks.isEmpty()) {
-					break;
-				}
+				break;
 			}
-			if (!auditHeader.isProcessCompleted()) {
-				auditHeader = execute(auditHeader, null, role, usrAction, engine);
+
+			auditHeader = execute(auditHeader, task);
+
+			// Check whether to proceed with next service tasks.
+			auditHeader = nextProcess(auditHeader);
+
+			if (!auditHeader.isNextProcess()) {
+				break;
 			}
-		} else {
-			auditHeader = execute(auditHeader, null, role, usrAction, engine);
+
+			finishedTasks = task.getOperation() + ";" + finishedTasks;
+			serviceTasks = getRemainingServiceTasks(serviceTasks, engine, taskId, afinanceMain, finishedTasks);
+			if (serviceTasks.isEmpty()) {
+				break;
+			}
 		}
+
+		// Save the data.
+		if (!auditHeader.isProcessCompleted()) {
+			// Set work-flow details.
+			setNextTaskDetails(taskId, afinanceMain, engine, usrAction, role);
+
+			auditHeader = save(finalOperation, auditHeader, afinanceMain.getRecordType());
+		}
+
 		return auditHeader;
 	}
 
@@ -4587,54 +4598,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 * @param auditHeader
 	 * @param task
-	 * @param role
-	 * @param usrAction
-	 * @param engine
 	 * @return
 	 * @throws Exception
 	 */
-	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task, String role, String usrAction,
-			WorkflowEngine engine) throws Exception {
-
+	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task) throws Exception {
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		// Setting workflow details
-		String taskId = engine.getUserTaskId(role);
-		setNextTaskDetails(taskId, afinanceMain, engine, usrAction, role);
-
-		if (task == null) {
-			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-				auditHeader = delete(auditHeader, false);
-				auditHeader.setDeleteNotes(true);
-			} else {
-				auditHeader = saveOrUpdate(auditHeader, false);
-				auditHeader.setProcessCompleted(true);
-			}
-			return auditHeader;
-		}
 		switch (task.getOperation()) {
-		case PennantConstants.method_doApprove:
-			auditHeader = doApprove(auditHeader, false);
-			auditHeader.setProcessCompleted(true);
-			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-				auditHeader.setDeleteNotes(true);
-			}
-			break;
-		case PennantConstants.method_doPreApprove:
-			auditHeader = doPreApprove(auditHeader, false);
-			auditHeader.setProcessCompleted(true);
-			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-				auditHeader.setDeleteNotes(true);
-			}
-			break;
-		case PennantConstants.method_doReject:
-			auditHeader = doReject(auditHeader, false);
-			auditHeader.setProcessCompleted(true);
-			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				auditHeader.setDeleteNotes(true);
-			}
-			break;
 		case PennantConstants.WF_CIBIL:
 			creditInformation.getCreditEnquiryDetails(auditHeader, false);
 			break;
@@ -4650,26 +4621,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		case PennantConstants.method_doCheckDeviations:
-			List<FinanceDeviations> list = new ArrayList<>();
-			List<FinanceDeviations> autoDeviations = financeDetail.getFinanceDeviations();
-			if (autoDeviations != null && !autoDeviations.isEmpty()) {
-				list.addAll(autoDeviations);
-			}
-			List<FinanceDeviations> manualDeviations = financeDetail.getManualDeviations();
-			if (manualDeviations != null && !manualDeviations.isEmpty()) {
-				list.addAll(manualDeviations);
-			}
-			if (list != null && !list.isEmpty()) {
-				boolean deviationfound = false;
-				for (FinanceDeviations financeDeviations : list) {
-					if (StringUtils.isBlank(financeDeviations.getApprovalStatus())
-							|| PennantConstants.List_Select.equals(financeDeviations.getApprovalStatus())) {
-						deviationfound = true;
-						break;
-					}
+			// Deviations Available? [doCheckDeviations]
+			String[] nextTasks = StringUtils.trimToEmpty(afinanceMain.getNextTaskId()).split(";");
+
+			if (nextTasks.length <= 1) {
+				List<FinanceDeviations> list = new ArrayList<>();
+				List<FinanceDeviations> autoDeviations = financeDetail.getFinanceDeviations();
+				if (autoDeviations != null && !autoDeviations.isEmpty()) {
+					list.addAll(autoDeviations);
 				}
-				afinanceMain.setDeviationApproval(deviationfound);
+				List<FinanceDeviations> manualDeviations = financeDetail.getManualDeviations();
+				if (manualDeviations != null && !manualDeviations.isEmpty()) {
+					list.addAll(manualDeviations);
+				}
+				if (list != null && !list.isEmpty()) {
+					boolean deviationfound = false;
+					for (FinanceDeviations financeDeviations : list) {
+						if (StringUtils.isBlank(financeDeviations.getApprovalStatus())
+								|| PennantConstants.List_Select.equals(financeDeviations.getApprovalStatus())) {
+							deviationfound = true;
+							break;
+						}
+					}
+					afinanceMain.setDeviationApproval(deviationfound);
+				}
 			}
+
 			break;
 		case PennantConstants.method_doCheckAuthLimit:
 			/*
@@ -4708,6 +4685,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		}
+
 		return auditHeader;
 	}
 
@@ -4733,42 +4711,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String role) {
 		logger.trace(Literal.ENTERING);
 
-		// Get the existing next task id.
-		String nextTaskId = StringUtils.trimToEmpty(financeMain.getNextTaskId());
-
 		// Re-set the existing next task id.
-		if (StringUtils.isNotEmpty(nextTaskId)) {
-			if ("Save".equals(action)) {
-				// Do nothing.
-			} else {
-				String result = engine.getNextUserTaskIdsAsString(taskId, financeMain);
-				Flow flow = engine.compareTo(taskId, result);
-
-				if (flow == Flow.PREDECESSOR) {
-					if (ProcessUtil.parallelGatewayExists(engine, result, taskId)) {
-						// Sequential flow within concurrent flow.
-						nextTaskId = "";
-					} else {
-						if ("".equals(result)) {
-							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result);
-						} else {
-							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
-						}
-					}
-				} else {
-					if (ProcessUtil.parallelGatewayExists(engine, taskId, result)) {
-						// Sequential flow within concurrent flow.
-						nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					} else {
-						if ("".equals(result)) {
-							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result);
-						} else {
-							nextTaskId = nextTaskId.replaceFirst(taskId + ";", result + ";");
-						}
-					}
-				}
-			}
-		}
+		String nextTaskId = ProcessUtil.resetNextTask(engine, taskId, action, financeMain.getNextTaskId(), financeMain);
 
 		// Set the new next task id if there are no pending existing queues.
 		if (StringUtils.isEmpty(nextTaskId)) {
@@ -4828,6 +4772,50 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		logger.trace(Literal.LEAVING);
+	}
+
+	private AuditHeader save(String operation, AuditHeader auditHeader, String recordType) throws Exception {
+		logger.trace(Literal.ENTERING);
+
+		switch (Operation.methodOf(operation)) {
+		case DEFAULT:
+			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+				auditHeader = delete(auditHeader, false);
+				auditHeader.setDeleteNotes(true);
+			} else {
+				auditHeader = saveOrUpdate(auditHeader, false);
+				auditHeader.setProcessCompleted(true);
+			}
+
+			break;
+		case APPROVE:
+			auditHeader = doApprove(auditHeader, false);
+			auditHeader.setProcessCompleted(true);
+			if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
+				auditHeader.setDeleteNotes(true);
+			}
+
+			break;
+		case PRE_APPROVE:
+			auditHeader = doPreApprove(auditHeader, false);
+			auditHeader.setProcessCompleted(true);
+			if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
+				auditHeader.setDeleteNotes(true);
+			}
+
+			break;
+		case REJECT:
+			auditHeader = doReject(auditHeader, false);
+			auditHeader.setProcessCompleted(true);
+			if (recordType.equals(PennantConstants.RECORD_TYPE_NEW)) {
+				auditHeader.setDeleteNotes(true);
+			}
+
+			break;
+		}
+
+		logger.trace(Literal.LEAVING);
+		return auditHeader;
 	}
 
 	private FinanceDetail createOrUpdateCrmCustomer(FinanceDetail financeDetail) {

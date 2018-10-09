@@ -2,6 +2,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,8 @@ import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -331,16 +334,59 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 				FinanceMain finmain = financeMainDAO.getFinanceMainById(finref, "_Temp", false);
 
-				//Remove deviation flag
-				finmain.setDeviationApproval(false);
+				// Load the work-flow engine.
+				long workflowId = finmain.getWorkflowId();
+				WorkflowEngine engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(workflowId).getWorkFlowXml());
+
+				// Get the delegator's next tasks.
+				Map<String, Object> data = new HashMap<>();
 
 				if (rejected) {
+					data.put("deviationApprovalStatus", "REJECTED");
+				} else {
+					data.put("deviationApprovalStatus", "APPROVED");
+				}
 
-					String roleCode = finmain.getRoleCode();
-					String nextRoleCode = finmain.getNextRoleCode();
-					String taskId = finmain.getTaskId();
-					String nextUserid = StringUtils.trimToEmpty(finmain.getNextUserId());
+				String delegatorNextTasks = engine.getDelegatorNextTasks(data);
 
+				// Remove deviation flag.
+				finmain.setDeviationApproval(false);
+
+				boolean queueChanged = false;
+				String roleCode = finmain.getRoleCode();
+				String nextRoleCode = finmain.getNextRoleCode();
+				String taskId = finmain.getTaskId();
+				String nextUserid = StringUtils.trimToEmpty(finmain.getNextUserId());
+				String newTaskId = null;
+				String newRoleCode = "";
+
+				if (StringUtils.isBlank(delegatorNextTasks)) {
+					if (rejected) {
+						queueChanged = true;
+
+						newTaskId = taskId;
+						newRoleCode = roleCode;
+					} else {
+						//
+					}
+				} else {
+					queueChanged = true;
+					
+					newTaskId = delegatorNextTasks;
+
+					String[] nextTasks = newTaskId.split(";");
+					String tempRoleCode;
+
+					for (int i = 0; i < nextTasks.length; i++) {
+						if (newRoleCode.length() > 1) {
+							newRoleCode = newRoleCode.concat(",");
+						}
+						tempRoleCode = engine.getUserTask(nextTasks[i]).getActor();
+						newRoleCode += tempRoleCode;
+					}
+				}
+
+				if (queueChanged) {
 					//if queue assignment process then
 					if (StringUtils.isNotEmpty(nextUserid) && Long.parseLong(nextUserid) != 0) {
 						/*
@@ -358,10 +404,10 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 						}
 					}
 
-					finmain.setNextTaskId(taskId + ";");
-					finmain.setNextRoleCode(roleCode);
-
+					finmain.setNextTaskId(newTaskId + ";");
+					finmain.setNextRoleCode(newRoleCode);
 				}
+
 				financeMainDAO.updateDeviationApproval(finmain, rejected, "_Temp");
 				deviationDetailsDAO.updateDeviProcessed(finref, "");
 			}
