@@ -530,7 +530,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		logger.debug(Literal.ENTERING);
 
 		DocumentDetails documentDetails = (DocumentDetails) event.getData();
-
+		
 		// Set Image data to bean
 		if (documentDetails != null && documentDetails.getDocImage() == null
 				&& documentDetails.getDocRefId() != Long.MIN_VALUE) {
@@ -540,14 +540,16 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			}
 		}
 
-		if (documentDetails.getDocName().endsWith(".doc") || documentDetails.getDocName().endsWith(".docx")) {
-			Filedownload.save(new AMedia(documentDetails.getDocName(), "msword", "application/msword",
+		String docName = documentDetails.getDocName().toLowerCase();
+		if (docName.endsWith(".doc") || docName.endsWith(".docx")) {
+			Filedownload.save(new AMedia(docName, "msword", "application/msword",
 					documentDetails.getDocImage()));
-		} else if (documentDetails.getDocName().endsWith(".xls") || documentDetails.getDocName().endsWith(".xlsx")) {
-			Filedownload.save(new AMedia(documentDetails.getDocName(), "xls", "application/vnd.ms-excel",
+		} else if (docName.endsWith(".xls") || docName.endsWith(".xlsx")) {
+			Filedownload.save(new AMedia(docName, "xls", "application/vnd.ms-excel",
 					documentDetails.getDocImage()));
-		} else if (documentDetails.getDocName().endsWith(".png") || documentDetails.getDocName().endsWith(".jpeg")
-				|| documentDetails.getDocName().endsWith(".pdf") || documentDetails.getDocName().endsWith(".jpg")) {
+		} else if (docName.endsWith(".png")
+				|| docName.endsWith(".jpeg")
+				|| docName.endsWith(".pdf") || docName.endsWith(".jpg")) {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("documentDetails", documentDetails);
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDocumentView.zul", null, map);
@@ -1367,6 +1369,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		this.finReference.setConstraint("");
 		this.qryCategory.setConstraint("");
+		this.custDocType.setConstraint("");
 		this.qryNotes.setConstraint("");
 		this.assignedRole.setConstraint("");
 		this.notifyTo.setConstraint("");
