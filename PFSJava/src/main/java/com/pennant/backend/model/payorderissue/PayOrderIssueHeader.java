@@ -18,42 +18,41 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class PayOrderIssueHeader extends AbstractWorkflowEntity {
-	private static final long					serialVersionUID		= 384180539764860246L;
+	private static final long serialVersionUID = 384180539764860246L;
 
-	private String								finReference;
-	private BigDecimal							totalPOAmount			= BigDecimal.ZERO;
-	private int									totalPOCount;
-	private BigDecimal							issuedPOAmount			= BigDecimal.ZERO;
-	private int									issuedPOCount;
-	private BigDecimal							pODueAmount				= BigDecimal.ZERO;
-	private int									pODueCount;
-	private boolean								newRecord				= false;
-	private PayOrderIssueHeader					befImage;
-	private LoggedInUser						userDetails;
-	private HashMap<String, List<AuditDetail>>	auditDetailMap			= new HashMap<String, List<AuditDetail>>();
-	private List<FinAdvancePayments>			finAdvancePaymentsList	= new ArrayList<FinAdvancePayments>();
-	private FinanceMain							financeMain;
+	private String finReference;
+	private BigDecimal totalPOAmount = BigDecimal.ZERO;
+	private int totalPOCount;
+	private BigDecimal issuedPOAmount = BigDecimal.ZERO;
+	private int issuedPOCount;
+	private BigDecimal pODueAmount = BigDecimal.ZERO;
+	private int pODueCount;
+	private boolean newRecord = false;
+	private PayOrderIssueHeader befImage;
+	private LoggedInUser userDetails;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<FinAdvancePayments>();
+	private FinanceMain financeMain;
 
 	//others
-	private String								custCIF;
-	private String								custShrtName;
-	private Date								requestDate;
-	private String								finType;
-	private String								finTypeDesc;
-	private String								finCcy;
-	
-	
-	private boolean								loanApproved;
-	private boolean								finIsActive;
-	private boolean								alwMultiPartyDisb;
+	private String custCIF;
+	private String custShrtName;
+	private Date requestDate;
+	private String finType;
+	private String finTypeDesc;
+	private String finCcy;
 
-	private List<FinanceDisbursement>			financeDisbursements;
-	private List<FinanceDisbursement>			approvedFinanceDisbursements;
-	private DocumentDetails						documentDetails; 
-	
-	private List<FinCovenantType> 				covenantTypeList        = new ArrayList<FinCovenantType>();
-	private List<DocumentDetails> 				documentDetailsList		= new ArrayList<DocumentDetails>(1);
-		
+	private boolean loanApproved;
+	private boolean finIsActive;
+	private boolean alwMultiPartyDisb;
+
+	private List<FinanceDisbursement> financeDisbursements;
+	private List<FinanceDisbursement> approvedFinanceDisbursements;
+	private DocumentDetails documentDetails;
+
+	private List<FinCovenantType> covenantTypeList = new ArrayList<FinCovenantType>();
+	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>(1);
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -229,7 +228,6 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-
 
 	public boolean isLoanApproved() {
 		return loanApproved;
