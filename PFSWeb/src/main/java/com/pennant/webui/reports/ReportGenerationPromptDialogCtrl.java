@@ -2276,7 +2276,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			// StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null);
-		} if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
 			String custCif = null;
 			String finReference = null;
 			String fromDate = null;
