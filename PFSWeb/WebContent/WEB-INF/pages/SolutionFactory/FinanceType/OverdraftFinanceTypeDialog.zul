@@ -1314,18 +1314,6 @@
 														id="dftBpiTreatment" width="250px" readonly="true" />
 												</hbox>
 											</row>
-											<row visible="true">
-												<label
-													id="label_FinanceTypeDialog_BpiPftDaysBasis"
-													value="${c:l('label_FinanceTypeDialog_BpiPftDaysBasis.value')}" />
-												<hbox>
-													<space
-														id="space_bpiPftDaysBasis" spacing="2px"
-														sclass="mandatory" />
-													<combobox
-														id="cbBpiPftDaysBasis" width="275px" readonly="true" />
-												</hbox>
-											</row>
 											<row visible="false">
 												<label
 													id="label_FinanceTypeDialog_BpiPftDaysBasis"
