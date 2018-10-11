@@ -132,44 +132,43 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 @SuppressWarnings("rawtypes")
 public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static final Logger	logger				= Logger.getLogger(ExtendedFieldsGenerator.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldsGenerator.class);
 
-	private Window				window;
-	private Tabs				tabs;
-	private Tabpanel			tabpanel;
-	private Map<String, Object>	fieldValueMap		= new HashMap<>();
-	private boolean				isReadOnly;
-	private int 				tabHeight;
-	private String				labelKey;
-	private int					ccyFormat;
-	private int					rowWidth;
-	private final String		TABPANEL_ID			= "Tab_Panel";
-	private final String		DELIMETR_DOUBLE_BAR	= "\\|\\|";
-	private Row					row;
-	private Tab					topLevelTab;// To through wrong value exceptions
-	private Tab					parentTab;
-	private String				userRole;
-	private int					columnCount;
-	private String				defaultComponentWidth	= "250px";
-	
+	private Window window;
+	private Tabs tabs;
+	private Tabpanel tabpanel;
+	private Map<String, Object> fieldValueMap = new HashMap<>();
+	private boolean isReadOnly;
+	private int tabHeight;
+	private String labelKey;
+	private int ccyFormat;
+	private int rowWidth;
+	private final String TABPANEL_ID = "Tab_Panel";
+	private final String DELIMETR_DOUBLE_BAR = "\\|\\|";
+	private Row row;
+	private Tab topLevelTab;// To through wrong value exceptions
+	private Tab parentTab;
+	private String userRole;
+	private int columnCount;
+	private String defaultComponentWidth = "250px";
+
 	// Constants for scriptlets.
 	private static final String SCRIPTLET_DELIMITER = "^^";
 	private static final String SCRIPT_DELIMITER = ">>";
 
 	//story #699 Allow Additional filters for extended combobox.
 	private List<ExtendedFieldDetail> extendedFieldDetails = new ArrayList<>();
-	
 
 	public ExtendedFieldsGenerator() {
 		super();
@@ -189,7 +188,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			this.tabpanel.setHeight(tabHeight + "px");
 		}
 		this.tabpanel.setStyle("overflow:auto;border:none;");
-		 
+
 		if (fieldHeader != null && CollectionUtils.isEmpty(fieldHeader.getExtendedFieldDetails())) {
 			return;
 		}
@@ -306,11 +305,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			boolean isReadOnly, boolean newRecord, int i) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
-		
 		if (!detail.isVisible()) {
 			return;
 		}
-		
+
 		if (rowWidth == 0) {
 			rowWidth = 220;//default
 		}
@@ -327,9 +325,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		Component component = getComponent(detail, isReadOnly, hbox, newRecord, parentComponent);
 		if (component != null) {
-			boolean editable=true;
+			boolean editable = true;
 			if (!detail.isEditable() || isReadOnly) {
-				editable=false;
+				editable = false;
 			} else if (getUserWorkspace() != null) {
 				editable = getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
 			}
@@ -393,7 +391,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					});
 				}
 			}
-			
+
 			//12Jul2018 Bug Fix Related To ExtendedFields CurrencyBox readonly.
 			if (StringUtils.equals(detail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_PHONE)
 					&& component instanceof Hbox) {
@@ -414,7 +412,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			} else {
 				readOnlyComponent(!editable, component);
 			}
-			
+
 			hbox.appendChild(component);
 		}
 
@@ -422,7 +420,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for create the Container, it creates the container based on the fieldType and append that container to the
 	 * rootElement
@@ -431,7 +429,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param rootElement
 	 * @return
 	 */
-	private Component processContainer(ExtendedFieldDetail container, Component rootElement,boolean readonly) {
+	private Component processContainer(ExtendedFieldDetail container, Component rootElement, boolean readonly) {
 		String key = container.getFieldType().trim();
 
 		Component existting = rootElement.getFellowIfAny(container.getFieldName());
@@ -583,7 +581,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 		return component;
 	}
-	
+
 	/**
 	 * Method for Create Grid component and append column and rows to that based on columncount
 	 * 
@@ -616,15 +614,16 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		parentComponent.appendChild(grid);
 		return grid;
 	}
-	
+
 	/**
 	 * Method for process all the ListFields of the ListBox container element and render the List
 	 * 
 	 * @param containerElement
 	 * @param inputElemetswithParents
 	 */
-	private void processListBoxrender(ExtendedFieldDetail containerElement,List<ExtendedFieldDetail> inputElemetswithParents) {
-	
+	private void processListBoxrender(ExtendedFieldDetail containerElement,
+			List<ExtendedFieldDetail> inputElemetswithParents) {
+
 		List<ExtendedFieldDetail> childlist = getChilds(inputElemetswithParents, containerElement);
 		if (childlist != null && !childlist.isEmpty()) {
 			Component component = this.tabpanel.getFellowIfAny(containerElement.getFieldName());
@@ -690,7 +689,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param parentgrid
 	 * @return
 	 */
-	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> extendedFieldDetails,ExtendedFieldDetail parent) {
+	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> extendedFieldDetails,
+			ExtendedFieldDetail parent) {
 		List<ExtendedFieldDetail> parentinputElemets = new ArrayList<ExtendedFieldDetail>();
 		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
 			if (StringUtils.equals(extendedFieldDetail.getParentTag(), parent.getFieldName())
@@ -1049,44 +1049,44 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		for (ExtendedFieldDetail detail : fields) {
 			Object value = null;
 			Object field2 = null;
-			Object field3 = null; 
-			
-			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE,detail.getFieldType())) {
-				if (fieldValueMap.containsKey(detail.getFieldName()+"_CC")) {
-					value = fieldValueMap.get(detail.getFieldName()+"_CC");
+			Object field3 = null;
+
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
+				if (fieldValueMap.containsKey(detail.getFieldName() + "_CC")) {
+					value = fieldValueMap.get(detail.getFieldName() + "_CC");
 				}
-				if (fieldValueMap.containsKey(detail.getFieldName()+"_AC")) {
-					field2 = fieldValueMap.get(detail.getFieldName()+"_AC");
+				if (fieldValueMap.containsKey(detail.getFieldName() + "_AC")) {
+					field2 = fieldValueMap.get(detail.getFieldName() + "_AC");
 				}
-				if (fieldValueMap.containsKey(detail.getFieldName()+"_SC")) {
-					field3 = fieldValueMap.get(detail.getFieldName()+"_SC");
+				if (fieldValueMap.containsKey(detail.getFieldName() + "_SC")) {
+					field3 = fieldValueMap.get(detail.getFieldName() + "_SC");
 				}
-			
-			}else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE,detail.getFieldType())) {
-				if (fieldValueMap.containsKey(detail.getFieldName()+"_BR")) {
-					value = fieldValueMap.get(detail.getFieldName()+"_BR");
+
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail.getFieldType())) {
+				if (fieldValueMap.containsKey(detail.getFieldName() + "_BR")) {
+					value = fieldValueMap.get(detail.getFieldName() + "_BR");
 				}
-				if (fieldValueMap.containsKey(detail.getFieldName()+"_SR")) {
-					field2 = fieldValueMap.get(detail.getFieldName()+"_SR");
+				if (fieldValueMap.containsKey(detail.getFieldName() + "_SR")) {
+					field2 = fieldValueMap.get(detail.getFieldName() + "_SR");
 				}
-				if (fieldValueMap.containsKey(detail.getFieldName()+"_MR")) {
-					field3 = fieldValueMap.get(detail.getFieldName()+"_MR");
+				if (fieldValueMap.containsKey(detail.getFieldName() + "_MR")) {
+					field3 = fieldValueMap.get(detail.getFieldName() + "_MR");
 				}
-			}else{
+			} else {
 				if (fieldValueMap.containsKey(detail.getFieldName())) {
 					value = fieldValueMap.get(detail.getFieldName());
 				}
 			}
 
-			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE,detail.getFieldType())) {
-				values.put(detail.getFieldName()+"_CC", value);
-				values.put(detail.getFieldName()+"_AC", field2);
-				values.put(detail.getFieldName()+"_SC", field3);
-			}else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE,detail.getFieldType())) {
-				values.put(detail.getFieldName()+"_BR", value);
-				values.put(detail.getFieldName()+"_SR", field2);
-				values.put(detail.getFieldName()+"_MR", field3);
-			}else{
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
+				values.put(detail.getFieldName() + "_CC", value);
+				values.put(detail.getFieldName() + "_AC", field2);
+				values.put(detail.getFieldName() + "_SC", field3);
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail.getFieldType())) {
+				values.put(detail.getFieldName() + "_BR", value);
+				values.put(detail.getFieldName() + "_SR", field2);
+				values.put(detail.getFieldName() + "_MR", field3);
+			} else {
 				values.put(detail.getFieldName(), value);
 			}
 		}
@@ -1102,7 +1102,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 */
 	private void dateValidation(Datebox datebox, ExtendedFieldDetail detail) {
 		if (StringUtils.isNotBlank(detail.getFieldConstraint())) {
-		
+
 			String[] value = detail.getFieldConstraint().split(",");
 			PTDateValidator dateValidator = null;
 			String label = detail.getFieldLabel();
@@ -1180,9 +1180,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			if (maxValue != 0 && maxValue > Math.pow(10, detail.getFieldLength()) - 1) {
 				maxValue = (long) Math.pow(10, detail.getFieldLength()) - 1;
 			}
-			boolean allownegative=false;
+			boolean allownegative = false;
 			if (detail.getFieldMinValue() < 0) {
-				allownegative=true;
+				allownegative = true;
 			}
 			decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
 					detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);
@@ -1305,11 +1305,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			HashMap<ExtendedFieldDetail, List<WrongValueException>> data = groupByParentTab(wveMap, notInputElements);
 			//
 			if (data != null && !data.isEmpty()) {
-			
+
 				if (getParentTab() != null) {
 					getParentTab().setSelected(true);
 				}
-				
+
 				if (topLevelTab != null) {
 					topLevelTab.setSelected(true);
 				}
@@ -1319,7 +1319,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					ExtendedFieldDetail extdetai = entryset.getKey();
 					//get tab by name and set selected
 					Component fellowIfAny = window.getFellowIfAny(extdetai.getFieldName());
-					
+
 					if (fellowIfAny != null && fellowIfAny instanceof Tab) {
 						Tab parTab = (Tab) fellowIfAny;
 						parTab.setSelected(true);
@@ -1765,7 +1765,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		} else {
 			combobox.setWidth(defaultComponentWidth);
 		}
-			// Data Rendering and Setting existing value
+		// Data Rendering and Setting existing value
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
@@ -1869,7 +1869,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		// Adding the event listener
 		//story #699 Allow Additional filters for extended combobox. 
 		extendedCombobox.addEventListener(Events.ON_FULFILL, new MyExtendedComboListener());
-		
+
 		// Adding the default filters
 		//story #699 Allow Additional filters for extended combobox.
 		addDefaultFilters(extendedCombobox, detail);
@@ -1921,7 +1921,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (StringUtils.trimToNull(detail.getFilters()) == null) {
 			return;
 		}
-		
+
 		List<String> filters = new ArrayList<>();
 		String delimiter = SCRIPT_DELIMITER;
 
@@ -1932,12 +1932,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			if (fieldValueMap.containsKey(fieldName) && fieldValueMap.get(fieldName) != null
 					&& StringUtils.isNotBlank(fieldValueMap.get(fieldName).toString())) {
-				
+
 				StringBuilder sb = new StringBuilder();
-				sb.append(childArray[0]).append(delimiter).append(fieldValueMap.get(fieldName)).append(delimiter).append(childArray[2]);
+				sb.append(childArray[0]).append(delimiter).append(fieldValueMap.get(fieldName)).append(delimiter)
+						.append(childArray[2]);
 				filters.add(sb.toString());
-				
-				
+
 			}
 		}
 		appendFilters(extendedCombobox, filters);
@@ -2000,7 +2000,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		String delimiter = SCRIPT_DELIMITER;
 		List<String> filters = new ArrayList<>();
-		
+
 		String[] parentArray = StringUtils.split(detail.getFilters(), SCRIPTLET_DELIMITER);
 		for (String value : parentArray) {
 			String[] childArray = StringUtils.split(value, delimiter);
@@ -2012,10 +2012,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				ExtendedCombobox combobox = (ExtendedCombobox) component;
 				extendedCombobox.setConstraint("");
 				extendedCombobox.setErrorMessage("");
-				
+
 				if (StringUtils.trimToNull(combobox.getValue()) != null) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(childArray[0]).append(delimiter).append(combobox.getValue()).append(delimiter).append(childArray[2]);
+					sb.append(childArray[0]).append(delimiter).append(combobox.getValue()).append(delimiter)
+							.append(childArray[2]);
 					filters.add(sb.toString());
 				}
 			}
@@ -2038,7 +2039,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Appending the filters to component
 	 * 
@@ -2054,7 +2055,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		extendedCombobox.setFilters(filters);
 	}
 	//story #699 Allow Additional filters for extended combobox. Development Ended.
-	
+
 	/**
 	 * Method for create MultiExtendedCombox based on the Extended field details.
 	 * 
@@ -2368,10 +2369,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		caption.setParent(groupbox);
 		return groupbox;
 	}
-	
-	
+
 	/**
-	 * Method to setting the values 
+	 * Method to setting the values
 	 * 
 	 * @param extendedFieldDetailList
 	 * @param fieldValueMap
@@ -2397,7 +2397,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				continue;
 			}
 			String stringVal = String.valueOf(value);
-			
+
 			String id = getComponentId(detail.getFieldName());
 
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
@@ -2439,29 +2439,32 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					//FIXME
 					RateBox rateBox = (RateBox) component;
 					if (fieldValueMap.containsKey(detail.getFieldName().concat("_BR"))
-							&& fieldValueMap.get(detail.getFieldName().concat("_BR")) != null
-							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString())) {
+							&& fieldValueMap.get(detail.getFieldName().concat("_BR")) != null && StringUtils
+									.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString())) {
 						rateBox.setBaseValue(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString());
 					}
 					if (fieldValueMap.containsKey(detail.getFieldName().concat("_SR"))
-							&& fieldValueMap.get(detail.getFieldName().concat("_SR")) != null
-							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString())) {
+							&& fieldValueMap.get(detail.getFieldName().concat("_SR")) != null && StringUtils
+									.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString())) {
 						rateBox.setSpecialValue(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString());
 					}
 					if (fieldValueMap.containsKey(detail.getFieldName().concat("_MR"))
-							&& fieldValueMap.get(detail.getFieldName().concat("_MR")) != null
-							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString())) {
-						rateBox.setMarginValue(new BigDecimal(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString()));
+							&& fieldValueMap.get(detail.getFieldName().concat("_MR")) != null && StringUtils
+									.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString())) {
+						rateBox.setMarginValue(
+								new BigDecimal(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString()));
 					}
 				} else if (component instanceof Timebox) {
 					Timebox timebox = (Timebox) component;
 					timebox.setConstraint("");
 					timebox.setErrorMessage("");
-					if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+					if (fieldValueMap.containsKey(detail.getFieldName())
+							&& fieldValueMap.get(detail.getFieldName()) != null
 							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 						timebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
 					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-						if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME, detail.getFieldDefaultValue())) {
+						if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME,
+								detail.getFieldDefaultValue())) {
 							timebox.setValue(DateUtility.getTimestamp(new Date()));
 						}
 					}
@@ -2469,20 +2472,24 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					Datebox datebox = (Datebox) component;
 					datebox.setConstraint("");
 					datebox.setErrorMessage("");
-					if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+					if (fieldValueMap.containsKey(detail.getFieldName())
+							&& fieldValueMap.get(detail.getFieldName()) != null
 							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 						datebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
 					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
-							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
+							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
+									detail.getFieldDefaultValue())) {
 								datebox.setValue(DateUtility.getAppDate());
 							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 									detail.getFieldDefaultValue())) {
 								datebox.setValue(DateUtility.getSysDate());
 							}
 
-						} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
-							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
+						} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME,
+								detail.getFieldType().trim())) {
+							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
+									detail.getFieldDefaultValue())) {
 								datebox.setText(DateUtility.getAppDate(DateFormat.SHORT_DATE_TIME));
 							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 									detail.getFieldDefaultValue())) {
@@ -2494,7 +2501,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
 					extendedCombobox.setConstraint("");
 					extendedCombobox.setErrorMessage("");
-					
+
 					// Module Parameters Identification from Module Mapping
 					ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(detail.getFieldList());
 					String[] lovefields = moduleMapping.getLovFields();
@@ -2503,7 +2510,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 								detail.isFieldMandatory(), detail.getFieldLength(), 150);
 					}
 					//Data Setting
-					if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+					if (fieldValueMap.containsKey(detail.getFieldName())
+							&& fieldValueMap.get(detail.getFieldName()) != null
 							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 						extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
 					}
@@ -2608,7 +2616,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Textbox textbox = (Textbox) component;
 						textbox.setConstraint("");
 						textbox.setErrorMessage("");
-						if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+						if (fieldValueMap.containsKey(detail.getFieldName())
+								&& fieldValueMap.get(detail.getFieldName()) != null
 								&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 							textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
 						} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
@@ -2628,7 +2637,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @return Tabpanel
 	 */
 	private Tabpanel getTabpanel(ExtendedFieldDetail container) {
-		
+
 		Tabbox tabbox = (Tabbox) this.tabpanel.getFellowIfAny("Tab_ROOT_");
 		if (tabbox == null) {
 			tabbox = new Tabbox();
@@ -2665,7 +2674,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		tabpanels.setParent(tabbox);
 		return tabpanel;
 	}
-	
+
 	/**
 	 * Method for Enabling or Disabling the container element based on rights.
 	 * 
@@ -2676,7 +2685,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		logger.debug(Literal.ENTERING);
 		if (container instanceof Tabpanel) {
 			Tabpanel tabpanel = (Tabpanel) container;
-			boolean isVisible=getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
+			boolean isVisible = getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
 			tabpanel.setVisible(isVisible);
 			Tab tab = (Tab) tabpanel.getFellowIfAny(detail.getFieldName());
 			if (tab != null) {
@@ -2694,7 +2703,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * method to check whether the rootComponent is visible or not.
 	 * 
@@ -2714,14 +2723,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				} else if (StringUtils.isNotBlank(container.getParentTag())) {
 					parentTag = container.getParentTag();
 					i = 0;
-				}else{
+				} else {
 					break;
 				}
 			}
 		}
 		return isVisible;
 	}
-	
+
 	/**
 	 * Method for create ListBox based on the Extended field details.
 	 * 
@@ -2745,7 +2754,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		return column;
 	}
 
-	
 	/**
 	 * 
 	 * This Comparator class is used to sort the ExtendedFieldDetail based on their sequenceNumber
