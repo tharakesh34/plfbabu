@@ -41,32 +41,32 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
-	private static final long			serialVersionUID	= 2290501784830847866L;
-	private static final Logger			logger				= Logger.getLogger(FinanceDeviationsDialogCtrl.class);
+	private static final long serialVersionUID = 2290501784830847866L;
+	private static final Logger logger = Logger.getLogger(FinanceDeviationsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_FinanceDeviationsDialog;												// autoWired
-	protected Borderlayout				borderlayoutDeviationDetail;												// autoWired
-	protected Tab						tabDeviation;
+	protected Window window_FinanceDeviationsDialog; // autoWired
+	protected Borderlayout borderlayoutDeviationDetail; // autoWired
+	protected Tab tabDeviation;
 	// Tab 1
-	protected Tabpanel					creditApprovalTabpanel;
+	protected Tabpanel creditApprovalTabpanel;
 	// Tab 2
-	protected Groupbox					finBasicdetails;
-	protected Listbox					listBoxDeviationDetails;
-	protected Listbox					listBoxManualDeviations;
+	protected Groupbox finBasicdetails;
+	protected Listbox listBoxDeviationDetails;
+	protected Listbox listBoxManualDeviations;
 
-	private FinanceDetail				financeDetail		= null;
+	private FinanceDetail financeDetail = null;
 
-	private FinanceDeviationsService	deviationDetailsService;
-	private FinanceDeviationsListCtrl	financeDeviationsListCtrl;
+	private FinanceDeviationsService deviationDetailsService;
+	private FinanceDeviationsListCtrl financeDeviationsListCtrl;
 	@Autowired
-	private DeviationRenderer			deviationRenderer;
+	private DeviationRenderer deviationRenderer;
 	@Autowired
 	private DeviationHelper deviationHelper;
-	int									ccyformat			= 0;
+	int ccyformat = 0;
 	List<ValueLabel> delegators = new ArrayList<>();
 
 	/**
@@ -328,7 +328,8 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 			if (deviationDetail.isApproved()) {
 				continue;
 			}
-			Component component = listitem.getFellowIfAny("combo_" + (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
+			Component component = listitem.getFellowIfAny(
+					"combo_" + (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
 							+ deviationDetail.getDeviationCode() + StringUtils.trimToEmpty(deviationDetail.getModule())
 							+ deviationDetail.getDeviationCategory());
 			if (component != null && component instanceof Combobox) {
