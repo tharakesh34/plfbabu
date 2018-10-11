@@ -231,6 +231,9 @@ public class CurrencyBox extends Hbox {
 		if (readOnly) {
 			setTabindex(-1);
 		}
+		if (readOnly) {
+			setMandatory(false);
+		}
 	}
 
 	public void setTabindex(int tabIndex) {

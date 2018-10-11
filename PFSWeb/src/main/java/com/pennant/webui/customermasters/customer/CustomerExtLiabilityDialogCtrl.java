@@ -943,7 +943,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		if (!this.finDate.isReadonly()) {
+		if (!this.finDate.isDisabled()) {
 			this.finDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_FinDate.value"), true,
 							appStartDate, appDate, true));
@@ -961,12 +961,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_InstallmentAmount.value"),
 							0, this.installmentAmount.isMandatory(), false));
 		}
-		if (!this.outStandingBal.isDisabled()) {
+		if (!this.outStandingBal.isReadonly()) {
 			this.outStandingBal.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_OutStandingBal.value"), 0, true, false));
 		}
 		// ###_0.2
-		if (!this.pos.isDisabled()) {
+		if (!this.pos.isReadonly()) {
 			this.pos.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_POS.value"),
 					0, true, false));
 		}
@@ -978,11 +978,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.overdue.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_Overdue.value"), 0, false, false));
 		}
-		if (!this.totalTenure.isDisabled()) {
+		if (!this.totalTenure.isReadonly()) {
 			this.totalTenure.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_TotalTenure.value"), true, false));
 		}
-		if (!this.balanceTenure.isDisabled()) {
+		if (!this.balanceTenure.isReadonly()) {
 			this.balanceTenure.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_BalanceTenure.value"), true, false));
 		}
