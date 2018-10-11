@@ -246,6 +246,9 @@ public class AuditDetail implements java.io.Serializable {
 	}
 
 	public void setErrorDetails(List<ErrorDetail> errorDetails) {
+		if(errorDetails == null){
+			return;
+		}
 		this.errors = errorDetails;
 	}
 
