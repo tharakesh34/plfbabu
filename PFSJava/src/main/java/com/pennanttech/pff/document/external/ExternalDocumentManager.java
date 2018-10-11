@@ -26,12 +26,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.DocumentManagementService;
 
 public class ExternalDocumentManager {
-	private static final Logger			logger	= Logger.getLogger(ExternalDocumentManager.class);
+	private static final Logger logger = Logger.getLogger(ExternalDocumentManager.class);
 
 	@Autowired(required = false)
-	private DocumentManagementService	documentManagementService;
+	private DocumentManagementService documentManagementService;
 
-	
 	public AMedia setDocContent(DocumentDetails documentDetails) {
 		AMedia amedia = null;
 		if (documentDetails == null) {
@@ -60,7 +59,7 @@ public class ExternalDocumentManager {
 
 	public AMedia getDocumentMedia(String fileName, String docRefId, String reference) {
 		DocumentDetails detail = getExternalDocument(fileName, docRefId, reference);
-		if (detail != null && detail.getDocImage()!=null) {
+		if (detail != null && detail.getDocImage() != null) {
 			AMedia amedia = new AMedia(detail.getDocName(), null, null, detail.getDocImage());
 			return amedia;
 		} else {
@@ -71,9 +70,9 @@ public class ExternalDocumentManager {
 
 	public DocumentDetails getExternalDocument(String fileName, String docRefId, String reference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DocumentDetails returndetails = null;
-		if (documentManagementService==null) {
+		if (documentManagementService == null) {
 			return returndetails;
 		}
 

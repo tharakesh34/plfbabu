@@ -68,105 +68,105 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
 
-	private static final long	serialVersionUID	= -6234931333270161797L;
+	private static final long serialVersionUID = -6234931333270161797L;
 
-	private long				paymentId			= Long.MIN_VALUE;
-	private String				finReference;
-	private int					paymentSeq;
-	private int					disbSeq;
+	private long paymentId = Long.MIN_VALUE;
+	private String finReference;
+	private int paymentSeq;
+	private int disbSeq;
 
 	@XmlElement(name = "disbParty")
-	private String				paymentDetail;
+	private String paymentDetail;
 
 	@XmlElement(name = "disbAmount")
-	private BigDecimal			amtToBeReleased		= BigDecimal.ZERO;
+	private BigDecimal amtToBeReleased = BigDecimal.ZERO;
 
 	@XmlElement(name = "favourName")
-	private String				liabilityHoldName;
+	private String liabilityHoldName;
 
 	@XmlElement(name = "acHolderName")
-	private String				beneficiaryName;
+	private String beneficiaryName;
 
 	@XmlElement(name = "accountNo")
-	private String				beneficiaryAccNo;
-	private String				description;
+	private String beneficiaryAccNo;
+	private String description;
 
 	@XmlElement(name = "disbType")
-	private String				paymentType;
+	private String paymentType;
 
 	@XmlElement(name = "chequeNo")
-	private String				llReferenceNo;
+	private String llReferenceNo;
 
 	@XmlElement(name = "disbDate")
-	private Date				llDate;
-	private BigDecimal			custContribution	= BigDecimal.ZERO;
-	private BigDecimal			sellerContribution	= BigDecimal.ZERO;
+	private Date llDate;
+	private BigDecimal custContribution = BigDecimal.ZERO;
+	private BigDecimal sellerContribution = BigDecimal.ZERO;
 
 	@XmlElement
-	private String				remarks;
+	private String remarks;
 
 	@XmlElement(name = "issueBank")
-	private String				bankCode;
-	private String				bankName;
+	private String bankCode;
+	private String bankName;
 
 	@XmlElement(name = "bankCode")
-	private String				branchBankCode;
-	private String				branchBankName;
+	private String branchBankCode;
+	private String branchBankName;
 
 	@XmlElement
-	private String				branchCode;
-	private String				branchDesc;
-	private String				city;
+	private String branchCode;
+	private String branchDesc;
+	private String city;
 
 	@XmlElement(name = "ifsc")
-	private String				iFSC;
+	private String iFSC;
 
 	@XmlElement
-	private String				payableLoc;
+	private String payableLoc;
 
 	@XmlElement
-	private String				printingLoc;
+	private String printingLoc;
 
 	@XmlElement
-	private Date				valueDate;
-	private long				bankBranchID;
+	private Date valueDate;
+	private long bankBranchID;
 
 	@XmlElement
-	private String				phoneCountryCode;
+	private String phoneCountryCode;
 
 	@XmlElement
-	private String				phoneAreaCode;
+	private String phoneAreaCode;
 
 	@XmlElement
-	private String				phoneNumber;
-	private Date				clearingDate;
-	private String				status;
-	private boolean				active;
-	private Date				inputDate;
-	private String				disbCCy;
-	private boolean				pOIssued;
+	private String phoneNumber;
+	private Date clearingDate;
+	private String status;
+	private boolean active;
+	private Date inputDate;
+	private String disbCCy;
+	private boolean pOIssued;
 
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private FinAdvancePayments	befImage;
-	private LoggedInUser		userDetails;
+	private boolean newRecord = false;
+	private String lovValue;
+	private FinAdvancePayments befImage;
+	private LoggedInUser userDetails;
 	@XmlElement(name = "partnerBankId")
-	private long				partnerBankID;
-	private String				partnerbankCode;
-	private String				partnerBankName;
-	private String				finType;
-	private String				custShrtName;
-	private long				linkedTranId;
-	private String				partnerBankAcType;
-	private String				transactionRef;
-	private String				rejectReason;
+	private long partnerBankID;
+	private String partnerbankCode;
+	private String partnerBankName;
+	private String finType;
+	private String custShrtName;
+	private long linkedTranId;
+	private String partnerBankAcType;
+	private String transactionRef;
+	private String rejectReason;
 
-	private String				partnerBankAc;
-	private boolean				alwFileDownload;
-	private String				fileNamePrefix;
-	private String				channel;
-	private String              entityCode;
-	
+	private String partnerBankAc;
+	private boolean alwFileDownload;
+	private String fileNamePrefix;
+	private String channel;
+	private String entityCode;
+
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
 	}

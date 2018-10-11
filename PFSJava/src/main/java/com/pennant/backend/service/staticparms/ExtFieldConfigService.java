@@ -50,7 +50,7 @@ public interface ExtFieldConfigService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName,String event);
+	ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName, String event);
 
 	ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName, String event);
 
