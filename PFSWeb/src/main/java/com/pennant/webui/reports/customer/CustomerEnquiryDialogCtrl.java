@@ -47,35 +47,34 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	private static final long serialVersionUID = -6646226859133636932L;
 	private static final Logger logger = Logger.getLogger(CustomerEnquiryDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected   Window     			window_CustomerEnquiryDialog;// autoWired
-	
-	protected 	Borderlayout 		borderlayout_Enquiry;  		 // autoWired
-	protected 	ExtendedCombobox    			custCIF;	         		 // autoWired
-	protected 	Textbox				dftBranch;		 		 	 // autoWired
-	
-	protected 	Button    			button_Print;	             // autoWired
-	
-	protected 	Listbox    			listBoxEnquiryResult;	     // autoWired
-	protected 	Paging     			pagingEnquiryList;	         // autoWired
-	protected 	Grid      			grid_enquiryDetails;         // autoWired
-	protected 	Menu		 		menu_filter;				 // autoWired
-	protected 	Menupopup  			menupopup_filter;			 // autoWired
-	protected 	Menuitem 			menuitem;
-	private 	Tab 				tab;
-	private 	Tabbox				tabbox;
-	
+	protected Window window_CustomerEnquiryDialog;// autoWired
+
+	protected Borderlayout borderlayout_Enquiry; // autoWired
+	protected ExtendedCombobox custCIF; // autoWired
+	protected Textbox dftBranch; // autoWired
+
+	protected Button button_Print; // autoWired
+
+	protected Listbox listBoxEnquiryResult; // autoWired
+	protected Paging pagingEnquiryList; // autoWired
+	protected Grid grid_enquiryDetails; // autoWired
+	protected Menu menu_filter; // autoWired
+	protected Menupopup menupopup_filter; // autoWired
+	protected Menuitem menuitem;
+	private Tab tab;
+	private Tabbox tabbox;
+
 	// not auto wired variables
 	List<FinanceEnquiry> financeEnqList = null;
 	private FinanceMainService financeMainService;
-	private int 		listRows;
-	private long		custId;
-	
+	private int listRows;
+	private long custId;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -87,11 +86,10 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	protected void doSetProperties() {
 		super.pageRightName = "CustomerEnquiryDialog";
 	}
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Academic object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Academic object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -103,45 +101,45 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		setPageComponents(window_CustomerEnquiryDialog);
 
 		if (event.getTarget() != null && event.getTarget().getParent() != null
-				&& event.getTarget().getParent().getParent()!=null && 
-				event.getTarget().getParent().getParent().getParent() != null) {
+				&& event.getTarget().getParent().getParent() != null
+				&& event.getTarget().getParent().getParent().getParent() != null) {
 			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
-			if (tabbox != null) {			
-				tab = (Tab)tabbox.getFellowIfAny("tab_CustomerEnquiry");
+			if (tabbox != null) {
+				tab = (Tab) tabbox.getFellowIfAny("tab_CustomerEnquiry");
 			}
-	    }
+		}
 
 		doSetFieldProperties();
 		doFillFilterList();
 		this.borderlayout_Enquiry.setHeight(getBorderLayoutHeight());
-		int dialogHeight =  grid_enquiryDetails.getRows().getVisibleItemCount()* 20 + 52 ; 
-		int listboxHeight = borderLayoutHeight-dialogHeight;
-		listBoxEnquiryResult.setHeight(listboxHeight+"px");
-		listRows = Math.round(listboxHeight/ 22);
+		int dialogHeight = grid_enquiryDetails.getRows().getVisibleItemCount() * 20 + 52;
+		int listboxHeight = borderLayoutHeight - dialogHeight;
+		listBoxEnquiryResult.setHeight(listboxHeight + "px");
+		listRows = Math.round(listboxHeight / 22);
 		this.pagingEnquiryList.setDetailed(true);
 		this.pagingEnquiryList.setPageSize(listRows);
-		
+
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("custId")) {
 			this.custId = (Long) arguments.get("custId");
 			doFillFinDetails(this.custId);
 		}
-		
+
 		if (arguments.containsKey("custCIF")) {
 			this.custCIF.setValue(String.valueOf(arguments.get("custCIF")));
 		}
-		
+
 		if (arguments.containsKey("custShrtName")) {
 			this.custCIF.setDescription(String.valueOf(arguments.get("custShrtName")));
 		}
-		
+
 		if (arguments.containsKey("dftBranch")) {
 			this.dftBranch.setValue(String.valueOf(arguments.get("dftBranch")));
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -149,14 +147,15 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.button_Print.setVisible(getUserWorkspace()
-				.isAllowed("button_CustomerEnquiryDialog_PrintList"));
+		this.button_Print.setVisible(getUserWorkspace().isAllowed("button_CustomerEnquiryDialog_PrintList"));
 		logger.debug("Leaving");
 	}
-	
+
 	// Helpers
-	
-	/** Set the properties of the fields, like maxLength.<br> */
+
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
 	private void doSetFieldProperties() {
 		this.dftBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.custCIF.setMaxlength(12);
@@ -165,13 +164,13 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		this.custCIF.setDescColumn("CustShrtName");
 		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
 	}
-	
+
 	/**
-	 * Method to fill menu items 
+	 * Method to fill menu items
 	 */
 	private void doFillFilterList() {
 		logger.debug("Entering");
-		
+
 		this.menupopup_filter.getChildren().clear();
 		menuitem = new Menuitem();
 		menuitem.setLabel(Labels.getLabel("label_CustomerAccountSummary"));
@@ -180,28 +179,29 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		menuitem.addForward("onClick", this.window_CustomerEnquiryDialog, "onFilterMenuItem", menuitem);
 		this.menupopup_filter.appendChild(menuitem);
 		this.menu_filter.setLabel(Labels.getLabel("label_CustomerFinanceSummary"));
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Method for OnClick Event on Menu Item Enqiries 
+	 * Method for OnClick Event on Menu Item Enqiries
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onFilterMenuItem(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("custId",this.custId);
-		map.put("custCIF",this.custCIF.getValue());
-		map.put("custShrtName",this.custCIF.getDescription());
-		map.put("dftBranch",this.dftBranch.getValue());
-		
+		map.put("custId", this.custId);
+		map.put("custCIF", this.custCIF.getValue());
+		map.put("custShrtName", this.custCIF.getDescription());
+		map.put("dftBranch", this.dftBranch.getValue());
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			if (tab != null) {
-				
+
 				Tabbox tabbox = (Tabbox) tab.getParent().getParent();
 				Tab custEnqtab = (Tab) tabbox.getFellowIfAny("tab_CustomerEnquiry");
 				Tab custAcctab = (Tab) tabbox.getFellowIfAny("tab_CustomerAccount");
@@ -210,11 +210,11 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 					this.window_CustomerEnquiryDialog.onClose();
 					custEnqtab.close();
 				}
-				
+
 				if (custAcctab != null) {
 					custAcctab.close();
 				}
-				
+
 				final Tab tab = new Tab();
 				tab.setId("menu_Item_CustomerAccount".trim().replace("menu_Item_", "tab_"));
 				tab.setLabel(Labels.getLabel("menu_Item_CustomerAccount"));
@@ -230,7 +230,8 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 
 				tab.setParent(tabbox.getFellow("tabsIndexCenter"));
 
-				final Tabpanels tabpanels = (Tabpanels) tabbox.getFellow("tabsIndexCenter").getFellow("tabpanelsBoxIndexCenter");
+				final Tabpanels tabpanels = (Tabpanels) tabbox.getFellow("tabsIndexCenter")
+						.getFellow("tabpanelsBoxIndexCenter");
 				final Tabpanel tabpanel = new Tabpanel();
 				tabpanel.setHeight("100%");
 				tabpanel.setStyle("padding: 0px;");
@@ -242,19 +243,19 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * This method fill the CustomerName and CIF values by using Search box. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 **/
-	public void onFulfill$custCIF(Event event)  {
+	public void onFulfill$custCIF(Event event) {
 		logger.debug("Entering");
 		Customer custDetails = null;
-		
+
 		Object dataObject = custCIF.getObject();
 		if (dataObject instanceof String) {
 			this.custCIF.setValue(dataObject.toString());
@@ -270,63 +271,68 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 				doFillFinDetails(this.custId);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method fill the Finance Details by Clicking on Search box. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 **/
 	public void doFillFinDetails(long custId) {
 		logger.debug("Entering");
 		financeEnqList = getFinanceMainService().getFinanceDetailsByCustId(custId);
 		this.listBoxEnquiryResult.getItems().clear();
-		/*listBoxEnquiryResult.setModel(new GroupsModelArray(financeEnqList.toArray(),new CustomerEnquiryComparator()));
-		this.listBoxEnquiryResult.setItemRenderer(new CustomerEnquiryListModelItemRender());*/
-		
+		/*
+		 * listBoxEnquiryResult.setModel(new GroupsModelArray(financeEnqList.toArray(),new
+		 * CustomerEnquiryComparator())); this.listBoxEnquiryResult.setItemRenderer(new
+		 * CustomerEnquiryListModelItemRender());
+		 */
+
 		//Adding to Listbox
 		String fintype = "";
 		String finCcy = "";
 		BigDecimal grpTotal = BigDecimal.ZERO;
 
 		for (int i = 0; i < financeEnqList.size(); i++) {
-			
+
 			FinanceEnquiry aFinanceEnq = financeEnqList.get(i);
-			
+
 			//Adding List Group
-			if(!fintype.equals(aFinanceEnq.getFinType())){
+			if (!fintype.equals(aFinanceEnq.getFinType())) {
 				fintype = aFinanceEnq.getFinType();
 				finCcy = aFinanceEnq.getFinCcy();
 				addListGroup(aFinanceEnq);
 				grpTotal = BigDecimal.ZERO;
 			}
-			if(!finCcy.equals(aFinanceEnq.getFinCcy())){
+			if (!finCcy.equals(aFinanceEnq.getFinCcy())) {
 				finCcy = aFinanceEnq.getFinCcy();
 				addListGroup(aFinanceEnq);
 				grpTotal = BigDecimal.ZERO;
 			}
-			
+
 			//Adding List Item
 			addListItem(aFinanceEnq);
-			grpTotal = grpTotal.add(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt()).subtract(aFinanceEnq.getFinRepaymentAmount()));
-			
+			grpTotal = grpTotal.add(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
+					.subtract(aFinanceEnq.getFinRepaymentAmount()));
+
 			//Adding List Footer
-			if(i == financeEnqList.size() -1){
+			if (i == financeEnqList.size() - 1) {
 				addListFooter(grpTotal, CurrencyUtil.getFormat(aFinanceEnq.getFinCcy()));
-			}else{
-				FinanceEnquiry nextTerm = financeEnqList.get(i+1);
-				if(!fintype.equals(nextTerm.getFinType()) || !finCcy.equals(nextTerm.getFinCcy())){
+			} else {
+				FinanceEnquiry nextTerm = financeEnqList.get(i + 1);
+				if (!fintype.equals(nextTerm.getFinType()) || !finCcy.equals(nextTerm.getFinCcy())) {
 					addListFooter(grpTotal, CurrencyUtil.getFormat(aFinanceEnq.getFinCcy()));
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	private void addListItem(FinanceEnquiry aFinanceEnq){
-		Listitem item  = new Listitem();
+
+	private void addListItem(FinanceEnquiry aFinanceEnq) {
+		Listitem item = new Listitem();
 		Listcell lc;
 		lc = new Listcell(aFinanceEnq.getFinReference());
 		lc.setParent(item);
@@ -340,16 +346,18 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getMaturityDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount(),CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount(),
+				CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt()).subtract(aFinanceEnq.getFinRepaymentAmount()),
-				CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
+				.subtract(aFinanceEnq.getFinRepaymentAmount()), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getNextDueDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getNextDueAmount(),CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getNextDueAmount(),
+				CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		item.setAttribute("data", aFinanceEnq);
@@ -359,14 +367,15 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 
 	/**
 	 * Method for Adding List Group to listBox in Corporation
+	 * 
 	 * @param scoringMetric
 	 * @param listbox
 	 */
-	private void addListGroup(FinanceEnquiry aFinanceEnq){
+	private void addListGroup(FinanceEnquiry aFinanceEnq) {
 		logger.debug("Entering");
-		
+
 		Listgroup listgroup = new Listgroup();
-		Listcell cell = new Listcell(aFinanceEnq.getFinType() +" - "+aFinanceEnq.getLovDescFinTypeName());
+		Listcell cell = new Listcell(aFinanceEnq.getFinType() + " - " + aFinanceEnq.getLovDescFinTypeName());
 		cell.setSpan(3);
 		listgroup.appendChild(cell);
 
@@ -375,84 +384,88 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		cell.setStyle("text-align:right;");
 		listgroup.appendChild(cell);
 		this.listBoxEnquiryResult.appendChild(listgroup);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Adding List Group to listBox in Corporation
+	 * 
 	 * @param scoringMetric
 	 * @param listbox
 	 */
-	private void addListFooter(BigDecimal grpTotalAmt, int formatter){
+	private void addListFooter(BigDecimal grpTotalAmt, int formatter) {
 		logger.debug("Entering");
-		
+
 		Listgroupfoot listgroupfoot = new Listgroupfoot();
-		
+
 		Listcell cell = new Listcell("Group Total");
 		cell.setStyle("font-weight:bold;text-align:right;");
 		cell.setSpan(7);
 		listgroupfoot.appendChild(cell);
-		
-		cell = new Listcell(PennantAppUtil.amountFormate(grpTotalAmt,formatter));
+
+		cell = new Listcell(PennantAppUtil.amountFormate(grpTotalAmt, formatter));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
-		
+
 		this.listBoxEnquiryResult.appendChild(listgroupfoot);
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * When user clicks on button "button_Print" button
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void onClick$button_Print(Event event) throws InterruptedException{
+	public void onClick$button_Print(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		
-		if(getFinanceEnqList()!=null && getFinanceEnqList().size()>0){
-			ReportGenerationUtil.generateReport("Sample", getFinanceEnqList(),
-					getFinanceEnqList(),true, 1, getUserWorkspace().getLoggedInUser().getUserName(),null);
+
+		if (getFinanceEnqList() != null && getFinanceEnqList().size() > 0) {
+			ReportGenerationUtil.generateReport("Sample", getFinanceEnqList(), getFinanceEnqList(), true, 1,
+					getUserWorkspace().getLoggedInUser().getUserName(), null);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Methodd for fetching Finance Record
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onLoanItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		final Listitem item = this.listBoxEnquiryResult.getSelectedItem();
 		if (item != null) {
-			
+
 			final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
-			
+
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("financeEnquiry", aFinanceEnquiry);
 			map.put("enquiryType", "FINENQ");
 
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",null,map);
+				Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+						null, map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
-			
+
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public FinanceMainService getFinanceMainService() {
 		return financeMainService;
 	}
+
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
@@ -460,6 +473,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	public List<FinanceEnquiry> getFinanceEnqList() {
 		return financeEnqList;
 	}
+
 	public void setFinanceEnqList(List<FinanceEnquiry> financeEnqList) {
 		this.financeEnqList = financeEnqList;
 	}
