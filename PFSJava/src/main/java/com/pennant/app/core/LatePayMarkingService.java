@@ -275,7 +275,11 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
-		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
+		Date odtCaldate=valueDate;
+		if (ImplementationConstants.LP_MARK_FIRSTDAY) {
+			odtCaldate=DateUtility.addDays(valueDate, 1);
+		}
+		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
 		fod.setFinLMdfDate(DateUtility.getAppDate());
 
