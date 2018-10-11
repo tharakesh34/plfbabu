@@ -86,14 +86,14 @@ public class Facility extends AbstractWorkflowEntity {
 	private String userRole;
 	private String sICCodeName;
 	private String customerRiskTypeName;
-	
+
 	private String reviewCenter;
 	private String countryLimitAdeq;
 	private String levelOfApproval;
-	private BigDecimal	countryExposure;
+	private BigDecimal countryExposure;
 	private BigDecimal countryLimit;
 	private String custRelation;
-	
+
 	private String customerBackGround;
 	private String strength;
 	private String weaknesses;
@@ -103,9 +103,9 @@ public class Facility extends AbstractWorkflowEntity {
 	private String guaranteeDescription;
 	private String financialSummary;
 	private String mitigants;
-	
+
 	private String purpose;
-	private Date   interim;
+	private Date interim;
 	private String accountRelation;
 	private String antiMoneyLaunderClear;
 	private String limitAndAncillary;
@@ -113,23 +113,23 @@ public class Facility extends AbstractWorkflowEntity {
 	private boolean overriddeCirculation;
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
-	
+
 	private boolean newRecord = false;
 	private String lovValue;
 	private Facility befImage;
 	private LoggedInUser userDetails;
-	
+
 	private boolean abuser;
 	private boolean securityCollateral;
 	private BigDecimal amountBD = BigDecimal.ZERO;
 	private BigDecimal amountUSD = BigDecimal.ZERO;
-	private BigDecimal  maturity = BigDecimal.ZERO;
-	
-	private List<Collateral> collaterals=new ArrayList<Collateral>();
-	private List<FacilityDetail> facilityDetails=new ArrayList<FacilityDetail>();
-	private List<CustomerRating> customerRatings=new ArrayList<CustomerRating>();
+	private BigDecimal maturity = BigDecimal.ZERO;
+
+	private List<Collateral> collaterals = new ArrayList<Collateral>();
+	private List<FacilityDetail> facilityDetails = new ArrayList<FacilityDetail>();
+	private List<CustomerRating> customerRatings = new ArrayList<CustomerRating>();
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-	
+
 	private List<FacilityReferenceDetail> checkList = new ArrayList<FacilityReferenceDetail>();
 	private List<FacilityReferenceDetail> aggrementList = new ArrayList<FacilityReferenceDetail>();
 	private List<FacilityReferenceDetail> scoringGroupList = new ArrayList<FacilityReferenceDetail>();
@@ -147,17 +147,16 @@ public class Facility extends AbstractWorkflowEntity {
 	private HashMap<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
 	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<FinanceScoreHeader>();
 	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
-	
+
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
 
 	public Facility(String cAFReference) {
 		super();
-		this.cAFReference=cAFReference;
+		this.cAFReference = cAFReference;
 	}
 
 	public Facility() {
@@ -174,28 +173,28 @@ public class Facility extends AbstractWorkflowEntity {
 		excludeFields.add("custGrpCodeName");
 		excludeFields.add("sICCodeName");
 		excludeFields.add("customerRiskTypeName");
-		
+
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
 		excludeFields.add("custCtgCode");
 		excludeFields.add("custCoreBank");
 		excludeFields.add("custDOB");
 		excludeFields.add("custTypeDesc");
-		
+
 		excludeFields.add("userRole");
-		
+
 		excludeFields.add("aggrementList");
 		excludeFields.add("checkList");
 		excludeFields.add("scoringGroupList");
 		excludeFields.add("corpScoringGroupList");
 		excludeFields.add("documentDetailsList");
-		
+
 		excludeFields.add("customerEligibilityCheck");
 		excludeFields.add("customerScoringCheck");
-		
+
 		excludeFields.add("finRefDetailsList");
 		excludeFields.add("financeCheckList");
-		
+
 		excludeFields.add("sufficientScore");
 		excludeFields.add("finScoringMetricList");
 		excludeFields.add("nonFinScoringMetricList");
@@ -237,12 +236,12 @@ public class Facility extends AbstractWorkflowEntity {
 	}
 
 	public String getFacilityType() {
-    	return facilityType;
-    }
+		return facilityType;
+	}
 
 	public void setFacilityType(String facilityType) {
-    	this.facilityType = facilityType;
-    }
+		this.facilityType = facilityType;
+	}
 
 	public long getCustID() {
 		return custID;
@@ -251,55 +250,54 @@ public class Facility extends AbstractWorkflowEntity {
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
+
 	public String getCustCIF() {
-    	return custCIF;
-    }
+		return custCIF;
+	}
 
 	public void setCustCIF(String custCif) {
-    	this.custCIF = custCif;
-    }
+		this.custCIF = custCif;
+	}
 
 	public String getCustShrtName() {
-    	return custShrtName;
-    }
+		return custShrtName;
+	}
 
 	public void setCustShrtName(String custShrtName) {
-    	this.custShrtName = custShrtName;
-    }
-	
+		this.custShrtName = custShrtName;
+	}
 
 	public String getCustCtgCode() {
-    	return custCtgCode;
-    }
+		return custCtgCode;
+	}
 
 	public void setCustCtgCode(String custCtgCode) {
-    	this.custCtgCode = custCtgCode;
-    }
-	
+		this.custCtgCode = custCtgCode;
+	}
+
 	public String getCustCoreBank() {
-    	return custCoreBank;
-    }
+		return custCoreBank;
+	}
 
 	public void setCustCoreBank(String custCoreBank) {
-    	this.custCoreBank = custCoreBank;
-    }
+		this.custCoreBank = custCoreBank;
+	}
 
 	public Date getCustDOB() {
-    	return custDOB;
-    }
+		return custDOB;
+	}
 
 	public void setCustDOB(Date custDOB) {
-    	this.custDOB = custDOB;
-    }
+		this.custDOB = custDOB;
+	}
 
 	public String getCustTypeDesc() {
-    	return custTypeDesc;
-    }
+		return custTypeDesc;
+	}
 
 	public void setCustTypeDesc(String custTypeDesc) {
-    	this.custTypeDesc = custTypeDesc;
-    }
+		this.custTypeDesc = custTypeDesc;
+	}
 
 	public Date getStartDate() {
 		return startDate;
@@ -438,12 +436,12 @@ public class Facility extends AbstractWorkflowEntity {
 	}
 
 	public String getCustRelation() {
-    	return custRelation;
-    }
+		return custRelation;
+	}
 
 	public void setCustRelation(String custRelation) {
-    	this.custRelation = custRelation;
-    }
+		this.custRelation = custRelation;
+	}
 
 	public Date getNextReviewDate() {
 		return nextReviewDate;
@@ -486,104 +484,100 @@ public class Facility extends AbstractWorkflowEntity {
 	}
 
 	public List<FacilityReferenceDetail> getCheckList() {
-    	return checkList;
-    }
+		return checkList;
+	}
 
 	public void setCheckList(List<FacilityReferenceDetail> checkList) {
-    	this.checkList = checkList;
-    }
+		this.checkList = checkList;
+	}
 
 	public List<FacilityReferenceDetail> getAggrementList() {
-    	return aggrementList;
-    }
+		return aggrementList;
+	}
 
 	public void setAggrementList(List<FacilityReferenceDetail> aggrementList) {
-    	this.aggrementList = aggrementList;
-    }
+		this.aggrementList = aggrementList;
+	}
 
 	public List<FacilityReferenceDetail> getScoringGroupList() {
-    	return scoringGroupList;
-    }
+		return scoringGroupList;
+	}
 
 	public void setScoringGroupList(List<FacilityReferenceDetail> scoringGroupList) {
-    	this.scoringGroupList = scoringGroupList;
-    }
+		this.scoringGroupList = scoringGroupList;
+	}
 
 	public List<FacilityReferenceDetail> getCorpScoringGroupList() {
-    	return corpScoringGroupList;
-    }
+		return corpScoringGroupList;
+	}
 
 	public void setCorpScoringGroupList(List<FacilityReferenceDetail> corpScoringGroupList) {
-    	this.corpScoringGroupList = corpScoringGroupList;
-    }
+		this.corpScoringGroupList = corpScoringGroupList;
+	}
 
 	public List<DocumentDetails> getDocumentDetailsList() {
-    	return documentDetailsList;
-    }
+		return documentDetailsList;
+	}
 
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
-    	this.documentDetailsList = documentDetailsList;
-    }
+		this.documentDetailsList = documentDetailsList;
+	}
 
 	public CustomerEligibilityCheck getCustomerEligibilityCheck() {
-    	return customerEligibilityCheck;
-    }
+		return customerEligibilityCheck;
+	}
 
 	public void setCustomerEligibilityCheck(CustomerEligibilityCheck customerEligibilityCheck) {
-    	this.customerEligibilityCheck = customerEligibilityCheck;
-    }
+		this.customerEligibilityCheck = customerEligibilityCheck;
+	}
 
 	public void setFinRefDetailsList(List<FacilityReferenceDetail> finRefDetailsList) {
-	    this.finRefDetailsList = finRefDetailsList;
-    }
+		this.finRefDetailsList = finRefDetailsList;
+	}
 
 	public List<FacilityReferenceDetail> getFinRefDetailsList() {
-	    return finRefDetailsList;
-    }
+		return finRefDetailsList;
+	}
 
 	public void setLovDescSelAnsCountMap(Map<Long, Long> lovDescSelAnsCountMap) {
-	    this.lovDescSelAnsCountMap = lovDescSelAnsCountMap;
-    }
+		this.lovDescSelAnsCountMap = lovDescSelAnsCountMap;
+	}
 
 	public Map<Long, Long> getLovDescSelAnsCountMap() {
-	    return lovDescSelAnsCountMap;
-    }
+		return lovDescSelAnsCountMap;
+	}
 
 	public void setFinanceCheckList(List<FinanceCheckListReference> financeCheckList) {
-	    this.financeCheckList = financeCheckList;
-    }
-	
+		this.financeCheckList = financeCheckList;
+	}
 
 	public List<FinanceCheckListReference> getFinanceCheckList() {
-	    return financeCheckList;
-    }
+		return financeCheckList;
+	}
 
 	public List<ScoringMetrics> getFinScoringMetricList() {
-    	return finScoringMetricList;
-    }
+		return finScoringMetricList;
+	}
 
 	public void setFinScoringMetricList(List<ScoringMetrics> finScoringMetricList) {
-    	this.finScoringMetricList = finScoringMetricList;
-    }
+		this.finScoringMetricList = finScoringMetricList;
+	}
 
-	
-	
 	public List<ScoringMetrics> getNonFinScoringMetricList() {
-    	return nonFinScoringMetricList;
-    }
+		return nonFinScoringMetricList;
+	}
 
 	public void setNonFinScoringMetricList(List<ScoringMetrics> nonFinScoringMetricList) {
-    	this.nonFinScoringMetricList = nonFinScoringMetricList;
-    }
+		this.nonFinScoringMetricList = nonFinScoringMetricList;
+	}
 
 	public void setFinScoreHeaderList(List<FinanceScoreHeader> finScoreHeaderList) {
-	    this.finScoreHeaderList = finScoreHeaderList;
-    }
-	
+		this.finScoreHeaderList = finScoreHeaderList;
+	}
 
 	public List<FinanceScoreHeader> getFinScoreHeaderList() {
-	    return finScoreHeaderList;
-    }
+		return finScoreHeaderList;
+	}
 
 	public void setScoringMetrics(Long id, List<ScoringMetrics> scoringMetrics) {
 		if (this.scoringMetrics == null) {
@@ -595,24 +589,26 @@ public class Facility extends AbstractWorkflowEntity {
 		}
 		this.scoringMetrics.put(id, scoringMetrics);
 	}
-	
+
 	public void setScoringMetrics(HashMap<Long, List<ScoringMetrics>> scoringMetrics) {
 		if (this.scoringMetrics == null) {
 			this.scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
-		} 
+		}
 		this.scoringMetrics = scoringMetrics;
 	}
 
 	public HashMap<Long, List<ScoringMetrics>> getScoringMetrics() {
-	    return scoringMetrics;
-    }
+		return scoringMetrics;
+	}
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-	    this.auditDetailMap = auditDetailMap;
-    }
+		this.auditDetailMap = auditDetailMap;
+	}
 
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-	    return auditDetailMap;
-    }
+		return auditDetailMap;
+	}
+
 	public void setScoringSlabs(Long id, List<ScoringSlab> scoringSlabs) {
 		if (this.scoringSlabs == null) {
 			this.scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
@@ -623,311 +619,311 @@ public class Facility extends AbstractWorkflowEntity {
 		}
 		this.scoringSlabs.put(id, scoringSlabs);
 	}
-	
+
 	public void setScoringSlabs(HashMap<Long, List<ScoringSlab>> scoringSlabs) {
 		if (this.scoringSlabs == null) {
 			this.scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
-		} 
+		}
 		this.scoringSlabs = scoringSlabs;
 	}
 
 	public HashMap<Long, List<ScoringSlab>> getScoringSlabs() {
-	    return scoringSlabs;
-    }
+		return scoringSlabs;
+	}
 
 	public void setScoreDetailListMap(HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
-	    this.scoreDetailListMap = scoreDetailListMap;
-    }
+		this.scoreDetailListMap = scoreDetailListMap;
+	}
 
 	public HashMap<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
-	    return scoreDetailListMap;
-    }
+		return scoreDetailListMap;
+	}
 
 	public void setSufficientScore(boolean sufficientScore) {
-	    this.sufficientScore = sufficientScore;
-    }
+		this.sufficientScore = sufficientScore;
+	}
 
 	public boolean isSufficientScore() {
-	    return sufficientScore;
-    }
+		return sufficientScore;
+	}
 
 	public void setUserRole(String userRole) {
-	    this.userRole = userRole;
-    }
+		this.userRole = userRole;
+	}
 
 	public String getUserRole() {
-	    return userRole;
-    }
+		return userRole;
+	}
 
 	public void setCollaterals(List<Collateral> collaterals) {
-	    this.collaterals = collaterals;
-    }
+		this.collaterals = collaterals;
+	}
 
 	public List<Collateral> getCollaterals() {
-	    return collaterals;
-    }
+		return collaterals;
+	}
 
 	public void setFacilityDetails(List<FacilityDetail> facilityDetails) {
-	    this.facilityDetails = facilityDetails;
-    }
+		this.facilityDetails = facilityDetails;
+	}
 
 	public List<FacilityDetail> getFacilityDetails() {
-	    return facilityDetails;
-    }
+		return facilityDetails;
+	}
 
 	public void setCustomerRatings(List<CustomerRating> customerRatings) {
-	    this.customerRatings = customerRatings;
-    }
+		this.customerRatings = customerRatings;
+	}
 
 	public List<CustomerRating> getCustomerRatings() {
-	    return customerRatings;
-    }
+		return customerRatings;
+	}
 
 	public void setAbuser(boolean abuser) {
-	    this.abuser = abuser;
-    }
+		this.abuser = abuser;
+	}
 
 	public boolean isAbuser() {
-	    return abuser;
-    }
+		return abuser;
+	}
 
 	public void setSecurityCollateral(boolean securityCollateral) {
-	    this.securityCollateral = securityCollateral;
-    }
+		this.securityCollateral = securityCollateral;
+	}
 
 	public boolean isSecurityCollateral() {
-	    return securityCollateral;
-    }
+		return securityCollateral;
+	}
 
 	public void setAmountBD(BigDecimal amountBD) {
-	    this.amountBD = amountBD;
-    }
+		this.amountBD = amountBD;
+	}
 
 	public BigDecimal getAmountBD() {
-	    return amountBD;
-    }
+		return amountBD;
+	}
 
 	public void setMaturity(BigDecimal maturity) {
-	    this.maturity = maturity;
-    }
+		this.maturity = maturity;
+	}
 
 	public BigDecimal getMaturity() {
-	    return maturity;
-    }
+		return maturity;
+	}
 
 	public void setAmountUSD(BigDecimal amountUSD) {
-	    this.amountUSD = amountUSD;
-    }
+		this.amountUSD = amountUSD;
+	}
 
 	public BigDecimal getAmountUSD() {
-	    return amountUSD;
-    }
+		return amountUSD;
+	}
 
 	public void setSICCodeName(String sICCodeName) {
-	    this.sICCodeName = sICCodeName;
-    }
+		this.sICCodeName = sICCodeName;
+	}
 
 	public String getSICCodeName() {
-	    return sICCodeName;
-    }
+		return sICCodeName;
+	}
 
 	public void setCustomerRiskTypeName(String customerRiskTypeName) {
-	    this.customerRiskTypeName = customerRiskTypeName;
-    }
+		this.customerRiskTypeName = customerRiskTypeName;
+	}
 
 	public String getCustomerRiskTypeName() {
-	    return customerRiskTypeName;
-    }
+		return customerRiskTypeName;
+	}
 
 	public void setCustGrpCodeName(String custGrpCodeName) {
-	    this.custGrpCodeName = custGrpCodeName;
-    }
+		this.custGrpCodeName = custGrpCodeName;
+	}
 
 	public String getCustGrpCodeName() {
-	    return custGrpCodeName;
-    }
+		return custGrpCodeName;
+	}
 
 	public String getReviewCenter() {
-    	return reviewCenter;
-    }
+		return reviewCenter;
+	}
 
 	public void setReviewCenter(String reviewCenter) {
-    	this.reviewCenter = reviewCenter;
-    }
+		this.reviewCenter = reviewCenter;
+	}
 
 	public String getCountryLimitAdeq() {
-    	return countryLimitAdeq;
-    }
+		return countryLimitAdeq;
+	}
 
 	public void setCountryLimitAdeq(String countryLimitAdeq) {
-    	this.countryLimitAdeq = countryLimitAdeq;
-    }
+		this.countryLimitAdeq = countryLimitAdeq;
+	}
 
 	public String getLevelOfApproval() {
-    	return levelOfApproval;
-    }
+		return levelOfApproval;
+	}
 
 	public void setLevelOfApproval(String levelOfAoorival) {
-    	this.levelOfApproval = levelOfAoorival;
-    }
+		this.levelOfApproval = levelOfAoorival;
+	}
 
 	public BigDecimal getCountryExposure() {
-    	return countryExposure;
-    }
+		return countryExposure;
+	}
 
 	public void setCountryExposure(BigDecimal countryExposure) {
-    	this.countryExposure = countryExposure;
-    }
+		this.countryExposure = countryExposure;
+	}
 
 	public BigDecimal getCountryLimit() {
-    	return countryLimit;
-    }
+		return countryLimit;
+	}
 
 	public void setCountryLimit(BigDecimal countryLimit) {
-    	this.countryLimit = countryLimit;
-    }
+		this.countryLimit = countryLimit;
+	}
 
 	public String getCustomerBackGround() {
-	    return customerBackGround;
-    }
+		return customerBackGround;
+	}
 
 	public void setCustomerBackGround(String customerBackGround) {
-	    this.customerBackGround = customerBackGround;
-    }
+		this.customerBackGround = customerBackGround;
+	}
 
 	public String getStrength() {
-	    return strength;
-    }
+		return strength;
+	}
 
 	public void setStrength(String strength) {
-	    this.strength = strength;
-    }
+		this.strength = strength;
+	}
 
 	public String getWeaknesses() {
-	    return weaknesses;
-    }
+		return weaknesses;
+	}
 
 	public void setWeaknesses(String weaknesses) {
-	    this.weaknesses = weaknesses;
-    }
+		this.weaknesses = weaknesses;
+	}
 
 	public String getSourceOfRepayment() {
-	    return sourceOfRepayment;
-    }
+		return sourceOfRepayment;
+	}
 
 	public void setSourceOfRepayment(String sourceOfRepayment) {
-	    this.sourceOfRepayment = sourceOfRepayment;
-    }
+		this.sourceOfRepayment = sourceOfRepayment;
+	}
 
 	public String getAdequacyOfCashFlows() {
-	    return adequacyOfCashFlows;
-    }
+		return adequacyOfCashFlows;
+	}
 
 	public void setAdequacyOfCashFlows(String adequacyOfCashFlows) {
-	    this.adequacyOfCashFlows = adequacyOfCashFlows;
-    }
+		this.adequacyOfCashFlows = adequacyOfCashFlows;
+	}
 
 	public String getTypesOfSecurities() {
-	    return typesOfSecurities;
-    }
+		return typesOfSecurities;
+	}
 
 	public void setTypesOfSecurities(String typesOfSecurities) {
-	    this.typesOfSecurities = typesOfSecurities;
-    }
+		this.typesOfSecurities = typesOfSecurities;
+	}
 
 	public String getGuaranteeDescription() {
-	    return guaranteeDescription;
-    }
+		return guaranteeDescription;
+	}
 
 	public void setGuaranteeDescription(String guaranteeDescription) {
-	    this.guaranteeDescription = guaranteeDescription;
-    }
+		this.guaranteeDescription = guaranteeDescription;
+	}
 
 	public String getFinancialSummary() {
-	    return financialSummary;
-    }
+		return financialSummary;
+	}
 
 	public void setFinancialSummary(String financialSummary) {
-	    this.financialSummary = financialSummary;
-    }
+		this.financialSummary = financialSummary;
+	}
 
 	public String getMitigants() {
-	    return mitigants;
-    }
+		return mitigants;
+	}
 
 	public void setMitigants(String mitigants) {
-	    this.mitigants = mitigants;
-    }
+		this.mitigants = mitigants;
+	}
 
 	public void setPurpose(String purpose) {
-	    this.purpose = purpose;
-    }
+		this.purpose = purpose;
+	}
 
 	public String getPurpose() {
-	    return purpose;
-    }
+		return purpose;
+	}
 
 	public void setInterim(Date interim) {
-	    this.interim = interim;
-    }
+		this.interim = interim;
+	}
 
 	public Date getInterim() {
-	    return interim;
-    }
+		return interim;
+	}
 
 	public void setAccountRelation(String accountRelation) {
-	    this.accountRelation = accountRelation;
-    }
+		this.accountRelation = accountRelation;
+	}
 
 	public String getAccountRelation() {
-	    return accountRelation;
-    }
+		return accountRelation;
+	}
 
 	public void setAntiMoneyLaunderClear(String antiMoneyLaunderClear) {
-	    this.antiMoneyLaunderClear = antiMoneyLaunderClear;
-    }
+		this.antiMoneyLaunderClear = antiMoneyLaunderClear;
+	}
 
 	public String getAntiMoneyLaunderClear() {
-	    return antiMoneyLaunderClear;
-    }
+		return antiMoneyLaunderClear;
+	}
 
 	public void setLimitAndAncillary(String limitAndAncillary) {
-	    this.limitAndAncillary = limitAndAncillary;
-    }
+		this.limitAndAncillary = limitAndAncillary;
+	}
 
 	public String getLimitAndAncillary() {
-	    return limitAndAncillary;
-    }
+		return limitAndAncillary;
+	}
 
 	public void setAntiMoneyLaunderSection(String antiMoneyLaunderSection) {
-	    this.antiMoneyLaunderSection = antiMoneyLaunderSection;
-    }
+		this.antiMoneyLaunderSection = antiMoneyLaunderSection;
+	}
 
 	public String getAntiMoneyLaunderSection() {
-	    return antiMoneyLaunderSection;
-    }
+		return antiMoneyLaunderSection;
+	}
 
 	public void setOverriddeCirculation(boolean overriddeCirculation) {
-	    this.overriddeCirculation = overriddeCirculation;
-    }
+		this.overriddeCirculation = overriddeCirculation;
+	}
 
 	public boolean isOverriddeCirculation() {
-	    return overriddeCirculation;
-    }
+		return overriddeCirculation;
+	}
 
 	public void setDedupFound(boolean dedupFound) {
-	    this.dedupFound = dedupFound;
-    }
+		this.dedupFound = dedupFound;
+	}
 
 	public boolean isDedupFound() {
-	    return dedupFound;
-    }
+		return dedupFound;
+	}
 
 	public void setSkipDedup(boolean skipDedup) {
-	    this.skipDedup = skipDedup;
-    }
+		this.skipDedup = skipDedup;
+	}
 
 	public boolean isSkipDedup() {
-	    return skipDedup;
-    }	
+		return skipDedup;
+	}
 }
