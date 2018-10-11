@@ -58,9 +58,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class FinanceReferenceDetail extends AbstractWorkflowEntity implements Entity {
-
 	private static final long serialVersionUID = 6569842731762889262L;
-	
+
 	private long finRefDetailId = Long.MIN_VALUE;
 	private String finType;
 	private String finEvent;
@@ -80,8 +79,8 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private boolean lovDescIsRemarksAllowed;
 	private long lovDescCheckMinCount;
 	private long lovDescCheckMaxCount;
-	
-	private String lovDescStgRuleValue;	////////////////////Stage Accounting with Stage Accounting Rules change///////////
+
+	private String lovDescStgRuleValue; ////////////////////Stage Accounting with Stage Accounting Rules change///////////
 	private String lovDescElgRuleValue;
 	private String lovDescAggReportName;
 	private String lovDescAggReportPath;
@@ -98,7 +97,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private List<CheckListDetail> lovDesccheckListDetail;
 	private String lovDescElgCalVal;
 	private BigDecimal lovDescRuleResult;
-	
+
 	private String lovDescFinCcyCode;
 	private String lovDescProductCodeName;
 	private String lovDescRuleReturnType;
@@ -111,7 +110,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private boolean allowMultiple;
 	private String moduleType;
 	private boolean resendReq;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -124,9 +123,9 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("aggType");
 		excludeFields.add("allowMultiple");
 		excludeFields.add("moduleType");
@@ -134,16 +133,13 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		return excludeFields;
 	}
 
-
 	//Getter and Setter methods
-
 
 	// Getter and Setter methods
 
 	public long getId() {
 		return finRefDetailId;
 	}
-
 
 	public void setId(long id) {
 		this.finRefDetailId = id;
@@ -156,7 +152,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public void setFinRefDetailId(long finRefDetailId) {
 		this.finRefDetailId = finRefDetailId;
 
-	}		
+	}
 
 	public String getFinType() {
 		return finType;
@@ -165,7 +161,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public void setFinType(String finType) {
 		this.finType = finType;
 
-	}		
+	}
 
 	public boolean isOverRide() {
 		return overRide;
@@ -190,9 +186,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public void setFinRefType(int finRefType) {
 		this.finRefType = finRefType;
 
-	}		
-
-
+	}
 
 	public long getFinRefId() {
 		return finRefId;
@@ -262,7 +256,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		return this.befImage;
 	}
 
-
 	public void setBefImage(FinanceReferenceDetail beforeImage) {
 		this.befImage = beforeImage;
 
@@ -284,7 +277,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		this.lovDescRefDesc = lovDescRefDesc;
 	}
 
-
 	public String getLovDescCodelov() {
 		return lovDescCodelov;
 	}
@@ -300,14 +292,14 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public void setLovDescNamelov(String lovDescNamelov) {
 		this.lovDescNamelov = lovDescNamelov;
 	}
-	
+
 	public String getLovDescAggImage() {
-    	return lovDescAggImage;
-    }
+		return lovDescAggImage;
+	}
 
 	public void setLovDescAggImage(String lovDescAggImage) {
-    	this.lovDescAggImage = lovDescAggImage;
-    }
+		this.lovDescAggImage = lovDescAggImage;
+	}
 
 	public String getLovDescElgRuleValue() {
 		return lovDescElgRuleValue;
@@ -333,7 +325,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 		return lovDescAggReportPath;
 	}
 
-
 	public void setLovDesccheckListDetail(List<CheckListDetail> lovDesccheckListDetail) {
 		this.lovDesccheckListDetail = lovDesccheckListDetail;
 	}
@@ -341,6 +332,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public List<CheckListDetail> getLovDesccheckListDetail() {
 		return lovDesccheckListDetail;
 	}
+
 	public boolean getLovDescIsRemarksAllowed() {
 		return lovDescIsRemarksAllowed;
 	}
@@ -364,8 +356,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public void setLovDescCheckMaxCount(long lovDescCheckMaxCount) {
 		this.lovDescCheckMaxCount = lovDescCheckMaxCount;
 	}
-
-
 
 	public int getLovDescminScore() {
 		return lovDescminScore;
@@ -408,48 +398,49 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	}
 
 	public void setLovDescFinCcyCode(String lovDescFinCcyCode) {
-	    this.lovDescFinCcyCode = lovDescFinCcyCode;
-    }
+		this.lovDescFinCcyCode = lovDescFinCcyCode;
+	}
 
 	public String getLovDescFinCcyCode() {
-	    return lovDescFinCcyCode;
-    }
+		return lovDescFinCcyCode;
+	}
 
 	public void setLovDescProductCodeName(String lovDescProductCodeName) {
-	    this.lovDescProductCodeName = lovDescProductCodeName;
-    }
+		this.lovDescProductCodeName = lovDescProductCodeName;
+	}
 
 	public String getLovDescProductCodeName() {
-	    return lovDescProductCodeName;
-    }
+		return lovDescProductCodeName;
+	}
 
 	public void setLovDescRuleReturnType(String lovDescRuleReturnType) {
-	    this.lovDescRuleReturnType = lovDescRuleReturnType;
-    }
+		this.lovDescRuleReturnType = lovDescRuleReturnType;
+	}
 
 	public String getLovDescRuleReturnType() {
-	    return lovDescRuleReturnType;
-    }
+		return lovDescRuleReturnType;
+	}
 
 	public void setLovDescFinTypeDescName(String lovDescFinTypeDescName) {
-	    this.lovDescFinTypeDescName = lovDescFinTypeDescName;
-    }
+		this.lovDescFinTypeDescName = lovDescFinTypeDescName;
+	}
 
 	public String getLovDescFinTypeDescName() {
-	    return lovDescFinTypeDescName;
-    }
+		return lovDescFinTypeDescName;
+	}
 
 	public String getLovDescAggRuleName() {
-	    return lovDescAggRuleName;
-    }
+		return lovDescAggRuleName;
+	}
 
 	public void setLovDescAggRuleName(String lovDescAggRuleName) {
-	    this.lovDescAggRuleName = lovDescAggRuleName;
-    }
+		this.lovDescAggRuleName = lovDescAggRuleName;
+	}
 
 	public boolean isAllowDeviation() {
 		return allowDeviation;
 	}
+
 	public void setAllowDeviation(boolean allowDeviation) {
 		this.allowDeviation = allowDeviation;
 	}
@@ -457,6 +448,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public boolean isAllowWaiver() {
 		return allowWaiver;
 	}
+
 	public void setAllowWaiver(boolean allowWaiver) {
 		this.allowWaiver = allowWaiver;
 	}
@@ -464,6 +456,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public boolean isAllowPostpone() {
 		return allowPostpone;
 	}
+
 	public void setAllowPostpone(boolean allowPostpone) {
 		this.allowPostpone = allowPostpone;
 	}
@@ -471,27 +464,31 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public boolean isAllowExpire() {
 		return allowExpire;
 	}
+
 	public void setAllowExpire(boolean allowExpire) {
 		this.allowExpire = allowExpire;
 	}
 
 	public String getAggType() {
-	    return aggType;
-    }
+		return aggType;
+	}
+
 	public void setAggType(String aggType) {
-	    this.aggType = aggType;
-    }
+		this.aggType = aggType;
+	}
 
 	public String getFinEvent() {
-	    return finEvent;
-    }
+		return finEvent;
+	}
+
 	public void setFinEvent(String finEvent) {
-	    this.finEvent = finEvent;
-    }
+		this.finEvent = finEvent;
+	}
 
 	public String getAlertType() {
 		return alertType;
 	}
+
 	public void setAlertType(String alertType) {
 		this.alertType = alertType;
 	}
@@ -527,7 +524,5 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	public void setResendReq(boolean resendReq) {
 		this.resendReq = resendReq;
 	}
-
-	
 
 }
