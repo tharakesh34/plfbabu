@@ -82,38 +82,38 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinAdvancePaymentsList.zul file.
  */
 public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> {
-	private static final long			serialVersionUID				= 4157448822555239535L;
-	private static final Logger			logger							= Logger.getLogger(FinAdvancePaymentsListCtrl.class);
+	private static final long serialVersionUID = 4157448822555239535L;
+	private static final Logger logger = Logger.getLogger(FinAdvancePaymentsListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_FinAdvancePaymentsList;
+	protected Window window_FinAdvancePaymentsList;
 
-	protected Button					btnNew_NewFinAdvancePayments;
-	protected Label						label_AdvancePayments_Title;
+	protected Button btnNew_NewFinAdvancePayments;
+	protected Label label_AdvancePayments_Title;
 
-	protected Listbox					listBoxAdvancePayments;
+	protected Listbox listBoxAdvancePayments;
 
 	// For Dynamically calling of this Controller
-	private FinanceDetail				financedetail;
-	private Object						financeMainDialogCtrl;
-	private Component					parent							= null;
-	private Tab							parentTab						= null;
-	private transient boolean			recSave							= false;
-	private String						roleCode						= "";
-	private boolean						isEnquiry						= false;
-	private transient boolean			newFinance;
-	protected Groupbox					finBasicdetails;
-	private FinBasicDetailsCtrl			finBasicDetailsCtrl;
-	private String						ModuleType_Loan					= "LOAN";
-	private List<FinAdvancePayments>	finAdvancePaymentsList	= new ArrayList<FinAdvancePayments>();
-	private DisbursementInstCtrl		disbursementInstCtrl;
-	private List<FinanceDisbursement>	financeDisbursement;
-	private List<FinanceDisbursement>	approvedDisbursments;
+	private FinanceDetail financedetail;
+	private Object financeMainDialogCtrl;
+	private Component parent = null;
+	private Tab parentTab = null;
+	private transient boolean recSave = false;
+	private String roleCode = "";
+	private boolean isEnquiry = false;
+	private transient boolean newFinance;
+	protected Groupbox finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private String ModuleType_Loan = "LOAN";
+	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<FinAdvancePayments>();
+	private DisbursementInstCtrl disbursementInstCtrl;
+	private List<FinanceDisbursement> financeDisbursement;
+	private List<FinanceDisbursement> approvedDisbursments;
 	String moduleDefiner = "";
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -166,15 +166,14 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			if (arguments.containsKey("isEnquiry")) {
 				isEnquiry = (Boolean) arguments.get("isEnquiry");
 			}
-			
+
 			if (arguments.containsKey("approvedDisbursments")) {
-				approvedDisbursments =  (List<FinanceDisbursement>) arguments.get("approvedDisbursments");
+				approvedDisbursments = (List<FinanceDisbursement>) arguments.get("approvedDisbursments");
 			}
-			
+
 			if (arguments.containsKey("moduleDefiner")) {
 				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
-
 
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
@@ -232,9 +231,9 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinAdvancePaymentsList", roleCode);
-		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)){			
-			this.btnNew_NewFinAdvancePayments.setVisible(getUserWorkspace().isAllowed(
-					"FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
+		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+			this.btnNew_NewFinAdvancePayments
+					.setVisible(getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
 		}
 		logger.debug("leaving");
 	}
@@ -270,12 +269,13 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			doCheckEnquiry();
 			FinanceMain finMain = getFinancedetail().getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinancedetail().getFinScheduleData().getFinanceType();
-			disbursementInstCtrl.init(this.listBoxAdvancePayments,
-					finMain.getFinCcy(), financeType.isAlwMultiPartyDisb(), roleCode);
-			disbursementInstCtrl.setFinanceDisbursement(getFinancedetail().getFinScheduleData().getDisbursementDetails());
+			disbursementInstCtrl.init(this.listBoxAdvancePayments, finMain.getFinCcy(),
+					financeType.isAlwMultiPartyDisb(), roleCode);
+			disbursementInstCtrl
+					.setFinanceDisbursement(getFinancedetail().getFinScheduleData().getDisbursementDetails());
 			disbursementInstCtrl.setFinanceMain(finMain);
 			disbursementInstCtrl.setApprovedDisbursments(approvedDisbursments);
-			
+
 			doWriteBeanToComponents();
 
 			this.listBoxAdvancePayments.setHeight(borderLayoutHeight - 226 + "px");
@@ -310,11 +310,11 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		}
 	}
 
-	public boolean  onAdvancePaymentValidation(Map<String, Object> map) throws InterruptedException {
+	public boolean onAdvancePaymentValidation(Map<String, Object> map) throws InterruptedException {
 		logger.debug("Entering");
 
-		boolean proceed=true;
-		boolean isFinalStage=false;
+		boolean proceed = true;
+		boolean isFinalStage = false;
 		String userAction = "";
 		FinanceDetail finDetail = null;
 
@@ -325,11 +325,11 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		if (map.containsKey("financeDetail")) {
 			finDetail = (FinanceDetail) map.get("financeDetail");
 		}
-		
+
 		if (map.containsKey("isFinalStage")) {
 			isFinalStage = (boolean) map.get("isFinalStage");
 		}
-		
+
 		if (map.containsKey("moduleDefiner")) {
 			moduleDefiner = (String) map.get("moduleDefiner");
 		}
@@ -354,18 +354,20 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 					disbursementInstCtrl.setFinanceDisbursement(schdData.getDisbursementDetails());
 					disbursementInstCtrl.setFinanceMain(main);
 					disbursementInstCtrl.markCancelIfNoDisbursmnetFound(getFinAdvancePaymentsList());
-					boolean validate = getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
-					
+					boolean validate = getUserWorkspace()
+							.isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
+
 					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
-						validate=false;
+						validate = false;
 					}
-					
-					List<ErrorDetail> valid = disbursementInstCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
+
+					List<ErrorDetail> valid = disbursementInstCtrl
+							.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
 
 					valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 
 					if (valid != null && !valid.isEmpty()) {
-						proceed=false;
+						proceed = false;
 						if (parentTab != null) {
 							parentTab.setSelected(true);
 						}
@@ -468,7 +470,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		}
 
 	}
-	
+
 	private DocumentDetails getDisbursmentDoc() throws Exception {
 		logger.debug("Entering");
 
@@ -531,7 +533,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
-	
+
 	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
 		this.disbursementInstCtrl = disbursementInstCtrl;
 	}
