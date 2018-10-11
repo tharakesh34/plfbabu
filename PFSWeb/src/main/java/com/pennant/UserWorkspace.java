@@ -94,17 +94,18 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	private List<SecurityUserDivBranch> divisionBranches;
 	private List<SecurityRole> securityRoles;
 	private HashMap<String, Collection<SecurityRight>> rightsMap = new HashMap<>();
-	
+
 	@Autowired
 	private transient UserService userService;
-	
+
 	/**
 	 * Default Constructor
 	 */
 	@SuppressWarnings("deprecation")
 	public UserWorkspace() {
-		super(AuthenticationManager.getLoggedInUser().getUserId(), AuthenticationManager.getLoggedInUser().getLanguage());
-		
+		super(AuthenticationManager.getLoggedInUser().getUserId(),
+				AuthenticationManager.getLoggedInUser().getLanguage());
+
 		loggedInUser = AuthenticationManager.getLoggedInUser();
 		grantedAuthorities = AuthenticationManager.getGrantedAuthorities();
 		securityRoles = AuthenticationManager.getSecurityRoles();
@@ -168,7 +169,7 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 
 	public boolean isReadOnly(String rightName) {
 		return !isAllowed(rightName);
-		
+
 	}
 
 	/**
@@ -220,21 +221,21 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 		}
 	}
 
-	private Collection<SecurityRight> getSecurityRights(String page, String roleCode, String menuRightName){
-		StringBuffer rightKey= new StringBuffer();
+	private Collection<SecurityRight> getSecurityRights(String page, String roleCode, String menuRightName) {
+		StringBuffer rightKey = new StringBuffer();
 		rightKey.append(page);
-		
+
 		if (StringUtils.isNotBlank(roleCode)) {
 			rightKey.append("@");
 			rightKey.append(roleCode);
 		}
-		
+
 		if (StringUtils.isNotBlank(menuRightName)) {
 			rightKey.append("@");
 			rightKey.append(menuRightName);
 		}
-		
-		if(!rightsMap.containsKey(rightKey.toString())){
+
+		if (!rightsMap.containsKey(rightKey.toString())) {
 			SecurityRight secRight = new SecurityRight();
 			secRight.setLoginAppId(App.ID);
 			secRight.setLoginAppCode(App.CODE);
@@ -242,15 +243,14 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 			secRight.setRoleCd(roleCode);
 			secRight.setPage(page);
 			secRight.setMenuRight(menuRightName);
-			Collection<SecurityRight> rights  = userService.getPageRights(secRight);
+			Collection<SecurityRight> rights = userService.getPageRights(secRight);
 			rightsMap.put(rightKey.toString(), rights);
 			return rights;
 		}
-		
+
 		return rightsMap.get(rightKey.toString());
 	}
-	
-	
+
 	public void deAllocateAuthorities(String page) {
 		Set<String> tempAuthoritySet = new HashSet<String>();
 		Object[] object = grantedAuthoritySet.toArray();
@@ -263,17 +263,13 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	}
 
 	public void allocateRoleAuthorities(String roleCode, String page) {
-		allocateAuthorities(page, roleCode,null);
+		allocateAuthorities(page, roleCode, null);
 	}
 
 	public void allocateMenuRoleAuthorities(String roleCode, String page, String menuRightName) {
-		allocateAuthorities(page, roleCode,menuRightName);
+		allocateAuthorities(page, roleCode, menuRightName);
 	}
 
-	
-	
-
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -299,15 +295,15 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 
 	public ArrayList<String> getUserRoles() {
 		ArrayList<String> arrayRoleCode = null;
-			arrayRoleCode = new ArrayList<String>();
-			Object[] object = this.userRoleSet.toArray();
+		arrayRoleCode = new ArrayList<String>();
+		Object[] object = this.userRoleSet.toArray();
 
-			for (int i = 0; i < object.length; i++) {
-				arrayRoleCode.add(object[i].toString());
-			}
+		for (int i = 0; i < object.length; i++) {
+			arrayRoleCode.add(object[i].toString());
+		}
 		return arrayRoleCode;
 	}
-	
+
 	public Set<String> getUserRoleSet() {
 		return userRoleSet;
 	}
