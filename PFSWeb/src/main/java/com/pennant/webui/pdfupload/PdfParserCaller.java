@@ -1,4 +1,4 @@
- package com.pennant.webui.pdfupload;
+package com.pennant.webui.pdfupload;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +33,14 @@ public class PdfParserCaller {
 		return allHashParseResult;
 	}
 
-	public Map<String, Object> parsePdf(CustomerDocument customerDocument){
+	public Map<String, Object> parsePdf(CustomerDocument customerDocument) {
 		logger.debug("Entering");
 		Map<String, Object> parserResult = new HashMap<>(1);
 		// this is a pdf file
 		if (!customerDocument.isDocIsPdfExtRequired()) {
 			return parserResult;
 		}
-		
+
 		if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
 			customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
 		}
@@ -49,7 +49,7 @@ public class PdfParserCaller {
 			logger.warn("file byte array is empty");
 			return parserResult;
 		}
-		
+
 		parserResult = documentParser.getValueByTypeNYear(customerDocument.getCustDocImage(),
 				customerDocument.getCustDocName(), customerDocument.getPdfPassWord(),
 				customerDocument.getPdfMappingRef(), customerDocument.getYear());
@@ -59,4 +59,3 @@ public class PdfParserCaller {
 	}
 
 }
-

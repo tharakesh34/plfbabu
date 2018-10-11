@@ -55,9 +55,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final Logger logger = Logger.getLogger(CustomerDedupDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerDedupDialog;
 	protected Grid searchGrid;
@@ -93,10 +92,9 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected CoreCustomerSelectCtrl coreCustomerSelectCtrl;
 
 	protected CustomerListCtrl customerListCtrl;
-	
-	@Autowired(required = false)	
-	private CustomerInterfaceService			customerExternalInterfaceService;
 
+	@Autowired(required = false)
+	private CustomerInterfaceService customerExternalInterfaceService;
 
 	private String custCIF = "";
 	private String custCtgCode = "";
@@ -116,9 +114,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -141,16 +138,14 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (arguments.containsKey("parentWindow")) {
 			parentWindow = (Window) arguments.get("parentWindow");
 		}
-		
-		
+
 		if (arguments.containsKey("isFromCustomer")) {
 			isFromCustomer = true;
 		}
-		
+
 		if (arguments.containsKey("isFromLoan")) {
 			isFromLoan = true;
 		}
-
 
 		if (arguments.containsKey("SelectFinanceTypeDialogCtrl")) {
 			selectFinanceTypeDialogCtrl = (SelectFinanceTypeDialogCtrl) arguments.get("SelectFinanceTypeDialogCtrl");
@@ -159,7 +154,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setSelectFinanceTypeDialogCtrl(null);
 
 		}
-		
+
 		if (arguments.containsKey("CoreCustomerSelectCtrl")) {
 			coreCustomerSelectCtrl = (CoreCustomerSelectCtrl) arguments.get("CoreCustomerSelectCtrl");
 			setCoreCustomerSelectCtrl((this.coreCustomerSelectCtrl));
@@ -167,8 +162,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setCoreCustomerSelectCtrl(null);
 
 		}
-		
-		
+
 		if (arguments.containsKey("CustomerListCtrl")) {
 			customerListCtrl = (CustomerListCtrl) arguments.get("CustomerListCtrl");
 			setCustomerListCtrl(this.customerListCtrl);
@@ -176,7 +170,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setCustomerListCtrl(null);
 
 		}
-		
+
 		this.btnNewCustomer.setLabel("PROCEED AS NEW CUSTOMER");
 		this.btnExistingCustomer.setLabel("PROCEED AS EXISTING CUSTOMER");
 		int dialogHeight = searchGrid.getRows().getVisibleItemCount() * 20 + 200;
@@ -211,8 +205,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	/**
-	 * Filling the CustomerDedup details based on checked and unchecked events
-	 * of listCellCheckBox.
+	 * Filling the CustomerDedup details based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onCheck_listCellRadioBtn(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -231,7 +224,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				radio.setChecked(false);
 			}
 		}
-		if (StringUtils.isNotBlank(checkBox.getValue()))  {
+		if (StringUtils.isNotBlank(checkBox.getValue())) {
 			String[] array = checkBox.getValue().toString().split(",");
 			custCIF = array[0];
 			custCtgCode = array[1];
@@ -244,14 +237,14 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		this.custName.setValue(customerDetails.getCustomer().getCustShrtName());
 		this.mobileNo.setValue(customerDetails.getCustomer().getPhoneNumber());
-		
+
 		if (StringUtils.trimToEmpty(customerDetails.getCustomer().getCustCRCPR()).length() == 10) {
 			this.pANNo.setValue(customerDetails.getCustomer().getCustCRCPR());
 		} else {
-			this.aadhaarNo.setValue(PennantApplicationUtil.formatEIDNumber(customerDetails.getCustomer().getCustCRCPR()));
+			this.aadhaarNo
+					.setValue(PennantApplicationUtil.formatEIDNumber(customerDetails.getCustomer().getCustCRCPR()));
 		}
-		
-		
+
 		doFilllistbox(customerDetails.getCustomerDedupList());
 
 		logger.debug(Literal.LEAVING);
@@ -275,7 +268,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (StringUtils.isEmpty(custCtgCode)) {
 				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
 			}
-			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode, customerDetails.getCustomer().getCustCRCPR(), true);
+			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode,
+					customerDetails.getCustomer().getCustCRCPR(), true);
 			customerListCtrl.buildDialogWindow(customerDetails, true);
 
 		}
@@ -288,7 +282,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doRemoveValidation();
 
 		if (StringUtils.isBlank(custCIF)) {
-			throw new WrongValueException(this.btnExistingCustomer, "Please select Customer CIF to proceed with existing customer  !!!");
+			throw new WrongValueException(this.btnExistingCustomer,
+					"Please select Customer CIF to proceed with existing customer  !!!");
 		} else if (isFromLoan) {
 			selectFinanceTypeDialogCtrl.existingCust.setSelected(true);
 			selectFinanceTypeDialogCtrl.custCIF.setValue(custCIF);
@@ -322,16 +317,16 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 				}
 				customerDetails.setCustomer(customer);
-			
 
-			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode, customerDetails.getCustomer().getCustCRCPR(), true);
-			customerListCtrl.buildDialogWindow(customerDetails, true);
-			closeDialog();
+				customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode,
+						customerDetails.getCustomer().getCustCRCPR(), true);
+				customerListCtrl.buildDialogWindow(customerDetails, true);
+				closeDialog();
+			}
 		}
-	}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void setCustomerStatus(CustomerDetails customerDetails) {
 		try {
 			if (StringUtils.isBlank(customerDetails.getCustomer().getCustSts())) {
@@ -393,7 +388,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Listcell lc = new Listcell();
 			if (StringUtils.isNotEmpty(customerDedup.getCustCIF())) {
 				Radio list_radioButton = new Radio();
-				list_radioButton.setValue(customerDedup.getCustCIF()+ "," + customerDedup.getCustCtgCode());
+				list_radioButton.setValue(customerDedup.getCustCIF() + "," + customerDedup.getCustCtgCode());
 				list_radioButton.addForward("onCheck", self, "onCheck_listCellRadioBtn");
 				list_radioButton.setParent(radioButtonGroup);
 				lc.appendChild(list_radioButton);
@@ -402,7 +397,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			lc = new Listcell(customerDedup.getCustCIF());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(customerDedup.getCustFName());
 			lc.setParent(item);
 
@@ -411,11 +406,10 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			lc = new Listcell(PennantApplicationUtil.formatEIDNumber(customerDedup.getAadharNumber()));
 			lc.setParent(item);
-			
+
 			lc = new Listcell(customerDedup.getPanNumber());
 			lc.setParent(item);
-			
-			
+
 			item.setAttribute("id", customerDedup.getCustId());
 			if (StringUtils.isNotEmpty(customerDedup.getCustCIF())) {
 				ComponentsCtrl.applyForward(item, "onClick=onCustDedupItemSelected");
@@ -442,11 +436,11 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void setSelectFinanceTypeDialogCtrl(SelectFinanceTypeDialogCtrl selectFinanceTypeDialogCtrl) {
 		this.selectFinanceTypeDialogCtrl = selectFinanceTypeDialogCtrl;
 	}
-	
+
 	public void setCustomerListCtrl(CustomerListCtrl customerListCtrl) {
 		this.customerListCtrl = customerListCtrl;
 	}
-	
+
 	public void setCoreCustomerSelectCtrl(CoreCustomerSelectCtrl coreCustomerSelectCtrl) {
 		this.coreCustomerSelectCtrl = coreCustomerSelectCtrl;
 	}
@@ -454,7 +448,6 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
-
 
 	public List<CustomerDedup> getCustomerDedupsList() {
 		return customerDedupsList;
@@ -511,11 +504,10 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void setDedupPagedListWrapper(PagedListWrapper<CustomerDedup> dedupPagedListWrapper) {
 		this.dedupPagedListWrapper = dedupPagedListWrapper;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void setDedupPagedListWrapper() {
-		this.dedupPagedListWrapper = (PagedListWrapper<CustomerDedup>) SpringUtil
-				.getBean("pagedListWrapper");
+		this.dedupPagedListWrapper = (PagedListWrapper<CustomerDedup>) SpringUtil.getBean("pagedListWrapper");
 	}
 
 	public CustomerDetails getCustomerDetails() {

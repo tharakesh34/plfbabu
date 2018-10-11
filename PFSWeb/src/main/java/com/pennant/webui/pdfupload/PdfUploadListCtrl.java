@@ -76,8 +76,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/com.pennant.payment/PaymentHeader/PaymentHeaderList.zul file.
+ * This is the controller class for the /WEB-INF/pages/com.pennant.payment/PaymentHeader/PaymentHeaderList.zul file.
  * 
  */
 public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
@@ -97,11 +96,10 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 	private byte[] fileByte;
 	private long fileTypeRef = 0;
-	
+
 	@Autowired
 	private PdfParserCaller pdfParserCaller;
-	
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -114,8 +112,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -154,7 +151,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 			fileTypeRef = documentType.getPdfMappingRef();
 			if (documentType.isDocIsPasswordProtected()) {
 				passwordRow.setVisible(true);
-			}else{
+			} else {
 				passwordRow.setVisible(false);
 			}
 		}
@@ -191,11 +188,10 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		}
 	}
 
-	/*public void onChange$year(Event event) {
-		logger.debug("Entering");
-		checkReadButtonVisibility();
-		logger.debug("Leaving");
-	}*/
+	/*
+	 * public void onChange$year(Event event) { logger.debug("Entering"); checkReadButtonVisibility();
+	 * logger.debug("Leaving"); }
+	 */
 
 	public void onChange$pdfPassword(Event event) {
 		logger.debug("Entering");
@@ -220,7 +216,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		try {
 			if (fileByte != null) {
 				// entry point
-				extractionoutPut =  pdfParserCaller.parsePdf(customerDocument); 
+				extractionoutPut = pdfParserCaller.parsePdf(customerDocument);
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -255,14 +251,15 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 	private Map<String, Object> mapOutPut(Map<String, Object> outPut) {
 		Map<String, Object> outPutAfterMapping = new HashMap<>();
-		
+
 		ExtendedFieldCtrl extendedFieldCtrl = new ExtendedFieldCtrl();
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl
 				.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, "USL");
-		 
-		for(ExtendedFieldDetail extendedFieldDetail : extendedFieldHeader.getExtendedFieldDetails()){
-			if(outPut.containsKey(extendedFieldDetail.getFieldName())){
-				outPutAfterMapping.put(extendedFieldDetail.getFieldLabel(), outPut.get(extendedFieldDetail.getFieldName()));
+
+		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldHeader.getExtendedFieldDetails()) {
+			if (outPut.containsKey(extendedFieldDetail.getFieldName())) {
+				outPutAfterMapping.put(extendedFieldDetail.getFieldLabel(),
+						outPut.get(extendedFieldDetail.getFieldName()));
 			}
 		}
 		return outPutAfterMapping;
@@ -333,10 +330,10 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 			this.pdfPassword.setConstraint(new PTStringValidator(Labels.getLabel("label_pdf_password.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
-		/*if (!this.year.isReadonly()) {
-			this.year.setConstraint(new PTStringValidator(Labels.getLabel("label_Ext_Year.value"),
-					PennantRegularExpressions.REGEX_NUMERIC, true));
-		}*/
+		/*
+		 * if (!this.year.isReadonly()) { this.year.setConstraint(new
+		 * PTStringValidator(Labels.getLabel("label_Ext_Year.value"), PennantRegularExpressions.REGEX_NUMERIC, true)); }
+		 */
 		logger.debug("Leaving ");
 	}
 
