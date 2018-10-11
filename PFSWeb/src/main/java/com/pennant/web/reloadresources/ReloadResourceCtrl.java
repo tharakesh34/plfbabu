@@ -26,17 +26,16 @@ import com.pennanttech.pennapps.web.ApplicationStartup;
  * 
  */
 
-public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Serializable   {
+public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FileDownloadListCtrl.class);
 
-	private static final long	serialVersionUID	= 1L;
-	private static final Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
-	
-	protected Window			window_ReloadConfig;
-	protected Borderlayout		borderLayout_ReloadConfig;
-	protected Paging			pagingReloadConfig;
-	protected Listbox			listBoxReloadConfig;
-	protected Button			btnRefresh;
-	
+	protected Window window_ReloadConfig;
+	protected Borderlayout borderLayout_ReloadConfig;
+	protected Paging pagingReloadConfig;
+	protected Listbox listBoxReloadConfig;
+	protected Button btnRefresh;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -50,12 +49,12 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 		// Set the page level components.
 		setPageComponents(window_ReloadConfig, borderLayout_ReloadConfig, listBoxReloadConfig, pagingReloadConfig);
 		doRenderPage();
-				
+
 		Listitem item = null;
 		Listcell cell = null;
 		Label label = null;
 
-		item = new Listitem();		
+		item = new Listitem();
 		cell = new Listcell();
 		label = new Label("Custom labels");
 		label.setParent(cell);
@@ -85,12 +84,12 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onClick_button_labels(Event event) throws Exception {
 		ApplicationStartup.loadCustomLabels();
 		MessageUtil.showMessage("Label's reloaded successfully.");
 	}
-	
+
 	public void onClick_button_regex(Event event) throws Exception {
 		ApplicationStartup.loadCustomRegex();
 		MessageUtil.showMessage("Regular expression's reloaded successfully.");
