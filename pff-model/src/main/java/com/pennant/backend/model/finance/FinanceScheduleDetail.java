@@ -73,14 +73,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private int noOfDays;
 	private boolean calOnIndRate = false;
 	private BigDecimal dayFactor = BigDecimal.ZERO;
-	@XmlElement(name="pftAmount")
+	@XmlElement(name = "pftAmount")
 	private BigDecimal profitCalc = BigDecimal.ZERO;
-	@XmlElement(name="schdPft")
+	@XmlElement(name = "schdPft")
 	private BigDecimal profitSchd = BigDecimal.ZERO;
-	@XmlElement(name="schdPri")
+	@XmlElement(name = "schdPri")
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal rolloverAmount = BigDecimal.ZERO;
-	@XmlElement(name="totalAmount")
+	@XmlElement(name = "totalAmount")
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	private BigDecimal profitBalance = BigDecimal.ZERO;
 	private BigDecimal disbAmount = BigDecimal.ZERO;
@@ -90,7 +90,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	private BigDecimal refundOrWaiver = BigDecimal.ZERO;
 	private BigDecimal cpzAmount = BigDecimal.ZERO;
-	@XmlElement(name="endBal")
+	@XmlElement(name = "endBal")
 	private BigDecimal closingBalance = BigDecimal.ZERO;
 
 	private BigDecimal profitFraction = BigDecimal.ZERO;
@@ -146,10 +146,10 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal writeoffSuplRent = BigDecimal.ZERO;
 	private BigDecimal writeoffSchFee = BigDecimal.ZERO;
 	private BigDecimal rebate = BigDecimal.ZERO;
-	private String 	   finCcy;
+	private String finCcy;
 	private BigDecimal partialPaidAmt = BigDecimal.ZERO;
-	
-	private long presentmentId ;
+
+	private long presentmentId;
 	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceScheduleDetail befImage;
@@ -157,11 +157,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private boolean repayComplete = false;
 	private ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-	
+
 	//GST
 	private BigDecimal feeTax = BigDecimal.ZERO;
 	private BigDecimal subventionAmount = BigDecimal.ZERO;
-	
+
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {
 		super();
 		this.schDate = schDate;
@@ -174,11 +174,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 
 	public FinanceScheduleDetail() {
-		super(); 
+		super();
 	}
 
 	public FinanceScheduleDetail(String id) {
-		super(); 
+		super();
 		this.setId(id);
 	}
 
@@ -279,7 +279,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public void setBpiOrHoliday(String bpiOrHoliday) {
 		this.bpiOrHoliday = bpiOrHoliday;
 	}
-	
+
 	public boolean isFrqDate() {
 		return frqDate;
 	}
@@ -331,6 +331,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getCalculatedRate() {
 		return calculatedRate;
 	}
+
 	public void setCalculatedRate(BigDecimal calculatedRate) {
 		this.calculatedRate = calculatedRate;
 	}
@@ -512,6 +513,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public String getSpecifier() {
 		return specifier;
 	}
+
 	public void setSpecifier(String specifier) {
 		this.specifier = specifier;
 	}
@@ -519,6 +521,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getEarlyPaid() {
 		return earlyPaid;
 	}
+
 	public void setEarlyPaid(BigDecimal earlyPaid) {
 		this.earlyPaid = earlyPaid;
 	}
@@ -526,6 +529,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getEarlyPaidBal() {
 		return earlyPaidBal;
 	}
+
 	public void setEarlyPaidBal(BigDecimal earlyPaidBal) {
 		this.earlyPaidBal = earlyPaidBal;
 	}
@@ -533,6 +537,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getWriteoffPrincipal() {
 		return writeoffPrincipal;
 	}
+
 	public void setWriteoffPrincipal(BigDecimal writeoffPrincipal) {
 		this.writeoffPrincipal = writeoffPrincipal;
 	}
@@ -540,6 +545,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getWriteoffProfit() {
 		return writeoffProfit;
 	}
+
 	public void setWriteoffProfit(BigDecimal writeoffProfit) {
 		this.writeoffProfit = writeoffProfit;
 	}
@@ -587,6 +593,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
 		this.feeChargeAmt = feeChargeAmt;
 	}
+
 	public BigDecimal getFeeChargeAmt() {
 		return feeChargeAmt;
 	}
@@ -594,6 +601,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getRefundOrWaiver() {
 		return refundOrWaiver;
 	}
+
 	public void setRefundOrWaiver(BigDecimal refundOrWaiver) {
 		this.refundOrWaiver = refundOrWaiver;
 	}
@@ -601,6 +609,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public boolean isRepayComplete() {
 		return repayComplete;
 	}
+
 	public void setRepayComplete(boolean repayComplete) {
 		this.repayComplete = repayComplete;
 	}
@@ -608,6 +617,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public void setLogKey(long logKey) {
 		this.logKey = logKey;
 	}
+
 	public long getLogKey() {
 		return logKey;
 	}
@@ -615,6 +625,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getOrgPft() {
 		return orgPft;
 	}
+
 	public void setOrgPft(BigDecimal orgPft) {
 		this.orgPft = orgPft;
 	}
@@ -622,6 +633,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getOrgPri() {
 		return orgPri;
 	}
+
 	public void setOrgPri(BigDecimal orgPri) {
 		this.orgPri = orgPri;
 	}
@@ -629,6 +641,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getOrgEndBal() {
 		return orgEndBal;
 	}
+
 	public void setOrgEndBal(BigDecimal orgEndBal) {
 		this.orgEndBal = orgEndBal;
 	}
@@ -636,6 +649,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getOrgPlanPft() {
 		return orgPlanPft;
 	}
+
 	public void setOrgPlanPft(BigDecimal orgPlanPft) {
 		this.orgPlanPft = orgPlanPft;
 	}
@@ -643,6 +657,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getFeeSchd() {
 		return feeSchd;
 	}
+
 	public void setFeeSchd(BigDecimal feeSchd) {
 		this.feeSchd = feeSchd;
 	}
@@ -650,6 +665,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getSchdFeePaid() {
 		return schdFeePaid;
 	}
+
 	public void setSchdFeePaid(BigDecimal schdFeePaid) {
 		this.schdFeePaid = schdFeePaid;
 	}
@@ -657,6 +673,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getSchdFeeOS() {
 		return schdFeeOS;
 	}
+
 	public void setSchdFeeOS(BigDecimal schdFeeOS) {
 		this.schdFeeOS = schdFeeOS;
 	}
@@ -664,6 +681,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public String getAdvBaseRate() {
 		return advBaseRate;
 	}
+
 	public void setAdvBaseRate(String advBaseRate) {
 		this.advBaseRate = advBaseRate;
 	}
@@ -671,6 +689,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAdvMargin() {
 		return advMargin;
 	}
+
 	public void setAdvMargin(BigDecimal advMargin) {
 		this.advMargin = advMargin;
 	}
@@ -678,6 +697,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAdvPftRate() {
 		return advPftRate;
 	}
+
 	public void setAdvPftRate(BigDecimal advPftRate) {
 		this.advPftRate = advPftRate;
 	}
@@ -685,6 +705,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAdvCalRate() {
 		return advCalRate;
 	}
+
 	public void setAdvCalRate(BigDecimal advCalRate) {
 		this.advCalRate = advCalRate;
 	}
@@ -692,6 +713,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAdvProfit() {
 		return advProfit;
 	}
+
 	public void setAdvProfit(BigDecimal advProfit) {
 		this.advProfit = advProfit;
 	}
@@ -699,6 +721,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAdvRepayAmount() {
 		return advRepayAmount;
 	}
+
 	public void setAdvRepayAmount(BigDecimal advRepayAmount) {
 		this.advRepayAmount = advRepayAmount;
 	}
@@ -706,6 +729,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getSuplRent() {
 		return SuplRent;
 	}
+
 	public void setSuplRent(BigDecimal suplRent) {
 		SuplRent = suplRent;
 	}
@@ -713,6 +737,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getIncrCost() {
 		return IncrCost;
 	}
+
 	public void setIncrCost(BigDecimal incrCost) {
 		IncrCost = incrCost;
 	}
@@ -720,6 +745,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getSuplRentPaid() {
 		return SuplRentPaid;
 	}
+
 	public void setSuplRentPaid(BigDecimal suplRentPaid) {
 		SuplRentPaid = suplRentPaid;
 	}
@@ -727,6 +753,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getIncrCostPaid() {
 		return IncrCostPaid;
 	}
+
 	public void setIncrCostPaid(BigDecimal incrCostPaid) {
 		IncrCostPaid = incrCostPaid;
 	}
@@ -734,6 +761,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public boolean isRolloverOnSchDate() {
 		return rolloverOnSchDate;
 	}
+
 	public void setRolloverOnSchDate(boolean rolloverOnSchDate) {
 		this.rolloverOnSchDate = rolloverOnSchDate;
 	}
@@ -741,6 +769,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getRolloverAmount() {
 		return rolloverAmount;
 	}
+
 	public void setRolloverAmount(BigDecimal rolloverAmount) {
 		this.rolloverAmount = rolloverAmount;
 	}
@@ -748,6 +777,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getRolloverAmountPaid() {
 		return rolloverAmountPaid;
 	}
+
 	public void setRolloverAmountPaid(BigDecimal rolloverAmountPaid) {
 		this.rolloverAmountPaid = rolloverAmountPaid;
 	}
@@ -755,6 +785,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getTDSAmount() {
 		return tDSAmount;
 	}
+
 	public void setTDSAmount(BigDecimal tDSAmount) {
 		this.tDSAmount = tDSAmount;
 	}
@@ -762,6 +793,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public String getPftDaysBasis() {
 		return pftDaysBasis;
 	}
+
 	public void setPftDaysBasis(String pftDaysBasis) {
 		this.pftDaysBasis = pftDaysBasis;
 	}
@@ -817,6 +849,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getInsuranceAmt() {
 		return insuranceAmt;
 	}
+
 	public void setInsuranceAmt(BigDecimal insuranceAmt) {
 		this.insuranceAmt = insuranceAmt;
 	}
@@ -824,6 +857,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getInsSchd() {
 		return insSchd;
 	}
+
 	public void setInsSchd(BigDecimal insFeeSchd) {
 		this.insSchd = insFeeSchd;
 	}
@@ -831,6 +865,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getSchdInsPaid() {
 		return schdInsPaid;
 	}
+
 	public void setSchdInsPaid(BigDecimal schdInsPaid) {
 		this.schdInsPaid = schdInsPaid;
 	}
@@ -838,6 +873,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public BigDecimal getWriteoffIns() {
 		return writeoffIns;
 	}
+
 	public void setWriteoffIns(BigDecimal writeoffIns) {
 		this.writeoffIns = writeoffIns;
 	}
@@ -865,7 +901,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public void setPartialPaidAmt(BigDecimal partialPaidAmt) {
 		this.partialPaidAmt = partialPaidAmt;
 	}
-	
+
 	//GST
 	public BigDecimal getFeeTax() {
 		return feeTax;
@@ -882,7 +918,5 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public void setSubventionAmount(BigDecimal subventionAmount) {
 		this.subventionAmount = subventionAmount;
 	}
-
-
 
 }
