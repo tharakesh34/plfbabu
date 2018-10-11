@@ -75,28 +75,25 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/
- * SelectFinanceTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
  */
 public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = Logger.getLogger(SelectFacilityTypeDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_SelectFacilityTypeDialog; 
+	protected Window window_SelectFacilityTypeDialog;
 	protected ExtendedCombobox custId;
-	protected Button btnProceed; 
+	protected Button btnProceed;
 	protected FacilityListCtrl facilityListCtrl; // over handed parameter
 	private Facility facility = null;
 	private transient WorkFlowDetails workFlowDetails = null;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	private transient FacilityService facilityService;
-	private String cafType="";
-	
+	private String cafType = "";
 
 	/**
 	 * default constructor.<br>
@@ -111,11 +108,10 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -137,8 +133,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				setFacility(null);
 			}
 			if (arguments.containsKey("facilityListCtrl")) {
-				this.facilityListCtrl = (FacilityListCtrl) arguments
-						.get("facilityListCtrl");
+				this.facilityListCtrl = (FacilityListCtrl) arguments.get("facilityListCtrl");
 			} else {
 				setFacilityListCtrl(null);
 			}
@@ -153,7 +148,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void onFulfill$custId(Event event){
+	public void onFulfill$custId(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.custId.setConstraint("");
 		this.custId.clearErrorMessage();
@@ -161,7 +156,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 		Clients.clearWrongValue(custId);
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * When user clicks on button "btnProceed" button
 	 * 
@@ -170,13 +165,14 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		if(StringUtils.isBlank(this.custId.getValue())){
-			throw new WrongValueException(this.custId,Labels.getLabel("FIELD_IS_MAND",new String[]{Labels.getLabel("label_SelectFacilityTypeDialog_CustId.value")})); 
+		if (StringUtils.isBlank(this.custId.getValue())) {
+			throw new WrongValueException(this.custId, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_SelectFacilityTypeDialog_CustId.value") }));
 		}
 		this.window_SelectFacilityTypeDialog.onClose();
 		Customer customer = (Customer) this.custId.getObject();
-		if (customer!=null) {
-			FinanceWorkFlow financeWorkFlow =null;
+		if (customer != null) {
+			FinanceWorkFlow financeWorkFlow = null;
 			financeWorkFlow = getFinanceWorkFlow(cafType);
 			getFacility().setFacilityType(cafType);
 			// Workflow Details Setup
@@ -217,7 +213,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 					getFacility().setCustGrpCodeName(customer.getLovDescCustGroupCode());
 					getFacility().setCustomerGroupName(customer.getLovDesccustGroupIDName());
 				}
-		
+
 				getFacility().setUserRole(getRole());
 				//set Previous Facility  Data if any
 				setFacility(setPreviousCAfDetails(getFacility()));
@@ -225,8 +221,9 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				setFacility(getFacilityService().getFacilityChildRecords(getFacility()));
 				getFacilityService().setFacilityScoringDetails(getFacility());
 				getFacility().setCustomerEligibilityCheck(getFacilityService().getCustomerEligibility(customer, 0));
-				getFacility().setCustomerRatings(getFacilityService().getCustomerRatingByCustomer(facility.getCustID()));
-				getFacility().setCAFReference(ReferenceUtil.genNewCafRef(cafType,getFacility().getCustCtgCode()));
+				getFacility()
+						.setCustomerRatings(getFacilityService().getCustomerRatingByCustomer(facility.getCustID()));
+				getFacility().setCAFReference(ReferenceUtil.genNewCafRef(cafType, getFacility().getCustCtgCode()));
 				setFacility(getFacilityService().setCustomerDocuments(getFacility()));
 
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -238,7 +235,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
-			}else{
+			} else {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			}
 		}
@@ -249,7 +246,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Entering");
 		try {
 			Facility prvFacility = getFacilityService().getLatestFacilityByCustID(facility.getCustID());
-			if (prvFacility!=null) {
+			if (prvFacility != null) {
 				facility.setCustomerBackGround(prvFacility.getCustomerBackGround());
 				facility.setStrength(prvFacility.getStrength());
 				facility.setWeaknesses(prvFacility.getWeaknesses());
@@ -262,9 +259,9 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				facility.setPurpose(prvFacility.getPurpose());
 				facility.setAccountRelation(prvFacility.getAccountRelation());
 				facility.setLimitAndAncillary(prvFacility.getLimitAndAncillary());
-				facility.setAntiMoneyLaunderSection(prvFacility.getAntiMoneyLaunderSection());	
+				facility.setAntiMoneyLaunderSection(prvFacility.getAntiMoneyLaunderSection());
 			}
-			
+
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -273,7 +270,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// GUI Process
-	
+
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
@@ -295,20 +292,20 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 	}
 
-
-	public FinanceWorkFlow getFinanceWorkFlow(String finref){
-		JdbcSearchObject<FinanceWorkFlow> jdbcSearchObject=new JdbcSearchObject<FinanceWorkFlow>(FinanceWorkFlow.class);
+	public FinanceWorkFlow getFinanceWorkFlow(String finref) {
+		JdbcSearchObject<FinanceWorkFlow> jdbcSearchObject = new JdbcSearchObject<FinanceWorkFlow>(
+				FinanceWorkFlow.class);
 		jdbcSearchObject.addFilterEqual("FinType", finref);
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		List<FinanceWorkFlow> list = pagedListService.getBySearchObject(jdbcSearchObject);
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
 		return null;
 	}
-	
+
 	// Getters and Setters
-	
+
 	public FacilityListCtrl getFacilityListCtrl() {
 		return facilityListCtrl;
 	}
