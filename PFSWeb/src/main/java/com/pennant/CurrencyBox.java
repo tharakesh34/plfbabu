@@ -22,37 +22,37 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 
 public class CurrencyBox extends Hbox {
-	private static final long	serialVersionUID	= -4246285143621221275L;
-	private static final Logger	logger				= Logger.getLogger(CurrencyBox.class);
+	private static final long serialVersionUID = -4246285143621221275L;
+	private static final Logger logger = Logger.getLogger(CurrencyBox.class);
 
-	private Space				space;
-	private Space				spaceBtwComp;
-	private Textbox				textbox;
-	private Decimalbox			decimalbox;
+	private Space space;
+	private Space spaceBtwComp;
+	private Textbox textbox;
+	private Decimalbox decimalbox;
 
-	private static final int	tb_Width			= 180;
-	private static final int	db_Width			= 200;
+	private static final int tb_Width = 180;
+	private static final int db_Width = 200;
 
-	private int					scale;
-	private int					maxLength			= 24;
+	private int scale;
+	private int maxLength = 24;
 
-	private String				H					= "H";
-	private String				T					= "T";
-	private String				M					= "M";
-	private String				B					= "B";
+	private String H = "H";
+	private String T = "T";
+	private String M = "M";
+	private String B = "B";
 
-	private BigDecimal			HUNDERED			= new BigDecimal(100);
-	private BigDecimal			THOUSAND			= new BigDecimal(1000);
-	private BigDecimal			MILLIONORLAKHS		= new BigDecimal(1000000);
-	private BigDecimal			BILLIONSORCRORES	= new BigDecimal(1000000000);
+	private BigDecimal HUNDERED = new BigDecimal(100);
+	private BigDecimal THOUSAND = new BigDecimal(1000);
+	private BigDecimal MILLIONORLAKHS = new BigDecimal(1000000);
+	private BigDecimal BILLIONSORCRORES = new BigDecimal(1000000000);
 
-	private String				pattren				= "[0-9BMTH\\.]*";
+	private String pattren = "[0-9BMTH\\.]*";
 
-	private String				errormesage1		= " Invalid format.Allowed only numbers and 'B' 'M' 'T' 'H' in sequence. Ex: 1M, 2B";
-	private String				errormesage2		= " Allowed Decimal points are : ";
-	private String				errormesage3		= " A character can't be follwed by another character";
-	private String				errormesage4		= " Value exceeded the maximum range.";
-	private String				errormesage5		= " Value should not be negative.";
+	private String errormesage1 = " Invalid format.Allowed only numbers and 'B' 'M' 'T' 'H' in sequence. Ex: 1M, 2B";
+	private String errormesage2 = " Allowed Decimal points are : ";
+	private String errormesage3 = " A character can't be follwed by another character";
+	private String errormesage4 = " Value exceeded the maximum range.";
+	private String errormesage5 = " Value should not be negative.";
 
 	public CurrencyBox() {
 		super();
@@ -95,14 +95,15 @@ public class CurrencyBox extends Hbox {
 					}
 				} else {
 					textbox.getValue();
-					if(textbox.getValue().contains("-")){
+					if (textbox.getValue().contains("-")) {
 						throw new WrongValueException(this.textbox, errormesage5);
-					}else{
+					} else {
 						throw new WrongValueException(this.textbox, errormesage1);
 					}
 				}
 
-				if (String.valueOf(PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), scale)).length() > 18) {
+				if (String.valueOf(PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), scale))
+						.length() > 18) {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 					throw new WrongValueException(this.textbox, errormesage4);
 				}
@@ -260,21 +261,23 @@ public class CurrencyBox extends Hbox {
 				valuWithComma = valuWithComma.replace(",", "").toUpperCase();
 
 				if (valuWithComma.matches(pattren)) {
-					if (valuWithComma.contains(B) || valuWithComma.contains(M) || valuWithComma.contains(T) || valuWithComma.contains(H)) {
+					if (valuWithComma.contains(B) || valuWithComma.contains(M) || valuWithComma.contains(T)
+							|| valuWithComma.contains(H)) {
 						calculateNumber(valuWithComma);
 					} else {
 						decimalbox.setValue(new BigDecimal(valuWithComma).setScale(scale));
 					}
 				} else {
 					textbox.getValue();
-					if(textbox.getValue().contains("-")){
+					if (textbox.getValue().contains("-")) {
 						throw new WrongValueException(this.textbox, errormesage5);
-					}else{
+					} else {
 						throw new WrongValueException(this.textbox, errormesage1);
 					}
 				}
 
-				if (String.valueOf(PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), scale)).length() > 18) {
+				if (String.valueOf(PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), scale))
+						.length() > 18) {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 					throw new WrongValueException(this.textbox, errormesage4);
 				}
@@ -284,7 +287,8 @@ public class CurrencyBox extends Hbox {
 			}
 
 			if (isMandatory() && decimalbox.getValue().compareTo(BigDecimal.ZERO) <= 0) {
-				throw new WrongValueException(this.textbox, Labels.getLabel("AMOUNT_NOT_NEGATIVE", new String[] { fieldParam }));
+				throw new WrongValueException(this.textbox,
+						Labels.getLabel("AMOUNT_NOT_NEGATIVE", new String[] { fieldParam }));
 			}
 		} catch (WrongValueException e) {
 			logger.error("Exception :", e);
@@ -309,26 +313,28 @@ public class CurrencyBox extends Hbox {
 		BigDecimal bigDecimal = null;
 		try {
 			bigDecimal = decimalbox.getValue() == null ? BigDecimal.ZERO : decimalbox.getValue();
-			if(StringUtils.isNotEmpty(textbox.getValue())){
+			if (StringUtils.isNotEmpty(textbox.getValue())) {
 
 				String valuWithComma = textbox.getValue();
 				valuWithComma = valuWithComma.replace(",", "").toUpperCase();
 				if (!valuWithComma.matches(pattren)) {
-					if(textbox.getValue().contains("-")){
+					if (textbox.getValue().contains("-")) {
 						throw new WrongValueException(this.textbox, errormesage5);
-					}else{
+					} else {
 						throw new WrongValueException(this.textbox, errormesage1);
 					}
-				}else if (String.valueOf(PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), scale)).length() > 18) {
+				} else if (String.valueOf(PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), scale))
+						.length() > 18) {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 					throw new WrongValueException(this.textbox, errormesage4);
-				}else if (bigDecimal.compareTo(BigDecimal.ZERO) == 0 && new BigDecimal(textbox.getValue()).compareTo(BigDecimal.ZERO) > 0) {
+				} else if (bigDecimal.compareTo(BigDecimal.ZERO) == 0
+						&& new BigDecimal(textbox.getValue()).compareTo(BigDecimal.ZERO) > 0) {
 					throw new WrongValueException(this.textbox, errormesage4);
 				}
 			}
 		} catch (WrongValueException e) {
 			logger.error("Exception :", e);
-			if(StringUtils.isNotEmpty(textbox.getValue())){
+			if (StringUtils.isNotEmpty(textbox.getValue())) {
 				getValidateValue();
 			}
 			throw new WrongValueException(textbox, e.getMessage());
@@ -406,10 +412,8 @@ public class CurrencyBox extends Hbox {
 			}
 
 			/*
-			 * //calculate Decimals String[] decimalVal =
-			 * valueToConvert.replace(".", "#").split("#"); if
-			 * (decimalVal.length == 2) { total = total.add(new BigDecimal("0."
-			 * + decimalVal[1])); }
+			 * //calculate Decimals String[] decimalVal = valueToConvert.replace(".", "#").split("#"); if
+			 * (decimalVal.length == 2) { total = total.add(new BigDecimal("0." + decimalVal[1])); }
 			 */
 
 			try {
@@ -509,26 +513,25 @@ public class CurrencyBox extends Hbox {
 		logger.debug("Leaving");
 		return true;
 	}
-	
-	public void setProperties(boolean mandatory,int format){
+
+	public void setProperties(boolean mandatory, int format) {
 		setMandatory(mandatory);
 		setFormat(PennantApplicationUtil.getAmountFormate(format));
 		setScale(format);
 	}
-	
-	public void setBalUnvisible(boolean isUnVisible){
+
+	public void setBalUnvisible(boolean isUnVisible) {
 		logger.debug("Entering");
-		
-		if(isUnVisible){
+
+		if (isUnVisible) {
 			this.decimalbox.setVisible(false);
 			this.setStyle("text-align:right;width:100%;");
 			this.setPack("end");
-		}else{
+		} else {
 			this.decimalbox.setVisible(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
 
 }
