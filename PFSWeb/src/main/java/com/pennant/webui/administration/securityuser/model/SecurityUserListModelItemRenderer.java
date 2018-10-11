@@ -60,16 +60,15 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class SecurityUserListModelItemRenderer implements ListitemRenderer<SecurityUser>, Serializable {
-
 	private static final long serialVersionUID = 7204475649828613670L;
-	
+
 	public SecurityUserListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, SecurityUser securityUser, int count) throws Exception {
-		
+
 		Listcell lc;
 		lc = new Listcell(securityUser.getUsrLogin());
 		lc.setParent(item);
@@ -97,26 +96,28 @@ public class SecurityUserListModelItemRenderer implements ListitemRenderer<Secur
 		cbUsrAcLocked.setChecked(securityUser.isUsrAcLocked());
 		lc.appendChild(cbUsrAcLocked);
 		lc.setParent(item);
-		String appCode = StringUtils.isEmpty(securityUser.getLovDescUsrDftAppCodeName())?securityUser.getUsrDftAppCode():
-			securityUser.getUsrDftAppCode()+"-"+securityUser.getLovDescUsrDftAppCodeName();
+		String appCode = StringUtils.isEmpty(securityUser.getLovDescUsrDftAppCodeName())
+				? securityUser.getUsrDftAppCode()
+				: securityUser.getUsrDftAppCode() + "-" + securityUser.getLovDescUsrDftAppCodeName();
 		lc = new Listcell(appCode);
 		lc.setParent(item);
-		String branchCode = StringUtils.isEmpty(securityUser.getLovDescUsrBranchCodeName())?securityUser.getUsrBranchCode():
-			securityUser.getUsrBranchCode()+"-"+securityUser.getLovDescUsrBranchCodeName();
+		String branchCode = StringUtils.isEmpty(securityUser.getLovDescUsrBranchCodeName())
+				? securityUser.getUsrBranchCode()
+				: securityUser.getUsrBranchCode() + "-" + securityUser.getLovDescUsrBranchCodeName();
 		lc = new Listcell(branchCode);
 		lc.setParent(item);
-		String deptCode = StringUtils.isEmpty(securityUser.getLovDescUsrDeptCodeName())?securityUser.getUsrDeptCode():
-			securityUser.getUsrDeptCode()+"-"+securityUser.getLovDescUsrDeptCodeName();
+		String deptCode = StringUtils.isEmpty(securityUser.getLovDescUsrDeptCodeName()) ? securityUser.getUsrDeptCode()
+				: securityUser.getUsrDeptCode() + "-" + securityUser.getLovDescUsrDeptCodeName();
 		lc = new Listcell(deptCode);
 		lc.setParent(item);
 		lc = new Listcell(securityUser.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(securityUser.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", securityUser.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityUserItemDoubleClicked");
-	
+
 	}
 }
