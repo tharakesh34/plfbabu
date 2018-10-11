@@ -84,21 +84,20 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DisbursementInstCtrl {
-	private static final Logger			logger				= Logger.getLogger(DisbursementInstCtrl.class);
-	private Listbox						listbox;
-	private String						ccy;
-	private int							ccyFormat;
-	private boolean						multiParty;
-	private String						role;
+	private static final Logger logger = Logger.getLogger(DisbursementInstCtrl.class);
+	private Listbox listbox;
+	private String ccy;
+	private int ccyFormat;
+	private boolean multiParty;
+	private String role;
 
-	List<ValueLabel>					paymentDetailList	= PennantStaticListUtil.getPaymentDetails();
-	List<ValueLabel>					paymentTypeList		= PennantStaticListUtil.getPaymentTypes(true);
-	private FinanceMain					financeMain;
-	private List<FinanceDisbursement>	financeDisbursements;
-	private List<FinanceDisbursement>	approvedDisbursments;
-	private FinAdvancePaymentsService	finAdvancePaymentsService;
-	private DocumentDetails				documentDetails;
-	
+	List<ValueLabel> paymentDetailList = PennantStaticListUtil.getPaymentDetails();
+	List<ValueLabel> paymentTypeList = PennantStaticListUtil.getPaymentTypes(true);
+	private FinanceMain financeMain;
+	private List<FinanceDisbursement> financeDisbursements;
+	private List<FinanceDisbursement> approvedDisbursments;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
+	private DocumentDetails documentDetails;
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -321,7 +320,7 @@ public class DisbursementInstCtrl {
 	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list)
 			throws Exception {
 		logger.debug("Entering");
-		
+
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
 		aFinAdvancePayments.setFinReference(financeMain.getFinReference());
 		aFinAdvancePayments.setPaymentSeq(getNextPaymentSequence(list));
@@ -333,7 +332,7 @@ public class DisbursementInstCtrl {
 		map.put("newRecord", "true");
 		map.put("documentDetails", documentDetails);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -527,8 +526,7 @@ public class DisbursementInstCtrl {
 				date = financeDisbursement.getDisbDate();
 
 				//check is first disbursement
-				if (DateUtility.compare(date, main.getFinStartDate()) == 0 && 
-						financeDisbursement.getDisbSeq() == 1) {
+				if (DateUtility.compare(date, main.getFinStartDate()) == 0 && financeDisbursement.getDisbSeq() == 1) {
 
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
@@ -596,7 +594,6 @@ public class DisbursementInstCtrl {
 		}
 		return false;
 	}
-	
 
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursements = financeDisbursement;
