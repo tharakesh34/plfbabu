@@ -50,9 +50,8 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
 
 public class LatePayInterestService extends ServiceHelper {
-
-	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(LatePayInterestService.class);
+	private static final long serialVersionUID = 6161809223570900644L;
+	private static Logger logger = Logger.getLogger(LatePayInterestService.class);
 
 	/**
 	 * Default constructor
@@ -61,8 +60,9 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, String idb, List<FinanceScheduleDetail> finScheduleDetails,
-			List<FinanceRepayments> repayments, BigDecimal pastduePftMargin, String roundingMode, int roundingTarget) {
+	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, String idb,
+			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments,
+			BigDecimal pastduePftMargin, String roundingMode, int roundingTarget) {
 		logger.debug(" Entering ");
 
 		String finReference = fod.getFinReference();
@@ -97,7 +97,7 @@ public class LatePayInterestService extends ServiceHelper {
 			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
 				continue;
 			}
-			
+
 			//MAx OD amounts is same as repayment balance amounts
 			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
 				continue;
@@ -105,7 +105,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 			odPri = odPri.subtract(repayment.getFinSchdPriPaid());
 			odPft = odPft.subtract(repayment.getFinSchdPftPaid());
-			
+
 			odcr = new OverdueChargeRecovery();
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
@@ -154,25 +154,26 @@ public class LatePayInterestService extends ServiceHelper {
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
 			odcrCur.setPenalty(penalty);
-			odcrCur.setPenaltyBal(odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid().subtract(odcrCur.getWaivedAmt())));
+			odcrCur.setPenaltyBal(
+					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid().subtract(odcrCur.getWaivedAmt())));
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
 
 		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
-		
+
 		//if the record added for calculation it should not be displayed in screen.
 		if (isAddTodayRcd) {
-			schdODCRecoveries.remove(schdODCRecoveries.size()-1);
+			schdODCRecoveries.remove(schdODCRecoveries.size() - 1);
 		}
 		logger.debug(" Leaving ");
-		return  schdODCRecoveries;
+		return schdODCRecoveries;
 	}
 
 	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin) {
 
 		BigDecimal penaltyRate = BigDecimal.ZERO;
-		
+
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			if (finSchdDetails.get(i).getSchDate().compareTo(mvtDate) > 0) {
 				break;
