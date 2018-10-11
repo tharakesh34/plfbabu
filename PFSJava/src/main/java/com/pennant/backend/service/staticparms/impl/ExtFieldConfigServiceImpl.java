@@ -70,13 +70,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeader> implements ExtFieldConfigService {
-	private static final Logger			logger	= Logger.getLogger(ExtFieldConfigServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ExtFieldConfigServiceImpl.class);
 
-	private AuditHeaderDAO				auditHeaderDAO;
-	private ExtendedFieldsValidation	extendedFieldsValidation;
-	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
-	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
-	private SecurityRightDAO			securityRightDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private ExtendedFieldsValidation extendedFieldsValidation;
+	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private SecurityRightDAO securityRightDAO;
 
 	public ExtFieldConfigServiceImpl() {
 		super();
@@ -235,7 +235,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * @return ExtFieldConfig
 	 */
 	@Override
-	public ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName,String event) {
+	public ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName, String event) {
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldHeader extFldHeader = null;
@@ -270,14 +270,14 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 				"_AView");
 		if (extFldHeader != null) {
 			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
-					extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD,"_AView"));
+					extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_AView"));
 		}
 
 		logger.debug(Literal.LEAVING);
 		return extFldHeader;
 
 	}
-	
+
 	/**
 	 * getApprovedExtFieldConfigById fetch the details by using ExtFieldConfigDAO's getExtFieldConfigById method . with
 	 * parameter id and type as blank. it fetches the approved records from the ExtFieldConfig.
@@ -287,21 +287,22 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * @return ExtFieldConfig
 	 */
 	@Override
-	public ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName, int extendedType) {
+	public ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName,
+			int extendedType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		ExtendedFieldHeader extFldHeader = null;
-		
+
 		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName,
 				"_AView");
 		if (extFldHeader != null) {
-			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
-					extFldHeader.getModuleId(), extendedType,"_AView"));
+			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO()
+					.getExtendedFieldDetailById(extFldHeader.getModuleId(), extendedType, "_AView"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return extFldHeader;
-		
+
 	}
 
 	/**
