@@ -1048,21 +1048,47 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		for (ExtendedFieldDetail detail : fields) {
 			Object value = null;
-
-			if (fieldValueMap.get(detail.getFieldName()) != null) {
-				if (ExtendedFieldConstants.FIELDTYPE_DATE.equals(detail.getFieldType())) {
-					String id = getComponentId(detail.getFieldName());
-					Component component = tabpanel.getFellowIfAny(id);
-					if (component != null && component instanceof Datebox) {
-						Datebox datebox = (Datebox) component;
-						datebox.setConstraint(
-								new PTStringValidator(detail.getFieldLabel(), null, detail.isFieldMandatory()));
-					}
+			Object field2 = null;
+			Object field3 = null; 
+			
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE,detail.getFieldType())) {
+				if (fieldValueMap.containsKey(detail.getFieldName()+"_CC")) {
+					value = fieldValueMap.get(detail.getFieldName()+"_CC");
 				}
-				value = fieldValueMap.get(detail.getFieldName());
+				if (fieldValueMap.containsKey(detail.getFieldName()+"_AC")) {
+					field2 = fieldValueMap.get(detail.getFieldName()+"_AC");
+				}
+				if (fieldValueMap.containsKey(detail.getFieldName()+"_SC")) {
+					field3 = fieldValueMap.get(detail.getFieldName()+"_SC");
+				}
+			
+			}else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE,detail.getFieldType())) {
+				if (fieldValueMap.containsKey(detail.getFieldName()+"_BR")) {
+					value = fieldValueMap.get(detail.getFieldName()+"_BR");
+				}
+				if (fieldValueMap.containsKey(detail.getFieldName()+"_SR")) {
+					field2 = fieldValueMap.get(detail.getFieldName()+"_SR");
+				}
+				if (fieldValueMap.containsKey(detail.getFieldName()+"_MR")) {
+					field3 = fieldValueMap.get(detail.getFieldName()+"_MR");
+				}
+			}else{
+				if (fieldValueMap.containsKey(detail.getFieldName())) {
+					value = fieldValueMap.get(detail.getFieldName());
+				}
 			}
 
-			values.put(detail.getFieldName(), value);
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE,detail.getFieldType())) {
+				values.put(detail.getFieldName()+"_CC", value);
+				values.put(detail.getFieldName()+"_AC", field2);
+				values.put(detail.getFieldName()+"_SC", field3);
+			}else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE,detail.getFieldType())) {
+				values.put(detail.getFieldName()+"_BR", value);
+				values.put(detail.getFieldName()+"_SR", field2);
+				values.put(detail.getFieldName()+"_MR", field3);
+			}else{
+				values.put(detail.getFieldName(), value);
+			}
 		}
 		logger.debug(Literal.LEAVING);
 		return values;
