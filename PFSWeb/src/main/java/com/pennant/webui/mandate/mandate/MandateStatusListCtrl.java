@@ -112,7 +112,7 @@ public class MandateStatusListCtrl extends GFCBaseCtrl<MandateStatus> implements
 		list.sort(new Comparator<MandateStatus>() {
 			@Override
 			public int compare(MandateStatus obj1, MandateStatus obj2) {
-				
+
 				return obj1.getChangeDate().compareTo(obj2.getChangeDate());
 			}
 		});

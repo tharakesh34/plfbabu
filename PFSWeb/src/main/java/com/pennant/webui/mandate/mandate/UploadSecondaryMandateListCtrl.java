@@ -108,44 +108,41 @@ import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/SecondaryMandateList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/SecondaryMandateList.zul file.<br>
  * ************************************************************<br>
  * 
  */
 public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(UploadSecondaryMandateListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(UploadSecondaryMandateListCtrl.class);
 
-	protected Window					window_SecondaryMandateList;
-	protected Borderlayout				borderLayout_MandateList;
-	protected Paging					pagingSecondaryMandateList;
-	protected Listbox					listBoxMandate;
-	protected Textbox					fileName;
-	protected Button					btnUpload;
-	protected Button					btndownload;
-	protected Button					btnSave;
-	protected Button					btnRefresh;
-	protected Label						totalCount;
-	protected Label						successCount;
-	protected Label						failedCount;
-	protected Grid						statusGrid;
-	
-	private final String 				uploadLoaction  = "/opt/pennant/external";
-	private File 						file;
-	private Workbook 					workbook = null;
-	private DataFormatter 				objDefaultFormat = new DataFormatter();// for cell value formating
-	private FormulaEvaluator 			objFormulaEvaluator = null; // for cell value formating
+	protected Window window_SecondaryMandateList;
+	protected Borderlayout borderLayout_MandateList;
+	protected Paging pagingSecondaryMandateList;
+	protected Listbox listBoxMandate;
+	protected Textbox fileName;
+	protected Button btnUpload;
+	protected Button btndownload;
+	protected Button btnSave;
+	protected Button btnRefresh;
+	protected Label totalCount;
+	protected Label successCount;
+	protected Label failedCount;
+	protected Grid statusGrid;
 
-	private transient MandateService	mandateService;
-	private BankBranchService			bankBranchService;
-	private FinanceMainService 			financeMainService;
-	private UploadSecondaryMandateService	uploadSecondaryMandateService;
-	private UploadHeaderService			uploadHeaderService;
-	private BankDetailService			bankDetailService;
+	private final String uploadLoaction = "/opt/pennant/external";
+	private File file;
+	private Workbook workbook = null;
+	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
+	private FormulaEvaluator objFormulaEvaluator = null; // for cell value formating
 
-
+	private transient MandateService mandateService;
+	private BankBranchService bankBranchService;
+	private FinanceMainService financeMainService;
+	private UploadSecondaryMandateService uploadSecondaryMandateService;
+	private UploadHeaderService uploadHeaderService;
+	private BankDetailService bankDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -170,8 +167,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -179,7 +175,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	public void onCreate$window_SecondaryMandateList(Event event) {
 
 		// Set the page level components.
-		setPageComponents(window_SecondaryMandateList, borderLayout_MandateList, listBoxMandate, pagingSecondaryMandateList);
+		setPageComponents(window_SecondaryMandateList, borderLayout_MandateList, listBoxMandate,
+				pagingSecondaryMandateList);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -205,7 +202,6 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * when the "Upload" button is clicked. <br>
 	 * 
@@ -230,7 +226,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		writeFile(media, fName);
 		logger.debug(Literal.LEAVING);
 	}
-		
+
 	public void onClick$btnSave(Event event) throws Exception {
 		if (StringUtils.isBlank(fileName.getValue())) {
 			MessageUtil.showError("Please upload a excel file");
@@ -243,12 +239,13 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 			doProcessMandates(fileName.getValue());
 		}
 	}
-	 /**
-		 * when the "refresh" button is clicked. <br>
-		 * 
-		 * @param event
-		 * @throws Exception
-		 */
+
+	/**
+	 * when the "refresh" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -256,7 +253,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 
 		logger.debug(Literal.LEAVING);
 	}
-		
+
 	private void doResetData() {
 		logger.debug(Literal.ENTERING);
 
@@ -270,6 +267,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		this.btndownload.setVisible(false);
 		logger.debug(Literal.LEAVING);
 	}
+
 	private void writeFile(Media media, String fName) throws IOException {
 		logger.debug(Literal.ENTERING);
 		File parent = new File(uploadLoaction);
@@ -297,9 +295,9 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
-	 * reading whole excel and calling other methods to prepare mandate object
-	 *  and Save the mandates  .
+	 * reading whole excel and calling other methods to prepare mandate object and Save the mandates .
 	 * 
 	 * @return String
 	 * @throws Exception
@@ -314,10 +312,10 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		}
 
 		List<String> keys = getAllValuesOfRowByIndex(workbook, 0, 1);
-		if(!keys.contains("Mandate ID")){
+		if (!keys.contains("Mandate ID")) {
 			MessageUtil.showError("Invlid format");
-			return ;
-		} 
+			return;
+		}
 		Sheet sheet = workbook.getSheetAt(0);
 
 		Iterator<Row> rows = sheet.iterator();
@@ -405,7 +403,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 					mandateStatus.setUploadId(uploadId);
 					uploadSecondaryMandateService.save(mandateStatus);
 				} else { // primary mandate not available log the excel upload
-							// data
+								// data
 					if (rowIndex == 2) {
 						uploadId = saveUploadHeaderDetails(fName);
 					}
@@ -450,31 +448,33 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	}
 
 	/*
-	 * prepare the SecondaryMandateStatus  
+	 * prepare the SecondaryMandateStatus
 	 */
-	private UploadSecondaryMandate prepareMandateStatus(Mandate mandate,boolean status,String reason) {
+	private UploadSecondaryMandate prepareMandateStatus(Mandate mandate, boolean status, String reason) {
 		logger.debug(Literal.ENTERING);
-		
+
 		UploadSecondaryMandate mandateStatus = new UploadSecondaryMandate();
-	 mandateStatus.setMandateID(mandate.getMandateID());
-	 mandateStatus.setMandateType(mandate.getMandateType());
-	 mandateStatus.setmICR(mandate.getMICR());
-	 mandateStatus.setBankCode(mandate.getBankName());
-	 mandateStatus.setAccNumber(mandate.getAccNumber());
-	 mandateStatus.setAccType(mandate.getAccType());
-	 mandateStatus.setAccHolderName(mandate.getAccHolderName());
-	 mandateStatus.setBarCodeNumber(mandate.getBarCodeNumber());
-	 mandateStatus.setStatus(status);
-	 mandateStatus.setReason(reason);
-	 
-	 logger.debug(Literal.LEAVING);
-	return mandateStatus;
+		mandateStatus.setMandateID(mandate.getMandateID());
+		mandateStatus.setMandateType(mandate.getMandateType());
+		mandateStatus.setmICR(mandate.getMICR());
+		mandateStatus.setBankCode(mandate.getBankName());
+		mandateStatus.setAccNumber(mandate.getAccNumber());
+		mandateStatus.setAccType(mandate.getAccType());
+		mandateStatus.setAccHolderName(mandate.getAccHolderName());
+		mandateStatus.setBarCodeNumber(mandate.getBarCodeNumber());
+		mandateStatus.setStatus(status);
+		mandateStatus.setReason(reason);
+
+		logger.debug(Literal.LEAVING);
+		return mandateStatus;
 	}
+
 	/**
-	 *  validating the uploaded data 
-	 *  @param mandate
-	 *  @param preMandate
-	 *  @param remarks
+	 * validating the uploaded data
+	 * 
+	 * @param mandate
+	 * @param preMandate
+	 * @param remarks
 	 * @return String
 	 */
 	private StringBuilder validateMandateData(Mandate mandate, Mandate preMandate, StringBuilder remarks) {
@@ -657,6 +657,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		logger.debug(Literal.LEAVING);
 		return keys;
 	}
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -668,9 +669,11 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), null, null, null, auditDetail,
 				aMandate.getUserDetails(), getOverideMap());
 	}
+
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
 	}
+
 	public BankBranchService getBankBranchService() {
 		return bankBranchService;
 	}
@@ -686,8 +689,6 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
-	
-	
 
 	public UploadHeaderService getUploadHeaderService() {
 		return uploadHeaderService;
@@ -696,6 +697,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {
 		this.uploadHeaderService = uploadHeaderService;
 	}
+
 	public BankDetailService getBankDetailService() {
 		return bankDetailService;
 	}

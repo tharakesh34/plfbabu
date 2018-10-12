@@ -79,60 +79,59 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/MandateList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/MandateList.zul file.<br>
  * ************************************************************<br>
  * 
  */
 public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(MandateListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(MandateListCtrl.class);
 
-	protected Window					window_MandateList;
-	protected Borderlayout				borderLayout_MandateList;
-	protected Paging					pagingMandateList;
-	protected Listbox					listBoxMandate;
-	
-	protected Listheader				listheader_CustCIF;
-	protected Listheader				listheader_MandateId;
-	protected Listheader				listheader_CustName;
-	protected Listheader				listheader_MandateType;
-	protected Listheader				listheader_BankName;
-	protected Listheader				listheader_AccNumber;
-	protected Listheader				listheader_AccType;
-	protected Listheader				listheader_Amount;
-	protected Listheader				listheader_ExpiryDate;
-	protected Listheader				listheader_Status;
-	protected Listheader				listheader_InputDate;
+	protected Window window_MandateList;
+	protected Borderlayout borderLayout_MandateList;
+	protected Paging pagingMandateList;
+	protected Listbox listBoxMandate;
 
-	protected Button					button_MandateList_NewMandate;
-	protected Button					button_MandateList_MandateSearch;
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_MandateId;
+	protected Listheader listheader_CustName;
+	protected Listheader listheader_MandateType;
+	protected Listheader listheader_BankName;
+	protected Listheader listheader_AccNumber;
+	protected Listheader listheader_AccType;
+	protected Listheader listheader_Amount;
+	protected Listheader listheader_ExpiryDate;
+	protected Listheader listheader_Status;
+	protected Listheader listheader_InputDate;
 
-	protected Intbox					mandateID;
-	protected Textbox					custCIF;
-	protected Combobox					mandateType;
-	protected Textbox					custShrtName;
-	protected Textbox					bankName;
-	protected Combobox					status;
-	protected Textbox					accNumber;
-	protected Combobox					accType;
-	protected Datebox					expiryDate;
-	protected Datebox					inputDate;
+	protected Button button_MandateList_NewMandate;
+	protected Button button_MandateList_MandateSearch;
 
-	protected Listbox					sortOperator_MandateID;
-	protected Listbox					sortOperator_CustCIF;
-	protected Listbox					sortOperator_CustName;
-	protected Listbox					sortOperator_MandateType;
-	protected Listbox					sortOperator_BankName;
-	protected Listbox					sortOperator_AccNumber;
-	protected Listbox					sortOperator_AccType;
-	protected Listbox					sortOperator_ExpiryDate;
-	protected Listbox					sortOperator_Status;
-	protected Listbox					sortOperator_InputDate;
+	protected Intbox mandateID;
+	protected Textbox custCIF;
+	protected Combobox mandateType;
+	protected Textbox custShrtName;
+	protected Textbox bankName;
+	protected Combobox status;
+	protected Textbox accNumber;
+	protected Combobox accType;
+	protected Datebox expiryDate;
+	protected Datebox inputDate;
 
-	private transient MandateService	mandateService;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected Listbox sortOperator_MandateID;
+	protected Listbox sortOperator_CustCIF;
+	protected Listbox sortOperator_CustName;
+	protected Listbox sortOperator_MandateType;
+	protected Listbox sortOperator_BankName;
+	protected Listbox sortOperator_AccNumber;
+	protected Listbox sortOperator_AccType;
+	protected Listbox sortOperator_ExpiryDate;
+	protected Listbox sortOperator_Status;
+	protected Listbox sortOperator_InputDate;
+
+	private transient MandateService mandateService;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -161,8 +160,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -179,18 +177,28 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)), Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.status, "",
+				PennantStaticListUtil
+						.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
+				Collections.singletonList(MandateConstants.STATUS_FIN));
 
-		registerField("mandateID", listheader_MandateId, SortOrder.ASC, mandateID,  sortOperator_MandateID, Operators.NUMERIC);
-		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF,sortOperator_CustCIF, Operators.STRING);
-		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
-		registerField("custShrtName", listheader_CustName, SortOrder.NONE, custShrtName, sortOperator_CustName, Operators.STRING);
-		registerField("accNumber", listheader_AccNumber, SortOrder.NONE, accNumber, sortOperator_AccNumber, Operators.STRING);
+		registerField("mandateID", listheader_MandateId, SortOrder.ASC, mandateID, sortOperator_MandateID,
+				Operators.NUMERIC);
+		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF, sortOperator_CustCIF, Operators.STRING);
+		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType,
+				Operators.STRING);
+		registerField("custShrtName", listheader_CustName, SortOrder.NONE, custShrtName, sortOperator_CustName,
+				Operators.STRING);
+		registerField("accNumber", listheader_AccNumber, SortOrder.NONE, accNumber, sortOperator_AccNumber,
+				Operators.STRING);
 		registerField("accType", listheader_AccType, SortOrder.NONE, accType, sortOperator_AccType, Operators.STRING);
-		registerField("expiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate, Operators.DATE);
-		registerField("bankName", listheader_BankName, SortOrder.NONE, bankName, sortOperator_BankName, Operators.STRING);
-		registerField("maxLimit",listheader_Amount, SortOrder.NONE);
-		registerField("inputDate",listheader_InputDate, SortOrder.NONE, inputDate, sortOperator_InputDate, Operators.DATE);
+		registerField("expiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate,
+				Operators.DATE);
+		registerField("bankName", listheader_BankName, SortOrder.NONE, bankName, sortOperator_BankName,
+				Operators.STRING);
+		registerField("maxLimit", listheader_Amount, SortOrder.NONE);
+		registerField("inputDate", listheader_InputDate, SortOrder.NONE, inputDate, sortOperator_InputDate,
+				Operators.DATE);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 
 		// Render the page and display the data.
@@ -199,8 +207,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -210,8 +217,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -222,8 +228,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -243,8 +248,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -302,17 +307,16 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 				arg.put("enqModule", true);
 			}
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equalsIgnoreCase(MandateConstants.STATUS_APPROVED) 
-					||StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
+			if (StringUtils.trimToEmpty(mandate.getStatus()).equalsIgnoreCase(MandateConstants.STATUS_APPROVED)
+					|| StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
 				arg.put("maintain", true);
 			}
-			
 
-			String page="/WEB-INF/pages/Mandate/MandateDialog.zul";
+			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			if (enqiryModule) {
-				page="/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
-			} 
-			
+				page = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
+			}
+
 			Executions.createComponents(page, null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -349,8 +353,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -361,7 +364,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		}
 		doPrintResults();
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -372,7 +375,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -385,7 +388,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
