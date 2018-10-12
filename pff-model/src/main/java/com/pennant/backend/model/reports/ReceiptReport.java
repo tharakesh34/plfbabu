@@ -41,8 +41,10 @@
  */
 package com.pennant.backend.model.reports;
 
-public class ReceiptReport{
-	
+import java.io.Serializable;
+
+public class ReceiptReport implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String userName;
 	private String userBranch;
 	private String finReference;
@@ -54,18 +56,15 @@ public class ReceiptReport{
 	private String receiptNo;
 	private String fundingAc;
 	private String paymentMode;
-	
+
 	public ReceiptReport() {
-		
+		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-	
 	public String getUserName() {
 		return userName;
 	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -73,6 +72,7 @@ public class ReceiptReport{
 	public String getUserBranch() {
 		return userBranch;
 	}
+
 	public void setUserBranch(String userBranch) {
 		this.userBranch = userBranch;
 	}
@@ -80,6 +80,7 @@ public class ReceiptReport{
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -87,6 +88,7 @@ public class ReceiptReport{
 	public String getCustName() {
 		return custName;
 	}
+
 	public void setCustName(String custName) {
 		this.custName = custName;
 	}
@@ -94,6 +96,7 @@ public class ReceiptReport{
 	public String getReceiptAmount() {
 		return receiptAmount;
 	}
+
 	public void setReceiptAmount(String receiptAmount) {
 		this.receiptAmount = receiptAmount;
 	}
@@ -101,6 +104,7 @@ public class ReceiptReport{
 	public String getReceiptAmountInWords() {
 		return receiptAmountInWords;
 	}
+
 	public void setReceiptAmountInWords(String receiptAmountInWords) {
 		this.receiptAmountInWords = receiptAmountInWords;
 	}
@@ -108,6 +112,7 @@ public class ReceiptReport{
 	public String getAppDate() {
 		return appDate;
 	}
+
 	public void setAppDate(String appDate) {
 		this.appDate = appDate;
 	}
@@ -115,6 +120,7 @@ public class ReceiptReport{
 	public String getReceiptNo() {
 		return receiptNo;
 	}
+
 	public void setReceiptNo(String receiptNo) {
 		this.receiptNo = receiptNo;
 	}
@@ -122,6 +128,7 @@ public class ReceiptReport{
 	public String getFundingAc() {
 		return fundingAc;
 	}
+
 	public void setFundingAc(String fundingAc) {
 		this.fundingAc = fundingAc;
 	}
@@ -129,6 +136,7 @@ public class ReceiptReport{
 	public String getPaymentMode() {
 		return paymentMode;
 	}
+
 	public void setPaymentMode(String paymentMode) {
 		this.paymentMode = paymentMode;
 	}
@@ -140,5 +148,5 @@ public class ReceiptReport{
 	public void setReceiptDate(String receiptDate) {
 		this.receiptDate = receiptDate;
 	}
-	
+
 }

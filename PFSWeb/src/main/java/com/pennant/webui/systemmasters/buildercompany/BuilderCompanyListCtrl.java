@@ -93,14 +93,14 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	protected Button button_BuilderCompanyList_BuilderCompanySearch;
 
 	// Search Fields
-	protected Uppercasebox     name; // autowired
+	protected Uppercasebox name; // autowired
 	protected ExtendedCombobox segmentation; // autowired
 	protected ExtendedCombobox groupId; // autowired
-	
+
 	protected Listbox sortOperator_name;
 	protected Listbox sortOperator_segmentation;
 	protected Listbox sortOperator_groupId;
-	
+
 	private transient BuilderCompanyService builderCompanyService;
 
 	/**
@@ -122,10 +122,9 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-			this.searchObject.addFilter(new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL));
+		this.searchObject.addFilter(new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL));
 	}
 
-	
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -141,11 +140,13 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 
 		// Register buttons and fields.
 		registerButton(button_BuilderCompanyList_BuilderCompanySearch);
-		registerButton(button_BuilderCompanyList_NewBuilderCompany, "button_BuilderCompanyList_NewBuilderCompany", true);
+		registerButton(button_BuilderCompanyList_NewBuilderCompany, "button_BuilderCompanyList_NewBuilderCompany",
+				true);
 
 		registerField("id");
 		registerField("name", listheader_name, SortOrder.NONE, name, sortOperator_name, Operators.STRING);
-		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation, Operators.STRING);
+		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation,
+				Operators.STRING);
 		registerField("groupId", listheader_groupId, SortOrder.NONE, groupId, sortOperator_groupId, Operators.NUMERIC);
 		registerField("groupIdName");
 		doSetFieldProperties();
@@ -172,15 +173,16 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		this.segmentation.setModuleName("LovFieldDetail");
 		this.segmentation.setValueColumn("FieldCodeValue");
 		this.segmentation.setDescColumn("ValueDesc");
-		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
+		this.segmentation.setValidateColumns(new String[] { "FieldCodeValue" });
 		this.groupId.setModuleName("BuilderGroup");
 		this.groupId.setValueColumn("Id");
 		this.groupId.setValueType(DataType.LONG);
 		this.groupId.setDescColumn("Name");
-		this.groupId.setValidateColumns(new String[]{"Id"});
-		
+		this.groupId.setValidateColumns(new String[] { "Id" });
+
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
@@ -211,7 +213,6 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -222,7 +223,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 
 	public void onBuilderCompanyItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxBuilderCompany.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -232,13 +233,13 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  id = ");
-		whereCond.append( buildercompany.getId());
+		whereCond.append(buildercompany.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(buildercompany.getVersion());
-	
+
 		if (doCheckAuthority(buildercompany, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && buildercompany.getWorkflowId() == 0) {
@@ -248,10 +249,10 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -264,9 +265,10 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("buildercompany", buildercompany);
 		arg.put("buildercompanyListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -293,7 +295,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 
