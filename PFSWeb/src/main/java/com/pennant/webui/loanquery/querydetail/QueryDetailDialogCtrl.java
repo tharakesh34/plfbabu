@@ -898,7 +898,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				logger.error("Exception: ", e);
 			}
 		}
-		logger.debug("Leaving  ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1144,7 +1144,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 										String.valueOf(queryDetail.getCloserBy())))) {
 					doReadOnly();
 					readOnlyComponent(false, this.responsNotes);
-					this.row5.setVisible(false);
+					this.row5.setVisible(true);
 					this.row6.setVisible(false);
 					this.responseBy.setValue(getUserWorkspace().getUserDetails().getUsername());
 					this.responseOn.setValue(DateUtility.getAppDate());
