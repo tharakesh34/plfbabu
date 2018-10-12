@@ -1,3 +1,11 @@
+pff 4.11.2.3, 2018-10-12
+ --------------
+-Story #831 Added Custom deviations,Eligibility Summary, All fees details in Agreements
+-PPM #18401 Getting document type issue and getting query closed screen.
+-PSD # 129231    Extended fields saving issue for setting values from PHONE and BASERATE field Types.
+-bugs #834  LPP Wrong calculation
+-bugs #835  Audit Detail Error List getting null
+
 pff 4.11.2, 2018-10-09
  --------------
 -bugs #821 GST State wise Account Number building Issue.
