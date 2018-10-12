@@ -84,40 +84,39 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/FinTypeExpenseDialog.zul file.
  */
 public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
-	private static final long		serialVersionUID	= 1L;
-	private static final Logger		logger				= Logger.getLogger(FinTypeExpenseDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FinTypeExpenseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window				window_FinTypeExpenseDialog;
+	protected Window window_FinTypeExpenseDialog;
 
-	protected ExtendedCombobox		expenseType;
-	protected Combobox				calculationType;
-	protected CurrencyBox			amount;
-	protected Space					space_percentage;
-	protected Decimalbox			percentage;
-	protected Row					row_CalculationOn;
-	protected Combobox				calculationOn;
-	protected Checkbox				amortReq;
-	protected Checkbox				taxApplicable;
-	protected Checkbox				active;
-	protected Label					label_FinTypeExpenseDialog_AmtPerc;
-	protected Row					row_AmzTax;
+	protected ExtendedCombobox expenseType;
+	protected Combobox calculationType;
+	protected CurrencyBox amount;
+	protected Space space_percentage;
+	protected Decimalbox percentage;
+	protected Row row_CalculationOn;
+	protected Combobox calculationOn;
+	protected Checkbox amortReq;
+	protected Checkbox taxApplicable;
+	protected Checkbox active;
+	protected Label label_FinTypeExpenseDialog_AmtPerc;
+	protected Row row_AmzTax;
 	// not auto wired vars
-	private FinTypeExpense			finTypeExpense;															// overhanded per param
-	
+	private FinTypeExpense finTypeExpense; // overhanded per param
 
-	private transient boolean		validationOn;
+	private transient boolean validationOn;
 
-	private String					userRole			= "";
+	private String userRole = "";
 
-	private FinTypeExpenseListCtrl	finTypeExpenseListCtrl;
-	private List<FinTypeExpense>	finTypeExpenseList;
-	private int						ccyFormat			= 0;
-	boolean							isOriginationFee	= false;
-	boolean							isOverdraft			= false;
+	private FinTypeExpenseListCtrl finTypeExpenseListCtrl;
+	private List<FinTypeExpense> finTypeExpenseList;
+	private int ccyFormat = 0;
+	boolean isOriginationFee = false;
+	boolean isOverdraft = false;
 
 	/**
 	 * default constructor.<br>
@@ -335,7 +334,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 	 */
 	public void doWriteBeanToComponents(FinTypeExpense aFinTypeExpense) {
 		logger.debug("Entering");
-		
+
 		long expenseTypeId = aFinTypeExpense.getExpenseTypeID();
 
 		if (expenseTypeId != Long.MIN_VALUE && expenseTypeId != 0) {
@@ -349,24 +348,22 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		String calTypeExcludeFields = "," + PennantConstants.FEE_CALCULATION_TYPE_RULE + ",";
 		fillComboBox(this.calculationType, aFinTypeExpense.getCalculationType(),
 				PennantStaticListUtil.getFeeCalculationTypes(), calTypeExcludeFields);
-		
+
 		doSetCalculationTypeProp();
-		
+
 		fillComboBox(this.calculationOn, aFinTypeExpense.getCalculateOn(),
 				PennantStaticListUtil.getExpenseCalculatedOnList(), "");
 
-		if(aFinTypeExpense.isNewRecord()){
+		if (aFinTypeExpense.isNewRecord()) {
 			this.active.setChecked(true);
 			this.amortReq.setChecked(true);
-		}else{
+		} else {
 			this.active.setChecked(aFinTypeExpense.isActive());
 			this.amortReq.setChecked(aFinTypeExpense.isAmortReq());
 		}
-		
+
 		this.taxApplicable.setChecked(aFinTypeExpense.isTaxApplicable());
 		this.recordStatus.setValue(aFinTypeExpense.getRecordStatus());
-
-		
 
 		logger.debug("Leaving");
 	}
@@ -443,14 +440,13 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		}
 		//Amortization Required Flag
 		aFinTypeExpense.setAmortReq(this.amortReq.isChecked());
-	
+
 		//GST Applicable Flag
-		
+
 		aFinTypeExpense.setTaxApplicable(this.taxApplicable.isChecked());
-		
+
 		//Active
 		aFinTypeExpense.setActive(this.active.isChecked());
-		
 
 		doRemoveValidation();
 		if (wve.size() > 0) {
@@ -600,7 +596,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		readOnlyComponent(isReadOnly("FinTypeExpenseDialog_amortizationRequired"), this.amortReq);
 		readOnlyComponent(isReadOnly("FinTypeExpenseDialog_taxApplicable"), this.taxApplicable);
 		readOnlyComponent(isReadOnly("FinTypeExpenseDialog_active"), this.active);
-		
+
 		this.row_AmzTax.setVisible(!isReadOnly("ExpenseTypeDialog_RowAmortTaxApplicable"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -846,7 +842,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 			this.amount.setMandatory(false);
 			this.row_CalculationOn.setVisible(true);
 			this.space_percentage.setVisible(true);
-			
+
 		}
 	}
 
