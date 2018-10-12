@@ -6335,7 +6335,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		// validate QueryModule
-		if (isForwardCase(financeMain)) {
+		if ("saveOrUpdate".equals(method) && isForwardCase(financeMain)) {
 			String finReference = financeMain.getFinReference();
 			String currentRole = financeMain.getRoleCode();
 			List<QueryDetail> qrysList = getQueryDetailService().getUnClosedQurysForGivenRole(finReference,
@@ -6347,7 +6347,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 				List<ErrorDetail> errorDetailsList = new ArrayList<ErrorDetail>(1);
 				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT1", errParm, valueParm), "EN"));
+						new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT2", errParm, valueParm), "EN"));
 				errorDetailsList.add(errorDetail);
 				auditHeader.setErrorList(errorDetailsList);
 			}

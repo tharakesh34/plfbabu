@@ -921,7 +921,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		this.notifyTo.setValue(tempDeviationCode);
 
-		logger.debug("Entering");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -1144,7 +1144,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 										String.valueOf(queryDetail.getCloserBy())))) {
 					doReadOnly();
 					readOnlyComponent(false, this.responsNotes);
-					this.row5.setVisible(true);
+					this.row5.setVisible(false);
 					this.row6.setVisible(false);
 					this.responseBy.setValue(getUserWorkspace().getUserDetails().getUsername());
 					this.responseOn.setValue(DateUtility.getAppDate());
@@ -1238,16 +1238,29 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.responseOn.setValue(queryDetail.getResponseOn());
 				}
 			} else {
-				this.row5.setVisible(true);
-				this.row6.setVisible(true);
-				this.row7.setVisible(true);
-				this.row8.setVisible(true);
-				this.btnSave.setVisible(false);
-				doReadOnly();
-				this.responseBy.setValue(queryDetail.getResponseUser());
-				this.responseOn.setValue(queryDetail.getResponseOn());
-				this.closerBy.setValue(queryDetail.getCloserUser());
-				this.closerOn.setValue(queryDetail.getCloserOn());
+				if (queryDetail.getStatus().equals("Close")) {
+					this.row5.setVisible(true);
+					this.row6.setVisible(true);
+					this.row7.setVisible(true);
+					this.row8.setVisible(true);
+					this.btnSave.setVisible(false);
+					doReadOnly();
+					this.responseBy.setValue(queryDetail.getResponseUser());
+					this.responseOn.setValue(queryDetail.getResponseOn());
+					this.closerBy.setValue(queryDetail.getCloserUser());
+					this.closerOn.setValue(queryDetail.getCloserOn());
+				} else {
+					this.row5.setVisible(false);
+					this.row6.setVisible(false);
+					this.row7.setVisible(false);
+					this.row8.setVisible(false);
+					this.btnSave.setVisible(false);
+					doReadOnly();
+					this.responseBy.setValue(queryDetail.getResponseUser());
+					this.responseOn.setValue(queryDetail.getResponseOn());
+					this.closerBy.setValue(queryDetail.getCloserUser());
+					this.closerOn.setValue(queryDetail.getCloserOn());
+				}
 			}
 		}
 
