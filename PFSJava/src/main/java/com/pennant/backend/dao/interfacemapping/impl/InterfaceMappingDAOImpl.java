@@ -250,9 +250,16 @@ public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> imple
 		if (com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.SQL_SERVER) {
 			selectQry.append("SELECT COLUMN_name FROM information_schema.columns WHERE  TABLE_NAME=:TABLE_NAME");
 		}
+		if (com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.POSTGRES) {
+			selectQry.append("SELECT COLUMN_name FROM information_schema.columns WHERE  TABLE_NAME=:TABLE_NAME");
+		}
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("TABLE_NAME", tableName);
+		if(com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.POSTGRES){
+			paramSource.addValue("TABLE_NAME", tableName.toLowerCase());
+		}else{
+			paramSource.addValue("TABLE_NAME", tableName);
+		}
 
 		logger.debug("selectSql: " + selectQry);
 

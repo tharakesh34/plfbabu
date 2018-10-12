@@ -351,9 +351,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.mappingColumn.setValue("");
 			this.mappingTable.setValue("");
 			this.active.setChecked(true);
-			
+			this.recordStatus.setValue(ainterfaceMapping.getRecordStatus());
 		}
-		this.recordStatus.setValue(ainterfaceMapping.getRecordStatus());
 		logger.debug("Leaving");
 	}
 
