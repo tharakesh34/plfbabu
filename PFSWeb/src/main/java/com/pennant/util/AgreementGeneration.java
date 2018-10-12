@@ -2024,6 +2024,7 @@ public class AgreementGeneration implements Serializable {
 							loanDeviation
 									.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationDesc()));
 						}
+						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCode()));
 						loanDeviation.setDeviationCode("-");
 						loanDeviation.setSeverity("-");
 						loanDeviation.setRemarks("-");
