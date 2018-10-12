@@ -2155,6 +2155,33 @@ UNION ALL
 				update DEDUPFIELDS set fieldname='AadharNumber' where fielddesc='Customer Aadhar ID' and querymodule='RETAILCustomer';
 			</sql>
 		</changeSet>
+		
+		<changeSet id="129" author="Vinay">
+		<createTable tableName="fincreditreviewsummary_snap">
+			<column name="finreference" type="varchar(20)"/>
+			<column name="summaryid" type="bigint"/>
+			<column name="detailid" type="bigint"/>
+			<column name="subcategorycode" type="varchar(50)"/>
+			<column name="itemvalue" type="decimal(18,0)"/>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint"/>
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="130" author="Vinay">
+		<addColumn tableName="fincreditreviewsummary_snap">
+			<column name="audityear" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
 	
 	
