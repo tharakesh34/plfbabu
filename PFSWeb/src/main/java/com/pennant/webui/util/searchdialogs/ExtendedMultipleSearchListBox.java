@@ -86,12 +86,9 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 /**
  * This class creates a modal window as a dialog in which the user <br>
- * can search and select a branch object. By onClosing this box <b>returns</b>
- * an object or null. <br>
- * The object can returned by selecting and clicking the OK button or by
- * DoubleClicking on an item from the list.<br>
- * Further the count of results can limited by manipulating the value of a table
- * field for the sql where clause.<br>
+ * can search and select a branch object. By onClosing this box <b>returns</b> an object or null. <br>
+ * The object can returned by selecting and clicking the OK button or by DoubleClicking on an item from the list.<br>
+ * Further the count of results can limited by manipulating the value of a table field for the sql where clause.<br>
  */
 public class ExtendedMultipleSearchListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -114,11 +111,10 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	private JdbcSearchObject jdbcSearchObject;
 	private transient PagedListService pagedListService;
 	private String[] fieldString = null;
-	private ModuleMapping moduleMapping=null;
+	private ModuleMapping moduleMapping = null;
 	private Filter[] filters;
 	Map<String, Object> selectedValuesMap = new HashMap<String, Object>();
-	boolean selectAll=false;
-
+	boolean selectAll = false;
 
 	public ExtendedMultipleSearchListBox() {
 		super();
@@ -132,33 +128,34 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	 * @return a BeanObject from the listBox or null.
 	 */
 
-	public static Object show(Component parent,String listCode,	Map<String, Object> selectedValuesMap) {
-		return new ExtendedMultipleSearchListBox(parent,listCode,selectedValuesMap,null).getObject();
-	}	
+	public static Object show(Component parent, String listCode, Map<String, Object> selectedValuesMap) {
+		return new ExtendedMultipleSearchListBox(parent, listCode, selectedValuesMap, null).getObject();
+	}
 
 	/**
 	 * The Call method.
 	 * 
 	 * @param parent
 	 *            The parent component
-	 *            
+	 * 
 	 * @return a BeanObject from the listBox or null.
 	 */
 
-	public static Object show(Component parent,String listCode,	Map<String, Object> selectedValuesMap,Filter[] filters) {
-		return new ExtendedMultipleSearchListBox(parent,listCode,selectedValuesMap ,filters).getObject();
-	}	
+	public static Object show(Component parent, String listCode, Map<String, Object> selectedValuesMap,
+			Filter[] filters) {
+		return new ExtendedMultipleSearchListBox(parent, listCode, selectedValuesMap, filters).getObject();
+	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ExtendedMultipleSearchListBox(Component parent,String listCode,	Map<String, Object> selectedValuesMap,Filter[] filters) {
+	private ExtendedMultipleSearchListBox(Component parent, String listCode, Map<String, Object> selectedValuesMap,
+			Filter[] filters) {
 		super();
 		this.selectedValuesMap = selectedValuesMap;
-		this.filters=filters;
+		this.filters = filters;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
 		createBox();
@@ -169,20 +166,20 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void createBox() {
-		logger.debug("Entering Method createBox()"); 
+		logger.debug("Entering Method createBox()");
 
-		if(getModuleMapping().getLovWidth()!=0){
-			this._width=getModuleMapping().getLovWidth();
+		if (getModuleMapping().getLovWidth() != 0) {
+			this._width = getModuleMapping().getLovWidth();
 		}
 
 		// Window
-		this.setWidth(String.valueOf(this._width+5) + "px");
+		this.setWidth(String.valueOf(this._width + 5) + "px");
 		this.setHeight(String.valueOf(this._height) + "px");
 
 		this.setVisible(true);
 		this.setClosable(true);
 		this.addForward("onClose", this, "onClick$close");
- 		
+
 		final Vlayout vbox = new Vlayout();
 		vbox.setParent(this);
 		vbox.setStyle("text-align: left;");
@@ -207,9 +204,9 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 		for (int i = 0; i < this.fieldString.length; i++) {
 			final Listheader listheader = new Listheader();
-			listheader.setSclass("BCMListHeader"+i);
+			listheader.setSclass("BCMListHeader" + i);
 			listheader.setParent(listhead);
-			listheader.setLabel(Labels.getLabel("label_"+this.fieldString[i]));
+			listheader.setLabel(Labels.getLabel("label_" + this.fieldString[i]));
 		}
 
 		// hbox for holding the Textbox + SearchButton
@@ -232,7 +229,6 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		this._searchButton.addForward("onClick", this, "onSearchListener");
 		this._searchButton.setParent(hbox);
 
-
 		final Div divSouth = new Div();
 		divSouth.setWidth("100%");
 		divSouth.setHeight("100%");
@@ -253,37 +249,35 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		divSouth.appendChild(new Space());
 
 		// Button
-		final Button btnClear= new Button();
+		final Button btnClear = new Button();
 		btnClear.setStyle("padding-left: 5px");
 		btnClear.setLabel("Clear");
 		btnClear.setId("clear");
 		btnClear.addForward("onClick", this, "onClick$clear");
 		btnClear.setParent(divSouth);
-		
-		
-		if(StringUtils.equals(getModuleMapping().getModuleName(), "Branch")){
-		Space space= new Space();
-		space.setSpacing("10px");
-		space.setParent(divSouth);
-		
-		final Button btnSelectAll= new Button();
-		btnSelectAll.setStyle("padding-left: 1px");
-		btnSelectAll.setLabel("select All");
-		btnSelectAll.setId("selectAll");
-		btnSelectAll.addForward("onClick", this, "onClick$selectAll");
-		btnSelectAll.setParent(divSouth);
+
+		if (StringUtils.equals(getModuleMapping().getModuleName(), "Branch")) {
+			Space space = new Space();
+			space.setSpacing("10px");
+			space.setParent(divSouth);
+
+			final Button btnSelectAll = new Button();
+			btnSelectAll.setStyle("padding-left: 1px");
+			btnSelectAll.setLabel("select All");
+			btnSelectAll.setId("selectAll");
+			btnSelectAll.addForward("onClick", this, "onClick$selectAll");
+			btnSelectAll.setParent(divSouth);
 		}
 		/**
 		 * init the model.<br>
-		 * The ResultObject is a helper class that holds the generic list and
-		 * the totalRecord count as int value.
+		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
 		 */
 
 		logger.debug("Before fetch jdbc Search");
 		setJdbcSearchObject(0);
 
 		final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
-		logger.debug("After fetch jdbc Search Count:"+searchResult.getTotalCount());
+		logger.debug("After fetch jdbc Search Count:" + searchResult.getTotalCount());
 
 		this._paging.setTotalSize(searchResult.getTotalCount());
 		setListModelList(new ListModelList(searchResult.getResult()));
@@ -294,7 +288,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		} catch (final SuspendNotAllowedException e) {
 			logger.fatal("", e);
 			this.detach();
-		}  
+		}
 
 		logger.debug("Leaving Method createBox()");
 	}
@@ -303,29 +297,28 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class SearchBoxItemRenderer implements ListitemRenderer<Object> {
-		
+
 		public SearchBoxItemRenderer() {
-			
+
 		}
-		
+
 		@Override
-		public void render(Listitem item,Object data, int count) throws Exception {
-			((Listbox)item.getParent()).setMultiple(true);
+		public void render(Listitem item, Object data, int count) throws Exception {
+			((Listbox) item.getParent()).setMultiple(true);
 
 			for (int i = 0; i < fieldString.length; i++) {
 
-				String fieldValue= "";
-				String fieldMethod= "get"+fieldString[i].substring(0,1).toUpperCase()+fieldString[i].substring(1);
+				String fieldValue = "";
+				String fieldMethod = "get" + fieldString[i].substring(0, 1).toUpperCase() + fieldString[i].substring(1);
 
 				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-					fieldValue  = (String) data.getClass().getMethod(fieldMethod).invoke(data);
-				}else{
-					fieldValue=data.getClass().getMethod(fieldMethod).invoke(data).toString();
+					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
+				} else {
+					fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 				}
 
-
 				final Listcell lc = new Listcell(fieldValue);
-				if (selectedValuesMap.containsKey(fieldValue)){
+				if (selectedValuesMap.containsKey(fieldValue)) {
 					item.setSelected(true);
 				}
 
@@ -341,8 +334,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and
-	 * pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
 	 */
 	public void onPaging$paging(ForwardEvent event) throws Exception {
 
@@ -356,22 +348,22 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void setSelectedItems(){
+	public void setSelectedItems() {
 		List items = listbox.getItems();
 
-		for(int i=0;i<items.size();i++){
+		for (int i = 0; i < items.size(); i++) {
 			Listitem item = (Listitem) items.get(i);
-			String fieldValue= "";
-			String fieldMethod= "get"+fieldString[0].substring(0,1).toUpperCase()+fieldString[0].substring(1);
+			String fieldValue = "";
+			String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase() + fieldString[0].substring(1);
 			Object obj = (Object) item.getAttribute("data");
 			try {
 				if (obj.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-					fieldValue  = (String) obj.getClass().getMethod(fieldMethod).invoke(obj);
-				}else{
-					fieldValue=obj.getClass().getMethod(fieldMethod).invoke(obj).toString();
+					fieldValue = (String) obj.getClass().getMethod(fieldMethod).invoke(obj);
+				} else {
+					fieldValue = obj.getClass().getMethod(fieldMethod).invoke(obj).toString();
 				}
 			} catch (SecurityException e) {
-				logger.error("Exception: ", e); 
+				logger.error("Exception: ", e);
 			} catch (IllegalArgumentException e) {
 				logger.error("Exception: ", e);
 			} catch (NoSuchMethodException e) {
@@ -380,19 +372,19 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 				logger.error("Exception: ", e);
 			} catch (InvocationTargetException e) {
 				logger.error("Exception: ", e);
-			}	
+			}
 
-			if(selectedValuesMap.containsKey(fieldValue)){
+			if (selectedValuesMap.containsKey(fieldValue)) {
 				selectedValuesMap.remove(fieldValue);
 			}
-			if(item.isSelected()){
+			if (item.isSelected()) {
 				selectedValuesMap.put(fieldValue, obj);
-			} 
+			}
 		}
 	}
+
 	/**
-	 * Refreshes the list by calling the DAO methode with the modified search
-	 * object. <br>
+	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
 	 * @param so
 	 *            SearchObject, holds the entity and properties to search. <br>
@@ -408,15 +400,15 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 		setJdbcSearchObject(start);
 
-		if(StringUtils.isNotBlank(searchText)){
+		if (StringUtils.isNotBlank(searchText)) {
 
 			Filter[] filters = new Filter[fieldString.length];
 
 			for (int i = 0; i < fieldString.length; i++) {
-				filters[i] = new Filter(fieldString[i], "%" +searchText+"%", Filter.OP_LIKE);
+				filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
 			}
- 			this.jdbcSearchObject.addFilterOr(filters);
- 		}
+			this.jdbcSearchObject.addFilterOr(filters);
+		}
 
 		final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
 		this._paging.setTotalSize(searchResult.getTotalCount());
@@ -428,17 +420,18 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		logger.debug("Leaving Method refreshModel");
 	}
 
-	public void onClick$clear(Event event){
+	public void onClick$clear(Event event) {
 		selectedValuesMap.clear();
 		setObject(selectedValuesMap);
 		onClose();
 	}
-	public void onClick$ok(Event event){
+
+	public void onClick$ok(Event event) {
 		setSelectedItems();
 		setObject(selectedValuesMap);
 		onClose();
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void onClick$selectAll(Event event) throws Exception {
 		selectAll = true;
@@ -462,12 +455,11 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		}
 
 	}
-	
-	public void onClick$close(Event event){
+
+	public void onClick$close(Event event) {
 		setObject(selectedValuesMap);
 		onClose();
 	}
-
 
 	/**
 	 * Inner OnSearchListener class.<br>
@@ -491,7 +483,6 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		this.objClass = objClass;
 	}
 
-
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
@@ -511,17 +502,15 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	}
 
 	public PagedListService getPagedListService() {
-		if (this.pagedListService==null){
-			this.pagedListService= (PagedListService) SpringUtil.getBean("pagedListService");	
+		if (this.pagedListService == null) {
+			this.pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		}
 		return pagedListService;
 	}
 
-
 	public String[] getFieldString() {
 		return fieldString;
 	}
-
 
 	public void setFieldString(String[] fieldString) {
 		this.fieldString = fieldString;
@@ -535,24 +524,25 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setJdbcSearchObject(int start) {
 
-		this.jdbcSearchObject = new JdbcSearchObject (getModuleMapping().getModuleClass());
+		this.jdbcSearchObject = new JdbcSearchObject(getModuleMapping().getModuleClass());
 		this.jdbcSearchObject.setFirstResult(start);
 		this.jdbcSearchObject.setMaxResults(getPageSize());
 		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovTableName());
 
-		if (this.filters!=null){
+		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
 				this.jdbcSearchObject.addFilter(filters[i]);
-			}	
+			}
 		}
 
-		if (getModuleMapping().getLovFilters()!=null){
+		if (getModuleMapping().getLovFilters() != null) {
 			Object[][] condArray = getModuleMapping().getLovFilters();
 			Filter filter1;
 
 			for (int i = 0; i < condArray.length; i++) {
 
-				filter1 = new Filter((String)condArray[i][0], condArray[i][2], Integer.parseInt((String)condArray[i][1]));
+				filter1 = new Filter((String) condArray[i][0], condArray[i][2],
+						Integer.parseInt((String) condArray[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
 
 			}
@@ -565,9 +555,9 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 	public void setModuleMapping(ModuleMapping moduleMapping) {
 		this.moduleMapping = moduleMapping;
-		if (moduleMapping!=null){
-			this.fieldString=moduleMapping.getLovFields();
-			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));			
+		if (moduleMapping != null) {
+			this.fieldString = moduleMapping.getLovFields();
+			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
 		}
 
 	}
