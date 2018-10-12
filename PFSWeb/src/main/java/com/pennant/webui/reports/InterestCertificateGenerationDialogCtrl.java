@@ -47,27 +47,26 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	private static final Logger logger = Logger.getLogger(InterestCertificateGenerationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_InterestCertificateGeneration; 			    // autowired
-	
-	protected ExtendedCombobox	finReference;
+	protected Window window_InterestCertificateGeneration; // autowired
+
+	protected ExtendedCombobox finReference;
 	protected Combobox financeYear;
 	protected Label WindowTitle;
 	protected ExtendedCombobox finType;
-	
+
 	// Declaration of Service(s) & DAO(s)
 	private transient InterestCertificateService interestCertificateService;
-	
-	protected Tabbox         tabbox;
-	
+
+	protected Tabbox tabbox;
+
 	protected Window parentWindow;
 	private InterestCertificateGenerationDialogCtrl interestCertificateGenerationDialogCtrl = null;
 
 	private List<ValueLabel> financeYearList = null;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -79,11 +78,10 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	protected void doSetProperties() {
 		super.pageRightName = "AgreementGenerationDialog";
 	}
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -93,11 +91,11 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 		// Set the page level components.
 		setPageComponents(window_InterestCertificateGeneration);
-		
-		tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent().getParent();
+
+		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		if (arguments.containsKey("window")) {
-			parentWindow=(Window) arguments.get("window");
-		
+			parentWindow = (Window) arguments.get("window");
+
 		}
 		if (arguments.containsKey("module")) {
 			if ("provisional".equalsIgnoreCase(getArgument("module"))) {
@@ -115,21 +113,21 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 */
 	private void doSetFieldProperties() throws ParseException {
 		logger.debug("Entering");
-		
+
 		this.finType.setMaxlength(8);
 		this.finType.setMandatoryStyle(true);
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType" });
-		
+
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
 		this.finReference.setMandatoryStyle(true);
@@ -137,37 +135,39 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		this.finReference.setWhereClause("FinisActive = 1");
-		
-		String startYear=SMTParameterConstants.BAJAJFINANCE_STARTDATE;
-		String year=startYear.substring(startYear.length()-4);
-		
-		int years=DateUtility.getYearsBetween(new SimpleDateFormat("dd/MM/yyyy").parse(startYear), DateUtility.getAppDate());
-		
+
+		String startYear = SMTParameterConstants.BAJAJFINANCE_STARTDATE;
+		String year = startYear.substring(startYear.length() - 4);
+
+		int years = DateUtility.getYearsBetween(new SimpleDateFormat("dd/MM/yyyy").parse(startYear),
+				DateUtility.getAppDate());
+
 		int month = DateUtility.getMonth(DateUtility.getAppDate());
-		
+
 		// As of financeYear Start from april
 		if (month >= 4) {
 			years = years + 1;
 		}
-		
-		financeYearList=new ArrayList<ValueLabel>(years);
-		for(int i=0;i<=years-1;i++){
-			financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(year)+i) , String.valueOf(Integer.valueOf(year)+i)+"-"+String.valueOf(Integer.valueOf(year.substring(year.length()-2))+i+1)));
+
+		financeYearList = new ArrayList<ValueLabel>(years);
+		for (int i = 0; i <= years - 1; i++) {
+			financeYearList.add(
+					new ValueLabel(String.valueOf(Integer.valueOf(year) + i), String.valueOf(Integer.valueOf(year) + i)
+							+ "-" + String.valueOf(Integer.valueOf(year.substring(year.length() - 2)) + i + 1)));
 		}
-		
+
 		fillComboBox(this.financeYear, "", financeYearList, "");
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
-	public void onFulfill$finType(Event event){
+
+	public void onFulfill$finType(Event event) {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.finType);
 		this.finType.setConstraint("");
 		this.finType.setErrorMessage("");
 		Object dataObject = this.finType.getObject();
-		if (dataObject instanceof String || dataObject==null) {
+		if (dataObject instanceof String || dataObject == null) {
 			this.finType.setValue("");
 			this.finType.setObject("");
 			this.finReference.setButtonDisabled(true);
@@ -179,15 +179,15 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				this.finReference.setButtonDisabled(false);
 				this.finReference.setMandatoryStyle(true);
 				Filter[] filters = new Filter[1];
-                filters[0] = new Filter("FinType", details.getFinType(), Filter.OP_EQUAL);
-                this.finReference.setFilters(filters);
-				
+				filters[0] = new Filter("FinType", details.getFinType(), Filter.OP_EQUAL);
+				this.finReference.setFilters(filters);
+
 			}
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onFulfill$finReference(Event event) {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.finReference);
@@ -203,17 +203,19 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				this.finReference.setValue(details.getFinReference());
 			}
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
-		if (!this.finReference.isReadonly()){
-			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_SelectFinReferenceDialog_FinReference.value"),null,true,true));
+
+		if (!this.finReference.isReadonly()) {
+			this.finReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SelectFinReferenceDialog_FinReference.value"), null, true, true));
 		}
 		if (!this.financeYear.isDisabled() && this.financeYear.isVisible()) {
 			this.financeYear.setConstraint(new StaticListValidator(financeYearList,
@@ -232,20 +234,21 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		MessageUtil.showHelpWindow(event, window_InterestCertificateGeneration);
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws CustomerNotFoundException 
-	 * @throws CustomerLimitProcessException 
+	 * @throws CustomerNotFoundException
+	 * @throws CustomerLimitProcessException
 	 */
 	public void onClick$btnPrint(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		printAgreement(event);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void printAgreement(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -253,7 +256,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 		doSetValidation();
 		doRemoveValidation();
-		
+
 		try {
 			if (this.finType.getValidatedValue() == "") {
 				wve.add(new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_INVALID",
@@ -264,22 +267,22 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		}
 
 		try {
-		   if(this.finReference.getValidatedValue()=="" && !this.finReference.isButtonDisabled()){
-			   wve.add(new WrongValueException(this.finReference,Labels.getLabel("FIELD_NO_INVALID",
+			if (this.finReference.getValidatedValue() == "" && !this.finReference.isButtonDisabled()) {
+				wve.add(new WrongValueException(this.finReference, Labels.getLabel("FIELD_NO_INVALID",
 						new String[] { Labels.getLabel("label_SelectFinReferenceDialog_FinReference.value") })));
-		   }
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-		try {
-			if(getComboboxValue(this.financeYear).equals(PennantConstants.List_Select)){
-				wve.add(new WrongValueException(this.financeYear, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_InterestCertificate_FinanceYear.value")})));
 			}
 		} catch (WrongValueException e) {
 			wve.add(e);
 		}
-		
+		try {
+			if (getComboboxValue(this.financeYear).equals(PennantConstants.List_Select)) {
+				wve.add(new WrongValueException(this.financeYear, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_InterestCertificate_FinanceYear.value") })));
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -287,11 +290,12 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
-		String startDate="1/4/"+getComboboxValue(this.financeYear);
-		String endDate="31/3/"+String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear))+1);
-		
-		InterestCertificate interestCertificate=getInterestCertificateService().getInterestCertificateDetails(this.finReference.getValue(),startDate,endDate);
+
+		String startDate = "1/4/" + getComboboxValue(this.financeYear);
+		String endDate = "31/3/" + String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear)) + 1);
+
+		InterestCertificate interestCertificate = getInterestCertificateService()
+				.getInterestCertificateDetails(this.finReference.getValue(), startDate, endDate);
 		if (interestCertificate == null) {
 			MessageUtil.showError("Details Not Found");
 			return;
@@ -302,7 +306,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		interestCertificate.setFinStartDate(startDate);
 		interestCertificate.setFinEndDate(endDate);
 		interestCertificate.setFinPostDate(DateUtility.getAppDate());
-		
+
 		Method[] methods = interestCertificate.getClass().getDeclaredMethods();
 
 		for (Method property : methods) {
@@ -319,82 +323,86 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				if (value == null) {
 					try {
 						String stringParameter = "";
-						interestCertificate.getClass().getMethod("set"+field,new Class[]{String.class}).invoke(interestCertificate, stringParameter);
+						interestCertificate.getClass().getMethod("set" + field, new Class[] { String.class })
+								.invoke(interestCertificate, stringParameter);
 					} catch (Exception e) {
 						logger.error("Exception: ", e);
 					}
 				}
 			}
 		}
-		String combinedString=null;
-		String custflatnbr=null;
-		if(interestCertificate.getCustFlatNbr().equals("")){
-			custflatnbr=" ";
-		}else{
-			custflatnbr=" "+interestCertificate.getCustFlatNbr()+"\n";
+		String combinedString = null;
+		String custflatnbr = null;
+		if (interestCertificate.getCustFlatNbr().equals("")) {
+			custflatnbr = " ";
+		} else {
+			custflatnbr = " " + interestCertificate.getCustFlatNbr() + "\n";
 		}
-		if("provisional".equalsIgnoreCase(getArgument("module"))){
-			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr + interestCertificate.getCustAddrStreet()
-			+ "\n" + interestCertificate.getCustAddrCity() + "\n" + interestCertificate.getCustAddrState() + " "
-			+ interestCertificate.getCustAddrZIP() + "\n" + interestCertificate.getCountryDesc() + "\n"
-			+ interestCertificate.getCustEmail() + "\n" + interestCertificate.getCustPhoneNumber();
-	        interestCertificate.setCustAddrHnbr(combinedString);
+		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
+			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
+					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
+					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
+					+ interestCertificate.getCountryDesc() + "\n" + interestCertificate.getCustEmail() + "\n"
+					+ interestCertificate.getCustPhoneNumber();
+			interestCertificate.setCustAddrHnbr(combinedString);
 		}
-		
+
 		if ("interest".equalsIgnoreCase(getArgument("module"))) {
-			combinedString = interestCertificate.getCustAddrHnbr()+custflatnbr+ interestCertificate.getCustAddrStreet()
-			+ "\n" + interestCertificate.getCustAddrCity() + "\n" + interestCertificate.getCustAddrState() + " "
-			+ interestCertificate.getCustAddrZIP() + "\n" + interestCertificate.getCountryDesc() ;
-	        interestCertificate.setCustAddrHnbr(combinedString);
+			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
+					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
+					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
+					+ interestCertificate.getCountryDesc();
+			interestCertificate.setCustAddrHnbr(combinedString);
 		}
-		
-		String agreement=null;
-		if("provisional".equalsIgnoreCase(getArgument("module"))){
-     		agreement= "ProvisionalCertificate.docx";
+
+		String agreement = null;
+		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
+			agreement = "ProvisionalCertificate.docx";
 		}
-		
+
 		if ("interest".equalsIgnoreCase(getArgument("module"))) {
-			agreement= "InterestCertificate.docx";
+			agreement = "InterestCertificate.docx";
 		}
-		
+
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_INTERESTCERTIFICATE);
-		TemplateEngine engine=null;
-		try{
-		  engine = new TemplateEngine(templatePath, templatePath);
-		}catch (Exception e) {
+		TemplateEngine engine = null;
+		try {
+			engine = new TemplateEngine(templatePath, templatePath);
+		} catch (Exception e) {
 			MessageUtil.showError("Path Not Found");
 			return;
 		}
 		String refNo = interestCertificate.getFinReference();
-		String reportName = refNo + "_"+agreement.substring(0, agreement.length() - 4) + "pdf";
+		String reportName = refNo + "_" + agreement.substring(0, agreement.length() - 4) + "pdf";
 		try {
 			engine.setTemplate(agreement);
 		} catch (Exception e) {
-			MessageUtil.showError(agreement+" Not Found");
+			MessageUtil.showError(agreement + " Not Found");
 			return;
 		}
 		engine.loadTemplate();
 		engine.mergeFields(interestCertificate);
-		
+
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		engine.getDocument().save(stream, SaveFormat.PDF);
-		showDocument(this.window_InterestCertificateGeneration, reportName, SaveFormat.PDF,false,tabbox,stream);
+		showDocument(this.window_InterestCertificateGeneration, reportName, SaveFormat.PDF, false, tabbox, stream);
 		logger.debug("Leaving");
 	}
-	
+
 	private void doRemoveValidation() {
 		this.finReference.setConstraint("");
 		this.financeYear.setConstraint("");
-		
+
 	}
 
-	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox,ByteArrayOutputStream stream) throws Exception {
+	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox,
+			ByteArrayOutputStream stream) throws Exception {
 		logger.debug("Entering ");
 
-		if((SaveFormat.DOCX) == format){
+		if ((SaveFormat.DOCX) == format) {
 			Filedownload.save(new AMedia(reportName, "msword", "application/msword", stream.toByteArray()));
-		}else{
-			
+		} else {
+
 			Map<String, Object> arg = new HashMap<String, Object>();
 			arg.put("reportBuffer", stream.toByteArray());
 			arg.put("parentWindow", window);
@@ -411,7 +419,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		stream = null;
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -426,19 +434,18 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		}
 	}
 
-
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		
+
 		this.financeYear.setText("");
 		this.finReference.setValue("");
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -446,14 +453,13 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		this.finReference.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
 	 * @param event
 	 */
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

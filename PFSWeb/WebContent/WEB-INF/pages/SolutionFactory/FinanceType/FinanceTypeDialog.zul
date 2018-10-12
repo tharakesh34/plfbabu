@@ -319,7 +319,8 @@
 														id="alwMaxDisbCheckReq" checked="false" />
 												</hbox>
 											</row>
-											<row id="row_Commitment" visible="true">
+											<row id="row_Commitment"
+												visible="true">
 												<label
 													id="label_FinanceTypeDialog_FinCommitmentReq"
 													value="${c:l('label_FinanceTypeDialog_FinCommitmentReq.value')}" />
@@ -352,7 +353,7 @@
 
 												<label
 													id="label_FinanceTypeDialog_OverrideLimit"
-													value="${c:l('label_FinanceTypeDialog_OverrideLimit.value')}"/>
+													value="${c:l('label_FinanceTypeDialog_OverrideLimit.value')}" />
 												<hbox>
 													<space
 														spacing="2px" />
@@ -360,7 +361,8 @@
 														id="overrideLimit" />
 												</hbox>
 											</row>
-											<row id="row_QuickDisb" visible="false">
+											<row id="row_QuickDisb"
+												visible="false">
 												<label
 													id="label_FinanceTypeDialog_AllowQDP"
 													value="${c:l('label_FinanceTypeDialog_AllowQDP.value')}" />
@@ -440,11 +442,13 @@
 														id="allowDownpayPgm" checked="false" />
 												</hbox>
 											</row>
-											<row id='row_finDepreciation'>
+											<row
+												id='row_finDepreciation'>
 												<label
 													id="label_FinanceTypeDialog_FinDepreciationReq"
 													value="${c:l('label_FinanceTypeDialog_FinDepreciationReq.value')}" />
-												<hbox id="hbox_FinDepreciationReq">
+												<hbox
+													id="hbox_FinDepreciationReq">
 													<space
 														spacing="2px" />
 													<checkbox
@@ -524,20 +528,25 @@
 														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
-											<row id="row_LTVCheck" visible="false">
+											<row id="row_LTVCheck"
+												visible="false">
 												<label
 													id="label_FinanceTypeDialog_FinCollateralLTV"
 													value="${c:l('label_FinanceTypeDialog_FinCollateralLTV.value')}" />
 												<hbox>
-													<space spacing="2px"  sclass="mandatory"/>
-													<combobox id="finLTVCheck" width="200px"/>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="finLTVCheck" width="200px" />
 												</hbox>
 												<label
 													id="label_FinanceTypeDialog_PartiallyChecked"
 													value="${c:l('label_FinanceTypeDialog_PartiallyChecked.value')}" />
 												<hbox>
-													<space spacing="2px"/>
-													<checkbox id="finCollateralCheck" width="200px"/>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finCollateralCheck" width="200px" />
 												</hbox>
 											</row>
 											<row id="row_ManualSchedule"
@@ -565,7 +574,7 @@
 													<space
 														spacing="2px" />
 													<checkbox
-														id="developerFinance"/>
+														id="developerFinance" />
 												</hbox>
 											</row>
 											<row id="row_Custoffunds"
@@ -581,14 +590,14 @@
 												<label
 													id="label_FinanceTypeDialog_AlwIRRDetails"
 													value="${c:l('label_FinanceTypeDialog_AlwIRRDetails.value')}" />
-												<hbox id="hbox_IRRDetails">
+												<hbox
+													id="hbox_IRRDetails">
 													<space spacing="2px"
-														sclass="mandatory"/>
-														<textbox
-															id="alwdIRRDetails" width="170px" readonly="true" />
-														<button
-															id="btnAlwIRRDetails"
-															image="/images/icons/LOVSearch.png" />
+														sclass="mandatory" />
+													<textbox
+														id="alwdIRRDetails" width="170px" readonly="true" />
+													<button
+														id="btnAlwIRRDetails" image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
 											<row
@@ -596,13 +605,15 @@
 												<label
 													id="label_FinanceTypeDialog_EligibilityMethod"
 													value="${c:l('label_FinanceTypeDialog_EligibilityMethod.value')}" />
-												<hbox id="hbox_ElgMthdDetails">
-													<space spacing="2px" />
-														<textbox
-															id="eligibilityMethod" width="170px" readonly="true" />
-														<button
-															id="btnAlwElgMthdDetails"
-															image="/images/icons/LOVSearch.png" />
+												<hbox
+													id="hbox_ElgMthdDetails">
+													<space
+														spacing="2px" />
+													<textbox
+														id="eligibilityMethod" width="170px" readonly="true" />
+													<button
+														id="btnAlwElgMthdDetails"
+														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
 										</rows>
@@ -643,14 +654,15 @@
 													id="finGrcIntRate" width="125px" maxlength="15"
 													style="text-align:right" />
 											</hbox>
-										</row>										
+										</row>
 										<row visible="true">
-												<label
-													id="label_FinanceTypeDialog_FinGrcBaseRate"
-													value="${c:l('label_FinanceTypeDialog_FinGrcBaseRate.value')}" />
-												<ratebox id="financeGrcBaseRate" />
-												
-										</row>		
+											<label
+												id="label_FinanceTypeDialog_FinGrcBaseRate"
+												value="${c:l('label_FinanceTypeDialog_FinGrcBaseRate.value')}" />
+											<ratebox
+												id="financeGrcBaseRate" />
+
+										</row>
 										<row id="row_GrcAdvBaseRate"
 											visible="false">
 											<label
@@ -701,7 +713,8 @@
 													style="text-align:right" />
 											</hbox>
 										</row>
-										<row id = "row_ApplyGracePricingPolicy">
+										<row
+											id="row_ApplyGracePricingPolicy">
 											<label
 												id="label_ApplyGrcPricing"
 												value="${c:l('label_FinanceTypeDialog_ApplyGrcPricing.value')}" />
@@ -775,7 +788,8 @@
 											<frequencybox
 												id="finGrcRvwFrq" />
 										</row>
-										<row id="row_FinGrcRvwRateApplFor" visible="false">
+										<row
+											id="row_FinGrcRvwRateApplFor" visible="false">
 											<label
 												id="label_FinanceTypeDialog_FinGrcRvwRateApplFor"
 												value="${c:l('label_FinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />
@@ -825,23 +839,24 @@
 													<combobox
 														id="cbfinRateType" width="275px" readonly="true" />
 												</hbox>
-													<label
+												<label
 													id="label_FinanceTypeDialog_EqualRepayment"
 													value="${c:l('label_FinanceTypeDialog_EqualRepayment.value')}" />
 												<hbox>
 													<space
 														spacing="2px" />
 													<checkbox
-														id="equalRepayment" checked="true"  />
+														id="equalRepayment" checked="true" />
 												</hbox>
-												
+
 											</row>
-											
+
 											<row visible="true">
 												<label
 													id="label_FinanceTypeDialog_BaseRate"
 													value="${c:l('label_FinanceTypeDialog_BaseRate.value')}" />
-												<ratebox id="financeBaserate" />
+												<ratebox
+													id="financeBaserate" />
 												<label
 													id="label_FinanceTypeDialog_FinIntRate"
 													value="${c:l('label_FinanceTypeDialog_FinIntRate.value')}" />
@@ -852,9 +867,9 @@
 														id="finIntRate" width="125px" maxlength="15"
 														style="text-align:right" />
 												</hbox>
-											</row> 
+											</row>
 
-											
+
 											<row id="row_RpyAdvBaseRate"
 												visible="false">
 												<label
@@ -931,7 +946,8 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row id = "row_ApplyPricingPolicy">
+											<row
+												id="row_ApplyPricingPolicy">
 												<label
 													id="label_ApplyRpyPricing"
 													value="${c:l('label_FinanceTypeDialog_ApplyRpyPricing.value')}" />
@@ -1197,7 +1213,8 @@
 														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
-											<row id="row_pftUnchanged" visible="false">
+											<row id="row_pftUnchanged"
+												visible="false">
 												<label
 													id="label_FinanceTypeDialog_FinPftUnChanged"
 													value="${c:l('label_FinanceTypeDialog_FinPftUnChanged.value')}" />
@@ -1356,7 +1373,8 @@
 														id="alwUnPlannedEmiHoliday" checked="false" />
 												</hbox>
 											</row>
-											<row id="row_LockPeriod" visible="false">
+											<row id="row_LockPeriod"
+												visible="false">
 												<label
 													id="label_FinanceTypeDialog_UnPlannedEmiHolidayLockPeriod"
 													value="${c:l('label_FinanceTypeDialog_UnPlannedEmiHolidayLockPeriod.value')}" />
@@ -1378,7 +1396,8 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row id="row_CpzAtUnPlannedEmi" visible="false">
+											<row
+												id="row_CpzAtUnPlannedEmi" visible="false">
 												<label
 													id="label_FinanceTypeDialog_CpzAtUnPlannedEmi"
 													value="${c:l('label_FinanceTypeDialog_CpzAtUnPlannedEmi.value')}" />
@@ -1438,9 +1457,10 @@
 														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
-											<row id="row_RoundingMode">
+											<row
+												id="row_RoundingMode">
 												<label
-													id="label_FinanceTypeDialog_RoundingMode" 
+													id="label_FinanceTypeDialog_RoundingMode"
 													value="${c:l('label_FinanceTypeDialog_RoundingMode.value')}" />
 												<hbox>
 													<space
@@ -1449,21 +1469,26 @@
 														id="roundingMode" width="250px" readonly="true" />
 												</hbox>
 												<label
-													id="label_FinanceTypeDialog_RoundingTarget" 
+													id="label_FinanceTypeDialog_RoundingTarget"
 													value="${c:l('label_FinanceTypeDialog_RoundingTarget.value')}" />
 												<hbox>
 													<space
-														id="space_roundingTarget" sclass="mandatory" spacing="2px" />
+														id="space_roundingTarget" sclass="mandatory"
+														spacing="2px" />
 													<combobox
 														id="roundingTarget" width="250px" readonly="true" />
 												</hbox>
 											</row>
-											<row id="row_ChequeCaptureReq">
-												<label id="label_FinanceTypeDialog_ChequeAlw"
+											<row
+												id="row_ChequeCaptureReq">
+												<label
+													id="label_FinanceTypeDialog_ChequeAlw"
 													value="${c:l('label_FinanceTypeDialog_ChequeCaptureReq.value')}" />
 												<hbox>
-													<space spacing="2px" />
-													<checkbox id="chequeCaptureReq" checked="false" />
+													<space
+														spacing="2px" />
+													<checkbox
+														id="chequeCaptureReq" checked="false" />
 												</hbox>
 											</row>
 											<row>
@@ -1477,7 +1502,8 @@
 														id="alwAdvEMI" checked="false" />
 												</hbox>
 											</row>
-											<row id="row_advEMITerms" visible="true">
+											<row id="row_advEMITerms"
+												visible="true">
 												<label
 													id="label_FinanceTypeDialog_AdvEMIMinTerm"
 													value="${c:l('label_FinanceTypeDialog_AdvEMIMinTerms.value')}" />
@@ -1500,7 +1526,8 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row id="row_advEMIMethod" visible="true">
+											<row id="row_advEMIMethod"
+												visible="true">
 												<label
 													id="label_FinanceTypeDialog_AdvEMIDftTerms"
 													value="${c:l('label_FinanceTypeDialog_AdvEMIDftTerms.value')}" />
@@ -1521,7 +1548,7 @@
 														id="cbAdvEMIMethod" width="250px" readonly="true" />
 												</hbox>
 											</row>
-											
+
 										</rows>
 									</grid>
 								</groupbox>
@@ -1768,7 +1795,8 @@
 									</rows>
 								</grid>
 							</groupbox>
-							<groupbox id="gb_VasDetails" visible="false">
+							<groupbox id="gb_VasDetails"
+								visible="false">
 								<caption
 									label="${c:l('label_FinanceTypeDialog_VasDetails')}" />
 								<grid sclass="GridLayoutNoBorder"
