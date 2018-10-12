@@ -67,56 +67,54 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	private static final Logger logger = Logger.getLogger(LatepayProfitRecoveryListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_LatepayProfitRecoveryList; 		// autowired
-	protected Borderlayout 	borderLayout_LatepayProfitRecoveryList; // autowired
-	protected Paging 		pagingLatepayProfitRecoveryList; 		// autowired
-	protected Listbox 		listBoxLatepayProfitRecovery; 			// autowired
-	protected Div 			div_LatepayProfitRecoveryList; 			// autowired
-	private Tabpanel 		tabPanel_dialogWindow;
+	protected Window window_LatepayProfitRecoveryList; // autowired
+	protected Borderlayout borderLayout_LatepayProfitRecoveryList; // autowired
+	protected Paging pagingLatepayProfitRecoveryList; // autowired
+	protected Listbox listBoxLatepayProfitRecovery; // autowired
+	protected Div div_LatepayProfitRecoveryList; // autowired
+	private Tabpanel tabPanel_dialogWindow;
 
 	// List headers
-	protected Listheader listheader_FinSchdDate; 		// autowired
-	protected Listheader listheader_FinODDate; 			// autowired
-	protected Listheader listheader_FinODPri; 			// autowired
-	protected Listheader listheader_FinODPft; 			// autowired
-	protected Listheader listheader_FinODTot; 			// autowired
-	protected Listheader listheader_FinODCPenalty; 		// autowired
-	protected Listheader listheader_FinODCWaived; 		// autowired
-	protected Listheader listheader_FinODCPLPenalty; 	// autowired
-	protected Listheader listheader_FinODCCPenalty; 	// autowired
-	protected Listheader listheader_FinODCRecoverySts; 	// autowired
-
+	protected Listheader listheader_FinSchdDate; // autowired
+	protected Listheader listheader_FinODDate; // autowired
+	protected Listheader listheader_FinODPri; // autowired
+	protected Listheader listheader_FinODPft; // autowired
+	protected Listheader listheader_FinODTot; // autowired
+	protected Listheader listheader_FinODCPenalty; // autowired
+	protected Listheader listheader_FinODCWaived; // autowired
+	protected Listheader listheader_FinODCPLPenalty; // autowired
+	protected Listheader listheader_FinODCCPenalty; // autowired
+	protected Listheader listheader_FinODCRecoverySts; // autowired
 
 	// Filtering Fields 
 
-	protected Datebox finSchdDate;                   // autowired
-	protected Listbox sortOperator_finSchdDate;      // autowired
-	protected Datebox finODDate;                     // autowired
-	protected Listbox sortOperator_finODDate;        // autowired
-	protected Decimalbox finODPrinciple;                // autowired
-	protected Listbox sortOperator_finODPrincpl;     // autowired
-	protected Decimalbox finODProfit;                   // autowired
-	protected Listbox sortOperator_finODProfit;      // autowired
-	protected Decimalbox finODTotal;                    // autowired
-	protected Listbox sortOperator_finODTotal;       // autowired
-	protected Decimalbox finODTotalCharge;          	 // autowired
+	protected Datebox finSchdDate; // autowired
+	protected Listbox sortOperator_finSchdDate; // autowired
+	protected Datebox finODDate; // autowired
+	protected Listbox sortOperator_finODDate; // autowired
+	protected Decimalbox finODPrinciple; // autowired
+	protected Listbox sortOperator_finODPrincpl; // autowired
+	protected Decimalbox finODProfit; // autowired
+	protected Listbox sortOperator_finODProfit; // autowired
+	protected Decimalbox finODTotal; // autowired
+	protected Listbox sortOperator_finODTotal; // autowired
+	protected Decimalbox finODTotalCharge; // autowired
 	protected Listbox sortOperator_finODTotalCharge; // autowired
-	protected Decimalbox finODWaived;                   // autowired
-	protected Listbox sortOperator_finODWaived;      // autowired
-	protected Combobox finODSts;                     // autowired
-	protected Listbox sortOperator_finODSts;         // autowired
+	protected Decimalbox finODWaived; // autowired
+	protected Listbox sortOperator_finODWaived; // autowired
+	protected Combobox finODSts; // autowired
+	protected Listbox sortOperator_finODSts; // autowired
 
-	private Grid 			searchGrid;							// autowired
-	protected Textbox 		moduleType; 						// autowired
-	protected Radio			fromApproved;
-	protected Radio			fromWorkFlow;
-	protected Row			workFlowFrom;
+	private Grid searchGrid; // autowired
+	protected Textbox moduleType; // autowired
+	protected Radio fromApproved;
+	protected Radio fromWorkFlow;
+	protected Row workFlowFrom;
 
-	private transient boolean  approvedList=false; 
+	private transient boolean approvedList = false;
 
 	// checkRights
 	protected Button button_LatepayProfitRecoveryList_LatepayProfitRecoverySearchDialog; // autowired
@@ -135,13 +133,13 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	private Textbox recoveryCode;
 	private String finReference = "";
 	//private int ccyFormatter = 0;
-	
+
 	@Autowired
-	private FinODDetailsDAO				finODDetailsDAO;
+	private FinODDetailsDAO finODDetailsDAO;
 	@Autowired
-	private FinanceMainDAO				financeMainDAO;
+	private FinanceMainDAO financeMainDAO;
 	@Autowired
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	@Autowired
 	private LatePayInterestService latePayInterestService;
 
@@ -158,9 +156,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected OverdueChargeRecovery object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected OverdueChargeRecovery object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -169,44 +166,53 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public void onCreate$window_LatepayProfitRecoveryList(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
-		if(event.getTarget().getParent().getParent() != null){
+		if (event.getTarget().getParent().getParent() != null) {
 			tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 		}
 
 		if (arguments.containsKey("finReference")) {
 			this.finReference = (String) arguments.get("finReference");
-		} 
-		/*if (args.containsKey("ccyFormatter")) {
-			this.ccyFormatter = (Integer) args.get("ccyFormatter");
-		} */
+		}
+		/*
+		 * if (args.containsKey("ccyFormatter")) { this.ccyFormatter = (Integer) args.get("ccyFormatter"); }
+		 */
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
-		} 
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
+		}
 
 		// DropDown ListBox
-		if("N".equals(this.recoveryCode.getValue())){
-			this.sortOperator_finSchdDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		if ("N".equals(this.recoveryCode.getValue())) {
+			this.sortOperator_finSchdDate
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finSchdDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODDate
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finODDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODPrincpl.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODPrincpl
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finODPrincpl.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODProfit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODProfit
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finODProfit.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODTotal.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODTotal
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finODTotal.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODTotalCharge.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODTotalCharge
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finODTotalCharge.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODWaived.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODWaived
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 			this.sortOperator_finODWaived.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-			this.sortOperator_finODSts.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+			this.sortOperator_finODSts
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 			this.sortOperator_finODSts.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		}
 
@@ -215,11 +221,11 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		// set the paging parameters
 		this.borderLayout_LatepayProfitRecoveryList.setHeight(getBorderLayoutHeight());
-		if(this.recoveryCode.getValue().equals("N")) {
+		if (this.recoveryCode.getValue().equals("N")) {
 			this.listBoxLatepayProfitRecovery.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 			this.pagingLatepayProfitRecoveryList.setPageSize(getListRows());
 			this.pagingLatepayProfitRecoveryList.setDetailed(true);
-			
+
 			this.listheader_FinSchdDate.setSortAscending(new FieldComparator("finSchdDate", true));
 			this.listheader_FinSchdDate.setSortDescending(new FieldComparator("finSchdDate", false));
 			this.listheader_FinODDate.setSortAscending(new FieldComparator("finODDate", true));
@@ -240,13 +246,13 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			this.listheader_FinODCCPenalty.setSortDescending(new FieldComparator("finODCCPenalty", false));
 			this.listheader_FinODCRecoverySts.setSortAscending(new FieldComparator("finODCRecoverySts", true));
 			this.listheader_FinODCRecoverySts.setSortDescending(new FieldComparator("finODCRecoverySts", false));
-			
+
 			// set the itemRenderer
 			this.listBoxLatepayProfitRecovery.setItemRenderer(new LatepayProfitRecoveryListModelItemRenderer());
-			
-		}else{
+
+		} else {
 			this.listBoxLatepayProfitRecovery.setHeight(getListBoxHeight(4));
-			
+
 			// set the itemRenderer
 			this.listBoxLatepayProfitRecovery.setItemRenderer(new LatepayProfitRecoveryListModelItemRenderer());
 		}
@@ -262,32 +268,34 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 		}
 
-		if(this.recoveryCode.getValue().equals("Y")) {
+		if (this.recoveryCode.getValue().equals("Y")) {
 			this.div_LatepayProfitRecoveryList.setVisible(false);
-			if(tabPanel_dialogWindow != null){
+			if (tabPanel_dialogWindow != null) {
 				getBorderLayoutHeight();
-				int rowsHeight = this.financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				listBoxLatepayProfitRecovery.setHeight(borderLayoutHeight-rowsHeight-95+"px");
-				this.window_LatepayProfitRecoveryList.setHeight(this.borderLayoutHeight-rowsHeight-55+"px");
+				int rowsHeight = this.financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()
+						* 20;
+				listBoxLatepayProfitRecovery.setHeight(borderLayoutHeight - rowsHeight - 95 + "px");
+				this.window_LatepayProfitRecoveryList.setHeight(this.borderLayoutHeight - rowsHeight - 55 + "px");
 				tabPanel_dialogWindow.appendChild(this.window_LatepayProfitRecoveryList);
 			}
-			
+
 		}
-		
+
 		List<OverdueChargeRecovery> lpiListTodisplay = new ArrayList<OverdueChargeRecovery>();
 
 		List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finReference);
 		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "", false);
 		List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
 		for (FinODDetails fod : list) {
-			List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod, DateUtility.addDays(DateUtility.getAppDate(), -1),
-					finMian.getProfitDaysBasis(), schlist, null, finMian.getPastduePftMargin(),
-					finMian.getCalRoundingMode(), finMian.getRoundingTarget());
+			List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod,
+					DateUtility.addDays(DateUtility.getAppDate(), -1), finMian.getProfitDaysBasis(), schlist, null,
+					finMian.getPastduePftMargin(), finMian.getCalRoundingMode(), finMian.getRoundingTarget());
 			lpiListTodisplay.addAll(lpiList);
 
 		}
-		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(lpiListTodisplay.toArray(),new OverdueChargeRecoveryComparator()));
-		
+		this.listBoxLatepayProfitRecovery
+				.setModel(new GroupsModelArray(lpiListTodisplay.toArray(), new OverdueChargeRecoveryComparator()));
+
 		logger.debug("Leaving");
 	}
 
@@ -296,18 +304,19 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 */
 	public void findSearchObject() {
 		logger.debug("Entering");
-		
+
 		// ++ create the searchObject and init sorting ++//
 		this.detailSearchObject = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class);
 		this.detailSearchObject.addTabelName("FinODCRecovery_View");
 		this.detailSearchObject.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
-		this.detailSearchObject.addFilter(new Filter("FinODFor", FinanceConstants.SCH_TYPE_LATEPAYPROFIT, Filter.OP_EQUAL));
-		
+		this.detailSearchObject
+				.addFilter(new Filter("FinODFor", FinanceConstants.SCH_TYPE_LATEPAYPROFIT, Filter.OP_EQUAL));
+
 		// Defualt Sort on the table
 		this.detailSearchObject.addSort("FinReference", false);
-		
-//		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(
-//				getPagedListService().getBySearchObject(detailSearchObject).toArray(),new OverdueChargeRecoveryComparator()));
+
+		//		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(
+		//				getPagedListService().getBySearchObject(detailSearchObject).toArray(),new OverdueChargeRecoveryComparator()));
 		logger.debug("Leaving");
 	}
 
@@ -326,7 +335,6 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		logger.debug("Leaving ");
 	}
 
-
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -335,14 +343,16 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		getUserWorkspace().allocateAuthorities("OverdueChargeRecoveryList");
 		this.button_LatepayProfitRecoveryList_LatepayProfitRecoverySearchDialog.setVisible(
 				getUserWorkspace().isAllowed("button_OverdueChargeRecoveryList_OverdueChargeRecoveryFindDialog"));
-		this.button_LatepayProfitRecoveryList_PrintList.setVisible(
-				getUserWorkspace().isAllowed("button_OverdueChargeRecoveryList_PrintList"));
+		this.button_LatepayProfitRecoveryList_PrintList
+				.setVisible(getUserWorkspace().isAllowed("button_OverdueChargeRecoveryList_PrintList"));
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * This method is forwarded from the listboxes item renderer. <br>
-	 * see: com.pennant.webui.financemanagement.overduechargerecovery.model.LatepayProfitRecoveryListModelItemRenderer.java <br>
+	 * see:
+	 * com.pennant.webui.financemanagement.overduechargerecovery.model.LatepayProfitRecoveryListModelItemRenderer.java
+	 * <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -356,32 +366,37 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final OverdueChargeRecovery aOverdueChargeRecovery = (OverdueChargeRecovery) item.getAttribute("data");
-			final OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecoveryService().
-			getOverdueChargeRecoveryById(aOverdueChargeRecovery.getId(),aOverdueChargeRecovery.getFinODSchdDate(),
-					aOverdueChargeRecovery.getFinODFor());
+			final OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecoveryService()
+					.getOverdueChargeRecoveryById(aOverdueChargeRecovery.getId(),
+							aOverdueChargeRecovery.getFinODSchdDate(), aOverdueChargeRecovery.getFinODFor());
 
-			if(overdueChargeRecovery==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=aOverdueChargeRecovery.getId();
-				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+			if (overdueChargeRecovery == null) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aOverdueChargeRecovery.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
-			}else{
-				if(isWorkFlowEnabled()){
-					String whereCond =  " AND FinReference='"+ overdueChargeRecovery.getFinReference()+"' AND version=" + overdueChargeRecovery.getVersion()+" ";
+			} else {
+				if (isWorkFlowEnabled()) {
+					String whereCond = " AND FinReference='" + overdueChargeRecovery.getFinReference()
+							+ "' AND version=" + overdueChargeRecovery.getVersion() + " ";
 
-					boolean userAcces =  validateUserAccess(overdueChargeRecovery.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "OverdueChargeRecovery", whereCond, overdueChargeRecovery.getTaskId(), overdueChargeRecovery.getNextTaskId());
-					if (userAcces){
+					boolean userAcces = validateUserAccess(overdueChargeRecovery.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "OverdueChargeRecovery", whereCond,
+							overdueChargeRecovery.getTaskId(), overdueChargeRecovery.getNextTaskId());
+					if (userAcces) {
 						showDetailView(overdueChargeRecovery);
-					}else{
+					} else {
 						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					showDetailView(overdueChargeRecovery);
 				}
-			}	
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -392,7 +407,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public void onClick$button_OverdueChargeRecoveryList_NewOverdueChargeRecovery(Event event) throws Exception {
 		logger.debug(event.toString());
 		// create a new OverdueChargeRecovery object, We GET it from the backend.
-		final OverdueChargeRecovery aOverdueChargeRecovery = getOverdueChargeRecoveryService().getNewOverdueChargeRecovery();
+		final OverdueChargeRecovery aOverdueChargeRecovery = getOverdueChargeRecoveryService()
+				.getNewOverdueChargeRecovery();
 		showDetailView(aOverdueChargeRecovery);
 		logger.debug("Leaving");
 	}
@@ -401,15 +417,15 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param OverdueChargeRecovery (aOverdueChargeRecovery)
+	 * @param OverdueChargeRecovery
+	 *            (aOverdueChargeRecovery)
 	 * @throws Exception
 	 */
 	private void showDetailView(OverdueChargeRecovery aOverdueChargeRecovery) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 
 		if (aOverdueChargeRecovery.getWorkflowId() == 0 && isWorkFlowEnabled()) {
@@ -418,21 +434,22 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		Map<String, Object> map = getDefaultArguments();
 		map.put("overdueChargeRecovery", aOverdueChargeRecovery);
-		if(this.recoveryCode.getValue().equals("Y")) {
+		if (this.recoveryCode.getValue().equals("Y")) {
 			map.put("inquiry", true);
 		}
 
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listbox Listmodel. This is
-		 * fine for synchronizing the data in the OverdueChargeRecoveryListbox from the
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listbox Listmodel. This is fine for synchronizing the data in the OverdueChargeRecoveryListbox from the
 		 * dialog when we do a delete, edit or insert a OverdueChargeRecovery.
 		 */
 		map.put("overdueChargeRecoveryListCtrl", this);
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryDialog.zul",null,map);
+			Executions.createComponents(
+					"/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -483,10 +500,12 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	/**
 	 * Method for call the OverdueChargeRecovery dialog
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog(Event event) throws Exception {
+	public void onClick$button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog(Event event)
+			throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving" + event.toString());
@@ -502,14 +521,15 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public void onClick$button_OverdueChargeRecoveryList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("OverdueChargeRecovery", getSearchObj(),this.pagingLatepayProfitRecoveryList.getTotalSize()+1);
+		PTListReportUtils reportUtils = new PTListReportUtils("OverdueChargeRecovery", getSearchObj(),
+				this.pagingLatepayProfitRecoveryList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 
-	public void doSearch(){
+	public void doSearch() {
 		logger.debug("Entering");
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class,getListRows());
+		this.searchObj = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class, getListRows());
 
 		// Defualt Sort on the table
 		this.searchObj.addSort("FinReference", false);
@@ -518,69 +538,77 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("FinODCRecovery_View");
 
-			if(this.moduleType==null){
-				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-				approvedList=false;
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
 
-			}else{
-				if(this.fromApproved.isSelected()){
-					approvedList=true;
-				}else{
-					approvedList=false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					approvedList = false;
 				}
 			}
-		}else{
-			approvedList=true;
+		} else {
+			approvedList = true;
 		}
-		if(approvedList){
+		if (approvedList) {
 			this.searchObj.addTabelName("FinODCRecovery_AView");
-		}else{
+		} else {
 			this.searchObj.addTabelName("FinODCRecovery_View");
 		}
 
-		if("N".equals(this.recoveryCode.getValue())){
-			
+		if ("N".equals(this.recoveryCode.getValue())) {
+
 			setODrecoveryStatus();
 
 			// Scheduled Date
-			if (this.finSchdDate.getValue()!=null) {
+			if (this.finSchdDate.getValue() != null) {
 				//searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(), this.finSchdDate.getValue() , "finSchdDate");
 
-				searchObj.addFilter(new Filter("finSchdDate",DateUtility.formatUtilDate(
-						this.finSchdDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+				searchObj.addFilter(new Filter("finSchdDate",
+						DateUtility.formatUtilDate(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
+						Filter.OP_EQUAL));
 			}
 			// Overdue Date
-			if (this.finODDate.getValue()!=null) {
+			if (this.finODDate.getValue() != null) {
 				//searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(), this.finODDate.getValue() , "finODDate");
 
-				searchObj.addFilter(new Filter("finODDate",DateUtility.formatUtilDate(
-						this.finODDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));	
+				searchObj.addFilter(new Filter("finODDate",
+						DateUtility.formatUtilDate(this.finODDate.getValue(), PennantConstants.DBDateFormat),
+						Filter.OP_EQUAL));
 			}
 			// Overdue Principle 
-			if (this.finODPrinciple.getValue()!=null) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_finODPrincpl.getSelectedItem(), this.finODPrinciple.getValue() , "finODPri");
+			if (this.finODPrinciple.getValue() != null) {
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finODPrincpl.getSelectedItem(),
+						this.finODPrinciple.getValue(), "finODPri");
 			}
 			// Overdue Profit 
-			if (this.finODProfit.getValue()!=null) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_finODProfit.getSelectedItem(), this.finODProfit.getValue() , "finODPft");
+			if (this.finODProfit.getValue() != null) {
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finODProfit.getSelectedItem(),
+						this.finODProfit.getValue(), "finODPft");
 			}
 			// Overdue Total 
-			if (this.finODTotal.getValue()!=null) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_finODTotal.getSelectedItem(), this.finODTotal.getValue() , "finODTot");
+			if (this.finODTotal.getValue() != null) {
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finODTotal.getSelectedItem(),
+						this.finODTotal.getValue(), "finODTot");
 			}
 			// Overdue Waived 
-			if (this.finODWaived.getValue()!=null) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_finODWaived.getSelectedItem(), this.finODWaived.getValue() , "finODCWaiverPaid");
+			if (this.finODWaived.getValue() != null) {
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finODWaived.getSelectedItem(),
+						this.finODWaived.getValue(), "finODCWaiverPaid");
 			}
 
 			// Overdue recovery Status
-			if (null !=this.finODSts.getSelectedItem() && !StringUtils.trimToEmpty(this.finODSts.getSelectedItem().getValue().toString()).equals("")){
-				searchObj = getSearchFilter(searchObj, this.sortOperator_finODSts.getSelectedItem(), this.finODSts.getSelectedItem().getValue().toString(), "finODCRecoverySts");
+			if (null != this.finODSts.getSelectedItem()
+					&& !StringUtils.trimToEmpty(this.finODSts.getSelectedItem().getValue().toString()).equals("")) {
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finODSts.getSelectedItem(),
+						this.finODSts.getSelectedItem().getValue().toString(), "finODCRecoverySts");
 			}
 
 			// Set the ListModel for the articles.
 			//getPagedListWrapper().init(this.searchObj, this.listBoxLatepayProfitRecovery,this.pagingLatepayProfitRecoveryList);
-		}else{
+		} else {
 			this.searchObj.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
 		}
 		logger.debug("Leaving");
@@ -594,6 +622,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public void setOverdueChargeRecoveryService(OverdueChargeRecoveryService overdueChargeRecoveryService) {
 		this.overdueChargeRecoveryService = overdueChargeRecoveryService;
 	}
+
 	public OverdueChargeRecoveryService getOverdueChargeRecoveryService() {
 		return this.overdueChargeRecoveryService;
 	}
@@ -601,6 +630,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public JdbcSearchObject<OverdueChargeRecovery> getSearchObj() {
 		return this.searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<OverdueChargeRecovery> searchObj) {
 		this.searchObj = searchObj;
 	}
@@ -608,6 +638,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
