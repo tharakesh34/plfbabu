@@ -95,11 +95,11 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 	protected Button button_PaymentHeaderList_PaymentHeaderSearch;
 
 	// Search Fields
-    protected Combobox paymentType; // autowired
-    protected ExtendedCombobox finReference; // autowired
+	protected Combobox paymentType; // autowired
+	protected ExtendedCombobox finReference; // autowired
 	protected Datebox approvedOn; // autowired
-	
-    protected Listbox sortOperator_FinReference;
+
+	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_PaymentType;
 	protected Listbox sortOperator_ApprovedOn;
 	private transient PaymentHeaderService paymentHeaderService;
@@ -119,7 +119,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		super.queueTableName = "PaymentHeader_View";
 		super.enquiryTableName = "PaymentHeader_View";
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
@@ -137,7 +137,8 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 	public void onCreate$window_PaymentHeaderList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_PaymentHeaderList, borderLayout_PaymentHeaderList, listBoxPaymentHeader, pagingPaymentHeaderList);
+		setPageComponents(window_PaymentHeaderList, borderLayout_PaymentHeaderList, listBoxPaymentHeader,
+				pagingPaymentHeaderList);
 		setItemRender(new PaymentHeaderListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -146,18 +147,22 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		registerButton(button_PaymentHeaderList_NewPaymentHeader, "button_PaymentHeaderList_NewPaymentHeader", true);
 
 		if (enqiryModule) {
-			registerButton(button_PaymentHeaderList_NewPaymentHeader, "button_PaymentHeaderList_NewPaymentHeader", false);
+			registerButton(button_PaymentHeaderList_NewPaymentHeader, "button_PaymentHeaderList_NewPaymentHeader",
+					false);
 		}
-		registerField("paymentId");		
-		registerField("createdOn");		
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
-		registerField("paymentInstrType", listheader_PaymentType, SortOrder.NONE, paymentType, sortOperator_PaymentType, Operators.STRING);
-		registerField("approvedOn", listheader_ApprovedOn, SortOrder.NONE, approvedOn, sortOperator_ApprovedOn, Operators.DATE);
+		registerField("paymentId");
+		registerField("createdOn");
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
+				Operators.STRING);
+		registerField("paymentInstrType", listheader_PaymentType, SortOrder.NONE, paymentType, sortOperator_PaymentType,
+				Operators.STRING);
+		registerField("approvedOn", listheader_ApprovedOn, SortOrder.NONE, approvedOn, sortOperator_ApprovedOn,
+				Operators.DATE);
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -170,13 +175,13 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		
+
 		//paymentType
 		fillComboBox(this.paymentType, "", PennantStaticListUtil.getPaymentTypes(false), "");
-		
+
 		//SetFormats 
 		this.approvedOn.setFormat(PennantConstants.dateFormat);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -214,21 +219,20 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		PaymentHeader paymentHeader = new PaymentHeader();
 		paymentHeader.setNewRecord(true);
 		paymentHeader.setWorkflowId(getWorkFlowId());
-	
+
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("paymentHeader", paymentHeader);
 		arg.put("paymentheaderListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/Payment/SelectPaymentHeaderDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
@@ -240,7 +244,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 
 	public void onPaymentHeaderItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPaymentHeader.getSelectedItem();
 		final long paymentId = (long) selectedItem.getAttribute("paymentId");
@@ -250,13 +254,13 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  PaymentId = ");
-		whereCond.append( paymentheader.getPaymentId());
+		whereCond.append(paymentheader.getPaymentId());
 		whereCond.append(" AND  version=");
 		whereCond.append(paymentheader.getVersion());
-	
+
 		if (doCheckAuthority(paymentheader, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && paymentheader.getWorkflowId() == 0) {
@@ -266,10 +270,10 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -314,7 +318,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

@@ -125,56 +125,55 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
-	private static final long						serialVersionUID		= 1L;
-	private static final Logger						logger					= Logger
-			.getLogger(PaymentHeaderDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(PaymentHeaderDialogCtrl.class);
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window								window_PaymentHeaderDialog;
-	protected Borderlayout							borderlayoutPaymentHeader;
+	protected Window window_PaymentHeaderDialog;
+	protected Borderlayout borderlayoutPaymentHeader;
 
-	protected Grid									grid_Basicdetails;
-	protected Tabs									tabsIndexCenter;
-	protected Tabpanels								tabpanelsBoxIndexCenter;
-	protected Tab									tabDisbInstructions;
-	protected Tab									payTypeInstructions;
-	protected Tabpanel								tabDisbInstructionsTabPanel;
-	protected Listbox								listBoxPaymentTypeInstructions;
-	protected Decimalbox							paymentAmount			= null;
-	protected Decimalbox							totAmount				= null;
+	protected Grid grid_Basicdetails;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab tabDisbInstructions;
+	protected Tab payTypeInstructions;
+	protected Tabpanel tabDisbInstructionsTabPanel;
+	protected Listbox listBoxPaymentTypeInstructions;
+	protected Decimalbox paymentAmount = null;
+	protected Decimalbox totAmount = null;
 
-	protected Label									lbl_LoanReference;
-	protected Label									lbl_LoanType;
-	protected Label									lbl_CustCIF;
-	protected Label									lbl_Currency;
-	protected Label									lbl_startDate;
-	protected Label									lbl_MaturityDate;
+	protected Label lbl_LoanReference;
+	protected Label lbl_LoanType;
+	protected Label lbl_CustCIF;
+	protected Label lbl_Currency;
+	protected Label lbl_startDate;
+	protected Label lbl_MaturityDate;
 
-	protected Listheader							listheader_PaymentHeaderDialog_AvailableAmount;
-	protected Listheader							listheader_PaymentHeaderDialog_Balance;
+	protected Listheader listheader_PaymentHeaderDialog_AvailableAmount;
+	protected Listheader listheader_PaymentHeaderDialog_Balance;
 
-	private PaymentHeader							paymentHeader;
-	private FinanceMain								financeMain;
+	private PaymentHeader paymentHeader;
+	private FinanceMain financeMain;
 
-	private transient PaymentHeaderListCtrl			paymentHeaderListCtrl;
-	private transient PaymentHeaderService			paymentHeaderService;
-	private transient ReceiptCalculator				receiptCalculator;
-	private transient PostingsPreparationUtil		postingsPreparationUtil;
-	private EventManager							eventManager;
-	private transient PaymentInstructionDialogCtrl	disbursementInstructionsDialogCtrl;
-	private int										ccyFormatter			= 0;
-	private List<PaymentDetail>						paymentDetailList		= new ArrayList<PaymentDetail>();
-	protected String								selectMethodName		= "onSelectTab";
-	private transient AccountingDetailDialogCtrl	accountingDetailDialogCtrl;
- 	private boolean									isAccountingExecuted	= false;
-	private long									accountsetId;
+	private transient PaymentHeaderListCtrl paymentHeaderListCtrl;
+	private transient PaymentHeaderService paymentHeaderService;
+	private transient ReceiptCalculator receiptCalculator;
+	private transient PostingsPreparationUtil postingsPreparationUtil;
+	private EventManager eventManager;
+	private transient PaymentInstructionDialogCtrl disbursementInstructionsDialogCtrl;
+	private int ccyFormatter = 0;
+	private List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
+	protected String selectMethodName = "onSelectTab";
+	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
+	private boolean isAccountingExecuted = false;
+	private long accountsetId;
 	// Add list Manualadvise
-	private boolean									buttonVisible			= false;
-	private boolean									deleteButton			= false;
-	private Listheader								listheader_PaymentHeaderDialog_button;
-	private Grid									grid_basicDetails;
+	private boolean buttonVisible = false;
+	private boolean deleteButton = false;
+	private Listheader listheader_PaymentHeaderDialog_button;
+	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
 
 	/**
@@ -819,13 +818,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			validate = validateAccounting(validate);
 			// Accounting Details Validations
 			if (validate) {
-				if(!isAccountingExecuted){
+				if (!isAccountingExecuted) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}
-				if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && 
-						accountingDetailDialogCtrl.getDisbCrSum().compareTo(
-						accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+				if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl
+						.getDisbCrSum().compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 					return;
 				}
@@ -904,7 +902,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		} catch (final DataAccessException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
-		}catch (final InterfaceException e) {
+		} catch (final InterfaceException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
@@ -934,7 +932,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PaymentHeader aPaymentHeader, String tranType) throws InterfaceException{
+	private boolean doProcess(PaymentHeader aPaymentHeader, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1023,7 +1021,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException{
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1104,8 +1102,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 */
 	public void executeAccounting() throws Exception {
 		logger.debug("Entering");
-		BigDecimal amount=BigDecimal.ZERO;
-		String key=null;
+		BigDecimal amount = BigDecimal.ZERO;
+		String key = null;
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
@@ -1135,44 +1133,44 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 				amount = paymentDetail.getAmount();
 				key = paymentDetail.getFeeTypeCode() + "_P";
-				if(eventMapping.containsKey(key)){
-					amount = amount.add((BigDecimal)eventMapping.get(key));
-				} 
+				if (eventMapping.containsKey(key)) {
+					amount = amount.add((BigDecimal) eventMapping.get(key));
+				}
 				eventMapping.put(key, amount);
-				
-				if(paymentDetail.getPaymentTaxDetail() != null){
-					
+
+				if (paymentDetail.getPaymentTaxDetail() != null) {
+
 					PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
-					
+
 					//CGST
 					BigDecimal gstAmount = BigDecimal.ZERO;
-					if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_CGST_P")){
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_CGST_P");
+					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_CGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_CGST_P");
 					}
-					eventMapping.put(paymentDetail.getFeeTypeCode()+"_CGST_P",gstAmount.add(tax.getPaidCGST()));
-					
+					eventMapping.put(paymentDetail.getFeeTypeCode() + "_CGST_P", gstAmount.add(tax.getPaidCGST()));
+
 					//SGST
 					gstAmount = BigDecimal.ZERO;
-					if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_SGST_P")){
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_SGST_P");
+					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_SGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_SGST_P");
 					}
-					eventMapping.put(paymentDetail.getFeeTypeCode()+"_SGST_P",gstAmount.add(tax.getPaidSGST()));
-					
+					eventMapping.put(paymentDetail.getFeeTypeCode() + "_SGST_P", gstAmount.add(tax.getPaidSGST()));
+
 					//UGST
 					gstAmount = BigDecimal.ZERO;
-					if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_UGST_P")){
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_UGST_P");
+					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_UGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_UGST_P");
 					}
-					eventMapping.put(paymentDetail.getFeeTypeCode()+"_UGST_P",gstAmount.add(tax.getPaidUGST()));
-					
+					eventMapping.put(paymentDetail.getFeeTypeCode() + "_UGST_P", gstAmount.add(tax.getPaidUGST()));
+
 					//IGST
 					gstAmount = BigDecimal.ZERO;
-					if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_IGST_P")){
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_IGST_P");
+					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_IGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_IGST_P");
 					}
-					eventMapping.put(paymentDetail.getFeeTypeCode()+"_IGST_P",gstAmount.add(tax.getPaidIGST()));
+					eventMapping.put(paymentDetail.getFeeTypeCode() + "_IGST_P", gstAmount.add(tax.getPaidIGST()));
 				}
-				
+
 			} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(paymentDetail.getAmountType())) {
 				excessAmount = excessAmount.add(paymentDetail.getAmount());
 			} else if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())) {
@@ -1227,11 +1225,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				paymentDetail.setAmountType(String.valueOf(manualAdvise.getAdviseType()));
 				paymentDetail.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 				paymentDetail.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-				
+
 				// GST Field details
 				paymentDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
 				paymentDetail.setTaxComponent(manualAdvise.getTaxComponent());
-				
+
 				detailList.add(paymentDetail);
 			}
 
@@ -1245,20 +1243,20 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		} else {
 			updatePaybleAmounts(detailList, aPaymentHeader.getPaymentDetailList());
 		}
-		
+
 		// Calculate GST amount on Total available amount
 		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 		PaymentTaxDetail taxDetail = null;
-		
+
 		for (PaymentDetail detail : getPaymentDetailList()) {
-			if(!StringUtils.equals(detail.getAmountType(), String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))){
+			if (!StringUtils.equals(detail.getAmountType(), String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
 				continue;
 			}
 
-			if(detail.isTaxApplicable()){
+			if (detail.isTaxApplicable()) {
 
-				if(taxPercMap == null){
+				if (taxPercMap == null) {
 					FinanceDetail financeDetail = new FinanceDetail();
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 					taxPercMap = getReceiptCalculator().getTaxPercentages(financeDetail);
@@ -1271,68 +1269,77 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
 				BigDecimal gstAmount = BigDecimal.ZERO;
 
-				if(detail.getPaymentTaxDetail() == null){
+				if (detail.getPaymentTaxDetail() == null) {
 					taxDetail = new PaymentTaxDetail();
-				}else{
+				} else {
 					taxDetail = detail.getPaymentTaxDetail();
 				}
 
 				String taxType = detail.getTaxComponent();
 				taxDetail.setTaxComponent(taxType);
-				if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 
-					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal cgst =  (detail.getAvailableAmount().multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
-						taxDetail.setDueCGST(cgst);
-						gstAmount = gstAmount.add(cgst);
-					}
-					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal sgst =  (detail.getAvailableAmount().multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
-						taxDetail.setDueSGST(sgst);
-						gstAmount = gstAmount.add(sgst);
-					}
-					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal ugst =  (detail.getAvailableAmount().multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
-						taxDetail.setDueUGST(ugst);
-						gstAmount = gstAmount.add(ugst);
-					}
-					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal igst =  (detail.getAvailableAmount().multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
-						taxDetail.setDueIGST(igst);
-						gstAmount = gstAmount.add(igst);
-					}
-
-				}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
-
-					BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-					BigDecimal actualAmt = detail.getAvailableAmount().divide(percentage, 9, RoundingMode.HALF_DOWN);
-					actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
-					BigDecimal actTaxAmount = detail.getAvailableAmount().subtract(actualAmt);
-
-					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+					if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal cgst = (detail.getAvailableAmount().multiply(cgstPerc))
+								.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
 						taxDetail.setDueCGST(cgst);
 						gstAmount = gstAmount.add(cgst);
 					}
-					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+					if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal sgst = (detail.getAvailableAmount().multiply(sgstPerc))
+								.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
 						taxDetail.setDueSGST(sgst);
 						gstAmount = gstAmount.add(sgst);
 					}
-					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+					if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal ugst = (detail.getAvailableAmount().multiply(ugstPerc))
+								.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
 						taxDetail.setDueUGST(ugst);
 						gstAmount = gstAmount.add(ugst);
 					}
-					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+					if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal igst = (detail.getAvailableAmount().multiply(igstPerc))
+								.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
+						taxDetail.setDueIGST(igst);
+						gstAmount = gstAmount.add(igst);
+					}
+
+				} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+
+					BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9,
+							RoundingMode.HALF_DOWN);
+					BigDecimal actualAmt = detail.getAvailableAmount().divide(percentage, 9, RoundingMode.HALF_DOWN);
+					actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
+					BigDecimal actTaxAmount = detail.getAvailableAmount().subtract(actualAmt);
+
+					if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9,
+								RoundingMode.HALF_DOWN);
+						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
+						taxDetail.setDueCGST(cgst);
+						gstAmount = gstAmount.add(cgst);
+					}
+					if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9,
+								RoundingMode.HALF_DOWN);
+						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
+						taxDetail.setDueSGST(sgst);
+						gstAmount = gstAmount.add(sgst);
+					}
+					if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9,
+								RoundingMode.HALF_DOWN);
+						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
+						taxDetail.setDueUGST(ugst);
+						gstAmount = gstAmount.add(ugst);
+					}
+					if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9,
+								RoundingMode.HALF_DOWN);
 						igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
 						taxDetail.setDueIGST(igst);
 						gstAmount = gstAmount.add(igst);
@@ -1343,7 +1350,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detail.setPaymentTaxDetail(taxDetail);
 			}
 		}
-		
+
 		doFillHeaderList(getPaymentDetailList());
 		logger.debug(Literal.LEAVING);
 	}
@@ -1358,13 +1365,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		for (PaymentDetail oldDetail : oldList) {
 			for (PaymentDetail newDetail : newList) {
 				if (oldDetail.getReferenceId() == newDetail.getReferenceId()) {
-					
+
 					BigDecimal amount = oldDetail.getAmount();
-					if(oldDetail.getPaymentTaxDetail() != null && 
-							StringUtils.equals(oldDetail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+					if (oldDetail.getPaymentTaxDetail() != null
+							&& StringUtils.equals(oldDetail.getPaymentTaxDetail().getTaxComponent(),
+									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 						amount = amount.subtract(oldDetail.getPaymentTaxDetail().getTotalGST());
 					}
-					
+
 					oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
 					oldDetail.setNewRecord(false);
 					oldDetail.setFeeTypeCode(newDetail.getFeeTypeCode());
@@ -1403,8 +1411,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		for (PaymentDetail detail : getPaymentDetailList()) {
 			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
 				avaAmount = detail.getAvailableAmount().add(avaAmount);
-				if(detail.getPaymentTaxDetail() != null && StringUtils.equals(detail.getPaymentTaxDetail().getTaxComponent(), 
-						FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				if (detail.getPaymentTaxDetail() != null && StringUtils.equals(
+						detail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 					avaAmount = avaAmount.add(detail.getPaymentTaxDetail().getDueGST());
 				}
 			}
@@ -1417,8 +1425,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
 
 				BigDecimal balAmount = detail.getAvailableAmount();
-				if(detail.getPaymentTaxDetail() != null && StringUtils.equals(detail.getPaymentTaxDetail().getTaxComponent(), 
-						FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				if (detail.getPaymentTaxDetail() != null && StringUtils.equals(
+						detail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 					balAmount = balAmount.add(detail.getPaymentTaxDetail().getDueGST());
 				}
 
@@ -1454,7 +1462,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setNewRecord(true);
-				
+
 				detail = calTaxDetail(detail);
 				list.add(detail);
 			}
@@ -1485,31 +1493,32 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		aPaymentHeader.setPaymentDetailList(list);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Reset or calculate GST amounts based on amounts adjusted
+	 * 
 	 * @param detail
 	 * @return
 	 */
-	private PaymentDetail calTaxDetail(PaymentDetail detail){
+	private PaymentDetail calTaxDetail(PaymentDetail detail) {
 
-		if(!StringUtils.equals(detail.getAmountType(), String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE)) ||
-				detail.getAmount().compareTo(BigDecimal.ZERO) <= 0){
+		if (!StringUtils.equals(detail.getAmountType(), String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))
+				|| detail.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			detail.setPaymentTaxDetail(null);
 			return detail;
 		}
 
 		PaymentTaxDetail taxDetail = detail.getPaymentTaxDetail();
-		if(taxDetail == null){
+		if (taxDetail == null) {
 			taxDetail = new PaymentTaxDetail();
 		}
-		
+
 		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
-		if(detail.isTaxApplicable()){
+		if (detail.isTaxApplicable()) {
 
-			if(taxPercMap == null){
+			if (taxPercMap == null) {
 				FinanceDetail financeDetail = new FinanceDetail();
 				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 				taxPercMap = getReceiptCalculator().getTaxPercentages(financeDetail);
@@ -1522,45 +1531,46 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
 			BigDecimal gstAmount = BigDecimal.ZERO;
 
-			if(detail.getPaymentTaxDetail() == null){
+			if (detail.getPaymentTaxDetail() == null) {
 				taxDetail = new PaymentTaxDetail();
-			}else{
+			} else {
 				taxDetail = detail.getPaymentTaxDetail();
 			}
 
 			String taxType = detail.getTaxComponent();
 			taxDetail.setTaxComponent(taxType);
 
-			BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+			BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9,
+					RoundingMode.HALF_DOWN);
 			BigDecimal actualAmt = detail.getAmount().divide(percentage, 9, RoundingMode.HALF_DOWN);
 			actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
 			BigDecimal actTaxAmount = detail.getAmount().subtract(actualAmt);
 
-			if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+			if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
 				cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
 				taxDetail.setPaidCGST(cgst);
 				gstAmount = gstAmount.add(cgst);
 			}
-			if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+			if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
 				sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
 				taxDetail.setPaidSGST(sgst);
 				gstAmount = gstAmount.add(sgst);
 			}
-			if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+			if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
 				ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
 				taxDetail.setPaidUGST(ugst);
 				gstAmount = gstAmount.add(ugst);
 			}
-			if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+			if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
 				igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
 				taxDetail.setPaidIGST(igst);
 				gstAmount = gstAmount.add(igst);
 			}
-			
+
 			taxDetail.setTotalGST(gstAmount);
 			detail.setPaymentTaxDetail(taxDetail);
 		}
@@ -1591,13 +1601,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					amtType = paymentDetail.getAmountType();
 					avaAmount = paymentDetail.getAvailableAmount().add(avaAmount);
 					payAmount = paymentDetail.getAmount().add(payAmount);
-					if(paymentDetail.getPaymentTaxDetail() != null){
+					if (paymentDetail.getPaymentTaxDetail() != null) {
 						dueGST = paymentDetail.getPaymentTaxDetail().getDueGST().add(dueGST);
-						if(StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+						if (StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(),
+								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 							dueGSTExclusive = paymentDetail.getPaymentTaxDetail().getDueGST().add(dueGSTExclusive);
 						}
 					}
-					
+
 				}
 				if ("E".equals(paymentDetail.getAmountType()) || "A".equals(paymentDetail.getAmountType())) {
 					item = new Listitem();
@@ -1611,7 +1622,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					}
 					lc = new Listcell(amountType);
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					Decimalbox avalableAmt = new Decimalbox();
 					avalableAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1621,7 +1632,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 							.setValue(PennantAppUtil.formateAmount(paymentDetail.getAvailableAmount(), ccyFormatter));
 					lc.appendChild(avalableAmt);
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					Decimalbox gstAmount = new Decimalbox();
 					gstAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1630,13 +1641,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					gstAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, ccyFormatter));
 					lc.appendChild(gstAmount);
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					Decimalbox totalAvailAmt = new Decimalbox();
 					totalAvailAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 					totalAvailAmt.setStyle("text-align:right; ");
 					totalAvailAmt.setReadonly(true);
-					totalAvailAmt.setValue(PennantAppUtil.formateAmount(paymentDetail.getAvailableAmount(), ccyFormatter));
+					totalAvailAmt
+							.setValue(PennantAppUtil.formateAmount(paymentDetail.getAvailableAmount(), ccyFormatter));
 					lc.appendChild(totalAvailAmt);
 					lc.setParent(item);
 
@@ -1688,7 +1700,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
 				lc = new Listcell(amountType);
 				lc.setParent(item);
-				
+
 				// Available Amount
 				lc = new Listcell();
 				Decimalbox avalableAmt = new Decimalbox();
@@ -1698,7 +1710,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				avalableAmt.setValue(PennantAppUtil.formateAmount(avaAmount, ccyFormatter));
 				lc.appendChild(avalableAmt);
 				lc.setParent(item);
-				
+
 				// GST Amount
 				lc = new Listcell();
 				Decimalbox gstAmount = new Decimalbox();
@@ -1708,7 +1720,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				gstAmount.setValue(PennantAppUtil.formateAmount(dueGST, ccyFormatter));
 				lc.appendChild(gstAmount);
 				lc.setParent(item);
-				
+
 				// Total Available
 				lc = new Listcell();
 				Decimalbox totalAvailAmt = new Decimalbox();
@@ -1735,7 +1747,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 				balanceAmount.setStyle("text-align:right; ");
 				balanceAmount.setReadonly(true);
-				balanceAmount.setValue(PennantAppUtil.formateAmount(avaAmount.add(dueGSTExclusive).subtract(payAmount), ccyFormatter));
+				balanceAmount.setValue(
+						PennantAppUtil.formateAmount(avaAmount.add(dueGSTExclusive).subtract(payAmount), ccyFormatter));
 				lc.appendChild(balanceAmount);
 				lc.setParent(item);
 				this.listBoxPaymentTypeInstructions.appendChild(item);
@@ -1856,26 +1869,27 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					Listcell lc;
 					lc = new Listcell();
 					lc.setParent(item);
-					
+
 					BigDecimal calGST = BigDecimal.ZERO;
 					BigDecimal availAmount = advise.getAvailableAmount();
 					BigDecimal paidAmount = advise.getAmount();
 					String desc = advise.getFeeTypeDesc();
-					if(advise.getPaymentTaxDetail() != null){
-						
+					if (advise.getPaymentTaxDetail() != null) {
+
 						PaymentTaxDetail detail = advise.getPaymentTaxDetail();
-						calGST = detail.getDueCGST().add(detail.getDueSGST()).add(detail.getDueUGST()).add(detail.getDueIGST());
-						
-						if(StringUtils.equals(advise.getPaymentTaxDetail().getTaxComponent(), 
-								FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+						calGST = detail.getDueCGST().add(detail.getDueSGST()).add(detail.getDueUGST())
+								.add(detail.getDueIGST());
+
+						if (StringUtils.equals(advise.getPaymentTaxDetail().getTaxComponent(),
+								FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
 							availAmount = availAmount.subtract(calGST);
 							desc = desc.concat(" (Inclusive)");
-						}else if(StringUtils.equals(advise.getPaymentTaxDetail().getTaxComponent(), 
-								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+						} else if (StringUtils.equals(advise.getPaymentTaxDetail().getTaxComponent(),
+								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 							desc = desc.concat(" (Exclusive)");
 						}
 					}
-					
+
 					lc = new Listcell();
 					Hbox hbox = new Hbox();
 					Space space = new Space();
@@ -1886,7 +1900,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					label.setParent(hbox);
 					lc.appendChild(hbox);
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					Decimalbox availAmt = new Decimalbox();
 					availAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1895,9 +1909,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					availAmt.setValue(PennantAppUtil.formateAmount(availAmount, ccyFormatter));
 					lc.appendChild(availAmt);
 					lc.setParent(item);
-					
-					
-					
+
 					lc = new Listcell();
 					Decimalbox gstAmount = new Decimalbox();
 					gstAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1906,7 +1918,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					gstAmount.setValue(PennantAppUtil.formateAmount(calGST, ccyFormatter));
 					lc.appendChild(gstAmount);
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					Decimalbox totalAmt = new Decimalbox();
 					totalAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1915,7 +1927,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					totalAmt.setValue(PennantAppUtil.formateAmount(availAmount.add(calGST), ccyFormatter));
 					lc.appendChild(totalAmt);
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					paymentAmount = new Decimalbox();
 					paymentAmount.setReadonly(isReadOnly);
@@ -1931,8 +1943,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 					balanceAmount.setStyle("text-align:right; ");
 					balanceAmount.setReadonly(true);
-					balanceAmount.setValue(PennantAppUtil
-							.formateAmount(availAmount.add(calGST).subtract(paidAmount), ccyFormatter));
+					balanceAmount.setValue(
+							PennantAppUtil.formateAmount(availAmount.add(calGST).subtract(paidAmount), ccyFormatter));
 					lc.appendChild(balanceAmount);
 					lc.setParent(item);
 					this.listBoxPaymentTypeInstructions.appendChild(item);
@@ -1968,12 +1980,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		for (PaymentDetail detail : getPaymentDetailList()) {
 			if (paymentDetail.getReferenceId() == detail.getReferenceId()) {
 				avaAmount = detail.getAvailableAmount();
-				
-				if(detail.getPaymentTaxDetail() != null && StringUtils.equals(detail.getPaymentTaxDetail().getTaxComponent(), 
-						FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+
+				if (detail.getPaymentTaxDetail() != null && StringUtils.equals(
+						detail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 					avaAmount = avaAmount.add(detail.getPaymentTaxDetail().getDueGST());
 				}
-				
+
 				if ((amount.compareTo(avaAmount)) > 0) {
 					amount = avaAmount;
 					paymentAmount.setValue(PennantAppUtil.formateAmount(avaAmount, ccyFormatter));
@@ -1981,7 +1993,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detail.setAmount(amount);
 			}
 		}
-		
+
 		doFillHeaderList(getPaymentDetailList());
 		logger.debug("Leaving");
 	}
@@ -2038,7 +2050,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
-	
+
 	public Map<String, BigDecimal> getTaxPercMap() {
 		return taxPercMap;
 	}

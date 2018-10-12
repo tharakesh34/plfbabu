@@ -102,7 +102,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 		setPageComponents(window_SelectPaymentHeaderDialog);
 		showSelectPaymentHeaderDialog();
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -131,7 +131,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
 		sql.append(FinanceConstants.MANUAL_ADVISE_PAYABLE);
 		sql.append(" And BalanceAmt > 0)");
-		
+
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
 		this.finReference.setMandatoryStyle(true);
@@ -139,7 +139,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		this.finReference.setWhereClause(sql.toString());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -155,8 +155,9 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		if (!doFieldValidation()) {
 			return;
 		}
-		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
-		
+		FinanceMain financeMain = paymentHeaderService
+				.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
+
 		HashMap<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);
 		arg.put("paymentHeaderListCtrl", paymentHeaderListCtrl);
@@ -168,7 +169,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -178,14 +179,15 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	 * @return
 	 */
 	private boolean doFieldValidation() {
-	
+
 		doClearMessage();
 		doRemoveValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			if (StringUtils.trimToNull(this.finReference.getValue()) == null) {
-				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY", new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
+				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
 			}
 		} catch (WrongValueException e) {
 			wve.add(e);
@@ -212,7 +214,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		this.finReference.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Setting the amount formats based on currency
 	 * 
@@ -231,6 +233,5 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
 	}
-	
-	
+
 }

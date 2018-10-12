@@ -146,7 +146,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			}
 
 			this.enqiryModule = (Boolean) arguments.get("enqiryModule");
-			
+
 			if (arguments.containsKey("paymentHeaderDialogCtrl")) {
 				setPaymentHeaderDialogCtrl((PaymentHeaderDialogCtrl) arguments.get("paymentHeaderDialogCtrl"));
 				getPaymentHeaderDialogCtrl().setDisbursementInstructionsDialogCtrl(this);
@@ -175,12 +175,13 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			if (arguments.containsKey("ccyFormatter")) {
 				ccyFormatter = (int) arguments.get("ccyFormatter");
 			}
-			doLoadWorkFlow(this.paymentHeader.isWorkflow(), this.paymentHeader.getWorkflowId(), this.paymentHeader.getNextTaskId());
-			
+			doLoadWorkFlow(this.paymentHeader.isWorkflow(), this.paymentHeader.getWorkflowId(),
+					this.paymentHeader.getNextTaskId());
+
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 			}
-			
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(this.paymentInstruction);
@@ -201,7 +202,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		doSetValidation();
 		PaymentInstruction paymentInstruction = doWriteComponentsToBean(this.paymentInstruction);
-		
+
 		logger.debug("Entering");
 
 		return paymentInstruction;
@@ -232,7 +233,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		} else {
 			setDialog(DialogType.EMBEDDED);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -242,7 +243,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		this.paymentAmount.setDisabled(true/*isReadOnly("PaymentInstructionDialog_paymentAmount")*/);
+		this.paymentAmount.setDisabled(true/* isReadOnly("PaymentInstructionDialog_paymentAmount") */);
 		this.postDate.setDisabled(isReadOnly("PaymentInstructionDialog_postDate"));
 		this.paymentType.setDisabled(isReadOnly("PaymentInstructionDialog_paymentType"));
 		this.remarks.setReadonly(isReadOnly("PaymentInstructionDialog_remarks"));
@@ -327,7 +328,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.partnerBankID.setValueColumn("PartnerBankCode");
 		this.partnerBankID.setDescColumn("PartnerBankName");
 		this.partnerBankID.setMaxlength(8);
-		this.partnerBankID.setValidateColumns(new String[] {"PartnerBankCode"});
+		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode" });
 
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
@@ -335,7 +336,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.bankBranchID.setDescColumn("BankCode");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
-		
+
 		this.issuingBank.setModuleName("BankDetail");
 		this.issuingBank.setModuleName("BankDetail");
 		this.issuingBank.setMandatoryStyle(true);
@@ -350,14 +351,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		if (StringUtils.isNotBlank(this.paymentInstruction.getBankBranchCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.paymentInstruction.getBankBranchCode());
 		}
-		if (accNoLength!=0) {
+		if (accNoLength != 0) {
 			this.acctNumber.setMaxlength(accNoLength);
-		}else{
-			this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
+		} else {
+			this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
-		
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -369,15 +368,18 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		} else {
 			this.postDate.setValue(paymentInstruction.getPostDate());
 		}
-		
-		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(false), "");
+
+		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(),
+				PennantStaticListUtil.getPaymentTypes(false), "");
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());
-			this.partnerBankID.setValue(paymentInstruction.getPartnerBankCode(), paymentInstruction.getPartnerBankName());
+			this.partnerBankID.setValue(paymentInstruction.getPartnerBankCode(),
+					paymentInstruction.getPartnerBankName());
 		}
-		
-		this.paymentAmount.setValue(PennantAppUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
+
+		this.paymentAmount
+				.setValue(PennantAppUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
 		this.remarks.setValue(paymentInstruction.getRemarks());
 		this.tranReference.setValue(paymentInstruction.getTransactionRef());
 		this.status.setValue(paymentInstruction.getStatus());
@@ -396,15 +398,16 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.phoneNumber.setValue(paymentInstruction.getPhoneNumber());
 
 		this.issuingBank.setAttribute("issuingBank", paymentInstruction.getIssuingBank());
-		this.issuingBank.setValue(StringUtils.trimToEmpty(paymentInstruction.getIssuingBank()), StringUtils.trimToEmpty(paymentInstruction.getIssuingBankName()));
-		
+		this.issuingBank.setValue(StringUtils.trimToEmpty(paymentInstruction.getIssuingBank()),
+				StringUtils.trimToEmpty(paymentInstruction.getIssuingBankName()));
+
 		this.chequeOrDDumber.setValue(paymentInstruction.getFavourNumber());
 		this.favouringName.setValue(paymentInstruction.getFavourName());
 		this.payableLoc.setValue(paymentInstruction.getPayableLoc());
 		this.printingLoc.setValue(paymentInstruction.getPrintingLoc());
 		this.valueDate.setValue(paymentInstruction.getValueDate());
 		checkPaymentType(paymentInstruction.getPaymentType());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -422,10 +425,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		if (this.paymentHeader.isNewRecord()) {
 			paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
 		}
-		
+
 		try {
 			if (DateUtility.compare(this.postDate.getValue(), DateUtility.getAppDate()) < 0 && !postDate.isDisabled()) {
-				throw new WrongValueException(this.postDate, "Payment Date should be greater than or equal to :" + DateUtility.getAppDate());
+				throw new WrongValueException(this.postDate,
+						"Payment Date should be greater than or equal to :" + DateUtility.getAppDate());
 			}
 			paymentInstruction.setPostDate(this.postDate.getValue());
 		} catch (WrongValueException we) {
@@ -439,7 +443,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 
 		try {
-			paymentInstruction.setPaymentAmount(PennantAppUtil.unFormateAmount(this.paymentAmount.getActualValue(), ccyFormatter));
+			paymentInstruction.setPaymentAmount(
+					PennantAppUtil.unFormateAmount(this.paymentAmount.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -477,7 +482,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			paymentInstruction.setFavourName(this.favouringName.getValue());
 		} catch (WrongValueException we) {
@@ -532,8 +537,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.phoneNumber.clearErrorMessage();
 			this.phoneNumber.setErrorMessage("");
 			if (!this.phoneNumber.isReadonly()) {
-				this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory));
+				this.phoneNumber.setConstraint(new PTMobileNumberValidator(
+						Labels.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory));
 			}
 			paymentInstruction.setPhoneNumber(this.phoneNumber.getValue());
 		} catch (WrongValueException we) {
@@ -568,70 +573,72 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-
 		if (!this.paymentType.isDisabled()) {
-			this.paymentType.setConstraint(new PTListValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),  PennantStaticListUtil.getPaymentTypes(false) ,true));
+			this.paymentType
+					.setConstraint(new PTListValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),
+							PennantStaticListUtil.getPaymentTypes(false), true));
 		}
 
 		if (this.paymentAmount.isDisabled()) {
-			this.paymentAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbAmount.value"), ccyFormatter, true, false));
+			this.paymentAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_DisbInstructionsDialog_DisbAmount.value"), ccyFormatter, true, false));
 		}
 
 		if (!this.partnerBankID.isReadonly()) {
-			this.partnerBankID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true));
+			this.partnerBankID.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true));
 		}
 
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DisbInstructionsDialog_Remarks.value"), null, false));
+			this.remarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_Remarks.value"), null, false));
 		}
 
 		if (!this.chequeOrDDumber.isReadonly()) {
-			this.chequeOrDDumber.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DisbInstructionsDialog_ChequeOrDDumber.value"), null, false));
+			this.chequeOrDDumber.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_DisbInstructionsDialog_ChequeOrDDumber.value"), null, false));
 		}
 
 		if (gb_ChequeDetails.isVisible()) {
 			if (!this.favouringName.isReadonly()) {
-				this.favouringName.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_FavouringName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.favouringName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_FavouringName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.issuingBank.isReadonly()) {
-				this.issuingBank.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_IssuingBank.value"), null, true));
+				this.issuingBank.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_DisbInstructionsDialog_IssuingBank.value"), null, true));
 			}
 			if (!this.payableLoc.isReadonly()) {
-				this.payableLoc.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_PayableLoc.value"),
-						PennantRegularExpressions.REGEX_ADDRESS, true));
+				this.payableLoc.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_PayableLoc.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 			if (!this.printingLoc.isReadonly()) {
-				this.printingLoc.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_PrintingLoc.value"),
-						PennantRegularExpressions.REGEX_ADDRESS, true));
+				this.printingLoc.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_PrintingLoc.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 			if (!this.valueDate.isReadonly()) {
 				Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
-				this.valueDate.setConstraint(new PTDateValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_ValueDate.value"), true, DateUtility.getAppDate(),
-						todate, true));
+				this.valueDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_DisbInstructionsDialog_ValueDate.value"), true,
+								DateUtility.getAppDate(), todate, true));
 			}
 		} else {
 			if (!this.bankBranchID.isReadonly()) {
-				this.bankBranchID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_IFSC.value"), null, true));
+				this.bankBranchID.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_IFSC.value"), null, true));
 			}
 			if (!this.acctHolderName.isReadonly()) {
-				this.acctHolderName.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_AccountHolderName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.acctHolderName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountHolderName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.acctNumber.isReadonly()) {
-				this.acctNumber.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbInstructionsDialog_AccountNumber.value"),
-						PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+				this.acctNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountNumber.value"),
+								PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 			}
 		}
 
@@ -736,12 +743,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength!=0) {
+				if (accNoLength != 0) {
 					this.acctNumber.setMaxlength(accNoLength);
-				}else{
-					this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
+				} else {
+					this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				
+
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -771,7 +778,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	 */
 	public void onFulfill$partnerBankID(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Object dataObject = partnerBankID.getObject();
 		if (dataObject == null || dataObject instanceof String) {
 			if (dataObject != null) {
@@ -790,8 +797,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	
 	public void onChange$paymentType(Event event) {
 		String dType = this.paymentType.getSelectedItem().getValue().toString();
 		this.partnerBankID.setButtonDisabled(false);
@@ -801,7 +806,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
+		filters[4] = new Filter("EntityCode", financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setConstraint("");
 		this.partnerBankID.setErrorMessage("");
@@ -867,11 +872,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
-		
+		filters[4] = new Filter("EntityCode", financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
+
 		this.partnerBankID.setFilters(filters);
 
 	}
+
 	public void setPaymentInstruction(PaymentInstruction paymentInstruction) {
 		this.paymentInstruction = paymentInstruction;
 	}
