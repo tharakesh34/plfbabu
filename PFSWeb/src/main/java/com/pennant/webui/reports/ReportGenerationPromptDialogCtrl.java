@@ -137,7 +137,7 @@ import net.sf.jasperreports.export.AbstractXlsReportConfiguration;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
-	/**
+/**
  * This is the controller class for the /WEB-INF/pages/reports/ReportGenerationPromptDialog.zul file.
  */
 public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
@@ -181,7 +181,24 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	};
 
 	public enum FIELDTYPE {
-		TXT, DATE, TIME, DATETIME, STATICLIST, DYNAMICLIST, LOVSEARCH, DECIMAL, INTRANGE, DECIMALRANGE, NUMBER, CHECKBOX, MULTISELANDLIST, MULTISELINLIST, DATERANGE, DATETIMERANGE, TIMERANGE, STATICVALUE
+		TXT,
+		DATE,
+		TIME,
+		DATETIME,
+		STATICLIST,
+		DYNAMICLIST,
+		LOVSEARCH,
+		DECIMAL,
+		INTRANGE,
+		DECIMALRANGE,
+		NUMBER,
+		CHECKBOX,
+		MULTISELANDLIST,
+		MULTISELINLIST,
+		DATERANGE,
+		DATETIMERANGE,
+		TIMERANGE,
+		STATICVALUE
 	};
 
 	private boolean isExcel = false;
@@ -191,15 +208,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	Window dialogWindow = null;
 	private Map<String, Object> valueMap = new HashMap<String, Object>();
 	private Map<String, Object> valueLabelMap = new HashMap<String, Object>();
-	private Map<String, Object> renderMap= new HashMap<String, Object>();
+	private Map<String, Object> renderMap = new HashMap<String, Object>();
 	private List<String> myLableList = new ArrayList<String>();
 	private Map<Long, List<String>> myOrderedLableMap = new HashMap<>();
-	
+
 	private String moduleType;
-	
+
 	private boolean isEntity = false;
 	private String entityValue = "";
-	
+
 	public ReportGenerationPromptDialogCtrl() {
 		super();
 	}
@@ -231,9 +248,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			if (arguments.containsKey("dialogWindow")) {
 				dialogWindow = (Window) arguments.get("dialogWindow");
-				
+
 			}
-			
+
 			if (arguments.containsKey("entity")) {
 				if ("Y".equalsIgnoreCase(getArgument("entity"))) {
 					isEntity = true;
@@ -242,7 +259,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			if (arguments.containsKey("ReportConfiguration")) {
 				reportConfiguration = (ReportConfiguration) arguments.get("ReportConfiguration");
-				
+
 			} else {
 				// get the parameters map that are overHanded by creation.
 				reportMenuCode = tabbox.getSelectedTab().getId().trim().replace("tab_", "menu_Item_");
@@ -337,7 +354,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 */
 	private void doRenderComponents() throws Exception {
 		logger.debug("Entering");
-		int j =0;
+		int j = 0;
 		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 
 			FIELDTYPE fieldValueType = FIELDTYPE
@@ -414,8 +431,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			}
 		}
-		
-		if (myLableList.size()>0 && !myLableList.isEmpty()) {
+
+		if (myLableList.size() > 0 && !myLableList.isEmpty()) {
 			myOrderedLableMap.put((long) j, myLableList);
 			myLableList = new ArrayList<String>();
 		}
@@ -448,7 +465,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		textBoxRow.appendChild(new Label(aReportFieldsDetails.getFieldLabel()));
 
 		Listbox sortOperator = new Listbox();
-		sortOperator.setId("sortOperator_"+aReportFieldsDetails.getFieldID());
+		sortOperator.setId("sortOperator_" + aReportFieldsDetails.getFieldID());
 		sortOperator.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		sortOperator.setWidth("43px");
 		sortOperator.setMold("select");
@@ -488,11 +505,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	/**
 	 * Render LovSearch Field
-	 * @param j 
+	 * 
+	 * @param j
 	 */
 	private void renderLovSearchField(ReportFilterFields aReportFieldsDetails, int j) {
 		logger.debug("Entering");
-		
+
 		if (aReportFieldsDetails.getFilterFileds() == null) {
 			if (j > 0) {
 				myOrderedLableMap.put(aReportFieldsDetails.getFieldID() - 1, myLableList);
@@ -713,40 +731,48 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			// If Static List get From PennantAppUtil Methods else from Search Object by module name and where condition
 			if (isStatic) {
 				List<ValueLabel> staticValuesList = (List<ValueLabel>) Class
-						.forName("com.pennant.backend.util.PennantStaticListUtil").getMethod(aReportFieldsDetails
-						.getAppUtilMethodName()).invoke(Class.forName("com.pennant.backend.util.PennantStaticListUtil"));
+						.forName("com.pennant.backend.util.PennantStaticListUtil")
+						.getMethod(aReportFieldsDetails.getAppUtilMethodName())
+						.invoke(Class.forName("com.pennant.backend.util.PennantStaticListUtil"));
 				listSelectionMaps.put(comboBox.getId(), staticValuesList);
 
 				for (int i = 0; i < staticValuesList.size(); i++) {
-					if (!staticValuesList.get(i).getValue().equals(Labels.getLabel("value_Select")) && (StringUtils.isNotEmpty(staticValuesList.get(i).getValue()))) {
+					if (!staticValuesList.get(i).getValue().equals(Labels.getLabel("value_Select"))
+							&& (StringUtils.isNotEmpty(staticValuesList.get(i).getValue()))) {
 						comboitem = new Comboitem();
 						// comboitem.setValue(staticValuesList.get(i).getId());
 						comboitem.setLabel(staticValuesList.get(i).getLabel());
 						comboitem.setValue(staticValuesList.get(i).getValue());
 						comboBox.appendChild(comboitem);
-						comboBox.addForward("onSelect", window_ReportPromptFilterCtrl, "onComboFieldSelected", comboBox);
+						comboBox.addForward("onSelect", window_ReportPromptFilterCtrl, "onComboFieldSelected",
+								comboBox);
 					}
 				}
 				comboBox.setSelectedIndex(0);
 			} else {
 				List<ValueLabel> staticValuesList = new ArrayList<ValueLabel>();
-				JdbcSearchObject<Object> dynsearchObject = new JdbcSearchObject<Object>((Class<Object>) ModuleUtil.getModuleClass(aReportFieldsDetails.getModuleName()));
+				JdbcSearchObject<Object> dynsearchObject = new JdbcSearchObject<Object>(
+						(Class<Object>) ModuleUtil.getModuleClass(aReportFieldsDetails.getModuleName()));
 				// Add where condition for LOV Search Filter
-				if (aReportFieldsDetails.getWhereCondition() != null && !("").equals(aReportFieldsDetails.getWhereCondition().trim())) {
+				if (aReportFieldsDetails.getWhereCondition() != null
+						&& !("").equals(aReportFieldsDetails.getWhereCondition().trim())) {
 					dynsearchObject.addWhereClause(aReportFieldsDetails.getWhereCondition());
 				}
-				List<Object> dynamicListResult = getPagedListWrapper().getPagedListService().getBySearchObject(dynsearchObject);
+				List<Object> dynamicListResult = getPagedListWrapper().getPagedListService()
+						.getBySearchObject(dynsearchObject);
 				ValueLabel valueLabel = null;
 				for (int i = 0; i < dynamicListResult.size(); i++) {
 					valueLabel = new ValueLabel();
 					comboitem = new Comboitem();
 
-					Object object = dynamicListResult.get(i).getClass().getMethod(aReportFieldsDetails.getLovHiddenFieldMethod()).invoke(dynamicListResult.get(i));
+					Object object = dynamicListResult.get(i).getClass()
+							.getMethod(aReportFieldsDetails.getLovHiddenFieldMethod()).invoke(dynamicListResult.get(i));
 
 					comboitem.setValue(object.toString());
 					valueLabel.setValue(object.toString());
 
-					object = (String) dynamicListResult.get(i).getClass().getMethod(aReportFieldsDetails.getLovTextFieldMethod()).invoke(dynamicListResult.get(i));
+					object = (String) dynamicListResult.get(i).getClass()
+							.getMethod(aReportFieldsDetails.getLovTextFieldMethod()).invoke(dynamicListResult.get(i));
 
 					comboitem.setLabel(object.toString());
 					valueLabel.setLabel(object.toString());
@@ -757,7 +783,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				comboBox.setSelectedIndex(0);
 				listSelectionMaps.put(comboBox.getId(), staticValuesList);
 			}
-			
+
 		} catch (Exception e) {
 			logger.warn("Error While rendering combobox Filed Name : " + aReportFieldsDetails.getFieldLabel());
 			logger.error("Exception: ", e);
@@ -846,7 +872,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Entering");
 
 		String filter = "=";
-		StringBuilder whereCondition=null;
+		StringBuilder whereCondition = null;
 		if (reportConfiguration.isWhereCondition()) {
 			whereCondition = new StringBuilder("where ");
 		} else {
@@ -895,12 +921,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									}
 									searchCriteriaDesc.append(aReportFieldsDetails.getFieldLabel() + " "
 											+ filterDescMap.get(filter.trim()) + " ");
-									
-									if (this.isEntity && StringUtils.equalsIgnoreCase("EntityCode", aReportFieldsDetails.getFieldDBName())
-											&& StringUtils.equalsIgnoreCase("Entity", aReportFieldsDetails.getModuleName())) {
+
+									if (this.isEntity
+											&& StringUtils.equalsIgnoreCase("EntityCode",
+													aReportFieldsDetails.getFieldDBName())
+											&& StringUtils.equalsIgnoreCase("Entity",
+													aReportFieldsDetails.getModuleName())) {
 										this.entityValue = textbox.getValue();
 									}
-									
+
 								} else {
 									String inCondition = getINCondition(textbox.getValue());
 									whereCondition.append(aReportFieldsDetails.getFieldDBName() + " in " + inCondition);
@@ -1054,7 +1083,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									if (datebox.getValue() == null && aReportFieldsDetails.isMandatory()) {
 										throw new WrongValueException(datebox, Labels.getLabel("FIELD_NO_EMPTY",
 												new String[] { aReportFieldsDetails.getFieldLabel() }));
-									} 
+									}
 									whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
 											aReportFieldsDetails, component, filter + " ");
 
@@ -1080,7 +1109,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					}
 					break;
 
-					// Only Time any date
+				// Only Time any date
 				case Timebox:
 					try {
 						if (StringUtils.isNotEmpty(filter)) {// Prepare Where Condition
@@ -1204,12 +1233,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									throw new WrongValueException(fromDateBox,
 											Labels.getLabel("label_Error_FromValueMustGretaerTo.vlaue"));
 								}
-							}else if (StringUtils.equals("menu_Item_PresentmentStatusReport", reportMenuCode)){//FIXME
+							} else if (StringUtils.equals("menu_Item_PresentmentStatusReport", reportMenuCode)) {//FIXME
 								int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
-								if (DateUtility.getDaysBetween(((Datebox) fromDateBox).getValue(),((Datebox) toDateBox).getValue()) > diffentDays) {
-									throw new WrongValueException(toDateBox,Labels.getLabel("label_Difference_between_days")+" "+ diffentDays);
+								if (DateUtility.getDaysBetween(((Datebox) fromDateBox).getValue(),
+										((Datebox) toDateBox).getValue()) > diffentDays) {
+									throw new WrongValueException(toDateBox,
+											Labels.getLabel("label_Difference_between_days") + " " + diffentDays);
 								}
-							
+
 							}
 							if (!excludeDates) {
 								whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
@@ -1302,13 +1333,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 
 		}
-		
+
 		if (!isWhereCondition && wve.size() == 0) {
 			return reportSearchTemplateList;
 		}
 
 		doRemoveValidation();
-		
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			/* if any Exception Occurs make password and new password Fields empty */
@@ -1325,9 +1356,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (!"where".equals(whereCondition.toString().trim()) && !(saticValuesWhereCondition.length() == 0)) {
 			whereCondition.append(" and " + saticValuesWhereCondition.toString());
 		}
-		
+
 		logger.debug("where Condition :" + whereCondition.toString());
-		
+
 		return whereCondition;
 	}
 
@@ -1419,7 +1450,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								+ "))) " + filter + "'"
 								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
-					
+
 					if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 						exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
 								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
@@ -1590,13 +1621,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 							aReportFilterFields.setFieldConstraint(
 									aReportFilterFields.getFieldConstraint().replaceAll("^\"|\"$", ""));
 							component.setConstraint(new PTStringValidator(aReportFilterFields.getFieldErrorMessage(),
-									aReportFilterFields.getFieldConstraint(),aReportFilterFields.isMandatory()));
+									aReportFilterFields.getFieldConstraint(), aReportFilterFields.isMandatory()));
 						}
 					}
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1630,7 +1661,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1668,14 +1699,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (!reportConfiguration.isPromptRequired()) {
 			reportArgumentsMap.put("whereCondition", "");
 		}
-		
+
 		if (this.isEntity) {
-			String path = PathUtil.REPORTS_IMAGE_CLIENT_PATH + PathUtil.REPORTS_IMAGE_CLIENT_IMAGE + this.entityValue + PathUtil.REPORTS_IMAGE_PNG_FORMAT;
+			String path = PathUtil.REPORTS_IMAGE_CLIENT_PATH + PathUtil.REPORTS_IMAGE_CLIENT_IMAGE + this.entityValue
+					+ PathUtil.REPORTS_IMAGE_PNG_FORMAT;
 			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(path));
 		} else {
 			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 		}
-		
+
 		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		reportArgumentsMap.put("bankName", Labels.getLabel("label_ClientName"));
@@ -1720,10 +1752,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
 					reportName = reportConfiguration.getReportHeading();
-					
+
 					JRXlsExporter excelExporter = new JRXlsExporter();
 					excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
-					AbstractXlsReportConfiguration configuration=new AbstractXlsReportConfiguration();
+					AbstractXlsReportConfiguration configuration = new AbstractXlsReportConfiguration();
 					configuration.setDetectCellType(true);
 					configuration.setWhitePageBackground(false);
 					configuration.setRemoveEmptySpaceBetweenColumns(true);
@@ -1732,11 +1764,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					configuration.setIgnoreCellBorder(false);
 					configuration.setCollapseRowSpan(true);
 					configuration.setImageBorderFixEnabled(false);
-					SimpleOutputStreamExporterOutput outputStreamExporterOutput=new SimpleOutputStreamExporterOutput(outputStream);
+					SimpleOutputStreamExporterOutput outputStreamExporterOutput = new SimpleOutputStreamExporterOutput(
+							outputStream);
 					excelExporter.setExporterOutput(outputStreamExporterOutput);
 					excelExporter.setConfiguration(configuration);
 					excelExporter.exportReport();
-					Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+					Filedownload.save(
+							new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 
 					if (selectTab != null) {
 						// selectTab.setSelected(true);
@@ -2242,7 +2276,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			doShowReport("where".equals(whereCond1.toString().trim()) ? "" : whereCond1.toString(),
 					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), fromDate, toDate);
-			
+
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_DelinquencyVariance")) {
 			String fromDate = null;
 			String toDate = null;
@@ -2282,11 +2316,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			String fromDate = null;
 			String toDate = null;
 			String invoiceType = null;
-			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false, false);
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
 			boolean invoiceExist = false;
 			if (filters != null && filters.size() >= 2) {
 				for (ReportSearchTemplate template : filters) {
-					if (template.getFieldID() == 1) {	// CustCif
+					if (template.getFieldID() == 1) { // CustCif
 						custCif = template.getFieldValue();
 					} else if (template.getFieldID() == 2) { // Fin Reference
 						finReference = template.getFieldValue();
@@ -2295,8 +2330,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						break;
 					} else if (template.getFieldID() == 4) { // Dates
 						String[] fromDateArray = ((ReportSearchTemplate) filters.get(2)).getFieldValue().split("&");
-						fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]), PennantConstants.DBDateFormat);
-						toDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]), PennantConstants.DBDateFormat);
+						fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]),
+								PennantConstants.DBDateFormat);
+						toDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]),
+								PennantConstants.DBDateFormat);
 					} else if (template.getFieldID() == 5) { // Invoice Type
 						if (StringUtils.isNotBlank(template.getFieldValue())) {
 							if ("Credit".equals(template.getFieldValue())) {
@@ -2310,16 +2347,18 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
-			
+
 			if (invoiceExist) {
-				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
+				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
+						null, null);
 			} else {
 				//check if invoice number is existed or not
 				boolean invoiceNoExist = getReportConfigurationService().isGstInvoiceExist(custCif, finReference,
 						invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
-				
+
 				if (invoiceNoExist) {
-					doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
+					doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(),
+							null, null, null);
 				} else {
 					MessageUtil.showMessage(Labels.getLabel("info.invoice_not_generate"));
 					return;
@@ -2327,7 +2366,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
-			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null, null);
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
+					null);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -2407,19 +2447,18 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			valuesMap = null;
 		}
 	}
-	
-	
+
 	public void onComboFieldSelected(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Component component = (Component) event.getData();
 		String value = ((Combobox) component).getSelectedItem().getValue().toString();
 		ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(0);
 		valueLabelMap.put(aReportFieldsDetails.getFieldDBName(), value);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * On LovSearch Button Clicked
 	 * 
@@ -2429,7 +2468,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	@SuppressWarnings("unchecked")
 	public void onLovButtonClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		CustomArgument customArgument = (CustomArgument) event.getData();
 		ReportFilterFields aReportFieldsDetails = customArgument.getaReportFieldsDetails();
 
@@ -2497,7 +2536,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				} else if (getParentFlag() != null && aReportFieldsDetails.getFilterFileds() != null) {
 					valuestextBox.setValue("");
 				}
-				Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl, button.getId(), valuestextBox.getValue(), filters, searchValue);
+				Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl, button.getId(),
+						valuestextBox.getValue(), filters, searchValue);
 
 				if (dataObject instanceof String) {
 					valuestextBox.setValue(dataObject.toString());
@@ -2520,12 +2560,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						labelstextBox.setTooltiptext(label);
 					}
 				}
-				
+
 				if (this.isEntity && StringUtils.equalsIgnoreCase("EntityCode", aReportFieldsDetails.getFieldDBName())
 						&& StringUtils.equalsIgnoreCase("Entity", aReportFieldsDetails.getModuleName())) {
 					this.entityValue = valuestextBox.getValue();
 				}
-				
+
 				valueMap.put(aReportFieldsDetails.getFieldDBName(), valuestextBox.getValue());
 			}
 		} catch (Exception e) {
@@ -2536,10 +2576,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	private Filter[] doLovFilter(ReportFilterFields aReportFieldsDetails) throws Exception {
 		logger.debug("Entering");
-		
+
 		Filter[] filters = null;
 		StringBuilder message = new StringBuilder();
 		renderMap.putAll(valueMap);
@@ -2566,7 +2605,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (StringUtils.trimToNull(message.toString()) != null) {
 			throw new Exception(message.insert(0, "Please select the below fields:").toString());
 		}
-		
+
 		if (StringUtils.equals(moduleType, PennantConstants.NO_OBJECT_CERT)) {
 			Filter[] nocFilter = new Filter[2];
 			nocFilter[0] = Filter.equalTo("FINISACTIVE", 0);
@@ -2725,7 +2764,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			doSetValueOrClearOpertionOnFields(aReportFieldsDetails, null, true);
 		}
 	}
-	
+
 	/**
 	 * Clear components
 	 * 
@@ -2739,18 +2778,18 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				&& myOrderedLableMap.get(fieldID).get(0) == null) {
 			return;
 		}
-		
+
 		mapRenderer: for (Map.Entry<Long, List<String>> entry : myOrderedLableMap.entrySet()) {
 			Long key = entry.getKey();
 			List<String> value = entry.getValue();
 			if (fieldID < key) {
 				// finding group for the clicked(clear button) one. 
 				long index = 0;
-				
+
 				if (aReportFieldsDetails.getFilterFileds() != null) { // checking whether clicked one is parent or child  
 					index = key - fieldID;
 				}
-				
+
 				for (long i = index; i < value.size(); i++) { // clearing corresponding child in particular group.
 					Component component = dymanicFieldsRows.getFellow(Long.toString(fieldID));
 					Textbox textbox = (Textbox) component;
@@ -2765,8 +2804,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		renderMap.clear();
 		logger.debug("Entering");
 	}
-	
-	
+
 	/**
 	 * This method shows Message box with error message
 	 * 
