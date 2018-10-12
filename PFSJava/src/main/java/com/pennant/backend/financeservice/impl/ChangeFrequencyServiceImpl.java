@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -252,6 +253,21 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
 		scheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		scheduleData.getFinanceMain().setPftIntact(finServiceInst.isPftIntact());
+		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
 		
 		// Schedule Recalculation Depends on Frequency Change
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());

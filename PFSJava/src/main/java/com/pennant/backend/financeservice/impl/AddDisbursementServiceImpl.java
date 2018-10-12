@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -54,8 +55,22 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		
 		if(finScheduleData.getFinanceScheduleDetails().size()>0){
-			for(FinanceScheduleDetail finSchd:finScheduleData.getFinanceScheduleDetails()){
-				finSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+				
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				curSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
+				
+				// Schedule Recalculation Locking Period Applicability
+				if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+					if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+							&& (i != sdSize - 1) && i != 0){
+						curSchd.setRecalLock(true);
+					}else{
+						curSchd.setRecalLock(false);
+					}
+				}
 			}
 		}
 		

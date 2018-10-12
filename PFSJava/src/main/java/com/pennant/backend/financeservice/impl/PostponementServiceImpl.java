@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -45,6 +46,22 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
+		
 		finScheduleData = ScheduleCalculator.postpone(finScheduleData);
 		
 		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
@@ -79,6 +96,22 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			}
 		}
 		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
+		
 		// call schedule calculator
 		finScheduleData = ScheduleCalculator.unPlannedEMIH(finScheduleData, BigDecimal.ZERO, scheduleMethod);
 		
@@ -105,6 +138,22 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
 		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
+		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
 		
 		finScheduleData = ScheduleCalculator.reAging(finScheduleData);
 		

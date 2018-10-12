@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -45,6 +46,22 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 
 		FinScheduleData finSchdData = null;
 		BigDecimal oldTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finscheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finscheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finscheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
 		
 		finSchdData = ScheduleCalculator.changeRepay(finscheduleData, finServiceInstruction.getAmount(), 
 				finServiceInstruction.getSchdMethod());

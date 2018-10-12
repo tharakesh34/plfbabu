@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -15,6 +16,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -29,6 +31,23 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 		logger.debug("Entering");
 
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
+
 		FinScheduleData finSchData = ScheduleCalculator.reCalSchd(finScheduleData, "");
 
 		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();

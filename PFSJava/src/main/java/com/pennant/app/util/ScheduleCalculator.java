@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
@@ -4079,6 +4080,14 @@ public class ScheduleCalculator {
 			// In Screen level we are restricting Recalculation from date for Presentment cases, but in case of PRI_PFT & PFT schedule methods
 			// it will be auto calculated and adjusted.
 			if((curSchd.getProfitCalc().add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount()))).compareTo(curSchd.getProfitSchd()) > 0){
+				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
+				return curSchd;
+			}
+		}
+		
+		// If Schedule recalculation has Lock for the particular schedule term, it should not recalculate
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			if(curSchd.isRecalLock()){
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 				return curSchd;
 			}

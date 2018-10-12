@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -28,6 +29,23 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		logger.debug("Entering");
 		
 		BigDecimal oldTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finscheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finscheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finscheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
+
 		finscheduleData = ScheduleCalculator.addTerm(finscheduleData,finServiceInstruction.getTerms());
 
 		BigDecimal newTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();

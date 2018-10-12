@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -44,13 +45,26 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-		// Profit Days Basis Setting for Calculation Process
-		List<FinanceScheduleDetail> schDetailList = finScheduleData.getFinanceScheduleDetails();
-		for (FinanceScheduleDetail curSchd : schDetailList) {
+		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		FinanceScheduleDetail curSchd = null;
+		for (int i = 0; i <= sdSize - 1; i++) {
+			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+
+			// Profit Days Basis Setting for Calculation Process
 			if (curSchd.getSchDate().compareTo(financeMain.getEventFromDate()) >= 0
 					&& curSchd.getSchDate().compareTo(financeMain.getEventToDate()) < 0 &&
 					!StringUtils.equals(curSchd.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(finServiceInst.getPftDaysBasis());
+			}
+
+			// Schedule Recalculation Locking Period Applicability
+			if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
 			}
 		}
 		

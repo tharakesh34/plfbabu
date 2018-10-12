@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -410,6 +411,16 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 						}
 					}
 
+				}
+			}
+
+			// Schedule Recalculation Locking Period Applicability
+			if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
+						&& (i != scheduleData.getFinanceScheduleDetails().size() - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
 				}
 			}
 		}

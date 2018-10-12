@@ -51,7 +51,9 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -194,6 +196,22 @@ public class RateReviewService extends ServiceHelper {
 		finMain.setRecalToDate(finEODEvent.getRecalToDate());
 		finMain.setRecalSchdMethod(finEODEvent.getRecalSchdMethod());
 		finMain.setRecalType(finEODEvent.getRecalType());
+
+		// Schedule Recalculation Locking Period Applicability
+		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i <= sdSize - 1; i++) {
+
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(DateUtility.compare(curSchd.getSchDate(), finMain.getRecalFromDate()) < 0 
+						&& (i != sdSize - 1) && i != 0){
+					curSchd.setRecalLock(true);
+				}else{
+					curSchd.setRecalLock(false);
+				}
+			}
+		}
 
 		// Finance Profit Details
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();

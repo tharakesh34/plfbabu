@@ -108,7 +108,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, ClosingBalance, ProfitFraction, PrvRepayAmount,");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier, OrgPlanPft,");
 		selectSql.append(" SchdMethod, CalculatedRate,FeeChargeAmt,InsuranceAmt,");
-		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
+		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
 		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS , InsSchd, SchdInsPaid,");
 		selectSql.append(" AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
 		selectSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,  ");
@@ -257,7 +257,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, OrgPlanPft,");
 		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
 		insertSql.append(" CalculatedRate,FeeChargeAmt,InsuranceAmt,");
-		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
+		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
 		insertSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS ,InsSchd, SchdInsPaid,");
 		insertSql.append(" AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount,");
 		insertSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,");
@@ -265,7 +265,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal , WriteoffPrincipal, WriteoffProfit,");
 			insertSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt,");
 		}
-		insertSql.append(" DefSchdDate, SchdMethod, ");
+		insertSql.append(" DefSchdDate, SchdMethod,  ");
 		insertSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, InsuranceAmt)");
 		insertSql.append(" Values(:FinReference, :SchDate, :SchSeq, :PftOnSchDate,");
 		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, ");
@@ -277,7 +277,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" :ClosingBalance, :ProfitFraction, :PrvRepayAmount, :OrgPlanPft,");
 		insertSql.append(" :SchdPriPaid, :SchdPftPaid, :SchPriPaid, :SchPftPaid, :Specifier,");
 		insertSql.append(" :CalculatedRate,:FeeChargeAmt,:InsuranceAmt, ");
-		insertSql.append(" :InstNumber, :BpiOrHoliday, :FrqDate,");
+		insertSql.append(" :InstNumber, :BpiOrHoliday, :FrqDate, :RecalLock,");
 		insertSql.append(" :FeeSchd , :SchdFeePaid , :SchdFeeOS , :InsSchd, :SchdInsPaid,");
 		insertSql.append(" :AdvBaseRate , :AdvMargin , :AdvPftRate , :AdvCalRate , :AdvProfit , :AdvRepayAmount,");
 		insertSql
@@ -329,7 +329,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		}
 		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
 		insertSql.append(" DefSchdDate, SchdMethod, ");
-		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
+		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
 		insertSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid)");
 		insertSql.append(" Values(:FinReference, :SchDate, :SchSeq, :PftOnSchDate,");
 		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, ");
@@ -353,7 +353,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		}
 		insertSql.append(" :SchdPriPaid, :SchdPftPaid, :SchPriPaid, :SchPftPaid, :Specifier,");
 		insertSql.append("  :DefSchdDate, :SchdMethod, ");
-		insertSql.append("  :InstNumber, :BpiOrHoliday, :FrqDate, ");
+		insertSql.append("  :InstNumber, :BpiOrHoliday, :FrqDate, :RecalLock, ");
 		insertSql.append(" :RolloverOnSchDate , :RolloverAmount, :RolloverAmountPaid)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -426,8 +426,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			updateSql
 					.append(" WriteoffIncrCost=:WriteoffIncrCost, WriteoffSuplRent=:WriteoffSuplRent, WriteoffSchFee=:WriteoffSchFee, PartialPaidAmt=:PartialPaidAmt,  ");
 		}
-		updateSql.append(" DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod,");
-		updateSql.append(" InstNumber= :InstNumber, BpiOrHoliday= :BpiOrHoliday, FrqDate = :FrqDate,");
+		updateSql.append(" DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod, ");
+		updateSql.append(" InstNumber= :InstNumber, BpiOrHoliday= :BpiOrHoliday, FrqDate = :FrqDate,RecalLock=:RecalLock, ");
 		updateSql
 				.append(" RolloverOnSchDate=:RolloverOnSchDate , RolloverAmount=:RolloverAmount, RolloverAmountPaid=:RolloverAmountPaid ");
 		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate AND SchSeq = :SchSeq");
@@ -520,7 +520,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
 		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
-		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate");
+		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
 
 		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 			selectSql.append(", AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
@@ -572,7 +572,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
 		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
-		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate");
+		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
 		
 		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 			selectSql.append(", AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
@@ -627,7 +627,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		}
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
 		selectSql.append(" DefSchdDate, SchdMethod, ");
-		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
+		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
 		selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
 
 		if (isWIF) {
@@ -1198,7 +1198,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				.append(" FeeSchd , SchdFeePaid , SchdFeeOS , InsSchd, SchdInsPaid,AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
 		selectSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,  ");
 		selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, ");
-		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate");
+		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
 
 		selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
 		selectSql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee,PartialPaidAmt ");

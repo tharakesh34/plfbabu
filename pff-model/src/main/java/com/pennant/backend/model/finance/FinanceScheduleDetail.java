@@ -148,6 +148,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal rebate = BigDecimal.ZERO;
 	private String finCcy;
 	private BigDecimal partialPaidAmt = BigDecimal.ZERO;
+	private boolean recalLock = false;
 
 	private long presentmentId;
 	private boolean newRecord = false;
@@ -917,6 +918,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setSubventionAmount(BigDecimal subventionAmount) {
 		this.subventionAmount = subventionAmount;
+	}
+
+	public boolean isRecalLock() {
+		return recalLock;
+	}
+
+	public void setRecalLock(boolean recalLock) {
+		this.recalLock = recalLock;
 	}
 
 }

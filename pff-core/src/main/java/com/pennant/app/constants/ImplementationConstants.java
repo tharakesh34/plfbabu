@@ -121,5 +121,8 @@ public class ImplementationConstants {
 	public static final boolean ENTITY_REQ_TRAIL_BAL = false;
 	// BPI on Deduct from disbursement is Incomized or Receivable
 	public static final boolean BPI_INCOMIZED_ON_ORG = true;
+	
+	// Allow Schedule Recalculation lock period Changes
+	public static final boolean ALW_SCH_RECAL_LOCK = false;
 
 }
