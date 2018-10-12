@@ -75,23 +75,23 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 
-	private static final long		serialVersionUID	= 1L;
-	private static final Logger		logger				= Logger.getLogger(FinTypeExpenseListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FinTypeExpenseListCtrl.class);
 
-	protected Window				window_FinTypeExpenseList;
-	private Component				parent				= null;
-	protected Listbox				listBoxFinTypeExpenseList;
+	protected Window window_FinTypeExpenseList;
+	private Component parent = null;
+	protected Listbox listBoxFinTypeExpenseList;
 
-	protected Button				btnNew_FinTypeExpenseList_ExpenseType;
-	
-	private Object					mainController;
-	private String					roleCode			= "";
-	private String					finCcy				= "";
-	private String					finType				= "";
-	protected int					moduleId			= 0;
-	private boolean					isCompReadonly		= false;
+	protected Button btnNew_FinTypeExpenseList_ExpenseType;
 
-	private List<FinTypeExpense>	finTypeExpenseList	= new ArrayList<FinTypeExpense>();
+	private Object mainController;
+	private String roleCode = "";
+	private String finCcy = "";
+	private String finType = "";
+	protected int moduleId = 0;
+	private boolean isCompReadonly = false;
+
+	private List<FinTypeExpense> finTypeExpenseList = new ArrayList<FinTypeExpense>();
 
 	/**
 	 * default constructor.<br>
@@ -129,7 +129,7 @@ public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 			if (arguments.containsKey("finCcy")) {
 				finCcy = (String) arguments.get("finCcy");
 			}
-			
+
 			if (arguments.containsKey("mainController")) {
 				this.mainController = (Object) arguments.get("mainController");
 			}
@@ -205,7 +205,7 @@ public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 
 		} else {
 			finTypeExpense.setNewRecord(false);
-			
+
 			showDetailFinTypeExpenseView(finTypeExpense);
 		}
 
@@ -259,7 +259,7 @@ public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 					}
 					lc.setStyle("text-align:right;");
 					lc.setParent(item);
-					
+
 					lc = new Listcell();
 					Checkbox modifyFeeCB = new Checkbox();
 					modifyFeeCB.setChecked(finTypeExpense.isActive());
