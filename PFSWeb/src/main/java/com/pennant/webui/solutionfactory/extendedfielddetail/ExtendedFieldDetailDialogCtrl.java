@@ -484,7 +484,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldMultilinetxt.setValue(aExtendedFieldDetail.getMultiLine());
 		this.recordStatus.setValue(aExtendedFieldDetail.getRecordStatus());
 		if (StringUtils.isNotBlank(aExtendedFieldDetail.getFieldType())) {
-			onFieldTypeChange(aExtendedFieldDetail.getFieldType(), isNewRecord());
+			onFieldTypeChange(aExtendedFieldDetail.getFieldType(), false);
 		}
 		//story #699 Allow Additional filters for extended combobox.
 		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, aExtendedFieldDetail.getFieldType())){
@@ -1420,15 +1420,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		//story #699 Allow Additional filters for extended combobox.
 		readOnlyComponent(isReadOnly("ExtendedFieldDetailDialog_btnAddFilters"), this.btnAddFilters);
 		
-		boolean isMaintainRcd = false;
-		if (!getExtendedFieldDetail().isNewRecord()) {
+		boolean isMaintenanceProcess = false;
+		if ((!getExtendedFieldDetail().isNewRecord() && StringUtils.isEmpty(getExtendedFieldDetail().getRecordType())
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_UPD, getExtendedFieldDetail().getRecordType())
+				|| StringUtils.equals(PennantConstants.RCD_UPD, getExtendedFieldDetail().getRecordType()))) {
 			this.fieldType.setDisabled(true);
 			this.fieldLength.setReadonly(true);
 			this.fieldPrec.setReadonly(true);
 			this.fieldMandatory.setDisabled(true);
 			this.fieldUnique.setDisabled(true);
 
-			isMaintainRcd = true;
+			isMaintenanceProcess = true;
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -1449,7 +1451,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					btnCancel.setVisible(false);
 				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(firstTaskRole);
-					if (isMaintainRcd) {
+					if (isMaintenanceProcess) {
 						this.btnDelete.setVisible(false);// For Not Allowing Deletion of  Fields.
 					}
 				}
@@ -1908,7 +1910,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		return "|EXTENDEDCOMBO|STATICCOMBO|MULTISTATICCOMBO|MULTIEXTENDEDCOMBO|RADIO|LISTFIELD|".contains("|" + type + "|");
 	}
 
-	private void onFieldTypeChange(String fieldType, boolean newSelection) {
+	private void onFieldTypeChange(String fieldType, boolean isUserAction) {
 		logger.debug("Entering");
 		fillComboBox(this.parentTag, "", getParentElements(fieldType), "");
 		if(StringUtils.equals(PennantConstants.List_Select,fieldType)){
@@ -1961,12 +1963,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowfieldMaxValue.setVisible(false);
 			this.rowMandatory.setVisible(true);
 			this.rowUnique.setVisible(false);
-			this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
-			this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
 			this.rowConstraint.setVisible(false);
 			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);
 
-			if(newSelection){
+			if(isUserAction){
+				this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+				this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
 				this.fieldDefaultValue.setValue("");
 			}
 
@@ -1974,7 +1976,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.rowfieldDefaultValue.setVisible(true);
 				this.fieldDefaultValue.setVisible(true);
 				this.rowConstraint.setVisible(true);
-				if(newSelection){
+				if(isUserAction){
 					this.fieldConstraint.getItems().clear();
 					fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
 				}
@@ -1989,9 +1991,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.fieldDefaultValue.setVisible(true);
 				this.rowfieldMinValue.setVisible(true);
 				this.rowfieldMaxValue.setVisible(true);
-				this.fieldPrec.setReadonly(true);
 
-				if(newSelection){
+				if(isUserAction){
 					// Set the default values
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
 						this.fieldLength.setValue(18);
@@ -2027,7 +2028,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)){
 						this.fieldPrec.setReadonly(true);
 					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)){
-						this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
+						this.fieldPrec.setReadonly(true);
 					}
 				}
 
@@ -2057,7 +2058,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				textbox.setWidth("200px");
 				textbox.setId("SListId");
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-				if(!newSelection){
+				if(!isUserAction){
 					textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
 					this.fieldLength.setValue(getExtendedFieldDetail().getFieldLength());
 				}else{
@@ -2077,7 +2078,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				Uppercasebox textbox = new Uppercasebox();
 				textbox.setId("SListId");
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-				if(!newSelection){
+				if(!isUserAction){
 					textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
 				}
 				this.fieldLength.setReadonly(true);
@@ -2120,12 +2121,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}else if(isDateType()){
 				this.rowfieldDefaultValue.setVisible(true);
 				this.fieldDefaultValue_Date.setVisible(true);
-				if(newSelection){
+				if(isUserAction){
 					fillComboBox(fieldDefaultValue_Date, "", getDateDefaultType(fieldType), "");
 				}
 				if(!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fieldType)){
 					this.rowConstraint.setVisible(true);
-					if(newSelection){
+					if(isUserAction){
 						this.fieldConstraint.getChildren().clear();
 						while (this.fieldConstraint.getNextSibling() != null) {
 							this.fieldConstraint.getNextSibling().detach();

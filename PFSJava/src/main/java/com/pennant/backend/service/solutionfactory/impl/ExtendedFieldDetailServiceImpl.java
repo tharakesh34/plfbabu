@@ -349,9 +349,11 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 				extendedFieldDetail.setRecordType(rcdType);
 				extendedFieldDetail.setRecordStatus(recordStatus);
 				if(!deleteRecord){
-					extendedFieldDetailDAO.alter(extendedFieldDetail,"_Temp",false,true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail,"",false,true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail,"",false,true, true);
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_UPD , extendedFieldDetail.getRecordType())) {
+						extendedFieldDetailDAO.alter(extendedFieldDetail,"_Temp",false,true, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail,"",false,true, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail,"",false,true, true);
+					}
 				}else{
 					extendedFieldDetailDAO.alter(extendedFieldDetail,"_Temp",true,false, false);
 					extendedFieldDetailDAO.alter(extendedFieldDetail,"",true,false, false);

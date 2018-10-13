@@ -447,13 +447,15 @@ public class ExtendedFieldsValidation {
 				//if it is an input element added column in ED table.
 				if (extendedFieldDetail.isInputElement()) {
 					if (!deleteRecord) {
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
-						if (StringUtils.equals(extendedFieldDetail.getLovDescModuleName(),
-								CollateralConstants.MODULE_NAME)) {
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", false, true, false);
+						if (!StringUtils.equals(PennantConstants.RECORD_TYPE_UPD , extendedFieldDetail.getRecordType())) {
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
+							if (StringUtils.equals(extendedFieldDetail.getLovDescModuleName(),
+									CollateralConstants.MODULE_NAME)) {
+								extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", false, true, false);
+							}
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
 						}
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
 					} else {
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
