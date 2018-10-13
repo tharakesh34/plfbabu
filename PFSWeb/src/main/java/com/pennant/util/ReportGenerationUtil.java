@@ -82,41 +82,42 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 public class ReportGenerationUtil implements Serializable {
-    private static final long serialVersionUID = 7293149519883033383L;
-	private static final Logger	logger				= Logger.getLogger(ReportGenerationUtil.class);
-	
+	private static final long serialVersionUID = 7293149519883033383L;
+	private static final Logger logger = Logger.getLogger(ReportGenerationUtil.class);
+
 	public ReportGenerationUtil() {
-	    super();
-    }
-	
+		super();
+	}
+
 	@SuppressWarnings("rawtypes")
-	public static boolean generateReport(String reportName, Object object,List listData, boolean isRegenerate, 
-			int reportType,String userName, Window window) throws InterruptedException{
+	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
+			int reportType, String userName, Window window) throws InterruptedException {
 		logger.info("Generating report " + reportName);
 
 		return generateReport(reportName, object, listData, isRegenerate, reportType, userName, window, false);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static boolean generateReport(String reportName, Object object,List listData, boolean isRegenerate, 
-			int reportType,String userName, Window window,boolean createExcel) throws InterruptedException {
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE)+ "/" +reportName+ ".jasper";
+	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
+			int reportType, String userName, Window window, boolean createExcel) throws InterruptedException {
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
 
-        if (isRegenerate) {
-        	try {
-        		createReport(reportName, object,listData, reportSrc,userName,window,createExcel);
-        	} catch (JRException e) {
-        		logger.error("Exception: ", e);
+		if (isRegenerate) {
+			try {
+				createReport(reportName, object, listData, reportSrc, userName, window, createExcel);
+			} catch (JRException e) {
+				logger.error("Exception: ", e);
 				MessageUtil.showError("Template does not exist.");
-        		ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
-        	}
-        }
+				ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+			}
+		}
 
 		return false;
 	}
 
 	/**
 	 * Method For generating Report based upon passing Data Structure
+	 * 
 	 * @param reportName
 	 * @param object
 	 * @param listData
@@ -126,9 +127,9 @@ public class ReportGenerationUtil implements Serializable {
 	 * @throws JRException
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	private static void createReport(String reportName, Object object,List listData, String reportSrc,String userName,Window dialogWindow,boolean createExcel)
-			throws JRException, InterruptedException {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
+			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
 		logger.debug("Entering");
 		try {
 			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
@@ -142,8 +143,7 @@ public class ReportGenerationUtil implements Serializable {
 				auditMap.put("dialogWindow", dialogWindow);
 			}
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
-		} 
-		catch (JRException e) {
+		} catch (JRException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showError("Template does not exist.");
 			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
@@ -153,6 +153,7 @@ public class ReportGenerationUtil implements Serializable {
 
 	/**
 	 * Method for Printing Checks
+	 * 
 	 * @param listData
 	 * @param reportName
 	 * @param userName
@@ -161,40 +162,41 @@ public class ReportGenerationUtil implements Serializable {
 	 * @throws FileNotFoundException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void print(List listData,String reportName,String userName, Window dialogWindow) throws JRException, FileNotFoundException {
+	public static void print(List listData, String reportName, String userName, Window dialogWindow)
+			throws JRException, FileNotFoundException {
 		logger.debug("Entering");
 
 		try {
 			JRBeanCollectionDataSource subListDS = null;
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_CHECKS)+"/ChecksMain.jasper";
-			
+			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_CHECKS) + "/ChecksMain.jasper";
+
 			for (int i = 0; i < listData.size(); i++) {
-				
-				Object obj = listData.get(i);	            
-				if(obj instanceof List){
+
+				Object obj = listData.get(i);
+				if (obj instanceof List) {
 					subListDS = new JRBeanCollectionDataSource((List) obj);
-				}else {
+				} else {
 					List subList = new ArrayList();
 					subList.add(obj);
 					subListDS = new JRBeanCollectionDataSource(subList);
 				}
-				parameters.put("subDataSource"+(i+1), subListDS);
-            }
+				parameters.put("subDataSource" + (i + 1), subListDS);
+			}
 
 			// Set the parameters
 			parameters.put("userName", userName);
-			parameters.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
-			parameters.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+			parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 
 			byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, subListDS);
-			
+
 			final HashMap<String, Object> auditMap = new HashMap<String, Object>();
 			auditMap.put("reportBuffer", buf);
-			if (dialogWindow != null){
+			if (dialogWindow != null) {
 				auditMap.put("dialogWindow", dialogWindow);
 			}
-			
+
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 		} catch (JRException e) {
 			MessageUtil.showError(e);
@@ -205,6 +207,7 @@ public class ReportGenerationUtil implements Serializable {
 
 	/**
 	 * Method For generating Report based upon passing Data
+	 * 
 	 * @param reportName
 	 * @param userName
 	 * @param whereCond
@@ -217,10 +220,10 @@ public class ReportGenerationUtil implements Serializable {
 	public static void generateReport(String userName, String reportName, String whereCond,
 			StringBuilder searchCriteriaDesc, Window window, boolean createExcel) {
 		logger.debug("Entering");
-		
+
 		Connection connection = null;
 		DataSource dataSourceObj = null;
-		
+
 		try {
 
 			dataSourceObj = (DataSource) SpringUtil.getBean("pfsDatasource");
@@ -260,14 +263,16 @@ public class ReportGenerationUtil implements Serializable {
 					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS,
+							Boolean.TRUE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.FALSE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER, Boolean.FALSE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
 					excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
 					excelExporter.exportReport();
-					Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+					Filedownload.save(
+							new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -285,7 +290,7 @@ public class ReportGenerationUtil implements Serializable {
 			connection = null;
 			dataSourceObj = null;
 		}
-		
+
 		logger.debug("Leaving");
-	}	
+	}
 }
