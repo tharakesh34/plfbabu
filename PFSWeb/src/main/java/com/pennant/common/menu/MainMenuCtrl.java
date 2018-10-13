@@ -185,7 +185,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
 
 		if (!AuthenticationType.DAO.name().equals(authType)) {
-			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false, new MenuItemOnCloseListener());
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
+					new MenuItemOnCloseListener());
 		} else if ((expiredDate != null && expiredDate.before(DateUtil.getSysDate()))) {
 			Executions.sendRedirect("/csrfLogout.zul");
 		} else if ((pwdExpDate != null && pwdExpDate.before(DateUtil.getSysDate()))) {
@@ -194,7 +195,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			win.setHeight("98%");
 			win.doModal();
 		} else {
-			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false, new MenuItemOnCloseListener());
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
+					new MenuItemOnCloseListener());
 		}
 
 		logger.trace(Literal.LEAVING);

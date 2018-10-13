@@ -16,11 +16,20 @@
 			<north border="none" height="0px" />
 			<center border="none" autoscroll="true">
 				<div>
-					<listbox id="listBoxMandateStatus" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+					<listbox id="listBoxMandateStatus"
+						fixedLayout="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
 						<listhead sizable="true">
-							<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_Reason" label="${c:l('listheader_Reason.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_ChangeDate" label="${c:l('listheader_ChangeDate.label')}" sort="auto" hflex="min" />
+							<listheader id="listheader_Status"
+								label="${c:l('listheader_Status.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Reason"
+								label="${c:l('listheader_Reason.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_ChangeDate"
+								label="${c:l('listheader_ChangeDate.label')}" sort="auto"
+								hflex="min" />
 						</listhead>
 					</listbox>
 				</div>

@@ -70,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements DocumentTypeDAO {
 	private static Logger logger = Logger.getLogger(DocumentTypeDAOImpl.class);
-	
+
 	public DocumentTypeDAOImpl() {
 		super();
 	}
@@ -87,21 +87,24 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 	@Override
 	public DocumentType getDocumentTypeById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		DocumentType documentType = new DocumentType();
 		documentType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq,");
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef");
+		selectSql.append(
+				" SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(
+				" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef");
 		if (type.contains("View")) {
 			selectSql.append(" ,categoryCode,categoryDesc ");
 		}
 		selectSql.append(" FROM  BMTDocumentTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DocTypeCode =:DocTypeCode") ;
-				
+		selectSql.append(" Where DocTypeCode =:DocTypeCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
 		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
@@ -115,7 +118,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		logger.debug("Leaving");
 		return documentType;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String docTypeCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -151,25 +154,29 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(DocumentType documentType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTDocumentTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq," );
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef)");
-		sql.append(" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :CategoryId, :Pdd, :Otc, :LvReq, :RcuReq," );
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand, :DocIsPdfExtRequired, :DocIsPasswordProtected, :PdfMappingRef,:docExternalRef)");
-		
+		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(
+				" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef)");
+		sql.append(
+				" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :CategoryId, :Pdd, :Otc, :LvReq, :RcuReq,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(
+				" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand, :DocIsPdfExtRequired, :DocIsPasswordProtected, :PdfMappingRef,:docExternalRef)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(documentType);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
@@ -179,7 +186,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		logger.debug(Literal.LEAVING);
 		return documentType.getId();
 	}
-	
+
 	@Override
 	public void update(DocumentType documentType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -188,12 +195,17 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		StringBuilder sql = new StringBuilder("update BMTDocumentTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" set DocTypeDesc = :DocTypeDesc,");
-		sql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive, CategoryId = :CategoryId, Pdd = :Pdd, ");
+		sql.append(
+				" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive, CategoryId = :CategoryId, Pdd = :Pdd, ");
 		sql.append(" Otc = :Otc, LvReq = :LvReq, RcuReq = :RcuReq, Version = :Version , LastMntBy = :LastMntBy, ");
-		sql.append("  LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand,");
-		sql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand,");
-		sql.append(" DocIsPdfExtRequired = :DocIsPdfExtRequired, DocIsPasswordProtected = :DocIsPasswordProtected, PdfMappingRef = :PdfMappingRef ,docExternalRef =:docExternalRef");
+		sql.append(
+				"  LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(
+				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand,");
+		sql.append(
+				" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand,");
+		sql.append(
+				" DocIsPdfExtRequired = :DocIsPdfExtRequired, DocIsPasswordProtected = :DocIsPasswordProtected, PdfMappingRef = :PdfMappingRef ,docExternalRef =:docExternalRef");
 		sql.append(" where DocTypeCode =:DocTypeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -210,7 +222,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void delete(DocumentType documentType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
@@ -230,7 +242,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		
+
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -243,18 +255,21 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 	public List<DocumentType> getApprovedPdfExternalList(String type) {
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef");
-		selectSql.append(" FROM  BMTDocumentTypes"); 
+		selectSql.append(
+				"SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(
+				" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef,docExternalRef");
+		selectSql.append(" FROM  BMTDocumentTypes");
 		selectSql.append(type);
-		selectSql.append(" Where DocIsPdfExtRequired =1") ;
-				
+		selectSql.append(" Where DocIsPdfExtRequired =1");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		DocumentType documentType = new DocumentType();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
 		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }
