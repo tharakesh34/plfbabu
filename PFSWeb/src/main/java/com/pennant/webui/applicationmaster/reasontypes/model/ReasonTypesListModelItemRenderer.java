@@ -52,7 +52,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -65,21 +64,20 @@ public class ReasonTypesListModelItemRenderer implements ListitemRenderer<Reason
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, ReasonTypes reasonTypes, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(reasonTypes.getCode());
+		lc = new Listcell(reasonTypes.getCode());
 		lc.setParent(item);
-	  	lc = new Listcell(reasonTypes.getDescription());
+		lc = new Listcell(reasonTypes.getDescription());
 		lc.setParent(item);
-	  	lc = new Listcell(reasonTypes.getRecordStatus());
+		lc = new Listcell(reasonTypes.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(reasonTypes.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", reasonTypes.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onReasonTypesItemDoubleClicked");
 	}
 }

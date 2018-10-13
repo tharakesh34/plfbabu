@@ -64,9 +64,8 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Reject object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Reject object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -80,7 +79,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
-		
+
 		if (arguments.containsKey("reason")) {
 			this.reason = Integer.parseInt(arguments.get("reason").toString());
 		}
@@ -99,15 +98,16 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		this.reasonCategory.setValueColumn("Code");
 		this.reasonCategory.setDescColumn("Description");
 		this.reasonCategory.setValidateColumns(new String[] { "Code", "Description" });
-		
+
 		StringBuilder whereClause = new StringBuilder();
-		whereClause.append(" Id in (Select ReasonCategoryId from Reasons Where ReasonTypeId = (Select Id from ReasonTypes Where Id  = ");
+		whereClause.append(
+				" Id in (Select ReasonCategoryId from Reasons Where ReasonTypeId = (Select Id from ReasonTypes Where Id  = ");
 		whereClause.append(reason).append(" ))");
-		
+
 		this.reasonCategory.setWhereClause(whereClause.toString());
 		this.reasonCategory.setMandatoryStyle(true);
 		this.remarks.setMaxlength(1000);
-		
+
 		readOnlyComponent(true, this.reasons);
 		readOnlyComponent(true, this.btnReasons);
 
@@ -130,17 +130,18 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		for (int i = 0; i < resonTypes.length; i++) {
 			resonTypesMap.put(resonTypes[i], null);
 		}
-		
+
 		if (StringUtils.trimToNull(this.reasonCategory.getValue()) != null) {
 			ReasonCategory reasonCategory = (ReasonCategory) this.reasonCategory.getObject();
 			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("ReasonCategoryId", reasonCategory.getId(), Filter.OP_EQUAL);		
-			dataObject = ExtendedMultipleSearchListBox.show(this.window_ReasonDetailsDialog, "ReasonCode", resonTypesMap, filter);
+			filter[0] = new Filter("ReasonCategoryId", reasonCategory.getId(), Filter.OP_EQUAL);
+			dataObject = ExtendedMultipleSearchListBox.show(this.window_ReasonDetailsDialog, "ReasonCode",
+					resonTypesMap, filter);
 		} else {
-			dataObject = ExtendedMultipleSearchListBox.show(this.window_ReasonDetailsDialog, "ReasonCode", resonTypesMap);
+			dataObject = ExtendedMultipleSearchListBox.show(this.window_ReasonDetailsDialog, "ReasonCode",
+					resonTypesMap);
 		}
-		
-		
+
 		if (dataObject instanceof String) {
 			this.reasons.setValue(dataObject.toString());
 			this.reasons.setTooltiptext("");
@@ -179,7 +180,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -209,7 +210,9 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	public void doShowDialog() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		this.window_ReasonDetailsDialog.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px")))- 150 + "px");
+		this.window_ReasonDetailsDialog
+				.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0, getBorderLayoutHeight().indexOf("px")))
+						- 150 + "px");
 		this.window_ReasonDetailsDialog.doModal();
 
 		logger.debug(Literal.LEAVING);
@@ -223,9 +226,8 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	public void doWriteComponentsToBean(ReasonHeader reasonHeader) {
 		logger.debug(Literal.ENTERING);
 
-		
-		List<ReasonDetails> list = new ArrayList<ReasonDetails>();	
-		ReasonDetails details  = null;
+		List<ReasonDetails> list = new ArrayList<ReasonDetails>();
+		ReasonDetails details = null;
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -253,7 +255,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -272,12 +274,15 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		this.reasonCategory.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonDetailsDialog_ReasonCategory.value"), null, true, true));
+		this.reasonCategory.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_ReasonDetailsDialog_ReasonCategory.value"), null, true, true));
 		if (!this.reasons.isReadonly()) {
-			this.reasons.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonDetailsDialog_Reasons.value"), null, true));
+			this.reasons.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReasonDetailsDialog_Reasons.value"), null, true));
 		}
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonDetailsDialog_Remarks.value"), null, true));
+			this.remarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReasonDetailsDialog_Remarks.value"), null, true));
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -294,7 +299,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$reasonCategory(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -314,20 +319,21 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 			readOnlyComponent(false, this.reasons);
 			readOnlyComponent(false, this.btnReasons);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void doSave() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
-		
+
 		ReasonHeader reasonHeader = new ReasonHeader();
 		doSetValidation();
 		doWriteComponentsToBean(reasonHeader);
 		try {
-			getFinanceMainDialogCtrl().getClass().getMethod("setReasonDetails", ReasonHeader.class).invoke(financeMainDialogCtrl, reasonHeader);
+			getFinanceMainDialogCtrl().getClass().getMethod("setReasonDetails", ReasonHeader.class)
+					.invoke(financeMainDialogCtrl, reasonHeader);
 			getFinanceMainDialogCtrl().getClass().getMethod("doSave").invoke(getFinanceMainDialogCtrl());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -364,5 +370,4 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	 
 }

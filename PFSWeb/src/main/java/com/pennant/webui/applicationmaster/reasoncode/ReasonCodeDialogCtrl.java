@@ -72,11 +72,9 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-	
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/ReasonCode/reasonCodeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/ReasonCode/reasonCodeDialog.zul file. <br>
  */
 public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 
@@ -84,9 +82,8 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	private static final Logger logger = Logger.getLogger(ReasonCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ReasonCodeDialog;
 	protected ExtendedCombobox reasonTypeID;
@@ -118,11 +115,9 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -130,11 +125,10 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 */
 	public void onCreate$window_ReasonCodeDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_ReasonCodeDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.reasonCode = (ReasonCode) arguments.get("reasonCode");
@@ -148,7 +142,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			ReasonCode reasonCode = new ReasonCode();
 			BeanUtils.copyProperties(this.reasonCode, reasonCode);
 			this.reasonCode.setBefImage(reasonCode);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.reasonCode.isWorkflow(), this.reasonCode.getWorkflowId(),
 					this.reasonCode.getNextTaskId());
@@ -169,10 +163,9 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -198,10 +191,10 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		this.reasonCategoryID.setValidateColumns(new String[] { "Code" });
 
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$reasonTypeID(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = reasonTypeID.getObject();
@@ -211,11 +204,11 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonTypeID.setAttribute("ReasonTypeId", null);
 		} else {
 			ReasonTypes details = (ReasonTypes) dataObject;
-				this.reasonTypeID.setAttribute("ReasonTypeId", details.getId());
+			this.reasonTypeID.setAttribute("ReasonTypeId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$reasonCategoryID(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = reasonCategoryID.getObject();
@@ -225,11 +218,11 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonCategoryID.setAttribute("ReasonCategoryId", null);
 		} else {
 			ReasonCategory details = (ReasonCategory) dataObject;
-				this.reasonCategoryID.setAttribute("ReasonCategoryId", details.getId());
+			this.reasonCategoryID.setAttribute("ReasonCategoryId", details.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -255,7 +248,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -288,7 +281,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -352,14 +345,6 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-
-
-
-
-
-
-
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -369,7 +354,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 */
 	public void doWriteBeanToComponents(ReasonCode aReasonCode) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.reasonCategoryID.setValue(String.valueOf(aReasonCode.getReasonCategoryID()));
 		this.reasonTypeID.setValue(String.valueOf(aReasonCode.getReasonTypeID()));
 		this.code.setValue(aReasonCode.getCode());
@@ -399,7 +384,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 				this.reasonCategoryID.setAttribute("ReasonCategoryId", null);
 			}
 		}
-		
+
 		if (aReasonCode.isNew() || (aReasonCode.getRecordType() != null ? aReasonCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -409,7 +394,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -417,11 +402,11 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 */
 	public void doWriteComponentsToBean(ReasonCode aReasonCode) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Reason Type
 		try {
 			aReasonCode.setReasonTypeCode(this.reasonTypeID.getValue());
@@ -436,7 +421,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		//Reason Category
 		try {
 			aReasonCode.setReasonCategoryCode(this.reasonCategoryID.getValue());
@@ -451,7 +436,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Code
 		try {
 			aReasonCode.setCode(this.code.getValue());
@@ -467,13 +452,13 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		//Active
 		try {
 			aReasonCode.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -481,7 +466,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -533,38 +518,38 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.reasonTypeID.isReadonly()) {
-			this.reasonTypeID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_ReasonTypeID.value"), null, true, true));
+			this.reasonTypeID.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReasonCodeDialog_ReasonTypeID.value"), null, true, true));
 		}
 		if (!this.reasonCategoryID.isReadonly()) {
-			this.reasonCategoryID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_ReasonCategoryID.value"), null, true, true));
+			this.reasonCategoryID.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReasonCodeDialog_ReasonCategoryID.value"), null, true, true));
 		}
-		if (!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Code.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
+		if (!this.code.isReadonly()) {
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Code.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.description.isReadonly()){
-			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Description.value"),null,false));
+		if (!this.description.isReadonly()) {
+			this.description.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Description.value"), null, false));
 		}
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.reasonTypeID.setConstraint("");
 		this.reasonCategoryID.setConstraint("");
 		this.code.setConstraint("");
 		this.description.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
-	}
 
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Set Validations for LOV Fields
@@ -572,31 +557,28 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -606,40 +588,41 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final ReasonCode aReasonCode = new ReasonCode();
 		BeanUtils.copyProperties(this.reasonCode, aReasonCode);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aReasonCode.getCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aReasonCode.getRecordType()).equals("")){
-				aReasonCode.setVersion(aReasonCode.getVersion()+1);
+			if (StringUtils.trimToEmpty(aReasonCode.getRecordType()).equals("")) {
+				aReasonCode.setVersion(aReasonCode.getVersion() + 1);
 				aReasonCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aReasonCode.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aReasonCode.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aReasonCode.getNextTaskId(), aReasonCode);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aReasonCode.getNextTaskId(),
+							aReasonCode);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aReasonCode,tranType)){
+				if (doProcess(aReasonCode, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -648,7 +631,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 */
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
-		
+
 		if (this.reasonCode.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			readOnlyComponent(false, this.reasonTypeID);
@@ -659,7 +642,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			readOnlyComponent(true, this.reasonTypeID);
 			readOnlyComponent(true, this.reasonCategoryID);
 			readOnlyComponent(true, this.code);
-			
+
 		}
 
 		readOnlyComponent(isReadOnly("ReasonCodeDialog_Description"), this.description);

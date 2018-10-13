@@ -74,10 +74,8 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
 /**
- * This is the controller class for the
- * /WEB-INF/pages/com.pennant.payment/PaymentHeader/PaymentHeaderList.zul file.
+ * This is the controller class for the /WEB-INF/pages/com.pennant.payment/PaymentHeader/PaymentHeaderList.zul file.
  * 
  */
 public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
@@ -119,8 +117,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -253,10 +250,10 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private void doFileProcess() throws Exception {
 		logger.debug(Literal.ENTERING);
 		if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
-			long userId=getUserWorkspace().getUserId();
+			long userId = getUserWorkspace().getUserId();
 
 			BatchUploadProcessor batchProcessor = new BatchUploadProcessor(file, authorization, apiUrl, extraHeader,
-					sourceFileName,entityId,userId);
+					sourceFileName, entityId, userId);
 			batchProcessor.process();
 			fileName.setValue("");
 		}
@@ -298,7 +295,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 			}
 		}
 	}
-	
+
 	private List<ValueLabel> prepairDropDwnList(List<BatchUploadConfig> batchUploadActiveConfig, String baseurl) {
 		List<ValueLabel> list = new ArrayList<ValueLabel>();
 		for (BatchUploadConfig batchUploadConfig : batchUploadActiveConfig) {

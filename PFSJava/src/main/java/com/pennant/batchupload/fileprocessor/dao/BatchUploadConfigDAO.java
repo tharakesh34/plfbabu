@@ -16,7 +16,7 @@ import java.util.List;
 import com.pennant.batchupload.model.BatchUploadConfig;
 
 /**
- * Data access layer for <code>BatchUploadConfig</code> 
+ * Data access layer for <code>BatchUploadConfig</code>
  * 
  * @param <T>
  */

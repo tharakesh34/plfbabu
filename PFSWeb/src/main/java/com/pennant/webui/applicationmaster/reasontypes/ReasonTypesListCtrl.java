@@ -91,10 +91,10 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 	// Search Fields
 	protected Textbox code; // autowired
 	protected Textbox description; // autowired
-	
+
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
-	
+
 	private transient ReasonTypesService reasonTypesService;
 
 	/**
@@ -132,7 +132,8 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 
 		registerField("id");
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description, Operators.STRING);
+		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
+				Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -179,7 +180,6 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -190,7 +190,7 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 
 	public void onReasonTypesItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxReasonTypes.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -200,13 +200,13 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( reasontypes.getId());
+		whereCond.append(reasontypes.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(reasontypes.getVersion());
-	
+
 		if (doCheckAuthority(reasontypes, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && reasontypes.getWorkflowId() == 0) {
@@ -216,10 +216,10 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -232,9 +232,10 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("reasonTypes", reasontypes);
 		arg.put("reasonTypesListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -262,7 +263,7 @@ public class ReasonTypesListCtrl extends GFCBaseListCtrl<ReasonTypes> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

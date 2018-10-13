@@ -65,17 +65,16 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
-	 
+
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Logger.getLogger(ReasonDetailsLogDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  window_ReasonDetailsLogDialog;
+	protected Window window_ReasonDetailsLogDialog;
 	protected Textbox finReference;
 	protected Textbox finBranch;
 	protected Textbox custCIF;
@@ -85,10 +84,10 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox mobileNo;
 	protected Textbox emailID;
 	protected Listbox listReasonDetailsLog;
-	
+
 	private CustomerFinanceDetail customerFinanceDetail;
 	private List<ReasonDetailsLog> reasonDetails;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -102,11 +101,10 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -122,11 +120,11 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				setCustomerFinanceDetail(null);
 			}
-			
+
 			if (arguments.containsKey("reasonDetails")) {
 				this.reasonDetails = (List<ReasonDetailsLog>) arguments.get("reasonDetails");
-			} 
-			
+			}
+
 			doShowDialog();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -136,7 +134,6 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
- 
 	/**
 	 * Writes the bean data to the components.<br>
 	 *
@@ -156,8 +153,7 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		fillReasonDeatilsLog();
 		logger.debug(Literal.LEAVING);
 	}
-	 
-	
+
 	/**
 	 * Fill Reason Details List
 	 * 
@@ -183,14 +179,14 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			lc = new Listcell(date);
 			lc.setParent(item);
-			
+
 			String logTime = "";
 			if (detailsLog.getLogTime() != null) {
 				logTime = DateUtility.format(detailsLog.getLogTime(), DateUtility.DateFormat.LONG_TIME.getPattern());
 			}
 			lc = new Listcell(logTime);
 			lc.setParent(item);
-			
+
 			String roleCode = "";
 			if (detailsLog.getRoleCode() != null) {
 				roleCode = detailsLog.getRoleDesc();
@@ -252,12 +248,11 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.listReasonDetailsLog.appendChild(item);
 		}
 	}
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws Exception

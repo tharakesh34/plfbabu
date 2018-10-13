@@ -93,18 +93,18 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 	protected Button button_ReasonCodeList_ReasonCodeSearch;
 
 	// Search Fields
-    protected Textbox reasonTypeID; // autowired
-    protected Textbox reasonCategoryID; // autowired
+	protected Textbox reasonTypeID; // autowired
+	protected Textbox reasonCategoryID; // autowired
 	protected Textbox code; // autowired
 	protected Textbox description; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_ReasonTypeID;
 	protected Listbox sortOperator_ReasonCategoryID;
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient ReasonCodeService reasionCodeService;
 
 	/**
@@ -132,8 +132,7 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 	public void onCreate$window_ReasonCodeList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_ReasonCodeList, borderLayout_ReasonCodeList, listBoxReasonCode,
-				pagingReasonCodeList);
+		setPageComponents(window_ReasonCodeList, borderLayout_ReasonCodeList, listBoxReasonCode, pagingReasonCodeList);
 		setItemRender(new ReasonCodeListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -141,10 +140,13 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 		registerButton(button_ReasonCodeList_NewReasonCode, "button_ReasonCodeList_NewReasonCode", true);
 
 		registerField("id");
-		registerField("ReasonTypeCode", listheader_ReasonTypeID, SortOrder.NONE, reasonTypeID, sortOperator_ReasonTypeID, Operators.STRING);
-		registerField("ReasonCategoryCode", listheader_ReasonCategoryID, SortOrder.NONE, reasonCategoryID, sortOperator_ReasonCategoryID, Operators.STRING);
+		registerField("ReasonTypeCode", listheader_ReasonTypeID, SortOrder.NONE, reasonTypeID,
+				sortOperator_ReasonTypeID, Operators.STRING);
+		registerField("ReasonCategoryCode", listheader_ReasonCategoryID, SortOrder.NONE, reasonCategoryID,
+				sortOperator_ReasonCategoryID, Operators.STRING);
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description, Operators.STRING);
+		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -192,7 +194,6 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -203,7 +204,7 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 
 	public void onReasonCodeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxReasonCode.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -213,13 +214,13 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( reasoncode.getId());
+		whereCond.append(reasoncode.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(reasoncode.getVersion());
-	
+
 		if (doCheckAuthority(reasoncode, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && reasoncode.getWorkflowId() == 0) {
@@ -229,10 +230,10 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -245,7 +246,7 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("reasonCode", reasoncode);
 		arg.put("reasonCodeListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -275,7 +276,7 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

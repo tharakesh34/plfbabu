@@ -63,22 +63,21 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
- 
+
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(UserBarCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window winUserBar; // autowired
 
 	// Used Labels
 	private Label label_branch;
 	private Menu menu_user;
-	
+
 	// Localized labels for the columns
 
 	private String _LoginTimeText = "";
@@ -87,12 +86,12 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private String _BranchCodeText = "";
 	private String _DepartmentCodeText = "";
 
-	protected Label label_currentDate; // autowired
-	protected Label label_currentTime; // autowired
-    protected Window outerIndexWindow; // autowired
-    protected Menuitem menuitem_logout;
-    protected Menuitem menuitem_changePasssword;
-    LoggedInUser user =null;
+	protected Label label_currentDate;
+	protected Label label_currentTime;
+	protected Window outerIndexWindow;
+	protected Menuitem menuitem_logout;
+	protected Menuitem menuitem_changePasssword;
+	LoggedInUser user = null;
 
 	/**
 	 * Default constructor.
@@ -104,22 +103,22 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		logger.debug("Entering");
-		
+
 		super.doAfterCompose(comp);
 		user = getUserWorkspace().getLoggedInUser();
-		
+
 		String appDate = DateUtility.getAppDate(DateFormat.SHORT_DATE);
 		set_LoginTimeText(PennantAppUtil.getTime(user.getLogonTime()).toString());
 		set_LoginDateText(appDate);
 		set_UserText(user.getUserName());
 		set_BranchCodeText(user.getBranchCode());
 		set_DepartmentCodeText(user.getDepartmentCode());
-		
+
 		// Desktop Time Setting
 		label_currentDate.setValue(appDate);
 		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("HH:mm");
 		label_currentTime.setValue(dateFormat.format(DateUtility.getSysDate()));
-		
+
 		doShowLabel();
 
 		// Listener for Last Login
@@ -128,8 +127,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				doShowLastLogin();
 			}
 		});
-		
-		
+
 		switch (user.getAuthType()) {
 		case "SSO":
 			menuitem_logout.setVisible(false);
@@ -139,11 +137,11 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			menuitem_logout.setVisible(true);
 			menuitem_changePasssword.setVisible(false);
 			break;
-		default:			
+		default:
 			menuitem_logout.setVisible(true);
 			menuitem_changePasssword.setVisible(true);
 			break;
-		}		
+		}
 
 		logger.debug("Leaving");
 	}
@@ -156,23 +154,21 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	public void onCreate$winUserBar(Event event) {
 		this.winUserBar.setBorder("none");
 	}
- 
+
 	/**
 	 * Shows the labels with values.<br>
 	 */
 	private void doShowLabel() {
-		this.menu_user.setLabel(get_UserText())	;
+		this.menu_user.setLabel(get_UserText());
 		this.label_branch.setValue(get_BranchCodeText() + "/" + get_DepartmentCodeText());
 	}
-	
+
 	private void doShowLastLogin() {
 		String loginInfo = getLastLoginInfo();
-		if(loginInfo != null) {
+		if (loginInfo != null) {
 			Clients.showNotification(loginInfo, "info", this.menu_user, "start_before", -1);
 		}
 	}
-	
-	
 
 	/**
 	 * When the 'Logout' button is clicked.<br>
@@ -180,13 +176,13 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 * @throws IOException
 	 */
 	public void onClick$menuitem_logout(Event event) throws IOException {
- 		getUserWorkspace().doLogout(); // logout.
+		getUserWorkspace().doLogout(); // logout.
 	}
-	
+
 	public void onClick$menuitem_changePasssword() throws URISyntaxException {
 		ComponentUtil.openMenuItem("menu_Item_ChgPwd", "/WEB-INF/pages/PasswordReset/changePwd.zul", true, null);
 	}
-	
+
 	private String getLastLoginInfo() {
 		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
 		StringBuilder builder = new StringBuilder("<table>");
@@ -248,14 +244,15 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	public String get_LoginTimeText() {
 		return this._LoginTimeText;
 	}
-	
+
 	public void set_LoginDateText(String loginDateText) {
 		this._LoginDateText = loginDateText;
 	}
-	
+
 	public String get_LoginDateText() {
 		return this._LoginDateText;
 	}
+
 	public void set_UserText(String userText) {
 		this._UserText = userText;
 	}

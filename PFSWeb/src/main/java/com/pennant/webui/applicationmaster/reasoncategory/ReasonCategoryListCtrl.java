@@ -67,7 +67,6 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul file.
  * 
@@ -92,10 +91,10 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 	// Search Fields
 	protected Textbox code; // autowired
 	protected Textbox description; // autowired
-	
+
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
-	
+
 	private transient ReasonCategoryService reasonCategoryService;
 
 	/**
@@ -129,11 +128,13 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 
 		// Register buttons and fields.
 		registerButton(button_ReasonCategoryList_ReasonCategorySearch);
-		registerButton(button_ReasonCategoryList_NewReasonCategory, "button_ReasonCategoryList_NewReasonCategory", true);
+		registerButton(button_ReasonCategoryList_NewReasonCategory, "button_ReasonCategoryList_NewReasonCategory",
+				true);
 
 		registerField("id");
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description, Operators.STRING);
+		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
+				Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -180,7 +181,6 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -191,7 +191,7 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 
 	public void onReasonCategoryItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxReasonCategory.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -201,13 +201,13 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( reasoncategory.getId());
+		whereCond.append(reasoncategory.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(reasoncategory.getVersion());
-	
+
 		if (doCheckAuthority(reasoncategory, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && reasoncategory.getWorkflowId() == 0) {
@@ -217,10 +217,10 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -233,9 +233,10 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("reasonCategory", reasoncategory);
 		arg.put("reasonCategoryListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -263,7 +264,7 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

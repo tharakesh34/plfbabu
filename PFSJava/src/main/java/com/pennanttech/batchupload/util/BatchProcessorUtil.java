@@ -32,7 +32,7 @@ public class BatchProcessorUtil {
 	 * @param sheetIndex
 	 *            index of required sheet.
 	 */
-	public static List<String> getAllKeysByIndex(Workbook workbook , int sheetIndex) {
+	public static List<String> getAllKeysByIndex(Workbook workbook, int sheetIndex) {
 		List<String> keys = new ArrayList<String>();
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		Row headings = sheet.getRow(0);
@@ -56,7 +56,7 @@ public class BatchProcessorUtil {
 			return Boolean.valueOf(BatchUploadProcessorConstatnt.FALSE);
 		}
 	}
-	
+
 	/** util method accepting payload and converting to list of FaultDetails */
 	public static List<FaultDetails> convertJsonArrayToList(String payload)
 			throws JsonParseException, JsonMappingException, IOException {
@@ -66,7 +66,7 @@ public class BatchProcessorUtil {
 		});
 		return faultDetailsList;
 	}
-	
+
 	/**
 	 * formating date field
 	 * 
@@ -78,7 +78,8 @@ public class BatchProcessorUtil {
 		Date date1 = null;
 		String formattedDate = "";
 		try {
-			DateFormat originalFormat = new SimpleDateFormat(BatchUploadProcessorConstatnt.SAMPLE_DATE_FRMT_OLD, Locale.ENGLISH);
+			DateFormat originalFormat = new SimpleDateFormat(BatchUploadProcessorConstatnt.SAMPLE_DATE_FRMT_OLD,
+					Locale.ENGLISH);
 			DateFormat targetFormat = new SimpleDateFormat(BatchUploadProcessorConstatnt.SAMPLE_DATE_FRMT);
 			date1 = originalFormat.parse(date);
 			formattedDate = targetFormat.format(date1);

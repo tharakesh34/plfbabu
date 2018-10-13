@@ -20,5 +20,5 @@ import com.pennant.batchupload.model.BatchUploadConfig;
  * 
  */
 public interface BatchUploadConfigService {
-	List<BatchUploadConfig> getActiveConfiguration(); 
+	List<BatchUploadConfig> getActiveConfiguration();
 }

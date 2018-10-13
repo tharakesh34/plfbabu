@@ -47,7 +47,7 @@ import com.pennanttech.batchupload.util.BatchProcessorUtil;
 
 public class BatchUploadProcessor {
 	private static final Logger logger = Logger.getLogger(BatchUploadProcessor.class);
-	
+
 	private String authorization;
 	private Workbook workbook = null;
 	private File file;
@@ -57,16 +57,17 @@ public class BatchUploadProcessor {
 	private FormulaEvaluator objFormulaEvaluator = null; // for cell value formating
 	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
 	private String entityId = null;
-	private long userId=Long.MIN_VALUE;
+	private long userId = Long.MIN_VALUE;
 
-	public BatchUploadProcessor(File file, String authorization, String apiUrl, String extraHeader, String sourceFileName, String entityId,long userId) {
+	public BatchUploadProcessor(File file, String authorization, String apiUrl, String extraHeader,
+			String sourceFileName, String entityId, long userId) {
 		this.file = file;
 		this.authorization = authorization;
 		this.apiUrl = apiUrl;
 		this.extraHeader = extraHeader; // it could be blank.
 		this.sourceFileName = sourceFileName;
-		this.entityId=entityId;
-		this.userId=userId;
+		this.entityId = entityId;
+		this.userId = userId;
 		inIt(file);
 	}
 
@@ -74,14 +75,15 @@ public class BatchUploadProcessor {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
-			if (file.toString().toLowerCase().endsWith(".xls")){
+			if (file.toString().toLowerCase().endsWith(".xls")) {
 				workbook = new HSSFWorkbook(fis);
 			} else {
 				workbook = new XSSFWorkbook(fis);
 			}
 		} catch (Exception e) {
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
-			throw new RuntimeException(BatchUploadProcessorConstatnt.INIT_WORKBOOK_EX_MSG);		}
+			throw new RuntimeException(BatchUploadProcessorConstatnt.INIT_WORKBOOK_EX_MSG);
+		}
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class BatchUploadProcessor {
 		// deep check
 		TemplateMatcher matcher = new TemplateMatcher(workbook, sourceFileName);
 		matcher.doCompair();
-		
+
 		List<String> keys = BatchProcessorUtil.getAllKeysByIndex(workbook, 0);
 		int parentKeyCount = getNumberOfParentKey(keys);
 		Sheet sheet = workbook.getSheetAt(0);
@@ -113,8 +115,8 @@ public class BatchUploadProcessor {
 			Row row = rows.next();
 			int rowIndex = row.getRowNum();
 			Calendar calendar = Calendar.getInstance();
-			
-			String messageId =  userId+"-"+calendar.getTimeInMillis()+"/" + rowIndex;
+
+			String messageId = userId + "-" + calendar.getTimeInMillis() + "/" + rowIndex;
 			int cellIndex = 0;
 			Iterator<Cell> cellIterator = row.cellIterator();
 			// to check how many cells are blank in a row.
@@ -125,7 +127,8 @@ public class BatchUploadProcessor {
 				// skipping header and other column value which is not inside header
 				if (rowIndex > 0 && columnIndex <= keys.size()) {
 					// parent value shouldn't be blank in hierarchy.
-					if (cell.toString().equals("") && keys.get(cellIndex).contains(BatchUploadProcessorConstatnt.SEPARETOR)) {
+					if (cell.toString().equals("")
+							&& keys.get(cellIndex).contains(BatchUploadProcessorConstatnt.SEPARETOR)) {
 						finalRequestJson = new JSONObject(); // resting
 						emptyCellList.add(1);
 					} else { // parent key cell is not blank
@@ -147,9 +150,13 @@ public class BatchUploadProcessor {
 			}
 			// everything is fine just call api and write response back.
 			if (finalRequestJson.length() > 0 && cellIndex >= parentKeyCount) {
-				if (jsonForextendedField.length() > 0 && finalRequestJson.has(BatchUploadProcessorConstatnt.FINANCE_SCHEDULE)) {
-					if (finalRequestJson.getJSONObject(BatchUploadProcessorConstatnt.FINANCE_SCHEDULE).has(BatchUploadProcessorConstatnt.VAS)) {
-						JSONArray vasArray = finalRequestJson.getJSONObject(BatchUploadProcessorConstatnt.FINANCE_SCHEDULE).getJSONArray(BatchUploadProcessorConstatnt.VAS);
+				if (jsonForextendedField.length() > 0
+						&& finalRequestJson.has(BatchUploadProcessorConstatnt.FINANCE_SCHEDULE)) {
+					if (finalRequestJson.getJSONObject(BatchUploadProcessorConstatnt.FINANCE_SCHEDULE)
+							.has(BatchUploadProcessorConstatnt.VAS)) {
+						JSONArray vasArray = finalRequestJson
+								.getJSONObject(BatchUploadProcessorConstatnt.FINANCE_SCHEDULE)
+								.getJSONArray(BatchUploadProcessorConstatnt.VAS);
 						vasArray.put(jsonForextendedField);
 					}
 				}
@@ -300,7 +307,8 @@ public class BatchUploadProcessor {
 			finalRequestJson.put(key, value);
 		}
 		// Preparing json for other than <ROOT>_id(EX:finaceSchedule_id)
-		if (!BatchUploadProcessorConstatnt.ROOTKEY.equals(key) && key.contains(BatchUploadProcessorConstatnt.SEPARETOR) && nestedJSONObjects.length() > 0) {
+		if (!BatchUploadProcessorConstatnt.ROOTKEY.equals(key) && key.contains(BatchUploadProcessorConstatnt.SEPARETOR)
+				&& nestedJSONObjects.length() > 0) {
 			finalRequestJson.put(key.split(BatchUploadProcessorConstatnt.SEPARETOR)[0], nestedJSONObjects);
 		}
 		logger.debug("Leaving");
@@ -347,7 +355,7 @@ public class BatchUploadProcessor {
 		List<Map<String, Object>> allMappedRowsOfSheet = new ArrayList<>();
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		Iterator<Row> rows = sheet.iterator();
-		List<String> keyList = BatchProcessorUtil.getAllKeysByIndex(workbook,sheetIndex);
+		List<String> keyList = BatchProcessorUtil.getAllKeysByIndex(workbook, sheetIndex);
 		while (rows.hasNext()) {
 			Row row = rows.next();
 			if (row != null && row.getRowNum() > 0) {
@@ -451,7 +459,8 @@ public class BatchUploadProcessor {
 	/** deciding cell type based on column format */
 	public Object getValueByColumnType(Cell cell, String value) {
 		Object result = null;
-		if (value.equalsIgnoreCase(BatchUploadProcessorConstatnt.TRUE) || value.equalsIgnoreCase(BatchUploadProcessorConstatnt.FALSE)) {
+		if (value.equalsIgnoreCase(BatchUploadProcessorConstatnt.TRUE)
+				|| value.equalsIgnoreCase(BatchUploadProcessorConstatnt.FALSE)) {
 			result = BatchProcessorUtil.boolFormater(value);
 		} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
 			result = BatchProcessorUtil.dateFormater(cell.toString());
@@ -536,16 +545,17 @@ public class BatchUploadProcessor {
 
 			if (response.getStatus() == 200 && body != null) {
 				JSONObject parentBody = new JSONObject(body);
-				if(StringUtils.isNotBlank(extraHeader)){
-				if (!parentBody.isNull(BatchUploadProcessorConstatnt.FIN_REFERENCE)) {
-					extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.FIN_REFERENCE));
-				} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.MANDATE_ID)) {
-					extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.MANDATE_ID));
-				} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.WORKFLOW_DESIGN_ID)) {
-					extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.WORKFLOW_DESIGN_ID));
-				} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.LIMIT_Id)) {
-					extraHeaderValue = String.valueOf(parentBody.getString(BatchUploadProcessorConstatnt.LIMIT_Id));
-				}
+				if (StringUtils.isNotBlank(extraHeader)) {
+					if (!parentBody.isNull(BatchUploadProcessorConstatnt.FIN_REFERENCE)) {
+						extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.FIN_REFERENCE));
+					} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.MANDATE_ID)) {
+						extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.MANDATE_ID));
+					} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.WORKFLOW_DESIGN_ID)) {
+						extraHeaderValue = String
+								.valueOf(parentBody.get(BatchUploadProcessorConstatnt.WORKFLOW_DESIGN_ID));
+					} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.LIMIT_Id)) {
+						extraHeaderValue = String.valueOf(parentBody.getString(BatchUploadProcessorConstatnt.LIMIT_Id));
+					}
 				}
 				parentBody = parentBody.getJSONObject(BatchUploadProcessorConstatnt.RETURN_STATUS);
 				ReturnText = parentBody.getString(BatchUploadProcessorConstatnt.RETURN_TEXT);
@@ -558,16 +568,14 @@ public class BatchUploadProcessor {
 				ReturnCode = BatchUploadProcessorConstatnt.CODE_09090;
 			} else {
 				List<FaultDetails> payloads = BatchProcessorUtil.convertJsonArrayToList(body);
-				
-				ReturnText = payloads.stream()
-						                .filter(payload -> Objects.nonNull(payload))
-										.map(FaultDetails :: getFaultMessage)
-										.collect(Collectors.joining(BatchUploadProcessorConstatnt.COMMA_SEP));
-				
-				ReturnCode = payloads.stream()
-					                	.filter(payload -> Objects.nonNull(payload))
-										.map(FaultDetails :: getFaultCode)
-										.collect(Collectors.joining(BatchUploadProcessorConstatnt.COMMA_SEP));
+
+				ReturnText = payloads.stream().filter(payload -> Objects.nonNull(payload))
+						.map(FaultDetails::getFaultMessage)
+						.collect(Collectors.joining(BatchUploadProcessorConstatnt.COMMA_SEP));
+
+				ReturnCode = payloads.stream().filter(payload -> Objects.nonNull(payload))
+						.map(FaultDetails::getFaultCode)
+						.collect(Collectors.joining(BatchUploadProcessorConstatnt.COMMA_SEP));
 			}
 		} finally {
 			client.close();
@@ -598,10 +606,12 @@ public class BatchUploadProcessor {
 			client.header(BatchUploadProcessorConstatnt.MESSAGE_ID, messageId);
 			String[] values = serviceEndPoint.split("/");
 			client.header(BatchUploadProcessorConstatnt.SERVICENAME, values[values.length - 1]);
-			client.header(BatchUploadProcessorConstatnt.SERVICEVERSION, BatchUploadProcessorConstatnt.SERVICEVERSIONVALUE);
+			client.header(BatchUploadProcessorConstatnt.SERVICEVERSION,
+					BatchUploadProcessorConstatnt.SERVICEVERSIONVALUE);
 			client.header(BatchUploadProcessorConstatnt.LANGUAGE, BatchUploadProcessorConstatnt.LANGUAGEVALUE);
-			client.header(BatchUploadProcessorConstatnt.REQUESTTIME,DateUtility.getSysDate(PennantConstants.APIDateFormatter));
-			client.header(BatchUploadProcessorConstatnt.ENTITYID,entityId.concat("BU"));
+			client.header(BatchUploadProcessorConstatnt.REQUESTTIME,
+					DateUtility.getSysDate(PennantConstants.APIDateFormatter));
+			client.header(BatchUploadProcessorConstatnt.ENTITYID, entityId.concat("BU"));
 		} catch (Exception e) {
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
 		}

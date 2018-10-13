@@ -76,8 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Accounts/Accounts/AcountsList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Accounts/Accounts/AcountsList.zul file.
  */
 public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	private static final long serialVersionUID = -7795679541515607779L;
@@ -85,39 +84,35 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	private static final Logger logger = Logger.getLogger(AccountsListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window       window_AccountsList;            // autoWired
-	protected Borderlayout borderLayout_AcountsList;      // autoWired
-	protected Paging       pagingAcountsList;             // autoWired
-	protected Listbox      listBoxAcounts;                // autoWired
-	protected Checkbox     internalAc;
-	protected Textbox      recordType;
+	protected Window window_AccountsList; // autoWired
+	protected Borderlayout borderLayout_AcountsList; // autoWired
+	protected Paging pagingAcountsList; // autoWired
+	protected Listbox listBoxAcounts; // autoWired
+	protected Checkbox internalAc;
+	protected Textbox recordType;
 	// List headers
-	protected Listheader   listheader_AccountId;           // autoWired
-	protected Listheader   listheader_AcCcy;               // autoWired
-	protected Listheader   listheader_AcType;              // autoWired
-	protected Listheader   listheader_AcBranch;            // autoWired
-	protected Listheader   listheader_AcCustId;            // autoWired
-	protected Listheader   listheader_AcFullName;          // autoWired
-	protected Listheader   listheader_AcShortName;         // autoWired
-	protected Listheader   listheader_AcPurpose;           // autoWired
-	protected Listheader   listheader_InternalAc;          // autoWired
-	protected Listheader   listheader_CustSysAc;           // autoWired
-	protected Listheader   listheader_AcActive;            // autoWired
-	protected Listheader   listheader_AcBlocked;           // autoWired
-	protected Listheader   listheader_AcClosed;            // autoWired
-	protected Listheader   listheader_HostAcNumber;        // autoWired
-	
-	
-
+	protected Listheader listheader_AccountId; // autoWired
+	protected Listheader listheader_AcCcy; // autoWired
+	protected Listheader listheader_AcType; // autoWired
+	protected Listheader listheader_AcBranch; // autoWired
+	protected Listheader listheader_AcCustId; // autoWired
+	protected Listheader listheader_AcFullName; // autoWired
+	protected Listheader listheader_AcShortName; // autoWired
+	protected Listheader listheader_AcPurpose; // autoWired
+	protected Listheader listheader_InternalAc; // autoWired
+	protected Listheader listheader_CustSysAc; // autoWired
+	protected Listheader listheader_AcActive; // autoWired
+	protected Listheader listheader_AcBlocked; // autoWired
+	protected Listheader listheader_AcClosed; // autoWired
+	protected Listheader listheader_HostAcNumber; // autoWired
 
 	// checkRights
-	protected Button btnHelp;                              // autoWired
-	protected Button button_AccountsList_NewAccounts;        // autoWired
-	protected Button button_AccountsList_PrintList;         // autoWired
+	protected Button btnHelp; // autoWired
+	protected Button button_AccountsList_NewAccounts; // autoWired
+	protected Button button_AccountsList_PrintList; // autoWired
 	protected Button button_AccountsList_AccountsSearchDialog;// autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
@@ -131,7 +126,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	public AccountsListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		moduleCode = "Accounts";
@@ -233,8 +228,10 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("AccountsList");
 
-		this.button_AccountsList_NewAccounts.setVisible(getUserWorkspace().isAllowed("button_AccountsList_NewAccounts"));
-		this.button_AccountsList_AccountsSearchDialog.setVisible(getUserWorkspace().isAllowed("button_AccountsList_AccountsFindDialog"));
+		this.button_AccountsList_NewAccounts
+				.setVisible(getUserWorkspace().isAllowed("button_AccountsList_NewAccounts"));
+		this.button_AccountsList_AccountsSearchDialog
+				.setVisible(getUserWorkspace().isAllowed("button_AccountsList_AccountsFindDialog"));
 		this.button_AccountsList_PrintList.setVisible(getUserWorkspace().isAllowed("button_AccountsList_PrintList"));
 		logger.debug("Leaving");
 	}
@@ -258,31 +255,33 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 			final Accounts aAccounts = (Accounts) item.getAttribute("data");
 			final Accounts acounts = getAccountsService().getAccountsById(aAccounts.getAccountId());
 
-			if(acounts==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=aAccounts.getAccountId();
-				errParm[0]=PennantJavaUtil.getLabel("label_AccointId")+":"+valueParm[0];
+			if (acounts == null) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aAccounts.getAccountId();
+				errParm[0] = PennantJavaUtil.getLabel("label_AccointId") + ":" + valueParm[0];
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
-			}else{
-				if(isWorkFlowEnabled()){
-					String whereCond =  " AND AccountId='"+ acounts.getAccountId()+"' AND version=" + acounts.getVersion()+" ";
+			} else {
+				if (isWorkFlowEnabled()) {
+					String whereCond = " AND AccountId='" + acounts.getAccountId() + "' AND version="
+							+ acounts.getVersion() + " ";
 
-					boolean userAcces =  validateUserAccess(acounts.getWorkflowId()
-							,getUserWorkspace().getLoggedInUser().getUserId(), "Accounts"
-							, whereCond, acounts.getTaskId(), acounts.getNextTaskId());
-					if (userAcces){
+					boolean userAcces = validateUserAccess(acounts.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "Accounts", whereCond,
+							acounts.getTaskId(), acounts.getNextTaskId());
+					if (userAcces) {
 						doShowDialogPage(acounts);
-					}else{
+					} else {
 						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					doShowDialogPage(acounts);
 				}
-			}	
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -298,7 +297,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 		doShowDialogPage(aAccounts);
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -307,7 +306,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	 */
 	private void doShowDialogPage(Accounts aAccounts) {
 		logger.debug("Entering");
-		
+
 		if (aAccounts.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aAccounts.setWorkflowId(getWorkFlowId());
 		}
@@ -318,10 +317,11 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			if(aAccounts.isNew()){
-				Executions.createComponents("/WEB-INF/pages/Account/Accounts/SelectAccountDetailsDialog.zul",null, aruments);
-			}else{
-				Executions.createComponents("/WEB-INF/pages/Account/Accounts/AccountsDialog.zul",null, aruments);
+			if (aAccounts.isNew()) {
+				Executions.createComponents("/WEB-INF/pages/Account/Accounts/SelectAccountDetailsDialog.zul", null,
+						aruments);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Account/Accounts/AccountsDialog.zul", null, aruments);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -365,10 +365,8 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 		logger.debug("Entering " + event.toString());
 		logger.debug(event.toString());
 		/*
-		 * we can call our AcountsDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Accounts. For handed over
-		 * these parameter only a Map is accepted. So we put the Accounts object
-		 * in a HashMap.
+		 * we can call our AcountsDialog ZUL-file with parameters. So we can call them with a object of the selected
+		 * Accounts. For handed over these parameter only a Map is accepted. So we put the Accounts object in a HashMap.
 		 */
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("acountsCtrl", this);
@@ -376,7 +374,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Account/Accounts/AccountsSearchDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/Account/Accounts/AccountsSearchDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -392,7 +390,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	public void onClick$button_AccountsList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		new PTListReportUtils("Accounts", getSearchObj(),this.pagingAcountsList.getTotalSize()+1);
+		new PTListReportUtils("Accounts", getSearchObj(), this.pagingAcountsList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 

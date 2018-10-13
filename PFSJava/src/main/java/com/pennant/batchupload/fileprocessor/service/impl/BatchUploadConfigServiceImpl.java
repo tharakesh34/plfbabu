@@ -29,7 +29,7 @@ public class BatchUploadConfigServiceImpl implements BatchUploadConfigService {
 	public List<BatchUploadConfig> getActiveConfiguration() {
 		return batchUploadConfigDAO.getActiveConfiguration();
 	}
-	
+
 	public BatchUploadConfigDAO getBatchUploadConfigDAO() {
 		return batchUploadConfigDAO;
 	}
@@ -37,5 +37,5 @@ public class BatchUploadConfigServiceImpl implements BatchUploadConfigService {
 	public void setBatchUploadConfigDAO(BatchUploadConfigDAO batchUploadConfigDAO) {
 		this.batchUploadConfigDAO = batchUploadConfigDAO;
 	}
-	
+
 }

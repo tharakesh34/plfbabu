@@ -24,9 +24,8 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 	private static final Logger logger = Logger.getLogger(CacheParameterDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CacheProcessDialog;
 

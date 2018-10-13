@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,18 +65,17 @@ public class ReasonCodeListModelItemRenderer implements ListitemRenderer<ReasonC
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, ReasonCode reasonCode, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(reasonCode.getReasonTypeCode()));
-	  	lc.setParent(item);
-		lc = new Listcell(String.valueOf(reasonCode.getReasonCategoryCode()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(reasonCode.getCode());
 		lc.setParent(item);
-	  	lc = new Listcell(reasonCode.getDescription());
+		lc = new Listcell(String.valueOf(reasonCode.getReasonCategoryCode()));
+		lc.setParent(item);
+		lc = new Listcell(reasonCode.getCode());
+		lc.setParent(item);
+		lc = new Listcell(reasonCode.getDescription());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -85,12 +83,12 @@ public class ReasonCodeListModelItemRenderer implements ListitemRenderer<ReasonC
 		cbActive.setChecked(reasonCode.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(reasonCode.getRecordStatus());
+		lc = new Listcell(reasonCode.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(reasonCode.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", reasonCode.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onReasonCodeItemDoubleClicked");
 	}
 }

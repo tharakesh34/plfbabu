@@ -48,8 +48,7 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 	public void onCreate$window_CacheNodesList(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		setPageComponents(window_CacheNodesList, borderLayout_CacheNodes, listBoxCacheNodes,
-				pagingCacheNodes);
+		setPageComponents(window_CacheNodesList, borderLayout_CacheNodes, listBoxCacheNodes, pagingCacheNodes);
 		doRenderPage();
 
 		int divKycHeight = this.borderLayoutHeight - 80;
@@ -118,9 +117,9 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 				final Checkbox active = new Checkbox();
 				active.setDisabled(true);
 				active.setChecked(stats.isActive());
-				if(stats.isActive()){
+				if (stats.isActive()) {
 					lc.setSclass("checklistboxgreen");
-				}else{
+				} else {
 					lc.setSclass("checklistboxred");
 				}
 				lc.appendChild(active);
@@ -144,8 +143,7 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -169,8 +167,8 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 			map.put("cacheProcessListCtrl", this);
 			map.put("mapData", (HashMap<String, Object>) item.getAttribute("data"));
 			try {
-				Executions.createComponents("/WEB-INF/pages/Cache/CacheParameterDialog.zul",
-						window_CacheNodesList, map);
+				Executions.createComponents("/WEB-INF/pages/Cache/CacheParameterDialog.zul", window_CacheNodesList,
+						map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}

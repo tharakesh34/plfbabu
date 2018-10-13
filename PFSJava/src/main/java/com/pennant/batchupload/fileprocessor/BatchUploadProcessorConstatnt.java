@@ -4,7 +4,7 @@ public class BatchUploadProcessorConstatnt {
 
 	public static final String FIN_REFERENCE = "finReference";
 	public static final String MANDATE_ID = "mandateID";
-	public static final  String WORKFLOW_DESIGN_ID = "workFlowDesignId";
+	public static final String WORKFLOW_DESIGN_ID = "workFlowDesignId";
 	public static final String LIMIT_Id = "limitId";
 	public static final String MESSAGE_ID = "MessageId";
 	public static final String RETURN_STATUS = "returnStatus";
@@ -14,7 +14,7 @@ public class BatchUploadProcessorConstatnt {
 	public static final String CODE_09090 = "09090";
 	public static final String AUTHORIZATION_KEY = "Authorization";
 	public static final String FINANCE_SCHEDULE = "financeSchedule";
-	public static final String VAS ="vas";
+	public static final String VAS = "vas";
 	public static final String CODE_10101 = "10101";
 	public static final String NO_MAP_FOUND_MSG = "This Row Couldn't be Processed, ParentKey Is Blank OR No Mapping Found.";
 	public static final String EXT_DETAILS = "extendedDetails";
@@ -25,7 +25,7 @@ public class BatchUploadProcessorConstatnt {
 	public static final String COMMA_SEP = ", ";
 	public static final String SAMPLE_DATE_FRMT = "yyyy-MM-dd'T'hh:mm:ss";
 	public static final String SAMPLE_DATE_FRMT_OLD = "dd-MMM-yyyy";
-	public static final String EXCEPTION =  "Exception: ";
+	public static final String EXCEPTION = "Exception: ";
 	public static final String INVALID_FILE_MSG = "The uploaded file could not be recognized. Please upload a valid excel file.";
 	public static final String INVALID_FILE_TEMPLATE_MSG = "The uploaded file template could not be recognized. Please upload a valid file.";
 	public static final String HEADER_KEY = "Column Header Shouldn't Be Blank";
@@ -43,11 +43,11 @@ public class BatchUploadProcessorConstatnt {
 	public static final String FILE_PATH = "BatchUploadTemplates/";
 	public static final String UNABLE_TO_PROCESS = "Unable To Process Your Request Please Contact To System Administrator.";
 	public static final String DATE_EXCEPTION = "Check Your Excel Sheet Date Column, It Should Be In 'dd-MMM-yyyy'(26-Jul-2017) Formate";
-	public static final String ENTITYID="EntityId";
+	public static final String ENTITYID = "EntityId";
 	public static final String LANGUAGE = "Language";
 	public static final String REQUESTTIME = "RequestTime";
 	public static final String SERVICENAME = "Servicename";
 	public static final String SERVICEVERSION = "ServiceVersion";
-	public static final String LANGUAGEVALUE="EN";
-	public static final String SERVICEVERSIONVALUE="01";
+	public static final String LANGUAGEVALUE = "EN";
+	public static final String SERVICEVERSIONVALUE = "01";
 }

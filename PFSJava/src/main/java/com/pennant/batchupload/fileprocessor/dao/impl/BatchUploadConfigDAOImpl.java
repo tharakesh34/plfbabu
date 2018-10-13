@@ -58,7 +58,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class BatchUploadConfigDAOImpl extends BasicDao<BatchUploadConfig> implements BatchUploadConfigDAO {
 	private static Logger logger = Logger.getLogger(BatchUploadConfigDAOImpl.class);
-	
+
 	public BatchUploadConfigDAOImpl() {
 		super();
 	}
@@ -70,13 +70,14 @@ public class BatchUploadConfigDAOImpl extends BasicDao<BatchUploadConfig> implem
 		sql.append(" Label, Url, IsActive, ExtraHeader");
 		sql.append(" From BatchUploadConfig");
 		sql.append(" Where IsActive = 1");
-		
+
 		logger.trace("SQL" + sql.toString());
 
 		BatchUploadConfig batchUploadConfig = new BatchUploadConfig();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(batchUploadConfig);
 
 		logger.debug("leaving");
-		return jdbcTemplate.query(sql.toString(), beanParameters, ParameterizedBeanPropertyRowMapper.newInstance(BatchUploadConfig.class));
+		return jdbcTemplate.query(sql.toString(), beanParameters,
+				ParameterizedBeanPropertyRowMapper.newInstance(BatchUploadConfig.class));
 	}
 }
