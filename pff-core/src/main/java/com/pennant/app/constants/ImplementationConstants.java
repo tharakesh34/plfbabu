@@ -128,6 +128,6 @@ public class ImplementationConstants {
 	// Capitalizing on Lock Period of Schedule Profit Balance
 	// 1. TRUE : Default Capitalize Balance amount when Applicable Capitalization
 	// 2. FALSE : Check Schedule is on Lock Period or not, if not Capitalize amount will reset
-	public static final boolean ALW_CPZ_RESET_ON_RECAL_LOCK = false;
+	public static final boolean DFT_CPZ_RESET_ON_RECAL_LOCK = true;
 
 }
