@@ -65,6 +65,7 @@ public class AEAmountCodes {
 	private BigDecimal	rpTot				= BigDecimal.ZERO;
 	private BigDecimal	instpft				= BigDecimal.ZERO;
 	private BigDecimal	instpri				= BigDecimal.ZERO;
+	private BigDecimal	instcpz				= BigDecimal.ZERO;
 	private BigDecimal	insttot				= BigDecimal.ZERO;
 	private BigDecimal	refund				= BigDecimal.ZERO;
 	private BigDecimal	rebate				= BigDecimal.ZERO;
@@ -1199,6 +1200,14 @@ public class AEAmountCodes {
 
 	public void setImdAmount(BigDecimal imdAmount) {
 		this.imdAmount = imdAmount;
+	}
+
+	public BigDecimal getInstcpz() {
+		return instcpz;
+	}
+
+	public void setInstcpz(BigDecimal instcpz) {
+		this.instcpz = instcpz;
 	}
 
 	

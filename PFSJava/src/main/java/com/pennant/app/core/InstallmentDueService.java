@@ -96,6 +96,7 @@ public class InstallmentDueService extends ServiceHelper {
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setInstpft(curSchd.getProfitSchd());
 		amountCodes.setInstpri(curSchd.getPrincipalSchd());
+		amountCodes.setInstcpz(curSchd.getCpzAmount());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
 
 		amountCodes.setPftS(profiDetails.getTdSchdPft());
