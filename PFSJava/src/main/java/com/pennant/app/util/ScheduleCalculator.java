@@ -3747,7 +3747,13 @@ public class ScheduleCalculator {
 
 		/* If capitalize on this schedule date */
 		if (curSchd.isCpzOnSchDate()) {
-			curSchd.setCpzAmount(curSchd.getProfitBalance());
+			if(!ImplementationConstants.ALW_CPZ_RESET_ON_RECAL_LOCK){
+				if(!curSchd.isRecalLock()){
+					curSchd.setCpzAmount(curSchd.getProfitBalance());
+				}
+			}else{
+				curSchd.setCpzAmount(curSchd.getProfitBalance());
+			}
 		} else {
 			curSchd.setCpzAmount(BigDecimal.ZERO);
 		}
@@ -3977,7 +3983,13 @@ public class ScheduleCalculator {
 
 				// Capitalize OR not
 				if (curSchd.isCpzOnSchDate()) {
-					curSchd.setCpzAmount(curSchd.getProfitBalance());
+					if(!ImplementationConstants.ALW_CPZ_RESET_ON_RECAL_LOCK){
+						if(!curSchd.isRecalLock()){
+							curSchd.setCpzAmount(curSchd.getProfitBalance());
+						}
+					}else{
+						curSchd.setCpzAmount(curSchd.getProfitBalance());
+					}
 				} else {
 					curSchd.setCpzAmount(BigDecimal.ZERO);
 				}
