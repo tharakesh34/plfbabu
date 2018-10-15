@@ -4660,6 +4660,7 @@
 		<property name="accrualService" ref="accrualService" />
 
 		<!-- GST Invoice Changes -->
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
