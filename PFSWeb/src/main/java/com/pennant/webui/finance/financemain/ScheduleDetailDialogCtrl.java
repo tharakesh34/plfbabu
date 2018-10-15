@@ -893,7 +893,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				if (i != 0 && !termsCountCompleted) {
 					if (curSchd.getSchDate().compareTo(grcEndDate) <= 0) {
-						if (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+						if (curSchd.isPftOnSchDate()) {
 							totGrcTerms = totGrcTerms + 1;
 						}
 					} else {
