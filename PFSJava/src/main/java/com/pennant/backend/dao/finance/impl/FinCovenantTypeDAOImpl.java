@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -74,35 +73,35 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements FinCovenantTypeDAO {
 	private static Logger logger = Logger.getLogger(FinCovenantTypeDAOImpl.class);
-	
+
 	public FinCovenantTypeDAOImpl() {
 		super();
 	}
-	
-		
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinCovenantType 
+	 * This method set the Work Flow id based on the module name and return the new FinCovenantType
+	 * 
 	 * @return FinCovenantType
 	 */
 
 	@Override
 	public FinCovenantType getFinCovenantType() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("FinCovenantType");
-		FinCovenantType finCovenantType= new FinCovenantType();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinCovenantType");
+		FinCovenantType finCovenantType = new FinCovenantType();
+		if (workFlowDetails != null) {
 			finCovenantType.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return finCovenantType;
 	}
 
-
 	/**
-	 * This method get the module from method getFinCovenantType() and set the new record flag as true and return FinCovenantType()   
+	 * This method get the module from method getFinCovenantType() and set the new record flag as true and return
+	 * FinCovenantType()
+	 * 
 	 * @return FinCovenantType
 	 */
-
 
 	@Override
 	public FinCovenantType getNewFinCovenantType() {
@@ -114,83 +113,90 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	}
 
 	/**
-	 * Fetch the Record  Goods Details details by key field
+	 * Fetch the Record Goods Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinCovenantType
 	 */
 	@Override
 	public FinCovenantType getFinCovenantTypeById(FinCovenantType finCovenantType, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, InternalUse,");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				"Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, InternalUse,");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("CovenantTypeDesc,");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
 		selectSql.append(" From FinCovenantType");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference and CovenantType = :CovenantType");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCovenantType.class);
-		
-		try{
-			finCovenantType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCovenantType.class);
+
+		try {
+			finCovenantType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finCovenantType = null;
 		}
 		logger.debug("Leaving");
 		return finCovenantType;
 	}
-	
+
 	@Override
-	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type,boolean isEnquiry) {
+	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type, boolean isEnquiry) {
 		logger.debug("Entering");
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, CategoryCode,AlwOtc, InternalUse,");
-		if(isEnquiry){
+		selectSql.append(
+				" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, CategoryCode,AlwOtc, InternalUse,");
+		if (isEnquiry) {
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
-		}else{
-			if (StringUtils.trimToEmpty(type).contains("View")){
+		} else {
+			if (StringUtils.trimToEmpty(type).contains("View")) {
 				selectSql.append(" CovenantTypeDesc,MandRoleDesc,pddFlag,otcFlag,");
 			}
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCovenantType.class);
+		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCovenantType.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the FinCovenantType or FinCovenantType_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Goods Details by key LoanRefNumber
+	 * This method Deletes the Record from the FinCovenantType or FinCovenantType_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
 	 * 
-	 * @param Goods Details (FinCovenantType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Goods
+	 *            Details (FinCovenantType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinCovenantType finCovenantType,String type) {
+	public void delete(FinCovenantType finCovenantType, String type) {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder("Delete From FinCovenantType");
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -198,82 +204,87 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into FinCovenantType or FinCovenantType_Temp.
 	 *
-	 * save Goods Details 
+	 * save Goods Details
 	 * 
-	 * @param Goods Details (FinCovenantType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Goods
+	 *            Details (FinCovenantType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(FinCovenantType finCovenantType,String type) {
+	public String save(FinCovenantType finCovenantType, String type) {
 		logger.debug("Entering");
-		StringBuilder insertSql =new StringBuilder();
-		
+		StringBuilder insertSql = new StringBuilder();
+
 		insertSql.append(" Insert Into FinCovenantType");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, InternalUse," );
+		insertSql.append(
+				" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, InternalUse,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :AlwOtc, :InternalUse,");
+		insertSql.append(
+				" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :AlwOtc, :InternalUse,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finCovenantType.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record FinCovenantType or FinCovenantType_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinCovenantType or FinCovenantType_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
 	 * 
-	 * @param Goods Details (FinCovenantType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Goods
+	 *            Details (FinCovenantType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(FinCovenantType finCovenantType,String type) {
+	public void update(FinCovenantType finCovenantType, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder("Update FinCovenantType");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+
+		StringBuilder updateSql = new StringBuilder("Update FinCovenantType");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append("  Set Description = :Description,");
-		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, AlwOtc =:AlwOtc, InternalUse = :InternalUse,");
-		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				"  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, AlwOtc =:AlwOtc, InternalUse = :InternalUse,");
+		updateSql.append(
+				"  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append("  Where FinReference = :FinReference and CovenantType = :CovenantType");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -281,22 +292,21 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	}
 
 	@Override
-    public void deleteByFinRef(String loanReference, String tableType) {
+	public void deleteByFinRef(String loanReference, String tableType) {
 		logger.debug("Entering");
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(loanReference);
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From FinCovenantType");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where FinReference = :FinReference ");
 		logger.debug("deleteSql: " + deleteSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	    
-    }
 
+	}
 
 	@Override
 	public boolean isDuplicateKey(String finReference, String covenantType, TableType tableType) {
@@ -335,7 +345,6 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		return exists;
 	}
 
-
 	@Override
 	public void delete(FinCovenantType finCovenantType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -362,58 +371,59 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		}
 
 		logger.debug(Literal.LEAVING);
-		
-	}
 
+	}
 
 	@Override
 	public String save(FinCovenantType aFinCovenantType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		logger.debug("Entering");
-		StringBuilder insertSql =new StringBuilder();
-		
+		StringBuilder insertSql = new StringBuilder();
+
 		insertSql.append(" Insert Into FinCovenantType");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse," );
+		insertSql.append(
+				" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :InternalUse,");
+		insertSql.append(
+				" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :InternalUse,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aFinCovenantType);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return aFinCovenantType.getId();
 	}
 
-
 	@Override
 	public void update(FinCovenantType aFinCovenantType, TableType tableType) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder("Update FinCovenantType");
+
+		StringBuilder updateSql = new StringBuilder("Update FinCovenantType");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append("  Set Description = :Description,");
-		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, InternalUse = :InternalUse,");
-		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				"  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, InternalUse = :InternalUse,");
+		updateSql.append(
+				"  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append("  Where FinReference = :FinReference and CovenantType = :CovenantType");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aFinCovenantType);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-		
-	}
 
+	}
 
 	@Override
 	public FinCovenantType getCovenantTypeById(String finReference, String covenantType, String type) {
@@ -423,19 +433,22 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		aFinCovenantType.setFinReference(finReference);
 		aFinCovenantType.setCovenantType(covenantType);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse, ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				"Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse, ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("CovenantTypeDesc,");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
 		selectSql.append(" From FinCovenantType");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference and CovenantType = :CovenantType");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aFinCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCovenantType.class);
+		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCovenantType.class);
 
 		try {
 			aFinCovenantType = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -448,16 +461,16 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		return aFinCovenantType;
 	}
 
-
 	@Override
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
 		logger.debug("Entering");
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc,InternalUse,");
-		
+		selectSql.append(
+				" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc,InternalUse,");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("CategoryCode, ");
 		}
@@ -468,19 +481,21 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
 			}
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference ");
-		selectSql.append(" AND finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory) ");
-		
+		selectSql.append(
+				" AND finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory) ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCovenantType.class);
+		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCovenantType.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-
 
 	@Override
 	public boolean isExists(FinCovenantType finCovenantType, String tableType) {
@@ -501,6 +516,5 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		logger.debug(Literal.LEAVING);
 		return count > 0 ? true : false;
 	}
-	
-	
+
 }
