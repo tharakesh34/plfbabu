@@ -596,13 +596,13 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 					datatype.append(fieldDetail.getFieldName()+"_MR "); 
 					datatype.append("TYPE decimal(13,9) ");
 				}else{
-				datatype.append("varchar(8)  "); 
-				datatype.append(" add "); 
-				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_SR varchar(8) , "); 
-				datatype.append(" add "); 
-				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_MR decimal(13,9) ");
+					datatype.append("varchar(8) , "); 
+					datatype.append(" add "); 
+					datatype.append(fieldDetail.getFieldName()); 
+					datatype.append("_SR varchar(8) , "); 
+					datatype.append(" add "); 
+					datatype.append(fieldDetail.getFieldName()); 
+					datatype.append("_MR decimal(13,9) ");
 				}
 			} else {
 				datatype.append("_BR varchar(8) , "); 
