@@ -7698,7 +7698,7 @@ public class AgreementDetail {
 		}
 	}
 	
-	private String eligibilityMethod="";
+	private String lovElgMtdDesc="";
 	private String ConnectorCode="";
 	
     public String getConnectorCode() {
@@ -7709,14 +7709,14 @@ public class AgreementDetail {
 		ConnectorCode = connectorCode;
 	}
 
-	public String getEligibilityMethod() {
-		return eligibilityMethod;
+	public String getLovElgMtdDesc() {
+		return lovElgMtdDesc;
 	}
 
-	public void setEligibilityMethod(String eligibilityMethod) {
-		this.eligibilityMethod = eligibilityMethod;
+	public void setLovElgMtdDesc(String lovElgMtdDesc) {
+		this.lovElgMtdDesc = lovElgMtdDesc;
 	}
-
+	
 	private List<DirectorDetail> directorDetails;
 	
 	public List<DirectorDetail> getDirectorDetails() {

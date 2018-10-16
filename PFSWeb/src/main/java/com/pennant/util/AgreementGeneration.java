@@ -1108,7 +1108,7 @@ public class AgreementGeneration implements Serializable {
 			
 			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW))) {
 				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
-					agreement.setEligibilityMethod(StringUtils
+					agreement.setLovElgMtdDesc(StringUtils
 							.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getLovDescEligibilityMethod()));
 				}
 				if (null != detail.getCustomerDetails()) {
@@ -2025,7 +2025,6 @@ public class AgreementGeneration implements Serializable {
 									.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationDesc()));
 						}
 						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCode()));
-						loanDeviation.setDeviationCode("-");
 						loanDeviation.setSeverity("-");
 						loanDeviation.setRemarks("-");
 					}
