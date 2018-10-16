@@ -1,3 +1,15 @@
+pff 4.11.2.5, 2018-10-16
+----------------
+-PSD#128207 In Overdue Charge Enquiry screen, System showing Penalty as Paid and Status as Collected for Bounce Receipt 
+-PPM#18397 Grace Interest Frequency Periods are wrongly populated in Change Frequency and Reschedule menu's.
+-PPM#18411   While Approve the record in Extended Fields Getting Validation.
+-PPM#18382 : In GST Invoice report, Transaction amount field shown is including GST amount.
+
+pff 4.11.2.4, 2018-10-15
+----------------
+-story #838 Extended Field Configuration Maintenance.	
+-story #836 Recalculation from after few dates on Schedule Servicing.		
+
 pff 4.11.2.3, 2018-10-12
  --------------
 -Story #831 Added Custom deviations,Eligibility Summary, All fees details in Agreements
