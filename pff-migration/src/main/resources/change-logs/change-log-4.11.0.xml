@@ -171,4 +171,46 @@
 			WHERE      NOT EXISTS (SELECT 1 FROM FinScheduleDetails_Temp  WHERE FinReference = T1.FinReference)
 		</createView>
 	</changeSet>
+<changeSet id="7.1" author="siva">
+<comment>128207 : Only DR Patch</comment>
+	<createView viewName="finodcrecovery_view" replaceIfExists="true">
+	SELECT t1.finreference,
+    t1.schdate AS finodschddate,
+    t1.schdfor AS finodfor,
+    t3.valuedate AS movementdate,
+    t1.repayschid AS seqno,
+    t1.dayslate AS oddays,
+    t1.principalschdbal + t1.profitschdbal AS fincurodamt,
+    t1.principalschdbal AS fincurodpri,
+    t1.profitschdbal AS fincurodpft,
+    t5.odchargetype AS penaltytype,
+    t5.odchargecalon AS penaltycalon,
+    t5.odchargeamtorperc AS penaltyamtperc,
+    t1.penaltyamt AS penalty,
+    t1.maxwaiver,
+    t1.waivedamt,
+    t1.penaltypaynow AS penaltypaid,
+    t1.penaltyamt - t1.penaltypaynow - t1.waivedamt AS penaltybal,
+    0 AS rcdcandel,
+    t4.custcif AS lovdesccustcif,
+    t4.custshrtname AS lovdesccustshrtname,
+    t2.finstartdate AS lovdescfinstartdate,
+    t2.maturitydate AS lovdescmaturitydate,
+    t2.finamount AS lovdescfinamount,
+    t2.finamount - t2.finrepaymentamount AS lovdesccurfinamt,
+    t2.finccy,
+    t5.fincurodpri AS lovdesccurschpridue,
+    t5.fincurodpft AS lovdesccurschpftdue,
+    t5.totpenaltyamt AS lovdesctotovrduechrg,
+    t5.totwaived AS lovdesctotovrduechrgwaived,
+    t5.totpenaltypaid AS lovdesctotovrduechrgpaid
+   FROM finrepayscheduledetail t1
+     JOIN financemain t2 ON t1.finreference = t2.finreference
+     JOIN customers t4 ON t4.custid = t2.custid
+     JOIN finrepayheader t3 ON t1.repayid = t3.repayid
+	  JOIN finreceiptDetail t6 ON t6.ReceiptSeqID = t3.ReceiptSeqID AND t6.Status NOT IN('C','B')
+     JOIN finoddetails t5 ON t1.finreference = t5.finreference AND t1.schdate = t5.finodschddate
+	</createView>
+</changeSet>
+	
 </databaseChangeLog>
