@@ -65,6 +65,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		Date prvSchdate = financeMain.getFinStartDate();
 		FinanceScheduleDetail prvSchd = null;;
 		Date eventFromdate = null;
+		Date appDate = DateUtility.getAppDate();
 		int day = Integer.parseInt(frequency.substring(3));
 		for (int i = 1; i < scheduleList.size(); i++) {
 			
@@ -120,7 +121,9 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			
 			// Check days Difference between earlier date and current newly calculated date
 			if(DateUtility.getDaysBetween(newDate.getTime(), prvSchdate) <= 15){
-				newDate.add(Calendar.MONTH,1);
+				if(!(DateUtility.compare(prvSchdate, financeMain.getGrcPeriodEndDate()) == 0 && DateUtility.compare(oldDate, appDate) > 0)){
+					newDate.add(Calendar.MONTH,1);
+				}
 			}
 			
 			Date curSchDate = DateUtility.getDBDate(DateUtility.formatUtilDate(newDate.getTime(),PennantConstants.DBDateFormat));

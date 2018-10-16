@@ -15580,8 +15580,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.gracePeriodEndDate_two.setValue(main.getGrcPeriodEndDate());
 			this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
 			
-			this.graceTerms_Two.setValue(main.getGraceTerms());
-			this.oldVar_graceTerms = this.graceTerms_Two.intValue();
+			//this.graceTerms_Two.setValue(main.getGraceTerms());
+			//this.oldVar_graceTerms = this.graceTerms_Two.intValue();
 		}
 
 		//Setting Total Disbursements as of Date

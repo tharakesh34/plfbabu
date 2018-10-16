@@ -1009,9 +1009,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (getFinanceMainDialogCtrl() != null) {
 				try {
 
-					aFinSchData.getFinanceMain().setGraceTerms(totGrcTerms);
-					aFinSchData.getFinanceMain().setNumberOfTerms(totRepayTerms);
-					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
+					if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RESCHD)){
+						aFinSchData.getFinanceMain().setGraceTerms(totGrcTerms);
+						aFinSchData.getFinanceMain().setNumberOfTerms(totRepayTerms);
+					}
 					if (financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)
 								.invoke(financeMainDialogCtrl, aFinSchData);
