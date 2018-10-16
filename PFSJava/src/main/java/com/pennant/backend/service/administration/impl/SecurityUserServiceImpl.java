@@ -42,8 +42,8 @@
  */
 package com.pennant.backend.service.administration.impl;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,9 +67,9 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
-import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * Service implementation for methods that depends on <b>SecurityUsers</b>.<br>
@@ -515,18 +515,13 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			return auditHeader;
 		}
 
-		int expDays;
-		//if password is changed by user itself sets UsrAcExpDt is 30days after present date
 		if (securityUser.getLastMntBy() == securityUser.getUsrID()) {
-			/*
-			 * expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS"); securityUser.setUsrAcExpDt(DateUtil.addDays(new
-			 * Date(System.currentTimeMillis()), expDays));
-			 */
-			/* save the password for backup */
+			// Change Password: Save the password to maintain history.
 			getSecurityUserPasswordsDAO().save(securityUser);
 		} else {
-			//if it is changed by admin sets UsrAcExpDt is one day before the present date
-			securityUser.setUsrAcExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
+			// Reset Password: Set the password expire date, so that system will prompt the user to change his 
+			// password on his next login.
+			securityUser.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 		}
 
 		getSecurityUserDAO().changePassword(securityUser);
