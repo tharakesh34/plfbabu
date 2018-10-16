@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -2790,7 +2791,9 @@ public class AgreementGeneration implements Serializable {
 												String[] condArray = moduleMapping.getLovFields();
 												Filter filter1;
 												String fieldName = extendedFieldDetail.getFieldName();
-												filter1 = new Filter((String) condArray[0], mapValues.get(fieldName),
+												Stream<String> stream = mapValues.keySet().stream();
+												List<String> details=stream.filter(key1 -> StringUtils.equalsIgnoreCase(key1, fieldName)).collect(Collectors.toList());
+												filter1 = new Filter((String) condArray[0], mapValues.get(details.get(0)),
 														Filter.OP_EQUAL);
 												filters.add(filter1);
 												search.setFilters(filters);
