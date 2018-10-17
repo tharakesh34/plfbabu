@@ -469,7 +469,7 @@ public class AgreementGeneration implements Serializable {
 	 * @param detail
 	 * @return
 	 */
-	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, User userDetails,boolean reqAutoGeneration) {
+	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, User userDetails) {
  		logger.debug("Entering");
 		
 		// Create New Object For The Agreement Detail
@@ -496,9 +496,9 @@ public class AgreementGeneration implements Serializable {
 		BPIAmount=BigDecimal.ZERO;
 		try {
 
-			boolean reqFrmAutoGeneration=reqAutoGeneration;
+			
 			// ------------------ Customer Details
-			if (reqFrmAutoGeneration || aggModuleDetails.contains(PennantConstants.AGG_BASICDE)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_BASICDE)) {
 
 				if (detail.getCustomerDetails() != null && detail.getCustomerDetails().getCustomer() != null) {
 					Customer customer = detail.getCustomerDetails().getCustomer();
@@ -577,7 +577,7 @@ public class AgreementGeneration implements Serializable {
 						agreement.setKycDetails(new ArrayList<>());
 					}
 					
-					if ((reqFrmAutoGeneration ||aggModuleDetails.contains(PennantConstants.AGG_KYCDT)) && CollectionUtils.isNotEmpty(customerDocumentsList)) {
+					if (aggModuleDetails.contains(PennantConstants.AGG_KYCDT) && CollectionUtils.isNotEmpty(customerDocumentsList)) {
 						for (CustomerDocument cusDocument : customerDocumentsList)
 							if (null != cusDocument) {
 								com.pennant.backend.model.finance.AgreementDetail.KycDetail kycDetail = agreement.new KycDetail();
@@ -637,7 +637,7 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getContactDetails())){
 				agreement.setContactDetails(new ArrayList<>());
 			}
-			if ((reqFrmAutoGeneration || aggModuleDetails.contains(PennantConstants.AGG_CONTACT))
+			if (aggModuleDetails.contains(PennantConstants.AGG_CONTACT)
 					&& detail.getCustomerDetails().getCustomerPhoneNumList() != null) {
 				populateContactDetails(detail, agreement);
 			}
@@ -649,7 +649,7 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getEmailDetails())){
 				agreement.setEmailDetails(new ArrayList<>());
 			}
-			if ((reqFrmAutoGeneration ||aggModuleDetails.contains(PennantConstants.AGG_CONTACT))
+			if (aggModuleDetails.contains(PennantConstants.AGG_CONTACT)
 					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerEMailList())) {
 				int highPriorty=0;
 				for (CustomerEMail email : detail.getCustomerDetails().getCustomerEMailList()) {
@@ -677,7 +677,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setInternalLiabilityDetails(new ArrayList<>());
 			}
 			
-			if ((reqFrmAutoGeneration || aggModuleDetails.contains(PennantConstants.AGG_LIABILI)) && null != detail.getCustomerDetails()
+			if (aggModuleDetails.contains(PennantConstants.AGG_LIABILI) && null != detail.getCustomerDetails()
 					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustFinanceExposureList())) {
 				List<FinanceEnquiry> custFinanceExposureList = detail.getCustomerDetails().getCustFinanceExposureList();
 				for(FinanceEnquiry financeEnquiry:custFinanceExposureList){
@@ -704,7 +704,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setExtendedDetails(new ArrayList<>());
 			}
 			
-			if ((reqFrmAutoGeneration ||aggModuleDetails.contains(PennantConstants.AGG_EXTENDE)) && null != detail.getCustomerDetails()
+			if (aggModuleDetails.contains(PennantConstants.AGG_EXTENDE) && null != detail.getCustomerDetails()
 					&& null != detail.getCustomerDetails().getExtendedFieldRender()
 					&& MapUtils.isNotEmpty(detail.getCustomerDetails().getExtendedFieldRender().getMapValues())) {
 				agreement=populateCustomerExtendedDetails(detail, agreement);
@@ -715,7 +715,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setExternalLiabilityDetails(new ArrayList<>());
 			}
 			
-			if ((reqFrmAutoGeneration || aggModuleDetails.contains(PennantConstants.AGG_LIABILI))&& null != detail.getCustomerDetails()
+			if (aggModuleDetails.contains(PennantConstants.AGG_LIABILI)&& null != detail.getCustomerDetails()
 					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerExtLiabilityList())) {
 				
 				List<CustomerExtLiability> customerExtLiabilityList = detail.getCustomerDetails().getCustomerExtLiabilityList();
@@ -750,7 +750,7 @@ public class AgreementGeneration implements Serializable {
 
 				String loanRef = detail.getFinScheduleData().getFinanceMain().getFinReference();
 				List<Activity> activities = getActivityLogService().getActivities("FinanceMain", loanRef);
-				if ((reqFrmAutoGeneration || aggModuleDetails.contains(PennantConstants.AGG_ACTIVIT) ) &&CollectionUtils.isNotEmpty(activities)) {
+				if (aggModuleDetails.contains(PennantConstants.AGG_ACTIVIT) &&CollectionUtils.isNotEmpty(activities)) {
 					for (Activity activity : activities) {
 						if (null != activity) {
 							ActivityDetail activityDetail = agreement.new ActivityDetail();
@@ -779,7 +779,7 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
 				agreement.setExtendedDetails(new ArrayList<>());
 			}
-			if ((reqFrmAutoGeneration ||aggModuleDetails.contains(PennantConstants.AGG_EXTENDE)) && null != detail.getExtendedFieldRender()
+			if (aggModuleDetails.contains(PennantConstants.AGG_EXTENDE) && null != detail.getExtendedFieldRender()
 					&& MapUtils.isNotEmpty(detail.getExtendedFieldRender().getMapValues())) {
 				agreement = populateExtendedDetails(detail, agreement);
 			}
@@ -796,13 +796,13 @@ public class AgreementGeneration implements Serializable {
 			if (null!=detail.getCustomerDetails() && null!=detail.getCustomerDetails().getCustomer()){
 				String custCoreBank = detail.getCustomerDetails().getCustomer().getCustCoreBank();
 				agreement.setExistingCustomer((StringUtils.isNotBlank(custCoreBank))?"YES":"NO");
-				if ((reqFrmAutoGeneration ||aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB))&& StringUtils.isNotBlank(custCoreBank)){
+				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB)&& StringUtils.isNotBlank(custCoreBank)){
 					getLoanAppCoreBankIDDetails(agreement, detail, detail.getCustomerDetails().getCustomer(), "Primary Applicant");
 				}
 				
 			}
 			
-			if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_DEVIATI))){
+			if(aggModuleDetails.contains(PennantConstants.AGG_DEVIATI)){
 				List<FinanceDeviations> financeDeviations = detail.getFinanceDeviations();
 				setDeviationDetails(agreement, financeDeviations);
 				List<FinanceDeviations> manualDeviations = detail.getManualDeviations();
@@ -828,7 +828,7 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getBankingDetails())){
 				agreement.setBankingDetails(new ArrayList<>());
 			}
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_INCOMDE)) && null != detail.getCustomerDetails()
+			if (aggModuleDetails.contains(PennantConstants.AGG_INCOMDE)&& null != detail.getCustomerDetails()
 					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerIncomeList())) {
 				List<CustomerIncome> customerIncomeList = detail.getCustomerDetails().getCustomerIncomeList();
 				populateAppIncExpDetails(customerIncomeList, agreement, formatter, "Primary Applicant");
@@ -837,15 +837,15 @@ public class AgreementGeneration implements Serializable {
 			if (detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
 				for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
 					CustomerDetails custdetails = customerDetailsService.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
-					if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_INCOMDE))&&null!=custdetails&&CollectionUtils.isNotEmpty(custdetails.getCustomerIncomeList())){
+					if(aggModuleDetails.contains(PennantConstants.AGG_INCOMDE)&&null!=custdetails&&CollectionUtils.isNotEmpty(custdetails.getCustomerIncomeList())){
 						populateAppIncExpDetails(custdetails.getCustomerIncomeList(), agreement, formatter, "Co-Applicant");
 					}
-					if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_BANKING)) && null != custdetails
+					if (aggModuleDetails.contains(PennantConstants.AGG_BANKING) && null != custdetails
 							&& CollectionUtils.isNotEmpty(custdetails.getCustomerBankInfoList())) {
 						populateBankingDetails(agreement, formatter, "Co-Applicant", custdetails);
 					}
 					
-					if(reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_LIABILI)){
+					if(aggModuleDetails.contains(PennantConstants.AGG_LIABILI)){
 						populateInternalLiabilities(detail, agreement, formatter, custdetails, "Co-Applicant");
 						
 						List<CustomerExtLiability> customerExtLiabilityList = custdetails.getCustomerExtLiabilityList();
@@ -875,7 +875,7 @@ public class AgreementGeneration implements Serializable {
 			agreement.setTotalIncome(PennantAppUtil.amountFormate(totalIncome, formatter));
 			agreement.setTotalExpense(PennantAppUtil.amountFormate(totalExpense, formatter));
 			
-			if(reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_BANKING)){
+			if(aggModuleDetails.contains(PennantConstants.AGG_BANKING)){
 				if (null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerBankInfoList())) {
 					populateBankingDetails(agreement, formatter, "Primary Applicant", detail.getCustomerDetails());
 				}
@@ -904,7 +904,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			//Setting Sourcing Details
-			if(reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_SOURCIN)){
+			if(aggModuleDetails.contains(PennantConstants.AGG_SOURCIN)){
 				if(CollectionUtils.isEmpty(agreement.getSourcingDetails())){
 					agreement.setSourcingDetails(new ArrayList<>());
 				}
@@ -925,7 +925,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.getSourcingDetails().add(agreement.new SourcingDetail());
 			}
 			//-------------- Setting IRR Details
-			if(reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_IRRDTLS)){
+			if(aggModuleDetails.contains(PennantConstants.AGG_IRRDTLS)){
 				if(CollectionUtils.isEmpty(agreement.getIrrDetails())){
 					agreement.setIrrDetails(new ArrayList<>());
 				}
@@ -969,12 +969,12 @@ public class AgreementGeneration implements Serializable {
 			
 			// ----------------Customer Repayment Details
 			Mandate mandate = detail.getMandate();
-			if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_REPAYDT))&&null!=mandate){
+			if(aggModuleDetails.contains(PennantConstants.AGG_REPAYDT)&&null!=mandate){
 				setRepaymentDetails(agreement, mandate);
 			}
 			
 			// ----------------Customer Charges Details
-			if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_CHRGDET))){
+			if(aggModuleDetails.contains(PennantConstants.AGG_CHRGDET)){
 				if(CollectionUtils.isEmpty(agreement.getCusCharges())){
 					agreement.setCusCharges(new ArrayList<>());
 				}
@@ -988,7 +988,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			// ----------------Disbursement Details
-			if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_DISBURS))){
+			if(aggModuleDetails.contains(PennantConstants.AGG_DISBURS)){
 				if(CollectionUtils.isEmpty(agreement.getDisbursements())){
 					agreement.setDisbursements(new ArrayList<>());
 				}
@@ -1014,7 +1014,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			// ----------------Document Details
-			if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_DOCDTLS))){
+			if(aggModuleDetails.contains(PennantConstants.AGG_DOCDTLS)){
 				if(CollectionUtils.isEmpty(agreement.getDocuments())){
 					agreement.setDocuments(new ArrayList<>());
 				}
@@ -1039,7 +1039,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setCovenants(new ArrayList<>());
 			}
 			List<FinCovenantType> covenantTypeList = detail.getCovenantTypeList();
-			if((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_COVENAN))&&CollectionUtils.isNotEmpty(covenantTypeList)){
+			if(aggModuleDetails.contains(PennantConstants.AGG_COVENAN)&&CollectionUtils.isNotEmpty(covenantTypeList)){
 				setCovenantDetails(agreement,covenantTypeList);
 			}
 			if(CollectionUtils.isEmpty(agreement.getCovenants())){
@@ -1051,7 +1051,7 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getCollateralData())){
 				agreement.setCollateralData(new ArrayList<AgreementDetail.FinCollaterals>());
 			}
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_COLLTRL))&&CollectionUtils.isNotEmpty(detail.getCollateralAssignmentList())) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_COLLTRL)&&CollectionUtils.isNotEmpty(detail.getCollateralAssignmentList())) {
 				agreement = getCollateralDetails(agreement, detail, formatter);
 			}
 			if(CollectionUtils.isEmpty(agreement.getCollateralData())){
@@ -1068,7 +1068,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setVasData(new ArrayList<AgreementDetail.VasDetails>());
 			}
 			
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_VAS))&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getVasRecordingList())) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_VAS)&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getVasRecordingList())) {
 			getVasRecordingDetails(agreement,detail, formatter);
 			}
 			if (CollectionUtils.isEmpty(agreement.getVasData())) {
@@ -1107,7 +1107,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setCrdRevElgSummaries(new ArrayList<>());
 			}
 			
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW))) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW)) {
 				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
 					agreement.setLovElgMtdDesc(StringUtils
 							.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getLovDescEligibilityMethod()));
@@ -1195,7 +1195,7 @@ public class AgreementGeneration implements Serializable {
 			}
 
 			// -----------------Scoring Detail
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_SCOREDE))) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_SCOREDE)){
 				populateAgreementScoringDetails(detail, agreement);				
 			}
 			
@@ -1205,7 +1205,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			// -----------------Eligibility Detail
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_ELGBLTY))
+			if (aggModuleDetails.contains(PennantConstants.AGG_ELGBLTY)
 					&& CollectionUtils.isNotEmpty(detail.getElgRuleList())) {
 				if(CollectionUtils.isEmpty(agreement.getEligibilityList())){
 					agreement.setEligibilityList(new ArrayList<>());
@@ -1249,22 +1249,22 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			// ----------------Finance Details
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_FNBASIC)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_FNBASIC)) {
 				agreement = getFinanceDetails(agreement, detail);
 			}
 
 			// -----------------Check List Details
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_CHKLSTD)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_CHKLSTD)) {
 				agreement = getCheckListDetails(agreement, detail);
 			}
 
 			// -------------------Schedule Details
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_SCHEDLD)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_SCHEDLD)) {
 				agreement = getScheduleDetails(agreement, detail, formatter);
 			}
 
 			// -------------------Recommendations and Notes
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_RECOMMD)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_RECOMMD)) {
 				agreement = getRecommendations(agreement, finRef);
 			}
 			if(CollectionUtils.isEmpty(agreement.getRecommendations())){
@@ -1273,12 +1273,12 @@ public class AgreementGeneration implements Serializable {
 			}
 
 			// -------------------Exception List
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_EXCEPTN)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_EXCEPTN)) {
 				agreement = getExceptionList(agreement, detail);
 			}
 
 			// -----------------Customer Finance Details
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_EXSTFIN)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_EXSTFIN)) {
 				agreement = getCustomerFinanceDetails(agreement, formatter);
 			}
 
@@ -1294,14 +1294,14 @@ public class AgreementGeneration implements Serializable {
 						.getFinScheduleData().getFinanceMain().getFinCcy());
 			}
 			// Co-applicant details
-			setCoapplicantDetails(detail, agreement, aggModuleDetails,reqFrmAutoGeneration);
+			setCoapplicantDetails(detail, agreement, aggModuleDetails);
 			//Mandate details
 			setMandateDetails(detail, agreement);
 			//customer bank info
-			setCustomerBankInfo(detail, agreement, aggModuleDetails,reqFrmAutoGeneration);
+			setCustomerBankInfo(detail, agreement, aggModuleDetails);
 			
 			// Verification details
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_VERIFIC)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_VERIFIC)) {
 				if(CollectionUtils.isEmpty(agreement.getFiVerification())){
 					agreement.setFiVerification(new ArrayList<>());
 				}
@@ -1344,7 +1344,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setQueryDetails(new ArrayList<>());
 			}
 			
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_QRYMODL)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_QRYMODL)) {
 				populateQueryDetails(agreement, finRef);
 			}
 			
@@ -1380,7 +1380,7 @@ public class AgreementGeneration implements Serializable {
 			agreement.setOtherMap(otherMap);
 			
 			//Populate the PSL Details in Agreements
-			if (reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_PSLMODL)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_PSLMODL)) {
 				logger.debug("Start of PSL Details in Agreements");
 				PSLDetail pslDetail = pSLDetailService.getPSLDetail(finRef);
 				if (null != pslDetail) {
@@ -1479,7 +1479,7 @@ public class AgreementGeneration implements Serializable {
 				logger.debug("End of PSL Details in Agreements");
 			}
 			
-			if(reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_SMPMODL)){
+			if(aggModuleDetails.contains(PennantConstants.AGG_SMPMODL)){
 				Sampling sampling = finSamplingService.getSamplingDetails(finRef, "_aview");
 				
 				if (sampling == null) {
@@ -1530,7 +1530,7 @@ public class AgreementGeneration implements Serializable {
 				finTypeFeesList = finTypeFeesService.getFinTypeFeesById(
 						detail.getFinScheduleData().getFinanceType().getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			}
-			if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_SERVFEE))&& CollectionUtils.isNotEmpty(finTypeFeesList)) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_SERVFEE)&& CollectionUtils.isNotEmpty(finTypeFeesList)) {
 				getLoanServicingFee(agreement, detail, formatter, finTypeFeesList);
 			}
 			if (CollectionUtils.isEmpty(agreement.getLoanServicingFeeDetails())) {
@@ -2323,10 +2323,10 @@ public class AgreementGeneration implements Serializable {
 		agreement.setRepayMode(StringUtils.trimToEmpty(mandate.getMandateType()));
 	}
 
-	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails,boolean reqFrmAutoGeneration) {
+	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails) {
 		agreement.setCustomerBankInfos(
 				new ArrayList<com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo>());
-		if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_BANKING))&& detail != null
+		if (aggModuleDetails.contains(PennantConstants.AGG_BANKING)&& detail != null
 				&& detail.getCustomerDetails() != null
 				&& detail.getCustomerDetails().getCustomerBankInfoList() != null) {
 			List<CustomerBankInfo> list = detail.getCustomerDetails().getCustomerBankInfoList();
@@ -2495,10 +2495,10 @@ public class AgreementGeneration implements Serializable {
 		
 	}
 
-	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails,boolean reqFrmAutoGeneration) {
+	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails) {
 		agreement.setCoApplicants(new ArrayList<>());
 		
-		if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_COAPPDT))&&detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
+		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT)&&detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
 			for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
 				CustomerDetails custdetails = customerDetailsService.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
 				CoApplicant coapplicant = agreement.new CoApplicant();
@@ -2507,13 +2507,13 @@ public class AgreementGeneration implements Serializable {
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				coapplicant.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 				
-				if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB))&& null != customer && StringUtils.isNotBlank(customer.getCustCoreBank())){
+				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB)&& null != customer && StringUtils.isNotBlank(customer.getCustCoreBank())){
 					getLoanAppCoreBankIDDetails(agreement, detail, customer, "Co-Applicant");
 				}
 				//pan number
 				List<CustomerDocument> doclist = custdetails.getCustomerDocumentsList();
 				coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
-				if( (reqFrmAutoGeneration || aggModuleDetails.contains(PennantConstants.AGG_KYCDT)) && CollectionUtils.isNotEmpty(doclist)){
+				if(aggModuleDetails.contains(PennantConstants.AGG_KYCDT) && CollectionUtils.isNotEmpty(doclist)){
 					doclist.forEach(coApplicantDocument-> {
 						if(null != coApplicantDocument){
 				    		com.pennant.backend.model.finance.AgreementDetail.KycDetail kycDetail= agreement.new KycDetail();
@@ -2548,7 +2548,7 @@ public class AgreementGeneration implements Serializable {
 			}
 		}
 		
-		if ((reqFrmAutoGeneration|| aggModuleDetails.contains(PennantConstants.AGG_COAPPDT))&&CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
+		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT)&&CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
 			detail.getGurantorsDetailList().forEach((guarantorDetail)->{
 				CoApplicant coapplicant = agreement.new CoApplicant();
 				if(guarantorDetail.getCustID()>0){
@@ -3418,7 +3418,7 @@ public class AgreementGeneration implements Serializable {
 			List<AgreementDetail> listtoGenerate = new ArrayList<AgreementDetail>();
 			if (list != null && !list.isEmpty()) {
 				// to get the other date related to customer and finance
-				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails,false);
+				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails);
 
 				for (GuarantorDetail guarantorDetail : list) {
 					// Prepare to new object for each individual record to
@@ -3431,7 +3431,7 @@ public class AgreementGeneration implements Serializable {
 
 			} else {
 				AgreementDetail detailsToSend = new AgreementDetail();
-				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails,false);
+				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails);
 				detailsToSend = setJointAccountEmptyDetails(agreementDetail);
 				listtoGenerate.add(detailsToSend);
 			}
@@ -3483,7 +3483,7 @@ public class AgreementGeneration implements Serializable {
 			List<AgreementDetail> listtoGenerate = new ArrayList<AgreementDetail>();
 			if (list != null && !list.isEmpty()) {
 				// to get the other date related to customer and finance
-				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails,false);
+				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails);
 
 				for (FinAdvancePayments finAdvancePayments : list) {
 					// Prepare to new object for each individual record to
@@ -3498,7 +3498,7 @@ public class AgreementGeneration implements Serializable {
 
 			} else {
 				AgreementDetail detailsToSend = new AgreementDetail();
-				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails,false);
+				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails);
 				detailsToSend = setAdvancePayEmptyDetails(agreementDetail);
 				listtoGenerate.add(detailsToSend);
 			}
