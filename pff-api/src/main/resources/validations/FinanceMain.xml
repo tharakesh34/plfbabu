@@ -25,7 +25,7 @@
 				</groups>
 			</constraint>
 		</field>
-		<field name="finAmount">
+		<!--  s<field name="finAmount">
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>90127</message>
 				<groups>
@@ -34,7 +34,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-		</field>
+		</field> -->
 		<!-- <field name="finStartDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>90128</message>

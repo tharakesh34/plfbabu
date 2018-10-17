@@ -110,5 +110,40 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	/**
+	 * Fetch the Record Repay Instruction Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return RepayInstruction
+	 */
+	@Override
+	public List<FinServiceInstruction> getFinServInstByServiceReqNo(final String finReference, String serviceReqNo, String finEvent) {
+		logger.debug("Entering");
+		
+		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
+		finServiceInstruction.setFinReference(finReference);
+		finServiceInstruction.setServiceReqNo(serviceReqNo);
+		finServiceInstruction.setFinEvent(finEvent);
+		
+		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
+		selectSql.append(
+				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
+		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
+		selectSql.append(
+				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg ");
+		selectSql.append(" From FinServiceInstruction");
+		selectSql.append(" Where FinReference =:FinReference AND FinEvent =:FinEvent AND ServiceReqNo =:ServiceReqNo ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
+		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinServiceInstruction.class);
+		
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
 
 }

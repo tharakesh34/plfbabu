@@ -6,19 +6,23 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.financeservice.CancelDisbursementService;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CancelDisbursementServiceImpl extends GenericService<FinServiceInstruction>
@@ -26,6 +30,7 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	private static Logger logger = Logger.getLogger(CancelDisbursementServiceImpl.class);
 	
 	private FinanceDataValidation		financeDataValidation;
+	private FinServiceInstrutionDAO     finServiceInstructionDAO;
 
 	public FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
@@ -62,6 +67,8 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	public AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = new AuditDetail();
+		
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		// validate disb amount
 		if(finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -110,6 +117,29 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm)));
 			return auditDetail;
 		}
+		
+		//validate ServiceReqNo
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
+				&& !(StringUtils.isEmpty(finServiceInstruction.getServiceReqNo()))) {
+			List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO.getFinServInstByServiceReqNo(finServiceInstruction.getFinReference(), finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_ADDDISB);
+			if(CollectionUtils.isNullOrEmpty(finServiceInstructions)){
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getServiceReqNo();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99026", "", valueParm)));
+				return auditDetail;
+			} else {
+				List<FinServiceInstruction> finServInstCanReq = finServiceInstructionDAO.getFinServInstByServiceReqNo(
+						finServiceInstruction.getFinReference(), finServiceInstruction.getServiceReqNo(),
+						FinanceConstants.FINSER_EVENT_CANCELDISB);
+				if (!CollectionUtils.isNullOrEmpty(finServInstCanReq)) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finServiceInstruction.getServiceReqNo();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99027", "", valueParm)));
+					return auditDetail;
+				}
+				
+			}
+		}
 				
 		logger.debug("Leaving");
 		return auditDetail;
@@ -119,5 +149,14 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
 	}
+
+	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
+		return finServiceInstructionDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
 
 }

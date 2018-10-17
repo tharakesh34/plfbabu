@@ -7315,6 +7315,7 @@
 
 	<bean name="cancelDisbursementServiceTarget" class="com.pennant.backend.financeservice.impl.CancelDisbursementServiceImpl">
 		<property name="financeDataValidation" ref="financeDataValidation" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!-- CommitmentRateDAO -->

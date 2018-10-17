@@ -212,5 +212,11 @@
      JOIN finoddetails t5 ON t1.finreference = t5.finreference AND t1.schdate = t5.finodschddate
 	</createView>
 </changeSet>
-	
+	<changeSet id="8" author="Nagewar.p">
+	<sql>
+		INSERT INTO errordetails(
+	code, language, severity, message, recordstatus, workflowid, lastmntby, version)
+	VALUES ('99027', 'EN', 'E', 'Service request number is already cancelled with {0}.', 'Approved' ,0, 1000, 0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
