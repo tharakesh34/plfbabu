@@ -50,6 +50,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 /**
  * Model class for the <b>Academic table</b>.<br>
  * 
@@ -201,7 +203,8 @@ public class StatementOfAccount {
 	//Co-Applicant And Borrower Details
 	private List<InterestRateDetail> interestRateDetails = new ArrayList<InterestRateDetail>();
 	
-	
+	//API Purpose
+	private WSReturnStatus returnStatus;
 
 	/**
 	 * Default Constructor
@@ -1049,6 +1052,14 @@ public class StatementOfAccount {
 
 	public void setInterestRateDetails(List<InterestRateDetail> interestRateDetails) {
 		this.interestRateDetails = interestRateDetails;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
 	}
 	
 }

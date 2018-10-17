@@ -101,6 +101,7 @@
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
 				<message>reCalType is Mandatory</message>
 				<groups>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 					<value>com.pennant.validation.DefermentsGroup</value>

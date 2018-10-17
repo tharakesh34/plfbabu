@@ -27,6 +27,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
+import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -48,12 +49,14 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.DemographicDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -88,8 +91,10 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
+import com.pennant.backend.service.finance.DemoGraphicDetailsService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -123,6 +128,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ChangeProfitService changeProfitService;
 	private AddDisbursementService addDisbursementService;
 	private CancelDisbursementService cancelDisbursementService;
+	private DemoGraphicDetailsService demoGraphicDetailsService;
 	private ChangeFrequencyService changeFrequencyService;
 	private ReScheduleService reScheduleService;
 	private PostponementService postponementService;
@@ -133,6 +139,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinFeeDetailService finFeeDetailService;
 	private BankBranchService bankBranchService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
+	private BankDetailService bankDetailService;
 	private ReceiptService receiptService;
 	private FinTypePartnerBankService finTypePartnerBankService;
 	private ReceiptCalculator receiptCalculator;
@@ -147,6 +154,26 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
+	}
+
+	/**
+	 * Method for fetch DemoGraphic Details of corresponding pin code
+	 * 
+	 * @param pinCode
+	 * @return DemographicDetails
+	 */
+	public DemographicDetails getDemoGraphicDetail(String pinCode) {
+		return demoGraphicDetailsService.getDemoGraphicDetails(pinCode);
+	}
+
+	/**
+	 * Method for fetch Bank Details of corresponding ifsc code
+	 * 
+	 * @param ifsc
+	 * @return BankDetail
+	 */
+	public BankDetail getBankDetailsByIfsc(String ifsc) {
+		return bankDetailService.getBankDetailsByIfsc(ifsc);
 	}
 
 	/**
@@ -726,6 +753,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDDISB);
+			finServiceInst.setFinEvent(FinanceConstants.FINSER_EVENT_ADDDISB);
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
@@ -812,6 +840,13 @@ public class FinServiceInstController extends SummaryDetailService {
 						finScheduleData.setErrorDetail(ErrorUtil
 								.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
 					}
+				}
+				
+				//Overdraft schedule details should be calculated before finschduledetails is empty.
+				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory()) 
+						&& (finScheduleData.getFinanceScheduleDetails() == null
+						|| finScheduleData.getFinanceScheduleDetails().isEmpty())) {
+					financeDetail.setFinScheduleData(ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData()));
 				}
 
 				// Call Schedule calculator for add disbursement
@@ -2281,6 +2316,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 			financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
 			financeDetail.getFinScheduleData().setSchduleGenerated(true);
+			List<FinServiceInstruction> finServiceInstructionList = new ArrayList<>();
+			if(finServiceInst!=null) {
+			finServiceInstructionList.add(finServiceInst);
+			financeDetail.getFinScheduleData().setFinServiceInstructions(finServiceInstructionList);
+			}
 			financeDetail.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
 
 			AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
@@ -2855,5 +2895,14 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setCancelDisbursementService(CancelDisbursementService cancelDisbursementService) {
 		this.cancelDisbursementService = cancelDisbursementService;
 	}
+
+	public void setDemoGraphicDetailsService(DemoGraphicDetailsService demoGraphicDetailsService) {
+		this.demoGraphicDetailsService = demoGraphicDetailsService;
+	}
+
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
 
 }

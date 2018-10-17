@@ -42,7 +42,10 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -57,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.model.collection.Collection;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -71,6 +75,76 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	public VehicleDealerDAOImpl() {
 		super();
 	}
+	
+	
+	/*@Override
+	public List<VehicleDealer> getVehicleDealerList(String type) {
+		logger.debug("Entering");
+		List<VehicleDealer> vehicleDealer = new ArrayList<VehicleDealer>();
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
+		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
+		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
+		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
+		selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
+		selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
+		selectSql.append(" FROM  AMTVehicleDealer");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VehicleDealer.class);
+
+		try {
+			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			vehicleDealer = null;
+		}
+		logger.debug("Leaving");
+		return vehicleDealer;
+		
+	} */
+	
+	
+	/**
+	 * get the Collection Tables List
+	 */
+	public List<VehicleDealer> getVehicleDealerList(String dealerType,String type) {
+		logger.debug("Entering");
+		VehicleDealer vehicleDealer = new VehicleDealer();
+		vehicleDealer.setDealerType(dealerType);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
+		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
+		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
+		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
+		selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
+		selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
+		selectSql.append(" FROM  AMTVehicleDealer");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DealerType =:DealerType ");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		//MapSqlParameterSource source = new MapSqlParameterSource();
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+
+		/*StringBuilder selectSql = new StringBuilder("select TABLE_NAME TableName, Status, ERROR_DESC ErrorMessage, EFFECTED_COUNT InsertCount");
+		selectSql.append(" From COLLECTIONS_TABLES");*/
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
+		List<VehicleDealer> collectionsVehicleDealerList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
+		logger.debug("Leaving");
+
+		return collectionsVehicleDealerList;
+	}
+	
 	
 	/**
 	 * Fetch the Record  Vehicle Dealer details by key field
@@ -114,6 +188,37 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug("Leaving");
 		return vehicleDealer;
 	}
+	
+	@Override
+	public VehicleDealer getOverDraftVehicleDealerById(String type) {
+		logger.debug("Entering");
+		VehicleDealer vehicleDealer = new VehicleDealer();
+		vehicleDealer.setDealerType("SOPT");
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append("SELECT dealername,dealercity FROM AMTVehicleDealer_AView");
+		selectSql.append(" Where DealerType =:DealerType AND Active = 1 ORDER BY DealerName ASC,DealerCity ASC LIMIT 10");
+	
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VehicleDealer.class);
+		
+		Map<String,String> paramMap = new HashMap<>();
+		paramMap.put("DealerType", "SOPT");
+
+		try {
+			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			vehicleDealer = null;
+		}
+		logger.debug("Leaving");
+		return vehicleDealer;
+	} 
+	
+	
 
 	/**
 	 * This method Deletes the Record from the AMTVehicleDealer or AMTVehicleDealer_Temp.

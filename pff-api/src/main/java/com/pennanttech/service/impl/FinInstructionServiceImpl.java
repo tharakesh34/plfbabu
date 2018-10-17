@@ -29,7 +29,9 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.DemographicDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -60,8 +62,8 @@ import com.pennant.validation.UpdateLoanBasicDetailsGroup;
 import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.controller.CreateFinanceController;
+import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
@@ -744,7 +746,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for process cancel disbursement request received from API.
 	 * 
 	 * @param finServiceInstruction
-	 * @return WSReturnStatus
+	 * @return FinanceDetail
 	 * 
 	 */
 
@@ -814,6 +816,51 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.debug("Leaving");
 
 		return financeDetail;
+	}
+
+	/**
+	 * Method for fetch Demographic details of corresponding pinCode
+	 * 
+	 * @param pinCode
+	 * @return DemographicDetails
+	 */
+
+	@Override
+	public DemographicDetails getDemoGraphicDetail(String pinCode) throws ServiceException {
+		DemographicDetails pinCodeDetail = null;
+		pinCodeDetail = finServiceInstController.getDemoGraphicDetail(pinCode);
+
+		if (pinCodeDetail == null) {
+			DemographicDetails error = new DemographicDetails();
+			String [] param=new String[1];
+			param[0] = pinCode;
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("99019", param));
+			return error;
+		}
+		pinCodeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		return pinCodeDetail;
+	}
+
+	/**
+	 * Method for fetch Bank Details of corresponding pinCode
+	 * 
+	 * @param iFSCCode
+	 * @return BankDetail
+	 */
+
+	@Override
+	public BankDetail getBankDetail(String iFSCCode) throws ServiceException {
+		BankDetail bankDetail = null;
+		bankDetail = finServiceInstController.getBankDetailsByIfsc(iFSCCode);
+		if (bankDetail == null) {
+			BankDetail error = new BankDetail();
+			String[] param = new String[1];
+			param[0] = iFSCCode;
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("99020", param));
+			return error;
+		}
+		bankDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		return bankDetail;
 	}
 
 	/**
@@ -1016,10 +1063,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		returnStatus = overDraftMaintainenceValidation(finServiceInstRequest,financeDetail);
 		
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(returnStatus);
+		 	return response;
 		}
 		
 		financeDetail.getFinScheduleData().setFinanceType(null);
@@ -1095,6 +1142,28 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			returnStatus.setReturnText(message[0]);
 			return returnStatus;
 		}
+		
+		if(finServiceInstRequest.getTenor() <= 0){
+			 String[] valueParm = new String[1];
+			 valueParm[0] = "Tenor ";
+			 returnStatus = APIErrorHandlerService.getFailedStatus("90259", valueParm);
+			 String alterMessage = returnStatus.getReturnText().replace(" feeCode:", " ").replace("Negative", "Negative or Zero");
+			 returnStatus.setReturnText(alterMessage);	
+			 return returnStatus;
+		 }
+		
+		if(finServiceInstRequest.getTenor() != financeDetail.getFinScheduleData().getFinanceSummary().getLoanTenor()){
+			 String[] valueParm = new String[1];
+			 valueParm[0] = "Tenor ";
+			 returnStatus = APIErrorHandlerService.getFailedStatus("30101", valueParm);
+			 String alterMessage = returnStatus.getReturnText()+". Please give correct tenor for this finReference.";
+			 returnStatus.setReturnText(alterMessage.replace("Date T", "t"));	
+			 return returnStatus;
+		 }
+		
+		
+		
+		
 		
 		if (DateUtility.compare(finServiceInstRequest.getMaturityDate(), financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
 			String[] valueParm = new String[1];

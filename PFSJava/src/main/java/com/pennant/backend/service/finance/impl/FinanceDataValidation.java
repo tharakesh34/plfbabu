@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
-import org.jfree.util.Log;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -207,6 +206,8 @@ public class FinanceDataValidation {
 			financeReference=finMain.getFinReference();
 		}
 
+		if(financeType.isFinIsGenRef())
+			finMain.setFinReference(null);
 		// validate FinReference
 		//ErrorDetail error = validateFinReference("NFLBR", finScheduleData,vldGroup);
 		/*ErrorDetail error = validateFinReference(financeReference, finScheduleData,vldGroup);
@@ -289,14 +290,32 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 		}
-
-		//Net Loan Amount
-		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
-		if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
+		
+		
+		if(finMain.getFinAssetValue().compareTo(financeType.getFinMinAmount()) == -1){
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(financeType.getFinMinAmount());
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 		}
+		
+		//Net Loan Amount
+		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
+		// This is violating Over Draft Loan
+		if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(financeType.getFinMinAmount());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
+			} 	
+		}
+		
+		
+		if(finMain.getFinAssetValue().compareTo(financeType.getFinMaxAmount()) > 0){
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(financeType.getFinMaxAmount());
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
+		}
+		
 
 		if (financeType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
 			if (netLoanAmount.compareTo(financeType.getFinMaxAmount()) > 0) {
@@ -1145,11 +1164,15 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 
-			errorDetails = disbursementValidation(financeDetail);
-			if (!errorDetails.isEmpty()) {
-				finScheduleData.setErrorDetails(errorDetails);
-				return finScheduleData;
+			// Disbursement is not mandatory for Over Draft schedule
+			if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+				errorDetails = disbursementValidation(financeDetail);
+				if (!errorDetails.isEmpty()) {
+					finScheduleData.setErrorDetails(errorDetails);
+					return finScheduleData;
+				}	
 			}
+			
 			
 			errorDetails = mandateValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
@@ -2509,10 +2532,12 @@ public class FinanceDataValidation {
 		}
 
 		//Loan Amount Validation
-		if (finMain.getFinAmount().compareTo(zeroAmount) <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(finMain.getFinAmount().doubleValue());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
+		if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			if (finMain.getFinAmount().compareTo(zeroAmount) <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(finMain.getFinAmount().doubleValue());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
+			} 			
 		}
 
 		// 

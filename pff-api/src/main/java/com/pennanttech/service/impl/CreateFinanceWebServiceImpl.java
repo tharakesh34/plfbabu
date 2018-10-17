@@ -1,7 +1,10 @@
 package com.pennanttech.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +14,12 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -75,6 +80,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return response;
 			}
+			
 			// validate and Data defaulting
 			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 
@@ -82,6 +88,14 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
 
+			if(financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+				FinanceDetail finResponse = createOverDraftLoanValidation(financeDetail);
+				WSReturnStatus status = finResponse.getReturnStatus();
+				if(status != null){
+					return finResponse;
+				}
+			} 
+			
 			// validate finance data
 			if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 				CustomerDetails customerDetails = new CustomerDetails();
@@ -89,7 +103,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				financeDetail.setCustomerDetails(customerDetails);
 				financeDataValidation.setFinanceDetail(financeDetail);
 			}
-
+			
 			// validate Finance schedule details Validations
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(), true);
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
@@ -134,7 +148,129 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 	}
 	
+	public FinanceDetail createOverDraftLoanValidation(FinanceDetail financeDetail){
+		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		 FinanceDetail response = new FinanceDetail();
+		 if(!financeType.isFinIsGenRef()){
+			 FinanceDetail checkDuplicateRecord = createFinanceController.getFinanceDetails(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+			 WSReturnStatus checkExistingRecordStatus = checkDuplicateRecord.getReturnStatus();
+			 if(!checkExistingRecordStatus.getReturnCode().equals("API006")){
+				 doEmptyResponseObject(response);
+				 response.setStp(financeDetail.isStp());
+				 String[] valueParm = new String[1];
+				 valueParm[0] = "Finance Reference ";
+				 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("PR002", valueParm);
+				 status.setReturnText(valueParm[0]+financeDetail.getFinScheduleData().getFinanceMain().getFinReference()+" "+status.getReturnText());	
+				 response.setReturnStatus(status);
+				 return response;
+			 }	 
+		 }
 	
+		 if(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue().compareTo(new BigDecimal("0"))==0){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[1];
+			 valueParm[0] = "Finance Asset Value ";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
+			 status.setReturnText(status.getReturnText().replace("Invalid", "Required"));
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		 
+		 if(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue().compareTo(new BigDecimal("0"))==-1){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[1];
+			 valueParm[0] = "Finance Asset Value ";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90259", valueParm);
+			 status.setReturnText(status.getReturnText().replace(" feeCode:", " "));	
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		 if((new BigDecimal("999999999999999999").compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue())==-1)){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[2];
+			 valueParm[0] = "Finance Asset Value is less than 18 digits or ";
+			 valueParm[1] = " 18";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90300", valueParm);
+			 status.setReturnText(status.getReturnText().replace("maximum", "Maximum").replaceAll("\n\t\t\t", " "));	
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		 
+		 // schedule method PFT only allowed in Over Draft
+		 
+		 if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod())) {
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[1];
+			 valueParm[0] = "Schedule Method ";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
+			 status.setReturnText(status.getReturnText().replace("Invalid", "Required"));
+			 response.setReturnStatus(status);
+			 return response;	
+		 }
+		 
+		 if(!financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod().equals("PFT")){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[2];
+			 valueParm[0] = "Schedule Method ";
+			 valueParm[1] = " PFT";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90337", valueParm);
+			 status.setReturnText(status.getReturnText());	
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		 
+		 // disbursement is not required in Over Draft loan
+			 
+		 List<FinAdvancePayments> advancePaymentsList = financeDetail.getAdvancePaymentsList();
+		 
+		 if(!CollectionUtils.isEmpty(advancePaymentsList)){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[2];
+			 valueParm[0] = "Disbursement ";
+			 valueParm[1] = " Overdraft Loan";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90204", valueParm);
+			 status.setReturnText(status.getReturnText());	
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		 
+		 // Compare first drop line date greater than start date
+		 
+		 
+		 if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate().compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()) == -1){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[2];
+			 valueParm[0] = "First Drop line Date";
+			 valueParm[1] = "Finance Start Date";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("65012", valueParm);
+			 status.setReturnText(status.getReturnText());	
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		 
+		 
+		 if(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(new BigDecimal("0"))!=0){
+			 doEmptyResponseObject(response);
+			 response.setStp(financeDetail.isStp());
+			 String[] valueParm = new String[2];
+			 valueParm[0] = "Finance Amount ";
+			 valueParm[1] = "Zero";
+			 WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90281", valueParm);
+			 String alterMessage = status.getReturnText();
+			 System.out.println("Text is  :"+status.getReturnText());
+			 status.setReturnText(alterMessage);	
+			 response.setReturnStatus(status);
+			 return response;
+		 }
+		return financeDetail;
+	}
 	
 	
 	public FinanceDetail getOverDraftMaintenance(OverDraftMaintenance overDraftMaintenance) throws ServiceException{

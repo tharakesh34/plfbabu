@@ -1,10 +1,14 @@
 package com.pennanttech.pffws;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.finance.DemographicDetails;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
@@ -47,6 +51,14 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/cancelDisbursement")
 	public FinanceDetail cancelDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getDemoGraphicDetail/{pincode}")
+	public DemographicDetails getDemoGraphicDetail(@PathParam("pincode") String pinCode) throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getBankDetail/{iFSCCode}")
+	public BankDetail getBankDetail(@PathParam("iFSCCode") String iFSCCode) throws ServiceException;
 
 	@POST
 	@Path("/loanInstructionService/partialSettlement")

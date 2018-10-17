@@ -738,6 +738,29 @@ public class FinStatementController extends SummaryDetailService {
 			return stmtResponse;
 		}
 	}
+	
+	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) {
+		logger.debug("Entering");
+
+		StatementOfAccount statementOfAccount = null;
+		Date fromdate = statementRequest.getFromDate();
+		Date todate = statementRequest.getToDate();
+		String finReference = statementRequest.getFinReference();
+		String envVariable = System.getenv("APP_ROOT_PATH");
+		PathUtil.setRootPath(envVariable);
+		statementOfAccount = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate, todate);
+		
+		
+		if (statementOfAccount != null) {
+				statementOfAccount.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				return statementOfAccount;
+		} else {
+			statementOfAccount = new StatementOfAccount();
+			statementOfAccount.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			logger.debug("Leaving");
+		}
+		return statementOfAccount;
+	}
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}

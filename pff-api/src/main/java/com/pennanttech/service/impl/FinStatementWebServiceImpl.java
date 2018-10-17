@@ -14,6 +14,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.util.FinanceConstants;
@@ -309,6 +310,49 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException {
 		logger.debug("Enetring");
 
+		FinStatementResponse finStatementResponse;
+		validateSOARequest(statementRequest,true);
+		if(StringUtils.isBlank(statementRequest.getTemplate())){
+			statementRequest.setTemplate(APIConstants.REPORT_TEMPLATE_API);
+		}
+		if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_API)) {
+			statementRequest.setTemplate("FINENQ_StatementOfAccount_Template2");
+		} else if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_APPLICATION)) {
+			statementRequest.setTemplate("FINENQ_StatementOfAccount");
+		}	else {
+			String[] valueParm = new String[2];
+			valueParm[0] = "template";
+			valueParm[1] = APIConstants.REPORT_TEMPLATE_API +"  " +APIConstants.REPORT_TEMPLATE_APPLICATION;
+			finStatementResponse = new FinStatementResponse();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
+			return finStatementResponse;
+		}
+		int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference());
+		if (count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = statementRequest.getFinReference();
+			finStatementResponse = new FinStatementResponse();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
+			return finStatementResponse;
+		}
+		// call the controller for report genaration
+		finStatementResponse = finStatementController.getReportSatatement(statementRequest);
+		logger.debug("Leaving");
+		return finStatementResponse;
+	}
+	@Override
+	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws ServiceException {
+		logger.debug("Enetring");
+		FinStatementResponse finStatementResponse=validateSOARequest(statementRequest,false);
+		if(finStatementResponse!=null){
+			StatementOfAccount statementOfAccount=new StatementOfAccount();
+			statementOfAccount.setReturnStatus(finStatementResponse.getReturnStatus());
+			return statementOfAccount;
+		}
+		StatementOfAccount statementOfAccount = finStatementController.getStatementOfAcc(statementRequest);
+		return statementOfAccount;
+	}
+	private FinStatementResponse validateSOARequest(FinStatementRequest statementRequest,boolean isTypeReq) {
 		Date fromDate = statementRequest.getFromDate();
 		Date toDate = statementRequest.getToDate();
 		FinStatementResponse finStatementResponse = null;
@@ -343,14 +387,14 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				return finStatementResponse;
 			}
 		}
-		if (StringUtils.isBlank(statementRequest.getType())) {
+		if (StringUtils.isBlank(statementRequest.getType()) && isTypeReq) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Type";
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return finStatementResponse;
 		}
-		if(!StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)){
+		if(!StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA) && isTypeReq){
 			String[] valueParm = new String[2];
 			valueParm[0] = "Type: "+statementRequest.getType();
 			valueParm[1] = APIConstants.REPORT_SOA;
@@ -366,32 +410,6 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 			return finStatementResponse;
 		}
-		if(StringUtils.isBlank(statementRequest.getTemplate())){
-			statementRequest.setTemplate(APIConstants.REPORT_TEMPLATE_API);
-		}
-		if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_API)) {
-			statementRequest.setTemplate("FINENQ_StatementOfAccount_Template2");
-		} else if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_APPLICATION)) {
-			statementRequest.setTemplate("FINENQ_StatementOfAccount");
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = "template";
-			valueParm[1] = APIConstants.REPORT_TEMPLATE_API +"  " +APIConstants.REPORT_TEMPLATE_APPLICATION;
-			finStatementResponse = new FinStatementResponse();
-			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
-			return finStatementResponse;
-		}
-		int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference());
-		if (count <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = statementRequest.getFinReference();
-			finStatementResponse = new FinStatementResponse();
-			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
-			return finStatementResponse;
-		}
-		// call the controller for report genaration
-		finStatementResponse = finStatementController.getReportSatatement(statementRequest);
-		logger.debug("Leaving");
 		return finStatementResponse;
 	}
 

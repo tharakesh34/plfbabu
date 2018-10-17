@@ -553,9 +553,13 @@ public class CreateFinanceController extends SummaryDetailService {
 		
 		// set finAssetValue = FinCurrAssetValue when there is no maxDisbCheck
 		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
-		if(!finType.isAlwMaxDisbCheckReq()) {
-			financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());//FIXME: override actual finAsset value
+		// This is not applicable for Over Draft
+		if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			if(!finType.isAlwMaxDisbCheckReq()) {
+				financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());//FIXME: override actual finAsset value
+			} 	
 		}
+		
 		
 		//vas Details
 		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){

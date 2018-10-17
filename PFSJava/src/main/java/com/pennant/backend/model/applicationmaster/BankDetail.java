@@ -43,7 +43,14 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -51,11 +58,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinanceApplicationCode table</b>.<br>
  * 
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class BankDetail extends AbstractWorkflowEntity implements java.io.Serializable {
 	private static final long serialVersionUID = -6305409759684865400L;
 
 	private String bankCode;
+	@XmlElement
+	private String ifsc;
+	@XmlElement
 	private String bankName;
+	@XmlElement
+	private String bankBranch;
 	private String bankShortCode;
 	private boolean active;
 	private int accNoLength;
@@ -63,11 +76,21 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	private String lovValue;
 	private BankDetail befImage;
 	private LoggedInUser userDetails;
-	
+	@XmlElement
+	private WSReturnStatus returnStatus = null;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("bankBranch");
+		excludeFields.add("ifsc");
+		excludeFields.add("returnStatus");
+		return excludeFields;
+	}
+
 	public BankDetail() {
 		super();
 	}
-	
+
 	public BankDetail(String id) {
 		super();
 		this.setId(id);
@@ -84,6 +107,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public String getId() {
 		return bankCode;
 	}
+
 	public void setId(String id) {
 		this.bankCode = id;
 	}
@@ -91,6 +115,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public String getBankCode() {
 		return bankCode;
 	}
+
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
 	}
@@ -98,6 +123,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public String getBankName() {
 		return bankName;
 	}
+
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
@@ -105,6 +131,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -112,6 +139,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -119,6 +147,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -126,6 +155,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public BankDetail getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(BankDetail beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -133,6 +163,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -144,6 +175,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public void setAccNoLength(int accNoLength) {
 		this.accNoLength = accNoLength;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
@@ -155,5 +187,29 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public void setBankShortCode(String bankShortCode) {
 		this.bankShortCode = bankShortCode;
 	}
-	
+
+	public String getBankBranch() {
+		return bankBranch;
+	}
+
+	public void setBankBranch(String bankBranch) {
+		this.bankBranch = bankBranch;
+	}
+
+	public String getIfsc() {
+		return ifsc;
+	}
+
+	public void setIfsc(String ifsc) {
+		this.ifsc = ifsc;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
 }

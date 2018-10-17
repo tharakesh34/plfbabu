@@ -2414,6 +2414,13 @@
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
+	<!--============ Demographic Details ============== -->
+	<bean id="demoGraphicDetailsDAO" class="com.pennant.backend.dao.finance.impl.DemoGraphicDetailsDAOImpl" parent="basicDao"/>
+	
+	<bean id="demoGraphicDetailsService" class="com.pennant.backend.service.finance.impl.DemoGraphicDetailsServiceImpl">
+		<property name="demoGraphicDetailsDAO" ref="demoGraphicDetailsDAO"></property>
+	</bean>
+	
 	<!--============ Customer Income Details ============== -->
 	<bean id="customerIncomeDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerIncomeDAOImpl" parent="sequenceDao" />
 

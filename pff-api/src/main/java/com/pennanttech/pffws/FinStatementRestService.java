@@ -4,6 +4,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -33,5 +34,9 @@ public interface FinStatementRestService {
 	@POST
 	@Path("/statementService/getStatement")
 	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException;
+	
+	@POST
+	@Path("/statementService/getStatementOfAcc")
+	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws ServiceException;
 
 }

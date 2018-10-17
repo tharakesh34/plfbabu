@@ -129,6 +129,10 @@ public class FinanceDataDefaulting {
 			financeMain.setNextRepayCpzDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayCpzDate(),
 					PennantConstants.DBDateFormat)));
 		}
+		if(financeMain.getFirstDroplineDate()!= null){
+			financeMain.setFirstDroplineDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFirstDroplineDate(),
+					PennantConstants.DBDateFormat)));
+		}
 		if(financeMain.getMaturityDate()!= null){
 			financeMain.setMaturityDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getMaturityDate(),
 					PennantConstants.DBDateFormat)));
@@ -180,6 +184,8 @@ public class FinanceDataDefaulting {
 				String ccy = SysParamUtil.getAppCurrency();
 				finMain.setFinCcy(ccy);
 			}
+			
+			
 
 			// validate finance branch
 			if (StringUtils.isNotBlank(finMain.getFinBranch())) {
@@ -190,6 +196,7 @@ public class FinanceDataDefaulting {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
 				}
 			}
+			
 
 			//Validate Interest Days basis
 			if (StringUtils.isNotBlank(finMain.getProfitDaysBasis()) && !isValidateIDB(finMain.getProfitDaysBasis())) {

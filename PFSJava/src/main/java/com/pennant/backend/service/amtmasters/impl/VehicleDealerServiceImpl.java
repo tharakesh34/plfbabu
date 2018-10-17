@@ -181,6 +181,17 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	public VehicleDealer getVehicleDealerById(long id) {
 		return getVehicleDealerDAO().getVehicleDealerById(id,"_View");
 	}
+	
+	/**
+	 * getVehicleDealerList fetch the details by using VehicleDealerDAO's
+	 * getVehicleDealerList method.
+	 * 
+	 * @return VehicleDealer
+	 */
+	@Override
+	public List<VehicleDealer> getVehicleDealerList(String dealerType) {
+		return getVehicleDealerDAO().getVehicleDealerList(dealerType,"_AView");
+	}
 
 	/**
 	 * getApprovedVehicleDealerById fetch the details by using

@@ -2,6 +2,7 @@ package com.pennanttech.ws.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -893,6 +894,8 @@ public class FinanceValidationService {
 				return getErrorDetails("90501", valueParm);
 			}
 			
+			List<VehicleDealer> listVehicleDealerDsa = vehicleDealerService.getVehicleDealerList("DSA");
+			
 			RelationshipOfficer	relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
@@ -900,6 +903,24 @@ public class FinanceValidationService {
 				return getErrorDetails("90501", valueParm);
 			}
 
+			if (vehicleDealer != null) {
+				Iterator<VehicleDealer> itr = listVehicleDealerDsa.iterator();
+				boolean checkExistingDSA = false;
+				while(itr.hasNext()){
+					VehicleDealer vehicleDealerDsa = itr.next();
+					if(vehicleDealerDsa.getDealerType().equals(financeMain.getDsaCode())){
+						checkExistingDSA=true;
+					}
+				}
+				if(!checkExistingDSA){
+					String[] valueParm = new String[1];
+					valueParm[0] = financeMain.getDsaCode();
+					returnStatus = getErrorDetails("90501", valueParm);
+					returnStatus.setReturnText(returnStatus.getReturnText().replace("code", "dsa code"));
+					return returnStatus;
+				}
+				
+			}
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
 				GeneralDepartment generalDepartment = generalDepartmentService
 						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
@@ -910,8 +931,7 @@ public class FinanceValidationService {
 				}
 			}
 			if (StringUtils.isNotBlank(financeMain.getDmaCode())) {
-				RelationshipOfficer dmaCode = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain
-						.getDmaCode());
+				RelationshipOfficer dmaCode = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDmaCode());
 				if (dmaCode == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getDmaCode();

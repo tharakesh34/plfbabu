@@ -61,4 +61,5 @@ public interface BankDetailService {
 	int getAccNoLengthByCode(String bankCode);
 	String getBankCodeByName(String bankName);
 
+	BankDetail getBankDetailsByIfsc(String ifsc);
 }

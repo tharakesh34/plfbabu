@@ -115,6 +115,11 @@ public class BankDetailServiceImpl extends
 		this.bankDetailDAO = bankDetailDAO;
 	}
 
+	@Override
+	public BankDetail getBankDetailsByIfsc(String ifsc) {
+		return bankDetailDAO.getBankDetailByIfsc(ifsc);
+	}
+
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is

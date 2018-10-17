@@ -53,6 +53,7 @@ public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 
 	BankDetail getBankDetailById(String id, String type);
 	
+	BankDetail getBankDetailByIfsc(String ifsc);
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -66,4 +67,5 @@ public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 	int getAccNoLengthByCode(String bankCode, String type);
 
 	String getBankCodeByName(String bankName);
+
 }

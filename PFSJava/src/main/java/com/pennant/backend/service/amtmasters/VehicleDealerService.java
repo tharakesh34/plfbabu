@@ -51,6 +51,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface VehicleDealerService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 	VehicleDealer getVehicleDealerById(long id);
+	List<VehicleDealer> getVehicleDealerList(String dealerType);
 	VehicleDealer getApprovedVehicleDealerById(long id);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

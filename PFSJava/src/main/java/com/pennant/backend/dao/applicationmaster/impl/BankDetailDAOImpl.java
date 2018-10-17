@@ -73,6 +73,31 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		super();
 	}
 
+	@Override
+	public BankDetail getBankDetailByIfsc(String ifsc) {
+		BankDetail bankDetail = new BankDetail();
+		bankDetail.setIfsc(ifsc);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select branch.branchdesc bankBranch,bank.bankname bankName from BankBranches branch");
+		selectSql.append(" left join BMTBankDetail bank on");
+		selectSql.append(" branch.bankcode=bank.bankcode where ifsc=:ifsc");
+				
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+		RowMapper<BankDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankDetail.class);
+
+		try {
+			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			bankDetail = null;
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return bankDetail;
+	}
+
 	/**
 	 * Fetch the Record Bank Details by key field
 	 * 

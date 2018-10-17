@@ -49,6 +49,10 @@ import com.pennant.backend.model.amtmasters.VehicleDealer;
 public interface VehicleDealerDAO {
 
 	VehicleDealer getVehicleDealerById(long id, String type);
+	
+	List<VehicleDealer> getVehicleDealerList(String dealerType,String type);
+	
+	VehicleDealer getOverDraftVehicleDealerById(String type);
 
 	void update(VehicleDealer vehicleDealer, String type);
 

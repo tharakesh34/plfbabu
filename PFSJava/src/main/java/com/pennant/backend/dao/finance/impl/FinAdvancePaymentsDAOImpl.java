@@ -542,6 +542,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	@Override
 	public int getCountByFinReference(String finReference) {
+		
+		int count = 0;
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setFinReference(finReference);
 
@@ -553,7 +555,14 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			
+		} catch (Exception e) {
+			logger.info(e);
+			count = 0;
+		}
+		return count;
 	}
 
 }
