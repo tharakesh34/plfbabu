@@ -7151,7 +7151,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				engine.setTemplate("CreditAssessmentSheet" + PennantConstants.DOC_TYPE_WORD_EXT);
 				engine.loadTemplate();
 				engine.mergeFields(agreementGeneration.getAggrementData(getFinanceDetail(),
-						financeReferenceDetail.getLovDescAggImage(), getUserWorkspace().getUserDetails(), false));
+						financeReferenceDetail.getLovDescAggImage(), getUserWorkspace().getUserDetails()));
 
 				details.setDocModule(FinanceConstants.MODULE_NAME);
 				details.setDocCategory("CRASSMNT");
@@ -7507,120 +7507,112 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		//story #491  
-		//Auto Generation of Loan Agreements while submitting
-		//before submitting loan generate AGREEMENTS...
+				// story #491
+				// Auto Generation of Loan Agreements while submitting
+				// before submitting loan generate AGREEMENTS...
 
-		if ("Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-			List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
-			DocumentDetails documentDetails = null;
-			autoDownloadMap = new HashMap<>();
-			AgreementDefinition agreementDefinition = null;
-			List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
-			String templateValidateMsg = "";
-			String accMsg = "";
-			boolean isTemplateError = false;
-			List<DocumentDetails> existingUploadDocList = aFinanceDetail.getDocumentDetailsList();
-			Map<String, DocumentDetails> docCatMap = new HashMap<>();
-			for (DocumentDetails docDetail : existingUploadDocList) {
-				docCatMap.put(docDetail.getDocCategory(), docDetail);
-			}
-			//story #800
-			// Improve the performance of auto download of agreements
-			AgreementDetail agreementDetail = getAgreementGeneration().getAggrementData(financeDetail,
-					StringUtils.EMPTY, getUserWorkspace().getUserDetails(), true);
-
-			for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
-				long id = financeReferenceDetail.getFinRefId();
-				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
-				// For Agreement Rules
-				boolean isAgrRender = true;
-				// Check Each Agreement is attached with Rule or Not, If Rule
-				// Exists based on Rule Result Agreement will display
-				if (StringUtils.isNotBlank(financeReferenceDetail.getLovDescAggRuleName())) {
-					Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
-							RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
-					if (rule != null) {
-						HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
-								.getDeclaredFieldValues();
-						isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
-								getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
-								RuleReturnType.BOOLEAN);
-					}
-				}
-				if (isAgrRender) {
-					if (agreementDefinition.isAutoGeneration()) {
-						try {
-							templateValidateMsg = validateTemplate(financeReferenceDetail); // If
-																							// valid
-																							// template
-							if ("Y".equals(templateValidateMsg)) {
-								if (!isTemplateError) {
-									documentDetails = autoGenerateAgreement(financeReferenceDetail, aFinanceDetail,
-											agreementDefinition, existingUploadDocList, docCatMap, agreementDetail);
-								}
-							} else {
-								accMsg = accMsg + "  " + templateValidateMsg;
-								isTemplateError = true;
-								continue;
+				// preparing aggreementimageDescription
+				// story #800
+				// Improve the performance of auto download of agreements
+				if (!recSave) {
+					List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
+					DocumentDetails documentDetails = null;
+					autoDownloadMap = new HashMap<>();
+					AgreementDefinition agreementDefinition = null;
+					List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
+					String templateValidateMsg = "";
+					String accMsg = "";
+					boolean isTemplateError = false;
+					Set<String> allagrDataset = new HashSet<>();
+					Map<String, AgreementDefinition> agrdefMap = new HashMap();
+					Map<String, FinanceReferenceDetail> finRefMap = new HashMap();
+					List<DocumentDetails> existingUploadDocList = aFinanceDetail.getDocumentDetailsList();
+					for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
+						long id = financeReferenceDetail.getFinRefId();
+						agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
+						// For Agreement Rules
+						boolean isAgrRender = true;
+						// Check Each Agreement is attached with Rule or Not, If Rule
+						// Exists based on Rule Result Agreement will display
+						if (StringUtils.isNotBlank(financeReferenceDetail.getLovDescAggRuleName())) {
+							Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
+									RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
+							if (rule != null) {
+								HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
+										.getDeclaredFieldValues();
+								isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
+										getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
+										RuleReturnType.BOOLEAN);
 							}
+						}
+						if (isAgrRender) {
+							if (agreementDefinition.isAutoGeneration()) {
+								try {
+									templateValidateMsg = validateTemplate(financeReferenceDetail); // If
+
+									if ("Y".equals(templateValidateMsg)) {
+										if (!isTemplateError) {
+
+											allagrDataset.add(agreementDefinition.getAggImage());
+											agrdefMap.put(agreementDefinition.getAggReportName(), agreementDefinition);
+											finRefMap.put(agreementDefinition.getAggReportName(), financeReferenceDetail);
+
+										} else {
+
+											accMsg = accMsg + "  " + templateValidateMsg;
+											isTemplateError = true;
+											continue;
+										}
+									}
+								} catch (Exception e) {
+									MessageUtil.showError(e.getMessage());
+								}
+							}
+						}
+					} // for close
+					if (!agrdefMap.isEmpty()) {
+						AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail,
+								allagrDataset.toString(), getUserWorkspace().getUserDetails());
+						for (String tempName : agrdefMap.keySet()) {
+
+							AgreementDefinition aggdef = agrdefMap.get(tempName);
+							documentDetails = autoGenerateAgreement(finRefMap.get(tempName), aFinanceDetail, aggdef,
+									existingUploadDocList,agrData);
 							agenDocList.add(documentDetails);
-							if (agreementDefinition.isAutoDownload()) {
+							if (aggdef.isAutoDownload()) {
 								autoDownloadLst.add(documentDetails);
 							}
-						} catch (Exception e) {
-							MessageUtil.showError(e.getMessage());
+						}
+						autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
+						agrdefMap = null;
+						finRefMap = null;
+						allagrDataset = null;
+						
+					}
+				}
+				
+				if (isWorkFlowEnabled()) {
+					String taskId = getTaskId(getRole());
+					afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					if (isNotesMandatory(taskId, afinanceMain)) {
+						if (!notesEntered) {
+							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+							return false;
 						}
 					}
+					auditHeader = getAuditHeader(aFinanceDetail, PennantConstants.TRAN_WF);
+					doProcess_Assets(aFinanceDetail);
+					auditHeader.getAuditDetail().setModelData(aFinanceDetail);
+					processCompleted = doSaveProcess(auditHeader, null);
+				} else {
+					doProcess_Assets(aFinanceDetail);
+					auditHeader = getAuditHeader(aFinanceDetail, tranType);
+					processCompleted = doSaveProcess(auditHeader, null);
 				}
+				logger.debug("return value :" + processCompleted);
+				logger.debug(Literal.LEAVING);
+				return processCompleted;
 			}
-			agenDocList.addAll(aFinanceDetail.getDocumentDetailsList());
-			if (!isTemplateError) {
-				if (!agenDocList.isEmpty()) {
-					Iterator<DocumentDetails> iterator = existingUploadDocList.iterator();
-					while (iterator.hasNext()) {
-						DocumentDetails type = (DocumentDetails) iterator.next();
-						DocumentDetails docDetails = isInAggremnetGenerated(type, agenDocList);
-						if (docDetails != null) {
-							iterator.remove();
-						}
-					}
-
-					if (aFinanceDetail.getDocumentDetailsList() == null) {
-						aFinanceDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
-					}
-					aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
-				}
-				autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
-			}
-			if (isTemplateError) {
-				MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
-				return false;
-			}
-		}
-
-		if (isWorkFlowEnabled()) {
-			String taskId = getTaskId(getRole());
-			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			if (isNotesMandatory(taskId, afinanceMain)) {
-				if (!notesEntered) {
-					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-					return false;
-				}
-			}
-			auditHeader = getAuditHeader(aFinanceDetail, PennantConstants.TRAN_WF);
-			doProcess_Assets(aFinanceDetail);
-			auditHeader.getAuditDetail().setModelData(aFinanceDetail);
-			processCompleted = doSaveProcess(auditHeader, null);
-		} else {
-			doProcess_Assets(aFinanceDetail);
-			auditHeader = getAuditHeader(aFinanceDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader, null);
-		}
-		logger.debug("return value :" + processCompleted);
-		logger.debug(Literal.LEAVING);
-		return processCompleted;
-	}
 
 	private DocumentDetails isInAggremnetGenerated(DocumentDetails type, List<DocumentDetails> agenDocList) {
 		if (agenDocList != null) {
@@ -7637,7 +7629,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Saving Details Record
 	 * 
-	 * @param auditHeader
+	 * @param auditHeaderex
 	 * @param method
 	 * @return
 	 * @throws InterruptedException
@@ -18519,7 +18511,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// tasks #503 Auto Generation of Agreements
 	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
-			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList, Map docCatMap,
+			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
 			AgreementDetail detail) throws Exception {
 		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
@@ -18558,7 +18550,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				DocumentDetails exstDetails = null;
 				if (existingUploadDocList.size() > 0)
 
-					exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition, docCatMap);
+					exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition);
 
 				if (exstDetails != null) {
 
@@ -18620,7 +18612,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private DocumentDetails getExistDocDetails(List<DocumentDetails> exstDoclst,
-			AgreementDefinition agreementDefinition, Map docCatMap) {
+			AgreementDefinition agreementDefinition) {
 
 		for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
 			if (agreementDefinition.getDocType().equalsIgnoreCase(docDetails.getDocCategory())) {
