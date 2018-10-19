@@ -52,6 +52,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.backend.model.ApplicationDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
@@ -2422,6 +2423,11 @@ public class PennantJavaUtil {
 		// Income/Expense Details
 		ModuleUtil.register("IncomeExpenseDetail", new ModuleMapping("IncomeExpenseDetail", IncomeExpenseDetail.class,
 				new String[] { "org_income_expenses", "org_income_expenses_view" }, "ORGANIZATION_SCHOOL_INCOME_EXPENSE", new String[] { "id" }, null, 600));
+		
+		 //Master Definition Details
+		ModuleUtil.register("MasterDef", new ModuleMapping("MasterDef", MasterDef.class,
+				new String[] { "master_def", "master_def" }, null, new String[] { "masterType,keyType,keyCode" }, null, 600));
+
 
 	}
 
