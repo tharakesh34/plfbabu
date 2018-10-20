@@ -38,7 +38,8 @@ public class FinanceFlagsController {
 		FinanceFlag response = null;
 		try {
 			response = financeFlagsService.getFinanceFlagsByRef(finReference, "_View");
-			if (response != null && response.getFinFlagDetailList() != null && !response.getFinFlagDetailList().isEmpty()) {
+			if (response != null && response.getFinFlagDetailList() != null
+					&& !response.getFinFlagDetailList().isEmpty()) {
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
 				response = new FinanceFlag();
@@ -56,10 +57,10 @@ public class FinanceFlagsController {
 		logger.debug("Leaving");
 		return response;
 	}
-	
-	
+
 	/**
 	 * Method for create LoanFlags in PLF system.
+	 * 
 	 * @param financeFlag
 	 */
 
@@ -68,7 +69,7 @@ public class FinanceFlagsController {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
 		List<FinFlagsDetail> flagseList = financeFlag.getFinFlagDetailList();
-		for(FinFlagsDetail detail: flagseList){
+		for (FinFlagsDetail detail : flagseList) {
 			detail.setLastMntBy(userDetails.getUserId());
 			detail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
@@ -86,7 +87,7 @@ public class FinanceFlagsController {
 			//get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(financeFlag,PennantConstants.TRAN_WF);
+			AuditHeader auditHeader = getAuditHeader(financeFlag, PennantConstants.TRAN_WF);
 			//set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = financeFlagsService.doApprove(auditHeader);
@@ -106,9 +107,10 @@ public class FinanceFlagsController {
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * Method for Delete LoanFlags in PLF system.
+	 * 
 	 * @param financeFlag
 	 */
 	public WSReturnStatus deleteLoanFlags(FinanceFlag financeFlag) {
@@ -132,8 +134,9 @@ public class FinanceFlagsController {
 		WSReturnStatus response = new WSReturnStatus();
 		try {
 			//get the header details from the request
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(financeFlag,PennantConstants.TRAN_WF);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(financeFlag, PennantConstants.TRAN_WF);
 			//set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = financeFlagsService.deleteFinanceFlag(auditHeader);
@@ -152,6 +155,7 @@ public class FinanceFlagsController {
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -161,10 +165,10 @@ public class FinanceFlagsController {
 	 */
 	private AuditHeader getAuditHeader(FinanceFlag aFinanceFlag, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceFlag.getBefImage(), aFinanceFlag);
-		return new AuditHeader(null,
-				null, null, null, auditDetail,
-				aFinanceFlag.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(null, null, null, null, auditDetail, aFinanceFlag.getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
+
 	public void setFinanceFlagsService(FinanceFlagsService financeFlagsService) {
 		this.financeFlagsService = financeFlagsService;
 	}

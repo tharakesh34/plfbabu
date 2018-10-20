@@ -28,16 +28,15 @@ import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-
 @Service
 public class FinStatementWebServiceImpl implements FinStatementRestService, FinStatementSoapService {
 
-	private static final Logger		logger	= Logger.getLogger(FinStatementWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinStatementWebServiceImpl.class);
 
-	private FinStatementController	finStatementController;
-	private CustomerDetailsService	customerDetailsService;
-	private FinanceMainDAO			financeMainDAO;
-	private FinanceMainService		financeMainService;
+	private FinStatementController finStatementController;
+	private CustomerDetailsService customerDetailsService;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceMainService financeMainService;
 
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
@@ -133,7 +132,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatement.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			return finStatement;
 		}
-		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_REPAY_SCHD);
+		FinStatementResponse response = finStatementController.getStatement(finReferences,
+				APIConstants.STMT_REPAY_SCHD);
 		logger.debug("Leaving");
 		return response;
 	}
@@ -162,13 +162,14 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatementResponse;
 		} else {
 			FinanceMain finMain = financeMainDAO.getFinanceMainForPftCalc(finReference);
-			if(finMain == null) {
+			if (finMain == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return finStatementResponse;
 			} else {
-				if (finMain.isFinIsActive() && !(StringUtils.equals(finMain.getClosingStatus(),FinanceConstants.CLOSE_STATUS_MATURED)
+				if (finMain.isFinIsActive() && !(StringUtils.equals(finMain.getClosingStatus(),
+						FinanceConstants.CLOSE_STATUS_MATURED)
 						|| StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_EARLYSETTLE))) {
 					finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90403"));
 					return finStatementResponse;
@@ -184,7 +185,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 
 	/**
 	 * Method to fetch fore-closure letter for specific finance.<br>
-	 * 	- Provide fore-closure details for max allowed days of 7.
+	 * - Provide fore-closure details for max allowed days of 7.
 	 * 
 	 * @param statementRequest
 	 * @return FinStatementResponse
@@ -192,13 +193,13 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	@Override
 	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException {
 		logger.debug("Enetring");
-		
+
 		FinStatementResponse finStatementResponse = new FinStatementResponse();
 		// for logging purpose
 		String[] logFields = new String[1];
 		logFields[0] = statementRequest.getCif();
 		APIErrorHandlerService.logKeyFields(logFields);
-		
+
 		String finReference = statementRequest.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
@@ -214,8 +215,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				return finStatementResponse;
 			}
 		}
-		
-		if(statementRequest.getDays() <= 0 || statementRequest.getDays() > 7) {
+
+		if (statementRequest.getDays() <= 0 || statementRequest.getDays() > 7) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Days";
 			valueParm[1] = "1";
@@ -224,10 +225,12 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatementResponse;
 		}
 		// call controller to get fore-closure letter 
-		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
+		FinStatementResponse response = finStatementController.getStatement(statementRequest,
+				APIConstants.STMT_FORECLOSURE);
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * get the List of FinReferences Based on the CustID.
 	 * 
@@ -276,8 +279,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 
 			// validate FinActiveStatus
 			if (StringUtils.isNotBlank(statementRequest.getFinActiveStatus())) {
-				if (!(StringUtils.equals(statementRequest.getFinActiveStatus(), FinanceConstants.CLOSE_STATUS_MATURED) 
-						|| StringUtils.equals(statementRequest.getFinActiveStatus(), APIConstants.CLOSE_STATUS_ACTIVE))) {
+				if (!(StringUtils.equals(statementRequest.getFinActiveStatus(), FinanceConstants.CLOSE_STATUS_MATURED)
+						|| StringUtils.equals(statementRequest.getFinActiveStatus(),
+								APIConstants.CLOSE_STATUS_ACTIVE))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = statementRequest.getFinActiveStatus();
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90501", valueParm);
@@ -286,7 +290,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 					statementRequest.setFinActiveStatus(null);
 				}
 			}
-		} else if(StringUtils.isNotBlank(statementRequest.getFinReference())) {
+		} else if (StringUtils.isNotBlank(statementRequest.getFinReference())) {
 			int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference(), "", false);
 			if (count <= 0) {
 				String[] valueParm = new String[1];
@@ -301,6 +305,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Leaving");
 		return returnStatus;
 	}
+
 	/**
 	 * get the SOA Report.
 	 * 
@@ -311,18 +316,18 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 
 		FinStatementResponse finStatementResponse;
-		validateSOARequest(statementRequest,true);
-		if(StringUtils.isBlank(statementRequest.getTemplate())){
+		validateSOARequest(statementRequest, true);
+		if (StringUtils.isBlank(statementRequest.getTemplate())) {
 			statementRequest.setTemplate(APIConstants.REPORT_TEMPLATE_API);
 		}
 		if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_API)) {
 			statementRequest.setTemplate("FINENQ_StatementOfAccount_Template2");
 		} else if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_APPLICATION)) {
 			statementRequest.setTemplate("FINENQ_StatementOfAccount");
-		}	else {
+		} else {
 			String[] valueParm = new String[2];
 			valueParm[0] = "template";
-			valueParm[1] = APIConstants.REPORT_TEMPLATE_API +"  " +APIConstants.REPORT_TEMPLATE_APPLICATION;
+			valueParm[1] = APIConstants.REPORT_TEMPLATE_API + "  " + APIConstants.REPORT_TEMPLATE_APPLICATION;
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
 			return finStatementResponse;
@@ -340,19 +345,21 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Leaving");
 		return finStatementResponse;
 	}
+
 	@Override
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws ServiceException {
 		logger.debug("Enetring");
-		FinStatementResponse finStatementResponse=validateSOARequest(statementRequest,false);
-		if(finStatementResponse!=null){
-			StatementOfAccount statementOfAccount=new StatementOfAccount();
+		FinStatementResponse finStatementResponse = validateSOARequest(statementRequest, false);
+		if (finStatementResponse != null) {
+			StatementOfAccount statementOfAccount = new StatementOfAccount();
 			statementOfAccount.setReturnStatus(finStatementResponse.getReturnStatus());
 			return statementOfAccount;
 		}
 		StatementOfAccount statementOfAccount = finStatementController.getStatementOfAcc(statementRequest);
 		return statementOfAccount;
 	}
-	private FinStatementResponse validateSOARequest(FinStatementRequest statementRequest,boolean isTypeReq) {
+
+	private FinStatementResponse validateSOARequest(FinStatementRequest statementRequest, boolean isTypeReq) {
 		Date fromDate = statementRequest.getFromDate();
 		Date toDate = statementRequest.getToDate();
 		FinStatementResponse finStatementResponse = null;
@@ -394,15 +401,15 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return finStatementResponse;
 		}
-		if(!StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA) && isTypeReq){
+		if (!StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA) && isTypeReq) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "Type: "+statementRequest.getType();
+			valueParm[0] = "Type: " + statementRequest.getType();
 			valueParm[1] = APIConstants.REPORT_SOA;
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
 			return finStatementResponse;
 		}
-		if (DateUtility.compare(fromDate, toDate)> 0) {
+		if (DateUtility.compare(fromDate, toDate) > 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "fromDate:" + DateUtility.formatDate(fromDate, PennantConstants.XMLDateFormat);
 			valueParm[1] = "toDate:" + DateUtility.formatDate(toDate, PennantConstants.XMLDateFormat);
@@ -417,14 +424,17 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
+
 	@Autowired
 	public void setFinStatementController(FinStatementController finStatementController) {
 		this.finStatementController = finStatementController;

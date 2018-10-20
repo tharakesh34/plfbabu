@@ -4,10 +4,9 @@
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
 					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
-<!-- RepayInstruction validations -->
-	<bean class="com.pennant.backend.model.finance.RepayInstruction"
-		ignore-annotations="false">
+
+	<!-- RepayInstruction validations -->
+	<bean class="com.pennant.backend.model.finance.RepayInstruction" ignore-annotations="false">
 		<field name="repayDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>repayDate is Mandatory</message>
@@ -20,7 +19,7 @@
 		</field>
 		<field name="repayAmount">
 			<constraint annotation="javax.validation.constraints.Min">
-			<message>repayAmount should be Positive</message>
+				<message>repayAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -37,7 +36,7 @@
 				</groups>
 				<element name="value">999999999999999999</element>
 			</constraint>
-		
+
 		</field>
 		<field name="repaySchdMethod">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
@@ -60,4 +59,4 @@
 		</field>
 	</bean>
 
-	</constraint-mappings>
+</constraint-mappings>

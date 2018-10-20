@@ -24,9 +24,9 @@ import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,BeneficiaryRestService{
+public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, BeneficiaryRestService {
 	private final Logger logger = Logger.getLogger(getClass());
-	
+
 	private BeneficiaryController beneficiaryController;
 	private ValidationUtility validationUtility;
 	private CustomerDetailsService customerDetailsService;
@@ -42,11 +42,11 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 	@Override
 	public Beneficiary createBeneficiary(Beneficiary beneficiary) {
 		logger.debug("Entering");
-		
+
 		// bean validations
 		validationUtility.validate(beneficiary, SaveValidationGroup.class);
 		WSReturnStatus returnStatus = doBeneficiaryValidation(beneficiary);
-		
+
 		Beneficiary response = null;
 		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 			response = beneficiaryController.createBeneficiary(beneficiary);
@@ -62,7 +62,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * get the Beneficiary Details by the given beneficiaryId.
 	 * 
@@ -83,6 +83,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * Method for update Beneficiary in PLF system.
 	 * 
@@ -99,10 +100,10 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
 		//beanValidation
 		validationUtility.validate(beneficiary, UpdateValidationGroup.class);
-		Beneficiary beneficiaryDetails=beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
+		Beneficiary beneficiaryDetails = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
 		WSReturnStatus returnStatus = null;
 		if (beneficiaryDetails != null) {
-			 returnStatus = doBeneficiaryValidation(beneficiary);
+			returnStatus = doBeneficiaryValidation(beneficiary);
 			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 				returnStatus = beneficiaryController.updateBeneficiary(beneficiary);
 			} else {
@@ -114,10 +115,11 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 			valueParm[0] = String.valueOf(beneficiary.getBeneficiaryId());
 			returnStatus = APIErrorHandlerService.getFailedStatus("90601", valueParm);
 		}
-		
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}
+
 	/**
 	 * delete the Beneficiary by the given beneficiaryId.
 	 * 
@@ -138,7 +140,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		WSReturnStatus response = new WSReturnStatus();
 		Beneficiary beneficiary = beneficiaryService.getApprovedBeneficiaryById(beneficiaryId);
 		if (beneficiary != null) {
-			response =  beneficiaryController.deleteBeneficiary(beneficiaryId);
+			response = beneficiaryController.deleteBeneficiary(beneficiaryId);
 		} else {
 
 			String[] valueParm = new String[1];
@@ -148,6 +150,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * get the Beneficiary Details by the given cif.
 	 * 
@@ -178,7 +181,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 
 		return response;
 	}
-	
+
 	/**
 	 * Validate the mandatory fields in the request object
 	 * 
@@ -187,7 +190,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 	 */
 	private WSReturnStatus doBeneficiaryValidation(Beneficiary beneficiary) {
 		logger.debug("Entering");
-		
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		// validate customer
 		String custCIF = beneficiary.getCustCIF();
@@ -207,11 +210,13 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 				String[] valueParm = new String[1];
 				valueParm[0] = beneficiary.getiFSC();
 				return getErrorDetails("90301", valueParm);
-			} else{
+			} else {
 				beneficiary.setBankCode(bankBranch.getBankCode());
 			}
-		} else if (StringUtils.isNotBlank(beneficiary.getBankCode()) && StringUtils.isNotBlank(beneficiary.getBranchCode())) {
-			BankBranch bankBranch = bankBranchService.getBankBrachByCode(beneficiary.getBankCode(), beneficiary.getBranchCode());
+		} else if (StringUtils.isNotBlank(beneficiary.getBankCode())
+				&& StringUtils.isNotBlank(beneficiary.getBranchCode())) {
+			BankBranch bankBranch = bankBranchService.getBankBrachByCode(beneficiary.getBankCode(),
+					beneficiary.getBranchCode());
 			if (bankBranch == null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = beneficiary.getBankCode();
@@ -229,18 +234,17 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 			}
 		}
 		//validate AccNumber length
-		/*if(StringUtils.isNotBlank(beneficiary.getBankCode())){
-					int accNoLength = bankDetailService.getAccNoLengthByCode(beneficiary.getBankCode());
-					if(beneficiary.getAccNumber().length()!=accNoLength){
-						String[] valueParm = new String[2];
-						valueParm[0] = "AccountNumber";
-						valueParm[1] = String.valueOf(accNoLength)+" characters";
-						return getErrorDetails("30570", valueParm);
-					}
-				}*/
+		/*
+		 * if(StringUtils.isNotBlank(beneficiary.getBankCode())){ int accNoLength =
+		 * bankDetailService.getAccNoLengthByCode(beneficiary.getBankCode());
+		 * if(beneficiary.getAccNumber().length()!=accNoLength){ String[] valueParm = new String[2]; valueParm[0] =
+		 * "AccountNumber"; valueParm[1] = String.valueOf(accNoLength)+" characters"; return getErrorDetails("30570",
+		 * valueParm); } }
+		 */
 		logger.debug("Leaving");
 		return returnStatus;
 	}
+
 	/**
 	 * Method for prepare response object with errorDetails.
 	 * 
@@ -263,27 +267,30 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	@Autowired
 	public void setBeneficiaryController(BeneficiaryController beneficiaryController) {
 		this.beneficiaryController = beneficiaryController;
 	}
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
+
 	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
 	@Autowired
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
 	}
+
 	@Autowired
 	public void setBeneficiaryService(BeneficiaryService beneficiaryService) {
 		this.beneficiaryService = beneficiaryService;
 	}
 
-	
 }

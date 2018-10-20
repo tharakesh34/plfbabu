@@ -9,7 +9,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"cif","customerBankInfo","bankId", "returnStatus" })
+@XmlType(propOrder = { "cif", "customerBankInfo", "bankId", "returnStatus" })
 
 public class CustomerBankInfoDetail {
 	@XmlElement
@@ -20,31 +20,37 @@ public class CustomerBankInfoDetail {
 	private long bankId = Long.MIN_VALUE;
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	
+
 	public String getCif() {
 		return cif;
 	}
+
 	public void setCif(String cif) {
 		this.cif = cif;
 	}
-	
+
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
+
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
+
 	public CustomerBankInfo getCustomerBankInfo() {
 		return customerBankInfo;
 	}
+
 	public void setCustomerBankInfo(CustomerBankInfo customerBankInfo) {
 		this.customerBankInfo = customerBankInfo;
 	}
+
 	public long getBankId() {
 		return bankId;
 	}
+
 	public void setBankId(long bankId) {
 		this.bankId = bankId;
 	}
-	
+
 }

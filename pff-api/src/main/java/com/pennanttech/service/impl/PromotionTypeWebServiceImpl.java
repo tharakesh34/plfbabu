@@ -20,7 +20,7 @@ import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,PromotionTypeSoapService {
+public class PromotionTypeWebServiceImpl implements PromotionTypeRestService, PromotionTypeSoapService {
 
 	private static final Logger logger = Logger.getLogger(PromotionTypeWebServiceImpl.class);
 
@@ -89,7 +89,7 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 			validationUtility.fieldLevelException();
 		}
 		//for logging purpose
-		APIErrorHandlerService.logReference(policyCode);	
+		APIErrorHandlerService.logReference(policyCode);
 
 		StepPolicyHeader response = new StepPolicyHeader();
 
@@ -121,7 +121,7 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 			validationUtility.fieldLevelException();
 		}
 		//for logging purpose
-		APIErrorHandlerService.logReference(finType);	
+		APIErrorHandlerService.logReference(finType);
 
 		FinanceTypeResponse response = new FinanceTypeResponse();
 
@@ -149,10 +149,12 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
+
 	@Autowired
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
 	}
+
 	@Autowired
 	public void setPromotionService(PromotionService promotionService) {
 		this.promotionService = promotionService;

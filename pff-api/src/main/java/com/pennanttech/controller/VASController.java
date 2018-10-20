@@ -35,8 +35,8 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class VASController {
 	private static final Logger logger = Logger.getLogger(VASController.class);
-	private VASRecordingService		vASRecordingService;
-	private VASConfigurationService	vASConfigurationService;
+	private VASRecordingService vASRecordingService;
+	private VASConfigurationService vASConfigurationService;
 
 	/**
 	 * Method for used to add create new VAS based on VAS configuration in PLF system.
@@ -59,18 +59,18 @@ public class VASController {
 			vasRecording.setLastMntBy(userDetails.getUserId());
 			vasRecording.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			vasRecording.setVersion(1);
-			VASConfiguration vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(vasRecording
-					.getProductCode());
+			VASConfiguration vasConfiguration = vASConfigurationService
+					.getApprovedVASConfigurationByCode(vasRecording.getProductCode());
 			vasRecording.setVasConfiguration(vasConfiguration);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPaidAmt(vasRecording.getFee().subtract(vasRecording.getWaivedAmt()));
-			if(vasRecording.getDocuments() != null){
-			for (DocumentDetails detail : vasRecording.getDocuments()) {
-				detail.setRecordType(PennantConstants.RCD_ADD);
-				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				detail.setDocModule(VASConsatnts.MODULE_NAME);
-				detail.setNewRecord(true);
-			}
+			if (vasRecording.getDocuments() != null) {
+				for (DocumentDetails detail : vasRecording.getDocuments()) {
+					detail.setRecordType(PennantConstants.RCD_ADD);
+					detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					detail.setDocModule(VASConsatnts.MODULE_NAME);
+					detail.setNewRecord(true);
+				}
 			}
 			// process Extended field details
 			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
@@ -94,7 +94,7 @@ public class VASController {
 					}
 
 				}
-				if(extendedFields.size()<=0){
+				if (extendedFields.size() <= 0) {
 					Map<String, Object> mapValues = new HashMap<String, Object>();
 					exdFieldRender.setMapValues(mapValues);
 				}
@@ -123,8 +123,8 @@ public class VASController {
 			response = new VASRecording();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 				response.setVasReference(vasRecording.getVasReference());
@@ -148,6 +148,7 @@ public class VASController {
 		return response;
 
 	}
+
 	/**
 	 * Method for used to cancel the VAS in PLF system.
 	 * 
@@ -156,7 +157,7 @@ public class VASController {
 	 */
 	public WSReturnStatus cancelVAS(VASRecording vasDetails) {
 		logger.debug("Entering");
-		
+
 		WSReturnStatus response = new WSReturnStatus();
 		try {
 			//set the default values for mandate 
@@ -181,8 +182,7 @@ public class VASController {
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 
@@ -200,6 +200,7 @@ public class VASController {
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * Fetch the Record VASRecording details by key field
 	 * 
@@ -232,6 +233,7 @@ public class VASController {
 		logger.debug("Leaving");
 		return vASRecordingDetail;
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -241,8 +243,8 @@ public class VASController {
 	 */
 	private AuditHeader getAuditHeader(VASRecording aVASRecording, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVASRecording.getBefImage(), aVASRecording);
-		return new AuditHeader(String.valueOf(aVASRecording.getId()), String.valueOf(aVASRecording.getId()), null,
-				null, auditDetail, aVASRecording.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aVASRecording.getId()), String.valueOf(aVASRecording.getId()), null, null,
+				auditDetail, aVASRecording.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public void setvASRecordingService(VASRecordingService vASRecordingService) {
@@ -252,6 +254,5 @@ public class VASController {
 	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
 		this.vASConfigurationService = vASConfigurationService;
 	}
-	
 
 }

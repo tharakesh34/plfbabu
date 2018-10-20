@@ -130,7 +130,7 @@
 				<element name="max">5</element>
 			</constraint>
 		</field>
-	<field name="remarks">
+		<field name="remarks">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>remarks should have maximum 1000 characters</message>
 				<groups>
@@ -139,7 +139,7 @@
 				</groups>
 				<element name="max">1000</element>
 			</constraint>
-		
+
 		</field>
 		<field name="collateralThirdPartyList">
 			<valid />

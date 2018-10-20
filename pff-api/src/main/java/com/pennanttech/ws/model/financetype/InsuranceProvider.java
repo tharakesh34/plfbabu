@@ -14,14 +14,13 @@ public class InsuranceProvider implements Serializable {
 	private static final long serialVersionUID = -2552074747844730033L;
 
 	public InsuranceProvider() {
-		
+
 	}
-	
+
 	private String providerCode;
 	private String providerDesc;
 	private BigDecimal providerRate = BigDecimal.ZERO;
 
-	
 	public String getProviderCode() {
 		return providerCode;
 	}

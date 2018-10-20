@@ -41,7 +41,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 		if (message.containsKey(LoggingMessage.ID_KEY)) {
 			return;
 		}
-		
+
 		// Set unique messageId
 		String messageId = (String) message.getExchange().get(LoggingMessage.ID_KEY);
 		if (messageId == null) {
@@ -65,12 +65,12 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 		if (httpMethod != null) {
 			buffer.getHttpMethod().append(httpMethod + ", ");
 		}
-		
+
 		String ct = (String) message.get(Message.CONTENT_TYPE);
 		if (ct != null) {
 			buffer.getContentType().append(ct + ", ");
 		}
-		
+
 		Object headers = message.get(Message.PROTOCOL_HEADERS);
 		if (headers != null) {
 			buffer.getHeader().append(headers + ", ");
@@ -126,7 +126,8 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 	private String getServiceName(String endPoint, String method) {
 		String serviceName = "";
 		String[] values = endPoint.split("/");
-		if (StringUtils.equalsIgnoreCase(method, HttpMethod.DELETE) || StringUtils.equalsIgnoreCase(method, HttpMethod.GET)) {
+		if (StringUtils.equalsIgnoreCase(method, HttpMethod.DELETE)
+				|| StringUtils.equalsIgnoreCase(method, HttpMethod.GET)) {
 			if (values.length >= 2) {
 				serviceName = values[values.length - 2];
 			}

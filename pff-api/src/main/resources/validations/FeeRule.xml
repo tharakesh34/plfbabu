@@ -4,13 +4,12 @@
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
 					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
-<!-- FeeRule validations -->
-<bean class="com.pennant.backend.model.rulefactory.FeeRule"
-		ignore-annotations="false">
+
+	<!-- FeeRule validations -->
+	<bean class="com.pennant.backend.model.rulefactory.FeeRule" ignore-annotations="false">
 		<field name="feeCode">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-			 	<message>feeCode is Mandatory</message>
+				<message>feeCode is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -109,7 +108,7 @@
 				<element name="max">10</element>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-			 	<message>feeMethod is Mandatory</message>
+				<message>feeMethod is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -118,6 +117,6 @@
 				</groups>
 			</constraint>
 		</field>
-		
-	</bean> 
-	</constraint-mappings>
+
+	</bean>
+</constraint-mappings>

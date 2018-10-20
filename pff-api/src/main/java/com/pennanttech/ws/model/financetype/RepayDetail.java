@@ -22,89 +22,89 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RepayDetail implements Serializable {
 
-	private static final long	serialVersionUID	= -9071743448729728471L;
+	private static final long serialVersionUID = -9071743448729728471L;
 
 	public RepayDetail() {
 
 	}
 
-	private String		finRateType;
+	private String finRateType;
 
 	@XmlElement(name = "finRateTypeDesc")
-	private String		lovDescFinRateTypeName;
+	private String lovDescFinRateTypeName;
 
 	@XmlElement(name = "finPftRate")
-	private BigDecimal	finIntRate		= BigDecimal.ZERO;
-	private String		finBaseRate;
+	private BigDecimal finIntRate = BigDecimal.ZERO;
+	private String finBaseRate;
 
 	@XmlElement(name = "rpyBaseRateCodeDesc")
-	private String		lovDescFinBaseRateName;
-	private String		finSplRate;
+	private String lovDescFinBaseRateName;
+	private String finSplRate;
 
 	@XmlElement(name = "rpySpecialRateCodeDesc")
-	private String		lovDescFinSplRateName;
-	private BigDecimal	finMargin		= BigDecimal.ZERO;
-	private String		rpyAdvBaseRate;
-	private String		rpyAdvBaseRateDesc;
-	private BigDecimal	rpyAdvMargin	= BigDecimal.ZERO;
-	private BigDecimal	rpyAdvPftRate	= BigDecimal.ZERO;
+	private String lovDescFinSplRateName;
+	private BigDecimal finMargin = BigDecimal.ZERO;
+	private String rpyAdvBaseRate;
+	private String rpyAdvBaseRateDesc;
+	private BigDecimal rpyAdvMargin = BigDecimal.ZERO;
+	private BigDecimal rpyAdvPftRate = BigDecimal.ZERO;
 
 	@XmlElement(name = "finMinRate")
-	private BigDecimal	fInMinRate		= BigDecimal.ZERO;
-	private BigDecimal	finMaxRate		= BigDecimal.ZERO;
+	private BigDecimal fInMinRate = BigDecimal.ZERO;
+	private BigDecimal finMaxRate = BigDecimal.ZERO;
 
 	@XmlElement(name = "finDftPftFrq")
-	private String		finDftIntFrq;
-	private boolean		finRepayPftOnFrq;
-	private String		finRpyFrq;
-	private String		finSchdMthd;
+	private String finDftIntFrq;
+	private boolean finRepayPftOnFrq;
+	private String finRpyFrq;
+	private String finSchdMthd;
 
 	@XmlElement(name = "schdMethodDesc")
-	private String		lovDescFinSchdMthdName;
+	private String lovDescFinSchdMthdName;
 
 	@XmlElement(name = "finIsPftCpz")
-	private boolean		finIsIntCpz;
-	private String		finCpzFrq;
-	private boolean		finIsRvwAlw;
-	private String		finRvwFrq;
-	private String		finRvwRateApplFor;
-	private String		finSchCalCodeOnRvw;
-	private int			finMinTerm;
-	private int			finMaxTerm;
-	private int			finDftTerms;
-	private String		fInRepayMethod;
+	private boolean finIsIntCpz;
+	private String finCpzFrq;
+	private boolean finIsRvwAlw;
+	private String finRvwFrq;
+	private String finRvwRateApplFor;
+	private String finSchCalCodeOnRvw;
+	private int finMinTerm;
+	private int finMaxTerm;
+	private int finDftTerms;
+	private String fInRepayMethod;
 
 	@XmlElement(name = "finRepayMethodDesc")
-	private String		lovDescFInRepayMethodName;
-	private boolean		finIsAlwPartialRpy;
-	private boolean		finIsAlwDifferment;
-	private int			finMaxDifferment;
-	private boolean		alwPlanDeferment;
-	private int			planDeferCount;
-	private String		finScheduleOn;
-	private String		alwEarlyPayMethods;
-	private String		finDepreciationFrq;
-	private boolean		finPftUnChanged;
-	private boolean		equalRepayment;
-	private int			finHistRetension;
-	private int			finODRpyTries;
-	private boolean		finAlwRateChangeAnyDate;
-	private boolean		finIsAlwEarlyRpy;
-	private boolean		finIsAlwEarlySettle;
-	
-	private boolean		planEMIHAlw;
-	private String 		planEMIHMethod;
-	private int			planEMIHMaxPerYear;
-	private int			planEMIHMax;
-	private int			planEMIHLockPeriod;
-	private boolean 	planEMICpz;
-	private int			unPlanEMIHLockPeriod;
-	private boolean		unPlanEMICpz;
-	private boolean		reAgeCpz;
-	private int			fddLockPeriod;
-	private int			maxUnplannedEmi;
-	private int			maxReAgeHolidays;
-	private String 		frequencyDays;
+	private String lovDescFInRepayMethodName;
+	private boolean finIsAlwPartialRpy;
+	private boolean finIsAlwDifferment;
+	private int finMaxDifferment;
+	private boolean alwPlanDeferment;
+	private int planDeferCount;
+	private String finScheduleOn;
+	private String alwEarlyPayMethods;
+	private String finDepreciationFrq;
+	private boolean finPftUnChanged;
+	private boolean equalRepayment;
+	private int finHistRetension;
+	private int finODRpyTries;
+	private boolean finAlwRateChangeAnyDate;
+	private boolean finIsAlwEarlyRpy;
+	private boolean finIsAlwEarlySettle;
+
+	private boolean planEMIHAlw;
+	private String planEMIHMethod;
+	private int planEMIHMaxPerYear;
+	private int planEMIHMax;
+	private int planEMIHLockPeriod;
+	private boolean planEMICpz;
+	private int unPlanEMIHLockPeriod;
+	private boolean unPlanEMICpz;
+	private boolean reAgeCpz;
+	private int fddLockPeriod;
+	private int maxUnplannedEmi;
+	private int maxReAgeHolidays;
+	private String frequencyDays;
 
 	public String getFinRateType() {
 		return finRateType;

@@ -9,6 +9,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.vas.VASRecordingDetail;
+
 @WebService
 public interface VASSoapService {
 	@WebResult(name = "vasConfiguration")
@@ -22,7 +23,7 @@ public interface VASSoapService {
 
 	@WebResult(name = "vasRecording")
 	public VASRecording getRecordVAS(VASRecording vasRecording) throws ServiceException;
-	
+
 	@WebResult(name = "vasRecording")
 	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) throws ServiceException;
 }

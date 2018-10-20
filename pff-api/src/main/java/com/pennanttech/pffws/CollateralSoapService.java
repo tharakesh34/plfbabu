@@ -24,7 +24,6 @@ public interface CollateralSoapService {
 	public WSReturnStatus deleteCollateral(@WebParam(name = "collateral") CollateralSetup collateralSetup)
 			throws ServiceException;
 
-	public CollateralDetail getCollaterals(@WebParam(name = "cif") String cif)
-			throws ServiceException;
+	public CollateralDetail getCollaterals(@WebParam(name = "cif") String cif) throws ServiceException;
 
 }

@@ -4,13 +4,12 @@
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
 					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
-<!-- Insurance validations -->
-	<bean class="com.pennant.backend.model.finance.Insurance"
-		ignore-annotations="false">
+
+	<!-- Insurance validations -->
+	<bean class="com.pennant.backend.model.finance.Insurance" ignore-annotations="false">
 		<field name="insType">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-			<message>type is is Mandatory</message>
+				<message>type is is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -19,4 +18,4 @@
 			</constraint>
 		</field>
 	</bean>
-	</constraint-mappings>
+</constraint-mappings>

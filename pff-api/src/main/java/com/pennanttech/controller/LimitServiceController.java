@@ -126,15 +126,16 @@ public class LimitServiceController {
 					detail.setActualLimit(PennantApplicationUtil.formateAmount(
 							detail.getLimitSanctioned().subtract(detail.getUtilisedLimit()),
 							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
-					LimitStructureDetail limitStrucDetail = limitStructureDetailDAO.getLimitStructureDetail(
-							limitStructureId, "_AView");
+					LimitStructureDetail limitStrucDetail = limitStructureDetailDAO
+							.getLimitStructureDetail(limitStructureId, "_AView");
 					detail.setLimitStructureDetails(limitStrucDetail);
-					detail.setLimitSanctioned(PennantApplicationUtil.formateAmount(detail.getLimitSanctioned(), CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+					detail.setLimitSanctioned(PennantApplicationUtil.formateAmount(detail.getLimitSanctioned(),
+							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
 				}
 			}
 
 			if (headerDetail != null) {
-				headerDetail.setCustFullName(PennantApplicationUtil.getFullName(headerDetail.getCustFName(), 
+				headerDetail.setCustFullName(PennantApplicationUtil.getFullName(headerDetail.getCustFName(),
 						headerDetail.getCustMName(), headerDetail.getCustFullName()));
 				if (isCustCIF) {
 					headerDetail.setCustomerName(headerDetail.getCustFullName());
@@ -143,9 +144,9 @@ public class LimitServiceController {
 				}
 				headerDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
-				String [] valueParam = new String[1];
+				String[] valueParam = new String[1];
 				valueParam[0] = limitHeader.getCustGrpCode();
-				if(isCustCIF) {
+				if (isCustCIF) {
 					valueParam[0] = limitHeader.getCustCIF();
 				}
 				headerDetail = new LimitHeader();
@@ -179,10 +180,10 @@ public class LimitServiceController {
 			//get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			
+
 			//set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
-			
+
 			// call create limit setup method
 			AuditHeader header = limitDetailService.doApprove(auditHeader, false);
 
@@ -252,7 +253,7 @@ public class LimitServiceController {
 		logger.debug("Leaving");
 		return returnStatus;
 	}
-	
+
 	/**
 	 * Method for reserve a limit for finance or commitment
 	 * 
@@ -273,7 +274,7 @@ public class LimitServiceController {
 	}
 
 	/**
-	 * Process cancel reserve limit request 
+	 * Process cancel reserve limit request
 	 * 
 	 * @param limitTransDetail
 	 * @return
@@ -299,7 +300,7 @@ public class LimitServiceController {
 		List<ErrorDetail> errorDetails = null;
 		try {
 			// process limits
-			errorDetails = limitManagement.processLoanLimitOrgination(financeDetail, false, lmtTransType,false);
+			errorDetails = limitManagement.processLoanLimitOrgination(financeDetail, false, lmtTransType, false);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -376,7 +377,7 @@ public class LimitServiceController {
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setLastMntOn(new Timestamp(new Date().getTime()));
 				detail.setUserDetails(userDetails);
-				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(), 
+				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(),
 						CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
 			}
 		}
@@ -386,7 +387,7 @@ public class LimitServiceController {
 		if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {
 			prvLimitHeader = limitDetailService.getLimitHeaderById(limitHeader.getHeaderId());
 			if (prvLimitHeader != null) {
-				prvLimitHeader.setCustFullName(PennantApplicationUtil.getFullName(prvLimitHeader.getCustFName(), 
+				prvLimitHeader.setCustFullName(PennantApplicationUtil.getFullName(prvLimitHeader.getCustFName(),
 						prvLimitHeader.getCustMName(), prvLimitHeader.getCustFullName()));
 				prvLimitHeader.setVersion(prvLimitHeader.getVersion() + 1);
 				prvLimitHeader.setCustCIF(limitHeader.getCustCIF());
@@ -417,21 +418,16 @@ public class LimitServiceController {
 					for (LimitDetails curDetail : currentLimitDetails) {
 						if (prvDetail.getLimitStructureDetailsID() == curDetail.getLimitStructureDetailsID()) {
 
-							/*							// expiry date
-							if (curDetail.getExpiryDate() != null) {
-								prvDetail.setExpiryDate(curDetail.getExpiryDate());
-							}
-							// limit check
-							prvDetail.setLimitCheck(curDetail.isLimitCheck());
-
-							// limit check method
-							if (StringUtils.isNotBlank(curDetail.getLimitChkMethod())) {
-								prvDetail.setLimitChkMethod(curDetail.getLimitChkMethod());
-							}
-
-							if (!curDetail.getLimitSanctioned().equals(BigDecimal.ZERO)) {
-								prvDetail.setLimitSanctioned(curDetail.getLimitSanctioned());
-							}
+							/*
+							 * // expiry date if (curDetail.getExpiryDate() != null) {
+							 * prvDetail.setExpiryDate(curDetail.getExpiryDate()); } // limit check
+							 * prvDetail.setLimitCheck(curDetail.isLimitCheck());
+							 * 
+							 * // limit check method if (StringUtils.isNotBlank(curDetail.getLimitChkMethod())) {
+							 * prvDetail.setLimitChkMethod(curDetail.getLimitChkMethod()); }
+							 * 
+							 * if (!curDetail.getLimitSanctioned().equals(BigDecimal.ZERO)) {
+							 * prvDetail.setLimitSanctioned(curDetail.getLimitSanctioned()); }
 							 */
 							curDetail.setDetailId(prvDetail.getDetailId());
 							curDetail.setNewRecord(false);
@@ -441,8 +437,8 @@ public class LimitServiceController {
 					}
 				}
 				for (LimitDetails detail : limitHeader.getCustomerLimitDetailsList()) {
-					for(LimitDetails prvDetail : prvLimitHeader.getCustomerLimitDetailsList()) {
-						if(detail.getLimitStructureDetailsID() == prvDetail.getLimitStructureDetailsID()) {
+					for (LimitDetails prvDetail : prvLimitHeader.getCustomerLimitDetailsList()) {
+						if (detail.getLimitStructureDetailsID() == prvDetail.getLimitStructureDetailsID()) {
 							prvDetail.setLastMntBy(userDetails.getUserId());
 							prvDetail.setNewRecord(false);
 							prvDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -450,8 +446,8 @@ public class LimitServiceController {
 							prvDetail.setUserDetails(userDetails);
 							prvDetail.setLimitCheck(detail.isLimitCheck());
 							prvDetail.setVersion(prvDetail.getVersion() + 1);
-							prvDetail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(), 
-									CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
+							prvDetail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(
+									detail.getLimitSanctioned(), CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
 						}
 					}
 				}
@@ -465,8 +461,8 @@ public class LimitServiceController {
 
 	/**
 	 * Method for process limit transaction details and prepare data for below oprerations.<br>
-	 * 	- Reserve Limit<br>
-	 * 	- Cancel Reserve Limit.
+	 * - Reserve Limit<br>
+	 * - Cancel Reserve Limit.
 	 * 
 	 * @param limitTransDetail
 	 * @return
@@ -516,7 +512,7 @@ public class LimitServiceController {
 
 		return financeDetail;
 	}
-	
+
 	public void setLimitStructureService(LimitStructureService limitStructureService) {
 		this.limitStructureService = limitStructureService;
 	}

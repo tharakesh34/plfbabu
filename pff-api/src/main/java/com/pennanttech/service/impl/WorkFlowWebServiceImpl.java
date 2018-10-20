@@ -32,13 +32,13 @@ import com.pennanttech.pffws.WorkFlowSOAPService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPService {
+public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAPService {
 	private static final Logger logger = Logger.getLogger(WorkFlowWebServiceImpl.class);
 	@Autowired
 	WorkFlowDetailsService workFlowDetailsService;
-	private  final String Create = "create";
-	private  final String Update = "update";
-	private  final String Get = "get";
+	private final String Create = "create";
+	private final String Update = "update";
+	private final String Get = "get";
 
 	private ActivityLogService activityLogService;
 
@@ -54,31 +54,31 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 		workFlowDetails.setLastMntBy(userDetails.getUserId());
 		workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create, true); // validating object
-			for(ErrorDetail errDetail : errorDetails) {// returning in case of exception
-				WSReturnStatus status = new WSReturnStatus();
-				status.setReturnCode(errDetail.getCode());
-				status.setReturnText(errDetail.getError());
-				response.setReturnStatus(status);
-				return response;
-			}
-			// proceeding for insertion
-			workFlowDetails.setNewRecord(true);
-			workFlowDetails.setWorkFlowActive(true); 
-			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting FirstTaskOwners and Actors.
-			workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
-			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
-			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
-			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
-					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		for (ErrorDetail errDetail : errorDetails) {// returning in case of exception
+			WSReturnStatus status = new WSReturnStatus();
+			status.setReturnCode(errDetail.getCode());
+			status.setReturnText(errDetail.getError());
+			response.setReturnStatus(status);
+			return response;
+		}
+		// proceeding for insertion
+		workFlowDetails.setNewRecord(true);
+		workFlowDetails.setWorkFlowActive(true);
+		List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting FirstTaskOwners and Actors.
+		workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
+		workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
+		AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
+		AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
+				auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
-			auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
-			workFlowDetails = (WorkFlowDetails) auditHeader.getAuditDetail().getModelData();
+		auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
+		workFlowDetails = (WorkFlowDetails) auditHeader.getAuditDetail().getModelData();
 
-			doEmptyResponseObject(workFlowDetails);
+		doEmptyResponseObject(workFlowDetails);
 
-			response.setWorkFlowActive(true);
-			response.setWorkFlowDesignId(workFlowDetails.getId());
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		response.setWorkFlowActive(true);
+		response.setWorkFlowDesignId(workFlowDetails.getId());
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		logger.debug("Leaving");
 		return response;
 	}
@@ -96,7 +96,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			workFlowDetails.setWorkFlowId(workFlowDetails.getWorkFlowDesignId());
 			List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Update, true);
 
-			for(ErrorDetail errDetail : errorDetails) {
+			for (ErrorDetail errDetail : errorDetails) {
 				WSReturnStatus status = new WSReturnStatus();
 				status.setReturnCode(errDetail.getCode());
 				status.setReturnText(errDetail.getError());
@@ -109,7 +109,8 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting FirstTaskOwners and Actors.
 			workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
 			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
-			workFlowDetails.setVersion(workFlowDetailsService.getWorkFlowDetailsVersionByID(workFlowDetails.getWorkflowId()));
+			workFlowDetails
+					.setVersion(workFlowDetailsService.getWorkFlowDetailsVersionByID(workFlowDetails.getWorkflowId()));
 			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
 			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
 					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
@@ -129,21 +130,21 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 	public WorkFlowDetails getWorkFlowDetails(String workFlowId) throws ServiceException {
 		logger.debug("Entering");
 		// for logging purpose
-		APIErrorHandlerService.logReference(workFlowId);				
+		APIErrorHandlerService.logReference(workFlowId);
 		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
-			if(StringUtils.isNotBlank(workFlowId))
+		if (StringUtils.isNotBlank(workFlowId))
 			workFlowDetails.setWorkflowId(Long.valueOf(workFlowId));
 		List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Get, false);
-			for(ErrorDetail errDetail : errorDetails) {
-				WSReturnStatus status = new WSReturnStatus();
-				status.setReturnCode(errDetail.getCode());
-				status.setReturnText(errDetail.getError());
-				workFlowDetails.setReturnStatus(status);
-				return workFlowDetails;
-			}
-			workFlowDetails = workFlowDetailsService.getWorkFlowDetailsByID(Long.valueOf(workFlowId)); // getting result
-			workFlowDetails.setWorkFlowDesignId(workFlowDetails.getWorkFlowId());
-			workFlowDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		for (ErrorDetail errDetail : errorDetails) {
+			WSReturnStatus status = new WSReturnStatus();
+			status.setReturnCode(errDetail.getCode());
+			status.setReturnText(errDetail.getError());
+			workFlowDetails.setReturnStatus(status);
+			return workFlowDetails;
+		}
+		workFlowDetails = workFlowDetailsService.getWorkFlowDetailsByID(Long.valueOf(workFlowId)); // getting result
+		workFlowDetails.setWorkFlowDesignId(workFlowDetails.getWorkFlowId());
+		workFlowDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		return workFlowDetails;
 	}
 
@@ -162,18 +163,18 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 		response.setFirstTaskOwner(null);
 		response.setJsonDesign(null);
 	}
-	
-	private List<String> getFirstTaskOwnersNActors(String xml){
+
+	private List<String> getFirstTaskOwnersNActors(String xml) {
 		String actrors = "";
-		List<String> firstTaskOwnersAndActors =  new ArrayList<String>();
-		try{
-		WorkflowEngine workflowEngine = new WorkflowEngine(xml);
-		firstTaskOwnersAndActors.add(workflowEngine.firstTaskOwner());
-		for (String actor : workflowEngine.getActors(false)) {
-			actrors += actor+";";
-		}
-		firstTaskOwnersAndActors.add(actrors.substring(0, actrors.length() - 1));
-		}catch(Exception e){
+		List<String> firstTaskOwnersAndActors = new ArrayList<String>();
+		try {
+			WorkflowEngine workflowEngine = new WorkflowEngine(xml);
+			firstTaskOwnersAndActors.add(workflowEngine.firstTaskOwner());
+			for (String actor : workflowEngine.getActors(false)) {
+				actrors += actor + ";";
+			}
+			firstTaskOwnersAndActors.add(actrors.substring(0, actrors.length() - 1));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return firstTaskOwnersAndActors;
@@ -307,7 +308,6 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			// Add the next role code.
 			roles.add(nextRoleCode.replace(',', ';'));
 		}
-
 
 		logger.debug(Literal.LEAVING);
 		return roles;

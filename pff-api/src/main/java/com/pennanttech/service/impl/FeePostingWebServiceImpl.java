@@ -25,10 +25,10 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class FeePostingWebServiceImpl implements FeePostingRestService, FeePostingSoapService {
-	private final Logger			logger	= Logger.getLogger(getClass());
-	private FeePostingController	feePostingController;
-	private ValidationUtility		validationUtility;
-	private FeePostingService		feePostingService;
+	private final Logger logger = Logger.getLogger(getClass());
+	private FeePostingController feePostingController;
+	private ValidationUtility validationUtility;
+	private FeePostingService feePostingService;
 
 	/**
 	 * Method for create FeePostings in PLF system.

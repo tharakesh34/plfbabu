@@ -47,6 +47,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 	private static final Logger LOG = Logger.getLogger(LogResponseInterceptor.class);
 	private APILogDetailDAO apiLogDetailDAO;
 	private String returnCode;
+
 	public LogResponseInterceptor() {
 		super(Phase.PRE_STREAM);
 	}
@@ -68,10 +69,10 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 		newOut.registerCallback(new LoggingCallback(message, os));
 
 	}
-	
+
 	/**
-	 * Method to prepare the PROTOCOL HEADERS based on the given response return code.
-	 * if return code is 0000 then return description  is success else Failure.
+	 * Method to prepare the PROTOCOL HEADERS based on the given response return code. if return code is 0000 then
+	 * return description is success else Failure.
 	 * 
 	 * @param message
 	 */
@@ -108,6 +109,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 	protected java.util.logging.Logger getLogger() {
 		return LogUtils.getLogger(LogResponseInterceptor.class);
 	}
+
 	@Autowired
 	public void setaPILogDetailDAO(APILogDetailDAO apiLogDetailDAO) {
 		this.apiLogDetailDAO = apiLogDetailDAO;
@@ -173,12 +175,13 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				// ignore
 			}
 			message.setContent(OutputStream.class, origStream);
-			APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+			APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_LOG_KEY);
 			if (apiLogDetail != null) {
 				apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
 				apiLogDetail.setResponse(String.valueOf(buffer.getPayload()));
-				if(StringUtils.isBlank(apiLogDetail.getStatusCode())){
-					apiLogDetail.setStatusCode(returnCode);					
+				if (StringUtils.isBlank(apiLogDetail.getStatusCode())) {
+					apiLogDetail.setStatusCode(returnCode);
 				}
 				// save API logging details
 				apiLogDetailDAO.saveLogDetails(apiLogDetail);
@@ -191,7 +194,8 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				messageId = LoggingMessage.nextId();
 				message.getExchange().put(LoggingMessage.ID_KEY, messageId);
 			}
-			final LoggingMessage buffer = new LoggingMessage("============= OUT Message =============\n", messageId + ", ");
+			final LoggingMessage buffer = new LoggingMessage("============= OUT Message =============\n",
+					messageId + ", ");
 
 			Integer responseCode = (Integer) message.get(Message.RESPONSE_CODE);
 			if (responseCode != null) {
@@ -227,15 +231,14 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			}
 			return buffer;
 		}
-		
 
 	}
 
 	public static class LogUtility {
-		static Configuration	conf		= Configuration.defaultConfiguration();
-		static Configuration	conf2		= conf.addOptions(Option.SUPPRESS_EXCEPTIONS);
-		static ObjectMapper		mapper		= new ObjectMapper();
-		static DateFormat		dateFormat	= new SimpleDateFormat("yyyy-MM-dd");
+		static Configuration conf = Configuration.defaultConfiguration();
+		static Configuration conf2 = conf.addOptions(Option.SUPPRESS_EXCEPTIONS);
+		static ObjectMapper mapper = new ObjectMapper();
+		static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		public static String getValueFromResponse(String key, String jsonResponse) {
 			Object value = null;

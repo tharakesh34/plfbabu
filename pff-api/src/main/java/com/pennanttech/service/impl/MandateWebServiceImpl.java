@@ -44,18 +44,17 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class MandateWebServiceImpl implements MandateRestService, MandateSoapService {
-	private static final Logger			logger	= Logger.getLogger(MandateWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MandateWebServiceImpl.class);
 
-	private ValidationUtility			validationUtility;
-	private MandateController			mandateController;
-	private CustomerDetailsService		customerDetailsService;
-	private BankBranchService			bankBranchService;
-	private MandateService				mandateService;;
-	private BankDetailService			bankDetailService;
-	private FinanceMainService			financeMainService;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private EntityService 				entityService;
-	
+	private ValidationUtility validationUtility;
+	private MandateController mandateController;
+	private CustomerDetailsService customerDetailsService;
+	private BankBranchService bankBranchService;
+	private MandateService mandateService;;
+	private BankDetailService bankDetailService;
+	private FinanceMainService financeMainService;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private EntityService entityService;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -374,7 +373,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		String custCIF = mandate.getCustCIF();
 		Customer customer = null;
 		if (StringUtils.isNotBlank(custCIF)) {
-			 customer = customerDetailsService.getCustomerByCIF(custCIF);
+			customer = customerDetailsService.getCustomerByCIF(custCIF);
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
@@ -396,13 +395,12 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			return getErrorDetails("90701", valueParm);
 
 		}
-		
+
 		//validate finance reference
-		/*if(StringUtils.isBlank(mandate.getOrgReference())){
-			String[] valueParm = new String[1];
-			valueParm[0] = "finReference";
-			return getErrorDetails("90502", valueParm);
-		}*/
+		/*
+		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
+		 * "finReference"; return getErrorDetails("90502", valueParm); }
+		 */
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
 			int count = financeMainService.getFinanceCountById(mandate.getOrgReference(), false);
 			if (count <= 0) {
@@ -425,7 +423,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return APIErrorHandlerService.getFailedStatus("90406", valueParm);
 			}
 		}
-			
+
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
 			List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
@@ -468,7 +466,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		}
 		// validate status
 		if (StringUtils.isNotBlank(mandate.getStatus())) {
-			List<ValueLabel> status = PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+			List<ValueLabel> status = PennantStaticListUtil
+					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 			boolean sts = false;
 			for (ValueLabel value : status) {
 				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
@@ -559,7 +558,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 					valueParm[1] = String.valueOf(accNoLength) + " characters";
 					return getErrorDetails("30570", valueParm);
 				}
-			}else if (length > LengthConstants.LEN_ACCOUNT) {
+			} else if (length > LengthConstants.LEN_ACCOUNT) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "AccountNumber";
 				valueParm[1] = String.valueOf(accNoLength) + " characters";
@@ -607,7 +606,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (errors != null && !errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
 				if (StringUtils.isNotBlank(errorDetails.getCode())) {
-					returnStatus = (APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),errorDetails.getError()));
+					returnStatus = (APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
+							errorDetails.getError()));
 					return returnStatus;
 				}
 			}
@@ -696,6 +696,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
 	@Autowired
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;

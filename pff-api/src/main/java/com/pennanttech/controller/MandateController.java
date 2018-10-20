@@ -44,7 +44,7 @@ public class MandateController {
 	private MandateService mandateService;
 	private BankBranchService bankBranchService;
 	private CustomerDetailsService customerDetailsService;
-	private FinanceMainService  financeMainService;
+	private FinanceMainService financeMainService;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -55,36 +55,37 @@ public class MandateController {
 	public Mandate createMandate(Mandate mandate) {
 		logger.debug("Entering");
 		Mandate response = null;
-		try{
-		// setting required values which are not received from API
-		prepareRequiredData(mandate);
-		Customer customer = customerDetailsService.getCustomerByCIF(mandate.getCustCIF());
-		mandate.setCustID(customer.getCustID());
-		mandate.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		mandate.setNewRecord(true);
-		mandate.setActive(true);
-		mandate.setVersion(1);
-		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);
-		
-		auditHeader = mandateService.doApprove(auditHeader);
-		
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = new Mandate();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getError()));
+		try {
+			// setting required values which are not received from API
+			prepareRequiredData(mandate);
+			Customer customer = customerDetailsService.getCustomerByCIF(mandate.getCustCIF());
+			mandate.setCustID(customer.getCustID());
+			mandate.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			mandate.setNewRecord(true);
+			mandate.setActive(true);
+			mandate.setVersion(1);
+			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
+			//set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			auditHeader = mandateService.doApprove(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new Mandate();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				response = (Mandate) auditHeader.getAuditDetail().getModelData();
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				doEmptyResponseObject(response);
 			}
-		} else {
-			response = (Mandate) auditHeader.getAuditDetail().getModelData();
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			doEmptyResponseObject(response);
-		}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new Mandate();
@@ -107,7 +108,7 @@ public class MandateController {
 		try {
 			response = mandateService.getApprovedMandateById(mandateId);
 			if (response != null) {
-				
+
 				BigDecimal maxlimt = PennantApplicationUtil.formateAmount(response.getMaxLimit(),
 						CurrencyUtil.getFormat(response.getMandateCcy()));
 				response.setAmountInWords(NumberToEnglishWords.getNumberToWords(maxlimt.toBigInteger()));
@@ -138,43 +139,44 @@ public class MandateController {
 		logger.debug("Entering");
 
 		WSReturnStatus response = new WSReturnStatus();
-		try{
-		//set the default values for mandate 
-		prepareRequiredData(mandate);
-		
-		Mandate prvMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
-		mandate.setCustID(prvMandate.getCustID());
-		mandate.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-		mandate.setNewRecord(false);
-		mandate.setVersion(prvMandate.getVersion() + 1);
-		mandate.setActive(true);
-		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
-		// copy properties
-		BeanUtils.copyProperties(mandate,prvMandate);
-		
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(prvMandate, PennantConstants.TRAN_WF);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);
-		
-		// call update service method
-		auditHeader = mandateService.doApprove(auditHeader);
-		
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-			}
-		} else {
+		try {
+			//set the default values for mandate 
+			prepareRequiredData(mandate);
 
-			response = APIErrorHandlerService.getSuccessStatus();
-		}
+			Mandate prvMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
+			mandate.setCustID(prvMandate.getCustID());
+			mandate.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			mandate.setNewRecord(false);
+			mandate.setVersion(prvMandate.getVersion() + 1);
+			mandate.setActive(true);
+			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
+			// copy properties
+			BeanUtils.copyProperties(mandate, prvMandate);
+
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(prvMandate, PennantConstants.TRAN_WF);
+			//set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			// call update service method
+			auditHeader = mandateService.doApprove(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
-		
+
 		logger.debug("Leaving");
 		return response;
 	}
@@ -190,31 +192,32 @@ public class MandateController {
 	public WSReturnStatus deleteMandate(long mandateID) {
 		logger.debug("Entering");
 		WSReturnStatus response = new WSReturnStatus();
-		try{
-		//get the mandate by the mandateId
-		Mandate mandate = mandateService.getApprovedMandateById(mandateID);
-		
-		prepareRequiredData(mandate);
-		mandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-		mandate.setNewRecord(false);
-		mandate.setVersion(mandate.getVersion() + 1);
-		
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);
-		
-		auditHeader = mandateService.doApprove(auditHeader);
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-			}
-		} else {
+		try {
+			//get the mandate by the mandateId
+			Mandate mandate = mandateService.getApprovedMandateById(mandateID);
 
-			response = APIErrorHandlerService.getSuccessStatus();
-		}
-		}catch (Exception e) {
+			prepareRequiredData(mandate);
+			mandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			mandate.setNewRecord(false);
+			mandate.setVersion(mandate.getVersion() + 1);
+
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
+			//set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			auditHeader = mandateService.doApprove(auditHeader);
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
@@ -266,22 +269,22 @@ public class MandateController {
 	}
 
 	/**
-	 * loanMandateSwapping to oldmandateId to newMandateId With repect to  FinanceReference.
+	 * loanMandateSwapping to oldmandateId to newMandateId With repect to FinanceReference.
 	 * 
 	 * @param mandateID
 	 * @return Mandates
 	 */
 	public WSReturnStatus loanMandateSwapping(MandateDetial mandateDetail) {
 		logger.debug("Entering");
-		WSReturnStatus response=null; 
-		try{
-		int count =financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),mandateDetail.getNewMandateId());
-		if(count>0)
-		{
-			response = APIErrorHandlerService.getSuccessStatus();
-		}else{
-			response = APIErrorHandlerService.getFailedStatus();
-		}
+		WSReturnStatus response = null;
+		try {
+			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
+					mandateDetail.getNewMandateId());
+			if (count > 0) {
+				response = APIErrorHandlerService.getSuccessStatus();
+			} else {
+				response = APIErrorHandlerService.getFailedStatus();
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -292,9 +295,6 @@ public class MandateController {
 		return response;
 	}
 
-	
-	
-	
 	/**
 	 * Setting default values from Mandate object
 	 * 
@@ -388,7 +388,7 @@ public class MandateController {
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
-	
+
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;

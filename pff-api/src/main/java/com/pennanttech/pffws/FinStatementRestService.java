@@ -26,15 +26,15 @@ public interface FinStatementRestService {
 	@POST
 	@Path("/statementService/getNOC")
 	public FinStatementResponse getNOC(FinStatementRequest statementRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/statementService/getForeclosureLetter")
 	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/statementService/getStatement")
 	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/statementService/getStatementOfAcc")
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws ServiceException;

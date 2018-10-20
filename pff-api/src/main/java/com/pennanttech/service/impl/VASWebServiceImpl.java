@@ -32,12 +32,12 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class VASWebServiceImpl implements VASSoapService, VASRestService {
 
-	private static final Logger		logger	= Logger.getLogger(VASWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VASWebServiceImpl.class);
 
-	private ValidationUtility		validationUtility;
-	private VASConfigurationService	vASConfigurationService;
-	private VASRecordingService		vASRecordingService;
-	private VASController			vasController;
+	private ValidationUtility validationUtility;
+	private VASConfigurationService vASConfigurationService;
+	private VASRecordingService vASRecordingService;
+	private VASController vasController;
 
 	/**
 	 * it fetches the approved records from the VasStructure.
@@ -95,11 +95,11 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		// bean validations
 		validationUtility.validate(vasRecording, SaveValidationGroup.class);
 		// for logging purpose
-		String[] logFields=new String[4];
-		logFields[0]=vasRecording.getProductCode();
-		logFields[1]=vasRecording.getPostingAgainst();
-		logFields[2]=String.valueOf(vasRecording.getFee());
-		logFields[3]=vasRecording.getFeePaymentMode();
+		String[] logFields = new String[4];
+		logFields[0] = vasRecording.getProductCode();
+		logFields[1] = vasRecording.getPostingAgainst();
+		logFields[2] = String.valueOf(vasRecording.getFee());
+		logFields[3] = vasRecording.getFeePaymentMode();
 		APIErrorHandlerService.logKeyFields(logFields);
 		VASRecording response = null;
 		try {
@@ -108,8 +108,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			if (auditDetail.getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 					response = new VASRecording();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 					return response;
 				}
 			}
@@ -145,14 +145,14 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			}
 
 			//for logging purpose
-			String[] logFields=new String[3];
-			logFields[0]=vasRecording.getProductCode();
-			logFields[1]=vasRecording.getPostingAgainst();
-			logFields[2]=vasRecording.getVasReference();
+			String[] logFields = new String[3];
+			logFields[0] = vasRecording.getProductCode();
+			logFields[1] = vasRecording.getPostingAgainst();
+			logFields[2] = vasRecording.getVasReference();
 			APIErrorHandlerService.logKeyFields(logFields);
 
-			VASRecording vasDetails = vASRecordingService
-					.getVASRecordingByRef(vasRecording.getVasReference(), "", true);
+			VASRecording vasDetails = vASRecordingService.getVASRecordingByRef(vasRecording.getVasReference(), "",
+					true);
 			if (vasDetails != null) {
 				boolean validConfig = true;
 				if (StringUtils.isNotBlank(vasRecording.getProductCode())
@@ -214,10 +214,10 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				return response;
 			}
 			//for logging purpose
-			String[] logFields=new String[3];
-			logFields[0]=vasRecording.getProductCode();
-			logFields[1]=vasRecording.getPostingAgainst();
-			logFields[2]=vasRecording.getVasReference();
+			String[] logFields = new String[3];
+			logFields[0] = vasRecording.getProductCode();
+			logFields[1] = vasRecording.getPostingAgainst();
+			logFields[2] = vasRecording.getVasReference();
 			APIErrorHandlerService.logKeyFields(logFields);
 
 			response = vASRecordingService.getVASRecordingByRef(vasRecording.getVasReference(), "", false);
@@ -283,7 +283,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * Fetch the Record VASRecording details by key field
 	 * 
@@ -292,8 +292,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 	 */
 	@Override
 	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) throws ServiceException {
-		
-		VASRecordingDetail vASRecordingDetail= null;
+
+		VASRecordingDetail vASRecordingDetail = null;
 		try {
 			boolean isMutiValues = false;
 			if (StringUtils.isBlank(vasRecording.getCif()) && StringUtils.isBlank(vasRecording.getFinReference())
@@ -323,7 +323,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 					vasRecording.setPrimaryLinkRef(vasRecording.getCollateralRef());
 				}
 			}
-			if(isMutiValues){
+			if (isMutiValues) {
 				vASRecordingDetail = new VASRecordingDetail();
 				String[] valueParm = new String[1];
 				vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90336", valueParm));
@@ -331,8 +331,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			}
 			// for logging purpose
 			APIErrorHandlerService.logReference(vasRecording.getPrimaryLinkRef());
-			vASRecordingDetail =vasController.getVASRecordings(vasRecording);
-			
+			vASRecordingDetail = vasController.getVASRecordings(vasRecording);
+
 		} catch (Exception e) {
 			logger.error(e);
 			vASRecordingDetail = new VASRecordingDetail();

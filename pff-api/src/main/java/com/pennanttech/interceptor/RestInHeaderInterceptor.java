@@ -66,23 +66,23 @@ import com.pennanttech.ws.log.model.APILogDetail;
  */
 public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
-	Logger						logger			= Logger.getLogger(RestInHeaderInterceptor.class);
+	Logger logger = Logger.getLogger(RestInHeaderInterceptor.class);
 
 	// Static variables
-	public static final String	CHANNEL_USER	= "user";
-	public static final String	CHANNEL_SERVER	= "device";
-	public static long			TOKEN_EXPIRY	= 300000;
-	SimpleDateFormat			dateFormat		= new SimpleDateFormat(PennantConstants.APIDateFormatter);
+	public static final String CHANNEL_USER = "user";
+	public static final String CHANNEL_SERVER = "device";
+	public static long TOKEN_EXPIRY = 300000;
+	SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
 	// private variables
 	@Autowired
-	private PasswordEncoder		passwordEncoder;
-	private UserAuthService		userAuthService;
-	private ServerAuthService	serverAuthService;
-	private UserService			userService;
+	private PasswordEncoder passwordEncoder;
+	private UserAuthService userAuthService;
+	private ServerAuthService serverAuthService;
+	private UserService userService;
 	@Autowired
-	private PFSParameterService	systemParameterService;
+	private PFSParameterService systemParameterService;
 
-	private APILogDetailDAO		apiLogDetailDAO;
+	private APILogDetailDAO apiLogDetailDAO;
 
 	/*
 	 * Constructor
@@ -374,7 +374,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 */
 	private void validateMessageId(Message message, APIHeader header, APILogDetail apiLogDetail) {
 		logger.debug(Literal.ENTERING);
-		APILogDetail previousApiLogDetail = getLogMessageById(header.getMessageId(),header.getEntityId());
+		APILogDetail previousApiLogDetail = getLogMessageById(header.getMessageId(), header.getEntityId());
 		if (previousApiLogDetail != null) {
 			//if the given messageId is already processed then sets the previous response as current response.
 			//conflict response code is 409.
@@ -581,7 +581,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 * @return apiLogDetail
 	 */
 	private APILogDetail getLogMessageById(String messageId, String entityCode) {
-		return apiLogDetailDAO.getLogByMessageId(messageId,entityCode);
+		return apiLogDetailDAO.getLogByMessageId(messageId, entityCode);
 	}
 
 	/**** SETTER/GETTERS ****/

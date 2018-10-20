@@ -17,11 +17,11 @@ public interface PromotionTypeRestService {
 	@POST
 	@Path("/promotionType/getPromotion")
 	public FinanceTypeResponse getPromotion(FinanceTypeRequest finTypeReq) throws ServiceException;
-	
+
 	@GET
 	@Path("/stepPolicy/getStepPolicy/{policyCode}")
 	public StepPolicyHeader getStepPolicy(@PathParam("policyCode") String policyCode) throws ServiceException;
-	
+
 	@GET
 	@Path("/promotionType/getPromotions/{productCode}")
 	public FinanceTypeResponse getPromotions(@PathParam("productCode") String productCode) throws ServiceException;

@@ -7,8 +7,7 @@
 
 	<!-- FinCollaterals validations -->
 
-	<bean class="com.pennant.backend.model.finance.FinCollaterals"
-		ignore-annotations="false">
+	<bean class="com.pennant.backend.model.finance.FinCollaterals" ignore-annotations="false">
 		<field name="collateralType">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>type is Mandatory</message>

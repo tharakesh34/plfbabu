@@ -11,51 +11,52 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.pennant.backend.model.finance.JointAccountDetail;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinInquiryDetail {
 	@XmlElement
-	private String						finReference;
+	private String finReference;
 	@XmlElement
-	private String						finType;
+	private String finType;
 	@XmlElement
-	private String						product;
+	private String product;
 	@XmlElement
-	private String						finCcy;
+	private String finCcy;
 	@XmlElement
-	private BigDecimal					finAmount;
+	private BigDecimal finAmount;
 	@XmlElement
-	private BigDecimal					finAssetValue;
+	private BigDecimal finAssetValue;
 	@XmlElement
-	private int							numberOfTerms;
+	private int numberOfTerms;
 	@XmlElement
-	private int							loanTenor;
+	private int loanTenor;
 	@XmlElement
-	private Date						maturityDate;
+	private Date maturityDate;
 	@XmlElement
-	private BigDecimal					firstEmiAmount;
+	private BigDecimal firstEmiAmount;
 	@XmlElement
-	private BigDecimal					nextRepayAmount;
+	private BigDecimal nextRepayAmount;
 	@XmlElement
-	private BigDecimal					paidTotal;
+	private BigDecimal paidTotal;
 	@XmlElement
-	private BigDecimal					paidPri;
+	private BigDecimal paidPri;
 	@XmlElement
-	private BigDecimal					paidPft;
+	private BigDecimal paidPft;
 	@XmlElement
-	private BigDecimal					outstandingTotal;
+	private BigDecimal outstandingTotal;
 	@XmlElement
-	private BigDecimal					outstandingPri;
+	private BigDecimal outstandingPri;
 	@XmlElement
-	private BigDecimal					outstandingPft;
+	private BigDecimal outstandingPft;
 	@XmlElement
-	private int							futureInst;
+	private int futureInst;
 	@XmlElement
-	private String						finStatus;
+	private String finStatus;
 	@XmlElement
-	private String						disbStatus;
+	private String disbStatus;
 	@XmlElementWrapper(name = "coApplicants")
 	@XmlElement(name = "coApplicant")
-	private List<JointAccountDetail>	jountAccountDetailList	= new ArrayList<JointAccountDetail>(1);
+	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
 
 	public String getFinReference() {
 		return finReference;

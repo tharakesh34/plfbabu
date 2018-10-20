@@ -13,9 +13,9 @@ public class Insurance implements Serializable {
 	private static final long serialVersionUID = -2273747187615277778L;
 
 	public Insurance() {
-		
+
 	}
-	
+
 	private boolean takafulReq;
 	private String insTypeDesc;
 	private boolean takafulMandatory;

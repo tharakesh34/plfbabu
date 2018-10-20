@@ -43,7 +43,7 @@ public class BeneficiaryController {
 	 * @param beneficiary
 	 * @return Beneficiary
 	 */
-	public Beneficiary createBeneficiary(Beneficiary beneficiary){
+	public Beneficiary createBeneficiary(Beneficiary beneficiary) {
 		logger.debug("Entering");
 		Beneficiary response = null;
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
@@ -62,8 +62,8 @@ public class BeneficiaryController {
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new Beneficiary();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 					reqHeaderDetails.setReturnCode(response.getReturnStatus().getReturnCode());
 					reqHeaderDetails.setReturnDesc(response.getReturnStatus().getReturnText());
 				}
@@ -82,7 +82,7 @@ public class BeneficiaryController {
 		}
 
 		logger.debug("Leaving");
-		PhaseInterceptorChain.getCurrentMessage().getExchange().put(APIHeader.API_HEADER_KEY,reqHeaderDetails);
+		PhaseInterceptorChain.getCurrentMessage().getExchange().put(APIHeader.API_HEADER_KEY, reqHeaderDetails);
 		return response;
 	}
 
@@ -94,7 +94,7 @@ public class BeneficiaryController {
 	 */
 	public Beneficiary getBeneficiary(long beneficiaryId) {
 		logger.debug("Entering");
-		Beneficiary response = null;		
+		Beneficiary response = null;
 		try {
 			response = beneficiaryService.getApprovedBeneficiaryById(beneficiaryId);
 			if (response != null) {
@@ -127,27 +127,26 @@ public class BeneficiaryController {
 		try {
 			// set the default values for mandate
 			prepareRequiredData(beneficiary);
-			
+
 			Beneficiary prevBeneficiary = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
 			beneficiary.setCustID(prevBeneficiary.getCustID());
 			beneficiary.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			beneficiary.setNewRecord(false);
 			beneficiary.setVersion(prevBeneficiary.getVersion() + 1);
-			
+
 			// copy properties
 			BeanUtils.copyProperties(beneficiary, prevBeneficiary);
-			
+
 			// call update service method
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader= getAuditHeader(prevBeneficiary, PennantConstants.TRAN_WF);
+			AuditHeader auditHeader = getAuditHeader(prevBeneficiary, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
-			 auditHeader = beneficiaryService.doApprove(auditHeader);
+			auditHeader = beneficiaryService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -188,8 +187,7 @@ public class BeneficiaryController {
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -216,8 +214,8 @@ public class BeneficiaryController {
 		BeneficiaryDetail response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
-			List<Beneficiary> beneficiaryList = beneficiaryService.getApprovedBeneficiaryByCustomerId(customer
-					.getCustID());
+			List<Beneficiary> beneficiaryList = beneficiaryService
+					.getApprovedBeneficiaryByCustomerId(customer.getCustID());
 			if (!beneficiaryList.isEmpty()) {
 				response = new BeneficiaryDetail();
 				response.setBeneficiaryList(beneficiaryList);
@@ -248,8 +246,8 @@ public class BeneficiaryController {
 	 */
 	private AuditHeader getAuditHeader(Beneficiary aBeneficiary, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBeneficiary.getBefImage(), aBeneficiary);
-		return new AuditHeader(String.valueOf(aBeneficiary.getBeneficiaryId()), String.valueOf(aBeneficiary
-				.getBeneficiaryId()), null, null, auditDetail, aBeneficiary.getUserDetails(),
+		return new AuditHeader(String.valueOf(aBeneficiary.getBeneficiaryId()),
+				String.valueOf(aBeneficiary.getBeneficiaryId()), null, null, auditDetail, aBeneficiary.getUserDetails(),
 				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
@@ -263,14 +261,14 @@ public class BeneficiaryController {
 		logger.debug("Entering");
 
 		BankBranch bankBranch = new BankBranch();
-		
+
 		if (StringUtils.isNotBlank(beneficiary.getiFSC())) {
 			bankBranch = bankBranchService.getBankBrachByIFSC(beneficiary.getiFSC());
 		} else if (StringUtils.isNotBlank(beneficiary.getBankCode())
 				&& StringUtils.isNotBlank(beneficiary.getBranchCode())) {
 			bankBranch = bankBranchService.getBankBrachByCode(beneficiary.getBankCode(), beneficiary.getBranchCode());
 		}
-		
+
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		beneficiary.setUserDetails(userDetails);
 		beneficiary.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

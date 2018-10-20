@@ -7,8 +7,7 @@
 
 	<!-- FinCovenantType validations -->
 
-	<bean class="com.pennant.backend.model.finance.FinCovenantType"
-		ignore-annotations="false">
+	<bean class="com.pennant.backend.model.finance.FinCovenantType" ignore-annotations="false">
 		<field name="covenantType">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>covenantType is Mandatory</message>
@@ -63,7 +62,8 @@
 					false;
 					}
 					} else {
-					if (_this.postponeDays >0) {
+					if
+					(_this.postponeDays >0) {
 					false;
 					} else {
 					true;

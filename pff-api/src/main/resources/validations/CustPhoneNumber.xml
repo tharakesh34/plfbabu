@@ -28,7 +28,7 @@
 			</constraint>
 		</field>
 
-		 <field name="phoneTypeCode">
+		<field name="phoneTypeCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>phoneTypeCode should have maximum 8 characters</message>
 				<groups>
@@ -43,7 +43,7 @@
 				</groups>
 			</constraint>
 		</field>
- 
+
 		<field name="customerPhoneNumber">
 			<valid />
 		</field>

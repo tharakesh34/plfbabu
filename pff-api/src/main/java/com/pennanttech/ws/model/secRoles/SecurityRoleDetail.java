@@ -13,10 +13,10 @@ import com.pennant.backend.model.administration.SecurityRole;
 @XmlAccessorType(XmlAccessType.NONE)
 public class SecurityRoleDetail {
 
-	@XmlElementWrapper(name="securityRoles")
-	@XmlElement(name="securityRole")
+	@XmlElementWrapper(name = "securityRoles")
+	@XmlElement(name = "securityRole")
 	private List<SecurityRole> secRoleList;
-	
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 

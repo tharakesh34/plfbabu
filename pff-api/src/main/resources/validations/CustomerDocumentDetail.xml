@@ -44,7 +44,7 @@
 		</field>
 
 		<field name="customerDocument">
-		<valid />
+			<valid />
 		</field>
 	</bean>
 </constraint-mappings>

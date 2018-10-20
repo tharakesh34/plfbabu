@@ -4,27 +4,27 @@ import java.sql.Timestamp;
 
 public class APILogDetail {
 
-	private long		seqId	= Long.MIN_VALUE;
-	private int			restClientId;
-	private String		reference;
-	private String		keyFields;
-	private String		serviceName;
-	private String		endPoint;
-	private String		method;
-	private String		authKey;
-	private String		clientIP;
-	private String		request;
-	private String		response;
-	private Timestamp	receivedOn;
-	private Timestamp	responseGiven;
-	private String		statusCode;
-	private String		error;
-	private String		messageId;
-	private String		entityId;
-	private String		language;
-	private int		serviceVersion;
-	private Timestamp	headerReqTime;
-	private boolean		processed;
+	private long seqId = Long.MIN_VALUE;
+	private int restClientId;
+	private String reference;
+	private String keyFields;
+	private String serviceName;
+	private String endPoint;
+	private String method;
+	private String authKey;
+	private String clientIP;
+	private String request;
+	private String response;
+	private Timestamp receivedOn;
+	private Timestamp responseGiven;
+	private String statusCode;
+	private String error;
+	private String messageId;
+	private String entityId;
+	private String language;
+	private int serviceVersion;
+	private Timestamp headerReqTime;
+	private boolean processed;
 
 	public long getSeqId() {
 		return seqId;

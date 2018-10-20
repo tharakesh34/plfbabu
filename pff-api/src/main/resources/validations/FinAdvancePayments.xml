@@ -4,13 +4,12 @@
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
 					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
-<!-- FinAdvancePayments validations -->
 
-	<bean class="com.pennant.backend.model.finance.FinAdvancePayments"
-		ignore-annotations="false">
+	<!-- FinAdvancePayments validations -->
+
+	<bean class="com.pennant.backend.model.finance.FinAdvancePayments" ignore-annotations="false">
 		<field name="paymentDetail">
- 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>disbParty is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -18,7 +17,7 @@
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.CancelDisbursementGroup</value>
 				</groups>
-			</constraint> 
+			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>disbParty should have maximum 12 characters</message>
 				<groups>
@@ -31,7 +30,7 @@
 			</constraint>
 		</field>
 		<field name="paymentType">
- 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>disbType is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -39,7 +38,7 @@
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.CancelDisbursementGroup</value>
 				</groups>
-			</constraint> 
+			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>disbType should have maximum 8 characters</message>
 				<groups>
@@ -51,10 +50,10 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		
+
 		<field name="llDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
-			<message>disbDate is Mandatory</message>
+				<message>disbDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
@@ -63,7 +62,7 @@
 				</groups>
 			</constraint>
 		</field>
-		
+
 		<field name="llReferenceNo">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>chequeNo should have maximum 6 characters</message>
@@ -77,7 +76,7 @@
 		</field>
 		<field name="amtToBeReleased">
 			<constraint annotation="javax.validation.constraints.Min">
-			<message>disbAmount should be Positive</message>
+				<message>disbAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
@@ -119,8 +118,8 @@
 				</groups>
 				<element name="max">100</element>
 			</constraint>
-				<constraint annotation="javax.validation.constraints.Pattern">
-			<message>favourName  invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			<constraint annotation="javax.validation.constraints.Pattern">
+				<message>favourName  invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -129,7 +128,7 @@
 					<value>com.pennant.validation.CancelDisbursementGroup</value>
 				</groups>
 				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
-			</constraint> 
+			</constraint>
 		</field>
 		<field name="payableLoc">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -165,7 +164,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		
+
 		<field name="branchBankCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>bankCode should have maximum 8 characters</message>
@@ -178,7 +177,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		
+
 		<field name="branchCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>branchCode should have maximum 8 characters</message>
@@ -191,7 +190,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		
+
 		<field name="iFSC">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>ifsc should have maximum 11 characters</message>
@@ -204,7 +203,7 @@
 				<element name="max">11</element>
 			</constraint>
 		</field>
-		
+
 		<field name="beneficiaryAccNo">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>accountNo should have maximum 50 characters</message>
@@ -217,7 +216,7 @@
 				<element name="max">50</element>
 			</constraint>
 		</field>
-		
+
 		<field name="beneficiaryName">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>acHolderName should have maximum 50 characters</message>
@@ -230,7 +229,7 @@
 				<element name="max">50</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-			<message>accHolderName  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+				<message>accHolderName  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -239,50 +238,20 @@
 					<value>com.pennant.validation.CancelDisbursementGroup</value>
 				</groups>
 				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
-			</constraint> 
-		</field>
-		<!-- <field name="phoneCountryCode">
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneCountryCode should have maximum 5 characters</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-					<value>com.pennant.validation.AddDisbursementGroup</value>
-				</groups>
-				<element name="max">5</element>
 			</constraint>
 		</field>
-		<field name="phoneAreaCode">
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneAreaCode should have maximum 8 characters</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-					<value>com.pennant.validation.AddDisbursementGroup</value>
-				</groups>
-				<element name="max">8</element>
-			</constraint>
-		</field> -->
-		<!-- <field name="phoneNumber">
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>90279%%disbursement</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-					<value>com.pennant.validation.AddDisbursementGroup</value>
-				</groups>
-				<element name="max">10</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>90279%%disbursement</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-					<value>com.pennant.validation.AddDisbursementGroup</value>
-				</groups>
-				<element name="min">10</element>
-			</constraint>
-		</field> -->
+		<!-- <field name="phoneCountryCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>phoneCountryCode 
+			should have maximum 5 characters</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
+			<value>com.pennant.validation.AddDisbursementGroup</value> </groups> <element name="max">5</element> </constraint> </field> 
+			<field name="phoneAreaCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>phoneAreaCode 
+			should have maximum 8 characters</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
+			<value>com.pennant.validation.AddDisbursementGroup</value> </groups> <element name="max">8</element> </constraint> </field> -->
+		<!-- <field name="phoneNumber"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>90279%%disbursement</message> 
+			<groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
+			<value>com.pennant.validation.AddDisbursementGroup</value> </groups> <element name="max">10</element> </constraint> <constraint 
+			annotation="org.hibernate.validator.constraints.Length"> <message>90279%%disbursement</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> 
+			<value>com.pennant.validation.CreateFinancewithWIFGroup</value> <value>com.pennant.validation.AddDisbursementGroup</value> 
+			</groups> <element name="min">10</element> </constraint> </field> -->
 	</bean>
-	</constraint-mappings>
+</constraint-mappings>
 

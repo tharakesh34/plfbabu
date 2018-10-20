@@ -9,14 +9,15 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
-@XmlType(propOrder = { "finance", "returnStatus"})
+
+@XmlType(propOrder = { "finance", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceInquiry {
 	@XmlElementWrapper(name = "finances")
 	@XmlElement(name = "finance")
-	private List<FinInquiryDetail>	finance;
+	private List<FinInquiryDetail> finance;
 	@XmlElement
-	private WSReturnStatus	returnStatus;
+	private WSReturnStatus returnStatus;
 
 	public List<FinInquiryDetail> getFinance() {
 		return finance;

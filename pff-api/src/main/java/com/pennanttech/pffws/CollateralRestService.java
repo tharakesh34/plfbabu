@@ -18,7 +18,8 @@ public interface CollateralRestService {
 
 	@GET
 	@Path("/collateralService/getCollateralType/{collateralType}")
-	public CollateralStructure getCollateralType(@PathParam("collateralType") String collateralType) throws ServiceException;
+	public CollateralStructure getCollateralType(@PathParam("collateralType") String collateralType)
+			throws ServiceException;
 
 	@POST
 	@Path("/collateralService/createCollateral")

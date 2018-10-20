@@ -65,6 +65,6 @@
 					}
 				</element>
 			</constraint>
-			</field>
+		</field>
 	</bean>
 </constraint-mappings>

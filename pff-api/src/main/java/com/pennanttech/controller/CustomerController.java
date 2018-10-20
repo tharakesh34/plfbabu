@@ -53,19 +53,18 @@ import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CustomerController {
-	private final Logger						logger				= Logger.getLogger(CustomerController.class);
+	private final Logger logger = Logger.getLogger(CustomerController.class);
 
-	HashMap<String, ArrayList<ErrorDetail>>	overideMap;
-	private CustomerService						customerService;
-	private CustomerDetailsService				customerDetailsService;
-	private CustomerEmploymentDetailService		customerEmploymentDetailService;
-	private ExtendedFieldDetailsService			extendedFieldDetailsService;
-	private DocumentManagerDAO					documentManagerDAO;
-	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
-	
+	HashMap<String, ArrayList<ErrorDetail>> overideMap;
+	private CustomerService customerService;
+	private CustomerDetailsService customerDetailsService;
+	private CustomerEmploymentDetailService customerEmploymentDetailService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private DocumentManagerDAO documentManagerDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 
-	private final String						PROCESS_TYPE_SAVE	= "Save";
-	private final String						PROCESS_TYPE_UPDATE	= "Update";
+	private final String PROCESS_TYPE_SAVE = "Save";
+	private final String PROCESS_TYPE_UPDATE = "Update";
 
 	/**
 	 * 
@@ -85,15 +84,16 @@ public class CustomerController {
 			customer.setCustNationality("IN");
 			customer.setCustCOB("IN");
 			customer.setCustSourceID(APIConstants.FINSOURCE_ID_API);
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(customerDetails,PennantConstants.TRAN_WF);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerDetails();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 					return response;
 				}
 			}
@@ -122,12 +122,13 @@ public class CustomerController {
 		logger.debug("Entering");
 		try {
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
-			
+
 			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
 			customerDetails.getCustomer().setCustNationality(AppCountry);
-			
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(customerDetails,PennantConstants.TRAN_WF);
+
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 
@@ -179,15 +180,14 @@ public class CustomerController {
 
 		Customer curCustomer = customerDetails.getCustomer();
 		CustomerDetails prvCustomerDetails = null;
-		 
-		
+
 		if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {
 			// fetch customer object
 			Customer customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
 			// fetch customer details
 			prvCustomerDetails = customerDetailsService.getCustomerDetailsById(customer.getCustID(), true, "");
 		}
-		
+
 		// user language
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
@@ -201,7 +201,7 @@ public class CustomerController {
 		}
 		if (StringUtils.isNotBlank(customerDetails.getCustDftBranch())) {
 			curCustomer.setCustDftBranch(customerDetails.getCustDftBranch());
-		} 
+		}
 		if (StringUtils.isNotBlank(customerDetails.getCustCoreBank())) {
 			curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
 		}
@@ -211,14 +211,14 @@ public class CustomerController {
 		if (StringUtils.isNotBlank(Long.toString(customerDetails.getPrimaryRelationOfficer()))) {
 			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		}
-		if(StringUtils.isBlank(customerDetails.getCustomer().getCustLng())){
+		if (StringUtils.isBlank(customerDetails.getCustomer().getCustLng())) {
 			curCustomer.setCustLng(PennantConstants.default_Language);
 		}
-		if(StringUtils.isBlank(customerDetails.getCustomer().getCustCOB())){
+		if (StringUtils.isBlank(customerDetails.getCustomer().getCustCOB())) {
 			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
 			curCustomer.setCustCOB(AppCountry);
 		}
-		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+		if (StringUtils.equals(curCustomer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
 					curCustomer.getCustMName(), curCustomer.getCustLName()));
 		}
@@ -323,7 +323,8 @@ public class CustomerController {
 					List<CustomerPhoneNumber> prvCustomerPhoneNumberList = prvCustomerDetails.getCustomerPhoneNumList();
 					if (prvCustomerPhoneNumberList != null) {
 						for (CustomerPhoneNumber prvCustomerPhoneNum : prvCustomerPhoneNumberList) {
-							if (StringUtils.equals(curCustPhoneNum.getPhoneTypeCode(),prvCustomerPhoneNum.getPhoneTypeCode())) {
+							if (StringUtils.equals(curCustPhoneNum.getPhoneTypeCode(),
+									prvCustomerPhoneNum.getPhoneTypeCode())) {
 								curCustPhoneNum.setNewRecord(false);
 								curCustPhoneNum.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustPhoneNum.setVersion(prvCustomerPhoneNum.getVersion() + 1);
@@ -393,14 +394,13 @@ public class CustomerController {
 						}
 					}
 				}
-				
-					if (StringUtils.equals(PennantConstants.INCOME, curCustomerIncome.getIncomeExpense())) {
-						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getIncome());
-					}
-				 else if (StringUtils.equals(PennantConstants.EXPENSE, curCustomerIncome.getIncomeExpense())) {
-						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getIncome());
-					}
-				
+
+				if (StringUtils.equals(PennantConstants.INCOME, curCustomerIncome.getIncomeExpense())) {
+					custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getIncome());
+				} else if (StringUtils.equals(PennantConstants.EXPENSE, curCustomerIncome.getIncomeExpense())) {
+					custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getIncome());
+				}
+
 			}
 		}
 
@@ -414,13 +414,15 @@ public class CustomerController {
 					curCustDocument.setVersion(1);
 					//curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
+					if (StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
-					/*if(StringUtils.equals(curCustDocument.getCustDocCategory(), "15") && 
-							StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),PennantConstants.PFF_CUSTCTG_CORP)){
-						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
-					}*/
+					/*
+					 * if(StringUtils.equals(curCustDocument.getCustDocCategory(), "15") &&
+					 * StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),PennantConstants.
+					 * PFF_CUSTCTG_CORP)){
+					 * customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle()); }
+					 */
 				} else {
 					List<CustomerDocument> prvCustomerDocumentsList = prvCustomerDetails.getCustomerDocumentsList();
 					if (prvCustomerDocumentsList != null) {
@@ -431,7 +433,7 @@ public class CustomerController {
 								curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustDocument.setVersion(prvCustomerDocuments.getVersion() + 1);
 								curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
+								if (StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
 									customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 								}
 								// copy properties
@@ -497,7 +499,7 @@ public class CustomerController {
 				}
 			}
 		}
-		
+
 		// customerExtLiability
 		List<CustomerExtLiability> customerExtLiabilityList = customerDetails.getCustomerExtLiabilityList();
 		if (customerExtLiabilityList != null) {
@@ -525,9 +527,9 @@ public class CustomerController {
 				}
 				custTotExpense = custTotExpense.add(curCustomerExtLiability.getInstalmentAmount());
 			}
-			
+
 		}
-		
+
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
@@ -610,7 +612,6 @@ public class CustomerController {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -620,9 +621,9 @@ public class CustomerController {
 	 */
 	private AuditHeader getAuditHeader(CustomerDetails aCustomerDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
-		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
-				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
+				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
+				aCustomerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -634,9 +635,9 @@ public class CustomerController {
 	 */
 	private AuditHeader getAuditHeader(CustomerEmploymentDetail aCustomerDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
-		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
-				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
+				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
+				aCustomerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -659,11 +660,11 @@ public class CustomerController {
 				response.setCustDftBranch(response.getCustomer().getCustDftBranch());
 				response.setCustBaseCcy(response.getCustomer().getCustBaseCcy());
 				response.setPrimaryRelationOfficer(response.getCustomer().getCustRO1());
-				if(response.getCustomerDocumentsList() !=null){
-				for (CustomerDocument documents : response.getCustomerDocumentsList()) {
-					byte[] custDocImage = getDocumentImage(documents.getDocRefId());
-					documents.setCustDocImage(custDocImage);
-				}
+				if (response.getCustomerDocumentsList() != null) {
+					for (CustomerDocument documents : response.getCustomerDocumentsList()) {
+						byte[] custDocImage = getDocumentImage(documents.getDocRefId());
+						documents.setCustDocImage(custDocImage);
+					}
 				}
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
@@ -683,12 +684,13 @@ public class CustomerController {
 	}
 
 	private byte[] getDocumentImage(long docID) {
-		DocumentManager docImage=documentManagerDAO.getById(docID);
-		if(docImage != null){
+		DocumentManager docImage = documentManagerDAO.getById(docID);
+		if (docImage != null) {
 			return docImage.getDocImage();
 		}
 		return null;
 	}
+
 	/**
 	 * delete the Customer by given CustomerId
 	 * 
@@ -841,7 +843,7 @@ public class CustomerController {
 	 */
 	public CustomerDetails getCustomerPersonalInfo(long customerId) {
 		logger.debug("Entering");
-		CustomerDetails response = null ;
+		CustomerDetails response = null;
 		try {
 			Customer customer = getCustomerService().getApprovedCustomerById(customerId);
 			if (customer != null) {
@@ -879,7 +881,7 @@ public class CustomerController {
 		logger.debug("Entering");
 		// user details from session
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		
+
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
 		Customer curCustomer = customerDetails.getCustomer();
 		curCustomer.setCustCIF(customerDetails.getCustCIF());
@@ -903,7 +905,7 @@ public class CustomerController {
 		} else {
 			curCustomer.setCustRO1(prvCustomer.getCustRO1());
 		}
-		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+		if (StringUtils.equals(curCustomer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
 					curCustomer.getCustMName(), curCustomer.getCustLName()));
 		}
@@ -915,8 +917,9 @@ public class CustomerController {
 		curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		curCustomer.setLastMntBy(userDetails.getUserId());
 		curCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		curCustomer.setVersion(prvCustomer.getVersion()+1);
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+		curCustomer.setVersion(prvCustomer.getVersion() + 1);
+		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(curCustomer, PennantConstants.TRAN_WF);
 		auditHeader.setApiHeader(reqHeaderDetails);
 		auditHeader = customerService.doApprove(auditHeader);
@@ -976,49 +979,50 @@ public class CustomerController {
 		return response;
 
 	}
-	
+
 	/**
 	 * Method for create CustomerEmployment in PLF system.
 	 * 
 	 * @param customerEmploymentDetail
 	 * 
 	 */
-	public EmploymentDetail addCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail,String cif) {
-		
+	public EmploymentDetail addCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail, String cif) {
+
 		EmploymentDetail response = null;
 		logger.debug("Entering");
-		try{
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		Customer customer = customerDetailsService.getCustomerByCIF(cif);
-		customerEmploymentDetail.setCustID(customer.getCustID());
-		customerEmploymentDetail.setLovDescCustCIF(cif);
-		customerEmploymentDetail.setLovDesccustEmpName(String.valueOf(customerEmploymentDetail.getCustEmpName()));
-		customerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		customerEmploymentDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerEmploymentDetail.setNewRecord(true);
-		customerEmploymentDetail.setVersion(1);
-		customerEmploymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerEmploymentDetail.setLastMntBy(userDetails.getUserId());
-		customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(customerEmploymentDetail,PennantConstants.TRAN_WF);
-		auditHeader.setApiHeader(reqHeaderDetails);
-		auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
+		try {
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			Customer customer = customerDetailsService.getCustomerByCIF(cif);
+			customerEmploymentDetail.setCustID(customer.getCustID());
+			customerEmploymentDetail.setLovDescCustCIF(cif);
+			customerEmploymentDetail.setLovDesccustEmpName(String.valueOf(customerEmploymentDetail.getCustEmpName()));
+			customerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			customerEmploymentDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+			customerEmploymentDetail.setNewRecord(true);
+			customerEmploymentDetail.setVersion(1);
+			customerEmploymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			customerEmploymentDetail.setLastMntBy(userDetails.getUserId());
+			customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(customerEmploymentDetail, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+			auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
 
-		
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new EmploymentDetail();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				CustomerEmploymentDetail customerEmpDetail = (CustomerEmploymentDetail) auditHeader.getAuditDetail()
+						.getModelData();
 				response = new EmploymentDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getError()));
+				response.setEmployementId(customerEmpDetail.getCustEmpId());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
-		} else {
-			CustomerEmploymentDetail customerEmpDetail = (CustomerEmploymentDetail) auditHeader.getAuditDetail().getModelData();
-			response = new EmploymentDetail();
-			response.setEmployementId(customerEmpDetail.getCustEmpId());
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new EmploymentDetail();
@@ -1029,6 +1033,7 @@ public class CustomerController {
 		return response;
 
 	}
+
 	/**
 	 * Method for update CustomerEmploymentDetail in PLF system.
 	 * 
@@ -1052,11 +1057,12 @@ public class CustomerController {
 			customerEmploymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			customerEmploymentDetail.setLastMntBy(userDetails.getUserId());
 			customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			customerEmploymentDetail.setVersion((customerEmploymentDetailService.getVersion(
-					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpId())) + 1);
+			customerEmploymentDetail.setVersion((customerEmploymentDetailService
+					.getVersion(customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpId())) + 1);
 
 			// call service method to update customer Employment details
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerEmploymentDetail, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
@@ -1064,8 +1070,7 @@ public class CustomerController {
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -1079,6 +1084,7 @@ public class CustomerController {
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * delete the customerEmploymentDetail.
 	 * 
@@ -1098,15 +1104,15 @@ public class CustomerController {
 			customerEmpDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			customerEmpDetail.setNewRecord(false);
 			customerEmpDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(customerEmpDetail,PennantConstants.TRAN_WF);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(customerEmpDetail, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getError()));
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 
@@ -1123,7 +1129,6 @@ public class CustomerController {
 		return response;
 	}
 
-
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -1133,8 +1138,8 @@ public class CustomerController {
 	 */
 	private AuditHeader getAuditHeader(Customer aCustomer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
-		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null,
-				null, auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null, null,
+				auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public CustomerService getCustomerService() {
@@ -1176,5 +1181,5 @@ public class CustomerController {
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
-	
+
 }

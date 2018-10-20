@@ -12,16 +12,15 @@ import com.pennant.backend.model.customermasters.CustomerChequeInfo;
 @XmlType(propOrder = { "cif", "customerChequeInfo", "chequeSeq", "returnStatus" })
 public class CustomerChequeInfoDetail {
 
-	
 	@XmlElement
 	private String cif;
 
 	@XmlElement(name = "accountBehaviour")
-	private  CustomerChequeInfo  customerChequeInfo;
+	private CustomerChequeInfo customerChequeInfo;
 
 	@XmlElement
 	private int chequeSeq;
-	
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 

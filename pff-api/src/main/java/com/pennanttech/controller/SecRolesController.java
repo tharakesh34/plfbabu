@@ -12,7 +12,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class SecRolesController {
 	private final Logger logger = Logger.getLogger(SecRolesController.class);
-	
+
 	private SecurityRoleService securityRoleService;
 
 	/**

@@ -41,7 +41,8 @@ public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILo
 		insertSql.append(" keyFields, messageId, entityId, language, serviceVersion, headerReqTime, processed )");
 		insertSql.append(" Values(:restClientId , :serviceName, :reference, :endPoint, :method, :authKey, :clientIP,");
 		insertSql.append(" :request, :response, :receivedOn, :responseGiven, :statusCode, :error, ");
-		insertSql.append(" :keyFields, :messageId, :entityId, :language, :serviceVersion, :headerReqTime, :processed )");
+		insertSql
+				.append(" :keyFields, :messageId, :entityId, :language, :serviceVersion, :headerReqTime, :processed )");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(apiLogDetail);
 		logger.trace(Literal.SQL + insertSql.toString());
 		try {
@@ -52,7 +53,6 @@ public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILo
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * Method for fetch the record from PLFAPILOGDETAILS based on the given MessageId and Processed id true.
 	 * 
@@ -60,7 +60,7 @@ public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILo
 	 * @return
 	 */
 	@Override
-	public APILogDetail getLogByMessageId(String messageId,String entityCode) {
+	public APILogDetail getLogByMessageId(String messageId, String entityCode) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder(

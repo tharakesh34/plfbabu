@@ -1872,15 +1872,16 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		
+
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(customer.getCustID());
 		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
-		
+
 		liability = customerExtLiabilityService.getLiability(liability);
 		if (liability != null) {
 			// call update customer if there is no errors
-			response = customerDetailsController.updateCustomerExternalLiability(customerExtLiabilityDetail.getExternalLiability(), customerExtLiabilityDetail.getCif());
+			response = customerDetailsController.updateCustomerExternalLiability(
+					customerExtLiabilityDetail.getExternalLiability(), customerExtLiabilityDetail.getCif());
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -1954,13 +1955,13 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		}
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		
+
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(customerExtLiability.getCustId());
 		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
-		
+
 		liability = customerExtLiabilityService.getLiability(liability);
-		
+
 		CustomerExtLiability custExtLiability = customerExtLiabilityService.getLiability(customerExtLiability);
 		if (custExtLiability != null) {
 			// call delete customer service

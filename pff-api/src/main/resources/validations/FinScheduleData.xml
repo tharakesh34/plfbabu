@@ -5,12 +5,26 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<bean class="com.pennant.backend.model.finance.FinScheduleData">
-		<field name="financeMain"> <valid /></field>
-		<field name="feeRules"> <valid/></field>
-		<field name="repayInstructions"><valid/></field>
-		<field name="rateInstruction"><valid/></field>
-		<field name="insuranceList"><valid/></field>
-		<field name="stepPolicyDetails"><valid/></field>
-		<field name="finODPenaltyRate"><valid/></field>
+		<field name="financeMain">
+			<valid />
+		</field>
+		<field name="feeRules">
+			<valid />
+		</field>
+		<field name="repayInstructions">
+			<valid />
+		</field>
+		<field name="rateInstruction">
+			<valid />
+		</field>
+		<field name="insuranceList">
+			<valid />
+		</field>
+		<field name="stepPolicyDetails">
+			<valid />
+		</field>
+		<field name="finODPenaltyRate">
+			<valid />
+		</field>
 	</bean>
 </constraint-mappings>

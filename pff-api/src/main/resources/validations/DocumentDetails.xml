@@ -6,13 +6,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<!-- DocumentDetails validations -->
-	<bean class="com.pennant.backend.model.documentdetails.DocumentDetails"
-		ignore-annotations="false">
+	<bean class="com.pennant.backend.model.documentdetails.DocumentDetails" ignore-annotations="false">
 		<field name="docCategory">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>docCategory is Mandatory</message>
 				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -21,7 +20,7 @@
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>docCategory should have maximum 50 characters</message>
 				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -33,7 +32,7 @@
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>docFormat is Mandatory</message>
 				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -42,7 +41,7 @@
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>docFormat should have maximum 10 characters</message>
 				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -51,34 +50,19 @@
 			</constraint>
 		</field>
 
-<!-- 		<field name="docRefId">
-			<constraint annotation="javax.validation.constraints.Min">
-				<message>docRefId should be Positive</message>
-				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="value">1</element>
-			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
-				<message>docRefId allow 19 digits only</message>
-				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="value">9999999999999999999</element>
-			</constraint>
-		</field> -->
-		
+		<!-- <field name="docRefId"> <constraint annotation="javax.validation.constraints.Min"> <message>docRefId should be Positive</message> 
+			<groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
+			<value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> </groups> 
+			<element name="value">1</element> </constraint> <constraint annotation="javax.validation.constraints.DecimalMax"> <message>docRefId 
+			allow 19 digits only</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
+			<value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> </groups> 
+			<element name="value">9999999999999999999</element> </constraint> </field> -->
+
 		<field name="docName">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>docName is Mandatory</message>
 				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -87,7 +71,7 @@
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>docName should have maximum 300 characters</message>
 				<groups>
-					 <value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -95,7 +79,7 @@
 				<element name="max">300</element>
 			</constraint>
 		</field>
-	
+
 	</bean>
 </constraint-mappings>
 		

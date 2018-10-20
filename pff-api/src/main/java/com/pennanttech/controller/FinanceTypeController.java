@@ -38,8 +38,7 @@ public class FinanceTypeController {
 	private ProductDAO productDAO;
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private PromotionService promotionService;
-	
-	
+
 	public FinanceTypeResponse getFinanceTypeDetails(FinanceTypeRequest finTypeRequest, boolean isPromotion) {
 		logger.debug("Entering");
 
@@ -117,10 +116,10 @@ public class FinanceTypeController {
 					response.setFinTypeFeesList(financeType.getFinTypeFeesList());
 				}
 			}
-			response.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(
-					finTypeRequest.getFinType(), ""));
-			
-			if(finTypeRequest.isPartnerBankDetailReq()){
+			response.setFinTypeVASProductsList(
+					finTypeVASProductsDAO.getVASProductsByFinType(finTypeRequest.getFinType(), ""));
+
+			if (finTypeRequest.isPartnerBankDetailReq()) {
 				response.setFinTypePartnerBankList(financeType.getFinTypePartnerBankList());
 			}
 
@@ -142,23 +141,23 @@ public class FinanceTypeController {
 	 */
 	public StepPolicyHeader getStepPolicyDetails(String policyCode) {
 		logger.debug("Entering");
-		
+
 		// fetch StepHeader details
 		StepPolicyHeader stepPolicyHeader = stepPolicyService.getStepPolicyHeaderById(policyCode);
-		
-		if(stepPolicyHeader == null) {
+
+		if (stepPolicyHeader == null) {
 			StepPolicyHeader stepHeader = new StepPolicyHeader();
 			stepHeader.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stepHeader;
 		}
-		
+
 		// add return status
 		stepPolicyHeader.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		
+
 		logger.debug("Leaving");
 		return stepPolicyHeader;
 	}
-	
+
 	/**
 	 * Method to fetch ProductType details by given productCode
 	 * 
@@ -239,7 +238,7 @@ public class FinanceTypeController {
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
 	}
@@ -247,7 +246,7 @@ public class FinanceTypeController {
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
 	}
-	
+
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;
 	}

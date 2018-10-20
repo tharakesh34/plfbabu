@@ -26,15 +26,14 @@ import com.pennanttech.ws.model.collateral.CollateralDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CollateralWebServiceImpl implements CollateralRestService,CollateralSoapService  {
+public class CollateralWebServiceImpl implements CollateralRestService, CollateralSoapService {
 	Logger logger = Logger.getLogger(CollateralWebServiceImpl.class);
-	
+
 	private CollateralSetupService collateralSetupService;
 	private CustomerDetailsService customerDetailsService;
 	private CollateralController collateralController;
 	private ValidationUtility validationUtility;
-	
-	
+
 	/**
 	 * Get collateral structure details by validating the requested collateral type.
 	 * 
@@ -44,16 +43,16 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 	@Override
 	public CollateralStructure getCollateralType(String collateralType) throws ServiceException {
 		logger.debug("Entering");
-		
-		if(StringUtils.isBlank(collateralType)) {
+
+		if (StringUtils.isBlank(collateralType)) {
 			validationUtility.fieldLevelException();
 		}
 		//for logging purpose
 		APIErrorHandlerService.logReference(collateralType);
-		
+
 		// call get collateralType method
 		CollateralStructure collateralStructure = collateralController.getCollateralType(collateralType);
-		
+
 		logger.debug("Leaving");
 		return collateralStructure;
 	}
@@ -124,29 +123,28 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		// bean validations
 		validationUtility.validate(collateralSetup, UpdateValidationGroup.class);
 		WSReturnStatus response = null;
-		try{
-		// bussiness validations
-		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update");
+		try {
+			// bussiness validations
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update");
 
-		
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
 			}
-		}
 
-		// call create collateral controller service
-		APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
-		response = collateralController.updateCollateral(collateralSetup);
-		}catch (Exception e) {
+			// call create collateral controller service
+			APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
+			response = collateralController.updateCollateral(collateralSetup);
+		} catch (Exception e) {
 			logger.error(e);
 			response = new WSReturnStatus();
-			response=APIErrorHandlerService.getFailedStatus();
+			response = APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * Method for validate and delete customer collateral
 	 * 
@@ -160,27 +158,27 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		String[] logFields = new String[1];
 		logFields[0] = collateralSetup.getDepositorCif();
 		APIErrorHandlerService.logKeyFields(logFields);
-		
+
 		// bean validations
-		validationUtility.validate(collateralSetup, DeleteValidationGroup.class); 
+		validationUtility.validate(collateralSetup, DeleteValidationGroup.class);
 		WSReturnStatus response = null;
-		try{
+		try {
 			// for logging purpose
 			APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
-		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete");
-		
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete");
+
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
 			}
-		}
-		
-		// call delete collateral service
-		response = collateralController.deleteCollateral(collateralSetup);
-		}catch (Exception e) {
+
+			// call delete collateral service
+			response = collateralController.deleteCollateral(collateralSetup);
+		} catch (Exception e) {
 			logger.error(e);
 			response = new WSReturnStatus();
-			response=APIErrorHandlerService.getFailedStatus();
+			response = APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
 		return response;
@@ -190,7 +188,7 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 	 * Fetch list customer collateral details by cif
 	 * 
 	 * @param cif
-	 * @return 
+	 * @return
 	 */
 	@Override
 	public CollateralDetail getCollaterals(String cif) throws ServiceException {
@@ -205,10 +203,10 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		CollateralDetail collateralDetail = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		if (customer != null) {
-			
+
 			// call getCollaterals service
 			collateralDetail = collateralController.getCollaterals(customer.getCustID());
-			
+
 			if (collateralDetail != null) {
 				collateralDetail.setCif(cif);
 				collateralDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -228,7 +226,7 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		logger.debug("Leaving");
 		return collateralDetail;
 	}
-	
+
 	/**
 	 * prepare create collateral response object
 	 * 
@@ -243,17 +241,17 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	@Autowired
 	public void setCollateralController(CollateralController collateralController) {
 		this.collateralController = collateralController;
 	}
-	
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
-	
+
 	@Autowired
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;

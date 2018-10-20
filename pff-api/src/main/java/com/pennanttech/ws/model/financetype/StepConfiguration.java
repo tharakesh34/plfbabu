@@ -7,9 +7,9 @@ public class StepConfiguration implements Serializable {
 	private static final long serialVersionUID = 7907132962063203943L;
 
 	public StepConfiguration() {
-		
+
 	}
-	
+
 	private boolean stepFinance;
 	private String alwdStepPolicies;
 	private boolean steppingMandatory;

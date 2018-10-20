@@ -13,21 +13,20 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = { "customer", "finance","finReference","docImage", "returnStatus" })
+@XmlType(propOrder = { "customer", "finance", "finReference", "docImage", "returnStatus" })
 public class FinStatementResponse {
 	@XmlElement
-	private CustomerDetails		customer;
+	private CustomerDetails customer;
 	@XmlElement
-	private List<FinanceDetail>	finance	= null;
+	private List<FinanceDetail> finance = null;
 	@XmlElement
-	private WSReturnStatus		returnStatus;
+	private WSReturnStatus returnStatus;
 	@XmlElement
-	private String 				finReference;
-	@XmlElement(name="docContent")
+	private String finReference;
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
 	@XmlElement
 	private StatementOfAccount statementSOA;
-
 
 	public CustomerDetails getCustomer() {
 		return customer;
@@ -60,6 +59,7 @@ public class FinStatementResponse {
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
+
 	public byte[] getDocImage() {
 		return docImage;
 	}

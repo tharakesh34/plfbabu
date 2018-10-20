@@ -44,19 +44,19 @@ public class GraceDetail implements Serializable {
 	private BigDecimal grcAdvPftRate = BigDecimal.ZERO;
 	private BigDecimal fInGrcMinRate = BigDecimal.ZERO;
 	private BigDecimal finGrcMaxRate = BigDecimal.ZERO;
-	
+
 	@XmlElement(name = "finGrcDftPftFrq")
 	private String finGrcDftIntFrq;
 	private boolean finIsAlwGrcRepay;
 	private String finGrcSchdMthd;
-	
+
 	@XmlElement(name = "finGrcIsPftCpz")
 	private boolean finGrcIsIntCpz;
 	private String finGrcCpzFrq;
 	private boolean finGrcIsRvwAlw;
 	private String finGrcRvwFrq;
 	private String finGrcRvwRateApplFor;
-	
+
 	@XmlElement(name = "finIsPftCpzAtGrcEnd")
 	private boolean finIsIntCpzAtGrcEnd;
 

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
 					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
+
 	<bean class="com.pennant.backend.model.systemmasters.Academic">
 
 		<field name="academicID">
@@ -19,5 +19,5 @@
 			<constraint annotation="javax.validation.constraints.NotNull" />
 		</field>
 	</bean>
-	
+
 </constraint-mappings>

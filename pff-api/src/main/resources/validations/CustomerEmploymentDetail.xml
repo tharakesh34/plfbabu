@@ -6,10 +6,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<!-- CustomerEmployementDetail validations -->
-	<bean
-		class="com.pennant.backend.model.customermasters.CustomerEmploymentDetail">
+	<bean class="com.pennant.backend.model.customermasters.CustomerEmploymentDetail">
 
-	<field name="custEmpId">
+		<field name="custEmpId">
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>employmentId is Mandatory</message>
 				<groups>

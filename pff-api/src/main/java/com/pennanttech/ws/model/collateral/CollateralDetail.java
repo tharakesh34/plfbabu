@@ -11,23 +11,21 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 
-@XmlType(propOrder = {
-		"cif", "collateralSetup", "returnStatus"
-})
+@XmlType(propOrder = { "cif", "collateralSetup", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollateralDetail implements Serializable {
 	private static final long serialVersionUID = -7149894537732020044L;
-	
+
 	private String cif;
-	
-	@XmlElement(name="collateral")
+
+	@XmlElement(name = "collateral")
 	private List<CollateralSetup> collateralSetup;
 	private WSReturnStatus returnStatus;
-	
+
 	public CollateralDetail() {
-		
+
 	}
-	
+
 	public String getCif() {
 		return cif;
 	}

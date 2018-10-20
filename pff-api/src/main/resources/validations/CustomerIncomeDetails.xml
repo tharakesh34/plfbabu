@@ -28,7 +28,7 @@
 			</constraint>
 		</field>
 
-		 <field name="incomeExpense">
+		<field name="incomeExpense">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>incomeExpense is Mandatory</message>
 				<groups>
@@ -73,8 +73,8 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		 
- 
+
+
 		<field name="customerIncome">
 			<valid />
 		</field>

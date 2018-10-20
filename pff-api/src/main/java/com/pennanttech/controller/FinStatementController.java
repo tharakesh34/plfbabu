@@ -56,18 +56,17 @@ import com.rits.cloning.Cloner;
 
 public class FinStatementController extends SummaryDetailService {
 
-	private static final Logger			logger	= Logger.getLogger(FinStatementController.class);
+	private static final Logger logger = Logger.getLogger(FinStatementController.class);
 
-	private FinanceDetailService		financeDetailService;
-	private PostingsDAO					postingsDAO;
-	private CollateralSetupService		collateralSetupService;
-	private FeeDetailService			feeDetailService;
+	private FinanceDetailService financeDetailService;
+	private PostingsDAO postingsDAO;
+	private CollateralSetupService collateralSetupService;
+	private FeeDetailService feeDetailService;
 
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private ManualAdviseDAO				manualAdviseDAO;
-	private ReceiptService				receiptService;
-	private SOAReportGenerationService 	soaReportGenerationService;	
-
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ManualAdviseDAO manualAdviseDAO;
+	private ReceiptService receiptService;
+	private SOAReportGenerationService soaReportGenerationService;
 
 	/**
 	 * get the FinStatement Details by the given FinReferences.
@@ -171,7 +170,8 @@ public class FinStatementController extends SummaryDetailService {
 					financeDetail = getForeClosureDetails(financeDetail, days);
 
 					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-					finScheduleData.setFinanceScheduleDetails(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails());
+					finScheduleData
+							.setFinanceScheduleDetails(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails());
 					// setting old values
 					financeDetail.setCustomerDetails(aFinanceDetail.getCustomerDetails());
 					finScheduleData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
@@ -266,8 +266,8 @@ public class FinStatementController extends SummaryDetailService {
 		return finStmtDetail;
 	}
 
-	private void processFeesAndCharges(FinScheduleData scheduleData,
-			List<FinFeeDetail> finFeeDetails) throws IllegalAccessException, InvocationTargetException {
+	private void processFeesAndCharges(FinScheduleData scheduleData, List<FinFeeDetail> finFeeDetails)
+			throws IllegalAccessException, InvocationTargetException {
 		// finance level fees and charges
 		for (FinFeeDetail feeDetail : finFeeDetails) {
 			feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
@@ -312,16 +312,18 @@ public class FinStatementController extends SummaryDetailService {
 		return getStatement(references, serviceName, statementRequest.getDays());
 	}
 
-	private void prepareResponse(FinanceDetail financeDetail, String servicName) throws IllegalAccessException, InvocationTargetException {
+	private void prepareResponse(FinanceDetail financeDetail, String servicName)
+			throws IllegalAccessException, InvocationTargetException {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
 		financeDetail.getFinScheduleData().setInsuranceList(null);
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
-		/*		if (!StringUtils.equals(APIConstants.STMT_REPAY_SCHD, servicName)) {
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(null);
-		}*/
+		/*
+		 * if (!StringUtils.equals(APIConstants.STMT_REPAY_SCHD, servicName)) {
+		 * financeDetail.getFinScheduleData().setFinanceScheduleDetails(null); }
+		 */
 		financeDetail.getFinScheduleData().setRateInstruction(null);
 		financeDetail.getFinScheduleData().setRepayInstructions(null);
 		financeDetail.setFinFlagsDetails(null);
@@ -348,7 +350,7 @@ public class FinStatementController extends SummaryDetailService {
 			} else {
 				financeDetail.getFinScheduleData().getFinanceMain().setFirstDisbDate(disbList.get(0).getDisbDate());
 				financeDetail.getFinScheduleData().getFinanceMain()
-				.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
+						.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 			}
 		}
 
@@ -443,13 +445,14 @@ public class FinStatementController extends SummaryDetailService {
 		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
 		ForeClosure foreClosure = new ForeClosure();
 		foreClosure.setValueDate(finServiceInst.getFromDate());
-		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow).add(totFeePayNow).subtract(totTdsReturn);
+		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow)
+				.add(totFeePayNow).subtract(totTdsReturn);
 		BigDecimal totServFees = BigDecimal.ZERO;
 
 		// foreclosure fees
 		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
 		finScheduleData.getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
-		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL, null,true);
+		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL, null, true);
 		if (finScheduleData.getFinFeeDetailList() != null) {
 			for (FinFeeDetail fee : finScheduleData.getFinFeeDetailList()) {
 				if (StringUtils.equals(fee.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
@@ -529,11 +532,12 @@ public class FinStatementController extends SummaryDetailService {
 		logger.debug("Entering");
 
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
-		if(finScheduleData.getFinanceMain().isTDSApplicable()){
+		if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
+						RoundingMode.HALF_DOWN);
 			}
 		}
 
@@ -553,7 +557,7 @@ public class FinStatementController extends SummaryDetailService {
 		FinanceScheduleDetail prvSchd = null;
 		for (int i = 0; i < tempScheduleDetails.size(); i++) {
 			curSchd = tempScheduleDetails.get(i);
-			if(i != 0){
+			if (i != 0) {
 				prvSchd = tempScheduleDetails.get(i - 1);
 			}
 			Date schdDate = curSchd.getSchDate();
@@ -563,43 +567,47 @@ public class FinStatementController extends SummaryDetailService {
 				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
 				priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 
-				if(finScheduleData.getFinanceMain().isTDSApplicable()){
+				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 					BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 					BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 					tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
 				}
 
-			}else if (DateUtility.compare(valueDate, schdDate) == 0) {
+			} else if (DateUtility.compare(valueDate, schdDate) == 0) {
 
 				BigDecimal remPft = curSchd.getProfitCalc();
 				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
-				if(prvSchd != null){
+				if (prvSchd != null) {
 					remPft = remPft.add(prvSchd.getProfitBalance());
 					pftAccruedTillNow = pftAccruedTillNow.add(prvSchd.getProfitBalance());
 				}
-				priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance())).subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
+				priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()))
+						.subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
 
-				if(finScheduleData.getFinanceMain().isTDSApplicable()){
+				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 					BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 					tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
 				}
 				partAccrualReq = false;
 
 			} else {
-				if(partAccrualReq && prvSchd != null){
+				if (partAccrualReq && prvSchd != null) {
 					partAccrualReq = false;
-					BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate, curSchd.getBalanceForPftCal(),
-							prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+					BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate,
+							curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 					accruedPft = accruedPft.add(prvSchd.getProfitFraction());
-					accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+					accruedPft = CalculationUtil.roundAmount(accruedPft,
+							finScheduleData.getFinanceMain().getCalRoundingMode(),
 							finScheduleData.getFinanceMain().getRoundingTarget());
 					pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
 
 					priBalance = priBalance.add(prvSchd.getClosingBalance());
 
-					if(finScheduleData.getFinanceMain().isTDSApplicable()){
-						BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-						tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+					if (finScheduleData.getFinanceMain().isTDSApplicable()) {
+						BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0,
+								RoundingMode.HALF_DOWN);
+						tdsAccruedTillNow = tdsAccruedTillNow
+								.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
 					}
 				}
 			}
@@ -635,11 +643,11 @@ public class FinStatementController extends SummaryDetailService {
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
-			if(overdueList != null) {
-				for(FinODDetails odDetail: overdueList) {
-					if(odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
-						overdueList = getReceiptService().getValueDatePenalties(finScheduleData, priBalance.add(pftAmt).add(totFeeAmount),
-								valueDate, null, true);
+			if (overdueList != null) {
+				for (FinODDetails odDetail : overdueList) {
+					if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+						overdueList = getReceiptService().getValueDatePenalties(finScheduleData,
+								priBalance.add(pftAmt).add(totFeeAmount), valueDate, null, true);
 					}
 				}
 			}
@@ -648,10 +656,10 @@ public class FinStatementController extends SummaryDetailService {
 		// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 		BigDecimal latePayPftBal = BigDecimal.ZERO;
 		BigDecimal penaltyBal = BigDecimal.ZERO;
-		if(overdueList != null && !overdueList.isEmpty()){
+		if (overdueList != null && !overdueList.isEmpty()) {
 			for (int i = 0; i < overdueList.size(); i++) {
 				FinODDetails finODDetail = overdueList.get(i);
-				if (finODDetail.getFinODSchdDate().compareTo(valueDate)>0) {
+				if (finODDetail.getFinODSchdDate().compareTo(valueDate) > 0) {
 					continue;
 				}
 				latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
@@ -675,6 +683,7 @@ public class FinStatementController extends SummaryDetailService {
 
 	/**
 	 * Method for Sorting Schedule Details
+	 * 
 	 * @param financeScheduleDetail
 	 * @return
 	 */
@@ -691,18 +700,20 @@ public class FinStatementController extends SummaryDetailService {
 
 		return financeScheduleDetail;
 	}
+
 	/**
-	 * Method for generating SOA  report
+	 * Method for generating SOA report
+	 * 
 	 * @param statementRequest
 	 * @return stmtResponse
 	 */
-	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest)  {
+	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest) {
 		logger.debug("Entering");
 
 		FinStatementResponse stmtResponse;
 		try {
 			String reportName = statementRequest.getTemplate();
-			Date fromdate =statementRequest.getFromDate();
+			Date fromdate = statementRequest.getFromDate();
 			Date todate = statementRequest.getToDate();
 			String finReference = statementRequest.getFinReference();
 			String envVariable = System.getenv("APP_ROOT_PATH");
@@ -738,7 +749,7 @@ public class FinStatementController extends SummaryDetailService {
 			return stmtResponse;
 		}
 	}
-	
+
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) {
 		logger.debug("Entering");
 
@@ -749,11 +760,10 @@ public class FinStatementController extends SummaryDetailService {
 		String envVariable = System.getenv("APP_ROOT_PATH");
 		PathUtil.setRootPath(envVariable);
 		statementOfAccount = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate, todate);
-		
-		
+
 		if (statementOfAccount != null) {
-				statementOfAccount.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				return statementOfAccount;
+			statementOfAccount.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			return statementOfAccount;
 		} else {
 			statementOfAccount = new StatementOfAccount();
 			statementOfAccount.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -761,6 +771,7 @@ public class FinStatementController extends SummaryDetailService {
 		}
 		return statementOfAccount;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -792,6 +803,7 @@ public class FinStatementController extends SummaryDetailService {
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
 	}
+
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
 	}

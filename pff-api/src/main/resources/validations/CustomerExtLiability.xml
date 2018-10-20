@@ -17,7 +17,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="value">1</element>
-			</constraint> 
+			</constraint>
 			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>liabilitySeq allow 3 digits only</message>
 				<groups>

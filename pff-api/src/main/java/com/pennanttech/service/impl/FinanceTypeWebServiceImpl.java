@@ -21,7 +21,7 @@ import com.pennanttech.ws.model.financetype.ProductType;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,FinanceTypeRestService {
+public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService, FinanceTypeRestService {
 
 	private static final Logger logger = Logger.getLogger(FinanceTypeWebServiceImpl.class);
 
@@ -48,7 +48,7 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 
 			FinanceTypeResponse response = new FinanceTypeResponse();
 			if (count > 0) {
-				response = financeTypeController.getFinanceTypeDetails(finTypeReq,false);
+				response = financeTypeController.getFinanceTypeDetails(finTypeReq, false);
 				response.setStartDate(null);
 				response.setEndDate(null);
 			} else {
@@ -56,7 +56,7 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 				valueParm[0] = finType;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90202", valueParm));
 			}
-			
+
 			logger.debug("Leaving");
 			return response;
 		} else {
@@ -74,7 +74,7 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 	@Override
 	public StepPolicyHeader getStepPolicyDetails(String policyCode) throws ServiceException {
 		logger.debug("Entering");
-		
+
 		// Mandatory validation
 		if (StringUtils.isBlank(policyCode)) {
 			validationUtility.fieldLevelException();
@@ -84,20 +84,21 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 		APIErrorHandlerService.logReference(policyCode);
 
 		StepPolicyHeader response = new StepPolicyHeader();
-		
+
 		// validate policyCode
 		StepPolicyHeader header = stepPolicyService.getStepPolicyHeaderById(policyCode);
-		if(header != null) {
+		if (header != null) {
 			response = financeTypeController.getStepPolicyDetails(policyCode);
 		} else {
 			String[] valueParm = new String[1];
 			valueParm[0] = policyCode;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501", valueParm));
 		}
-		
+
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * Fetch Product details from system.
 	 * 
@@ -105,8 +106,8 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 	 */
 	@Override
 	public ProductType getLoanTypes(String productCode) throws ServiceException {
-			logger.debug("Entering");
-		
+		logger.debug("Entering");
+
 		// Mandatory validation
 		if (StringUtils.isBlank(productCode)) {
 			validationUtility.fieldLevelException();
@@ -116,20 +117,21 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 		APIErrorHandlerService.logReference(productCode);
 
 		ProductType response = new ProductType();
-		
+
 		// validate productCode
 		Product product = productDAO.getProductByID(productCode, productCode, "_AView");
-		if(product != null) {
+		if (product != null) {
 			response = financeTypeController.getLoanTypes(productCode);
 		} else {
 			String[] valueParm = new String[1];
 			valueParm[0] = productCode;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501", valueParm));
 		}
-		
+
 		logger.debug("Leaving");
 		return response;
 	}
+
 	@Autowired
 	public void setFinanceTypeController(FinanceTypeController financeTypeController) {
 		this.financeTypeController = financeTypeController;
@@ -144,11 +146,12 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
 	}
-	
+
 	@Autowired
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
 	}
+
 	@Autowired
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;

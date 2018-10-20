@@ -10,27 +10,33 @@ import com.pennant.ws.exception.ServiceException;
 
 @WebService
 public interface FinServiceInstSOAPService {
-	
+
 	@WebResult(name = "finance")
-	public FinanceDetail addRateChange(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+	public FinanceDetail addRateChange(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 	@WebResult(name = "finance")
-	public FinanceDetail changeRepayAmt(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+	public FinanceDetail changeRepayAmt(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 	@WebResult(name = "finance")
-	public FinanceDetail deferments(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+	public FinanceDetail deferments(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 	@WebResult(name = "finance")
-	public FinanceDetail addTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+	public FinanceDetail addTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 	@WebResult(name = "finance")
-	public FinanceDetail manualPayment(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+	public FinanceDetail manualPayment(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 	@WebResult(name = "finance")
-	public FinanceDetail removeTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+	public FinanceDetail removeTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 	@WebResult(name = "finance")
-	public FinanceDetail getOverDraftMaintenance(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
-	
+	public FinanceDetail getOverDraftMaintenance(
+			@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
 }

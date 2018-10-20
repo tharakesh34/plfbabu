@@ -5,10 +5,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<bean class="com.pennant.backend.model.configuration.VASRecording">
-		
+
 		<field name="documents">
 			<valid />
-			</field>
-		
+		</field>
+
 	</bean>
 </constraint-mappings>

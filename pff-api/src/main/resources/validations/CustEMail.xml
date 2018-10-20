@@ -28,7 +28,7 @@
 			</constraint>
 		</field>
 
-		 <field name="custEMailTypeCode">
+		<field name="custEMailTypeCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>addrType should have maximum 8 characters</message>
 				<groups>
@@ -43,7 +43,7 @@
 				</groups>
 			</constraint>
 		</field>
- 
+
 		<field name="customerEMail">
 			<valid />
 		</field>

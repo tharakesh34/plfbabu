@@ -203,8 +203,8 @@ public interface CustomerRESTService {
 
 	@POST
 	@Path("/customerService/addCustomerDocument")
-	public WSReturnStatus addCustomerDocument(@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail)
-			throws ServiceException;
+	public WSReturnStatus addCustomerDocument(
+			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
 
 	@POST
 	@Path("/customerService/updateCustomerDocument")

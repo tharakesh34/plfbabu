@@ -35,20 +35,25 @@ public interface CustomerSOAPService {
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerPersonalInfo(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
-	public WSReturnStatus updateCustomerPersonalInfo(@WebParam(name = "customer") CustomerDetails customer) throws ServiceException;
+	public WSReturnStatus updateCustomerPersonalInfo(@WebParam(name = "customer") CustomerDetails customer)
+			throws ServiceException;
 
 	@WebResult(name = "customer")
-	public EmploymentDetail addCustomerEmployment(@WebParam(name = "customer") EmploymentDetail employmentDetail) throws ServiceException;
+	public EmploymentDetail addCustomerEmployment(@WebParam(name = "customer") EmploymentDetail employmentDetail)
+			throws ServiceException;
 
-	public WSReturnStatus updateCustomerEmployment(@WebParam(name = "customer") EmploymentDetail employmentDetail) throws ServiceException;
+	public WSReturnStatus updateCustomerEmployment(@WebParam(name = "customer") EmploymentDetail employmentDetail)
+			throws ServiceException;
 
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerEmployment(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
-	public WSReturnStatus deleteCustomerEmployment(@WebParam(name = "customer") EmploymentDetail employmentDetail)throws ServiceException;
-	
+	public WSReturnStatus deleteCustomerEmployment(@WebParam(name = "customer") EmploymentDetail employmentDetail)
+			throws ServiceException;
+
 	@WebResult(name = "customer")
-	public WSReturnStatus addCustomerPhoneNumber(@WebParam(name = "customer") CustPhoneNumber customerPhoneNumber) throws ServiceException;
+	public WSReturnStatus addCustomerPhoneNumber(@WebParam(name = "customer") CustPhoneNumber customerPhoneNumber)
+			throws ServiceException;
 
 	public WSReturnStatus updateCustomerPhoneNumber(@WebParam(name = "customer") CustPhoneNumber customerPhoneNumber)
 			throws ServiceException;
@@ -56,7 +61,8 @@ public interface CustomerSOAPService {
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerPhoneNumbers(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
-	public WSReturnStatus deleteCustomerPhoneNumber(@WebParam(name = "customer") CustPhoneNumber customerPhoneNumber) throws ServiceException;
+	public WSReturnStatus deleteCustomerPhoneNumber(@WebParam(name = "customer") CustPhoneNumber customerPhoneNumber)
+			throws ServiceException;
 
 	@WebResult(name = "customer")
 	public WSReturnStatus addCustomerAddress(@WebParam(name = "customer") CustAddress custAddress)
@@ -69,66 +75,81 @@ public interface CustomerSOAPService {
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerAddresses(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
-	public WSReturnStatus deleteCustomerAddress(@WebParam(name = "customer") CustAddress custAddress) throws ServiceException;
-	
+	public WSReturnStatus deleteCustomerAddress(@WebParam(name = "customer") CustAddress custAddress)
+			throws ServiceException;
+
 	@WebResult(name = "customer")
-	public WSReturnStatus addCustomerEmail(@WebParam(name ="customer")CustEMail custEMail)throws ServiceException;
-	
+	public WSReturnStatus addCustomerEmail(@WebParam(name = "customer") CustEMail custEMail) throws ServiceException;
+
 	@WebResult(name = "customer")
-	public WSReturnStatus updateCustomerEmail(@WebParam(name ="customer")CustEMail custEMail)throws ServiceException;
-	
+	public WSReturnStatus updateCustomerEmail(@WebParam(name = "customer") CustEMail custEMail) throws ServiceException;
+
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerEmails(@WebParam(name = "cif") String custCIF) throws ServiceException;
-	
-	public WSReturnStatus deleteCustomerEmail(@WebParam(name ="customer")CustEMail custEMail) throws ServiceException;
-	
+
+	public WSReturnStatus deleteCustomerEmail(@WebParam(name = "customer") CustEMail custEMail) throws ServiceException;
+
 	@WebResult(name = "customer")
-	public WSReturnStatus addCustomerIncome(@WebParam(name ="customer")CustomerIncomeDetail customerIncomeDetail)throws ServiceException;
-	
+	public WSReturnStatus addCustomerIncome(@WebParam(name = "customer") CustomerIncomeDetail customerIncomeDetail)
+			throws ServiceException;
+
 	@WebResult(name = "customer")
-	public WSReturnStatus updateCustomerIncome(@WebParam(name ="customer")CustomerIncomeDetail customerIncomeDetail)throws ServiceException;
-	
+	public WSReturnStatus updateCustomerIncome(@WebParam(name = "customer") CustomerIncomeDetail customerIncomeDetail)
+			throws ServiceException;
+
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerIncomes(@WebParam(name = "cif") String custCIF) throws ServiceException;
-	
-	public WSReturnStatus deleteCustomerIncome(@WebParam(name ="customer")CustomerIncomeDetail customerIncomeDetail) throws ServiceException;
-	
-	@WebResult(name = "customer")
-	public CustomerBankInfoDetail addCustomerBankingInformation(@WebParam(name ="customer")CustomerBankInfoDetail customerBankInfoDetail)throws ServiceException;
-	
-	@WebResult(name = "customer")
-	public WSReturnStatus updateCustomerBankingInformation(@WebParam(name ="customer")CustomerBankInfoDetail customerBankInfoDetail)throws ServiceException;
-	
-	@WebResult(name = "customer")
-	public CustomerDetails getCustomerBankingInformation(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
-	public WSReturnStatus deleteCustomerBankingInformation(@WebParam(name ="customer")CustomerBankInfoDetail customerBankInfoDetail) throws ServiceException;
+	public WSReturnStatus deleteCustomerIncome(@WebParam(name = "customer") CustomerIncomeDetail customerIncomeDetail)
+			throws ServiceException;
 
 	@WebResult(name = "customer")
-	public CustomerChequeInfoDetail addCustomerAccountBehaviour(@WebParam(name ="customer")CustomerChequeInfoDetail customerChequeInfoDetail)throws ServiceException;
-	
+	public CustomerBankInfoDetail addCustomerBankingInformation(
+			@WebParam(name = "customer") CustomerBankInfoDetail customerBankInfoDetail) throws ServiceException;
+
 	@WebResult(name = "customer")
-	public WSReturnStatus updateCustomerAccountBehaviour(@WebParam(name ="customer")CustomerChequeInfoDetail customerChequeInfoDetail)throws ServiceException;
-	
+	public WSReturnStatus updateCustomerBankingInformation(
+			@WebParam(name = "customer") CustomerBankInfoDetail customerBankInfoDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerDetails getCustomerBankingInformation(@WebParam(name = "cif") String custCIF)
+			throws ServiceException;
+
+	public WSReturnStatus deleteCustomerBankingInformation(
+			@WebParam(name = "customer") CustomerBankInfoDetail customerBankInfoDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerChequeInfoDetail addCustomerAccountBehaviour(
+			@WebParam(name = "customer") CustomerChequeInfoDetail customerChequeInfoDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public WSReturnStatus updateCustomerAccountBehaviour(
+			@WebParam(name = "customer") CustomerChequeInfoDetail customerChequeInfoDetail) throws ServiceException;
+
 	@WebResult(name = "customer")
 	public CustomerDetails getCustomerAccountBehaviour(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
-	public WSReturnStatus deleteCustomerAccountBehaviour(@WebParam(name ="customer")CustomerChequeInfoDetail customerChequeInfoDetail) throws ServiceException;
-	
-	@WebResult(name = "customer")
-	public CustomerExtLiabilityDetail addCustomerExternalLiability(@WebParam(name ="customer")CustomerExtLiabilityDetail customerExtLiabilityDetail)throws ServiceException;
-	
-	@WebResult(name = "customer")
-	public WSReturnStatus updateCustomerExternalLiability(@WebParam(name ="customer")CustomerExtLiabilityDetail customerExtLiabilityDetail)throws ServiceException;
-	
-	@WebResult(name = "customer")
-	public CustomerDetails getCustomerExternalLiabilities(@WebParam(name = "cif") String custCIF) throws ServiceException;
+	public WSReturnStatus deleteCustomerAccountBehaviour(
+			@WebParam(name = "customer") CustomerChequeInfoDetail customerChequeInfoDetail) throws ServiceException;
 
-	public WSReturnStatus deleteCustomerExternalLiability(@WebParam(name ="customer")CustomerExtLiabilityDetail customerExtLiabilityDetail) throws ServiceException;
-	
 	@WebResult(name = "customer")
-	public WSReturnStatus addCustomerDocument(@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail)
+	public CustomerExtLiabilityDetail addCustomerExternalLiability(
+			@WebParam(name = "customer") CustomerExtLiabilityDetail customerExtLiabilityDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public WSReturnStatus updateCustomerExternalLiability(
+			@WebParam(name = "customer") CustomerExtLiabilityDetail customerExtLiabilityDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerDetails getCustomerExternalLiabilities(@WebParam(name = "cif") String custCIF)
 			throws ServiceException;
+
+	public WSReturnStatus deleteCustomerExternalLiability(
+			@WebParam(name = "customer") CustomerExtLiabilityDetail customerExtLiabilityDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public WSReturnStatus addCustomerDocument(
+			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
 
 	@WebResult(name = "customer")
 	public WSReturnStatus updateCustomerDocument(

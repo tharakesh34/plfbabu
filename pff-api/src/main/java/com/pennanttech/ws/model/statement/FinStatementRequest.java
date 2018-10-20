@@ -8,24 +8,23 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinStatementRequest {
-	
+
 	@XmlElement
-	private String	cif;
+	private String cif;
 	@XmlElement
-	private String	finActiveStatus;
+	private String finActiveStatus;
 	@XmlElement
-	private String	finReference;
+	private String finReference;
 	@XmlElement
-	private Date	fromDate;
+	private Date fromDate;
 	@XmlElement
-	private Date	toDate;
+	private Date toDate;
 	@XmlElement
-	private int		days;
+	private int days;
 	@XmlElement
-	private String  type;
+	private String type;
 	@XmlElement
 	private String template;
-
 
 	public String getCif() {
 		return cif;
@@ -74,6 +73,7 @@ public class FinStatementRequest {
 	public void setDays(int days) {
 		this.days = days;
 	}
+
 	public String getType() {
 		return type;
 	}

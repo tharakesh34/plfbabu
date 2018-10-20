@@ -175,8 +175,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[99003]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[Channel Authentication Failed]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[Channel Authentication Failed]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)
@@ -189,8 +189,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[99001]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[AuthDetails Not Available]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[AuthDetails Not Available]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)
@@ -223,8 +223,8 @@ public class PFFServicesSecurityTest {
 		client.header(CONSTANTS.AuthKey.get(), encodedAuth);
 		Response response = client.get();
 
-		String token = response.getHeaders().get("Token").toString()
-				.substring(1, response.getHeaders().get("Token").toString().length() - 1);
+		String token = response.getHeaders().get("Token").toString().substring(1,
+				response.getHeaders().get("Token").toString().length() - 1);
 		client.header(CONSTANTS.ChannelId.get(), CONSTANTS.User.get());
 		client.header(CONSTANTS.Token.get(), token);
 
@@ -243,8 +243,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[99003]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[Channel Authentication Failed]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[Channel Authentication Failed]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)
@@ -258,8 +258,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[99001]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[AuthDetails Not Available]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[AuthDetails Not Available]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)
@@ -273,8 +273,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[EA006]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[User Token Authentication Failed]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[User Token Authentication Failed]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)
@@ -288,8 +288,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[EA006]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[User Token Authentication Failed]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[User Token Authentication Failed]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	// Device Test cases
@@ -316,8 +316,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[99003]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[Channel Authentication Failed]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[Channel Authentication Failed]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)
@@ -330,8 +330,8 @@ public class PFFServicesSecurityTest {
 		assertEquals("Response status not 401 ", 401, response.getStatus());
 		MultivaluedMap<String, Object> headerMap = response.getHeaders();
 		assertEquals("Error code not matching", "[EA010]", headerMap.get("StatusCode").toString());
-		assertEquals("Error Message not matching", "[Token Details Not Available]", headerMap.get("StatusDesc")
-				.toString());
+		assertEquals("Error Message not matching", "[Token Details Not Available]",
+				headerMap.get("StatusDesc").toString());
 	}
 
 	@Test(enabled = false)

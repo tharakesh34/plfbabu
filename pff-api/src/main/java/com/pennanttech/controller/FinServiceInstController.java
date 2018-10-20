@@ -177,8 +177,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method for process AddRateChange request and re-calculate schedule
-	 * details
+	 * Method for process AddRateChange request and re-calculate schedule details
 	 * 
 	 * @param finServiceInstruction
 	 * @param eventCode
@@ -213,7 +212,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				finServiceInst.setPftDaysBasis(financeMain.getProfitDaysBasis());
 			}
 			//OverDraft Loan Type
-			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finServiceInst.getRecalType())){
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finServiceInst.getRecalType())) {
 				finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 			}
 
@@ -791,11 +790,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			// set finAssetValue = FinCurrAssetValue when there is no
 			// maxDisbCheck
 			/*
-			 * FinanceType finType =
-			 * financeDetail.getFinScheduleData().getFinanceType();
-			 * if(!finType.isAlwMaxDisbCheckReq()) {
-			 * financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());
-			 * }
+			 * FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+			 * if(!finType.isAlwMaxDisbCheckReq()) { financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue()); }
 			 */
 
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDDISB);
@@ -841,11 +837,11 @@ public class FinServiceInstController extends SummaryDetailService {
 								.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
 					}
 				}
-				
+
 				//Overdraft schedule details should be calculated before finschduledetails is empty.
-				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory()) 
+				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
 						&& (finScheduleData.getFinanceScheduleDetails() == null
-						|| finScheduleData.getFinanceScheduleDetails().isEmpty())) {
+								|| finScheduleData.getFinanceScheduleDetails().isEmpty())) {
 					financeDetail.setFinScheduleData(ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData()));
 				}
 
@@ -951,13 +947,12 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		if (financeDetail != null) {
-			
+
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			
+
 			finServiceInst.setFinEvent(FinanceConstants.FINSER_EVENT_CANCELDISB);
-			
-			
+
 			// Disbursement Details Correction
 			List<FinanceDisbursement> list = finScheduleData.getDisbursementDetails();
 			for (int i = 0; i < list.size(); i++) {
@@ -993,7 +988,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					break;
 				}
 			}
-			
+
 			//subtract from FinCurrAssetValue to CurDisbursementAmt and set value to FinCurrAssetValue
 			BigDecimal amount = finServiceInst.getAmount();
 			financeMain.setCurDisbursementAmt(amount);
@@ -1003,10 +998,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setEventToDate(financeMain.getMaturityDate());
 			financeMain.setRecalFromDate(finServiceInst.getFromDate());
 			financeMain.setRecalToDate(financeMain.getMaturityDate());
-			
 
 			// Service details calling for Schedule calculation
-			finScheduleData=cancelDisbursementService.getCancelDisbDetails(finScheduleData);
+			finScheduleData = cancelDisbursementService.getCancelDisbDetails(finScheduleData);
 			finServiceInst.setPftChg(finScheduleData.getPftChg());
 			finScheduleData.getFinanceMain().resetRecalculationFields();
 			finScheduleData.setFinServiceInstruction(finServiceInst);
@@ -1018,11 +1012,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			} else {
 				finScheduleData.setSchduleGenerated(true);
 			}
-			
+
 			try {
 				// Get the response and set the value for RcdMaintainsts and for ModuleDefiner 
 				financeDetail.setModuleDefiner("CancelDisbursement");
-				financeDetail.getFinScheduleData().getFinanceMain().setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CANCELDISB);
+				financeDetail.getFinScheduleData().getFinanceMain()
+						.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CANCELDISB);
 				financeDetail = getResponse(financeDetail, finServiceInst);
 			} catch (InterfaceException ex) {
 				logger.error("InterfaceException", ex);
@@ -2150,16 +2145,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
 			/*
-			 * // tempStartDate List<FinanceScheduleDetail>
-			 * financeScheduleDetails = null; financeScheduleDetails =
-			 * financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-			 * if (financeScheduleDetails != null) { for (int i = 0; i <
-			 * financeScheduleDetails.size(); i++) { FinanceScheduleDetail
-			 * curSchd = financeScheduleDetails.get(i); if
-			 * (curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
+			 * // tempStartDate List<FinanceScheduleDetail> financeScheduleDetails = null; financeScheduleDetails =
+			 * financeDetail.getFinScheduleData().getFinanceScheduleDetails(); if (financeScheduleDetails != null) { for
+			 * (int i = 0; i < financeScheduleDetails.size(); i++) { FinanceScheduleDetail curSchd =
+			 * financeScheduleDetails.get(i); if (curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
 			 * curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) { if
-			 * (finServiceInst.getFromDate().compareTo(curSchd.getSchDate()) ==
-			 * 0) { break; } } } }
+			 * (finServiceInst.getFromDate().compareTo(curSchd.getSchDate()) == 0) { break; } } } }
 			 */
 
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -2312,14 +2303,14 @@ public class FinServiceInstController extends SummaryDetailService {
 			finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
 		}
 
-     		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
+		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
 			int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 			financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
 			financeDetail.getFinScheduleData().setSchduleGenerated(true);
 			List<FinServiceInstruction> finServiceInstructionList = new ArrayList<>();
-			if(finServiceInst!=null) {
-			finServiceInstructionList.add(finServiceInst);
-			financeDetail.getFinScheduleData().setFinServiceInstructions(finServiceInstructionList);
+			if (finServiceInst != null) {
+				finServiceInstructionList.add(finServiceInst);
+				financeDetail.getFinScheduleData().setFinServiceInstructions(finServiceInstructionList);
 			}
 			financeDetail.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
 
@@ -2419,11 +2410,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 		/*
-		 * List<FinFeeDetail> finServicingFeeList =
-		 * finFeeDetailService.getFinFeeDetailById(finReference, false,
-		 * "_TView", eventCode);
-		 * financeDetail.getFinScheduleData().setFinFeeDetailList(
-		 * finServicingFeeList);
+		 * List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false,
+		 * "_TView", eventCode); financeDetail.getFinScheduleData().setFinFeeDetailList( finServicingFeeList);
 		 */
 
 		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
@@ -2593,9 +2581,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		
 		Date curBussDate = DateUtility.getAppDate();
-		if(finServInst.getReceiptDetail()!=null) {
+		if (finServInst.getReceiptDetail() != null) {
 			if (DateUtility.compare(finServInst.getReceiptDetail().getReceivedDate(), curBussDate) > 0) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
@@ -2604,10 +2591,8 @@ public class FinServiceInstController extends SummaryDetailService {
 						+ DateUtility.formatToShortDate(finServInst.getReceiptDetail().getReceivedDate());
 				valueParm[1] = "Application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
-			}	
+			}
 		}
-		
-		
 
 		if (finType != null) {// if given fintype is not confugured
 
@@ -2712,8 +2697,8 @@ public class FinServiceInstController extends SummaryDetailService {
 										if (feeDetail.getPaidAmount().compareTo(finTypeFee.getAmount()) != 0) {
 											String[] valueParm = new String[1];
 											valueParm[0] = finTypeFee.getFeeTypeCode();
-											errorDetails.add(
-													ErrorUtil.getErrorDetail(new ErrorDetail("90254", valueParm)));
+											errorDetails
+													.add(ErrorUtil.getErrorDetail(new ErrorDetail("90254", valueParm)));
 											return errorDetails;
 										}
 									}
@@ -2725,8 +2710,8 @@ public class FinServiceInstController extends SummaryDetailService {
 											valueParm[0] = "Waiver amount";
 											valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
 											valueParm[2] = feeDetail.getFeeTypeCode();
-											errorDetails.add(
-													ErrorUtil.getErrorDetail(new ErrorDetail("90258", valueParm)));
+											errorDetails
+													.add(ErrorUtil.getErrorDetail(new ErrorDetail("90258", valueParm)));
 											return errorDetails;
 										}
 									}
@@ -2887,7 +2872,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
-	
+
 	public CancelDisbursementService getCancelDisbursementService() {
 		return cancelDisbursementService;
 	}
@@ -2903,6 +2888,5 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
-
 
 }

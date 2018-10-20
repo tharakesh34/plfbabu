@@ -11,7 +11,7 @@
 				<message>thirdPartyCif should have maximum 12 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
-						<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">12</element>
 			</constraint>
@@ -19,9 +19,9 @@
 				<message>thirdPartyCif is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
-						<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 			</constraint>
 		</field>
-		</bean>
-		</constraint-mappings>
+	</bean>
+</constraint-mappings>

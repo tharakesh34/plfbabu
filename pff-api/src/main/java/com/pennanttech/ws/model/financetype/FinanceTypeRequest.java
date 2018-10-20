@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="financeType")
+@XmlRootElement(name = "financeType")
 public class FinanceTypeRequest implements Serializable {
 
 	private static final long serialVersionUID = 4240224916197625490L;
@@ -19,7 +19,7 @@ public class FinanceTypeRequest implements Serializable {
 
 	// Request fields
 	private String finType;
-	@XmlElement(name="promotionCode")
+	@XmlElement(name = "promotionCode")
 	private String promotionType;
 	private boolean basicDetailReq;
 	private boolean grcDetailReq;
@@ -38,7 +38,7 @@ public class FinanceTypeRequest implements Serializable {
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public String getPromotionType() {
 		return promotionType;
 	}

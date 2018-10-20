@@ -8,9 +8,9 @@
 	<bean class="com.pennant.backend.model.finance.FinServiceInstruction">
 
 		<field name="finReference">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>finReference is Mandatory</message>
-				 <groups>
+				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 					<value>com.pennant.validation.DefermentsGroup</value>
@@ -32,7 +32,7 @@
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>finReference should have maximum 20 characters</message>
-				 <groups>
+				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 					<value>com.pennant.validation.DefermentsGroup</value>
@@ -48,13 +48,13 @@
 					<value>com.pennant.validation.ReSchedulingGroup</value>
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
-					<value>com.pennant.validation.ScheduleMethodGroup</value>	
-				</groups>  
+					<value>com.pennant.validation.ScheduleMethodGroup</value>
+				</groups>
 				<element name="max">20</element>
 			</constraint>
 		</field>
 		<field name="fromDate">
-			<constraint annotation="javax.validation.constraints.NotNull" >
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>fromDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -73,7 +73,7 @@
 			</constraint>
 		</field>
 		<field name="toDate">
-			<constraint annotation="javax.validation.constraints.NotNull" >
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>toDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -83,14 +83,14 @@
 			</constraint>
 		</field>
 		<field name="pftDaysBasis">
-			<constraint annotation="javax.validation.constraints.Null" >
+			<constraint annotation="javax.validation.constraints.Null">
 				<message>pftDaysBasis is not required for this service</message>
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-			 	<message>pftDaysBasis should have maximum 8 characters</message>
+				<message>pftDaysBasis should have maximum 8 characters</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 				</groups>
@@ -98,7 +98,7 @@
 			</constraint>
 		</field>
 		<field name="recalType">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>reCalType is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
@@ -123,35 +123,25 @@
 			</constraint>
 		</field>
 		<field name="schdMethod">
-			<constraint annotation="javax.validation.constraints.Null" >
+			<constraint annotation="javax.validation.constraints.Null">
 				<message>schMthd is not required for this service</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 				</groups>
 			</constraint>
-			<!-- <constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>schdMthd should have maximum 8 characters</message>
-				<groups>
-					<value>com.pennant.validation.ChangeRepaymentGroup</value>
-				</groups>
-				<element name="max">8</element>
-			</constraint>-->
+			<!-- <constraint annotation="org.hibernate.validator.constraints.Length"> <message>schdMthd should have maximum 8 characters</message> 
+				<groups> <value>com.pennant.validation.ChangeRepaymentGroup</value> </groups> <element name="max">8</element> </constraint> -->
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>schdMthd is Mandatory</message>
 				<groups>
-						<value>com.pennant.validation.ScheduleMethodGroup</value>
+					<value>com.pennant.validation.ScheduleMethodGroup</value>
 				</groups>
-			</constraint> 
+			</constraint>
 		</field>
-		
+
 		<field name="amount">
-			<!-- <constraint annotation="javax.validation.constraints.Max">
-				<message>amount is not required for this service</message>
-				<groups>
-					<value>com.pennant.validation.AddRateChangeGroup</value>
-				</groups>
-				<element name="value">0</element>
-			</constraint> -->
+			<!-- <constraint annotation="javax.validation.constraints.Max"> <message>amount is not required for this service</message> 
+				<groups> <value>com.pennant.validation.AddRateChangeGroup</value> </groups> <element name="value">0</element> </constraint> -->
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>amount should be greater than zero</message>
 				<groups>
@@ -172,25 +162,13 @@
 				</groups>
 				<element name="value">999999999999999999</element>
 			</constraint>
-			
+
 		</field>
-		
-<!-- 		<field name="terms">
-			<constraint annotation="javax.validation.constraints.DecimalMax">
-				<message>terms allow 3 digits only</message>
-				<groups>
-					<value>com.pennant.validation.AddTermsGroup</value>
-				</groups>
-				<element name="value">999</element>
-			</constraint>
-			<constraint annotation="javax.validation.constraints.Min">
-				<message>terms should be positive</message>
-				<groups>
-					<value>com.pennant.validation.AddTermsGroup</value>
-				</groups>
-				<element name="value">1</element>
-			</constraint>
-		</field> -->
+
+		<!-- <field name="terms"> <constraint annotation="javax.validation.constraints.DecimalMax"> <message>terms allow 3 digits 
+			only</message> <groups> <value>com.pennant.validation.AddTermsGroup</value> </groups> <element name="value">999</element> 
+			</constraint> <constraint annotation="javax.validation.constraints.Min"> <message>terms should be positive</message> <groups> 
+			<value>com.pennant.validation.AddTermsGroup</value> </groups> <element name="value">1</element> </constraint> </field> -->
 		<field name="actualRate">
 			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>actualRate allow 4 digits only</message>
@@ -232,7 +210,7 @@
 			</constraint>
 		</field>
 		<field name="repayFrq">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>repayFrq is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.ReSchedulingGroup</value>
@@ -246,9 +224,9 @@
 				<element name="max">5</element>
 			</constraint>
 		</field>
-		
+
 		<field name="dsaCode">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>dsaCode is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
@@ -266,31 +244,19 @@
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>accountsOfficer should be positive</message>
 				<groups>
-				<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
+					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-		</field> 
-		<!-- <field name="accountsOfficer">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
-				<message>accountsOfficer is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
-				</groups>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>accountsOfficer should have maximum 8 characters</message>
-				<groups>
-					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
-				</groups>
-				<element name="max">8</element>
-			</constraint>
-		</field> -->
-	<!-- 	<field name="feeRuleList">
-			<valid></valid>
-		</field> -->
+		</field>
+		<!-- <field name="accountsOfficer"> <constraint annotation="org.hibernate.validator.constraints.NotBlank" > <message>accountsOfficer 
+			is Mandatory</message> <groups> <value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value> </groups> </constraint> 
+			<constraint annotation="org.hibernate.validator.constraints.Length"> <message>accountsOfficer should have maximum 8 characters</message> 
+			<groups> <value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value> </groups> <element name="max">8</element> </constraint> 
+			</field> -->
+		<!-- <field name="feeRuleList"> <valid></valid> </field> -->
 		<field name="reqType">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>reqType is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -332,7 +298,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		
+
 		<field name="validateAddRateChange">
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>Either actualRate / baseRate are mandatory</message>
@@ -343,57 +309,58 @@
 				<element name="lang">javascript</element>
 				<element name="script">
 					if(_this.actualRate > 0){
-						if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
-								false;
-								}else{
-									true;
-										}
-						}else{
-						if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
-							true;
-							}else{
-								false;
-								}
-							}
+					if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
+					false;
+					}else{
+					true;
+					}
+					}else{
+					if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
+					true;
+					}else{
+					false;
+					}
+					}
 				</element>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message >splRate is mandatory for baseRate </message>
+				<message>splRate is mandatory for baseRate </message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 					<value>com.pennant.validation.ReSchedulingGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-				if ((_this.splrate != null) &amp;&amp; (_this.splrate !="")) {
+					if ((_this.splrate != null) &amp;&amp; (_this.splrate !="")) {
+					if ((_this.baseRate != null) &amp;&amp; (_this.baseRate
+					!= "")) {
+					true;
+					} else {
+					false;
+					}
+					} else {
+					true;
+					}
+				</element>
+			</constraint>
+
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>margin is mandatory for baseRate  </message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.ReSchedulingGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.margin > 0) {
 					if ((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")) {
-						true;
-					} else {
-						false;
-					}
-				} else {
 					true;
-				}
-				</element>
-			</constraint>
-			
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message >margin is mandatory for baseRate  </message>
-				<groups>
-					<value>com.pennant.validation.AddRateChangeGroup</value>
-					<value>com.pennant.validation.ReSchedulingGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-				if (_this.margin > 0) {
-					if ((_this.baseRate != null) &amp;&amp; (_this.baseRate != ""))	{
-						true;
 					} else {
-						false;
+					false;
 					}
-				}else{
+					}else{
 					true;
-				}
+					}
 				</element>
 			</constraint>
 		</field>

@@ -11,9 +11,9 @@ import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class SecRolesWebServiceImpl implements SecRolesSoapService,SecRolesRestService {
+public class SecRolesWebServiceImpl implements SecRolesSoapService, SecRolesRestService {
 	private final Logger logger = Logger.getLogger(SecRolesWebServiceImpl.class);
-	
+
 	private SecRolesController secRolesController;
 
 	/**
@@ -30,7 +30,7 @@ public class SecRolesWebServiceImpl implements SecRolesSoapService,SecRolesRestS
 
 		SecurityRoleDetail response = new SecurityRoleDetail();
 		response = secRolesController.getSecRoles();
-		
+
 		logger.debug("Leaving");
 		return response;
 	}

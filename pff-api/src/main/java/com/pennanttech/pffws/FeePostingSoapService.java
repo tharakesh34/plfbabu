@@ -10,5 +10,6 @@ import com.pennant.ws.exception.ServiceException;
 @WebService
 public interface FeePostingSoapService {
 
-	public WSReturnStatus doFeePostings(@WebParam(name = "feePostings") FeePostings feePostings) throws ServiceException;
+	public WSReturnStatus doFeePostings(@WebParam(name = "feePostings") FeePostings feePostings)
+			throws ServiceException;
 }

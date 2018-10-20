@@ -19,12 +19,11 @@ import com.pennanttech.ws.log.model.APILogDetail;
 public class APIErrorHandlerService {
 
 	private static ErrorDetailService errorDetailService;
-	
 
 	/**
 	 * Method for prepare and return default Success return status with below details.<br>
-	 * 	Return Code:0000<br>
-	 * 	Return Text:Success.
+	 * Return Code:0000<br>
+	 * Return Text:Success.
 	 * 
 	 * @return WSReturnStatus
 	 */
@@ -34,13 +33,13 @@ public class APIErrorHandlerService {
 		status.setReturnText(APIConstants.RES_SUCCESS_DESC);
 		return status;
 	}
-	
+
 	/**
 	 * Method for prepare and return default Failed status with below details.<br>
-	 * 	Return Code:9999<br>
-	 * 	Return Text:"Failed to process the request".
+	 * Return Code:9999<br>
+	 * Return Text:"Failed to process the request".
 	 * 
-	 * @return WSReturnStatus 
+	 * @return WSReturnStatus
 	 */
 	public static WSReturnStatus getFailedStatus() {
 		WSReturnStatus status = new WSReturnStatus();
@@ -48,7 +47,7 @@ public class APIErrorHandlerService {
 		status.setReturnText(APIConstants.RES_FAILED_DESC);
 		return status;
 	}
-	
+
 	/**
 	 * Method for prepare Failed status object with dynamic parameters.<br>
 	 * 
@@ -63,10 +62,10 @@ public class APIErrorHandlerService {
 		status.setReturnText(errorDesc);
 		return status;
 	}
-	
+
 	/**
 	 * fetch error description from ErrorDetails table and prepare response object.<br>
-	 * 	Response object includes ErrorCode and description.
+	 * Response object includes ErrorCode and description.
 	 * 
 	 * @param errorCode
 	 * @return
@@ -74,13 +73,13 @@ public class APIErrorHandlerService {
 	public static WSReturnStatus getFailedStatus(String errorCode) {
 		WSReturnStatus status = new WSReturnStatus();
 		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
-		if(errorDetail != null) {
+		if (errorDetail != null) {
 			status.setReturnCode(errorCode);
 			status.setReturnText(errorDetail.getMessage());
 		}
 		return status;
 	}
-	
+
 	/**
 	 * Method for prepare response object with specified errorCode and description.
 	 * 
@@ -92,7 +91,7 @@ public class APIErrorHandlerService {
 		WSReturnStatus status = new WSReturnStatus();
 		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
 		status.setReturnCode(errorCode);
-		if(errorDetail != null) {
+		if (errorDetail != null) {
 			String errorMessage = getErrorMessage(errorDetail.getMessage(), parameter);
 			status.setReturnText(errorMessage);
 		} else {
@@ -101,7 +100,7 @@ public class APIErrorHandlerService {
 		}
 		return status;
 	}
-	
+
 	private static String getErrorMessage(String errorMessage, String[] errorParameters) {
 		String error = StringUtils.trimToEmpty(errorMessage);
 
@@ -128,7 +127,8 @@ public class APIErrorHandlerService {
 		StringWriter writer = new StringWriter();
 		exception.printStackTrace(new PrintWriter(writer));
 		String errorMessage = writer.toString();
-		APILogDetail logDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+		APILogDetail logDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_LOG_KEY);
 		if (errorMessage.length() > 1990) {
 			errorMessage = errorMessage.substring(0, 1990);
 		}
@@ -142,24 +142,26 @@ public class APIErrorHandlerService {
 	 */
 	//TODO: Need to move Method
 	public static void logReference(String reference) {
-		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_LOG_KEY);
 		if (apiLogDetail != null) {
 			apiLogDetail.setReference(reference);
 		}
 	}
-	
+
 	//TODO: Need to move Method
 	public static void logKeyFields(String[] keyFields) {
-		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_LOG_KEY);
 		if (apiLogDetail != null && keyFields != null) {
 			String keyFieldsData = "";
 			for (String field : keyFields) {
-				if(StringUtils.isNotBlank(field)){
-					keyFieldsData = keyFieldsData + field + "," ;	
+				if (StringUtils.isNotBlank(field)) {
+					keyFieldsData = keyFieldsData + field + ",";
 				}
 			}
-			if(StringUtils.isNotBlank(keyFieldsData)){
-				apiLogDetail.setKeyFields(keyFieldsData.substring(0, keyFieldsData.length()-1));
+			if (StringUtils.isNotBlank(keyFieldsData)) {
+				apiLogDetail.setKeyFields(keyFieldsData.substring(0, keyFieldsData.length() - 1));
 			}
 		}
 	}

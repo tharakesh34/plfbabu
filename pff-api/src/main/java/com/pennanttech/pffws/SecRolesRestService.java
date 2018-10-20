@@ -9,7 +9,7 @@ import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
 
 @Produces("application/json")
 public interface SecRolesRestService {
-	
+
 	@GET
 	@Path("/secRoles/getSecRoles/{test}")
 	SecurityRoleDetail getSecRoles(@PathParam("test") String test);

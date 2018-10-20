@@ -77,7 +77,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private static final Logger logger = Logger.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController finServiceInstController;
-	private CreateFinanceController		createFinanceController;
+	private CreateFinanceController createFinanceController;
 	private AddRepaymentService addRepaymentService;
 	private RateChangeService rateChangeService;
 	private ChangeProfitService changeProfitService;
@@ -509,8 +509,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	/**
-	 * Method for validate the request receiving from API and do schedule
-	 * recalculation
+	 * Method for validate the request receiving from API and do schedule recalculation
 	 * 
 	 * @param finServiceInstruction
 	 * @return FinanceDetail
@@ -701,17 +700,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
 		}
-		
+
 		//set calMaturity Date
-		if(financeDetail!=null){
+		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			
+
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				financeMain.setCalMaturity(financeMain.getMaturityDate());
 			}
 		}
-		
+
 		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -765,7 +764,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstRequest);
 
-
 		WSReturnStatus returnStatus = validateReqType(finServiceInstRequest.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
@@ -794,12 +792,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
 		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstRequest, eventCode);
-		
+
 		//set value in amount from disbAmount
 		finServiceInstRequest.setAmount(finServiceInstRequest.getDisbursementDetails().get(0).getAmtToBeReleased());
-		
+
 		AuditDetail auditDetail = cancelDisbursementService.doValidations(financeDetail, finServiceInstRequest);
-		
+
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
@@ -809,7 +807,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				return financeDetail;
 			}
 		}
-		
+
 		// call doCancelDisbursement service
 		financeDetail = finServiceInstController.doCancelDisbursement(finServiceInstRequest, financeDetail, null);
 
@@ -832,7 +830,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		if (pinCodeDetail == null) {
 			DemographicDetails error = new DemographicDetails();
-			String [] param=new String[1];
+			String[] param = new String[1];
 			param[0] = pinCode;
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("99019", param));
 			return error;
@@ -1042,13 +1040,13 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.debug("Leaving");
 		return returnStatus;
 	}
-	
-	public FinanceDetail getOverDraftMaintenance(FinServiceInstruction finServiceInstRequest) throws ServiceException{
+
+	public FinanceDetail getOverDraftMaintenance(FinServiceInstruction finServiceInstRequest) throws ServiceException {
 		logger.debug("The Overdraft maintainence Start");
-		
+
 		APIErrorHandlerService.logReference(finServiceInstRequest.getFinReference());
 		WSReturnStatus returnStatus = null;
-	
+
 		returnStatus = validateDefaultOverDraftMaintainence(finServiceInstRequest);
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -1057,25 +1055,25 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		
+
 		FinanceDetail financeDetail = getFinInquiryDetails(finServiceInstRequest.getFinReference());
-		
-		returnStatus = overDraftMaintainenceValidation(finServiceInstRequest,financeDetail);
-		
+
+		returnStatus = overDraftMaintainenceValidation(finServiceInstRequest, financeDetail);
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(returnStatus);
-		 	return response;
+			return response;
 		}
-		
+
 		financeDetail.getFinScheduleData().setFinanceType(null);
 		financeDetail.setCustomerDetails(null);
 		financeDetail.setMandate(null);
 		logger.debug("The Overdraft maintainence Ending");
 		return financeDetail;
 	}
-	
+
 	/**
 	 * get the Finance Details by the given finReference.
 	 * 
@@ -1091,8 +1089,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return financeDetail;
 	}
 
-	
-	
 	/**
 	 * Method for validate finance reference and check existence in origination
 	 * 
@@ -1111,69 +1107,69 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			valueParm[0] = finServiceInstRequest.getFinReference();
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
-		
+
 		if (finServiceInstRequest.getValueDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Value Date";
 			return returnStatus = APIErrorHandlerService.getFailedStatus("30101", valueParm);
 		}
-		
+
 		if (finServiceInstRequest.getMaturityDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Maturity Date";
 			return returnStatus = APIErrorHandlerService.getFailedStatus("30101", valueParm);
 		}
-		
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}
-	
-	private WSReturnStatus overDraftMaintainenceValidation(FinServiceInstruction finServiceInstRequest,FinanceDetail financeDetail) {
+
+	private WSReturnStatus overDraftMaintainenceValidation(FinServiceInstruction finServiceInstRequest,
+			FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
-		if (DateUtility.compare(finServiceInstRequest.getValueDate(), financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate())<0) {
+		if (DateUtility.compare(finServiceInstRequest.getValueDate(),
+				financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()) < 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Value Date";
 			valueParm[1] = "OD Start Date";
 			valueParm[2] = "";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90350", valueParm);
-			String message[]=returnStatus.getReturnText().split(" and");
+			String message[] = returnStatus.getReturnText().split(" and");
 			returnStatus.setReturnText(message[0]);
 			return returnStatus;
 		}
-		
-		if(finServiceInstRequest.getTenor() <= 0){
-			 String[] valueParm = new String[1];
-			 valueParm[0] = "Tenor ";
-			 returnStatus = APIErrorHandlerService.getFailedStatus("90259", valueParm);
-			 String alterMessage = returnStatus.getReturnText().replace(" feeCode:", " ").replace("Negative", "Negative or Zero");
-			 returnStatus.setReturnText(alterMessage);	
-			 return returnStatus;
-		 }
-		
-		if(finServiceInstRequest.getTenor() != financeDetail.getFinScheduleData().getFinanceSummary().getLoanTenor()){
-			 String[] valueParm = new String[1];
-			 valueParm[0] = "Tenor ";
-			 returnStatus = APIErrorHandlerService.getFailedStatus("30101", valueParm);
-			 String alterMessage = returnStatus.getReturnText()+". Please give correct tenor for this finReference.";
-			 returnStatus.setReturnText(alterMessage.replace("Date T", "t"));	
-			 return returnStatus;
-		 }
-		
-		
-		
-		
-		
-		if (DateUtility.compare(finServiceInstRequest.getMaturityDate(), financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
+
+		if (finServiceInstRequest.getTenor() <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Tenor ";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90259", valueParm);
+			String alterMessage = returnStatus.getReturnText().replace(" feeCode:", " ").replace("Negative",
+					"Negative or Zero");
+			returnStatus.setReturnText(alterMessage);
+			return returnStatus;
+		}
+
+		if (finServiceInstRequest.getTenor() != financeDetail.getFinScheduleData().getFinanceSummary().getLoanTenor()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Tenor ";
+			returnStatus = APIErrorHandlerService.getFailedStatus("30101", valueParm);
+			String alterMessage = returnStatus.getReturnText() + ". Please give correct tenor for this finReference.";
+			returnStatus.setReturnText(alterMessage.replace("Date T", "t"));
+			return returnStatus;
+		}
+
+		if (DateUtility.compare(finServiceInstRequest.getMaturityDate(),
+				financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Maturity";
 			returnStatus = APIErrorHandlerService.getFailedStatus("30101", valueParm);
-			String message=returnStatus.getReturnText()+". Please give correct Maturity Date.";
+			String message = returnStatus.getReturnText() + ". Please give correct Maturity Date.";
 			returnStatus.setReturnText(message);
 			return returnStatus;
 		}
-		
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}
@@ -1356,8 +1352,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	/**
-	 * Method for perform manual payment action by taking specified
-	 * instructions.
+	 * Method for perform manual payment action by taking specified instructions.
 	 * 
 	 * @param finServiceInstruction
 	 * @return FinanceDetail
@@ -1398,8 +1393,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	/**
-	 * Method for perform Schedule method Change action by taking specified
-	 * instructions.
+	 * Method for perform Schedule method Change action by taking specified instructions.
 	 * 
 	 * @param finServiceInstruction
 	 * @return FinanceDetail
@@ -1667,8 +1661,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	/**
-	 * Method for validate finance reference and check existence in origination
-	 * or WIF
+	 * Method for validate finance reference and check existence in origination or WIF
 	 * 
 	 * @param finReference
 	 * @return
@@ -1897,7 +1890,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	public void setCancelDisbursementService(CancelDisbursementService cancelDisbursementService) {
 		this.cancelDisbursementService = cancelDisbursementService;
 	}
-	
+
 	public CreateFinanceController getCreateFinanceController() {
 		return createFinanceController;
 	}

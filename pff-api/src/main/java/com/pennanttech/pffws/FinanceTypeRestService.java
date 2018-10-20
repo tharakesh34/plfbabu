@@ -18,11 +18,11 @@ public interface FinanceTypeRestService {
 	@POST
 	@Path("/financeType/getFinanceType")
 	public FinanceTypeResponse getFinanceTypeDetails(FinanceTypeRequest finTypeReq) throws ServiceException;
-	
+
 	@GET
 	@Path("/stepPolicy/getStepPolicy/{policyCode}")
 	public StepPolicyHeader getStepPolicyDetails(@PathParam("policyCode") String policyCode) throws ServiceException;
-	
+
 	@GET
 	@Path("/productType/getLoanTypes/{productCode}")
 	public ProductType getLoanTypes(@PathParam("productCode") String productCode) throws ServiceException;

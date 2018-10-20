@@ -17,8 +17,9 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rulefactory.FeeRule;
 
-@XmlType(propOrder = { "promotionDesc","startDate","endDate","finType", "finTypeDesc", "basicDetail", "graceDetail", "repayDetail", "overdueDetail",
-		"overdueProfitDetail", "insurance", "feeRule","finTypeFeesList", "stepDetail", "promotions","finTypeVASProductsList","finTypePartnerBankList","returnStatus" })
+@XmlType(propOrder = { "promotionDesc", "startDate", "endDate", "finType", "finTypeDesc", "basicDetail", "graceDetail",
+		"repayDetail", "overdueDetail", "overdueProfitDetail", "insurance", "feeRule", "finTypeFeesList", "stepDetail",
+		"promotions", "finTypeVASProductsList", "finTypePartnerBankList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceTypeResponse implements Serializable {
 
@@ -42,22 +43,20 @@ public class FinanceTypeResponse implements Serializable {
 	private String promotionDesc;
 	private Date startDate;
 	private Date endDate;
-	
-	
-	@XmlElement(name="promotionDetail")
+
+	@XmlElement(name = "promotionDetail")
 	private List<PromotionType> promotions;
-	
-	@XmlElementWrapper(name="fees")
-	@XmlElement(name="fee")
+
+	@XmlElementWrapper(name = "fees")
+	@XmlElement(name = "fee")
 	private List<FinTypeFees> finTypeFeesList;
 
-	@XmlElementWrapper(name="vas")
-	@XmlElement(name="vas")
+	@XmlElementWrapper(name = "vas")
+	@XmlElement(name = "vas")
 	private List<FinTypeVASProducts> finTypeVASProductsList;
-	@XmlElementWrapper(name="partnerBanks")
-	@XmlElement(name="partnerBank")
+	@XmlElementWrapper(name = "partnerBanks")
+	@XmlElement(name = "partnerBank")
 	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
-	
 
 	// Return status
 	private WSReturnStatus returnStatus;
@@ -149,7 +148,7 @@ public class FinanceTypeResponse implements Serializable {
 	public void setStepDetail(StepDetail stepDetail) {
 		this.stepDetail = stepDetail;
 	}
-	
+
 	public List<PromotionType> getPromotions() {
 		return promotions;
 	}
@@ -157,7 +156,7 @@ public class FinanceTypeResponse implements Serializable {
 	public void setPromotions(List<PromotionType> promotions) {
 		this.promotions = promotions;
 	}
-	
+
 	public List<FinTypeFees> getFinTypeFeesList() {
 		return finTypeFeesList;
 	}
@@ -197,6 +196,7 @@ public class FinanceTypeResponse implements Serializable {
 	public void setFinTypeVASProductsList(List<FinTypeVASProducts> finTypeVASProductsList) {
 		this.finTypeVASProductsList = finTypeVASProductsList;
 	}
+
 	public List<FinTypePartnerBank> getFinTypePartnerBankList() {
 		return finTypePartnerBankList;
 	}

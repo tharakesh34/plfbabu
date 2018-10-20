@@ -17,27 +17,28 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/createFinance")
 	public FinanceDetail createFinance(FinanceDetail financeDetail) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/createFinanceWithWIF")
 	public FinanceDetail createFinanceWithWIF(FinanceDetail financeDetail) throws ServiceException;
-	
+
 	@GET
 	@Path("/finance/getFinanceDetails/{finReference}")
 	public FinanceDetail getFinanceDetails(@PathParam("finReference") String finReference) throws ServiceException;
-	
+
 	@GET
 	@Path("/finance/getFinance/{finReference}")
 	public FinanceDetail getFinInquiryDetails(@PathParam("finReference") String finReference) throws ServiceException;
-	
+
 	@GET
 	@Path("/finance/getFinanceWithCustomer/{cif}")
 	public FinanceInquiry getFinanceWithCustomer(@PathParam("cif") String custCif) throws ServiceException;
-	
+
 	@GET
 	@Path("/finance/getFinanceWithCollateral/{collateralRef}")
-	public FinanceInquiry getFinanceWithCollateral(@PathParam("collateralRef") String collateralRef) throws ServiceException;
-	
+	public FinanceInquiry getFinanceWithCollateral(@PathParam("collateralRef") String collateralRef)
+			throws ServiceException;
+
 	@POST
 	@Path("/finance/updateLoan")
 	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException;

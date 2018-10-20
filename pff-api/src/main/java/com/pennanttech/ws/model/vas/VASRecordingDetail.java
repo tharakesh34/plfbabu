@@ -10,12 +10,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.configuration.VASRecording;
+
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"vasRecordingList","returnStatus" })
+@XmlType(propOrder = { "vasRecordingList", "returnStatus" })
 public class VASRecordingDetail {
-	
-	@XmlElementWrapper(name="vasDetails")
-	@XmlElement(name="vasDetail")
+
+	@XmlElementWrapper(name = "vasDetails")
+	@XmlElement(name = "vasDetail")
 	private List<VASRecording> vasRecordingList;
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -35,7 +36,5 @@ public class VASRecordingDetail {
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
-	
-	
-	
+
 }

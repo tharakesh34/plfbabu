@@ -108,8 +108,8 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-				<constraint annotation="javax.validation.constraints.Pattern">
-			<message>poBox is invalid. Allowed Characters are [0-9].</message>
+			<constraint annotation="javax.validation.constraints.Pattern">
+				<message>poBox is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -119,61 +119,25 @@
 		</field>
 
 
-<!-- 		<field name="custAddrCity">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>city is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>city should have maximum 50 characters</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="max">50</element>
-			</constraint>
-		</field> -->
+		<!-- <field name="custAddrCity"> <constraint annotation="org.hibernate.validator.constraints.NotBlank"> <message>city is 
+			Mandatory</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+			</groups> </constraint> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>city should have maximum 
+			50 characters</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+			</groups> <element name="max">50</element> </constraint> </field> -->
 
 
-<!-- 		<field name="custAddrProvince">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>state is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>state should have maximum 8 characters</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="max">8</element>
-			</constraint>
-		</field> -->
+		<!-- <field name="custAddrProvince"> <constraint annotation="org.hibernate.validator.constraints.NotBlank"> <message>state 
+			is Mandatory</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+			</groups> </constraint> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>state should have maximum 
+			8 characters</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+			</groups> <element name="max">8</element> </constraint> </field> -->
 
 
-<!-- 		<field name="custAddrCountry">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>country is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>country should have maximum 2 characters</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="max">2</element>
-			</constraint>
-		</field> -->
+		<!-- <field name="custAddrCountry"> <constraint annotation="org.hibernate.validator.constraints.NotBlank"> <message>country 
+			is Mandatory</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+			</groups> </constraint> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>country should have 
+			maximum 2 characters</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+			</groups> <element name="max">2</element> </constraint> </field> -->
 
 
 		<field name="custAddrZIP">
@@ -185,17 +149,17 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-				<constraint annotation="javax.validation.constraints.Pattern">
-			<message>pinCode is invalid. Allowed Characters are [0-9].</message>
+			<constraint annotation="javax.validation.constraints.Pattern">
+				<message>pinCode is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="regexp">^$|[0-9]+</element>
 			</constraint>
-		</field>	
-	<field name="custAddrPriority">
-		<constraint annotation="javax.validation.constraints.DecimalMin">
+		</field>
+		<field name="custAddrPriority">
+			<constraint annotation="javax.validation.constraints.DecimalMin">
 				<message>priority should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

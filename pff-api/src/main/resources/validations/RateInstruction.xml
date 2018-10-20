@@ -4,13 +4,12 @@
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
 					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
-<!-- RateInstruction validations -->
-	<bean class="com.pennant.backend.model.finance.RateInstruction"
-		ignore-annotations="false">
+
+	<!-- RateInstruction validations -->
+	<bean class="com.pennant.backend.model.finance.RateInstruction" ignore-annotations="false">
 		<field name="schDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
-			<message>schDate is Mandatory</message>
+				<message>schDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -20,7 +19,7 @@
 		</field>
 		<field name="pftRate">
 			<constraint annotation="javax.validation.constraints.Min">
-			<message>pftRate should be Positive</message>
+				<message>pftRate should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -98,4 +97,4 @@
 		</field>
 	</bean>
 
-	</constraint-mappings>
+</constraint-mappings>

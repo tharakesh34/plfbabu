@@ -16,10 +16,11 @@ import org.codehaus.jackson.map.exc.UnrecognizedPropertyException;
 @Provider
 public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<UnrecognizedPropertyException> {
 
-    @Override
-    public Response toResponse(UnrecognizedPropertyException exception)  {
-        return Response.status(Response.Status.BAD_REQUEST).entity("'" + exception.getUnrecognizedPropertyName() 
-        		+ "' is an unrecognized field.").type( MediaType.TEXT_PLAIN).build();
-    }
+	@Override
+	public Response toResponse(UnrecognizedPropertyException exception) {
+		return Response.status(Response.Status.BAD_REQUEST)
+				.entity("'" + exception.getUnrecognizedPropertyName() + "' is an unrecognized field.")
+				.type(MediaType.TEXT_PLAIN).build();
+	}
 
 }

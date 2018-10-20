@@ -40,13 +40,13 @@
 		</field>
 		<field name="mandate">
 			<valid />
-			</field>
+		</field>
 		<field name="advancePaymentsList">
 			<valid />
-			</field>
+		</field>
 		<field name="finFlagsDetails">
 			<valid />
-			</field>
-		
+		</field>
+
 	</bean>
 </constraint-mappings>

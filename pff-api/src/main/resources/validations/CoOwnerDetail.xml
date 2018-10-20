@@ -16,7 +16,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		
+
 		<field name="coOwnerId">
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>coOwnerId should be Positive</message>
@@ -67,34 +67,34 @@
 				<element name="max">50</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-			<message>name invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+				<message>name invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
-			</constraint> 
+			</constraint>
 		</field>
 
 		<field name="mobileNo">
-	<constraint annotation="org.hibernate.validator.constraints.Length">
-		<message>phoneNumber should have maximum 10 characters</message>
-		<groups>
-			<value>com.pennant.validation.SaveValidationGroup</value>
-			<value>com.pennant.validation.UpdateValidationGroup</value>
-		</groups>
-		<element name="max">10</element>
-	</constraint>
-	<constraint annotation="org.hibernate.validator.constraints.Length">
-		<message>phoneNumber should have 10 characters</message>
-		<groups>
-			<value>com.pennant.validation.SaveValidationGroup</value>
-			<value>com.pennant.validation.UpdateValidationGroup</value>
-		</groups>
-		<element name="min">10</element>
-	</constraint>
-</field>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should have maximum 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">10</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should have 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="min">10</element>
+			</constraint>
+		</field>
 
 		<field name="emailId">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -183,14 +183,14 @@
 				<element name="max">10</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-			<message>PoBox is invalid. Allowed Characters are [0-9].</message>
+				<message>PoBox is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="regexp">^$|[0-9]+</element>
 			</constraint>
-			
+
 		</field>
 
 		<field name="addrCountry">
@@ -236,7 +236,7 @@
 				<element name="max">8</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-			<message>zip is invalid. Allowed Characters are [0-9].</message>
+				<message>zip is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -282,7 +282,7 @@
 			</constraint>
 
 
-			 <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>name is Applicable  for non bank customer </message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -291,7 +291,8 @@
 				<element name="lang">javascript</element>
 				<element name="script">
 					if ((_this.bankCustomer)) {
-					if(_this.coOwnerCIFName != null &amp;&amp; _this.coOwnerCIFName != ""){
+					if(_this.coOwnerCIFName != null &amp;&amp; _this.coOwnerCIFName !=
+					""){
 					false;
 					} else {
 					true;
@@ -299,39 +300,21 @@
 					} else {
 					if(_this.coOwnerCIFName != null &amp;&amp; _this.coOwnerCIFName != ""){
 					true;
-					} else {
+					} else
+					{
 					false;
 					}
 					}
 
 				</element>
-			</constraint> 
+			</constraint>
 
 
-			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-	<message>iDNumber is not required for bankCustomer </message>
-	<groups>
-		<value>com.pennant.validation.SaveValidationGroup</value>
-		<value>com.pennant.validation.UpdateValidationGroup</value>
-	</groups>
-	<element name="lang">javascript</element>
-	<element name="script">
-		if ((_this.bankCustomer)) {
-		if(_this.coOwnerIDNumber != null &amp;&amp; _this.coOwnerIDNumber
-		!= ""){
-		false;
-		} else {
-		true;
-		}
-		} else {
-		if(_this.coOwnerIDNumber != null &amp;&amp; _this.coOwnerIDNumber != ""){
-		true;
-		} else {
-		false
-		}
-		}
-	</element>
-</constraint> -->
+			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> <message>iDNumber is not required for 
+				bankCustomer </message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
+				</groups> <element name="lang">javascript</element> <element name="script"> if ((_this.bankCustomer)) { if(_this.coOwnerIDNumber 
+				!= null &amp;&amp; _this.coOwnerIDNumber != ""){ false; } else { true; } } else { if(_this.coOwnerIDNumber != null &amp;&amp; 
+				_this.coOwnerIDNumber != ""){ true; } else { false } } </element> </constraint> -->
 		</field>
 	</bean>
 </constraint-mappings>

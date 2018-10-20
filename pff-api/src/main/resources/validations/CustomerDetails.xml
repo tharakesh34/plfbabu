@@ -14,7 +14,7 @@
 				</groups>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Null">
-			<message>Invalid Data for cif </message>
+				<message>Invalid Data for cif </message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
@@ -57,12 +57,8 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-			<!-- <constraint annotation="javax.validation.constraints.Null">
-			<message>Invalid Data for categoryCode </message>
-				<groups>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint> -->
+			<!-- <constraint annotation="javax.validation.constraints.Null"> <message>Invalid Data for categoryCode </message> <groups> 
+				<value>com.pennant.validation.UpdateValidationGroup</value> </groups> </constraint> -->
 
 		</field>
 		<field name="custDftBranch">

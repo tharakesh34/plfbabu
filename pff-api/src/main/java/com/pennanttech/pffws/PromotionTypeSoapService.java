@@ -13,11 +13,13 @@ import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
 public interface PromotionTypeSoapService {
 
 	@WebResult(name = "financeType")
-	public FinanceTypeResponse getPromotion(@WebParam(name = "financeType") FinanceTypeRequest finTypeReq) throws ServiceException;
-	
+	public FinanceTypeResponse getPromotion(@WebParam(name = "financeType") FinanceTypeRequest finTypeReq)
+			throws ServiceException;
+
 	@WebResult(name = "stepHeader")
 	public StepPolicyHeader getStepPolicy(@WebParam(name = "policyCode") String policyCode) throws ServiceException;
-	
+
 	@WebResult(name = "product")
-	public FinanceTypeResponse getPromotions(@WebParam(name = "productCode") String productCode) throws ServiceException;
+	public FinanceTypeResponse getPromotions(@WebParam(name = "productCode") String productCode)
+			throws ServiceException;
 }

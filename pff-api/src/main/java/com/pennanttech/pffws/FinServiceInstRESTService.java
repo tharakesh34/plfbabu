@@ -31,7 +31,7 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/addTermsRequest")
 	public FinanceDetail addTerms(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/loanInstructionService/removeTermsRequest")
 	public FinanceDetail removeTerms(FinServiceInstruction finServiceInstRequest) throws ServiceException;
@@ -47,7 +47,7 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/addDisbursement")
 	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/loanInstructionService/cancelDisbursement")
 	public FinanceDetail cancelDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
@@ -75,7 +75,7 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/reScheduling")
 	public FinanceDetail reScheduling(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/loanInstructionService/manualPayment")
 	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
@@ -87,18 +87,17 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/updateLoanPenaltyDetails")
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/loanInstructionService/getOverDraftMaintenance")
 	public FinanceDetail getOverDraftMaintenance(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-		
+
 	@POST
 	@Path("/loanInstructionService/scheduleMethodChange")
 	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/loanInstructionService/feePayment")
 	public FinanceDetail feePayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-
 
 }

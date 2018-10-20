@@ -108,7 +108,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		validationUtility.validate(limitHeader, LimitSetupGroup.class);
 		LimitHeader response = null;
 		//for logging purpose
-		String[] logFields=new String[3];
+		String[] logFields = new String[3];
 		logFields[0] = limitHeader.getCustCIF();
 		logFields[1] = limitHeader.getCustGrpCode();
 		logFields[2] = limitHeader.getLimitStructureCode();
@@ -239,23 +239,23 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		WSReturnStatus returnStatus = null;
 		try {
 			limitTransactionDetailDAO.deleteReservedLogs(limitTransDetail.getReferenceNumber());
-			
+
 			// validate reserve limit request
 			returnStatus = doLimitReserveValidations(limitTransDetail);
-			
+
 			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 				return returnStatus;
 			}
-			
+
 			// call do Reserve limit method
 			returnStatus = limitServiceController.doReserveLimit(limitTransDetail);
 			//for logging purpose
-			if(StringUtils.equals(returnStatus.getReturnCode(), APIConstants.RES_SUCCESS_CODE)){
+			if (StringUtils.equals(returnStatus.getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
 				APIErrorHandlerService.logReference(String.valueOf(limitTransDetail.getHeaderId()));
 			}
 			logger.debug("Leaving");
 			return returnStatus;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error(e);
 			returnStatus = APIErrorHandlerService.getFailedStatus();
 		}
@@ -286,7 +286,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
-		
+
 		// for failure case logging purpose
 		APIErrorHandlerService.logReference(StringUtils.trimToEmpty(limitTransDetail.getCustGrpCode()));
 
@@ -297,15 +297,14 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		List<LimitTransactionDetail> lmtTransDetails = limitTransactionDetailDAO.getPreviousReservedAmt(finReference,
 				transType, limitId);
 		BigDecimal prvReserv = LimitManagement.getPreviousReservedAmt(lmtTransDetails);
-		if(prvReserv.compareTo(BigDecimal.ZERO) <= 0) {
+		if (prvReserv.compareTo(BigDecimal.ZERO) <= 0) {
 			return APIErrorHandlerService.getFailedStatus("90340");
 		}
-		
 
 		// call cancel Reserve limit method
 		returnStatus = limitServiceController.cancelReserveLimit(limitTransDetail);
 		//for logging purpose
-		if(StringUtils.equals(returnStatus.getReturnCode(), APIConstants.RES_SUCCESS_CODE)){
+		if (StringUtils.equals(returnStatus.getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
 			APIErrorHandlerService.logReference(String.valueOf(limitTransDetail.getHeaderId()));
 		}
 		logger.debug("Leaving");
@@ -326,15 +325,12 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Amount";
 			return APIErrorHandlerService.getFailedStatus("90242", valueParm);
-		} /*else {
-			if(limitTransDetail.getLimitAmount().compareTo(BigDecimal.ZERO)>0){
-				String[] valueParm = new String[2];
-				valueParm[0] = "Amount";
-				valueParm[1] = "0";
-				return APIErrorHandlerService.getFailedStatus("91121", valueParm);
-			}
-		}*/
-		LimitHeader limitheader=null;
+		} /*
+			 * else { if(limitTransDetail.getLimitAmount().compareTo(BigDecimal.ZERO)>0){ String[] valueParm = new
+			 * String[2]; valueParm[0] = "Amount"; valueParm[1] = "0"; return
+			 * APIErrorHandlerService.getFailedStatus("91121", valueParm); } }
+			 */
+		LimitHeader limitheader = null;
 		// validate limitId
 		if (limitTransDetail.getHeaderId() != Long.MIN_VALUE) {
 			limitheader = limitDetailService.getCustomerLimitsById(limitTransDetail.getHeaderId());
@@ -356,7 +352,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				return getErrorDetails("90101", valueParm);
 			}
 		}
-		if(customer.getCustID()!=limitheader.getCustomerId()){
+		if (customer.getCustID() != limitheader.getCustomerId()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = customer.getCustCIF();
 			valueParm[1] = String.valueOf(limitTransDetail.getHeaderId());
@@ -394,14 +390,14 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				valueParm[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
-			
-			if(!financeMain.isFinIsActive()) {
+
+			if (!financeMain.isFinIsActive()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
-			
-			if(financeMain.getCustID() != 0 && financeMain.getCustID() != customer.getCustID()) {
+
+			if (financeMain.getCustID() != 0 && financeMain.getCustID() != customer.getCustID()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customer.getCustCIF();
 				return APIErrorHandlerService.getFailedStatus("90812", valueParm);
@@ -434,7 +430,6 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		return new WSReturnStatus();
 	}
-
 
 	private WSReturnStatus doCustomerValidations(LimitHeader limitHeader) {
 		logger.debug("Entering");
@@ -506,42 +501,52 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		logger.debug("Leaving");
 		return response;
 	}
+
 	@Autowired
 	public void setLimitServiceController(LimitServiceController limitServiceController) {
 		this.limitServiceController = limitServiceController;
 	}
+
 	@Autowired
 	public void setLimitStructureService(LimitStructureService limitStructureService) {
 		this.limitStructureService = limitStructureService;
 	}
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
+
 	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
 	@Autowired
 	public void setCustomerGroupService(CustomerGroupService customerGroupService) {
 		this.customerGroupService = customerGroupService;
 	}
+
 	@Autowired
 	public void setLimitDetailService(LimitDetailService limitDetailService) {
 		this.limitDetailService = limitDetailService;
 	}
+
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
+
 	@Autowired
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}
+
 	@Autowired
 	public void setCommitmentService(CommitmentService commitmentService) {
 		this.commitmentService = commitmentService;
 	}
+
 	@Autowired
 	public void setLimitTransactionDetailDAO(LimitTransactionDetailsDAO limitTransactionDetailDAO) {
 		this.limitTransactionDetailDAO = limitTransactionDetailDAO;

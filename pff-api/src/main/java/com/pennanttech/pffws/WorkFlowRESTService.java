@@ -23,13 +23,13 @@ public interface WorkFlowRESTService {
 	@Path("/workFlowService/updateWorkFlow")
 	public WorkFlowDetails updateWorkFlow(@WebParam(name = "workFlow") WorkFlowDetails workFlowDetails)
 			throws ServiceException;
-	
+
 	@GET
 	@Path("/workFlowService/getWorkFlowDetails/{workflowID: .*}")
 	public WorkFlowDetails getWorkFlowDetails(@PathParam("workflowID") String workFlowId) throws ServiceException;
-	
+
 	@GET
 	@Path("/workFlowService/getProcessView/{args: .*}")
 	public ProcessViewDetails getProcessViewDetails(@PathParam("args") String args) throws ServiceException;
-	
+
 }

@@ -16,9 +16,8 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import com.pennant.app.util.APIHeader;
 
 /**
- * REST Interceptor for outgoing responses from the applicaiton.
- * 1. Set all the header details from the request to the response.
- * 2. set response time in response.
+ * REST Interceptor for outgoing responses from the applicaiton. 1. Set all the header details from the request to the
+ * response. 2. set response time in response.
  * 
  * @author pennant
  *
@@ -33,9 +32,9 @@ public class RestOutHeaderInterceptor extends AbstractPhaseInterceptor<Message> 
 	}
 
 	// Public methods
-	
+
 	public void handleMessage(Message message) throws Fault {
-		
+
 		@SuppressWarnings("unchecked")
 		Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
 		APIHeader header = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
@@ -44,7 +43,7 @@ public class RestOutHeaderInterceptor extends AbstractPhaseInterceptor<Message> 
 			headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
 			message.put(Message.PROTOCOL_HEADERS, headers);
 		}
-		
+
 		if (header != null) {
 			// ReqHeaderDetails header = responseBean.getHeader();
 			if (StringUtils.isNotBlank(header.getLanguage())) {
@@ -53,9 +52,10 @@ public class RestOutHeaderInterceptor extends AbstractPhaseInterceptor<Message> 
 			if (StringUtils.isNotBlank(header.getServiceVersion())) {
 				headers.put(APIHeader.API_SERVICEVERSION, Arrays.asList(header.getServiceVersion()));
 			}
-			/*if (header.getAdditionalInfo() != null) {
-				headers.put("additionalInfo", Arrays.asList(header.getAdditionalInfo().toString()));
-			}*/
+			/*
+			 * if (header.getAdditionalInfo() != null) { headers.put("additionalInfo",
+			 * Arrays.asList(header.getAdditionalInfo().toString())); }
+			 */
 			if (StringUtils.isNotBlank(header.getServiceName())) {
 				headers.put(APIHeader.API_SERVICENAME, Arrays.asList(header.getServiceName()));
 			}
@@ -68,11 +68,11 @@ public class RestOutHeaderInterceptor extends AbstractPhaseInterceptor<Message> 
 			if (StringUtils.isNotBlank(header.getSecurityInfo())) {
 				headers.put("Token", Arrays.asList(header.getSecurityInfo().toString()));
 			}
-			if (StringUtils.isNotBlank(header.getReturnCode())){
-			headers.put(APIHeader.API_RETURNCODE, Arrays.asList(header.getReturnCode()));
+			if (StringUtils.isNotBlank(header.getReturnCode())) {
+				headers.put(APIHeader.API_RETURNCODE, Arrays.asList(header.getReturnCode()));
 			}
-			if (StringUtils.isNotBlank(header.getReturnDesc())){
-			headers.put(APIHeader.API_RETURNDESC, Arrays.asList(header.getReturnDesc()));
+			if (StringUtils.isNotBlank(header.getReturnDesc())) {
+				headers.put(APIHeader.API_RETURNDESC, Arrays.asList(header.getReturnDesc()));
 			}
 			headers.put(APIHeader.API_RES_TIME, Arrays.asList(new Date().toString()));
 		}

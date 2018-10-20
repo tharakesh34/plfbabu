@@ -7,6 +7,6 @@ import com.pennanttech.ws.auth.model.ServerAuthentication;
  * 
  */
 public interface ServerAuthService {
-	 ServerAuthentication  validateServer(String tokenId,String IPAddress);
-	
+	ServerAuthentication validateServer(String tokenId, String IPAddress);
+
 }

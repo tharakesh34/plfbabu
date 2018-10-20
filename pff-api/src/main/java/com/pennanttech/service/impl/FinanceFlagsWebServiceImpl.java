@@ -26,7 +26,7 @@ import com.pennanttech.pffws.FinanceFlagsSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,FinanceFlagsRestService {
+public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService, FinanceFlagsRestService {
 
 	private static final Logger logger = Logger.getLogger(FinanceFlagsWebServiceImpl.class);
 
@@ -36,7 +36,6 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 	private FinanceFlagsService financeFlagsService;
 	private FinFlagDetailsDAO finFlagDetailsDAO;
 
-	
 	/**
 	 * Method to process and fetch Finance Flags details
 	 * 
@@ -64,21 +63,21 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 			return response;
 		}
 		FinanceFlag financeFlag = financeFlagsService.getApprovedFinanceFlagsById(finReference);
-		if(financeFlag == null){
+		if (financeFlag == null) {
 			response = new FinanceFlag();
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90218", valueParm));
 			return response;
 		}
-		
+
 		// call get Loan Flags controller
 		response = financeFlagsController.getLoanFlags(finReference);
-		
+
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * Method for create FinanceFlag in PLF system.
 	 * 
@@ -123,7 +122,7 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 		logger.debug("Leaving");
 		return returnStatus;
 	}
-	
+
 	/**
 	 * Method for Delete FinanceFlag in PLF system.
 	 * 
@@ -133,7 +132,7 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 	@Override
 	public WSReturnStatus deleteLoanFlags(FinanceFlag financeFlag) throws ServiceException {
 		logger.debug("Entering");
-		
+
 		// bean validations
 		validationUtility.validate(financeFlag, DeleteValidationGroup.class);
 
@@ -155,15 +154,14 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 
 		// validate finReference in Flags
 		FinanceFlag finFlag = financeFlagsService.getApprovedFinanceFlagsById(financeFlag.getFinReference());
-		if(finFlag == null){
+		if (finFlag == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = financeFlag.getFinReference();
 			return APIErrorHandlerService.getFailedStatus("90218", valueParm);
 		}
-		
-		
+
 		// validate FlagsService details as per the API specification
-		List<FinFlagsDetail> finFlagDetailsList= financeFlag.getFinFlagDetailList();
+		List<FinFlagsDetail> finFlagDetailsList = financeFlag.getFinFlagDetailList();
 		for (FinFlagsDetail detail : finFlagDetailsList) {
 			FinFlagsDetail aFinFlag = finFlagDetailsDAO.getFinFlagsByRef(financeFlag.getFinReference(),
 					detail.getFlagCode(), FinanceConstants.MODULE_NAME, "_AView");
@@ -174,10 +172,10 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 				return APIErrorHandlerService.getFailedStatus("90219", valueParm);
 			}
 		}
-		
+
 		// delete finance flags
-		WSReturnStatus  returnStatus = financeFlagsController.deleteLoanFlags(financeFlag);
-		
+		WSReturnStatus returnStatus = financeFlagsController.deleteLoanFlags(financeFlag);
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}
@@ -196,10 +194,12 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 	public void setFinanceFlagsController(FinanceFlagsController financeFlagsController) {
 		this.financeFlagsController = financeFlagsController;
 	}
+
 	@Autowired
 	public void setFinanceFlagsService(FinanceFlagsService financeFlagsService) {
 		this.financeFlagsService = financeFlagsService;
 	}
+
 	@Autowired
 	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
 		this.finFlagDetailsDAO = finFlagDetailsDAO;

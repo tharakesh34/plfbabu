@@ -17,10 +17,11 @@ import com.pennanttech.pffws.ExtendedFieldDetailSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class ExtendedFieldDetailWebServiceImpl implements ExtendedFieldDetailRestService, ExtendedFieldDetailSoapService {
-	private static final Logger			logger	= Logger.getLogger(ExtendedFieldDetailWebServiceImpl.class);
+public class ExtendedFieldDetailWebServiceImpl
+		implements ExtendedFieldDetailRestService, ExtendedFieldDetailSoapService {
+	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailWebServiceImpl.class);
 
-	private ExtendedFieldDetailService	extendedFieldDetailService;
+	private ExtendedFieldDetailService extendedFieldDetailService;
 
 	/**
 	 * get the ExtendedFieldHeader by the given module and SubModule code.
@@ -30,7 +31,8 @@ public class ExtendedFieldDetailWebServiceImpl implements ExtendedFieldDetailRes
 	 * @throws ServiceException
 	 */
 	@Override
-	public ExtendedFieldHeader getExtendedFieldDetails(ExtendedFieldHeader extendedFieldHeader)	throws ServiceException {
+	public ExtendedFieldHeader getExtendedFieldDetails(ExtendedFieldHeader extendedFieldHeader)
+			throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldHeader response = null;
@@ -41,11 +43,11 @@ public class ExtendedFieldDetailWebServiceImpl implements ExtendedFieldDetailRes
 			//ExtendedFieldHeader Validations
 			List<ErrorDetail> errorDetails = extendedFieldDetailService.doValidations(extendedFieldHeader);
 			if (errorDetails.isEmpty()) {
-				response = extendedFieldDetailService.getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),
-						extendedFieldHeader.getSubModuleName(), "");
+				response = extendedFieldDetailService.getExtendedFieldHeaderByModuleName(
+						extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(), "");
 				if (response != null) {
-					List<ExtendedFieldDetail> extendedFieldDetails = 
-							extendedFieldDetailService.getExtendedFieldDetailByModuleID(response.getModuleId(), "");
+					List<ExtendedFieldDetail> extendedFieldDetails = extendedFieldDetailService
+							.getExtendedFieldDetailByModuleID(response.getModuleId(), "");
 					response.setExtendedFieldDetails(extendedFieldDetails);
 				} else {
 					response = new ExtendedFieldHeader();

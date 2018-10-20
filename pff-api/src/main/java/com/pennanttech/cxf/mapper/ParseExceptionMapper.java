@@ -16,9 +16,10 @@ import org.codehaus.jackson.JsonParseException;
 @Provider
 public class ParseExceptionMapper implements ExceptionMapper<JsonParseException> {
 
-    @Override
-    public Response toResponse(JsonParseException exception)  {
-        return Response.status(Response.Status.BAD_REQUEST).entity(exception.getMessage()).type( MediaType.TEXT_PLAIN).build();
-    }
+	@Override
+	public Response toResponse(JsonParseException exception) {
+		return Response.status(Response.Status.BAD_REQUEST).entity(exception.getMessage()).type(MediaType.TEXT_PLAIN)
+				.build();
+	}
 
 }

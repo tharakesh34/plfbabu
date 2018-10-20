@@ -22,8 +22,8 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FeePostingController {
-	private final Logger		logger	= Logger.getLogger(getClass());
-	private FeePostingService	feePostingService;
+	private final Logger logger = Logger.getLogger(getClass());
+	private FeePostingService feePostingService;
 
 	/**
 	 * Method for create FeePostings in PLF system.

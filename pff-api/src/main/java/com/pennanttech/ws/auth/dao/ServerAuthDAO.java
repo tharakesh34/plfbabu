@@ -49,6 +49,6 @@ import com.pennanttech.ws.auth.model.ServerAuthentication;
  * 
  */
 public interface ServerAuthDAO {
-	public  ServerAuthentication validateServer(String tokenId,String IPAddress);
-	
+	public ServerAuthentication validateServer(String tokenId, String IPAddress);
+
 }

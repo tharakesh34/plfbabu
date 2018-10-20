@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PromotionType implements Serializable {
 	private static final long serialVersionUID = 73323169407512463L;
-	
+
 	private String promotionCode;
 	private String promotionDesc;
 
