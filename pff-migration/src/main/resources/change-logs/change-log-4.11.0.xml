@@ -233,6 +233,9 @@
 		delete from REPORTLIST where code='LoanPurpose';
 		Insert into REPORTLIST values ('LoanPurpose','LoanPurpose','listheader_LoanPurposeCode.label,listheader_LoanPurposeDesc.label,listheader_LoanPurposeIsActive.label','loanPurposeCode,loanPurposeDesc,loanPurposeIsActive','String,String,boolean',null,'ReportList03','Reason Category','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'0');
 		
+		delete from REPORTLIST where code='GSTRULE';
+		Insert into REPORTLIST values ('GSTRULE','GSTRULE','listheader_RuleEvent.label,listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleCode,ruleCodeDesc,ruleEvent','String,String,String',' ','ReportList03','GST Rules','Rules Factory',1,1001,null,'Approved',' ',' ',' ',' ',' ',0,'0');
+		
 		update reportlist set moduletype='Customer Masters' where code='Gender';
 		
 		update REPORTLIST set reportheading='Sourcing Officers' ,moduletype='Application Masters' where code='VehicleDealer';
