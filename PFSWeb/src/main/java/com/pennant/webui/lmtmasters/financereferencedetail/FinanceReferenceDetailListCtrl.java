@@ -282,7 +282,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			}else{
 				if(isPromotion){
-					financeReference.setLovDescFinTypeDescName(aFinanceWorkflow.getLovDescPromoFinTypeDesc());
+					financeReference.setLovDescFinTypeDescName(aFinanceWorkflow.getLovDescPromotionName());
 				}else if(isCollateral){
 					financeReference.setLovDescFinTypeDescName(aFinanceWorkflow.getCollateralDesc());
 				}else if(isCommitment){
