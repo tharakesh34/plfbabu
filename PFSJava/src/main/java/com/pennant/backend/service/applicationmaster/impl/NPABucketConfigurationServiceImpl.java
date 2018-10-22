@@ -369,7 +369,8 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		if (!(StringUtils.equals(method, PennantConstants.method_doReject)
 				|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(nPABucketConfiguration.getRecordType()))) {
 			
-			int count = nPABucketConfigurationDAO.getByProductCode(nPABucketConfiguration.getProductCode(), nPABucketConfiguration.getDueDays(), "");
+			int count = nPABucketConfigurationDAO.getByProductCode(nPABucketConfiguration.getProductCode(), 
+					nPABucketConfiguration.getDueDays(),nPABucketConfiguration.getConfigID(), "");
 
 			if (count != 0) {
 				String[] parameters = new String[2];

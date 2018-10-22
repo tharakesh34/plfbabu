@@ -76,7 +76,7 @@ public interface NPABucketConfigurationDAO extends BasicCrudDao<NPABucketConfigu
 	 */
 	boolean isDuplicateKey(long configID, String productCode, long bucketID, TableType tableType);
 
-	public int getByProductCode(String producCode, int dueDys, String type);
+	public int getByProductCode(String producCode, int dueDys, long configID, String type);
 
 	List<NPABucketConfiguration> getNPABucketConfigurations();
 

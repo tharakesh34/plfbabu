@@ -240,15 +240,16 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 
 
 	@Override
-	public int getByProductCode(String producCode, int dueDys, String type) {
+	public int getByProductCode(String producCode, int dueDys, long configID, String type) {
 		NPABucketConfiguration nPABucketConfiguration = new NPABucketConfiguration();
 		nPABucketConfiguration.setProductCode(producCode);
 		nPABucketConfiguration.setDueDays(dueDys);
+		nPABucketConfiguration.setConfigID(configID);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From NPABUCKETSCONFIG");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where productCode =:productCode AND dueDays =:dueDays ");
+		selectSql.append(" Where productCode =:productCode AND dueDays =:dueDays AND configID != :configID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nPABucketConfiguration);
