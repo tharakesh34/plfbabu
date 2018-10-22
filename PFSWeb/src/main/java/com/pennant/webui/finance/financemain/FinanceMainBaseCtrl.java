@@ -7557,19 +7557,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 											agrdefMap.put(agreementDefinition.getAggReportName(), agreementDefinition);
 											finRefMap.put(agreementDefinition.getAggReportName(), financeReferenceDetail);
 
-										} else {
+										} 
+									}
+										else {
 
 											accMsg = accMsg + "  " + templateValidateMsg;
 											isTemplateError = true;
 											continue;
 										}
-									}
+									
 								} catch (Exception e) {
 									MessageUtil.showError(e.getMessage());
 								}
 							}
 						}
 					} // for close
+					if(isTemplateError){
+						MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
+						return false;
+					}
 					if (!agrdefMap.isEmpty()) {
 						AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail,
 								allagrDataset.toString(), getUserWorkspace().getUserDetails());
