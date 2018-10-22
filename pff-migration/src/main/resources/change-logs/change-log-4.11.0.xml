@@ -236,6 +236,9 @@
 		delete from REPORTLIST where code='GSTRULE';
 		Insert into REPORTLIST values ('GSTRULE','GSTRULE','listheader_RuleEvent.label,listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleCode,ruleCodeDesc,ruleEvent','String,String,String',' ','ReportList03','GST Rules','Rules Factory',1,1001,null,'Approved',' ',' ',' ',' ',' ',0,'0');
 		
+		delete from REPORTLIST where code='QueryCategory';
+		Insert into REPORTLIST values ('QueryCategory','QueryCategory','listheader_Code.label,listheader_Description.label,listheader_Active.label','code,description,active','String,String,Boolean',' ','ReportList03','Query Category Type','Application Masters',1,1001,null,'Approved',' ',' ',' ',' ',' ',0,'0');
+		
 		update reportlist set moduletype='Customer Masters' where code='Gender';
 		
 		update REPORTLIST set reportheading='Sourcing Officers' ,moduletype='Application Masters' where code='VehicleDealer';
