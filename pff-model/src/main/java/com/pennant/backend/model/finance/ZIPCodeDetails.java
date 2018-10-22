@@ -9,7 +9,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class DemographicDetails extends AbstractWorkflowEntity implements Entity {
+public class ZIPCodeDetails extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -9134566802522550432L;
 

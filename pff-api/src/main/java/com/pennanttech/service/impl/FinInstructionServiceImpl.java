@@ -31,7 +31,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.finance.DemographicDetails;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -39,6 +38,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
@@ -848,21 +848,21 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	/**
-	 * Method for fetch Demographic details of corresponding pinCode
+	 * Method for fetch ZIPCode details of corresponding pinCode
 	 * 
 	 * @param pinCode
-	 * @return DemographicDetails
+	 * @return ZIPCodeDetails
 	 */
 
 	@Override
-	public DemographicDetails getDemoGraphicDetail(String pinCode) throws ServiceException {
+	public ZIPCodeDetails getZIPCodeDetail(String pinCode) throws ServiceException {
 		logger.debug("Entering");
 
-		DemographicDetails pinCodeDetail = null;
-		pinCodeDetail = finServiceInstController.getDemoGraphicDetail(pinCode);
+		ZIPCodeDetails pinCodeDetail = null;
+		pinCodeDetail = finServiceInstController.getZIPCodeDetails(pinCode);
 
 		if (pinCodeDetail == null) {
-			DemographicDetails error = new DemographicDetails();
+			ZIPCodeDetails error = new ZIPCodeDetails();
 			String[] param = new String[1];
 			param[0] = pinCode;
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("99019", param));

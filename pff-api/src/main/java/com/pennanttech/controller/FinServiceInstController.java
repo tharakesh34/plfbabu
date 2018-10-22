@@ -57,7 +57,6 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
-import com.pennant.backend.model.finance.DemographicDetails;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
@@ -86,6 +85,7 @@ import com.pennant.backend.model.finance.Insurance;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -97,7 +97,6 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
-import com.pennant.backend.service.finance.DemoGraphicDetailsService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -105,6 +104,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.ZIPCodeDetailsService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -131,7 +131,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ChangeProfitService changeProfitService;
 	private AddDisbursementService addDisbursementService;
 	private CancelDisbursementService cancelDisbursementService;
-	private DemoGraphicDetailsService demoGraphicDetailsService;
+	private ZIPCodeDetailsService zIPCodeDetailsService;
 	private ChangeFrequencyService changeFrequencyService;
 	private ReScheduleService reScheduleService;
 	private PostponementService postponementService;
@@ -221,14 +221,15 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Leaving");
 		return inquiryDetails;
 	}
+	
 	/**
-	 * Method for fetch DemoGraphic Details of corresponding pin code
+	 * Method for fetch ZIPCode Details of corresponding pin code
 	 * 
 	 * @param pinCode
-	 * @return DemographicDetails
+	 * @return ZIPCodeDetails
 	 */
-	public DemographicDetails getDemoGraphicDetail(String pinCode) {
-		return demoGraphicDetailsService.getDemoGraphicDetails(pinCode);
+	public ZIPCodeDetails getZIPCodeDetails(String pinCode) {
+		return zIPCodeDetailsService.getZIPCodeDetails(pinCode);
 	}
 
 	/**
@@ -2945,12 +2946,17 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.cancelDisbursementService = cancelDisbursementService;
 	}
 
-	public void setDemoGraphicDetailsService(DemoGraphicDetailsService demoGraphicDetailsService) {
-		this.demoGraphicDetailsService = demoGraphicDetailsService;
-	}
 
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
+	}
+
+	public ZIPCodeDetailsService getzIPCodeDetailsService() {
+		return zIPCodeDetailsService;
+	}
+
+	public void setzIPCodeDetailsService(ZIPCodeDetailsService zIPCodeDetailsService) {
+		this.zIPCodeDetailsService = zIPCodeDetailsService;
 	}
 
 }

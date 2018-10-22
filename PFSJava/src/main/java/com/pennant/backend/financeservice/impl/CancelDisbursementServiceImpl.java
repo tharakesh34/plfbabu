@@ -118,31 +118,28 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			return auditDetail;
 		}
 		
-		if(!StringUtils.isEmpty(finServiceInstruction.getServiceReqNo())){
 
 			//validate ServiceReqNo
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-					&& !(StringUtils.isEmpty(finServiceInstruction.getServiceReqNo()))) {
+				&& !(StringUtils.isEmpty(finServiceInstruction.getServiceReqNo()))) {
+			List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO.getFinServInstByServiceReqNo(
+					finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
+					finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_ADDDISB);
+			if (CollectionUtils.isNullOrEmpty(finServiceInstructions)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getServiceReqNo();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99026", "", valueParm)));
+				return auditDetail;
+			} else {
+				List<FinServiceInstruction> finServInstCanReq = finServiceInstructionDAO.getFinServInstByServiceReqNo(
+						finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
+						finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_CANCELDISB);
 
-				List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO
-						.getFinServInstByServiceReqNo(finServiceInstruction.getFinReference(),
-								finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_ADDDISB);
-				if (CollectionUtils.isNullOrEmpty(finServiceInstructions)) {
+				if (!CollectionUtils.isNullOrEmpty(finServInstCanReq)) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finServiceInstruction.getServiceReqNo();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99026", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99027", "", valueParm)));
 					return auditDetail;
-				} else {
-					List<FinServiceInstruction> finServInstCanReq = finServiceInstructionDAO
-							.getFinServInstByServiceReqNo(finServiceInstruction.getFinReference(),
-									finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_CANCELDISB);
-					if (!CollectionUtils.isNullOrEmpty(finServInstCanReq)) {
-						String[] valueParm = new String[1];
-						valueParm[0] = finServiceInstruction.getServiceReqNo();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99027", "", valueParm)));
-						return auditDetail;
-					}
-
 				}
 			}
 		}

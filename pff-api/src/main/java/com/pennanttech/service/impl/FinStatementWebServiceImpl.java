@@ -355,6 +355,14 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			statementOfAccount.setReturnStatus(finStatementResponse.getReturnStatus());
 			return statementOfAccount;
 		}
+		int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference());
+		if (count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = statementRequest.getFinReference();
+			StatementOfAccount statementOfAccount = new StatementOfAccount();
+			statementOfAccount.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
+			return statementOfAccount;
+		}
 		StatementOfAccount statementOfAccount = finStatementController.getStatementOfAcc(statementRequest);
 		return statementOfAccount;
 	}

@@ -8,10 +8,10 @@ import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
-import com.pennant.backend.model.finance.DemographicDetails;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennant.ws.exception.ServiceException;
 
 @Produces("application/json")
@@ -54,8 +54,8 @@ public interface FinServiceInstRESTService {
 	public FinanceDetail cancelDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 	@GET
-	@Path("/loanInstructionService/getDemoGraphicDetail/{pincode}")
-	public DemographicDetails getDemoGraphicDetail(@PathParam("pincode") String pinCode) throws ServiceException;
+	@Path("/loanInstructionService/getZIPCodeDetail/{pincode}")
+	public ZIPCodeDetails getZIPCodeDetail(@PathParam("pincode") String pinCode) throws ServiceException;
 
 	@GET
 	@Path("/loanInstructionService/getBankDetail/{iFSCCode}")

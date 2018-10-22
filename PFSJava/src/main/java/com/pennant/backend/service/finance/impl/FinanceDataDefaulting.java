@@ -1048,11 +1048,13 @@ public class FinanceDataDefaulting {
 
 		//Default Calculated Maturity Date using terms
 		if (finMain.getNumberOfTerms() > 0) {
-			finMain.setCalTerms(finMain.getNumberOfTerms());
+			if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+				finMain.setCalTerms(finMain.getNumberOfTerms());	
+			}
 			if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
 				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
 						finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
-
+	
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 					Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
@@ -1061,13 +1063,16 @@ public class FinanceDataDefaulting {
 			}
 			return;
 		}
-
+			
 		//Default Calculated Terms based on Maturity Date
 		finMain.setCalMaturity(finMain.getMaturityDate());
 		if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
-			int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), finMain.getNextRepayDate(),
-					finMain.getMaturityDate(), true, true).getTerms();
-			finMain.setCalTerms(terms);
+			if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+				int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), finMain.getNextRepayDate(),
+						finMain.getMaturityDate(), true, true).getTerms();
+				finMain.setCalTerms(terms);	
+			}
+			
 		}
 
 		return;

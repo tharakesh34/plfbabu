@@ -7,33 +7,33 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.finance.DemoGraphicDetailsDAO;
-import com.pennant.backend.model.finance.DemographicDetails;
+import com.pennant.backend.dao.finance.ZIPCodeDetailsDAO;
+import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class DemoGraphicDetailsDAOImpl extends BasicDao<DemographicDetails> implements DemoGraphicDetailsDAO {
+public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements ZIPCodeDetailsDAO {
 
-	private static Logger logger = Logger.getLogger(DemoGraphicDetailsDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ZIPCodeDetailsDAOImpl.class);
 
-	public DemoGraphicDetailsDAOImpl() {
+	public ZIPCodeDetailsDAOImpl() {
 	}
 
 	/**
-	 * Method for fetch DemoGraphic Details of corresponding pinCode
+	 * Method for fetch ZIPCode Details of corresponding pinCode
 	 * 
 	 * @param pinCode
 	 * 
-	 * @return DemographicDetails
+	 * @return ZIPCodeDetails
 	 */
 
 	@Override
-	public DemographicDetails getPinCodeDetail(String pinCode) {
+	public ZIPCodeDetails getPinCodeDetail(String pinCode) {
 		logger.debug("Entering");
 
 		logger.debug(Literal.ENTERING);
-		DemographicDetails demographicDetails = new DemographicDetails();
-		demographicDetails.setPinCode(pinCode);
+		ZIPCodeDetails zIPCodeDetails = new ZIPCodeDetails();
+		zIPCodeDetails.setPinCode(pinCode);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("select pin.pincodeid pinCodeId,pin.pincode,city.pccityname City,");
@@ -42,18 +42,18 @@ public class DemoGraphicDetailsDAOImpl extends BasicDao<DemographicDetails> impl
 		selectSql.append(" RMTCountryVsProvince stat on stat.cpprovince=city.pcprovince where pin.pincode=:pinCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(demographicDetails);
-		RowMapper<DemographicDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DemographicDetails.class);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(zIPCodeDetails);
+		RowMapper<ZIPCodeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ZIPCodeDetails.class);
 
 		try {
-			demographicDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			zIPCodeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			demographicDetails = null;
+			zIPCodeDetails = null;
 		}
 		logger.debug(Literal.LEAVING);
-		return demographicDetails;
+		return zIPCodeDetails;
 
 	}
 

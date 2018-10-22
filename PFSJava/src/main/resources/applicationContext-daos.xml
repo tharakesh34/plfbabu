@@ -2414,11 +2414,11 @@
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
-	<!--============ Demographic Details ============== -->
-	<bean id="demoGraphicDetailsDAO" class="com.pennant.backend.dao.finance.impl.DemoGraphicDetailsDAOImpl" parent="basicDao"/>
+	<!--============ ZIP Code Details ============== -->
+	<bean id="zIPCodeDetailsDAO" class="com.pennant.backend.dao.finance.impl.ZIPCodeDetailsDAOImpl" parent="basicDao"/>
 	
-	<bean id="demoGraphicDetailsService" class="com.pennant.backend.service.finance.impl.DemoGraphicDetailsServiceImpl">
-		<property name="demoGraphicDetailsDAO" ref="demoGraphicDetailsDAO"></property>
+	<bean id="zIPCodeDetailsService" class="com.pennant.backend.service.finance.impl.ZIPCodeDetailsServiceImpl">
+		<property name="zIPCodeDetailsDAO" ref="zIPCodeDetailsDAO"></property>
 	</bean>
 	
 	<!--============ Customer Income Details ============== -->

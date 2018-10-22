@@ -3993,19 +3993,23 @@ public class FinanceDataValidation {
 
 		//Default Calculated Maturity Date using terms
 		if (finMain.getNumberOfTerms() > 0) {
-			finMain.setCalTerms(finMain.getNumberOfTerms());
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),
-					finMain.getNumberOfTerms(), finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true)
-					.getScheduleList();
+				if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+					finMain.setCalTerms(finMain.getNumberOfTerms());
+				}
+				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),
+						finMain.getNumberOfTerms(), finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true)
+						.getScheduleList();
 
-			Date matDate = null;
-			if (scheduleDateList != null) {
-				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(),
-						PennantConstants.DBDateFormat));
-			}
+				Date matDate = null;
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(),
+							PennantConstants.DBDateFormat));
+				}
 
-			finMain.setCalMaturity(matDate);
+				finMain.setCalMaturity(matDate);
+	
+			//}
 		} else {
 			//Default Calculated Terms based on Maturity Date
 			finMain.setCalMaturity(finMain.getMaturityDate());
