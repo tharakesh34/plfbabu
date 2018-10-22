@@ -1213,7 +1213,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		// DealerName
 		try {
 
-			boolean status = getVehicleDealerService().SearchByName(aVehicleDealer.getDealerName());
+			boolean status = getVehicleDealerService().SearchByName(aVehicleDealer.getDealerName(), aVehicleDealer.getDealerType());
 			if (status) {
 				throw new WrongValueException(this.dealerName, "DealerName already exists...");
 			}

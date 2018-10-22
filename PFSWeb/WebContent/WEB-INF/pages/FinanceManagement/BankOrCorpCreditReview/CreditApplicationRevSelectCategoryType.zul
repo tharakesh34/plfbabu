@@ -35,7 +35,7 @@
 									<radiogroup id="custType">
 										<radio id="custType_Existing"
 											label="Existing" selected="true" />
-										<radio id="custType_Prospect"
+										<radio id="custType_Prospect" visible="false"
 											label="Prospect" />
 									</radiogroup>
 								</hbox>

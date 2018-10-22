@@ -60,7 +60,7 @@ public interface VehicleDealerDAO {
 
 	long save(VehicleDealer vehicleDealer, String type);
 
-	boolean SearchName(String dealerName);
+	boolean SearchName(String dealerName, String dealerType);
 
 	int getVehicleDealerByType(String dealerType, String name,long id, String type);
 

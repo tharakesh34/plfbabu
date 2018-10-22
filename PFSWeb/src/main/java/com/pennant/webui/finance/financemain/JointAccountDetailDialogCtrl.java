@@ -44,9 +44,11 @@ package com.pennant.webui.finance.financemain;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -175,7 +177,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 			finreference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			custCIF = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
+			custCIF = financeDetail.getCustomerDetails().getCustomer().getCustCIF();
 			ccDecimal = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
 			ccy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
 		}
@@ -388,7 +390,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("financeDetail", financeDetail);
 		map.put("primaryCustID", custCIF);
 		map.put("ccy", ccy);
-		map.put("filter", getjointAcFilter());
+		map.put("filter", setFilter(getjointAcFilter()));
 		try {
 			Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul", window_JointAccountDetailDialog, map);
 		} catch (Exception e) {
@@ -528,7 +530,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("index", index);
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
-				map.put("filter", getjointAcFilter());
+				map.put("filter", setFilter(getjointAcFilter()));
 				if(!enquiry){
 					map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
 					map.put("financeDetail", financeDetail);
@@ -574,7 +576,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("ccDecimal", ccDecimal);
 		map.put("financeMain", financeMain);
 		map.put("ccy", ccy);
-		map.put("filter", getGurantorFilter());
+		map.put("filter", setFilter(getGurantorFilter()));
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", window_JointAccountDetailDialog, map);
 		} catch (Exception e) {
@@ -713,7 +715,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("index", index);
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
-				map.put("filter", getGurantorFilter());
+				map.put("filter", setFilter(getGurantorFilter()));
 				if(enquiry){
 				map.put("enqModule", enquiry);
 				map.put("moduleType", "ENQ");
@@ -743,35 +745,59 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			logger.error("Exception: ", e);
 		}
 	}
-	private String[] getjointAcFilter(){
-		if (this.guarantorDetailList!=null && guarantorDetailList.size()>0) {
-			String cif[]=new String[guarantorDetailList.size()];
-			for (int i = 0; i <  guarantorDetailList.size(); i++) {
-					if(guarantorDetailList.get(i).getGuarantorCIF()!=null){
-						cif[i]=guarantorDetailList.get(i).getGuarantorCIF();
-				}else{
-					cif[i]=" ";
+	
+	/**
+	 * Add primary customer cif for filters
+	 * 
+	 * @return
+	 */
+	private String[] setFilter(String[] filters) {
+		logger.debug("Entering");
+
+		String[] pmryCIF = new String[1];
+		pmryCIF[0] = custCIF;
+		String[] filter = Stream.concat(Arrays.stream(filters), Arrays.stream(pmryCIF)).toArray(String[]::new);
+
+		logger.debug("Leaving");
+		return filter;
+	}
+	
+	private String[] getjointAcFilter() {
+		if (this.guarantorDetailList != null && guarantorDetailList.size() > 0) {
+			String cif[] = new String[guarantorDetailList.size()];
+			for (int i = 0; i < guarantorDetailList.size(); i++) {
+				if (guarantorDetailList.get(i).getGuarantorCIF() != null) {
+					cif[i] = guarantorDetailList.get(i).getGuarantorCIF();
+				} else {
+					cif[i] = " ";
 				}
 			}
 			//cif[cif.length]=custCIF;
 			return cif;
-		}else{
-			String cif[]=new String[1];
-			cif[0]=custCIF;
+		} else {
+			String cif[] = new String[1];
+			if (custCIF == null) {
+				custCIF = "";
+			}
+			cif[0] = custCIF;
 			return cif;
 		}
 	}
-	private String[] getGurantorFilter(){
-		if (this.jountAccountDetailList!=null && jountAccountDetailList.size()>0) {
-			String cif[]=new String[jountAccountDetailList.size()];
-			for (int i = 0; i <  jountAccountDetailList.size(); i++) {
-				cif[i]=jountAccountDetailList.get(i).getCustCIF();
+
+	private String[] getGurantorFilter() {
+		if (this.jountAccountDetailList != null && jountAccountDetailList.size() > 0) {
+			String cif[] = new String[jountAccountDetailList.size()];
+			for (int i = 0; i < jountAccountDetailList.size(); i++) {
+				cif[i] = jountAccountDetailList.get(i).getCustCIF();
 			}
 			//cif[cif.length-1]=custCIF;
 			return cif;
-		}else{
-			String cif[]=new String[1];
-			cif[0]=custCIF;
+		} else {
+			String cif[] = new String[1];
+			if (custCIF == null) {
+				custCIF = "";
+			}
+			cif[0] = custCIF;
 			return cif;
 		}
 	}

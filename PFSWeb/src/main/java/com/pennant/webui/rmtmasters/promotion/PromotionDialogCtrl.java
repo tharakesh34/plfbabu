@@ -109,6 +109,7 @@ import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -273,12 +274,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.endDate.setFormat(PennantConstants.dateFormat);
 
 		this.downPayRule.setInputAllowed(false);
-		this.downPayRule.setDisplayStyle(3);
-		this.downPayRule.setMaxlength(8);
+		//this.downPayRule.setDisplayStyle(3);
+		//this.downPayRule.setMaxlength(8);
 		this.downPayRule.setModuleName("Rule");
 		this.downPayRule.setValueColumn("RuleCode");
 		this.downPayRule.setDescColumn("RuleCodeDesc");
-		this.downPayRule.setValidateColumns(new String[] { "RuleId", "RuleCode", "RuleCodeDesc" });
+		//this.downPayRule.setValidateColumns(new String[] { "RuleCode", "RuleCodeDesc" });
 		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE, Filter.OP_EQUAL) });
 		this.downPayRule.setMandatoryStyle(this.promotion.isFinIsDwPayRequired());
 

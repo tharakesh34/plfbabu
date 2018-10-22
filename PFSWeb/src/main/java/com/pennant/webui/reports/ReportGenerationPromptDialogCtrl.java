@@ -2327,9 +2327,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						finReference = template.getFieldValue();
 					} else if (template.getFieldID() == 3) { // Invoice Number
 						invoiceExist = true;
-						break;
+						//break;
 					} else if (template.getFieldID() == 4) { // Dates
-						String[] fromDateArray = ((ReportSearchTemplate) filters.get(2)).getFieldValue().split("&");
+						String[] fromDateArray = template.getFieldValue().split("&");
 						fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]),
 								PennantConstants.DBDateFormat);
 						toDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]),
@@ -2348,17 +2348,17 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
-			if (invoiceExist) {
-				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
-						null, null);
+			//check if invoice number is existed or not
+			boolean invoiceNoExist = getReportConfigurationService().isGstInvoiceExist(custCif, finReference,
+					invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
+			
+			if (invoiceNoExist) {
+				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(),
+						null, null, null);
 			} else {
-				//check if invoice number is existed or not
-				boolean invoiceNoExist = getReportConfigurationService().isGstInvoiceExist(custCif, finReference,
-						invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
-
-				if (invoiceNoExist) {
-					doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(),
-							null, null, null);
+				if (invoiceExist) {
+					MessageUtil.showMessage(Labels.getLabel("info.invoice_cust_not_invoice")); //TODO validate message
+					return;
 				} else {
 					MessageUtil.showMessage(Labels.getLabel("info.invoice_not_generate"));
 					return;

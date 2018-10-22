@@ -79,13 +79,13 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(
-				" id, reasonTypeID, reasonCategoryID, code, description, active, reasonCategoryDesc, reasonTypeDesc,");
+				" id, reasonTypeID, reasonCategoryID, code, description, active,");
 
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(",reasonCategoryCode,reasonTypeCode");
+			sql.append(",reasonTypeDesc,reasonCategoryDesc,reasonCategoryCode,reasonTypeCode");
 		}
 		sql.append(" From Reasons");
 		sql.append(type);

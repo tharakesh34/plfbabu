@@ -516,15 +516,15 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docReceived.setChecked(aDocumentDetails.isDocReceived());
 		this.docReceivedDt.setValue(aDocumentDetails.getDocReceivedDate());
 		
+		this.documnetName.setReadonly(true);
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setReadonly(false);
-			this.documnetName.setReadonly(true);
 			//this.documnetName.setValue("");
 			this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
 		} else {
 			this.docReceivedDt.setDisabled(true);
-			this.documnetName.setReadonly(false);
+			//this.documnetName.setReadonly(false);
 		//	this.space_documentName.setSclass("mandatory");
 			this.btnUploadDoc.setVisible(true);
 		}
@@ -1141,7 +1141,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setDisabled(false);
 			this.space_docReceivedDt.setSclass("mandatory");
-			this.documnetName.setReadonly(true);
+			//this.documnetName.setReadonly(true);
 			this.documnetName.setValue("");
 			this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
@@ -1155,7 +1155,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} else {
 			this.docReceivedDt.setReadonly(true);
 			this.space_docReceivedDt.setSclass("");
-			this.documnetName.setReadonly(false);
+			//this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
 			this.docReceivedDt.setValue(null);
 		}

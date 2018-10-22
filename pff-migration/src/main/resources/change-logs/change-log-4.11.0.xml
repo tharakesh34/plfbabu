@@ -220,4 +220,25 @@
 	VALUES ('99027', 'EN', 'E', 'Service request number is already cancelled with {0}.', 'Approved' ,0, 1000, 0);
 	</sql>
 </changeSet>
+
+<changeSet id="9" author="Vinay">
+	<sql>
+		delete from REPORTLIST where code='ReasonCategory';
+		Insert into REPORTLIST values ('ReasonCategory','ReasonCategory','listheader_Code.label,listheader_Description.label','code,description','String,String',null,'ReportList02','Reason Category','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'0');
+		
+		delete from REPORTLIST where code='ReasonCode';
+		Insert into REPORTLIST values ('ReasonCode','ReasonCode','listheader_ReasonTypeID.label,listheader_ReasonCategoryID.label,listheader_Code.label,listheader_Description.label,listheader_Active.label',
+		'ReasonTypeCode,ReasonCategoryCode,code,description,active','String,String,String,String,boolean',null,'ReportList05','Reason Code','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'0');
+		
+		delete from REPORTLIST where code='LoanPurpose';
+		Insert into REPORTLIST values ('LoanPurpose','LoanPurpose','listheader_LoanPurposeCode.label,listheader_LoanPurposeDesc.label,listheader_LoanPurposeIsActive.label','loanPurposeCode,loanPurposeDesc,loanPurposeIsActive','String,String,boolean',null,'ReportList03','Reason Category','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'0');
+		
+		update reportlist set moduletype='Customer Masters' where code='Gender';
+		
+		update REPORTLIST set reportheading='Sourcing Officers' ,moduletype='Application Masters' where code='VehicleDealer';
+		
+		update REPORTLIST set reportheading='Lookup Values' where code='LovFieldDetail';
+				
+	</sql>
+</changeSet>
 </databaseChangeLog>

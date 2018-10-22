@@ -345,15 +345,16 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	}
 
 	@Override
-    public boolean SearchName(String dealerName) {
+    public boolean SearchName(String dealerName, String dealerType) {
 		logger.debug("Entering");
 		logger.debug(" Inside searchname");
 		boolean status = false;
 		try{
-			String searchQuery="select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName";
+			String searchQuery="select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName and dealerType=:dealerType";
 			
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("dealerName", dealerName);
+			parameterSource.addValue("dealerType", dealerType);
 			
             int count =jdbcTemplate.queryForObject(searchQuery, parameterSource, Integer.class);
 			logger.debug(" dealer name  : "+count);

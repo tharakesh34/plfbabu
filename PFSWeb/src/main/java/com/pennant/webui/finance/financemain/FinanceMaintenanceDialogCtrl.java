@@ -1434,7 +1434,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDIncGrcDays.setChecked(this.oldVar_oDIncGrcDays);
 		fillComboBox(this.oDChargeType, this.oldVar_oDChargeType, PennantStaticListUtil.getODCChargeType(), "");
 		this.oDGraceDays.setValue(this.oldVar_oDGraceDays);
-		fillComboBox(this.oDChargeCalOn, this.oldVar_oDChargeCalOn, PennantStaticListUtil.getODCChargeType(), "");
+		fillComboBox(this.oDChargeCalOn, this.oldVar_oDChargeCalOn, PennantStaticListUtil.getODCCalculatedOn(), "");
 		this.oDChargeAmtOrPerc.setValue(this.oldVar_oDChargeAmtOrPerc);
 		this.oDAllowWaiver.setChecked(this.oldVar_oDAllowWaiver);
 		this.oDMaxWaiverPerc.setValue(this.oldVar_oDMaxWaiverPerc);

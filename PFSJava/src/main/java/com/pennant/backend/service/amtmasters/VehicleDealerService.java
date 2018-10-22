@@ -56,7 +56,7 @@ public interface VehicleDealerService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	boolean SearchByName(String dealerName);
+	boolean SearchByName(String dealerName, String dealerType);
 	int getVASManufactureCode(String dealerName);
 	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
 }

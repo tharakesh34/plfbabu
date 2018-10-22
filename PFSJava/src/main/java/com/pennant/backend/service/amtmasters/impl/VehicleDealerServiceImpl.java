@@ -493,8 +493,8 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	}
 
 	@Override
-    public boolean SearchByName(String dealerName) {
-	    return getVehicleDealerDAO().SearchName(dealerName);
+    public boolean SearchByName(String dealerName, String dealerType) {
+	    return getVehicleDealerDAO().SearchName(dealerName, dealerType);
     }
 
 	@Override

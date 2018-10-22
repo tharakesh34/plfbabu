@@ -72,6 +72,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -132,6 +133,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		this.formType.setMaxlength(8);
 		this.formType.setMandatoryStyle(true);
 		this.formType.setModuleName("PdfDocumentType");
+		this.formType.setValueType(DataType.LONG);
 		this.formType.setValueColumn("PdfMappingRef");
 		this.formType.setDescColumn("DocTypeCode");
 		this.formType.setValidateColumns(new String[] { "PdfMappingRef" });

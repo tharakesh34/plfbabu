@@ -297,7 +297,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 				if(StringUtils.equals(aFinanceWorkflow.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
 					isOverDraft = true;
 				}
-				
+				financeReference.setLovDescFinTypeDescName(aFinanceWorkflow.getLovDescPromotionName());
 				showDetailView(financeReference, isOverDraft);
 			}
 		}
