@@ -73,9 +73,6 @@ public class LatePayMarkingService extends ServiceHelper {
 			boolean calcwithoutDue,boolean zeroIfpaid) {
 		logger.debug(" Entering ");
 
-		//get penalty rates one time
-		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finmain.getFinReference(), "");
-
 		for (FinODDetails fod : finODDetails) {
 			FinanceScheduleDetail curSchd = getODSchedule(finScheduleDetails, fod);
 
@@ -98,10 +95,10 @@ public class LatePayMarkingService extends ServiceHelper {
 						}
 					}
 					if (isAmountDue) {
-						latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate,valueDate);
+						latePayMarking(finmain, fod, finScheduleDetails, repayments, curSchd, valueDate,valueDate, true);
 					}
 				} else {
-					latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate,valueDate);
+					latePayMarking(finmain, fod, finScheduleDetails, repayments, curSchd, valueDate,valueDate, true);
 
 				}
 				if(DateUtility.compare(valueDate, curSchd.getSchDate())<=0){					
@@ -245,7 +242,7 @@ public class LatePayMarkingService extends ServiceHelper {
 					penaltyCalDate = DateUtility.addDays(valueDate, 1);
 				}
 				
-				latePayMarking(finMain, fod, penaltyRate, finSchdDetails, null, curSchd, valueDate,penaltyCalDate);
+				latePayMarking(finMain, fod, finSchdDetails, null, curSchd, valueDate,penaltyCalDate, false);
 			}
 		}
 
@@ -266,9 +263,9 @@ public class LatePayMarkingService extends ServiceHelper {
 		return null;
 	}
 
-	public void latePayMarking(FinanceMain finMain, FinODDetails fod, FinODPenaltyRate penaltyRate,
+	public void latePayMarking(FinanceMain finMain, FinODDetails fod, 
 			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments,
-			FinanceScheduleDetail curSchd, Date valueDate,Date penaltyCalDate) {
+			FinanceScheduleDetail curSchd, Date valueDate,Date penaltyCalDate, boolean isUserAction) {
 		logger.debug("Entering");
 
 		fod.setFinODTillDate(valueDate);
@@ -276,7 +273,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
 		Date odtCaldate=valueDate;
-		if (ImplementationConstants.LP_MARK_FIRSTDAY) {
+		if (ImplementationConstants.LP_MARK_FIRSTDAY && !isUserAction) {
 			odtCaldate=DateUtility.addDays(valueDate, 1);
 		}
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
