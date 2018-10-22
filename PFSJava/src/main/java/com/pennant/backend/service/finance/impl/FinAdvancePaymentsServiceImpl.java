@@ -60,6 +60,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -68,6 +69,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
@@ -87,7 +89,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private static final Logger logger = Logger.getLogger(FinAdvancePaymentsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-
+	private PostingsDAO postingsDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
 	private LimitCheckDetails limitCheckDetails;
@@ -121,6 +123,20 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	/**
+	 * Fetch FinAdvancePayments details by finReference
+	 * 
+	 * @param finReference
+	 * 
+	 * @return List<FinAdvancePayments>
+	 */
+
+
+	@Override
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce) {
+		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRefernce, "");
 	}
 
 	@Override
@@ -275,6 +291,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		logger.debug("Leaving");
 		return auditDetails;
+	}
+
+	@Override
+	public List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> tranIdList, String finReference) {
+		return postingsDAO.getPostingsByLinkTransId(tranIdList, finReference);
 	}
 
 	private List<AuditDetail> getAdvancePaymentAuditDetail(List<FinAdvancePayments> finAdvancePayments,
@@ -787,6 +808,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
 	}
 
 	@Override

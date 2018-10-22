@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.finance.DemographicDetails;
+import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
@@ -59,6 +60,11 @@ public interface FinServiceInstRESTService {
 	@GET
 	@Path("/loanInstructionService/getBankDetail/{iFSCCode}")
 	public BankDetail getBankDetail(@PathParam("iFSCCode") String iFSCCode) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/getDisbursementServiceReq")
+	public DisbursementServiceReq getDisbursementServiceReq(DisbursementServiceReq inquiryDetails)
+			throws ServiceException;
 
 	@POST
 	@Path("/loanInstructionService/partialSettlement")

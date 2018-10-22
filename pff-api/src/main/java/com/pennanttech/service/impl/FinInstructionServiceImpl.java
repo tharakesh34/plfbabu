@@ -32,6 +32,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.DemographicDetails;
+import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -98,6 +99,34 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private FinanceDataValidation financeDataValidation;
 
 	private FinReceiptDetailDAO finReceiptDetailDAO;
+
+	/**
+	 * Method for perform DisbursmentInquiry operation
+	 * 
+	 * @param DisbursementServiceReq
+	 * 
+	 * @return DisbursementInquiryDetails
+	 */
+
+	@Override
+	public DisbursementServiceReq getDisbursementServiceReq(DisbursementServiceReq inquiryDetails)
+			throws ServiceException {
+		logger.debug("Entering");
+
+		DisbursementServiceReq disbursementInquiryDetails = null;
+
+		disbursementInquiryDetails = finServiceInstController.doDisbursementInquiry(inquiryDetails);
+
+		if (disbursementInquiryDetails.getReturnStatus() != null) {
+			DisbursementServiceReq error = new DisbursementServiceReq();
+			error.setReturnStatus(disbursementInquiryDetails.getReturnStatus());
+			return error;
+		}
+		disbursementInquiryDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.debug("Leaving");
+		return disbursementInquiryDetails;
+	}
 
 	/**
 	 * Method for perform addRateChange operation
@@ -711,6 +740,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 		}
 
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDDISB);
+
 		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -825,6 +856,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	@Override
 	public DemographicDetails getDemoGraphicDetail(String pinCode) throws ServiceException {
+		logger.debug("Entering");
+
 		DemographicDetails pinCodeDetail = null;
 		pinCodeDetail = finServiceInstController.getDemoGraphicDetail(pinCode);
 
@@ -836,6 +869,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return error;
 		}
 		pinCodeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.debug("Entering");
 		return pinCodeDetail;
 	}
 
@@ -848,6 +883,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	@Override
 	public BankDetail getBankDetail(String iFSCCode) throws ServiceException {
+		logger.debug("Entering");
+
 		BankDetail bankDetail = null;
 		bankDetail = finServiceInstController.getBankDetailsByIfsc(iFSCCode);
 		if (bankDetail == null) {
@@ -858,6 +895,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return error;
 		}
 		bankDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.debug("Leaving");
 		return bankDetail;
 	}
 

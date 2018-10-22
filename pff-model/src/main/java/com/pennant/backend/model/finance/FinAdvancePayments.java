@@ -61,10 +61,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>EtihadCreditBureauDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "remarks", "bankCode",
-		"liabilityHoldName", "payableLoc", "printingLoc", "valueDate", "llReferenceNo", "branchBankCode", "branchCode",
-		"iFSC", "beneficiaryAccNo", "beneficiaryName", "partnerBankID", "phoneCountryCode", "phoneAreaCode",
-		"phoneNumber" })
+@XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "branchBankCode", "branchBankName",
+		"branchCode",
+		"iFSC", "custShrtName", "beneficiaryAccNo", "beneficiaryName", "linkedTranId", "partnerBankID",
+		"phoneCountryCode", "phoneAreaCode", "phoneNumber", "remarks", "bankCode", "liabilityHoldName", "payableLoc",
+		"printingLoc", "valueDate", "llReferenceNo" })
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
 
@@ -74,6 +76,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String finReference;
 	private int paymentSeq;
 	private int disbSeq;
+	private String serviceReqNo;
 
 	@XmlElement(name = "disbParty")
 	private String paymentDetail;
@@ -111,6 +114,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	@XmlElement(name = "bankCode")
 	private String branchBankCode;
+	@XmlElement
 	private String branchBankName;
 
 	@XmlElement
@@ -155,12 +159,12 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String partnerbankCode;
 	private String partnerBankName;
 	private String finType;
+	@XmlElement
 	private String custShrtName;
 	private long linkedTranId;
 	private String partnerBankAcType;
 	private String transactionRef;
 	private String rejectReason;
-
 	private String partnerBankAc;
 	private boolean alwFileDownload;
 	private String fileNamePrefix;
@@ -203,6 +207,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("fileNamePrefix");
 		excludeFields.add("channel");
 		excludeFields.add("entityCode");
+		excludeFields.add("serviceReqNo");
 		return excludeFields;
 	}
 
@@ -215,6 +220,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 		return paymentId;
 
+	}
+
+	public String getServiceReqNo() {
+		return serviceReqNo;
+	}
+
+	public void setServiceReqNo(String serviceReqNo) {
+		this.serviceReqNo = serviceReqNo;
 	}
 
 	@Override

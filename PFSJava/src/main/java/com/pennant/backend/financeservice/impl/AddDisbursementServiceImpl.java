@@ -12,6 +12,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
@@ -35,6 +36,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private FinanceStepDetailDAO		financeStepDetailDAO;
 	private FinanceDataValidation		financeDataValidation;
+	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
 	/**
 	 * Method for perform add disbursement action
@@ -71,6 +73,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 						curSchd.setRecalLock(false);
 					}
 				}
+			}
+		}
+		//overdraft loan changes   fix me
+		if (finScheduleData.getFinanceScheduleDetails().size() > 0) {
+			for (FinanceScheduleDetail finSchd : finScheduleData.getFinanceScheduleDetails()) {
+				finSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
 			}
 		}
 		
@@ -118,6 +126,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
+		boolean servNoExist = false;
 
 		// validate Instruction details
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -230,8 +239,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}else{
 				if(!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)){
 					String[] valueParm = new String[2];
-					valueParm[0] = "RecalType";
-					valueParm[1] = finServiceInstruction.getRecalType();
+					valueParm[0] = "RecalType : " + finServiceInstruction.getRecalType();
+					valueParm[1] = "Over Draft Loan";
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 				}
 			}
@@ -276,6 +285,19 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 			}
 
+		//validate serviceReqNo
+		if (isOverdraft) {
+			servNoExist = finServiceInstrutionDAO.getFinServInstDetails(finServiceInstruction.getFinEvent(),
+					finServiceInstruction.getServiceReqNo());
+			if (servNoExist) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "serviceReqNo with ";
+				valueParm[1] = finServiceInstruction.getServiceReqNo();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+				return auditDetail;
+			}
+		}
+
 		// validate reCalToDate
 		if(!isOverdraft){
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
@@ -293,6 +315,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91109", valueParm)));
 			}
 		}
+
 
 		// term
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
@@ -448,6 +471,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	public FinServiceInstrutionDAO getFinServiceInstrutionDAO() {
+		return finServiceInstrutionDAO;
+	}
+
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }

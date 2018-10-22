@@ -4269,6 +4269,7 @@
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="partnerBankService" ref="partnerBankService" />
+		<property name="postingsDAO" ref="postingsDAO" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -6940,6 +6941,7 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="financeDataValidation" ref="financeDataValidation" />
+		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO"/>
 	</bean>
 
 	<bean id="reScheduleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

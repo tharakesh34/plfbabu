@@ -108,6 +108,7 @@
 					<value>com.pennant.validation.RemoveTermsGroup</value>
 					<value>com.pennant.validation.RecalculateGroup</value>
 					<value>com.pennant.validation.PartialSettlementGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -118,6 +119,7 @@
 					<value>com.pennant.validation.DefermentsGroup</value>
 					<value>com.pennant.validation.RecalculateGroup</value>
 					<value>com.pennant.validation.PartialSettlementGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>

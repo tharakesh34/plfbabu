@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -109,6 +110,78 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	
+	/**
+	 * Fetch FinServiceInstruction Detail by finReference,fromDate,finEvent
+	 * 
+	 * @param finReference
+	 * 
+	 * @param fromDate
+	 * 
+	 * @param finEvent
+	 * 
+	 * @return List<FinServiceInstruction>
+	 */
+	@Override
+	public List<FinServiceInstruction> getFinServiceInstAddDisbDetail(final String finReference, Date fromDate,
+			String finEvent) {
+		logger.debug("Entering");
+
+		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
+		finServiceInstruction.setFinReference(finReference);
+		finServiceInstruction.setFinEvent(finEvent);
+
+		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
+		selectSql.append(
+				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
+		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
+		selectSql.append(
+				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg ");
+		selectSql.append(" From FinServiceInstruction");
+		selectSql.append(" Where FinReference =:FinReference AND FromDate =:FromDate AND FinEvent =:FinEvent ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
+		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinServiceInstruction.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
+	/**
+	 * Fetch List of FinServiceInstruction Detail by finEvent and serviceReqNo
+	 * 
+	 * @param finEvent
+	 * 
+	 * @param serviceReqNo
+	 * 
+	 * @return List<FinServiceInstruction>
+	 */
+
+	@Override
+	public boolean getFinServInstDetails(String finEvent, String serviceReqNo) {
+		logger.debug("Entering");
+		int count = 0;
+		boolean flag = false;
+		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
+		finServiceInstruction.setFinEvent(finEvent);
+		finServiceInstruction.setServiceReqNo(serviceReqNo);
+
+		StringBuilder selectSql = new StringBuilder("Select count(*)");
+		selectSql.append(" From FinServiceInstruction");
+		selectSql.append(" Where FinEvent =:FinEvent and ServiceReqNo=:ServiceReqNo");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
+		count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+
+		if (count > 0) {
+			flag = true;
+		}
+		logger.debug("Leaving");
+		return flag;
 	}
 	/**
 	 * Fetch the Record Repay Instruction Detail details by key field

@@ -86,4 +86,6 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 
 	void updatePostCtg();
+	
+	List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference);
 }

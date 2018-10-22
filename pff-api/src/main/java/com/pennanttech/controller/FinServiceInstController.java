@@ -17,6 +17,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
+import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -57,6 +58,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.DemographicDetails;
+import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -91,6 +93,7 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
@@ -156,6 +159,68 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.changeScheduleMethodService = changeScheduleMethodService;
 	}
 
+	/**
+	 * Method for fetch DisbursementInquiryDetails by FinReference and linkedTranId
+	 * 
+	 * @param FinReference
+	 * @param serviceReqNo
+	 * 
+	 * @return DisbursementInquiryDetails
+	 */
+
+	public DisbursementServiceReq doDisbursementInquiry(DisbursementServiceReq disbursementServiceReq) {
+		logger.debug("Entering");
+
+		DisbursementServiceReq inquiryDetails = new DisbursementServiceReq();
+		List<FinAdvancePayments> finAdvancePayments = null;
+		FinanceMain financeMain = null;
+		List<ReturnDataSet> postingList;
+		List<Long> tranIdList = new ArrayList<>();
+
+		financeMain = financeMainService.getFinanceMainByFinRef(disbursementServiceReq.getFinReference());
+		if (financeMain == null) {
+			DisbursementServiceReq error = new DisbursementServiceReq();
+			String valueParam[] = new String[1];
+			valueParam[0] = disbursementServiceReq.getFinReference();
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return error;
+		}
+		inquiryDetails.setFinCurrAssetValue(financeMain.getFinCurrAssetValue());
+		inquiryDetails.setMaturityDate(financeMain.getMaturityDate());
+		inquiryDetails.setFinReference(financeMain.getFinReference());
+		inquiryDetails.setFinStartDate(financeMain.getFinStartDate());
+
+		finAdvancePayments = finAdvancePaymentsService.getFinAdvancePaymentByFinRef(disbursementServiceReq.getFinReference());
+		if (CollectionUtils.isNullOrEmpty(finAdvancePayments)) {
+			DisbursementServiceReq error = new DisbursementServiceReq();
+			String valueParam[] = new String[1];
+			valueParam[0] = disbursementServiceReq.getFinReference();
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return error;
+		}
+		inquiryDetails.setFinAdvancePayments(finAdvancePayments);
+
+		for (FinAdvancePayments advancePayments : finAdvancePayments) {
+			tranIdList.add(advancePayments.getLinkedTranId());
+		}
+
+		postingList = finAdvancePaymentsService.getPostingsByLinkedTranId(tranIdList,
+				disbursementServiceReq.getFinReference());
+		if (postingList == null) {
+			DisbursementServiceReq error = new DisbursementServiceReq();
+			String valueParam[] = new String[3];
+			valueParam[0] = "finRefernce/linkedTranId";
+			valueParam[1] = disbursementServiceReq.getFinReference();
+			valueParam[2] = String.valueOf(disbursementServiceReq.getLinkedTranId());
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("99022", valueParam));
+			return error;
+		}
+
+		inquiryDetails.setPostingList(postingList);
+
+		logger.debug("Leaving");
+		return inquiryDetails;
+	}
 	/**
 	 * Method for fetch DemoGraphic Details of corresponding pin code
 	 * 
@@ -752,7 +817,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDDISB);
-			finServiceInst.setFinEvent(FinanceConstants.FINSER_EVENT_ADDDISB);
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);

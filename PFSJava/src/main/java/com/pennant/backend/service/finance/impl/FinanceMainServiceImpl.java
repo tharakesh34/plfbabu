@@ -74,6 +74,10 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		return financeMainDAO.getFinanceMainById(id, "_View", isWIF);
 	}
 
+	@Override
+	public FinanceMain getFinanceMainByFinRef(String finRefernce) {
+		return financeMainDAO.getFinanceMainById(finRefernce, "", false);
+	}
 	/**
 	 * Method to get Finance related data.
 	 * 

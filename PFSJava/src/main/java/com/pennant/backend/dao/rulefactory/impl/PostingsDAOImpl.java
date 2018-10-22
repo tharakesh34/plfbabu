@@ -73,7 +73,38 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	public PostingsDAOImpl() {
 		super();
 	}
-	
+
+	/**
+	 * Fetch ReturnDataSet details by finReference and TransId
+	 * 
+	 * @param tranIdList
+	 * @param finReference
+	 * 
+	 * @return List<ReturnDataSet>
+	 */
+
+	@Override
+	public List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("LinkedTranId", tranIdList);
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
+		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
+		selectSql.append(" FROM Postings ");
+		selectSql.append(" Where FinReference =:FinReference AND  LinkedTranId  IN(:LinkedTranId) ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return postings;
+	}
+
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,String postingGroupBy) {
 		logger.debug("Entering");

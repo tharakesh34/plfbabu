@@ -50,6 +50,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinAdvancePaymentsService {
@@ -85,4 +86,7 @@ public interface FinAdvancePaymentsService {
 
 	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 
+	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce);
+
+	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> tranIdList, String finReference);
 }
