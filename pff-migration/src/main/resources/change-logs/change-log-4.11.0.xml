@@ -239,6 +239,9 @@
 		delete from REPORTLIST where code='QueryCategory';
 		Insert into REPORTLIST values ('QueryCategory','QueryCategory','listheader_Code.label,listheader_Description.label,listheader_Active.label','code,description,active','String,String,Boolean',' ','ReportList03','Query Category Type','Application Masters',1,1001,null,'Approved',' ',' ',' ',' ',' ',0,'0');
 		
+		delete from REPORTLIST where code='InterfaceMapping';
+		Insert into REPORTLIST values ('InterfaceMapping','InterfaceMapping','listheader_InterfaceName.label,listheader_InterfaceField.label','interfaceName,interfaceField','String,String',' ','ReportList02','Interface Mapping','Application Masters',1,1001,null,'Approved',' ',' ',' ',' ',' ',0,'0');
+		
 		update reportlist set moduletype='Customer Masters' where code='Gender';
 		
 		update REPORTLIST set reportheading='Sourcing Officers' ,moduletype='Application Masters' where code='VehicleDealer';
