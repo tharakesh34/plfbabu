@@ -4855,6 +4855,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
+		Date rcvdDate = this.receivedDate.getValue();
 		if(!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)){
 			if(!this.fundingAccount.isReadonly() && this.row_fundingAcNo.isVisible()){
 				this.fundingAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
@@ -4948,7 +4949,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if (this.row_BounceRemarks.isVisible() && !this.bounceDate.isDisabled() ) {
 			this.bounceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_BounceDate.value"),
-					true, null, null, true));
+					true, rcvdDate, true, true));
 		}
 		
 		logger.debug("Leaving");

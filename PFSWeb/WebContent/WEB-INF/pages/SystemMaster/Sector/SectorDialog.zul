@@ -93,7 +93,7 @@
 										width="450px" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_SectorDialog_SectorLimit"
 									value="${c:l('label_SectorDialog_SectorLimit.value')}" />

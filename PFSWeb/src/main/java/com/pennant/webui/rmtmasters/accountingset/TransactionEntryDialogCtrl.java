@@ -1122,6 +1122,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		valueParm[0] = aTransactionEntry.getLovDescEventCodeName();
 		valueParm[1] = aTransactionEntry.getLovDescAccSetCodeName();
 		valueParm[2] = String.valueOf(aTransactionEntry.getTransOrder());
+		
+		boolean derivedEntryReq = false;
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FeeTranEvent") + ":" + valueParm[0] + " "
 				+ PennantJavaUtil.getLabel("label_AccountingSetDialog_AccountSetCode.value") + ":" + valueParm[1];
@@ -1136,9 +1138,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						&& transactionEntry.getLovDescAccSetCodeName().equals(
 								aTransactionEntry.getLovDescAccSetCodeName())
 						&& transactionEntry.getTransOrder() == aTransactionEntry.getTransOrder()
-						|| transactionEntry.getTransOrder() == (aTransactionEntry.getTransOrder() + 1)) {
+						|| (transactionEntry.getTransOrder() == (aTransactionEntry.getTransOrder() + 1)	&& derivedEntryReq)) {
 
-					if ((transactionEntry.getTransOrder() == (aTransactionEntry.getTransOrder() + 1))
+					if (derivedEntryReq && (transactionEntry.getTransOrder() == (aTransactionEntry.getTransOrder() + 1))
 							&& aTransactionEntry.isNewRecord()
 							&& StringUtils.equals(aTransactionEntry.getRecordType(), PennantConstants.RCD_ADD)
 							&& StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE)) {
@@ -1191,52 +1193,65 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 								aTransactionEntry.setNewRecord(true);
 							}
 						} else {
-							TransactionEntry derivedEntry = verifyDerivedTranOrder(transactionEntry, aTransactionEntry,
-									false);
-							if (derivedEntry != null) {
-								derivedEntryAdded = true;
-								transactionEntryList.add(derivedEntry);
+							if(derivedEntryReq){
+								TransactionEntry derivedEntry = verifyDerivedTranOrder(transactionEntry, aTransactionEntry,
+										false);
+								if (derivedEntry != null) {
+									derivedEntryAdded = true;
+									transactionEntryList.add(derivedEntry);
+								}
 							}
 						}
 					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
-							TransactionEntry derivedEntry = verifyDerivedTranOrder(transactionEntry, aTransactionEntry,
-									false);
-							if (derivedEntry != null) {
-								transactionEntryList.add(derivedEntry);
-							} else {
+							if(derivedEntryReq){
+								TransactionEntry derivedEntry = verifyDerivedTranOrder(transactionEntry, aTransactionEntry,
+										false);
+								if (derivedEntry != null) {
+									transactionEntryList.add(derivedEntry);
+								} else {
+									transactionEntryList.add(transactionEntry);
+								}
+							}else {
 								transactionEntryList.add(transactionEntry);
 							}
 						} else {
 							if (!(StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE) && (transactionEntry != null && StringUtils
 									.equals(transactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_GLNPL)))) {
-								TransactionEntry derivedEntry = verifyDerivedTranOrder(transactionEntry,
-										aTransactionEntry, false);
-								if (derivedEntry != null) {
-									transactionEntryList.add(derivedEntry);
-									derivedEntryAdded = true;
+								if(derivedEntryReq){
+									TransactionEntry derivedEntry = verifyDerivedTranOrder(transactionEntry,
+											aTransactionEntry, false);
+									if (derivedEntry != null) {
+										transactionEntryList.add(derivedEntry);
+										derivedEntryAdded = true;
+									}
 								}
 							}
 						}
 					}
 				} else {
-					TransactionEntry derivedEntry = null;
+					
+					if(derivedEntryReq){
+						TransactionEntry derivedEntry = null;
 
-					if (!(StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE) && (transactionEntry != null && StringUtils
-							.equals(transactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_GLNPL)))) {
-						derivedEntry = verifyDerivedTranOrder(transactionEntry, aTransactionEntry, false);
-					}
-					if (derivedEntry != null) {
-						transactionEntryList.add(derivedEntry);
-						derivedEntryAdded = true;
-					} else {
+						if (!(StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE) && (transactionEntry != null && StringUtils
+								.equals(transactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_GLNPL)))) {
+							derivedEntry = verifyDerivedTranOrder(transactionEntry, aTransactionEntry, false);
+						}
+						if (derivedEntry != null) {
+							transactionEntryList.add(derivedEntry);
+							derivedEntryAdded = true;
+						} else {
+							transactionEntryList.add(transactionEntry);
+						}
+					}else {
 						transactionEntryList.add(transactionEntry);
 					}
 				}
 			}
 		}
 		if (!recordAdded) {
-			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)) {
+			if (derivedEntryReq) {
 				if (!derivedEntryAdded) {
 					TransactionEntry derivedEntry = verifyDerivedTranOrder(null, aTransactionEntry, true);
 					if (derivedEntry != null) {

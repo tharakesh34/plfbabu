@@ -141,7 +141,7 @@
 								<listheader id="listheader_SectorDesc"
 									label="${c:l('listheader_SectorDesc.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_SectorLimit"
+								<listheader id="listheader_SectorLimit" visible="false"
 									label="${c:l('listheader_SectorLimit.label')}" sort="auto"
 									hflex="min" />
 								<listheader

@@ -731,7 +731,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		
 		if (!this.bounceDate.isDisabled() ) {
 			this.bounceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceDate.value"),
-					true, null, null, true));
+					true, getReceiptHeader().getReceiptDate(), true, true));
 		}
 
 		logger.debug("Leaving");
