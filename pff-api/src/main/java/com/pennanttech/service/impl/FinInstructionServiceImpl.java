@@ -735,8 +735,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-				financeMain.setCalMaturity(financeMain.getMaturityDate());
+			if (financeMain.getMaturityDate() !=null && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+					financeMain.setCalMaturity(financeMain.getMaturityDate());	
 			}
 		}
 

@@ -806,7 +806,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// validate disbursement instructions
-		if (!loanWithWIF) {
+		if(!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 			disbursementDetails.setDisbDate(financeMain.getFinStartDate());
 			disbursementDetails.setDisbAmount(financeMain.getFinAmount());
