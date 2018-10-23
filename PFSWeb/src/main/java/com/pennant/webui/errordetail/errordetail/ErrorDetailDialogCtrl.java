@@ -236,13 +236,12 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 			this.btnCancel.setVisible(false);
 		} else {
 			this.errorCode.setReadonly(true);
+			this.errorSeverity.setDisabled(true);
 			this.errorLanguage.setReadonly(true);
 			this.errorExtendedMessage.setReadonly(true);
 			this.btnCancel.setVisible(true);
+			this.errorMessage.setReadonly(true);
 		}
-
-		this.errorSeverity.setDisabled(isReadOnly("ErrorDetailDialog_ErrorSeverity"));
-		this.errorMessage.setReadonly(isReadOnly("ErrorDetailDialog_ErrorMessage"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
