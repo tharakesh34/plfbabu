@@ -253,6 +253,8 @@
 		update REPORTLIST set moduletype='Customer Masters' where code='Gender';		
 		
 		update REPORTLIST set fieldvalues='code,description,module,categorizationName,severity,active' where code='ManualDeviation';
+		
+		update reportlist set  reportheading='Manual Advise' where code='ManualAdvise';
 	</sql>
 </changeSet>
 </databaseChangeLog>
