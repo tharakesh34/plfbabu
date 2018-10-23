@@ -279,4 +279,31 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		
 		logger.debug(Literal.LEAVING);
     }
+	
+	@Override
+	public int getGenderCodeCount(String genderCode, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) from BMTSalutations");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where SalutationGenderCode = :SalutationGenderCode");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("SalutationGenderCode", genderCode);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
 }

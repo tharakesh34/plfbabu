@@ -375,6 +375,18 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 				}
 	        }
 
+			if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(gender.getRecordType()))) {
+				int count = this.salutationDAO.getGenderCodeCount(gender.getGenderCode(), "_View");
+				if (count > 0) {
+					String[] errParm = new String[1];
+					String[] valueParm = new String[1];
+					valueParm[0] = gender.getGenderCode();
+					errParm[0] = PennantJavaUtil.getLabel("label_GenderCode") + " : " + valueParm[0];
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+				}
+			}
+			
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 			logger.debug("Leaving");

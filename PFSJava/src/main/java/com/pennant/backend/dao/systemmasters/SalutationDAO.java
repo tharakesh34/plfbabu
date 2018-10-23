@@ -66,5 +66,5 @@ public interface SalutationDAO extends BasicCrudDao<Salutation> {
 	boolean isDuplicateKey(String salutationCode, TableType tableType);
 	String getSystemDefaultCount(String salutationCode);
 	void updateSytemDefaultByGender(String genderCode,boolean systemDefault);
-	
+	int getGenderCodeCount(String genderCode, String type);
 }
