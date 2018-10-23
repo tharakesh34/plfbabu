@@ -79,7 +79,7 @@
 										value="${c:l('label_SecurityUserList_UsrLogin.value')}" />
 									<listbox id="sortOperator_UsrLogin"
 										width="43px" mold="select" rows="1" />
-									<textbox id="usrLogin" width="150px"
+									<uppercasebox id="usrLogin" width="150px"
 										maxlength="50" />
 									<label
 										id="label_SecurityUserList_UsrFName"
