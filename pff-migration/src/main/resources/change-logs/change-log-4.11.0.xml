@@ -242,12 +242,17 @@
 		delete from REPORTLIST where code='InterfaceMapping';
 		Insert into REPORTLIST values ('InterfaceMapping','InterfaceMapping','listheader_InterfaceName.label,listheader_InterfaceField.label','interfaceName,interfaceField','String,String',' ','ReportList02','Interface Mapping','Application Masters',1,1001,null,'Approved',' ',' ',' ',' ',' ',0,'0');
 		
-		update reportlist set moduletype='Customer Masters' where code='Gender';
+		update REPORTLIST set moduletype='Customer Masters' where code='Gender';
 		
 		update REPORTLIST set reportheading='Sourcing Officers' ,moduletype='Application Masters' where code='VehicleDealer';
 		
 		update REPORTLIST set reportheading='Lookup Values' where code='LovFieldDetail';
-				
+		
+		update REPORTLIST set moduletype='Entity Masters' where code='Entity';
+		
+		update REPORTLIST set moduletype='Customer Masters' where code='Gender';		
+		
+		update REPORTLIST set fieldvalues='code,description,module,categorizationName,severity,active' where code='ManualDeviation';
 	</sql>
 </changeSet>
 </databaseChangeLog>
