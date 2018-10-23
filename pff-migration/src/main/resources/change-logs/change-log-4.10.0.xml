@@ -6966,7 +6966,12 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
           WHERE interfacemapping_temp.interfacemappingid = t1.interfacemappingid))
 	 </createView>
 </changeSet>
-	
+	<changeSet id="84_Pre" author="Kesav" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','depositdetails');
+			select deps_save_and_drop_dependencies('plf','depositdetails_temp');
+		</sql>
+	</changeSet>
 	<changeSet author="Kesav" id="84">
 		<comment> data type modified from varchar(8) to varchar(9)</comment>
 		<modifyDataType tableName="DepositDetails_Temp" columnName="BranchCode" newDataType="varchar(9)" />
@@ -6976,7 +6981,12 @@ Insert into SMTPARAMETERS values ('CUSTBRANCH','Customer Branch','String','1','N
 		<comment> data type modified from varchar(8) to varchar(9)</comment>
 		<modifyDataType tableName="DepositDetails" columnName="BranchCode" newDataType="varchar(9)" />
 	</changeSet> 
-	
+	<changeSet id="84_Post" author="Kesav" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','depositdetails');
+			select deps_restore_dependencies('plf','depositdetails_temp');
+		</sql>
+	</changeSet>
 	<changeSet id="86" author="Vinay" dbms="postgresql">
 		<sql>
 			update rmtfinancetypes set eligibilitymethods = (select STRING_AGG(cast(fieldcodeid as varchar), ',') from rmtlovfielddetail  where fieldcode = 'ELGMETHOD' and isactive='1');
@@ -7479,6 +7489,11 @@ UNION ALL
           WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 		   </createView>
 	</changeSet>
+		<changeSet id="92_pre" author="Jayant" dbms="postgresql">
+			<sql>
+				select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
+			</sql>
+		</changeSet>
 		<changeSet id="92" author="Mangapathi">
 		<createView viewName="RmtFinanceTypes_AView" replaceIfExists="true">
 		SELECT t1.fintype,
@@ -7693,6 +7708,11 @@ UNION ALL
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
+		</changeSet>
+		<changeSet id="92_post" author="Jayant" dbms="postgresql">
+			<sql>
+				select deps_restore_dependencies('plf','rmtfinancetypes_aview');
+			</sql>
 		</changeSet>
 		<changeSet id="93" author="Mangapathi">
 		<createView viewName="RmtFinanceTypes_OrgView" replaceIfExists="true">

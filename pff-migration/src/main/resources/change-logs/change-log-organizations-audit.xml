@@ -130,7 +130,7 @@
 			columnNames="auditId, AuditDate, auditSeq, auditImage"
 			constraintName="pk_adtorg_income_expense_h" />
 	</changeSet>
-	<changeSet id="3" author="murthy.y">
+	<changeSet id="3" author="murthy.y" dbms="postgresql,oracle">
 		<createTable tableName="adtorg_income_expenses">
 			<column name="AuditId" type="bigint">
 				<constraints nullable="false" />
@@ -190,6 +190,75 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
+<changeSet id="3" author="murthy.y" dbms="mssql">
+		<createTable tableName="adtorg_income_expenses">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="headerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpense" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpenseCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpenseType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="units" type="int"/>
+			<column name="unitPrice" type="number(18,0)" />
+			<column name="total" type="number(18,0)" />
+			<column name="frequency" type="varchar(10)" />
+			<column name="loockUpId" type="bigint" />
+			<column name="consider" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="3_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table adtorg_income_expenses add Constraint df_adtor_in_ex_units DEFAULT 0 for units;
+			alter table adtorg_income_expenses add Constraint df_adtor_in_ex_consi DEFAULT 1 for consider;
+			
+		</sql>
+	</changeSet>
+	
 	<changeSet id="3.1" author="murthy.y">
 		<addPrimaryKey tableName="adtorg_income_expenses"
 			columnNames="auditId, AuditDate, auditSeq, auditImage"
