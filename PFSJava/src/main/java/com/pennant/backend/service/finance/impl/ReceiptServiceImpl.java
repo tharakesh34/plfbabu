@@ -1082,7 +1082,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// Value Date identification
-		Date valueDate = DateUtility.getAppDate();
+		Date curBusDate = DateUtility.getAppDate();
+		Date valueDate = curBusDate;
 		if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
 				receiptHeader.getReceiptDetails().get(i).setReceiptID(receiptHeader.getReceiptID());
@@ -1104,7 +1105,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Postings Process
 		List<Object> returnList = getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
-				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate,DateUtility.getAppDate(), rceiptData.getFinanceDetail());
+				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate,curBusDate, rceiptData.getFinanceDetail());
 		schdList = (List<FinanceScheduleDetail>) returnList.get(0);
 		
 		// Preparing Total Principal Amount
@@ -1136,8 +1137,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Overdue Details updation , if Value Date is Back dated.
 		scheduleData.setFinanceScheduleDetails(schdList);
 		List<FinODDetails> overdueList = null;
-		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
-			Date reqMaxODDate = valueDate;
+		if (DateUtility.compare(valueDate, curBusDate) != 0) {
+			Date reqMaxODDate = curBusDate;
 			if(!ImplementationConstants.LPP_CALC_SOD){
 				reqMaxODDate = DateUtility.addDays(valueDate, -1);
 			}
@@ -1159,7 +1160,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							fod.setFinODTillDate(valueDate);
 						}
 						//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
-						fod.setFinLMdfDate(DateUtility.getAppDate());
+						fod.setFinLMdfDate(curBusDate);
 					}
 				}
 			}
@@ -1338,7 +1339,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							movement.setCollateralRef(colAssignList.get(i).getCollateralRef());
 							movement.setReference(colAssignList.get(i).getReference());
 							movement.setAssignPerc(BigDecimal.ZERO);
-							movement.setValueDate(DateUtility.getAppDate());
+							movement.setValueDate(curBusDate);
 							movement.setProcess(CollateralConstants.PROCESS_AUTO);
 							getCollateralAssignmentDAO().save(movement);
 						}

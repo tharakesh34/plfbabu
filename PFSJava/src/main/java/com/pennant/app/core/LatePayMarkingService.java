@@ -272,6 +272,28 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
+		
+		// MAX OD Amount resetting
+		fod.setFinMaxODPri(curSchd.getPrincipalSchd());
+		fod.setFinMaxODPft(curSchd.getProfitSchd());
+		if (repayments!=null ){
+			for (int i = 0; i < repayments.size(); i++) {
+				FinanceRepayments repayment = repayments.get(i);
+
+				//check the payment made against the actual schedule date 
+				if (repayment.getFinSchdDate().compareTo(fod.getFinODSchdDate()) != 0) {
+					continue;
+				}
+
+				//MAx OD amounts is same as repayments balance amounts
+				if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
+					fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(repayment.getFinSchdPriPaid()));
+					fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(repayment.getFinSchdPftPaid()));
+				}
+			}
+		}
+		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
+					
 		Date odtCaldate=valueDate;
 		if (ImplementationConstants.LP_MARK_FIRSTDAY && !isUserAction) {
 			odtCaldate=DateUtility.addDays(valueDate, 1);

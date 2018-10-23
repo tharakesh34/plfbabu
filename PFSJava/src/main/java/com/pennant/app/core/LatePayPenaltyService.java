@@ -83,24 +83,34 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			//Fixed Fee. On Every Passing Schedule Month 
 		} else if (FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(fod.getODChargeType())) {
-			int numberOfMonths = getMonthsBetween(fod, finScheduleDetails, valueDate);
-			penalty = fod.getODChargeAmtOrPerc().multiply(new BigDecimal(numberOfMonths));
+			
+			BigDecimal balanceForCal = getBalanceForCal(fod);
+			
+			if(balanceForCal.compareTo(BigDecimal.ZERO) > 0){
+				int numberOfMonths = getMonthsBetween(fod, finScheduleDetails, valueDate);
+				penalty = fod.getODChargeAmtOrPerc().multiply(new BigDecimal(numberOfMonths));
+			}
 
 			//Percentage ON OD Amount. One Time 
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(fod.getODChargeType())) {
 			BigDecimal balanceForCal = getBalanceForCal(fod);
 
 			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
-			BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-			penalty = balanceForCal.multiply(amtOrPercetage).divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+			if(balanceForCal.compareTo(BigDecimal.ZERO) > 0){
+				BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+				penalty = balanceForCal.multiply(amtOrPercetage).divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+			}
 
 			//Percentage ON OD Amount. One Time 
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(fod.getODChargeType())) {
 			BigDecimal balanceForCal = getBalanceForCal(fod);
-			int numberOfMonths = getMonthsBetween(fod, finScheduleDetails, valueDate);
-			BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-			penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
-					.divide(new BigDecimal(100));
+			
+			if(balanceForCal.compareTo(BigDecimal.ZERO) > 0){
+				int numberOfMonths = getMonthsBetween(fod, finScheduleDetails, valueDate);
+				BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
+						.divide(new BigDecimal(100));
+			}
 
 			//On Due Days
 		} else {

@@ -142,7 +142,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
 		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
 		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate,");
-		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal, LPIWaived= :LPIWaived");
+		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal,LPIWaived= :LPIWaived, ");
+		updateSql.append(" FinMaxODAmt=:FinMaxODAmt,FinMaxODPri=:FinMaxODPri,FinMaxODPft=:FinMaxODPft ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 		
 		logger.debug("updateSql: " + updateSql.toString());

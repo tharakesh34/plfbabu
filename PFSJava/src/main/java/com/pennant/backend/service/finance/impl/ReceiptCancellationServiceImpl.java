@@ -1006,6 +1006,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					scheduleData = new FinScheduleData();
 					scheduleData.setFinanceScheduleDetails(
 							getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false));
+					
+					scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 
 					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
 						schdMap.put(DateUtility.formatDate(schd.getSchDate(), PennantConstants.DBDateFormat), schd);
@@ -1211,6 +1213,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						.getFinODBalByFinRef(financeMain.getFinReference());
 				List<FinanceRepayments> repayments = getFinanceRepaymentsDAO()
 						.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+				
+				scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 				overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate,
 						scheduleData.getFinanceScheduleDetails(), repayments, true, true);
 
@@ -1289,7 +1293,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
 				if (!isBounceProcess
 						|| (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))) {
+					
 					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
 
@@ -1640,6 +1646,20 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		getRepayInstructionDAO().saveList(finDetail.getRepayInstructions(), tableType, false);
 
 		logger.debug("Leaving ");
+	}
+	
+	private List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
+
+		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
+			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
+				@Override
+				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
+					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				}
+			});
+		}
+
+		return financeScheduleDetail;
 	}
 
 	// ******************************************************//
