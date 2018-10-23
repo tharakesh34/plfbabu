@@ -369,7 +369,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		}
 
 		try {
-			aStepPolicyDetail.setRateMargin(this.rateMargin.getValue());
+			aStepPolicyDetail.setRateMargin(this.rateMargin.getValue() == null ? BigDecimal.ZERO : this.rateMargin.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
