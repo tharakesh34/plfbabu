@@ -141,7 +141,7 @@
 								<hbox>
 									<space spacing="2px" 
 									  />
-									<textbox id="custEID"
+									<uppercasebox id="custEID"
 										width="180px"/>
 								</hbox>
 								<label

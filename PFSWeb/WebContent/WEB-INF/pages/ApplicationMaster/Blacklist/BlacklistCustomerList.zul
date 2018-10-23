@@ -113,7 +113,7 @@
 									value="${c:l('label_BlacklistCustomerSearch_CustEID.value')}" />
 								<listbox id="sortOperator_custEID"
 									width="43px" mold="select" rows="1" />
-								<textbox id="custEID" width="170px" />
+								<uppercasebox id="custEID" width="170px" />
 								<label
 									id="label_BlacklistCustomerSearch_Passport"
 									value="${c:l('label_BlacklistCustomerSearch_Passport.value')}" />
