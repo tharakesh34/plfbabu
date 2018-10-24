@@ -133,10 +133,9 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		this.formType.setMaxlength(8);
 		this.formType.setMandatoryStyle(true);
 		this.formType.setModuleName("PdfDocumentType");
-		this.formType.setValueType(DataType.LONG);
-		this.formType.setValueColumn("PdfMappingRef");
-		this.formType.setDescColumn("DocTypeCode");
-		this.formType.setValidateColumns(new String[] { "PdfMappingRef" });
+		this.formType.setValueColumn("DocTypeCode");
+		this.formType.setDescColumn("DocTypeDesc");
+		this.formType.setValidateColumns(new String[] { "DocTypeCode" });
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("DocIsPdfExtRequired", 1, Filter.OP_EQUAL);
 		formType.setFilters(filters);
