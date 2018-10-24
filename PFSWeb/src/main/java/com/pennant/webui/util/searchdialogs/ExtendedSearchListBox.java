@@ -733,7 +733,13 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		if (moduleMapping != null) {
 			this.fieldString = moduleMapping.getLovFields();
-			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
+			String label = Labels.getLabel(moduleMapping.getModuleName());
+			
+			if (StringUtils.isEmpty(label)) {
+				this.setTitle("Lookup Values");
+			} else {
+				this.setTitle(label);
+			}
 		}
 	}
 
