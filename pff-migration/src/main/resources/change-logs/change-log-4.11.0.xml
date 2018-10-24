@@ -260,8 +260,8 @@
 
 	<changeSet id="10" author="siva">
 		<sql>
-			Insert into bmtamountcodes values('INSTDATE','0','ae_instcpz','Installment Capitalization Amount','1','1','1000',Current_timestamp,'Approved','','','','','',0)
-			Insert into bmtamountcodes values('INSTDATE','0','ae_instTds','Installment TDS Amount','1','1','1000',Current_timestamp,'Approved','','','','','',0)
+			Insert into bmtamountcodes values('INSTDATE','0','ae_instcpz','Installment Capitalization Amount','1','1','1000',Current_timestamp,'Approved','','','','','',0);
+			Insert into bmtamountcodes values('INSTDATE','0','ae_instTds','Installment TDS Amount','1','1','1000',Current_timestamp,'Approved','','','','','',0);
 		</sql>
 	</changeSet>
 
