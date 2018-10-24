@@ -45,6 +45,11 @@ package com.pennant.backend.model;
 public class Property {
 	private Object key;
 	private String value;
+	private String parent;
+	
+	public Property() {
+		super();
+	}
 
 	public Property(Object key, String value) {
 		super();
@@ -66,5 +71,13 @@ public class Property {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
 	}
 }
