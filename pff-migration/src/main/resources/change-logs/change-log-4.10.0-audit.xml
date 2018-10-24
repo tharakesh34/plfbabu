@@ -142,15 +142,13 @@
 	</addColumn>
 	</changeSet>
 	
-	<changeSet id="17.5" author="vijaykumar.l"  dbms="postgresql" >
-	 <modifyDataType tableName="AdtCostOfFunds" columnName="delexistingrates" newDataType="smallint" />
+	<changeSet id="17.6" author="vijaykumar.l" >
+	 <modifyDataType tableName="AdtCostOfFunds" columnName="delexistingrates" newDataType="boolean" />
 	</changeSet>
-	<changeSet id="18.5" author="vijaykumar.l" dbms="postgresql" >
-	 <modifyDataType tableName="AdtCostOfFundCodes" columnName="active" newDataType="smallint" />
+	<changeSet id="18.6" author="vijaykumar.l">
+	 <modifyDataType tableName="AdtCostOfFundCodes" columnName="active" newDataType="boolean" />
 	</changeSet>
-	
-	 <changeSet id="19.2" author="vijaykumar.l" dbms="postgresql">
+	 <changeSet id="19.3" author="vijaykumar.l">
 	 <modifyDataType tableName="AdtCostOfFunds" columnName="active" newDataType="boolean" />
 	</changeSet>
-	
 	</databaseChangeLog>
