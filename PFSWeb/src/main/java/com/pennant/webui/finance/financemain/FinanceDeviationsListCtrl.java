@@ -188,6 +188,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	protected void doPrintResults() {
+		//super.doPrintResults();
 		try {
 			new PTListReportUtils(this.loanType.getValue() + "FinanceMain", super.searchObject,
 					this.pagingFinanceMainList.getTotalSize() + 1);
