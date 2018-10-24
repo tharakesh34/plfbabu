@@ -192,7 +192,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
 	private TechnicalValuationDialogCtrl technicalValuationDialogCtrl;
 	private List<ExtendedFieldDetail> extendedFieldDetails;
-	private List<ValueLabel> moduleList = PennantAppUtil.getExtendedModuleList();
+	private List<ValueLabel> moduleList = PennantStaticListUtil.getExtendedFieldMasters();
 	private String moduleDesc;
 	private String subModuleDesc;
 	/**
