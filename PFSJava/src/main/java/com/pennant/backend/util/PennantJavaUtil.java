@@ -44,9 +44,11 @@ package com.pennant.backend.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.ApplicationDetails;
@@ -406,6 +408,7 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.document.DocumentCategory;
+import com.pennanttech.pennapps.pff.extension.feature.AbstractCustomModule;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
@@ -419,6 +422,8 @@ import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
 
 public class PennantJavaUtil {
+	@Autowired(required = false)
+	private AbstractCustomModule customModule;
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
 
 	private static String masterWF = "MSTGRP1";
@@ -2428,7 +2433,19 @@ public class PennantJavaUtil {
 		ModuleUtil.register("MasterDef", new ModuleMapping("MasterDef", MasterDef.class,
 				new String[] { "master_def", "master_def" }, null, new String[] { "masterType,keyType,keyCode" }, null, 600));
 
+		registerCustomModules();
+	}
 
+	protected void registerCustomModules() {
+		if (customModule == null) {
+			return;
+		}
+
+		for (Entry<String, ModuleMapping> module : customModule.getCustomMappings().entrySet()) {
+			if (!ModuleUtil.isExists(module.getKey())) {
+				ModuleUtil.register(module.getKey(), module.getValue());
+			}
+		}
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
@@ -2614,5 +2631,4 @@ public class PennantJavaUtil {
 
 		return stringBuilder.toString();
 	}
-
 }
