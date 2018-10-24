@@ -577,6 +577,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("financeMain", financeMain);
 		map.put("ccy", ccy);
 		map.put("filter", setFilter(getGurantorFilter()));
+		map.put("totSharePerc", getTotGuarPerc());
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", window_JointAccountDetailDialog, map);
 		} catch (Exception e) {
@@ -585,6 +586,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public BigDecimal getTotGuarPerc() {
+		BigDecimal totSharePerc = BigDecimal.ZERO;
+		for (GuarantorDetail guarantorDetail : getGuarantorDetailList()) {
+			if (guarantorDetail.getGuranteePercentage() != null) {
+				totSharePerc = totSharePerc.add(guarantorDetail.getGuranteePercentage());
+			}
+		}
+		return totSharePerc;
+	}
+	
 	public void doFillGurantorsDetails(List<GuarantorDetail> guarantorDetailList) {
 		logger.debug("Entering");
 		this.listBoxGurantorsDetail.getItems().clear();
@@ -716,6 +727,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
 				map.put("filter", setFilter(getGurantorFilter()));
+				BigDecimal totSharePerc = BigDecimal.ZERO;
+				if (guarantorDetail.getGuranteePercentage() != null) {
+					totSharePerc = getTotGuarPerc().subtract(guarantorDetail.getGuranteePercentage());
+				}
+				map.put("totSharePerc", totSharePerc);
 				if(enquiry){
 				map.put("enqModule", enquiry);
 				map.put("moduleType", "ENQ");

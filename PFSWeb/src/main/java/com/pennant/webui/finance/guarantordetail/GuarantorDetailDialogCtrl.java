@@ -248,6 +248,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private FinanceMain financeMain;
 	private  String addrCountryTemp;
 	private  String addrProvinceTemp;
+	private BigDecimal	totSharePerc;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -294,6 +296,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (arguments.containsKey("moduleType")) {
 				moduleType = (String) arguments.get("moduleType");
 			} 
+			
+			if (arguments.containsKey("totSharePerc")) {
+				this.totSharePerc = (BigDecimal) arguments.get("totSharePerc");
+			}
 			
 			// READ OVERHANDED params !
 			if (arguments.containsKey("guarantorDetail")) {
@@ -1335,6 +1341,25 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if (!this.guranteePercentage.isReadonly() && this.guranteePercentage.getValue().compareTo(BigDecimal.ZERO) <= 0) {
+				throw new WrongValueException(this.guranteePercentage, Labels.getLabel("NUMBER_MINVALUE",
+						new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"), "0" }));
+			}
+			if (this.guranteePercentage.getValue() != null  && this.guranteePercentage.intValue() != 0) {
+				if ((this.totSharePerc.add(this.guranteePercentage.getValue())).compareTo(new BigDecimal(100)) > 0) {
+					BigDecimal availableSharePerc = new BigDecimal(100).subtract(this.totSharePerc);
+					throw new WrongValueException(this.guranteePercentage, Labels.getLabel("Total_Percentage",
+							new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"),
+									availableSharePerc.toString() }));
+				}
+			}
+			
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		// Mobile No
 		try {
 			aGuarantorDetail.setMobileNo(this.mobileNo.getValue());
