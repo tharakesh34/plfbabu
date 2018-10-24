@@ -126,12 +126,12 @@ public class DisbursementPostings {
 	
 	
 	
-	public Map<Long, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch)  throws InterfaceException {
+	public Map<Integer, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch)  throws InterfaceException {
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();
 
-		Map<Long,Long> disbMap = new HashMap<>();
+		Map<Integer,Long> disbMap = new HashMap<>();
 
 		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "");
 
@@ -196,9 +196,9 @@ public class DisbursementPostings {
 					}
 
 					if (!posted) {
-						disbMap.put(finAdvancePayments.getPaymentId(), Long.MIN_VALUE);//To Identify
+						disbMap.put(finAdvancePayments.getPaymentSeq(), Long.MIN_VALUE);//To Identify
 					}else{
-						disbMap.put(finAdvancePayments.getPaymentId(), aeEvent.getLinkedTranId());
+						disbMap.put(finAdvancePayments.getPaymentSeq(), aeEvent.getLinkedTranId());
 					}
 					
 

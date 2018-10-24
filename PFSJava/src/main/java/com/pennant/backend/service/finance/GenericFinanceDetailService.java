@@ -1716,7 +1716,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSN)
 				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
 
-			Map<Long, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
+			Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
 					financeDetail.getFinScheduleData().getFinanceMain(), auditHeader.getAuditBranchCode());
 
 			List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
@@ -1726,8 +1726,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				for (int i = 0; i < advPayList.size(); i++) {
 					FinAdvancePayments advPayment = advPayList.get(i);
-					if(finAdvanceMap.containsKey(advPayment.getPaymentId())){
-						advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentId()));
+					if(finAdvanceMap.containsKey(advPayment.getPaymentSeq())){
+						advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
 					}
 				}
 			}

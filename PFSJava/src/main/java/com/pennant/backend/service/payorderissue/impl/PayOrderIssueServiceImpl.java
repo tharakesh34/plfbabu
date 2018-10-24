@@ -325,7 +325,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		calcluatePOHeaderDetails(payOrderIssueHeader);
 		
 		boolean posted=true;
-		Map<Long, Long> data =null;
+		Map<Integer, Long> data =null;
 		try {
 			 data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(), payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
 			for (Long linkedID : data.values()) {
@@ -679,7 +679,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type,Map<Long, Long> data) {
+	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type,Map<Integer, Long> data) {
 		logger.debug(" Entering ");
 
 		List<FinAdvancePayments> list = payOrderIssueHeader.getFinAdvancePaymentsList();
@@ -732,8 +732,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				
 				if (StringUtils.isEmpty(type)) {
 					auditTransType = PennantConstants.TRAN_ADD;
-					if (data!=null && data.containsKey(finAdvpay.getPaymentId())) {
-						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentId()));
+					if (data!=null && data.containsKey(finAdvpay.getPaymentSeq())) {
+						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentSeq()));
 					}
 				}
 				finAdvancePaymentsDAO.save(finAdvpay, type);
