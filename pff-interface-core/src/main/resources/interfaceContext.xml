@@ -100,4 +100,6 @@
 	<bean id="disbursementRequest" class="com.pennanttech.pff.disbursement.DisbursementRequest" parent="abstarctDisbursementRequest" />
 	<bean id="disbursementResponse" class="com.pennanttech.pff.disbursement.DisbursementResponse" parent="abstarctDisbursementResponse" />
 	<bean id="cibilEnquiryProcess" class="com.pennanttech.pff.cibil.CibilEnquiryProcess" parent="abstractCibilEnquiryProcess" />	
+	<bean id="externalUserSearch" class="com.pennanttech.pff.veritas.ExternalUserSearch"/>	
+	<bean id="externalAuthenticationProvider" class="com.pennanttech.pff.veritas.UserAuthenticationProvider"/>	
 </beans>

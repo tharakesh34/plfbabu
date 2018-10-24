@@ -117,9 +117,8 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.security.LdapContext;
-import com.pennanttech.pennapps.core.security.UserAttributes;
 import com.pennanttech.pennapps.core.security.UserType;
+import com.pennanttech.pennapps.core.security.user.UserSearch;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -192,10 +191,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
 	protected boolean newRecord = false;
 	protected Datebox UsrAcExpDt;
-	private boolean ldapUser = false;
+	private boolean findUser = false;
 
 	@Autowired
-	private LdapContext ldapContext;
+	private UserSearch ldapUserSearch;
+
+	@Autowired
+	private UserSearch externalUserSearch;
 
 	/**
 	 * default constructor.<br>
@@ -365,39 +367,20 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			doRemoveValidation();
 			doClearMessage();
-			ldapUser = false;
-			if (authType.getValue().equals("Internal") && StringUtils.isNotBlank(usrLogin.getValue())) {
+			findUser = false;
+			com.pennanttech.pennapps.core.security.model.SecurityUser user = null;
+			if (authType.getValue().equals(Labels.getLabel("label_Auth_Type_External")) && StringUtils.isNotBlank(usrLogin.getValue())) {
 
-				Map<String, String> details = ldapContext.getUserDetail(usrLogin.getValue());
-				if (StringUtils.isBlank(usrEmail.getValue())) {
-					usrEmail.setValue(details.get(UserAttributes.EMAIL.getAttribute()));
-				}
-				if (StringUtils.isBlank(usrMobile.getValue())) {
-					usrMobile.setValue(details.get(UserAttributes.MOBILE.getAttribute()));
-				}
-				if (StringUtils.isBlank(usrFName.getValue())) {
-					usrFName.setValue(details.get(UserAttributes.FIRST_NAME.getAttribute()));
-				}
-				if (StringUtils.isBlank(usrMName.getValue())) {
-					usrMName.setValue(details.get(UserAttributes.MIDDLE_NAME.getAttribute()));
-				}
-				if (StringUtils.isBlank(usrLName.getValue())) {
-					usrLName.setValue(details.get(UserAttributes.LAST_NAME.getAttribute()));
-				}
+				user = getUserSearch().searchForUser(usrLogin.getValue());
+				usrEmail.setValue(user.getEmail());
+				usrMobile.setValue(user.getMobileNumber());
+				usrFName.setValue(user.getFirstName());
+				usrMName.setValue(user.getMiddleName());
+				usrLName.setValue(user.getLastName());
 			}
-			ldapUser = true;
+			findUser = true;
 		} catch (InterfaceException e) {
-			if (e.getErrorCode().equals(LdapContext.LDAP81)) {
-				ldapUser = true;
-				logger.warn(e.getErrorMessage());
-			} else if (e.getErrorCode().equals(LdapContext.LDAP64)) {
-				ldapUser = false;
-				throw new WrongValueException(this.usrLogin, e.getErrorMessage());
-			} else {
-				MessageUtil.showError(e);
-				ldapUser = false;
-			}
-
+			throw new WrongValueException(this.usrLogin, e.getErrorMessage());
 		}
 	}
 
@@ -796,8 +779,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			wve.add(we);
 		}
 
-		if (!ldapUser && getSecurityUser().isNew() && aSecurityUser.getUsrLogin() != null) {
-			wve.add(new WrongValueException(this.usrLogin, "User not found in active directory"));
+		if (!findUser && getSecurityUser().isNew() && aSecurityUser.getUsrLogin() != null) {
+			wve.add(new WrongValueException(this.usrLogin, "User not found"));
 		} else {
 			this.usrLogin.setErrorMessage("");
 			this.usrLogin.setConstraint("");
@@ -941,7 +924,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (!this.usrMobile.isReadonly()) {
 			if (StringUtils.isNotEmpty(this.usrMobile.getValue())) {
 				this.usrMobile.setConstraint(
-						new PTMobileNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), true));
+						new PTMobileNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), true, PennantRegularExpressions.MOBILE_REGEX));
 			} else {
 				this.usrMobile.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), false));
@@ -2034,6 +2017,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
+	}
+
+	private UserSearch getUserSearch() {
+		return externalUserSearch == null ? ldapUserSearch : externalUserSearch;
 	}
 
 }

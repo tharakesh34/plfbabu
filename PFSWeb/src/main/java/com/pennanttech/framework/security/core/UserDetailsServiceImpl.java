@@ -66,41 +66,39 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class UserDetailsServiceImpl implements UserDetailsService {
-	private static final Logger		logger	= Logger.getLogger(UserDetailsServiceImpl.class);
-	
-	
+	private static final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class);
+
 	@Autowired
-	private transient UserService	userService;
+	private transient UserService userService;
 
 	public UserDetailsServiceImpl() {
 
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		logger.debug(Literal.ENTERING);
 
 		SecurityUser user;
 		Collection<GrantedAuthority> grantedAuthorities;
 		List<SecurityRole> securityRole;
-				
+
 		user = getUserByLogin(username.toUpperCase());
-		
+
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found.");
 		}
-		
+
 		if (!user.isUsrEnabled()) {
 			throw new UsernameNotFoundException("User account disabled.");
 		}
 
 		securityRole = userService.getUserRolesByUserID(user.getId());
 		grantedAuthorities = getGrantedAuthority(user);
-	
 
 		// Create the UserDetails object for a specified user with their granted Authorities.
 		final UserDetails userDetails = new User(user, grantedAuthorities, securityRole);
-		
+
 		logger.debug(Literal.LEAVING);
 		return userDetails;
 
@@ -139,11 +137,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		for (final SecurityRight right : rights) {
 			rechteGrantedAuthorities.add(new SimpleGrantedAuthority(right.getRightName()));
 		}
-		
+
 		logger.trace(Literal.LEAVING);
 		return rechteGrantedAuthorities;
 	}
-	
+
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}

@@ -3423,9 +3423,9 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAuthnticationTypes() {
 
 		if (authTypes == null) {
-			authTypes = new ArrayList<ValueLabel>(3);
-			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name(), "External "));
-			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.LDAP.name(), "Internal"));
+			authTypes = new ArrayList<>(2);
+			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name(), Labels.getLabel("label_Auth_Type_Internal")));
+			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.LDAP.name(), Labels.getLabel("label_Auth_Type_External")));
 		}
 		return authTypes;
 	}

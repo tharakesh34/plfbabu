@@ -46,7 +46,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -64,7 +64,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -75,6 +74,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.security.user.ExternalAuthenticationProvider;
 
 import eu.bitwalker.useragentutils.UserAgent;
 
@@ -84,6 +84,10 @@ import eu.bitwalker.useragentutils.UserAgent;
 public class AuthenticationManager implements AuthenticationProvider {
 	private static final Logger logger = Logger.getLogger(Authentication.class);
 
+	private static final String AUTH_TYPE_DAO = "DAO";
+	private static final String AUTH_TYPE_LDAP = "LDAP";
+	private static final String AUTH_TYPE_EXTERNAL = "EXTERNAL";
+
 	@Autowired
 	private UserDetailsService userDetailsService;
 	@Autowired
@@ -92,6 +96,10 @@ public class AuthenticationManager implements AuthenticationProvider {
 	private DaoAuthenticationProvider daoAuthenticationProvider;
 	@Autowired
 	private AuthenticationProvider ldapAuthenticationProvider;
+
+	@Qualifier(value = "externalAuthenticationProvider")
+	@Autowired(required = false)
+	private ExternalAuthenticationProvider externalAuthenticationProvider;
 
 	@Value("${authentication.default}")
 	private String defaultAuthType;
@@ -118,33 +126,28 @@ public class AuthenticationManager implements AuthenticationProvider {
 		Authentication result = null;
 
 		try {
-
+			boolean defaultIsActiveDirectory = false;
 			if (ldapAuthentication && daoAuthentication) {
-				boolean defaultIsActiveDirectory = false;
-
-				try {
-					if ("LDAP".equals(defaultAuthType)) {
-						defaultIsActiveDirectory = true;
-						result = authenticate(authentication, true);
-					} else {
-						result = authenticate(authentication, false);
-					}
-				} catch (Exception e) {
-					logger.warn(String.format("Login Attemp with default authentication %s failed.", defaultAuthType));
+				if (AUTH_TYPE_LDAP.equals(defaultAuthType)) {
+					defaultIsActiveDirectory = true;
 				}
+
+				result = authenticateDefault(authentication);
 
 				if (result == null) {
 					if (defaultIsActiveDirectory) {
-						result = authenticate(authentication, false);
+						result = authenticate(authentication, AUTH_TYPE_DAO);
 					} else {
-						result = authenticate(authentication, true);
+						result = authenticate(authentication, AUTH_TYPE_LDAP);
 					}
 				}
 
 			} else if (ldapAuthentication) {
-				result = authenticate(authentication, true);
+				result = authenticate(authentication, AUTH_TYPE_LDAP);
 			} else if (daoAuthentication) {
-				result = authenticate(authentication, false);
+				result = authenticate(authentication, AUTH_TYPE_DAO);
+			} else {
+				result = authenticate(authentication, AUTH_TYPE_EXTERNAL);
 			}
 		} catch (Exception e) {
 			logAttempt(authentication, e.getMessage());
@@ -157,25 +160,46 @@ public class AuthenticationManager implements AuthenticationProvider {
 		return result;
 	}
 
+	private Authentication authenticateDefault(Authentication authentication) {
+		Authentication result = null;
+		try {
+			result = authenticate(authentication, defaultAuthType);
+		} catch (Exception e) {
+			logger.warn(String.format("Login attempt with default authentication [ %s ] failed.", defaultAuthType));
+		}
+		return result;
+	}
+
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return true;
 	}
 
-	private Authentication authenticate(Authentication authentication, boolean ldap) {
+	private Authentication authenticate(Authentication authentication, String authType) {
 		Authentication result = null;
 
-		if (ldap) {
-			User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
+		User user = null;
+		if (AUTH_TYPE_LDAP.equals(authType) || AUTH_TYPE_EXTERNAL.equals(authType)) {
+			user = (User) userDetailsService.loadUserByUsername(authentication.getName());
+		}
 
+		if (AUTH_TYPE_LDAP.equals(authType)) {
 			result = ldapAuthenticationProvider.authenticate(authentication);
+		} else if (AUTH_TYPE_DAO.equals(authType)) {
+			result = daoAuthenticationProvider.authenticate(authentication);
+		} else if (AUTH_TYPE_EXTERNAL.equals(authType) && externalAuthenticationProvider != null) {
+			String username = authentication.getPrincipal().toString();
+			Object credentials = authentication.getCredentials();
+			String password = credentials == null ? null : credentials.toString();
+			externalAuthenticationProvider.authenticate(username, password);
+			result = authentication;
+		}
 
+		if (result != null && (AUTH_TYPE_LDAP.equals(authType) || AUTH_TYPE_EXTERNAL.equals(authType))) {
 			AbstractAuthenticationToken token = null;
 			token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(), user.getAuthorities());
 			token.setDetails(result.getDetails());
 			result = token;
-		} else {
-			result = daoAuthenticationProvider.authenticate(authentication);
 		}
 
 		SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -221,7 +245,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		User userImpl = (User) authentication.getPrincipal();
 		LoggedInUser loggedInUser = getUserDetails(userImpl.getSecurityUser());
 
-		loggedInUser.setSessionId(getSessionId(authentication));
+		loggedInUser.setSessionId(getSessionId());
 		loggedInUser.setLoginLogId(userImpl.getLoginId());
 
 		return loggedInUser;
@@ -233,7 +257,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		Authentication currentUser = getAuthentication();
 
 		if (currentUser == null) {
-			return new HashSet<>();
+			return new ArrayList<>();
 		}
 
 		User userImpl = (User) currentUser.getPrincipal();
@@ -281,8 +305,6 @@ public class AuthenticationManager implements AuthenticationProvider {
 		loggedInUser.setBrowserType(getBrowser());
 		loggedInUser.setLogonTime(DateUtility.getTimestamp(new Date()));
 		loggedInUser.setAuthType(user.getAuthType());
-		loggedInUser.setUserType(user.getUserType());
-		loggedInUser.setPasswordExpiredOn(user.getPwdExpDt());
 
 		return loggedInUser;
 	}
@@ -308,9 +330,8 @@ public class AuthenticationManager implements AuthenticationProvider {
 		}
 	}
 
-	public static String getSessionId(Authentication authentication) {
-		WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
-		return details.getSessionId();
+	public static String getSessionId() {
+		return getRequestAttribute().getSessionId();
 	}
 
 	public static String getBrowser() {
@@ -335,7 +356,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		secLoginlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
 		secLoginlog.setLoginIP(getRemoteAddress());
 		secLoginlog.setLoginBrowserType(getBrowser());
-		secLoginlog.setLoginSessionID(getSessionId(authentication));
+		secLoginlog.setLoginSessionID(getSessionId());
 
 		if (StringUtils.length(loginError) <= 500) {
 			secLoginlog.setLoginError(loginError);
