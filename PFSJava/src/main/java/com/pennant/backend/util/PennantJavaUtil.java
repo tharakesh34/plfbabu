@@ -1498,7 +1498,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("LiabilityRequest", new ModuleMapping("LiabilityRequest", LiabilityRequest.class,
 				new String[] { "FinLiabilityReq", "FinLiabilityReq_View" }, masterWF , new String[] { "FinReference",
-						"CustCIF", "FinType" }, null, 300));
+						"CustCIF", "FinType" }, null, 600));
 
 		ModuleUtil.register("CancelRepay", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
