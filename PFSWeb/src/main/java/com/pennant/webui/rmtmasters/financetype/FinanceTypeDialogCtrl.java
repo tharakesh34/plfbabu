@@ -2768,6 +2768,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
+			if(isOverdraft){
+				this.alwEarlyPayMethods.setValue(CalculationConstants.EARLYPAY_ADJMUR);
+			}
 			aFinanceType.setAlwEarlyPayMethods(this.alwEarlyPayMethods.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);

@@ -2764,12 +2764,12 @@ public class FinanceDataValidation {
 
 		//Number of Terms & Maturity Date are Mutually Exclusive
 		// This is not applicable for OverDraft Web services
-		if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+		//if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
 			if (finMain.getNumberOfTerms() > 0 && finMain.getMaturityDate() != null) {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
 				return errorDetails;
 			} 
-		}
+		//}
 		
 
 		//Both Grace Terms & Grace End Date are not present
@@ -3925,12 +3925,15 @@ public class FinanceDataValidation {
 			netRate = rate.getNetRefRateLoan();
 			
 			//Check Against Minimum Rate 
-			if (netRate.compareTo(finMain.getRpyMinRate()) < 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = round4(netRate).toString();
-				valueParm[1] = round4(finMain.getRpyMinRate()).toString();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90174", valueParm)));
+			if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+				if (netRate.compareTo(finMain.getRpyMinRate()) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = round4(netRate).toString();
+					valueParm[1] = round4(finMain.getRpyMinRate()).toString();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90174", valueParm)));
+				} 	
 			}
+			
 
 			//Check Against Maximum Rate 
 			if (finMain.getRpyMaxRate().compareTo(zeroValue) != 0) {
@@ -3995,20 +3998,33 @@ public class FinanceDataValidation {
 		if (finMain.getNumberOfTerms() > 0) {
 				if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
 					finMain.setCalTerms(finMain.getNumberOfTerms());
-				}
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),
-						finMain.getNumberOfTerms(), finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true)
-						.getScheduleList();
+					List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),
+							finMain.getNumberOfTerms(), finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true)
+							.getScheduleList();
 
-				Date matDate = null;
-				if (scheduleDateList != null) {
-					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(),
-							PennantConstants.DBDateFormat));
-				}
+					Date matDate = null;
+					if (scheduleDateList != null) {
+						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+						matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(),
+								PennantConstants.DBDateFormat));
+					}
 
-				finMain.setCalMaturity(matDate);
-	
+					finMain.setCalMaturity(matDate);
+
+				}else{
+						
+					if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
+						List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
+								finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
+			
+						if (scheduleDateList != null) {
+							Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+							Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+							finMain.setCalMaturity(matDate);
+						}
+					}
+				}
+					
 			//}
 		} else {
 			//Default Calculated Terms based on Maturity Date

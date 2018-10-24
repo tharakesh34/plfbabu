@@ -1809,7 +1809,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
 		FinanceMain financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		String usrLanguage = financeMain.getUserDetails().getLanguage();
+		String usrLanguage = auditHeader.getUsrLanguage();
 		
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {

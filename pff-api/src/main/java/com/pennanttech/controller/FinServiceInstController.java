@@ -1446,6 +1446,24 @@ public class FinServiceInstController extends SummaryDetailService {
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
+		boolean isOverDraft = false;
+		FinanceDetail response = null;
+		
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())){
+			isOverDraft = true;
+		}
+		
+		if(isOverDraft && !StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, finServiceInst.getRecalType())){
+			response = new FinanceDetail();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Recal type code";
+			valueParm[1] = CalculationConstants.EARLYPAY_ADJMUR;
+			doEmptyResponseObject(response);
+			response.setReturnStatus(
+					APIErrorHandlerService.getFailedStatus("90281", valueParm));
+			return response;
+
+		}
 
 		FinReceiptDetail finReceiptDetail = finServiceInst.getReceiptDetail();
 		if (finReceiptDetail == null) {
@@ -1458,7 +1476,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		FinanceDetail response = null;
 		try {
 
 			// calculate PartPayment amount

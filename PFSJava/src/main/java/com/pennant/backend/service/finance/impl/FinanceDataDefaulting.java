@@ -1050,17 +1050,30 @@ public class FinanceDataDefaulting {
 		if (finMain.getNumberOfTerms() > 0) {
 			if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
 				finMain.setCalTerms(finMain.getNumberOfTerms());	
-			}
-			if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
-						finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
-	
-				if (scheduleDateList != null) {
-					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
-					finMain.setCalMaturity(matDate);
+				if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
+					List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
+							finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
+		
+					if (scheduleDateList != null) {
+						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+						Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+						finMain.setCalMaturity(matDate);
+					}
 				}
+			}else{
+				if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
+					List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
+							finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
+		
+					if (scheduleDateList != null) {
+						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+						Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+						finMain.setCalMaturity(matDate);
+					}
+				}
+				
 			}
+			
 			return;
 		}
 			
