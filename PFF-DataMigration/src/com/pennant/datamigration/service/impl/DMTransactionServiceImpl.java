@@ -3205,8 +3205,8 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				penaltyCalDate = DateUtility.addDays(rid.getAppDate(), 1);
 			}
 
-			getLatePayMarkingService().latePayMarking(finMain, fod, penaltyRate, 
-					finSchdDetails, repayments, curSchd, rid.getAppDate(),penaltyCalDate);
+			getLatePayMarkingService().latePayMarking(finMain, fod,  
+					finSchdDetails, repayments, curSchd, rid.getAppDate(),penaltyCalDate, false);
 			
 			if(fod.getTotPenaltyAmt().compareTo(BigDecimal.ZERO) > 0 || 
 					fod.getLPIAmt().compareTo(BigDecimal.ZERO) > 0){
