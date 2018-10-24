@@ -48,6 +48,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
@@ -3333,6 +3334,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+	}
+
+	@Override
+	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference, CM.CustCIF CustCIF, CM.CustShrtName CustShrtName ");
+		selectSql.append(" From FinanceMain_Temp FM LEFT JOIN Customers CM ON CM.CustID = FM.CUSTID");
+		selectSql.append(" Where InitiateUser=:InitiateUser");
+
+
+		source.addValue("InitiateUser", userID);
+		RowMapper<LoanPendingData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LoanPendingData.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+
 	}
 
 }

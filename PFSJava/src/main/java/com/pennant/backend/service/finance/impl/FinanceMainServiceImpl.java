@@ -45,6 +45,7 @@ package com.pennant.backend.service.finance.impl;
 import java.util.List;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
@@ -173,6 +174,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	 */
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Override
+	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
+		return financeMainDAO.getCustomerODLoanDetails(userID);
 	}
 
 

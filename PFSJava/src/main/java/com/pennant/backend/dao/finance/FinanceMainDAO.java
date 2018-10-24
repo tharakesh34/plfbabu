@@ -49,6 +49,7 @@ import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 
+import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
@@ -295,5 +296,7 @@ public interface FinanceMainDAO {
 	FinanceMain getDMFinanceMainByRef(String finReference, String type);
 
 	List<String> getFinanceReferenceList(String type);
+
+	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
 }

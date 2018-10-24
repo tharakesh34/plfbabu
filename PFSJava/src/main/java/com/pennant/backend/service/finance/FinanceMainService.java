@@ -44,6 +44,7 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
+import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 
@@ -71,4 +72,6 @@ public interface FinanceMainService {
 	List<String> getFinanceMainbyCustId(long custID);
 
 	FinanceMain getFinanceMainByFinRef(String finRefernce);
+
+	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 }

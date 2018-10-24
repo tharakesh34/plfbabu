@@ -10,6 +10,7 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -30,6 +31,8 @@ import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.applicationmaster.LoanPendingData;
+import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -1776,6 +1779,36 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 		}
 		return false;
+	}
+	/**
+	 * Method for get Loan Reference,Customer CIF, Customer Name.
+	 */
+	@Override
+	public LoanPendingDetails getLoanPendingDetailsByUsrID(long userID) throws ServiceException {
+		logger.debug("Entering");
+
+		LoanPendingDetails custLoanDetails = new LoanPendingDetails();
+		List<LoanPendingData> customerODLoanData = null;
+		customerODLoanData = finServiceInstController.getCustomerODLoanDetails(userID);
+		
+		
+		if (CollectionUtils.isNullOrEmpty(customerODLoanData)) {
+			LoanPendingDetails error = new LoanPendingDetails();
+			String [] param=new String[2];
+			param[0] = "User ID";
+			param[1] = String.valueOf(userID);
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", param));
+			return error;
+		}
+		
+		if(customerODLoanData !=null){
+			custLoanDetails.setCustomerODLoanDataList(customerODLoanData);
+		}
+		
+		custLoanDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.debug("Entering");
+		return custLoanDetails;
 	}
 
 	/**

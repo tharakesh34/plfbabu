@@ -51,6 +51,7 @@ import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -2829,6 +2830,16 @@ public class FinServiceInstController extends SummaryDetailService {
 			return errorDetails;
 		}
 		return errorDetails;
+	}
+	
+	/**
+	 * Method for fetch Customer Loan Details of corresponding userID
+	 * 
+	 * @param userID
+	 * @return CustomerODLoanDetails
+	 */
+	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
+		return financeMainService.getCustomerODLoanDetails(userID);
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

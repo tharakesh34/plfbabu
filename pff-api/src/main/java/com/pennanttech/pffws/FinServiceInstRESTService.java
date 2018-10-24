@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -105,5 +106,9 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/feePayment")
 	public FinanceDetail feePayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getLoanPendingDetailsByUsrID/{userID}")
+	public LoanPendingDetails getLoanPendingDetailsByUsrID(@PathParam("userID") long userID) throws ServiceException;
 
 }
