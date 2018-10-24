@@ -31,6 +31,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.staticlist.AppStaticList;
+import com.pennanttech.pff.staticlist.ExtFieldStaticList;
 
 @Component("appList")
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -272,6 +273,29 @@ public class PennantStaticListUtil {
 	 */
 	public static List<Property> getApplications() {
 		return AppStaticList.getApplications();
+	}
+
+	/**
+	 * Gets the list of masters for extended fields.
+	 * 
+	 * @return The list of masters for extended fields.
+	 */
+	public static List<ValueLabel> getExtendedFieldMasters() {
+		return ExtFieldStaticList.getMasters();
+	}
+
+	/**
+	 * Adds the custom extended field master.
+	 * 
+	 * @param code
+	 *            The master code.
+	 */
+	public void addExtendedFieldMaster(String code) {
+		if (code == null) {
+			return;
+		}
+
+		ExtFieldStaticList.addMaster(code);
 	}
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
