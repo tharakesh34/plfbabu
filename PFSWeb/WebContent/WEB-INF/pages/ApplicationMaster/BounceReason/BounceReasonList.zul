@@ -99,7 +99,7 @@
 										id="sortOperator_ReturnCode" width="43px" mold="select"
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="returnCode"
-										width="130px" maxlength="5" />
+										width="130px" maxlength="8"/>
 								</row>
 								<row>
 									<label
