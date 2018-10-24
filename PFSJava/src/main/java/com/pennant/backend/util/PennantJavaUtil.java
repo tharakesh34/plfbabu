@@ -2232,7 +2232,7 @@ public class PennantJavaUtil {
 		null, 600));
 		
 		ModuleUtil.register("InterfaceFields", new ModuleMapping("InterfaceFields", InterfaceFields.class, new String[] { "Interface_Fields",
-		"INTERFACE_FIELDs_AVIEW" }, null, new String[] { "InterfaceId","InterfaceName", "TableName","MappingType","Field"},
+		"INTERFACE_FIELDs_AVIEW" }, null, new String[] { "InterfaceName", "TableName","MappingType","Field"},
 		null, 600));
 		
 		ModuleUtil.register("MasterMapping", new ModuleMapping("MasterMapping", MasterMapping.class,new String[] { "MasterMapping" }, null, null,
