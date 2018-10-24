@@ -1901,8 +1901,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			Component component = event.getTarget();
 			ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
 			String componentId = extendedCombobox.getId();
+			String fieldName = "";
 
-			String fieldName = StringUtils.split(componentId, "ad_")[0];
+			if (StringUtils.startsWith(componentId, "ad_")) {
+				fieldName = StringUtils.substring(componentId, 3);
+			} else {
+				fieldName = StringUtils.split(componentId, "ad_")[0];
+			}
 
 			ExtendedFieldDetail detail = getFieldDetail(fieldName);
 			addFilters(detail);
@@ -1930,16 +1935,19 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			String[] childArray = StringUtils.split(value, SCRIPT_DELIMITER);
 			String fieldName = childArray[1];
 
+			StringBuilder sb = new StringBuilder();
+
 			if (fieldValueMap.containsKey(fieldName) && fieldValueMap.get(fieldName) != null
 					&& StringUtils.isNotBlank(fieldValueMap.get(fieldName).toString())) {
-
-				StringBuilder sb = new StringBuilder();
 				sb.append(childArray[0]).append(delimiter).append(fieldValueMap.get(fieldName)).append(delimiter)
 						.append(childArray[2]);
 				filters.add(sb.toString());
-
+			} else {
+				sb.append(childArray[0]).append(delimiter).append(" ").append(delimiter).append(childArray[2]);
+				filters.add(sb.toString());
 			}
 		}
+
 		appendFilters(extendedCombobox, filters);
 		logger.debug(Literal.LEAVING);
 	}
@@ -2013,12 +2021,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				extendedCombobox.setConstraint("");
 				extendedCombobox.setErrorMessage("");
 
-				if (StringUtils.trimToNull(combobox.getValue()) != null) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(childArray[0]).append(delimiter).append(combobox.getValue()).append(delimiter)
-							.append(childArray[2]);
-					filters.add(sb.toString());
-				}
+				StringBuilder sb = new StringBuilder();
+				sb.append(childArray[0]).append(delimiter).append(StringUtils.isEmpty(combobox.getValue()) ? " " : combobox.getValue()).append(delimiter)
+						.append(childArray[2]);
+				filters.add(sb.toString());
 			}
 		}
 		appendFilters(extendedCombobox, filters);
