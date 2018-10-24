@@ -40,4 +40,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="1" author="Vinay">
+		<modifyDataType tableName="AdtFinTypeExpenses" columnName="AmortReq" newDataType="boolean"/>
+	</changeSet>
+
+	<changeSet id="2" author="Vinay">
+		<modifyDataType tableName="adtFinTypeExpenses" columnName="taxapplicable" newDataType="boolean"/>
+	</changeSet>
+	
+	<changeSet id="3" author="Vinay">
+		<modifyDataType tableName="adtFinTypeExpenses" columnName="active" newDataType="boolean"/>
+	</changeSet>
 	</databaseChangeLog>
