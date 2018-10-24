@@ -990,7 +990,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 								.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
 								PennantRegularExpressions.REGEX_PANNUMBER, true));
 					}else{
-						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), null, true));					
+						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));					
 					}
 				}
 			
