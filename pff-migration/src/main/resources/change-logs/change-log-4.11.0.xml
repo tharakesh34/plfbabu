@@ -827,4 +827,17 @@ UNION ALL
 		select deps_restore_dependencies('plf','fintypeexpenses_temp');
 	</sql>
 </changeSet>
+
+<changeSet id="18" author="Vinay">
+		<addColumn tableName="wiffinfeedetail">
+		<column name="TRANSACTIONID" type="VARCHAR(20)" >
+		<constraints nullable="true"/>
+		</column>
+	</addColumn>
+	<addColumn tableName="wiffinfeedetail_temp">
+		<column name="TRANSACTIONID" type="VARCHAR(20)" >
+		<constraints nullable="true"/>
+		</column>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
