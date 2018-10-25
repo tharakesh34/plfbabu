@@ -594,7 +594,14 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}
 			bounce.setReceiptID(aReceiptHeader.getReceiptID());
 			try {
-				bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+				//if bouncode is empty
+				if (StringUtils.isEmpty(this.bounceCode.getValue())) {
+					this.bounceCode.setValue("0");
+					bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+				} else {
+					bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+				}
+
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
