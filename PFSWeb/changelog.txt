@@ -2,21 +2,21 @@ pff 4.11.3.0 2018-10-24
 ----------------
 -bugs #840 Reset password should prompt the user to change his/her password on next login rather than expiring the user account
 -story #800 Improve the performance of auto download of agreements
--18413 -- While creating a connector getting validation at Name after hanging the name and submit the connector and resubmit the record and again change the name not getting any validations.
--PPM #18426 -- Getting wrong format document in loan
--PPM #18427 -- Getting unhandled exception while generating GST invoice report with loan reference
--PPM #18429  -- Form type is not appearing in the text box after selecting
--PPM #18431 -- Getting all modulenames as system masters rather than their prospective module names in print document.
--PPM #18432 -- Getting primary customer as guarantors details
--PPM #18434 -- Getting  Error in Configuring the report. Please Contact administrator. exception while clicking on print button in reason categories master.
--PPM #18435 -- Sourcing officer print ed document heading name is not same as menu name
--PPM #18436 -- Getting lookupvalues printed document heading as LOV Field Details
--PPM #18443 -- Getting same fields for both existing and prospect in corporate finance data input.
--PPM #18446 -- Getting only system dates for audited date rather than Application dates
--PPM #18447 -- Unable to open the record in corporate financial data input
--PPM #18448 -- Getting unhandled exception while maintaining Reason codescodes master.
--PPM #18453 -- Not getting downpay rule in promotions
--PPM #18454 -- Not getting promotion description in promotion process editor
+-PPM #18413  While creating a connector getting validation at Name after hanging the name and submit the connector and resubmit the record and again change the name not getting any validations.
+-PPM #18426 Getting wrong format document in loan
+-PPM #18427 Getting unhandled exception while generating GST invoice report with loan reference
+-PPM #18429 Form type is not appearing in the text box after selecting
+-PPM #18431 Getting all modulenames as system masters rather than their prospective module names in print document.
+-PPM #18432 Getting primary customer as guarantors details
+-PPM #18434 Getting  Error in Configuring the report. Please Contact administrator. exception while clicking on print button in reason categories master.
+-PPM #18435 Sourcing officer print ed document heading name is not same as menu name
+-PPM #18436 Getting lookupvalues printed document heading as LOV Field Details
+-PPM #18443 Getting same fields for both existing and prospect in corporate finance data input.
+-PPM #18446 Getting only system dates for audited date rather than Application dates
+-PPM #18447 Unable to open the record in corporate financial data input
+-PPM #18448 Getting unhandled exception while maintaining Reason codescodes master.
+-PPM #18453 Not getting downpay rule in promotions
+-PPM #18454 Not getting promotion description in promotion process editor
 
 pff 4.11.2.5, 2018-10-16
 ----------------
