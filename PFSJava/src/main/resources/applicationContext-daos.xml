@@ -6942,6 +6942,7 @@
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="financeDataValidation" ref="financeDataValidation" />
 		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO"/>
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<bean id="reScheduleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

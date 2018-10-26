@@ -17,6 +17,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -26,13 +27,16 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction> implements AddDisbursementService {
 	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);
 
+	private ExtendedFieldDetailsService			extendedFieldDetailsService;
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private FinanceStepDetailDAO		financeStepDetailDAO;
 	private FinanceDataValidation		financeDataValidation;
@@ -131,7 +135,9 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		// validate Instruction details
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
+		List<ExtendedField> extendedDetailsList = finServiceInstruction.getExtendedDetails();
+		List<ErrorDetail> errorDetailList = null;
+	
 		String finReference = financeMain.getFinReference();
 		boolean isWIF = finServiceInstruction.isWif();
 		Date fromDate = finServiceInstruction.getFromDate();
@@ -255,36 +261,51 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91105", valueParm)));
 					return auditDetail;
 				}
-			if (isOverdraft) {
-				if (finServiceInstruction.getRecalFromDate() == null) {
-					finServiceInstruction.setRecalFromDate(finServiceInstruction.getFromDate());
+				if (isOverdraft) {
+					if (finServiceInstruction.getRecalFromDate() == null) {
+						finServiceInstruction.setRecalFromDate(finServiceInstruction.getFromDate());
+					} else {
+						if(DateUtility.compare(finServiceInstruction.getFromDate(), finServiceInstruction.getRecalFromDate())!=0){
+							String[] valueParm = new String[2];
+							valueParm[0] = "RecalFromDate";
+							valueParm[1] = "FromDate";
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+							return auditDetail;
+					}
+				}
 				} else {
-					if(DateUtility.compare(finServiceInstruction.getFromDate(), finServiceInstruction.getRecalFromDate())!=0){
+
+					if (finServiceInstruction.getRecalFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
+						valueParm[1] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91114", valueParm)));
+					} else if (!isOverdraft && finServiceInstruction.getRecalFromDate()
+						.compareTo(finServiceInstruction.getFromDate()) <= 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "RecalFromDate";
-						valueParm[1] = "FromDate";
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+						valueParm[1] = "from date";
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", valueParm)));
 						return auditDetail;
 					}
 				}
-			} else {
-
-				if (finServiceInstruction.getRecalFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
-					valueParm[1] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91114", valueParm)));
-				} else if (!isOverdraft && finServiceInstruction.getRecalFromDate()
-						.compareTo(finServiceInstruction.getFromDate()) <= 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "RecalFromDate";
-					valueParm[1] = "from date";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", valueParm)));
+			}
+		
+			//ExtendedFieldDetails Validation
+			if (extendedDetailsList !=null && extendedDetailsList.size()>0) {
+				String subModule = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+				errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(finServiceInstruction.getExtendedDetails(),
+						ExtendedFieldConstants.MODULE_LOAN, subModule, FinanceConstants.FINSER_EVENT_ADDDISB);
+				if(errorDetailList != null){
+					for (ErrorDetail errorDetails : errorDetailList) {
+						auditDetail.setErrorDetail(errorDetails);
+					}	
 					return auditDetail;
-				}
+				} 	
 			}
-			}
-
+			
+			
+			//### 02-05-2018-END
 		//validate serviceReqNo
 		if (isOverdraft) {
 			servNoExist = finServiceInstrutionDAO.getFinServInstDetails(finServiceInstruction.getFinEvent(),
@@ -425,8 +446,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 			
-			List<ErrorDetail> errors = financeDataValidation.disbursementValidation(financeDetail);
-			for (ErrorDetail errorDetails : errors) {
+			errorDetailList = financeDataValidation.disbursementValidation(financeDetail);
+			for (ErrorDetail errorDetails : errorDetailList) {
 				auditDetail.setErrorDetail(errorDetails);
 			}
 		}
@@ -480,5 +501,18 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
 		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
+
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+    
+	
 
 }

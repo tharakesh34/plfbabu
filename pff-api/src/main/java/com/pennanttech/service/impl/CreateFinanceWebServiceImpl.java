@@ -611,6 +611,45 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return response;
 	}
 
+	/**
+	 * Method for approve temp_finance details 
+	 * 
+	 * @param financeDetail
+	 * @return WSReturnStatus
+	 */
+	
+	@Override
+	public WSReturnStatus approveLoan(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug("Enetring");
+		FinanceDetail finDetail = null;
+		WSReturnStatus returnStatus = null;
+		String finReference = financeDetail.getFinReference();
+
+		// for logging purpose
+		if (StringUtils.isNotBlank(finReference)) {
+			APIErrorHandlerService.logReference(finReference);
+		}
+		//check reference is in temp table or not
+		FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finReference, "_Temp", false);
+
+		if (finMain == null) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+
+		}
+
+		finDetail = createFinanceController.getFinanceDetails(finReference);
+
+		if (finDetail != null) {
+			returnStatus = createFinanceController.doApproveLoan(finDetail);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
 	private FinanceDetail getErrorMessage(FinScheduleData financeSchdData) {
 		for (ErrorDetail erroDetail : financeSchdData.getErrorDetails()) {
 			FinanceDetail response = new FinanceDetail();

@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
@@ -155,6 +156,10 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private String fromBranch;
 	@XmlElement
 	private String toBranch;
+	
+	@XmlElementWrapper(name = "extendedDetails")
+	@XmlElement(name = "extendedDetail")
+	private List<ExtendedField> extendedDetails;
 
 
 	// ******************************************************//
@@ -694,6 +699,14 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 
 	public void setRateReviewFrq(String rateReviewFrq) {
 		this.rateReviewFrq = rateReviewFrq;
+	}
+
+	public List<ExtendedField> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
+		this.extendedDetails = extendedDetails;
 	}
 
 	

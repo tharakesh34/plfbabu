@@ -42,4 +42,8 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/updateLoan")
 	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException;
+
+	@POST
+	@Path("/finance/approveLoan")
+	public WSReturnStatus approveLoan(FinanceDetail financeDetail) throws ServiceException;
 }

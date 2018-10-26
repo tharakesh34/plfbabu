@@ -88,6 +88,7 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -127,6 +128,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -2778,7 +2780,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
-
+		List<ExtendedField> extendedDetailsList = finServiceInstruction.getExtendedDetails();
+		List<ErrorDetail> errorDetailList = null;
+		FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finServiceInstruction.getFinReference(), "", false);
+		
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
 		if(StringUtils.isBlank(finServiceInstruction.getPaymentMode())) {
@@ -2800,6 +2805,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					+DisbursementConstants.PAYMENT_TYPE_DD;
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
 			return auditDetail;
+		}
+		
+		//ExtendedFieldDetails Validation
+		if (extendedDetailsList !=null && extendedDetailsList.size()>0) {
+			String subModule = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(finServiceInstruction.getExtendedDetails(),
+					ExtendedFieldConstants.MODULE_LOAN, subModule, FinanceConstants.FINSER_EVENT_RECEIPT);
+			if(errorDetailList != null){
+				for (ErrorDetail errorDetails : errorDetailList) {
+					auditDetail.setErrorDetail(errorDetails);
+				}	
+				return auditDetail;
+			} 	
 		}
 
 		if(StringUtils.equals(finServiceInstruction.getReqType(), "Post") && finServiceInstruction.getReceiptDetail() == null) {

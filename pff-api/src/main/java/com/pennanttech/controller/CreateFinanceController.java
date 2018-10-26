@@ -247,11 +247,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
-			doSetRequiredDetails(financeDetail, loanWithWIF, userDetails, stp);
 
-			if (financeDetail.getFinScheduleData().getExternalReference() != null
-					&& !financeDetail.getFinScheduleData().getExternalReference().isEmpty()) {
-				if (financeDetail.getFinScheduleData().isUpfrontAuto()) {
+			doSetRequiredDetails(financeDetail, loanWithWIF, userDetails, stp, false);
+			
+			if (financeDetail.getFinScheduleData().getExternalReference()!=null && !financeDetail.getFinScheduleData().getExternalReference().isEmpty()){
+				if (financeDetail.getFinScheduleData().isUpfrontAuto()){
 					adjustFeesAuto(finScheduleData);
 				} else {
 
@@ -506,8 +506,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
+
 	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF, LoggedInUser userDetails,
-			boolean stp) throws IllegalAccessException, InvocationTargetException {
+			boolean stp, boolean approve)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
@@ -810,7 +812,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// validate disbursement instructions
-		if(!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
+				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (!approve) {
 			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 			disbursementDetails.setDisbDate(financeMain.getFinStartDate());
 			disbursementDetails.setDisbAmount(financeMain.getFinAmount());
@@ -822,6 +826,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			disbursementDetails
 					.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 			finScheduleData.getDisbursementDetails().add(disbursementDetails);
+			}
 		}
 
 		// validate Disbursement instruction total amount
@@ -1158,6 +1163,107 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+	public WSReturnStatus doApproveLoan(FinanceDetail financeDetail) {
+		logger.debug("Entering");
+
+		try {
+			// financeMain details
+			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+			FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+			// user language
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			financeMain.setUserDetails(userDetails);
+
+			String roleCode = null;
+			String taskid = null;
+			boolean stp = financeDetail.isStp();
+			long workFlowId = 0;
+
+			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), financeDetail.isStp()));
+
+			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			financeMain.setWorkflowId(0);
+			financeMain.setRoleCode(roleCode);
+			financeMain.setNextRoleCode(roleCode);
+			financeMain.setTaskId(taskid);
+			financeMain.setNextTaskId(getNextTaskId(taskid, financeMain.isQuickDisb(), stp));
+			financeMain.setNewRecord(true);
+			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			financeMain.setLastMntBy(getLastMntBy(financeMain.isQuickDisb(), userDetails));
+			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+
+			finScheduleData.setFinanceMain(financeMain);
+
+			// set required mandatory values into finance details object
+			doSetRequiredDetails(financeDetail, false, userDetails, stp, true);
+			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
+			financeDetail.setStp(false);
+			// set LastMntBy , LastMntOn and status fields to schedule details
+			for (FinanceScheduleDetail schdDetail : finScheduleData.getFinanceScheduleDetails()) {
+				schdDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				schdDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+				schdDetail.setWorkflowId(workFlowId);
+				schdDetail.setRoleCode(roleCode);
+				schdDetail.setNextRoleCode(roleCode);
+				schdDetail.setTaskId(taskid);
+				schdDetail.setNextTaskId(financeMain.getNextTaskId());
+			}
+
+			
+
+			// Finance detail object
+			financeDetail.setUserAction("");
+			financeDetail.setExtSource(false);
+			financeDetail.setAccountingEventCode(PennantApplicationUtil.getEventCode(financeMain.getFinStartDate()));
+			financeDetail.setFinReference(financeMain.getFinReference());
+			if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+					financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
+				financeDetail.setFinScheduleData(finScheduleData);
+			}
+
+
+			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
+			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
+					financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			//auditHeader.setApiHeader(reqHeaderDetails);
+
+			auditHeader = financeDetailService.doApprove(auditHeader, false);
+
+			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+				for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+
+			if (auditHeader.getAuditDetail().getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			return APIErrorHandlerService.getFailedStatus("9999", ex.getMessage());
+		} catch (AppException ex) {
+			logger.error("AppException", ex);
+			return APIErrorHandlerService.getFailedStatus("9999", ex.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		return APIErrorHandlerService.getSuccessStatus();
+
 	}
 
 	/**

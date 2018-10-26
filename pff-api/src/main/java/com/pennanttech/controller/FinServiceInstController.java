@@ -31,12 +31,14 @@ import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.CancelDisbursementService;
@@ -57,6 +59,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -97,6 +102,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -108,6 +114,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.ZIPCodeDetailsService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -155,6 +162,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceTypeDAO financeTypeDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
+	private ExtendedFieldDetailsService			extendedFieldDetailsService;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
@@ -806,12 +816,13 @@ public class FinServiceInstController extends SummaryDetailService {
 	 */
 	public FinanceDetail doAddDisbursement(FinServiceInstruction finServiceInst, FinanceDetail financeDetail,
 			String eventCode) {
-		logger.debug("Enteing");
+		logger.debug("Entering");
 
 		if (financeDetail != null) {
+			List<ExtendedField> extendedDetailsList = finServiceInst.getExtendedDetails();
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-
+			FinanceType finType = finScheduleData.getFinanceType();
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(financeMain.getMaturityDate());
 			financeMain.setAdjTerms(finServiceInst.getTerms());
@@ -918,12 +929,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				if (finScheduleData.getErrorDetails() != null) {
-					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
-						FinanceDetail response = new FinanceDetail();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-						return response;
+					if(extendedDetailsList !=null && extendedDetailsList.size()>0){
+						addExtendedFields(finServiceInst, finType,FinanceConstants.FINSER_EVENT_ADDDISB,"ADSB");
 					}
 				}
 				financeDetail.setFinScheduleData(finScheduleData);
@@ -1008,6 +1015,100 @@ public class FinServiceInstController extends SummaryDetailService {
 		return financeDetail;
 	}
 
+	private void addExtendedFields(FinServiceInstruction finServiceInst, FinanceType finType,String event,String code) {
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory(), event,"");
+		List<ExtendedField> extendedFields = finServiceInst.getExtendedDetails();
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		Map<String, Object> prvExtFieldMap = new HashMap<>();
+		StringBuilder tableName = new StringBuilder();
+		tableName.append(ExtendedFieldConstants.MODULE_LOAN);
+		tableName.append("_");
+		tableName.append(finType.getFinCategory());
+		tableName.append("_");
+		tableName.append(code);
+		tableName.append("_ED");
+		if (extendedFieldHeader != null) {
+			int sequenceNo = 0;
+			
+			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+			exdFieldRender.setReference(finServiceInst.getFinReference());
+			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			exdFieldRender.setLastMntBy(userDetails.getUserId());
+			exdFieldRender.setSeqNo(++sequenceNo);
+			exdFieldRender.setTypeCode(extendedFieldHeader.getSubModuleName());
+			List<ExtendedFieldData> prvExtendedFields = new ArrayList<>(1);
+			ExtendedFieldHeader curExtendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+						ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory(),event,"");
+			if (curExtendedFieldHeader != null) {
+					ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
+							ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory()+"_"+code,
+							finServiceInst.getFinReference());
+					if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
+						prvExtFieldMap = extendedFieldRender.getMapValues();
+						for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
+							ExtendedFieldData data = new ExtendedFieldData();
+							data.setFieldName(entry.getKey());
+							data.setFieldValue(entry.getValue());
+							prvExtendedFields.add(data);
+						}
+					}
+					exdFieldRender.setNewRecord(false);
+					boolean checkFinReference = extendedFieldRenderDAO.isExists(finServiceInst.getFinReference(), 1, tableName.toString());
+					if(checkFinReference){
+						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}else{
+						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
+					}
+					
+					exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
+				    exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			}
+			if (extendedFields != null) {
+				for (ExtendedField extendedField : extendedFields) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					mapValues.put("Reference", exdFieldRender.getReference());
+					mapValues.put("SeqNo", exdFieldRender.getSeqNo());
+					mapValues.put("Version", exdFieldRender.getVersion());
+					mapValues.put("LastMntBy", exdFieldRender.getLastMntBy());
+					mapValues.put("LastMntOn", exdFieldRender.getLastMntOn());
+					mapValues.put("RecordStatus", PennantConstants.RCD_STATUS_APPROVED);
+					mapValues.put("RoleCode", "");
+					mapValues.put("NextRoleCode", "");
+					mapValues.put("TaskId", "");
+					mapValues.put("NextTaskId", "");
+					mapValues.put("RecordType", "");
+					mapValues.put("WorkflowId", 0);
+					//mapValues.put("adfdaf", "");
+					
+					if (extendedField.getExtendedFieldDataList() != null) {
+						for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+							exdFieldRender.setMapValues(mapValues);
+						}
+					} else {
+						Map<String, Object> map = new HashMap<String, Object>();
+						exdFieldRender.setMapValues(map);
+					}
+				}
+				if (extendedFields.isEmpty()) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
+				}
+			} else {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+			}
+				if(exdFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+					extendedFieldRenderDAO.save(exdFieldRender.getMapValues(), "", tableName.toString());	
+				}else{
+					extendedFieldRenderDAO.update(finServiceInst.getFinReference(), 1, exdFieldRender.getMapValues(), "", tableName.toString());
+				}
+				
+		}
+	}
+	
 	public FinanceDetail doCancelDisbursement(FinServiceInstruction finServiceInst, FinanceDetail financeDetail,
 			String eventCode) {
 		logger.debug("Enteing");
@@ -1446,6 +1547,10 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceType finType = finScheduleData.getFinanceType();
+		List<ExtendedField> extendedDetailsList = finServiceInst.getExtendedDetails();
+		
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
 		boolean isOverDraft = false;
 		FinanceDetail response = null;
@@ -1465,7 +1570,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			return response;
 
 		}
-
+		
+		if(extendedDetailsList !=null && extendedDetailsList.size()>0){
+				addExtendedFields(finServiceInst, finType,FinanceConstants.FINSER_EVENT_RECEIPT,"RCPT");
+		}
+	
 		FinReceiptDetail finReceiptDetail = finServiceInst.getReceiptDetail();
 		if (finReceiptDetail == null) {
 			finReceiptDetail = new FinReceiptDetail();
@@ -2987,4 +3096,28 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.zIPCodeDetailsService = zIPCodeDetailsService;
 	}
 
+	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
+		return extendedFieldHeaderDAO;
+	}
+
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
+		return extendedFieldRenderDAO;
+	}
+
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+       
 }

@@ -320,9 +320,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					
 					if ((finFeeDetail.isAlwPreIncomization())&& (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO)>0) ){
 						FinFeeDetail finFeeDtl=getFinFeeDetailDAO().getFeeDetailByExtReference(finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
-						finFeeDetail.setFeeID(finFeeDtl.getFeeID());
-						finFeeDetail.setFeeSeq(finFeeDtl.getFeeSeq());
-						getFinFeeDetailDAO().update(finFeeDetail, false, "");
+						if (finFeeDtl != null) {
+							finFeeDetail.setFeeID(finFeeDtl.getFeeID());
+							finFeeDetail.setFeeSeq(finFeeDtl.getFeeSeq());
+							getFinFeeDetailDAO().update(finFeeDetail, false, "");
+						}
 					} else {
 						finFeeDetail.setFeeID(getFinFeeDetailDAO().save(finFeeDetail, isWIF, tableType));
 					}
@@ -901,7 +903,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		List<FinFeeReceipt> finFeeReceipts = finScheduleData.getFinFeeReceipts();
 		AuditDetail detail = new AuditDetail();
-		if (finFeeReceipts != null) {
+		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
 			finFeeAuditDetails = getFinFeeReceiptAuditDetail(finFeeReceipts, auditTranType, method, workflowId);
 
 			for (AuditDetail auditDetail : finFeeAuditDetails) {
