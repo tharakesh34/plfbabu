@@ -50,6 +50,8 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -70,6 +72,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement
 	private long id = Long.MIN_VALUE;
 	private String finReference;
 	// private String finReferenceName;
@@ -80,13 +83,16 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private String notifyTo;
 	private String status;
 	private long raisedBy = 0;
+	@XmlElement
 	private String usrLogin;
 
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	private Timestamp raisedOn;
+	@XmlElement(name="remarks")
 	private String responsNotes;
 	private long responseBy = 0;
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
+	@XmlElement
 	private Timestamp responseOn;
 	private String closerNotes;
 	private String code;
@@ -108,6 +114,8 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private String categoryDescription;
 	private String module;
 	private String reference;
+	@XmlElementWrapper(name = "documents")
+	@XmlElement(name = "document")
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
 
 	public boolean isNew() {
@@ -372,5 +380,6 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
+
 
 }

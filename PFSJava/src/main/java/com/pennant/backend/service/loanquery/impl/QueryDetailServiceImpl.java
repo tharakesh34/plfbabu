@@ -455,6 +455,42 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			return auditDetail;
 		}
 		
+		@Override
+		public AuditHeader queryModuleUpdate(AuditHeader auditHeader) {
+			logger.info(Literal.ENTERING);	
+
+			auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+
+			if (!auditHeader.isNextProcess()) {
+				logger.info(Literal.LEAVING);
+				return auditHeader;
+			}
+
+			QueryDetail queryDetail = (QueryDetail) auditHeader.getAuditDetail().getModelData();
+
+			TableType tableType = TableType.MAIN_TAB;
+
+
+			getQueryDetailDAO().update(queryDetail,tableType);
+
+			// Documents
+			if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
+				for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
+					documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
+					if (documentDetails.isNew() && documentDetails.getDocRefId() <= 0) {
+						DocumentManager documentManager = new DocumentManager();
+						documentManager.setDocImage(documentDetails.getDocImage());
+						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+						documentDetailsDAO.save(documentDetails, tableType.getSuffix());
+					}
+				}
+			}
+
+			//getAuditHeaderDAO().addAudit(auditHeader);
+			logger.info(Literal.LEAVING);
+			return auditHeader;
+
+		}
 	/*
 	 * (non-Javadoc)
 	 * 

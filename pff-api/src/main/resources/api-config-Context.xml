@@ -147,6 +147,8 @@
 	</bean>
 	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController" autowire="byName" scope="prototype">
 	</bean>
+	<bean id="queryModuleController" class="com.pennanttech.controller.QueryModuleController" autowire="byName" scope="prototype">
+	</bean>
 
 	<bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl" parent="secBasicDao" />
 </beans>
