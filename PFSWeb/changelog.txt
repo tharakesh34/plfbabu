@@ -1,3 +1,22 @@
+pff 4.11.3.1 2018-10-26
+----------------
+-PPM #18108 is Negative List of Customers module is fixed 
+-PPM #18128 of header name is fixed
+-PPM #18299 retrun cheque depup field issue is  fixed 
+-PPM #18168 Payable/Receivable Advices menu name and Header name Miss match. 
+-PPM #18153 In EOD Configuration menu Double click on existing record then open record 
+-PPM #18090 In Host GL Mapping menu instead of Host GL displaying SAP GL name  in the application.
+-PPM #18145 In Application level click on Customer CIF search button then display CIF data.
+-PPM #18364 In Simulate pdf extraction.Form type is not appearing in the text box after  selecting
+-PPM # 18345 While Create a new record Ecs Return Code field  taken max length is "8" 
+-PPM # 18180 In "Downpayment Rules" menu name click on new button open window Header
+-PPM # 18135 In Users and User Operations menu Login Id Search field default Capital 
+-PPM # 18095 In Negative List of Customers menu PAN NUMBER Field accept small letters
+-PPM # 18088 In Error Codes Once Submitted Error Severity,Error Message Fields are Editable
+-PPM # 18313 In Receipt Bounce Marking open saved record then remove Bounce Reason Code 
+-story #848 Externalize extended field's application list
+-bugs #849 Same Linked transaction id for different instructions
+
 pff 4.11.3.0 2018-10-24
 ----------------
 -bugs #840 Reset password should prompt the user to change his/her password on next login rather than expiring the user account
