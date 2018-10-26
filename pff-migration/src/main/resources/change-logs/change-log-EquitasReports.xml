@@ -1044,4 +1044,213 @@ UNION ALL
 		update errordetails set severity='E' where Code='65034';
 	</sql>
 </changeSet>		
+
+<changeSet id="12" author="Swamy">
+		<createTable tableName="esfb_cm_scheme">
+			<column name="key" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_esfb_cm_scheme" />
+			</column>
+			<column name="value" type="varchar(50)">
+			<constraints nullable="false" />
+			</column>			
+		</createTable>
+		</changeSet>
+	<changeSet id="13" author="Swamy">
+		<createTable tableName="esfb_cm_prop_type">
+			<column name="parent" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="key" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="value" type="varchar(50)">
+			<constraints nullable="false" />
+			</column>	
+			</createTable>	
+		</changeSet>			
+		 <changeSet id="14" author="Swamy">
+		<addPrimaryKey 
+            columnNames="parent,key"
+            constraintName="pk_esfb_cm_prop_type"
+            tableName="esfb_cm_prop_type"/>
+		</changeSet>
+
+		<changeSet id="15" author="Swamy">
+		<createTable tableName="esfb_cm_construction_stage">
+			<column name="parent" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="key" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="value" type="varchar(50)">
+			<constraints nullable="false" />
+			</column>	
+		</createTable>	
+		</changeSet>	
+		
+		 <changeSet id="16" author="Swamy">
+		<addPrimaryKey 
+            columnNames="parent,key"
+            constraintName="pk_esfb_cm_construction_stage"
+            tableName="esfb_cm_construction_stage"/>
+		</changeSet>
+		
+		
+		<changeSet id="17" author="Swamy">
+		<createTable tableName="esfb_cm_construction_type">
+			<column name="parent" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="key" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="value" type="varchar(50)">
+			<constraints nullable="false" />
+			</column>	
+		</createTable>	
+		</changeSet>		
+		
+		 <changeSet id="18" author="Swamy">
+		<addPrimaryKey 
+            columnNames="parent,key"
+            constraintName="pk_esfb_cm_construction_type"
+            tableName="esfb_cm_construction_type"/>
+		</changeSet>
+		
+		
+		<changeSet id="19" author="Swamy">
+		<createTable tableName="esfb_cm_construction_floor">
+			<column name="parent" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="key" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="value" type="varchar(50)">
+			<constraints nullable="false" />
+			</column>	
+		</createTable>	
+		</changeSet>
+		
+		 <changeSet id="20" author="Swamy">
+		<addPrimaryKey 
+            columnNames="parent,key"
+            constraintName="pk_esfb_cm_construction_floor"
+            tableName="esfb_cm_construction_floor"/>
+		</changeSet>
+		
+		
+	<changeSet id="21" author="Swamy">
+    <sql>
+			insert into esfb_cm_scheme (key, value) values ('HP', 'Home Purchase');
+			insert into esfb_cm_scheme (key, value) values ('HC', 'Home Construction');
+			insert into esfb_cm_scheme (key, value) values ('HE', 'Home Extension/Renovation');
+			insert into esfb_cm_scheme (key, value) values ('CLL', 'Composite Loan - Land');
+			insert into esfb_cm_scheme (key, value) values ('CLC', 'Composite Loan - Construction');
+			insert into esfb_cm_scheme (key, value) values ('BT', 'BT');
+			insert into esfb_cm_scheme (key, value) values ('BTTU', 'BT + Top up');
+
+			
+			insert into esfb_cm_prop_type (parent, key, value) values ('HP', 'IH', 'Independent House/Villa');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HP', 'FALT', 'Flat/Apartment');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HP', 'RH', 'Row House');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HC', 'SOR', 'Self Occupied Residence');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HC', 'SOWLO', 'Self Occupied with Let Out');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HC', 'LO', 'Let Out');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HE', 'SOR', 'Self Occupied Residence');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HE', 'SOWLO', 'Self Occupied with Let Out');
+			insert into esfb_cm_prop_type (parent, key, value) values ('HE', 'LO', 'Let Out');
+			insert into esfb_cm_prop_type (parent, key, value) values ('CLL', 'VL', 'Vacant Land');
+			insert into esfb_cm_prop_type (parent, key, value) values ('CLC', 'SOR', 'Self Occupied Residence');
+			insert into esfb_cm_prop_type (parent, key, value) values ('CLC', 'SOWLO', 'Self Occupied with Let Out');
+			insert into esfb_cm_prop_type (parent, key, value) values ('CLC', 'LO', 'Let Out');
+			insert into esfb_cm_prop_type (parent, key, value) values ('BT', 'IH', 'Independent House/Villa');
+			insert into esfb_cm_prop_type (parent, key, value) values ('BT', 'FALT', 'Flat/Apartment');
+			insert into esfb_cm_prop_type (parent, key, value) values ('BT', 'RH', 'Row House');
+			insert into esfb_cm_prop_type (parent, key, value) values ('BTTU', 'IH', 'Independent House/Villa');
+			insert into esfb_cm_prop_type (parent, key, value) values ('BTTU', 'FALT', 'Flat/Apartment');
+			insert into esfb_cm_prop_type (parent, key, value) values ('BTTU', 'RH', 'Row House');
+
+
+			
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HP', 'RTO', 'Ready to Occupy');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HP', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HP', 'LINT', 'Lintel');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HP', 'FOUND', 'Foundation');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HC', 'RTO', 'Ready to Occupy');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HC', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HC', 'LINT', 'Lintel');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HC', 'FOUND', 'Foundation');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HC', 'VL', 'Vacant Land');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HE', 'RTO', 'Ready to Occupy');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HE', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HE', 'LINT', 'Lintel');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HE', 'FOUND', 'Foundation');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('HE', 'VL', 'Vacant Land');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('CLC', 'RTO', 'Ready to Occupy');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('CLC', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('CLC', 'LINT', 'Lintel');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('CLC', 'FOUND', 'Foundation');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('CLC', 'VL', 'Vacant Land');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BT', 'RTO', 'Ready to Occupy');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BT', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BT', 'LINT', 'Lintel');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BT', 'FOUND', 'Foundation');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BTTU', 'RTO', 'Ready to Occupy');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BTTU', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BTTU', 'LINT', 'Lintel');
+			insert into esfb_cm_construction_stage (parent, key, value) values ('BTTU', 'FOUND', 'Foundation');
+
+			insert into esfb_cm_construction_type (parent, key, value) values ('HC', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_type (parent, key, value) values ('HC', 'FIRST', 'Roofing + 1st Floor');
+			insert into esfb_cm_construction_type (parent, key, value) values ('HC', 'BUILD', 'Building');
+			insert into esfb_cm_construction_type (parent, key, value) values ('HE', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_type (parent, key, value) values ('HE', 'FIRST', 'Roofing + 1st Floor');
+			insert into esfb_cm_construction_type (parent, key, value) values ('HE', 'BUILD', 'Building');
+			insert into esfb_cm_construction_type (parent, key, value) values ('CLC', 'ROOF', 'Roofing');
+			insert into esfb_cm_construction_type (parent, key, value) values ('CLC', 'FIRST', 'Roofing + 1st Floor');
+			insert into esfb_cm_construction_type (parent, key, value) values ('CLC', 'BUILD', 'Building');
+
+			
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HP', 'GF', 'GF');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HP', 'FF', '1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HP', 'SF', '2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HP', 'GFF', 'GF + 1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HP', 'GFSF', 'GF + 1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HP', 'FSF', '1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HC', 'GF', 'GF');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HC', 'FF', '1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HC', 'SF', '2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HC', 'GFF', 'GF + 1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HC', 'GFSF', 'GF + 1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HC', 'FSF', '1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HE', 'GF', 'GF');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HE', 'FF', '1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HE', 'SF', '2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HE', 'GFF', 'GF + 1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HE', 'GFSF', 'GF + 1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('HE', 'FSF', '1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('CLC', 'GF', 'GF');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('CLC', 'FF', '1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('CLC', 'SF', '2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('CLC', 'GFF', 'GF + 1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('CLC', 'GFSF', 'GF + 1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('CLC', 'FSF', '1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BT', 'GF', 'GF');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BT', 'FF', '1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BT', 'SF', '2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BT', 'GFF', 'GF + 1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BT', 'GFSF', 'GF + 1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BT', 'FSF', '1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BTTU', 'GF', 'GF');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BTTU', 'FF', '1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BTTU', 'SF', '2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BTTU', 'GFF', 'GF + 1st Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BTTU', 'GFSF', 'GF + 1st Floor + 2nd Floor');
+			insert into esfb_cm_construction_floor (parent, key, value) values ('BTTU', 'FSF', '1st Floor + 2nd Floor');
+
+	  </sql>
+	</changeSet>
+ 
 </databaseChangeLog>
