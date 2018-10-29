@@ -736,7 +736,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 			String label = Labels.getLabel(moduleMapping.getModuleName());
 			
 			if (StringUtils.isEmpty(label)) {
-				this.setTitle("Lookup Values");
+				this.setTitle("Return Cheques");
 			} else {
 				this.setTitle(label);
 			}
