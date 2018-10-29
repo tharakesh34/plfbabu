@@ -124,9 +124,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private static final Logger logger = Logger.getLogger(JVPostingDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_JVPostingDialog;
 	protected Label window_JVPostingDialog_Title;
@@ -137,7 +136,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	protected Label label_ExpReference;
 	protected Label label_ExpAmoount;
 
-	
 	protected Row row0;
 	protected Label label_BatchReference;
 	protected Hlayout hlayout_BatchReference;
@@ -183,13 +181,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	protected Hlayout hlayout_Upload;
 	protected Space space_Upload;
 
-	
-	
 	protected ExtendedCombobox expReference;
-	protected ExtendedCombobox	postingDivision;
+	protected ExtendedCombobox postingDivision;
 	protected ExtendedCombobox reference;
 	protected Combobox postingAgainst;
-	
+
 	protected Textbox batch;
 	protected Label label_ExchangeRateType;
 	protected ExtendedCombobox exchangeRateType;
@@ -211,7 +207,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private List<JVPostingEntry> jVPostingEntryList = new ArrayList<JVPostingEntry>();
 	private List<JVPostingEntry> deletedJVPostingEntryList = new ArrayList<JVPostingEntry>();
 
-	
 	protected Button importFile;
 	private File directory;
 	protected Paging pagingBatchImportList;
@@ -232,8 +227,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private Currency aCurrency = null;
 	private Decimalbox expAmount;
 	private transient LegalExpensesService legalExpensesService;
-	
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -249,9 +243,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected JVPosting object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected JVPosting object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -273,15 +266,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 
 			if (arguments.containsKey("jVPostingListCtrl")) {
-				setJVPostingListCtrl((JVPostingListCtrl) arguments
-						.get("jVPostingListCtrl"));
+				setJVPostingListCtrl((JVPostingListCtrl) arguments.get("jVPostingListCtrl"));
 			} else {
 				setJVPostingListCtrl(null);
 			}
 			if (arguments.containsKey("isExpRequired")) {
 				isExpRequired = (Boolean) arguments.get("isExpRequired");
-				if(!isExpRequired){
-                    this.row_expReference.setVisible(false);
+				if (!isExpRequired) {
+					this.row_expReference.setVisible(false);
 				}
 			}
 			// READ OVERHANDED params !
@@ -298,13 +290,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			} else {
 				setJVPosting(null);
 			}
-			doLoadWorkFlow(this.jVPosting.isWorkflow(),
-					this.jVPosting.getWorkflowId(),
-					this.jVPosting.getNextTaskId());
+			doLoadWorkFlow(this.jVPosting.isWorkflow(), this.jVPosting.getWorkflowId(), this.jVPosting.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),"JVPostingDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "JVPostingDialog");
 			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
@@ -410,9 +400,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering" + event.toString());
 		try {
 
-			ScreenCTL.displayNotes(
-					getNotes("JVPosting", String.valueOf(getJVPosting().getBatchReference()),
-							getJVPosting().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("JVPosting", String.valueOf(getJVPosting().getBatchReference()),
+					getJVPosting().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -431,7 +420,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		aJVPostingEntry.setNewRecord(true);
 		aJVPostingEntry.setWorkflowId(0);
 		aJVPostingEntry.setFileName(getJVPosting().getFilename());
-		aJVPostingEntry.setTxnReference(this.listBoxJVPostingEntry.getItems().size()+1);
+		aJVPostingEntry.setTxnReference(this.listBoxJVPostingEntry.getItems().size() + 1);
 		showDetailView(aJVPostingEntry, false, true);
 		logger.debug("Leaving");
 	}
@@ -448,34 +437,30 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		// map.put("jVPosting", aJVPosting);
-		if (this.moduleType != null
-				&& this.moduleType.getValue().equalsIgnoreCase(
-						PennantConstants.MODULETYPE_ENQ) || enqModule) {
+		if (this.moduleType != null && this.moduleType.getValue().equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)
+				|| enqModule) {
 			map.put("enqModule", true);
 		} else if (this.moduleType != null
-				&& this.moduleType.getValue().equalsIgnoreCase(
-						PennantConstants.MODULETYPE_REPOSTING)) {
+				&& this.moduleType.getValue().equalsIgnoreCase(PennantConstants.MODULETYPE_REPOSTING)) {
 			map.put("rePostingModule", true);
 		} else {
 			map.put("enqModule", false);
 		}
-		if(setNewRecord){
+		if (setNewRecord) {
 			map.put("newRecord", true);
 		}
 
 		map.put("roleCode", getRole());
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listbox Listmodel. This is
-		 * fine for synchronizing the data in the JVPostingListbox from the
-		 * dialog when we do a delete, edit or insert a JVPosting.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listbox Listmodel. This is fine for synchronizing the data in the JVPostingListbox from the dialog when we do
+		 * a delete, edit or insert a JVPosting.
 		 */
 
 		map.put("jVPostingDialogCtrl", this);
@@ -486,7 +471,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		doSetValidation();
 		// fill the JVPosting object with the components data
 		doWriteComponentsToBean(aJVPosting, false);
-		map.put("jVPosting",aJVPosting);
+		map.put("jVPosting", aJVPosting);
 
 		// call the zul-file with the parameters packed in a map
 		try {
@@ -505,9 +490,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 	/**
 	 * This method is forwarded from the listboxes item renderer. <br>
-	 * see:
-	 * com.pennant.webui.others.jvposting.model.JVPostingListModelItemRenderer
-	 * .java <br>
+	 * see: com.pennant.webui.others.jvposting.model.JVPostingListModelItemRenderer .java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -517,32 +500,31 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug(event.toString());
 		// get the selected JVPosting object
 		final Listitem item = this.listBoxJVPostingEntry.getSelectedItem();
-		
+
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final JVPostingEntry aJVPostingEntry = (JVPostingEntry) item
-					.getAttribute("data");
+			final JVPostingEntry aJVPostingEntry = (JVPostingEntry) item.getAttribute("data");
 
-			if (aJVPostingEntry.getDerivedTxnRef() ==0) {
-				JVPostingEntry	jVPostingEntry=getEntryList(aJVPostingEntry.getTxnReference());
+			if (aJVPostingEntry.getDerivedTxnRef() == 0) {
+				JVPostingEntry jVPostingEntry = getEntryList(aJVPostingEntry.getTxnReference());
 				if (jVPostingEntry != null) {
 					aJVPostingEntry.setDebitAccount(jVPostingEntry.getAccount());
 					aJVPostingEntry.setDebitTxnCode(jVPostingEntry.getTxnCode());
 					aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getDebitTxnDesc());
 					showDetailView(aJVPostingEntry, false, false);
 				}
-			}	
-			
-//			if(!aJVPostingEntry.getRecordType().equals("ADD")){}else{
-//				if (aJVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)) {
-//				showDetailView(aJVPostingEntry, false, false);
-//				}
-//			}
+			}
+
+			//			if(!aJVPostingEntry.getRecordType().equals("ADD")){}else{
+			//				if (aJVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)) {
+			//				showDetailView(aJVPostingEntry, false, false);
+			//				}
+			//			}
 		}
 		logger.debug("Leaving");
 	}
 
-	public JVPostingEntry getEntryList(long derRef){
+	public JVPostingEntry getEntryList(long derRef) {
 		List<JVPostingEntry> list = getJVPostingEntryList();
 		for (JVPostingEntry jvPostingEntry : list) {
 			if (derRef == jvPostingEntry.getDerivedTxnRef()) {
@@ -551,20 +533,21 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		return null;
 	}
-	
 
 	public void onFulfill$baseCCy(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		try {
 			Object currency = this.baseCCy.getObject();
-			if(currency != null && !(currency instanceof String)){
+			if (currency != null && !(currency instanceof String)) {
 				Currency aCurrency = (Currency) this.baseCCy.getObject();
 				getJVPosting().setCurrency(aCurrency.getCcyCode());
-				this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(BigDecimal.ZERO,aCurrency.getCcyEditField()));
-				this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(BigDecimal.ZERO,aCurrency.getCcyEditField()));
+				this.totDebitsByBatchCcy
+						.setFormat(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, aCurrency.getCcyEditField()));
+				this.totCreditsByBatchCcy
+						.setFormat(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, aCurrency.getCcyEditField()));
 				renderJVPostingEntries(getJVPostingEntryList());
 				this.tab_JVSummary.setSelected(true);
-			} 
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -580,12 +563,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} else {
 			LegalExpenses details = (LegalExpenses) dataObject;
 			if (details != null) {
-				expAmount.setValue(PennantAppUtil.formateAmount(details.getAmountdue(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+				expAmount.setValue(PennantAppUtil.formateAmount(details.getAmountdue(),
+						CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 				expAmount.setVisible(true);
 				this.expReference.appendChild(expAmount);
 
-			}else{
-			    expAmount.setVisible(false);
+			} else {
+				expAmount.setVisible(false);
 			}
 		}
 		logger.debug("Leaving");
@@ -596,8 +580,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aJVPosting
 	 * @throws Exception
@@ -620,7 +603,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				doReadOnly(true);
 				btnCancel.setVisible(false);
 			}
-			if(enqModule){
+			if (enqModule) {
 				doReadOnly(true);
 			}
 		}
@@ -630,8 +613,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 			// set ReadOnly mode accordingly if the object is new or not.
 
-			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(),
-					aJVPosting.isNewRecord()));
+			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aJVPosting.isNewRecord()));
 
 			doSetWindowTitle();
 			setDialog(DialogType.EMBEDDED);
@@ -643,7 +625,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -677,14 +659,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private void doSetWindowTitle() {
 		logger.debug("Entering");
 		if (this.enqModule) {
-			this.window_JVPostingDialog_Title.setValue(Labels
-					.getLabel("window_JVPostingEnqDialog.title"));
+			this.window_JVPostingDialog_Title.setValue(Labels.getLabel("window_JVPostingEnqDialog.title"));
 		} else if (this.rePostingModule) {
-			this.window_JVPostingDialog_Title.setValue(Labels
-					.getLabel("window_JVPostingRePostingDialog.title"));
+			this.window_JVPostingDialog_Title.setValue(Labels.getLabel("window_JVPostingRePostingDialog.title"));
 		} else {
-			this.window_JVPostingDialog_Title.setValue(Labels
-					.getLabel("window_JVPostingDialog.title"));
+			this.window_JVPostingDialog_Title.setValue(Labels.getLabel("window_JVPostingDialog.title"));
 		}
 
 		logger.debug("Leaving");
@@ -695,8 +674,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * 
 	 * @param aJVPosting
 	 */
-	public void doWriteBatchDetailsToBean(JVPosting aJVPosting)
-			throws InterruptedException {
+	public void doWriteBatchDetailsToBean(JVPosting aJVPosting) throws InterruptedException {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -709,12 +687,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		// Batch Reference
 		try {
-			aJVPosting.setBatchReference(Long.valueOf(this.batchReference
-					.getValue()));
+			aJVPosting.setBatchReference(Long.valueOf(this.batchReference.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Fin Reference
 		try {
 			if (this.expReference.getValue() != null) {
@@ -723,8 +700,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		// Batch Currency
 		try {
 			aJVPosting.setCurrency(this.baseCCy.getValue());
@@ -734,22 +710,21 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		// exchangeRateType
 		try {
 			aJVPosting.setExchangeRateType(this.exchangeRateType.getValue());
-			aJVPosting.setRateTypeDescription(this.exchangeRateType
-					.getDescription());
+			aJVPosting.setRateTypeDescription(this.exchangeRateType.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Tot Debits By Batch Ccy
 		try {
-			aJVPosting.setTotDebitsByBatchCcy(PennantApplicationUtil
-					.unFormateAmount(this.totDebitsByBatchCcy.getValue(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+			aJVPosting.setTotDebitsByBatchCcy(PennantApplicationUtil.unFormateAmount(
+					this.totDebitsByBatchCcy.getValue(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Tot Credits By Batch Ccy
 		try {
-			aJVPosting.setTotCreditsByBatchCcy(PennantApplicationUtil
-					.unFormateAmount(this.totCreditsByBatchCcy.getValue(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+			aJVPosting.setTotCreditsByBatchCcy(PennantApplicationUtil.unFormateAmount(
+					this.totCreditsByBatchCcy.getValue(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -793,9 +768,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
 
-		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes,
-				isWorkFlowEnabled(), isFirstTask(), this.userAction,
-				this.batch, null));
+		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
+				this.userAction, this.batch, null));
 
 		logger.debug("Leaving");
 	}
@@ -808,14 +782,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		boolean tempReadOnly = readOnly;
 
-		if (readOnly){
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.jVPosting.getRecordType()) || enqModule) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.jVPosting.getRecordType()) || enqModule) {
 			tempReadOnly = true;
 		}
-		
+
 		// Batch Header Details		
-		
+
 		readOnlyComponent(isReadOnly("JVPostingDialog_expReference"), this.expReference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Batch"), this.batch);
 		readOnlyComponent(true, this.batchReference);
@@ -824,9 +798,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(isReadOnly("JVPostingDialog_PostingAgainst"), this.postingAgainst);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.reference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.postingDivision);
-		
-		setExtAccess("JVPostingDialog_ExchRateType", tempReadOnly,
-				this.exchangeRateType, row2);
+
+		setExtAccess("JVPostingDialog_ExchRateType", tempReadOnly, this.exchangeRateType, row2);
 
 		readOnlyComponent(true, this.totCreditsByBatchCcy);
 
@@ -835,8 +808,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(true, this.creditsCount);
 		readOnlyComponent(isReadOnly("JVPostingDialog_BatchPurpose"), this.batchPurpose);
 		//readOnlyComponent(isReadOnly("JVPostingDialog_btnUpload"), this.btn_Upload);
-		
-		if(enqModule){
+
+		if (enqModule) {
 			readOnlyComponent(true, this.expReference);
 			readOnlyComponent(true, this.batch);
 			readOnlyComponent(true, this.batchReference);
@@ -865,26 +838,20 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("JVPostingDialog",getRole());
+		getUserWorkspace().allocateAuthorities("JVPostingDialog", getRole());
 		if (!enqModule) {
-			this.btnNew.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingDialog_btnNew"));
-			this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingDialog_btnEdit"));
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingDialog_btnSave"));
-			
-			this.btnNewJVPostingEntry.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingDialog_btnNewJVPostingEntry"));
-			this.btnValidate.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingDialog_btnValidate"));
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnSave"));
+
+			this.btnNewJVPostingEntry
+					.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnNewJVPostingEntry"));
+			this.btnValidate.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnValidate"));
 			this.btnValidate.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -897,7 +864,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.batchReference.setMaxlength(50);
-		
+
 		this.expReference.setMandatoryStyle(false);
 		this.expReference.setModuleName("LegalExpenses");
 		this.expReference.setValueColumn("ExpReference");
@@ -920,7 +887,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		Filter[] postingBranch = new Filter[1];
 		postingBranch[0] = Filter.in("usrId", getUserWorkspace().getLoggedInUser().getUserId());
 		this.postingBranch.setFilters(postingBranch);
-		this.postingBranch.setValidateColumns(new String[] { "UserBranch" });		
+		this.postingBranch.setValidateColumns(new String[] { "UserBranch" });
 
 		this.exchangeRateType.setMaxlength(8);
 		this.exchangeRateType.setMandatoryStyle(true);
@@ -928,22 +895,22 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.exchangeRateType.setModuleName("RateType");
 		this.exchangeRateType.setValueColumn("RateTypeCode");
 		this.exchangeRateType.setDescColumn("RateTypeDescription");
-		this.exchangeRateType
-		.setValidateColumns(new String[] { "RateTypeCode" });
+		this.exchangeRateType.setValidateColumns(new String[] { "RateTypeCode" });
 		this.debitCount.setMaxlength(10);
 		this.creditsCount.setMaxlength(10);
 		this.totDebitsByBatchCcy.setMaxlength(18);
-		this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil
-				.amountFormate(this.totDebitsByBatchCcy.getValue(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(this.totDebitsByBatchCcy.getValue(),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.totCreditsByBatchCcy.setMaxlength(18);
-		this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil
-				.amountFormate(this.totCreditsByBatchCcy.getValue(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
-		/*this.expAmount.setMaxlength(18);
-		this.expAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		this.expAmount.setScale(2);*/
+		this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(this.totCreditsByBatchCcy.getValue(),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		/*
+		 * this.expAmount.setMaxlength(18); this.expAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		 * this.expAmount.setScale(2);
+		 */
 		this.batchPurpose.setMaxlength(35);
-		this.reference.setMandatoryStyle(true);		
-		
+		this.reference.setMandatoryStyle(true);
+
 		this.postingDivision.setMandatoryStyle(true);
 		this.postingDivision.setModuleName("DivisionDetail");
 		this.postingDivision.setValueColumn("DivisionCode");
@@ -952,7 +919,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -970,40 +936,41 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			getJVPosting().setPostingDate(DateUtility.getAppDate());
 			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		} else {
-			this.batchReference.setValue(String.valueOf(aJVPosting
-					.getBatchReference()));
+			this.batchReference.setValue(String.valueOf(aJVPosting.getBatchReference()));
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
 			this.postingBranch.setReadonly(true);
-			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), "");
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(),
+					PennantStaticListUtil.getpostingPurposeList(), "");
 		}
-		
+
 		//Added to map with legal expenses
-		if(!StringUtils.isEmpty(aJVPosting.getExpReference())){
+		if (!StringUtils.isEmpty(aJVPosting.getExpReference())) {
 			this.expReference.setValue(aJVPosting.getExpReference());
-			expenses=getLegalExpensesService().getLegalExpensesById(aJVPosting.getExpReference());
-			if(expenses!=null){
-			expAmount.setVisible(true);
-			expAmount.setValue(PennantAppUtil.formateAmount(expenses.getAmount(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
-			this.expReference.appendChild(expAmount);
+			expenses = getLegalExpensesService().getLegalExpensesById(aJVPosting.getExpReference());
+			if (expenses != null) {
+				expAmount.setVisible(true);
+				expAmount.setValue(PennantAppUtil.formateAmount(expenses.getAmount(),
+						CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+				this.expReference.appendChild(expAmount);
 			}
-			
+
 		}
-		
+
 		this.exchangeRateType.setValue(aJVPosting.getExchangeRateType());
-		this.exchangeRateType.setDescription(aJVPosting
-				.getRateTypeDescription());
+		this.exchangeRateType.setDescription(aJVPosting.getRateTypeDescription());
 		this.debitCount.setValue(aJVPosting.getDebitCount());
 		this.creditsCount.setValue(aJVPosting.getCreditsCount());
-		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(
-				getJVPosting().getTotDebitsByBatchCcy(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
-		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(
-				getJVPosting().getTotCreditsByBatchCcy(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(getJVPosting().getTotDebitsByBatchCcy(),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(getJVPosting().getTotCreditsByBatchCcy(),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.batchPurpose.setValue(aJVPosting.getBatchPurpose());
-		setFilters(StringUtils.equals(null, aJVPosting.getPostAgainst())? aJVPosting.getPostAgainst():aJVPosting.getPostAgainst().trim());
+		setFilters(StringUtils.equals(null, aJVPosting.getPostAgainst()) ? aJVPosting.getPostAgainst()
+				: aJVPosting.getPostAgainst().trim());
 		this.reference.setValue(aJVPosting.getReference());
-		this.postingDivision.setValue(aJVPosting.getPostingDivision(),aJVPosting.getDivisionCodeDesc());
+		this.postingDivision.setValue(aJVPosting.getPostingDivision(), aJVPosting.getDivisionCodeDesc());
 
 		this.recordStatus.setValue(aJVPosting.getRecordStatus());
 		doFillJVPostingEntryDetails(aJVPosting.getJVPostingEntrysList());
@@ -1016,14 +983,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		renderJVPostingEntries(getJVPostingEntryList());
 		fillAccountingTab();
 
-		if(aJVPostingEntryList != null && aJVPostingEntryList.size() > 0){
+		if (aJVPostingEntryList != null && aJVPostingEntryList.size() > 0) {
 			this.postingBranch.setReadonly(true);
-		}else {
+		} else {
 			this.postingBranch.setReadonly(false);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$reference(Event event) {
 
 		logger.debug("Entering");
@@ -1053,8 +1020,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Leaving");
 
 	}
-	
-	
+
 	public void onFulfill$postingBranch(Event event) {
 		if (!StringUtils.isEmpty(this.postingBranch.getValue())) {
 			this.postingBranch.setReadonly(true);
@@ -1084,8 +1050,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * 
 	 * @param aJVPosting
 	 */
-	public void doWriteComponentsToBean(JVPosting aJVPosting, boolean addList)
-			throws InterruptedException {
+	public void doWriteComponentsToBean(JVPosting aJVPosting, boolean addList) throws InterruptedException {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -1100,8 +1065,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		// Batch Reference
 		try {
-			if(!StringUtils.equals("", this.batchReference.getValue())){
-				aJVPosting.setBatchReference(Long.valueOf(this.batchReference.getValue()));				
+			if (!StringUtils.equals("", this.batchReference.getValue())) {
+				aJVPosting.setBatchReference(Long.valueOf(this.batchReference.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1138,15 +1103,15 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		// Tot Debits By Batch Ccy
 		try {
-			aJVPosting.setTotDebitsByBatchCcy(PennantAppUtil.unFormateAmount(
-					this.totDebitsByBatchCcy.getValue(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+			aJVPosting.setTotDebitsByBatchCcy(PennantAppUtil.unFormateAmount(this.totDebitsByBatchCcy.getValue(),
+					CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Tot Credits By Batch Ccy
 		try {
-			aJVPosting.setTotCreditsByBatchCcy(PennantAppUtil.unFormateAmount(
-					this.totCreditsByBatchCcy.getValue(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+			aJVPosting.setTotCreditsByBatchCcy(PennantAppUtil.unFormateAmount(this.totCreditsByBatchCcy.getValue(),
+					CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1179,7 +1144,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		//postingagainst
 		try {
-			if (!this.postingAgainst.isReadonly() && getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
+			if (!this.postingAgainst.isReadonly()
+					&& getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
 				throw new WrongValueException(this.postingAgainst, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_JVPostingDialog_PostingAgainst.value") }));
 			}
@@ -1188,13 +1154,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		/*// jVPostingEntryList setting
-		try {
-			// Preparing Updated List with Deleted Flag
-			doUpdateJVPostingEntrysList(aJVPosting);
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * // jVPostingEntryList setting try { // Preparing Updated List with Deleted Flag
+		 * doUpdateJVPostingEntrysList(aJVPosting); } catch (WrongValueException we) { wve.add(we); }
+		 */
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1206,7 +1169,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			throw new WrongValuesException(wvea);
 		}
 
-		if(addList){
+		if (addList) {
 			aJVPosting.setJVPostingEntrysList(this.jVPostingEntryList);
 		}
 
@@ -1220,27 +1183,25 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		// Batch
 		if (!this.batch.isReadonly()) {
-			this.batch.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_JVPostingDialog_Batch.value"),
+			this.batch.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_Batch.value"),
 					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-			//Exp Reference
+		//Exp Reference
 		if (!this.expReference.isReadonly()) {
-			this.expReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_JVPostingDialog_ExpReference.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, false));
+			this.expReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_ExpReference.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		//  Reference
 		if (!this.reference.isReadonly()) {
-			this.reference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_JVPostingDialog_Reference.value"),
+			this.reference.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_Reference.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		
-		if (!this.postingDivision.isButtonDisabled()){
-			this.postingDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_PostingDivision.value"), null, true, true));
-		}
 
+		if (!this.postingDivision.isButtonDisabled()) {
+			this.postingDivision.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_JVPostingDialog_PostingDivision.value"), null, true, true));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -1269,11 +1230,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private void doSetLOVValidation() {
 		// Cmt Branch
 		if (this.baseCCy.isButtonVisible()) {
-			this.baseCCy.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_BatchCcy.value"),null,true,true));
+			this.baseCCy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_JVPostingDialog_BatchCcy.value"), null, true, true));
 		}
 		// Cmt Ccy
 		if (this.postingBranch.isButtonVisible()) {
-			this.postingBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_PostingBranch.value"),null,true,true));
+			this.postingBranch.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_JVPostingDialog_PostingBranch.value"), null, true, true));
 		}
 	}
 
@@ -1304,10 +1267,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Leaving");
 	}
 
-	
-	
-	
-	
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
@@ -1332,20 +1291,17 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> " + aJVPosting.getBatchReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aJVPosting.getBatchReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aJVPosting.getRecordType())) {
 				aJVPosting.setVersion(aJVPosting.getVersion() + 1);
 				aJVPosting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				if (isWorkFlowEnabled()) {
-					aJVPosting.setRecordStatus(userAction.getSelectedItem()
-							.getValue().toString());
+					aJVPosting.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aJVPosting.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-							aJVPosting.getNextTaskId(), aJVPosting);
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aJVPosting.getNextTaskId(), aJVPosting);
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
@@ -1385,37 +1341,32 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 
-/*		if(("Submit".equals(userAction.getSelectedItem().getLabel())||
-				"Approve".equals(userAction.getSelectedItem().getLabel())) && !proceed){
-			MessageUtil.showErrorMessage(Labels.getLabel("VALIDATE_ACCOUNTS"));
-			return;
-		}
-		*/
-		if (getJVPosting().isNewRecord() &&  getJVPostingService()
-				.getJVPostingByFileName(
-						this.batch.getValue()) != null) {
+		/*
+		 * if(("Submit".equals(userAction.getSelectedItem().getLabel())||
+		 * "Approve".equals(userAction.getSelectedItem().getLabel())) && !proceed){
+		 * MessageUtil.showErrorMessage(Labels.getLabel("VALIDATE_ACCOUNTS")); return; }
+		 */
+		if (getJVPosting().isNewRecord()
+				&& getJVPostingService().getJVPostingByFileName(this.batch.getValue()) != null) {
 			MessageUtil.showError(Labels.getLabel("BATCH_ALREADY_EXISTS",
 					new String[] { this.batch.getValue(), DateUtility.getSysDate().toString() }));
 			return;
 		}
-		
-		if(this.listBoxJVPostingEntry.getItemCount()==0){
-			throw new WrongValueException(this.btnNewJVPostingEntry,"Click to add New Postings");
+
+		if (this.listBoxJVPostingEntry.getItemCount() == 0) {
+			throw new WrongValueException(this.btnNewJVPostingEntry, "Click to add New Postings");
 		}
 
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);
 		boolean isNew = false;
 		if (isWorkFlowEnabled()) {
-			aJVPosting.setRecordStatus(userAction.getSelectedItem().getValue()
-					.toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-					aJVPosting.getNextTaskId(), aJVPosting);
+			aJVPosting.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aJVPosting.getNextTaskId(), aJVPosting);
 		}
-		
+
 		// force validation, if on, than execute by component.getValue()
-		if (!PennantConstants.RECORD_TYPE_DEL
-				.equals(aJVPosting.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aJVPosting.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the JVPosting object with the components data
 			doWriteComponentsToBean(aJVPosting, true);
@@ -1449,15 +1400,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		// save it to database
 		try {
-			if("Cancelled".equals(aJVPosting.getRecordStatus()) || "Saved".equals(aJVPosting.getRecordStatus())){
+			if ("Cancelled".equals(aJVPosting.getRecordStatus()) || "Saved".equals(aJVPosting.getRecordStatus())) {
 				if (doProcess(aJVPosting, tranType)) {
 					// doWriteBeanToComponents(aJVPosting);
 					// refreshList();
 					getJVPostingListCtrl().refreshList();
 					closeDialog();
 				}
-			}else if (aJVPosting.getTotCreditsByBatchCcy().compareTo(
-					aJVPosting.getTotDebitsByBatchCcy()) == 0) {
+			} else if (aJVPosting.getTotCreditsByBatchCcy().compareTo(aJVPosting.getTotDebitsByBatchCcy()) == 0) {
 				if (doProcess(aJVPosting, tranType)) {
 					// List Detail Refreshment
 					refreshList();
@@ -1466,8 +1416,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					String msg = PennantApplicationUtil.getSavingStatus(aJVPosting.getRoleCode(),
 							aJVPosting.getNextRoleCode(), aJVPosting.getReference(), " Miscellaneous Postings ",
 							aJVPosting.getRecordStatus());
-					if(StringUtils.equals(aJVPosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
-						msg= "Miscellaneous Postings with Reference "+ aJVPosting.getReference() + " Approved Succesfully.";
+					if (StringUtils.equals(aJVPosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+						msg = "Miscellaneous Postings with Reference " + aJVPosting.getReference()
+								+ " Approved Succesfully.";
 					}
 					Clients.showNotification(msg, "info", null, null, -1);
 
@@ -1503,9 +1454,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
-		
-		aJVPosting.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+
+		aJVPosting.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aJVPosting.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aJVPosting.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1530,12 +1480,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)){
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
 					processCompleted = true;
-				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else {
-					JVPosting tJVPosting=  (JVPosting) auditHeader.getAuditDetail().getModelData();
+					JVPosting tJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, aJVPosting);
 					auditHeader.getAuditDetail().setModelData(tJVPosting);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -1547,12 +1497,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				}
 
 				finishedTasks += (method + ";");
-				JVPosting tJVPosting=  (JVPosting) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tJVPosting,finishedTasks);
+				JVPosting tJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tJVPosting, finishedTasks);
 
 			}
 
-			JVPosting tJVPosting=  (JVPosting) auditHeader.getAuditDetail().getModelData();
+			JVPosting tJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tJVPosting);
@@ -1560,11 +1510,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
 			}
-			
+
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)|| "Save".equals(userAction.getSelectedItem().getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, aJVPosting);
 					auditHeader.getAuditDetail().setModelData(tJVPosting);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -1572,22 +1522,20 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 
 		} else {
-			processCompleted = doSaveProcess(
-					getAuditHeader(aJVPosting, tranType), null);
+			processCompleted = doSaveProcess(getAuditHeader(aJVPosting, tranType), null);
 		}
 		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	protected String getServiceTasks(String taskId, JVPosting jvPosting,
-			String finishedTasks) {
+
+	protected String getServiceTasks(String taskId, JVPosting jvPosting, String finishedTasks) {
 		logger.debug("Entering");
-      // changes regarding parallel work flow 
+		// changes regarding parallel work flow 
 		String nextRoleCode = StringUtils.trimToEmpty(jvPosting.getNextRoleCode());
-		String nextRoleCodes[]=nextRoleCode.split(",");
-		
-		if (nextRoleCodes.length > 1 ) {
+		String nextRoleCodes[] = nextRoleCode.split(",");
+
+		if (nextRoleCodes.length > 1) {
 			return "";
 		}
 
@@ -1602,7 +1550,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Leaving");
 		return serviceTasks;
 	}
-	
+
 	protected void setNextTaskDetails(String taskId, JVPosting jvPosting) {
 		logger.debug("Entering");
 
@@ -1617,7 +1565,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} else {
 			if ("Resubmit".equals(action)) {
 				nextTaskId = "";
-			}else if (!"Save".equals(action)) {
+			} else if (!"Save".equals(action)) {
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 			}
 		}
@@ -1646,7 +1594,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					nextRoleCode += nextRole;
 					String baseRole = "";
 					if (!"Resubmit".equals(action)) {
-						baseRole= StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
+						baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
 					}
 					baseRoleMap.put(nextRole, baseRole);
 				}
@@ -1657,10 +1605,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		jvPosting.setNextTaskId(nextTaskId);
 		jvPosting.setRoleCode(getRole());
 		jvPosting.setNextRoleCode(nextRoleCode);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
@@ -1678,63 +1626,50 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		JVPosting aJVPosting = (JVPosting) auditHeader.getAuditDetail()
-				.getModelData();
+		JVPosting aJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader
-							.getAuditTranType())) {
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
 						auditHeader = getJVPostingService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getJVPostingService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getJVPostingService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove
-							.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getJVPostingService().doApprove(
-								auditHeader);
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+						auditHeader = getJVPostingService().doApprove(auditHeader);
 
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aJVPosting
-								.getRecordType())) {
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aJVPosting.getRecordType())) {
 							deleteNotes = true;
 						}
 
-					} else if (PennantConstants.method_doReject
-							.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getJVPostingService().doReject(
-								auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aJVPosting
-								.getRecordType())) {
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+						auditHeader = getJVPostingService().doReject(auditHeader);
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aJVPosting.getRecordType())) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_JVPostingDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_JVPostingDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_JVPostingDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_JVPostingDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(
-								getNotes("JVPosting",
-										String.valueOf(aJVPosting.getBatchReference()),
-										aJVPosting.getVersion()), true);
+						deleteNotes(getNotes("JVPosting", String.valueOf(aJVPosting.getBatchReference()),
+								aJVPosting.getVersion()), true);
 					}
 				}
 
@@ -1764,10 +1699,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 */
 
 	private AuditHeader getAuditHeader(JVPosting aJVPosting, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aJVPosting.getBefImage(), aJVPosting);
-		return new AuditHeader(Long.toString(aJVPosting.getBatchReference()), null, null,
-				null, auditDetail, aJVPosting.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJVPosting.getBefImage(), aJVPosting);
+		return new AuditHeader(Long.toString(aJVPosting.getBatchReference()), null, null, null, auditDetail,
+				aJVPosting.getUserDetails(), getOverideMap());
 	}
 
 	// ******************************************************//
@@ -1812,23 +1746,24 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	public void doUpdateBatchDetails(JVPosting jVPosting) {
 		this.debitCount.setValue(jVPosting.getDebitCount());
 		this.creditsCount.setValue(jVPosting.getCreditsCount());
-		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(
-				jVPosting.getTotCreditsByBatchCcy(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
-		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(
-				jVPosting.getTotDebitsByBatchCcy(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(jVPosting.getTotCreditsByBatchCcy(),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(jVPosting.getTotDebitsByBatchCcy(),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 	}
 
-	/*public void onSelect$tab_Accounting(Event event) {
-		fillAccountingTab();
-	}*/
+	/*
+	 * public void onSelect$tab_Accounting(Event event) { fillAccountingTab(); }
+	 */
 
-	private void fillAccountingTab(){
+	private void fillAccountingTab() {
 		List<JVPostingEntry> acEntryList = new ArrayList<JVPostingEntry>();
 		for (Listitem li : this.listBoxJVPostingEntry.getItems()) {
 			acEntryList.add((JVPostingEntry) li.getAttribute("data"));
 		}
 		acEntryList = getPostingsPreparationUtil().prepareAccountingEntryList(acEntryList, getJVPosting().getCurrency(),
-				CurrencyUtil.getCcyNumber(jVPosting.getCurrency()) ,CurrencyUtil.getFormat(getJVPosting().getCurrency()));
+				CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
+				CurrencyUtil.getFormat(getJVPosting().getCurrency()));
 		renderAccountingEntries(acEntryList, CurrencyUtil.getFormat(getJVPosting().getCurrency()));
 	}
 
@@ -1838,8 +1773,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		Listcell lc;
 		for (JVPostingEntry accountingEntry : acEntryList) {
 			item = new Listitem();
-			lc = new Listcell(
-					PennantApplicationUtil.formatAccountNumber(accountingEntry.getAccount()));
+			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(accountingEntry.getAccount()));
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getAccountName());
 			lc.setParent(item);
@@ -1848,13 +1782,15 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			lc = new Listcell(accountingEntry.getTxnEntry());
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getTxnCCy());
-			lc.setParent(item);	
-			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(), CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
+			lc.setParent(item);
+			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),
+					CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getAccCCy());
-			lc.setParent(item);					
-			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
+			lc.setParent(item);
+			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),
+					CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getPostingStatus());
@@ -1872,26 +1808,20 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.listBoxJVPostingEntry.getItems().clear();
 		Listitem item = null;
 		Listcell lc;
-		for (JVPostingEntry  jvPostingEntry: entryList) {
-			if(jvPostingEntry.isExternalAccount()){
+		for (JVPostingEntry jvPostingEntry : entryList) {
+			if (jvPostingEntry.isExternalAccount()) {
 				item = new Listitem();
 				lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
 				lc.setParent(item);
 				if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
-				lc = new Listcell(
-						PennantApplicationUtil.formatAccountNumber(jvPostingEntry
-								.getAccount()));
-				
-				}else{
-					if(jvPostingEntry.isNew()){
-					lc = new Listcell(
-							PennantApplicationUtil.formatAccountNumber(jvPostingEntry
-									.getDebitAccount()));
-					}else{
-						lc = new Listcell(
-								PennantApplicationUtil.formatAccountNumber(jvPostingEntry
-										.getAccount()));
-						
+					lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getAccount()));
+
+				} else {
+					if (jvPostingEntry.isNew()) {
+						lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getDebitAccount()));
+					} else {
+						lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getAccount()));
+
 					}
 				}
 				lc.setParent(item);
@@ -1920,22 +1850,25 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				lc.setTooltiptext(jvPostingEntry.getPostingStatus());
 				lc.setParent(item);
 				item.setAttribute("data", jvPostingEntry);
-				if(!jvPostingEntry.isDeletedFlag()){
+				if (!jvPostingEntry.isDeletedFlag()) {
 					int formatter = CurrencyUtil.getFormat(getJVPosting().getCurrency());
-					
-					if(jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)){
-						creditAmount = creditAmount.add(PennantAppUtil.unFormateAmount(
-								PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(), 
-										getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()), formatter),formatter));
-						creditCount = creditCount+1;
-					}else {
-						debitAmount = debitAmount.add(PennantAppUtil.unFormateAmount(
-								PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(), 
-										getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()), 	formatter),formatter));
-						debitCount =  debitCount+1;
+
+					if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
+						creditAmount = creditAmount
+								.add(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(
+										CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(),
+												getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()),
+										formatter), formatter));
+						creditCount = creditCount + 1;
+					} else {
+						debitAmount = debitAmount
+								.add(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(
+										CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(),
+												getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()),
+										formatter), formatter));
+						debitCount = debitCount + 1;
 					}
-					ComponentsCtrl.applyForward(item,
-							"onDoubleClick=onJVPostingEntryItemDoubleClicked");
+					ComponentsCtrl.applyForward(item, "onDoubleClick=onJVPostingEntryItemDoubleClicked");
 				}
 				Clients.clearWrongValue(this.btnNewJVPostingEntry);
 				this.listBoxJVPostingEntry.appendChild(item);
@@ -1943,48 +1876,46 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		if (baseCCy.getValue().equals(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY))
 				|| baseCCy.getValue().equals(AccountConstants.CURRENCY_KWD)) {
-			creditAmount = creditAmount.setScale(3,RoundingMode.HALF_DOWN);//FIXME--CHECK: SET BASED ON CURRENCY SELECTION
-			debitAmount = debitAmount.setScale(3,RoundingMode.HALF_DOWN);
-		}else {
-			creditAmount = creditAmount.setScale(2,RoundingMode.HALF_DOWN);
-			debitAmount = debitAmount.setScale(2,RoundingMode.HALF_DOWN);
+			creditAmount = creditAmount.setScale(3, RoundingMode.HALF_DOWN);//FIXME--CHECK: SET BASED ON CURRENCY SELECTION
+			debitAmount = debitAmount.setScale(3, RoundingMode.HALF_DOWN);
+		} else {
+			creditAmount = creditAmount.setScale(2, RoundingMode.HALF_DOWN);
+			debitAmount = debitAmount.setScale(2, RoundingMode.HALF_DOWN);
 		}
-		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(
-				creditAmount,CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totCreditsByBatchCcy.setValue(
+				PennantAppUtil.formateAmount(creditAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.creditsCount.setValue(creditCount);
-		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(
-				debitAmount,CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy.setValue(
+				PennantAppUtil.formateAmount(debitAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.debitCount.setValue(debitCount);
 	}
 
 	/**
 	 * when the "validate" button is clicked. <br>
-	 * Stores the default values, sets the validation and validates the given
-	 * finance details.
+	 * Stores the default values, sets the validation and validates the given finance details.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception,InterfaceException {
+	public void onClick$btnValidate(Event event) throws Exception, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);
 		aJVPosting.setUserDetails(getUserWorkspace().getLoggedInUser());
-		if(getJVPostingService().doAccountValidation(aJVPosting, getJVPostingEntryList())){
+		if (getJVPostingService().doAccountValidation(aJVPosting, getJVPostingEntryList())) {
 			this.setProceed(true);
 		}
 		this.tab_Accounting.setSelected(true);
 		renderJVPostingEntries(getJVPostingEntryList());
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	public void onChange$postingAgainst(Event event) {
 		this.reference.setConstraint("");
 		this.reference.setErrorMessage("");
 		this.reference.setValue("", "");
-		this.postingDivision.setValue("","");
+		this.postingDivision.setValue("", "");
 		this.postingDivision.setReadonly(false);
 		this.postingBranch.setValue("");
 		this.postingBranch.setReadonly(false);
@@ -1995,16 +1926,16 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	}
 
 	private void setFilters(String postValue) {
-		if (StringUtils.equals(postValue,PennantConstants.List_Select)) {
+		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
 			addFilters("", "", "");
 		}
-		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_LOAN)) {
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LOAN)) {
 			addFilters("FinanceMain", "FinReference", "FinType");
 		}
-		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_CUST)) {
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CUST)) {
 			addFilters("Customer", "CustCIF", "CustShrtName");
 		}
-		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
 		}
 		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
@@ -2012,13 +1943,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 	}
 
-	private void addFilters(String modulename,String valuecolumn,String descColumn) {
+	private void addFilters(String modulename, String valuecolumn, String descColumn) {
 		this.reference.setModuleName(modulename);
 		this.reference.setValueColumn(valuecolumn);
 		this.reference.setDescColumn(descColumn);
 		this.reference.setValidateColumns(new String[] { valuecolumn });
 	}
-	
+
 	public Window getWindow_JVPostingDialog() {
 		return window_JVPostingDialog;
 	}
@@ -2063,8 +1994,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		return deletedJVPostingEntryList;
 	}
 
-	public void setDeletedJVPostingEntryList(
-			List<JVPostingEntry> deletedJVPostingEntryList) {
+	public void setDeletedJVPostingEntryList(List<JVPostingEntry> deletedJVPostingEntryList) {
 		this.deletedJVPostingEntryList = deletedJVPostingEntryList;
 	}
 
@@ -2091,6 +2021,5 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	public void setLegalExpensesService(LegalExpensesService legalExpensesService) {
 		this.legalExpensesService = legalExpensesService;
 	}
-	
-	
+
 }
