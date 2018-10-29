@@ -110,9 +110,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 
 	protected Textbox totCreditsByBatchCcy;
 	protected Listbox sortOperator_TotCreditsByBatchCcy;
-	
-	protected Textbox moduleType;
 
+	protected Textbox moduleType;
 
 	private transient boolean approvedList = false;
 	private transient boolean workFlowList = false;
@@ -144,7 +143,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	public void onCreate$window_JVPostingList(Event event) throws Exception {
 		logger.debug("Entering");
 
-
 		// Set the page level components.
 		setPageComponents(window_JVPostingList, borderLayout_JVPostingList, listBoxJVPosting, pagingJVPostingList);
 		setItemRender(new JVPostingListModelItemRenderer());
@@ -153,7 +151,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		registerButton(button_JVPostingList_NewJVPosting, "button_JVPostingList_NewJVPosting", true);
 
 		registerField("BatchReference");
-		registerField("reference", listheader_BatchReference, SortOrder.ASC, reference,sortOperator_BatchReference, Operators.STRING);
+		registerField("reference", listheader_BatchReference, SortOrder.ASC, reference, sortOperator_BatchReference,
+				Operators.STRING);
 		registerField("batch", listheader_Batch, SortOrder.NONE, batch, sortOperator_Batch, Operators.STRING);
 		registerField("debitCount", listheader_DebitCount);
 		registerField("creditsCount", listheader_CreditsCount);
@@ -255,8 +254,9 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 					valueParm[0] = Long.toString(aJVPosting.getId());
 					errParm[0] = PennantJavaUtil.getLabel("label_BatchReference") + ":" + valueParm[0];
 
-					ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), getUserWorkspace().getUserLanguage());
+					ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+							getUserWorkspace().getUserLanguage());
 					MessageUtil.showError(errorDetails.getError());
 				} else {
 					/*
@@ -294,13 +294,12 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		if (this.moduleType != null && StringUtils.equals(PennantConstants.MODULETYPE_ENQ, moduleType.getValue())) {
 			moduleCode = PennantConstants.MODULETYPE_ENQ;
 		}
-		 
+
 		Map<String, Object> arg = getDefaultArguments();
 		if (this.moduleCode != null && this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)) {
 			arg.put("enqModule", true);
 			arg.put("workFlowList", this.workFlowList);
-		} else if (this.moduleCode != null
-				&& this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_REPOSTING)) {
+		} else if (this.moduleCode != null && this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_REPOSTING)) {
 			arg.put("rePostingModule", true);
 		} else {
 			arg.put("enqModule", false);
