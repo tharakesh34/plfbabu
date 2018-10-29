@@ -340,7 +340,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 				// Get the delegator's next tasks.
 				Map<String, Object> data = new HashMap<>();
-
+				data.put("vo", finmain);
+				
 				if (rejected) {
 					data.put("deviationApprovalStatus", "REJECTED");
 				} else {
