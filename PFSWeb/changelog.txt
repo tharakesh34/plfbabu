@@ -1,3 +1,9 @@
+pff 4.11.3.1 2018-10-30
+----------------
+-story #852 Merge Update Query Module API from Veritus.
+-PPM #18261 Presentment Batch Creation in search field need Space between "BankCode" and Header name also Bank Code.
+-PPM # 18470 For return chequesdedup getting wrong header name in loan process editor
+
 pff 4.11.3.1 2018-10-26
 ----------------
 -PPM #18108 is Negative List of Customers module is fixed 
