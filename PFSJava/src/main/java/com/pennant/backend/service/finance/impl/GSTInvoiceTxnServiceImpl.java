@@ -11,8 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.customermasters.Customer;
@@ -52,6 +55,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	private transient FinanceTaxDetailService financeTaxDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private RuleDAO ruleDAO;
+	private BranchDAO branchDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public GSTInvoiceTxnServiceImpl() {
 		super();
@@ -105,9 +110,25 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			gstInvoiceTxn.setPanNumber(entity.getPANNumber());
 			gstInvoiceTxn.setLoanAccountNo(finReference);
 
+			// Checking Finance Branch exist or not 
+			if (StringUtils.isBlank(financeMain.getFinBranch())) {
+				FinanceMain financeMainTemp = getFinanceMainDAO().getFinanceMainForBatch(finReference);
+				if (financeMainTemp == null || StringUtils.isBlank(financeMainTemp.getFinBranch())) {
+					return; //FIXME write this case as a error message
+				} else {
+					financeMain.setFinBranch(financeMainTemp.getFinBranch());
+				}
+			}
+			Branch fromBranch = getBranchDAO().getBranchById(financeMain.getFinBranch(), "");
+			
+			if (fromBranch == null) {
+				return; //FIXME write this case as a error message
+			}
+			
 			// Check whether State level Tax Details exists or not
-			Province companyProvince = this.provinceService.getApprovedProvinceById(entity.getCountry(),
-					entity.getStateCode());
+			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(), fromBranch.getBranchProvince());
+			//Province companyProvince = this.provinceService.getApprovedProvinceById(entity.getCountry(), entity.getStateCode());
+			
 			if (companyProvince != null) {
 
 				if (StringUtils.isBlank(companyProvince.getCPProvince())
@@ -459,5 +480,21 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
+	}
+
+	public BranchDAO getBranchDAO() {
+		return branchDAO;
+	}
+
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 }
