@@ -7520,7 +7520,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					autoDownloadMap = new HashMap<>();
 					AgreementDefinition agreementDefinition = null;
 					List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
-					String templateValidateMsg = "";
+					String templateValidateMsg = "";	
 					String accMsg = "";
 					boolean isTemplateError = false;
 					Set<String> allagrDataset = new HashSet<>();

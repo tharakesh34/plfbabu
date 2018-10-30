@@ -54,7 +54,6 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class AgreementFieldDetails extends AbstractWorkflowEntity {
-	
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
@@ -69,7 +68,7 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 	private String proprtyDesc;
 	private String propertyLocation;
 	private String custPoBox;
-	
+
 	private String jointApplicant;
 	private String sellerNationality;
 	private String sellerPobox;
@@ -87,7 +86,7 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 	private String collateral1;
 	private String sellerInternal;
 	private String area;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private AgreementFieldDetails befImage;
 	private LoggedInUser userDetails;
 
@@ -98,38 +97,38 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 	public AgreementFieldDetails() {
 		super();
 	}
+
 	public AgreementFieldDetails(String id) {
 		super();
 		this.setId(id);
 	}
-	
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String finReference) {
+
+	public void setId(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
 
-	
 	public String getCustCity() {
 		return custCity;
 	}
@@ -306,8 +305,6 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 		this.propertyType = propertyType;
 	}
 
-	
-
 	public String getCustCntAmt() {
 		return custCntAmt;
 	}
@@ -351,11 +348,11 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
-	
+
 	public AgreementFieldDetails getBefImage() {
 		return befImage;
 	}
@@ -363,9 +360,11 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 	public void setBefImage(AgreementFieldDetails befImage) {
 		this.befImage = befImage;
 	}
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -378,6 +377,4 @@ public class AgreementFieldDetails extends AbstractWorkflowEntity {
 		this.area = area;
 	}
 
-	
-	
 }

@@ -19,14 +19,13 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.document.generator.TemplateEngine;
 
 public class AgreementEngine {
-
-	private TemplateEngine templateEngine;
 	private static final Logger logger = Logger.getLogger(AgreementEngine.class);
+	private TemplateEngine templateEngine;
 
 	public AgreementEngine(String assetCode) throws Exception {
 		logger.debug("Entering ");
 		String templatePath = getTemplatePath(assetCode);
-		templateEngine=new TemplateEngine(templatePath,templatePath);
+		templateEngine = new TemplateEngine(templatePath, templatePath);
 		logger.debug("Leaving");
 	}
 
@@ -48,7 +47,7 @@ public class AgreementEngine {
 	}
 
 	public AgreementEngine(String templateSite, String documentSite) throws Exception {
-		templateEngine=new TemplateEngine(templateSite,documentSite);
+		templateEngine = new TemplateEngine(templateSite, documentSite);
 	}
 
 	public void loadTemplate() throws Exception {
@@ -89,8 +88,9 @@ public class AgreementEngine {
 		stream = null;
 		logger.debug("Leaving");
 	}
-	
-	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox) throws Exception {
+
+	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox)
+			throws Exception {
 		logger.debug("Entering ");
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 

@@ -43,12 +43,9 @@
 
 package com.pennant.backend.service.finance;
 
-
-
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
-
 
 /**
  * Service declaration for methods that depends on <b>BundledProductsDetail</b>.<br>
@@ -57,14 +54,23 @@ import com.pennant.backend.model.finance.AgreementFieldDetails;
 public interface AgreementFieldsDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	AgreementFieldDetails getAgreementFieldDetailsById(String id,String type);
+
+	AgreementFieldDetails getAgreementFieldDetailsById(String id, String type);
+
 	AgreementFieldDetails getApprovedAgreementFieldDetailsById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	AuditDetail saveOrUpdate(AgreementFieldDetails agreementFieldDetails, String tableType, String auditTranType);
+
 	AuditDetail doApprove(AgreementFieldDetails agreementFieldDetails, String tableType, String auditTranType);
-	AuditDetail validate(AgreementFieldDetails agreementFieldDetails, String method, String auditTranType, String  usrLanguage);
+
+	AuditDetail validate(AgreementFieldDetails agreementFieldDetails, String method, String auditTranType,
+			String usrLanguage);
+
 	AuditDetail delete(AgreementFieldDetails agreementFieldDetails, String tableType, String auditTranType);
 }
