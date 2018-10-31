@@ -155,7 +155,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update QUERYDETAIL");
 		// sql.append(tableType.getSuffix());
-		sql.append("  set status = :status, qryNotes = :qryNotes, responsNotes = :responsNotes, ");
+		sql.append("  set status = :status, raisedBy= :raisedBy, qryNotes = :qryNotes, responsNotes = :responsNotes, ");
 		sql.append(" responseBy = :responseBy, responseOn = :responseOn, closerNotes = :closerNotes, ");
 		sql.append(
 				" closerBy = :closerBy, closerOn = :closerOn, Version = :Version, Module = :Module, Reference = :Reference");

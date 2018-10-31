@@ -27,27 +27,8 @@ public class QueryModuleController {
 		logger.debug(Literal.ENTERING);
 		QueryDetail detail = null;
 
-		if (!CollectionUtils.isNullOrEmpty(queryDetail.getDocumentDetailsList())) {
-			for (DocumentDetails documentDetail : queryDetail.getDocumentDetailsList()) {
-				documentDetail.setNewRecord(true);
-				documentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				documentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				documentDetail.setVersion(1);
-			}
-		}
-
-		detail = queryDetailService.getQueryDetail(queryDetail.getId());
-
-		if (detail != null) {
-			queryDetail.setQryNotes(detail.getQryNotes());
-			queryDetail.setCloserNotes(detail.getCloserNotes());
-			queryDetail.setCloserBy(detail.getCloserBy());
-			queryDetail.setCloserOn(detail.getCloserOn());
-			queryDetail.setVersion(detail.getVersion());
-			queryDetail.setModule(detail.getModule());
-			queryDetail.setReference(detail.getReference());
-		}
+		//do set document details
+		doSetDocumentDetails(queryDetail);
 
 		AuditHeader auditHeader = getAuditHeader(queryDetail, "");
 
@@ -64,6 +45,18 @@ public class QueryModuleController {
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
+	private void doSetDocumentDetails(QueryDetail queryDetail){
+		if (!CollectionUtils.isNullOrEmpty(queryDetail.getDocumentDetailsList())) {
+			for (DocumentDetails documentDetail : queryDetail.getDocumentDetailsList()) {
+				documentDetail.setNewRecord(true);
+				documentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				documentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				documentDetail.setVersion(1);
+			}
+		}
+	}
+	
 	private AuditHeader getAuditHeader(QueryDetail aQueryDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aQueryDetail.getBefImage(), aQueryDetail);
 		return new AuditHeader(getReference(aQueryDetail.getId()), null, null, null, auditDetail,

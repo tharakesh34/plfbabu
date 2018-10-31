@@ -764,6 +764,19 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	}
 
 	/**
+	 * Method For fetching SecurityUser detail by userLogin
+	 * 
+	 * @param userLogin
+	 * 
+	 * @return SecurityUser
+	 */
+	
+	@Override
+	public SecurityUser getSecurityUserByLogin(String userLogin) {
+		return securityUsersDAO.getSecurityUserByLogin(userLogin, "");
+	}
+	
+	/**
 	 * Method For Preparing List of AuditDetails for securityUser
 	 * 
 	 * @param auditDetails
