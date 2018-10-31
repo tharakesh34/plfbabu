@@ -1252,5 +1252,29 @@ UNION ALL
 
 	  </sql>
 	</changeSet>
+	<changeSet id="22" author="Swamy">
+<sql>
+update extendedfielddetail 
+	set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var s = zk.Widget.$(jq("$ad_SCHEMES_ctb")[0]); var lv = zk.Widget.$(jq("$ad_CNLDVAL_cdb")[0]).getValue(); var bv = zk.Widget.$(jq("$ad_CONBLDVAL_cdb")[0]).getValue(); var result = 0; if (s.getValue() == "") { result = 0; } else if (s.getValue() == "CLL"){ result = lv.$toNumber(); } else { result = lv.$toNumber() + bv.$toNumber(); } zAu.send(new zk.Event(t, "onChange", result), 10);' 
+where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'GHF') 
+	and fieldname = 'SCHEMES' and extendedtype = 0;
+
+update extendedfielddetail 
+	set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var s = zk.Widget.$(jq("$ad_SCHEMES_ctb")[0]); var lv = zk.Widget.$(jq("$ad_CNLDVAL_cdb")[0]).getValue(); var bv = zk.Widget.$(jq("$ad_CONBLDVAL_cdb")[0]).getValue(); var result = 0; if (s.getValue() == "") { result = 0; } else if (s.getValue() == "CLL"){ result = lv.$toNumber(); } else { result = lv.$toNumber() + bv.$toNumber(); } zAu.send(new zk.Event(t, "onChange", result), 10);' 
+where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'GHF') 
+	and fieldname = 'CNLDVAL' and extendedtype = 0;
+
+update extendedfielddetail 
+	set scriptlet = 'onChange>>var t = zk.Widget.$(jq("$ad_UNITPRICE")[0]); var s = zk.Widget.$(jq("$ad_SCHEMES_ctb")[0]); var lv = zk.Widget.$(jq("$ad_CNLDVAL_cdb")[0]).getValue(); var bv = zk.Widget.$(jq("$ad_CONBLDVAL_cdb")[0]).getValue(); var result = 0; if (s.getValue() == "") { result = 0; } else if (s.getValue() == "CLL"){ result = lv.$toNumber(); } else { result = lv.$toNumber() + bv.$toNumber(); } zAu.send(new zk.Event(t, "onChange", result), 10);' 
+where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'GHF') 
+	and fieldname = 'CONBLDVAL' and extendedtype = 0;
+
+update extendedfielddetail 
+	set scriptlet = 'onChange>>default;' 
+where moduleid = (select moduleid from extendedfieldheader where modulename = 'COLLATERAL' and submodulename = 'GHF') 
+	and fieldname = 'UNITPRICE' and extendedtype = 0;
+</sql>
+</changeSet>
+	
  
 </databaseChangeLog>
