@@ -1629,7 +1629,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		CustomerStatusCode statusCode = this.customerDetailsService.getCustStatusByMinDueDays();
 		
 		if (customerDetails.getCustomer().getCustSts() == null
-				&& customerDetails.getCustomer().getLovDescCustStsName() == null) {
+				&& customerDetails.getCustomer().getLovDescCustStsName() == null && statusCode != null) {
 			customer.setCustSts(statusCode.getCustStsCode());
 			customer.setLovDescCustStsName(statusCode.getCustStsDescription());
 		}

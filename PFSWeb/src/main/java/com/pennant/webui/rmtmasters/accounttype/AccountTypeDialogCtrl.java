@@ -234,7 +234,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 
 		this.acHeadCode.setMaxlength(4);
 		
-		this.acTypeGrpId.setWidth("200px");
 		this.acTypeGrpId.setModuleName("AccountTypeGroup");
 		this.acTypeGrpId.setMandatoryStyle(true);
 		this.acTypeGrpId.setValueColumn("GroupCode");
