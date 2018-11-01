@@ -337,6 +337,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal customerAge;
 	@XmlElement
 	private String applicationNo;
+	private String branchProvince;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -353,6 +354,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("branchProvince");
 		excludeFields.add("proceedToDedup");
 		excludeFields.add("dedupFound");
 		excludeFields.add("skipDedup");
@@ -1940,6 +1942,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setApplicationNo(String applicationNo) {
 		this.applicationNo = applicationNo;
+	}
+
+	public String getBranchProvince() {
+		return branchProvince;
+	}
+
+	public void setBranchProvince(String branchProvince) {
+		this.branchProvince = branchProvince;
 	}
 
 }

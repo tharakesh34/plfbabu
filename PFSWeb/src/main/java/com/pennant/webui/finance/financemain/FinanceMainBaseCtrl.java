@@ -8534,6 +8534,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (branch != null) {
 				this.finBranch.setValue(branch.getUserBranch(), branch.getUserBranchDesc());
 				branchSwiftCode = branch.getBranchSwiftBrnCde();
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setFinBranchProvinceCode(branch.getBranchProvince());
 			}
 		}
 		isBranchanged = true;
@@ -16239,6 +16240,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!StringUtils.equals(PennantConstants.YES, isCustomerBranch)) {
 			this.finBranch.setValue(customer.getCustDftBranch());
 			this.finBranch.setDescription(customer.getLovDescCustDftBranchName());
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setFinBranchProvinceCode(customer.getBranchProvince());
 		} else {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			this.finBranch.setValue(userDetails.getBranchCode());

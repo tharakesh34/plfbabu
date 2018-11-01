@@ -224,7 +224,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinDivision, LovDescFinBranchName, ");
+					" ,LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinDivision, LovDescFinBranchName, finBranchProvinceCode, ");
 			selectSql.append(
 					" LovDescStepPolicyName, LovDescAccountsOfficer, DSACodeDesc, ReferralIdDesc,EmployeeNameDesc, DmaCodeDesc, SalesDepartmentDesc,lovdescEntityCode,lovEligibilityMethod,lovDescEligibilityMethod,lovdescfinpurposename,connectorcode,connectordesc ");
 		}
@@ -299,7 +299,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			selectSql.append(" lovDescFinTypeName, lovDescFinBranchName, ");
 			if (!isWIF) {
 				selectSql.append(" ReAgeBucket, FinLimitRef, ");
-				selectSql.append(" lovDescAccruedTillLBD, lovDescFinScheduleOn,");
+				selectSql.append(" lovDescAccruedTillLBD, lovDescFinScheduleOn, finBranchProvinceCode,");
 				selectSql.append(
 						" lovDescFinDivision,LovDescStepPolicyName,CustStsDescription, lovDescAccountsOfficer, DsaCodeDesc,  ");
 				selectSql.append("  ReferralIdDesc ,EmployeeNameDesc, DmaCodeDesc , SalesDepartmentDesc,lovDescEntityCode,LOVDESCSOURCECITY,lovEligibilityMethod,lovDescEligibilityMethod,lovdescfinpurposename,connectorCode,connectorDesc, ");

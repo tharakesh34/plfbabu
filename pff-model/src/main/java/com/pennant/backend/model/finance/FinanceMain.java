@@ -100,6 +100,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String finBranch;
 	private String lovDescFinBranchName;
+	private String finBranchProvinceCode;
 	@XmlElement
 	private Date finStartDate;
 	@XmlElement
@@ -833,6 +834,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("isAdjustClosingBal");
 
 		excludeFields.add("fixedTenorEndDate");
+		excludeFields.add("finBranchProvinceCode");
 
 		return excludeFields;
 	}
@@ -3908,4 +3910,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setFixedTenorEndDate(Date fixedTenorEndDate) {
 		this.fixedTenorEndDate = fixedTenorEndDate;
 	}
+
+	public String getFinBranchProvinceCode() {
+		return finBranchProvinceCode;
+	}
+
+	public void setFinBranchProvinceCode(String finBranchProvinceCode) {
+		this.finBranchProvinceCode = finBranchProvinceCode;
+	}
+
 }

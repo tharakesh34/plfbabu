@@ -240,7 +240,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			selectSql.append(" lovDescCustParentCountryName, lovDescCustResdCountryName , lovDescCustRiskCountryName , lovDescCustRO2Name , lovDescCustBLRsnCodeName,");
 			selectSql.append(" lovDescCustRejectedRsnName, lovDescCustGroupCode, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName" );
 			selectSql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
-			selectSql.append(" CasteCode, ReligionCode, CasteDesc, ReligionDesc," );
+			selectSql.append(" CasteCode, ReligionCode, CasteDesc, ReligionDesc,branchProvince," );
 		}
 			
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );

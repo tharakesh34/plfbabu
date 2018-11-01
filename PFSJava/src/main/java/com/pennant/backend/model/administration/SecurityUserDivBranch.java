@@ -64,6 +64,7 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private String lovDescPriKey;
 	private SecurityUserDivBranch befImage;
 	private String branchSwiftBrnCde;
+	private String branchProvince;
 	private LoggedInUser userDetails;
 
 	public SecurityUserDivBranch() {
@@ -83,6 +84,7 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("userBranchDesc");
 		excludeFields.add("branchSwiftBrnCde");
+		excludeFields.add("branchProvince");
 		return excludeFields;
 	}
 
@@ -161,5 +163,13 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 
 	public void setBranchSwiftBrnCde(String branchSwiftBrnCde) {
 		this.branchSwiftBrnCde = branchSwiftBrnCde;
+	}
+
+	public String getBranchProvince() {
+		return branchProvince;
+	}
+
+	public void setBranchProvince(String branchProvince) {
+		this.branchProvince = branchProvince;
 	}
 }
