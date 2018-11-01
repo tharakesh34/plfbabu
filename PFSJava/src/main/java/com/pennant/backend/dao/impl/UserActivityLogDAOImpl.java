@@ -44,15 +44,19 @@ package com.pennant.backend.dao.impl;
 
 import java.util.List;
 
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.model.UserActivityLog;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements UserActivityLogDAO {
 	private static Logger logger = Logger.getLogger(UserActivityLogDAOImpl.class);
@@ -128,4 +132,45 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 		logger.debug("Leaving");
     }
 
+	@Override
+	public String getPreviousRole(String module, String reference, String role) {
+		logger.debug(Literal.ENTERING);
+
+		String result = "";
+
+		StringBuilder sql = new StringBuilder("select rolecode, activity, nextrolecode");
+		sql.append(" from task_log");
+		sql.append(" where module = :module and reference = :reference");
+		sql.append(" order by serialno desc");
+		logger.debug("SQL: " + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("module", module);
+		source.addValue("reference", reference);
+
+		RowMapper<UserActivityLog> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(UserActivityLog.class);
+
+		List<UserActivityLog> activities = jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+
+		for (UserActivityLog activity : activities) {
+			if (StringUtils.equals(activity.getNextRoleCode(), role) && isForwardDirection(activity.getActivity())) {
+				result = activity.getRoleCode();
+
+				break;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return result;
+	}
+
+	private boolean isForwardDirection(String activity) {
+		if (StringUtils.contains(activity, "Saved") || StringUtils.contains(activity, "Reverted")
+				|| StringUtils.contains(activity, "Resubmitted")) {
+			return false;
+		}
+
+		return true;
+	}
 }

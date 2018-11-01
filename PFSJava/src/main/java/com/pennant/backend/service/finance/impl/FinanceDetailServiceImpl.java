@@ -246,7 +246,9 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.Action;
 import com.pennanttech.pennapps.core.engine.workflow.Operation;
 import com.pennanttech.pennapps.core.engine.workflow.ProcessUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
@@ -4712,7 +4714,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String role) {
 		logger.trace(Literal.ENTERING);
 
-		String nextTaskId = ProcessUtil.getNextTask(engine, taskId, action, financeMain.getNextTaskId(), financeMain);
+		String nextTaskId = "";
+		if (Action.REVERT.getLabel().equals(action)) {
+			String actor = userActivityLogDAO.getPreviousRole("FINANCE", financeMain.getFinReference(), role);
+
+			if (StringUtils.isEmpty(actor)) {
+				throw new AppException("The workflow stage to revert not found.");
+			}
+
+			nextTaskId = engine.getUserTaskId(actor);
+
+			if (StringUtils.isNotEmpty(nextTaskId)) {
+				nextTaskId += ";";
+			}
+		} else {
+			nextTaskId = ProcessUtil.getNextTask(engine, taskId, action, financeMain.getNextTaskId(), financeMain);
+		}
+
 		Map<String, String> nextRoles = ProcessUtil.getNextRoles(engine, nextTaskId);
 		String nextRoleCode = StringUtils.join(nextRoles.keySet(), ",");
 
