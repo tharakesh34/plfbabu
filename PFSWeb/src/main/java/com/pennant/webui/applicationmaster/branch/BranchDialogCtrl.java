@@ -72,6 +72,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -276,7 +277,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchProvince.setValidateColumns(new String[] { "CPProvince" });
 
 		this.branchCity.setMaxlength(8);
-		this.branchCity.setMandatoryStyle(false);
+		this.branchCity.setMandatoryStyle(true);
 		this.branchCity.setModuleName("City");
 		this.branchCity.setValueColumn("PCCity");
 		this.branchCity.setDescColumn("PCCityName");
@@ -1430,118 +1431,209 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		return processCompleted;
 	}
 
-	public void onFulfill$branchCity(Event event) {
-		logger.debug("Entering");
-		Object dataObject = branchCity.getObject();
+	public void onFulfill$branchCountry(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = branchCountry.getObject();
+		String pcProvince = null;
 		if (dataObject instanceof String) {
-			this.branchCity.setValue("","");
-			this.pinCode.setFilters(null);
-		} else {
-			City details = (City) dataObject;
-
-			if (details != null) {
-				this.branchCity.setValue(details.getPCCity());
-				this.branchCity.setDescription(details.getPCCityName());
-
-				Filter[] filterPin = new Filter[1];
-				filterPin[0] = new Filter("City", details.getPCCity(), Filter.OP_EQUAL);
-				this.pinCode.setFilters(filterPin);
-
-			} else {
-				if(getBranch().isNew()){
-				this.pinCode.setValue("", "");
-				this.pinCode.setFilters(null);
-				}
+			this.branchProvince.setValue("");
+			this.branchProvince.setDescription("");
+			this.branchCity.setValue("");
+			this.branchCity.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject;
+			if (country == null) {
+				fillProvinceDetails(null);
 			}
+			if (country != null) {
+				this.branchProvince.setErrorMessage("");
+				pcProvince = country.getCountryCode();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.branchProvince.setObject("");
+				this.branchCity.setObject("");
+				this.pinCode.setObject("");
+				this.branchProvince.setValue("");
+				this.branchProvince.setDescription("");
+				this.branchCity.setValue("");
+				this.branchCity.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+			}
+			fillPindetails(null, null);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void fillProvinceDetails(String country) {
+		this.branchProvince.setMandatoryStyle(true);
+		this.branchProvince.setModuleName("Province");
+		this.branchProvince.setValueColumn("CPProvince");
+		this.branchProvince.setDescColumn("CPProvinceName");
+		this.branchProvince.setValidateColumns(new String[] { "CPProvince" });
+
+		Filter[] filters1 = new Filter[1];
+
+		if (country == null || country.equals("")) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
 		}
 
-		logger.debug("Leaving");
+		this.branchProvince.setFilters(filters1);
 	}
-	
 	
 	public void onFulfill$branchProvince(Event event) {
-		logger.debug("Entering");
+		logger.debug("Entering" + event.toString());
+
 		Object dataObject = branchProvince.getObject();
+		String pcProvince = this.branchProvince.getValue();
 		if (dataObject instanceof String) {
-			this.branchCity.setValue("", "");
-			this.pinCode.setValue("", "");
-			this.branchCity.setFilters(null);
-			this.branchProvince.setFilters(null);
-			this.pinCode.setFilters(null);
-		}else{
-			Province details = (Province) dataObject;
-			if (details != null) {
-				this.branchProvince.setValue(details.getCPProvince(), details.getCPProvinceName());
-
-				Filter[] filterProvince = new Filter[1];
-				filterProvince[0] = new Filter("PCProvince", details.getCPProvince(), Filter.OP_EQUAL);
-				if(this.branchCity.getFilters()==null){				
-					this.branchCity.setFilters(filterProvince);
-				}
-
+			this.branchCity.setValue("");
+			this.branchCity.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillPindetails(null, null);
+			}
+			if (province != null) {
+				this.branchProvince.setErrorMessage("");
+				pcProvince = this.branchProvince.getValue();
+				this.branchCountry.setValue(province.getCPCountry());
+				this.branchCountry.setDescription(province.getLovDescCPCountryName());
+				this.branchCity.setValue("");
+				this.branchCity.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				fillPindetails(null, pcProvince);
 			} else {
-				if(getBranch().isNew()){					
-					this.branchCity.setValue("", "");
-					this.branchCity.setFilters(null);
-					this.branchProvince.setFilters(null);
-					this.pinCode.setValue("", "");
-					this.pinCode.setFilters(null);
-				}
+				this.branchCity.setObject("");
+				this.pinCode.setObject("");
+				this.branchCity.setValue("");
+				this.branchCity.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
 			}
 		}
-		
-
-		logger.debug("Leaving");
+		fillCitydetails(pcProvince);
+		logger.debug("Leaving" + event.toString());
 	}
 	
+	private void fillCitydetails(String state) {
+		logger.debug("Entering");
+
+		this.branchCity.setModuleName("City");
+		this.branchCity.setValueColumn("PCCity");
+		this.branchCity.setDescColumn("PCCityName");
+		this.branchCity.setValidateColumns(new String[] { "PCCity" });
+		Filter[] filters1 = new Filter[1];
+
+		if (state == null || state.isEmpty()) {
+			filters1[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		}
+
+		this.branchCity.setFilters(filters1);
+	}
+
+	public void onFulfill$branchCity(Event event) {
+		logger.debug("Entering");
+		doRemoveValidation();
+		doClearMessage();
+		Object dataObject = branchCity.getObject();
+		String cityValue = null;
+		if (!(dataObject instanceof String)) {
+			City details = (City) dataObject;
+			if (details == null) {
+				fillPindetails(null, null);
+			}
+			if (details != null) {
+				this.branchProvince.setValue(details.getPCProvince());
+				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
+				this.branchCountry.setValue(details.getPCCountry());
+				this.branchCountry.setDescription(details.getLovDescPCCountryName());
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				cityValue = details.getPCCity();
+				fillPindetails(cityValue, this.branchProvince.getValue());
+			} else {
+				this.branchCity.setObject("");
+				this.pinCode.setObject("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				this.branchProvince.setErrorMessage("");
+				this.branchCountry.setErrorMessage("");
+				fillPindetails(null, this.branchProvince.getValue());
+			}
+		} else if ("".equals(dataObject)) {
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			this.branchProvince.setObject("");
+		}
+		logger.debug("Leaving");
+	}
+
+	private void fillPindetails(String id, String province) {
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		Filter[] filters1 = new Filter[1];
+
+		if (id != null) {
+			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
+		} else if (province != null && !province.isEmpty()) {
+			filters1[0] = new Filter("PCProvince", province, Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+		}
+
+		this.pinCode.setFilters(filters1);
+	}
 	
 	public void onFulfill$pinCode(Event event) {
 		logger.debug("Entering");
 
 		Object dataObject = pinCode.getObject();
-
 		if (dataObject instanceof String) {
-			this.pinCode.setValue("", "");
-			this.branchCity.setValue("", "");
-			this.branchProvince.setValue("", "");
-			this.branchCity.setFilters(null);
-			this.branchProvince.setFilters(null);
-			this.branchCountry.setValue("","");
-			this.pinCode.setFilters(null);
+
 		} else {
 			PinCode details = (PinCode) dataObject;
+
 			if (details != null) {
-
-				this.branchCity.setValue(details.getCity());
-				this.branchCity.setDescription(details.getPCCityName());
-				Filter[] filtersCity = new Filter[1];
-				filtersCity[0] = new Filter("PCCity", details.getCity(), Filter.OP_EQUAL);
-				this.branchCity.setFilters(filtersCity);
-
-				this.branchProvince.setValue(details.getPCProvince());
-				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
-				Filter[] filtersProvince = new Filter[1];
-				filtersProvince[0] = new Filter("CPProvince", details.getPCProvince(), Filter.OP_EQUAL);
-				this.branchProvince.setFilters(filtersProvince);
 
 				this.branchCountry.setValue(details.getpCCountry());
 				this.branchCountry.setDescription(details.getLovDescPCCountryName());
-
-			} else {
-				if(getBranch().isNew()){
-				this.pinCode.setValue("", "");
-				this.branchCity.setValue("", "");
-				this.branchProvince.setValue("", "");
-				this.branchCity.setFilters(null);
-				this.branchProvince.setFilters(null);
-				this.branchCountry.setValue("","");
-				this.pinCode.setFilters(null);
-				}
+				this.branchCity.setValue(details.getCity());
+				this.branchCity.setDescription(details.getPCCityName());
+				this.branchProvince.setValue(details.getPCProvince());
+				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
+				this.branchCity.setErrorMessage("");
+				this.branchProvince.setErrorMessage("");
+				this.branchCountry.setErrorMessage("");
+				;
 			}
-			logger.debug("Leaving");
+
+		}
+		Filter[] filters1 = new Filter[1];
+		if (this.branchCity.getValue() != null && !this.branchCity.getValue().isEmpty()) {
+			filters1[0] = new Filter("City", this.branchCity.getValue(), Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
 
-	}
+		this.pinCode.setFilters(filters1);
+
+		logger.debug("Leaving");
+		}
+
 
 	public void onCheck$miniBranch(Event event) {
 		logger.debug("Entering" + event.toString());
