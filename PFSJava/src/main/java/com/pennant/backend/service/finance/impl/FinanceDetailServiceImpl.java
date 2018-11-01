@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -4711,49 +4712,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String role) {
 		logger.trace(Literal.ENTERING);
 
-		// Re-set the existing next task id.
-		String nextTaskId = ProcessUtil.resetNextTask(engine, taskId, action, financeMain.getNextTaskId(), financeMain);
+		String nextTaskId = ProcessUtil.getNextTask(engine, taskId, action, financeMain.getNextTaskId(), financeMain);
+		Map<String, String> nextRoles = ProcessUtil.getNextRoles(engine, nextTaskId);
+		String nextRoleCode = StringUtils.join(nextRoles.keySet(), ",");
 
-		// Set the new next task id if there are no pending existing queues.
-		if (StringUtils.isEmpty(nextTaskId)) {
-			if ("Save".equals(action)) {
-				nextTaskId = taskId + ";";
-			} else {
-				nextTaskId = engine.getNextUserTaskIdsAsString(taskId, financeMain);
-
-				if (StringUtils.isNotBlank(nextTaskId)) {
-					nextTaskId += ";";
-				}
+		// Clear the base roles if the action is "Resubmit".
+		if ("Resubmit".equals(action)) {
+			for (Entry<String, String> entry : nextRoles.entrySet()) {
+				entry.setValue("");
 			}
 		}
 
-		// Set the role codes for the next tasks
-		String nextRoleCode = "";
-		String nextRole = "";
-		Map<String, String> baseRoleMap = null;
-
-		if ("".equals(nextTaskId)) {
-			// nextRoleCode = engine.allFirstTaskOwners();
-		} else {
-			String[] nextTasks = nextTaskId.split(";");
-
-			if (nextTasks.length > 0) {
-				baseRoleMap = new HashMap<String, String>(nextTasks.length);
-				for (int i = 0; i < nextTasks.length; i++) {
-					if (nextRoleCode.length() > 1) {
-						nextRoleCode = nextRoleCode.concat(",");
-					}
-					nextRole = engine.getUserTask(nextTasks[i]).getActor();
-					nextRoleCode += nextRole;
-					String baseRole = "";
-					if (!"Resubmit".equals(action)) {
-						baseRole = StringUtils.trimToEmpty(engine.getUserTask(nextTasks[i]).getBaseActor());
-					}
-					baseRoleMap.put(nextRole, baseRole);
-				}
-			}
-		}
-
+		// Set the work-flow details.
 		financeMain.setTaskId(taskId);
 		financeMain.setNextTaskId(nextTaskId);
 		financeMain.setRoleCode(role);
@@ -4761,8 +4731,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String assignmentMthd = engine.getUserTask(taskId).getAssignmentLevel();
 		financeMain.setLovDescAssignMthd(StringUtils.trimToEmpty(assignmentMthd));
-		financeMain.setLovDescBaseRoleCodeMap(baseRoleMap);
-		baseRoleMap = null;
+		financeMain.setLovDescBaseRoleCodeMap(nextRoles);
 
 		if (!nextRoleCode.contains(role)) {
 			financeMain.setPriority(0);
