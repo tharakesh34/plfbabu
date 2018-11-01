@@ -718,10 +718,12 @@ public class AgreementDefinitionDialogCtrl extends
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(true);
 			this.docType.setSclass(PennantConstants.mandateSclass);
 			this.docType.setValue("");
+			this.docType.setMandatoryStyle(true);
 			this.docType.setButtonDisabled(false);
 			this.label_AgreementDefinitionDialog_doc_Type.setVisible(true);
 			this.docType.setVisible(true);
 		} else {
+			this.docType.setMandatoryStyle(false);
 			this.docType.setValue("");
 			this.docType.setButtonDisabled(true);
 			this.autoDownload.setVisible(false);
