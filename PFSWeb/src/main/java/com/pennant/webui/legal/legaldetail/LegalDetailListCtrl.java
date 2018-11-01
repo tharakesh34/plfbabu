@@ -40,9 +40,10 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.webui.legal.legaldetail;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,15 +63,20 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.service.legal.LegalDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.legal.legaldetail.model.LegalDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * This is the controller class for the
@@ -117,6 +123,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 
 	private transient LegalDetailService legalDetailService;
 	private String module;
+	private transient WorkflowEngine workflowEngine;
 
 	/**
 	 * default constructor.<br>
@@ -143,7 +150,58 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 
 	@Override
 	protected void doAddFilters() {
-		super.doAddFilters();
+		this.searchObject.clearFilters();
+
+		// Add filter for user's role queue.
+		if (isWorkFlowEnabled() && !enqiryModule) {
+			List<String> roles = new ArrayList<>();
+			List<String> actors = workflowEngine.getActors(false);
+
+			for (String role : getUserWorkspace().getUserRoleSet()) {
+				if (actors.contains(role)) {
+					roles.add(role);
+				}
+			}
+
+			StringBuilder whereClause = new StringBuilder();
+
+			if (roles.isEmpty()) {
+				whereClause.append(" nextRoleCode = '' ");
+			} else {
+				for (String role : roles) {
+					if (whereClause.length() > 0) {
+						whereClause.append(" OR ");
+					}
+
+					whereClause.append("(',' ");
+					whereClause.append(QueryUtil.getQueryConcat());
+					whereClause.append(" nextRoleCode ");
+					whereClause.append(QueryUtil.getQueryConcat());
+					whereClause.append(" ',' LIKE '%,");
+					whereClause.append(role);
+					whereClause.append(",%')");
+				}
+			}
+
+			this.searchObject.addWhereClause(whereClause.toString());
+		}
+
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+			if (filter != null) {
+				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
+						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
+					Filter[] filters = new Filter[2];
+					filters[0] = Filter.isNull(filter.getProperty());
+					filters[1] = filter;
+
+					this.searchObject.addFilterOr(filters);
+				} else {
+					this.searchObject.addFilter(filter);
+				}
+			}
+		}
+
 		if (!StringUtils.equals(this.module, PennantConstants.YES)) {
 			Filter[] fileters = new Filter[1];
 			fileters[0] = new Filter("module", PennantConstants.QUERY_LEGAL_VERIFICATION, Filter.OP_EQUAL);
@@ -175,6 +233,8 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 		registerField("legalRemarks");
 		registerField("legalId");
 		registerField("active");
+
+		workflowEngine = new WorkflowEngine(WorkFlowUtil.getWorkFlowDetails(moduleCode).getWorkFlowXml());
 
 		doSetFieldProperties();
 		doRenderPage();

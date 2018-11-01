@@ -120,6 +120,9 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.engine.workflow.Operation;
+import com.pennanttech.pennapps.core.engine.workflow.ProcessUtil;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -967,7 +970,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 				closeDialog();
 			}
-		} catch (final DataAccessException e) {
+		} catch (final DataAccessException | InterruptedException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
@@ -1185,6 +1188,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		return false;
 	}
+	
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1195,13 +1199,13 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 *            (String)
 	 * 
 	 * @return boolean
+	 * @throws InterruptedException
 	 * 
 	 */
-	private boolean doProcess(LegalDetail aLegalDetail, String tranType) {
+	private boolean doProcess(LegalDetail aLegalDetail, String tranType) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
-		String nextRoleCode = "";
 
 		aLegalDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLegalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1209,40 +1213,22 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
-			String nextTaskId = "";
 			aLegalDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
-			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-				nextTaskId = taskId + ";";
-			} else {
-				nextTaskId = StringUtils.trimToEmpty(aLegalDetail.getNextTaskId());
+			// Check whether notes is mandatory and specified by the user.
+			if (isNotesMandatory(taskId, aLegalDetail) && !notesEntered) {
+				MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 
-				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, aLegalDetail);
-				}
-
-				if (isNotesMandatory(taskId, aLegalDetail)) {
-					if (!notesEntered) {
-						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				}
+				return false;
 			}
-			if (!StringUtils.isBlank(nextTaskId)) {
-				String[] nextTasks = nextTaskId.split(";");
-				if (nextTasks != null && nextTasks.length > 0) {
-					for (int i = 0; i < nextTasks.length; i++) {
 
-						if (nextRoleCode.length() > 1) {
-							nextRoleCode = nextRoleCode.concat(",");
-						}
-						nextRoleCode = getTaskOwner(nextTasks[i]);
-					}
-				} else {
-					nextRoleCode = getTaskOwner(nextTaskId);
-				}
-			}
+			// Get the next queue details.
+			String nextTaskId = ProcessUtil.getNextTask(workFlow, taskId, userAction.getSelectedItem().getLabel(),
+					aLegalDetail.getNextTaskId(), aLegalDetail);
+			Map<String, String> nextRoles = ProcessUtil.getNextRoles(workFlow, nextTaskId);
+			String nextRoleCode = StringUtils.join(nextRoles.keySet(), ",");
+
+			// Set work-flow details.
 			aLegalDetail.setTaskId(taskId);
 			aLegalDetail.setNextTaskId(nextTaskId);
 			aLegalDetail.setRoleCode(getRole());
@@ -1399,21 +1385,33 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			}
 
 			auditHeader = getAuditHeader(aLegalDetail, tranType);
-			String operationRefs = getServiceOperations(taskId, aLegalDetail);
 
-			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader, null);
-			} else {
-				String[] list = operationRefs.split(";");
+			// Execute service tasks.
+			List<ServiceTask> serviceTasks = workFlow.getServiceTasks(taskId, aLegalDetail);
+			String finalOperation = null;
 
-				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aLegalDetail, PennantConstants.TRAN_WF);
-					processCompleted = doSaveProcess(auditHeader, list[i]);
-					if (!processCompleted) {
-						break;
-					}
+			for (ServiceTask task : serviceTasks) {
+				if (ProcessUtil.isPersistentTask(task)) {
+					finalOperation = task.getOperation();
+
+					break;
 				}
+
+				// No service tasks implemented.
+				auditHeader.setErrorDetails(
+						new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+				ErrorControl.showErrorControl(this.window_LegalDetailDialog, auditHeader);
+
+				return false;
 			}
+
+			// Save the data.
+			if (StringUtils.isNotEmpty(aLegalDetail.getNextTaskId())) {
+				// If the parallel flow not completed, don't consider the final operation.
+				finalOperation = null;
+			}
+
+			processCompleted = doSaveProcess(auditHeader, finalOperation);
 		} else {
 			auditHeader = getAuditHeader(aLegalDetail, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
@@ -1428,50 +1426,55 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * 
 	 * @param AuditHeader
 	 *            auditHeader
-	 * @param method
+	 * @param operation
 	 *            (String)
 	 * @return boolean
 	 * 
 	 */
-
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+	private boolean doSaveProcess(AuditHeader auditHeader, String operation) {
 		logger.debug(Literal.ENTERING);
 
-		setMethod(method);
+		setMethod(operation);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		LegalDetail aLegalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				if (StringUtils.isBlank(method)) {
+				switch (Operation.methodOf(operation)) {
+				case DEFAULT:
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = legalDetailService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
 						auditHeader = legalDetailService.saveOrUpdate(auditHeader);
 					}
-				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = legalDetailService.doApprove(auditHeader);
 
-						if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
+					break;
+				case APPROVE:
+					auditHeader = legalDetailService.doApprove(auditHeader);
 
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = legalDetailService.doReject(auditHeader);
-						if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_LegalDetailDialog, auditHeader);
-						return processCompleted;
+					if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteNotes = true;
 					}
+
+					break;
+				case REJECT:
+					auditHeader = legalDetailService.doReject(auditHeader);
+
+					if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
+					}
+
+					break;
+				default:
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_LegalDetailDialog, auditHeader);
+
+					return processCompleted;
 				}
+
 				auditHeader = ErrorControl.showErrorDetails(this.window_LegalDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE) {
