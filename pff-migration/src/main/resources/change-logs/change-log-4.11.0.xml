@@ -2850,4 +2850,7 @@ UNION ALL
 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','RULE_LTVLCR','LTV and LCR For AHF and GHF','decimal',18,'1','1','','static,calvalue','');
 	</sql>
 </changeSet>
+ <changeSet id="27" author="vijay">
+	<createSequence sequenceName="SEQ_EXTERANAL_INTERFACE" incrementBy="1"/>
+</changeSet>
 </databaseChangeLog>
