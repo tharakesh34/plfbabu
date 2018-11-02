@@ -2844,4 +2844,10 @@ UNION ALL
 		select deps_restore_dependencies('plf','customers_view');
 	</sql>
 </changeSet>
+	<changeSet id="26" author="siva">
+	<sql>
+	delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'RULE_LTVLCR';
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','RULE_LTVLCR','LTV and LCR For AHF and GHF','decimal',18,'1','1','','static,calvalue','');
+	</sql>
+</changeSet>
 </databaseChangeLog>
