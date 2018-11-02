@@ -221,7 +221,7 @@
 	</sql>
 </changeSet>
 
-<changeSet id="9" author="Vinay">
+<changeSet id="9.1" author="Vinay">
 	<sql>
 		delete from REPORTLIST where code='ReasonCategory';
 		Insert into REPORTLIST values ('ReasonCategory','ReasonCategory','listheader_Code.label,listheader_Description.label','code,description','String,String',null,'ReportList02','Reason Category','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'0');
@@ -265,7 +265,7 @@
 		</sql>
 	</changeSet>
 
-<changeSet id="11_Pre" author="Jayant">
+<changeSet id="11_Pre" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses');
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses_temp');
@@ -275,7 +275,7 @@
 	<modifyDataType tableName="FinTypeExpenses" columnName="AmortReq" newDataType="boolean"/>
 	<modifyDataType tableName="FinTypeExpenses_Temp" columnName="AmortReq" newDataType="boolean"/>
 </changeSet>
-<changeSet id="11_Post" author="Jayant">
+<changeSet id="11_Post" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','fintypeexpenses');
 		select deps_restore_dependencies('plf','fintypeexpenses_temp');
@@ -795,7 +795,7 @@ UNION ALL
 		<createSequence sequenceName="SeqFinTypeExpense" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 </changeSet>
 
-<changeSet id="16_Pre" author="Jayant">
+<changeSet id="16_Pre" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses');
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses_temp');
@@ -805,13 +805,13 @@ UNION ALL
 	<modifyDataType tableName="FinTypeExpenses" columnName="taxapplicable" newDataType="boolean"/>
 	<modifyDataType tableName="FinTypeExpenses_Temp" columnName="taxapplicable" newDataType="boolean"/>
 </changeSet>
-<changeSet id="16_Post" author="Jayant">
+<changeSet id="16_Post" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','fintypeexpenses');
 		select deps_restore_dependencies('plf','fintypeexpenses_temp');
 	</sql>
 </changeSet>
-<changeSet id="17_Pre" author="Jayant">
+<changeSet id="17_Pre" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses');
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses_temp');
@@ -821,7 +821,7 @@ UNION ALL
 	<modifyDataType tableName="FinTypeExpenses" columnName="Active" newDataType="boolean"/>
 	<modifyDataType tableName="FinTypeExpenses_Temp" columnName="Active" newDataType="boolean"/>
 </changeSet>
-<changeSet id="17_Post" author="Jayant">
+<changeSet id="17_Post" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','fintypeexpenses');
 		select deps_restore_dependencies('plf','fintypeexpenses_temp');
@@ -2398,7 +2398,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="25_Pre" author="Jayant">
+	<changeSet id="25_Pre" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','customers_view');
 	</sql>
@@ -2839,7 +2839,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="25_Post" author="Jayant">
+	<changeSet id="25_Post" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','customers_view');
 	</sql>
