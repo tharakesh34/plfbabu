@@ -3170,7 +3170,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!aFinanceMain.isNewRecord()) {
 			this.dmaCode.setValue(StringUtils.trimToEmpty(aFinanceMain.getDmaName()),
 					StringUtils.trimToEmpty(aFinanceMain.getDmaCodeDesc()));
-			if (aFinanceMain.getDsaCode() != null) {
+			if (aFinanceMain.getDmaCode() != null) {
 				this.dmaCode.setAttribute("DMAdealerID", aFinanceMain.getDmaCode());
 			} else {
 				this.dmaCode.setAttribute("DMAdealerID", null);
