@@ -75,7 +75,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15879,10 +15878,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		detail.getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES");
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge", maturityAge);
-		if (BigDecimal.ZERO.compareTo(this.finAssetValue.getActualValue()) == 0) {
-			detail.getCustomerEligibilityCheck().setCurrentAssetValue(this.finAmount.getActualValue());
+		if (!this.row_FinAssetValue.isVisible()) {
+			detail.getCustomerEligibilityCheck().setCurrentAssetValue(PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), finFormatter));
 		} else {
-			detail.getCustomerEligibilityCheck().setCurrentAssetValue(this.finAssetValue.getActualValue());
+			detail.getCustomerEligibilityCheck().setCurrentAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), finFormatter));
 		}
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Margin", customer.isMarginDeviation());
 		detail.getCustomerEligibilityCheck().addExtendedField("CUSTOMER_MARGIN_DEVIATION",

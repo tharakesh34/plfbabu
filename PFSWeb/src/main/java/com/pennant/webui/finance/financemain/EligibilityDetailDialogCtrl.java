@@ -458,7 +458,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		
 		for (FinanceEligibilityDetail financeEligibilityDetail : elgRuleList) {
 			
-			if(StringUtils.contains("MAXELIGI,MXELGASL,MXEADFL,MXELMGHF,LAPMXEL,ADFLREC,ASLRECOM,HFRECOM,LAPRECOM,LIVESTOC",financeEligibilityDetail.getLovDescElgRuleCode())){
+			if(StringUtils.contains("MAXELIGI,MXELGASL,MXEADFL,MXELMGHF,LAPMXEL,ADFLREC,ASLRECOM,HFRECOM,LAPRECOM,LIVESTOC,LTVLCR",financeEligibilityDetail.getLovDescElgRuleCode())){
 				elgRuleList2.add(financeEligibilityDetail);
 			}else{
 				elgRuleList1.add(financeEligibilityDetail);
