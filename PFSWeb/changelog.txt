@@ -1,8 +1,16 @@
-pff 4.11.3.1 2018-10-30
+pff 4.11.3.3 2018-11-01
+----------------
+-story #946 Re-factoring: Extract the logic of getting next task, queue, logic from LOS/LMS to framework.
+-story #945 Parallel work-flow support in Legal Details.
+-story #948 Loan Branch State, finBranchProvinceCode, to be made available as parameter for setting the conditions in the workflow
+-story #953 Support “Revert” user action in Loan Origination that will move the record from where the record received in forward direction (Based on Task 
+
+pff 4.11.3.2 2018-10-30
 ----------------
 -story #852 Merge Update Query Module API from Veritus.
 -PPM #18261 Presentment Batch Creation in search field need Space between "BankCode" and Header name also Bank Code.
 -PPM # 18470 For return chequesdedup getting wrong header name in loan process editor
+-PPM # 18473 FROM STATE details in GST Invoice report is incorrect
 
 pff 4.11.3.1 2018-10-26
 ----------------
