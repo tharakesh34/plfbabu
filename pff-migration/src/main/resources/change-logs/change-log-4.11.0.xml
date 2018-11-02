@@ -791,7 +791,7 @@ UNION ALL
 	</sql>
 </changeSet>
 
-<changeSet id="15" author="Vinay">
+<changeSet id="15" author="Vinay" dbms="oracle,postgresql">
 		<createSequence sequenceName="SeqFinTypeExpense" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 </changeSet>
 
