@@ -63,9 +63,9 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -3341,11 +3341,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, CM.CustCIF CustCIF, CM.CustShrtName CustShrtName ");
-		selectSql.append(" From FinanceMain_Temp FM LEFT JOIN Customers CM ON CM.CustID = FM.CUSTID");
-		selectSql.append(" Where InitiateUser=:InitiateUser");
-
-
+		
+		StringBuilder selectSql=new StringBuilder("SELECT FinReference, FM.CustID ,CM.CustCIF CustCIF,");
+		selectSql.append(" CM.CustShrtName CustShrtName,CD.CustDocTitle PANNumber,CP.PhoneNumber");
+		selectSql.append(" From FinanceMain_Temp FM left JOIN Customers CM ON CM.CustID = FM.CUSTID");
+		selectSql.append(" left join customerdocuments CD ON CD.CustID = CM.CUSTID AND CUSTDOCCATEGORY='PPAN'");
+		selectSql.append(
+				"left join CustomerPhonenumbers CP ON CP.PhoneCustID = CM.CUSTID AND PhoneTypeCode='MOBILE' Where InitiateUser=:InitiateUser");
+ 
 		source.addValue("InitiateUser", userID);
 		RowMapper<LoanPendingData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LoanPendingData.class);
 
