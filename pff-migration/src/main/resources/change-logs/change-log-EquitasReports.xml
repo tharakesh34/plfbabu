@@ -1275,6 +1275,8 @@ where moduleid = (select moduleid from extendedfieldheader where modulename = 'C
 	and fieldname = 'UNITPRICE' and extendedtype = 0;
 </sql>
 </changeSet>
-	
+	<changeSet author="vijay" id="58">
+    <sqlFile path="fincreditrevcategory.sql" endDelimiter=";" encoding="utf8" relativeToChangelogFile="true"/>
+	</changeSet>
  
 </databaseChangeLog>
