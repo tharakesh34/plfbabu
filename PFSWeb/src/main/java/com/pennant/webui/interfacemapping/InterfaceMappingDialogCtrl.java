@@ -351,8 +351,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.mappingColumn.setValue("");
 			this.mappingTable.setValue("");
 			this.active.setChecked(true);
-			this.recordStatus.setValue(ainterfaceMapping.getRecordStatus());
 		}
+		this.recordStatus.setValue(ainterfaceMapping.getRecordStatus());
 		logger.debug("Leaving");
 	}
 
@@ -644,8 +644,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.btnCancel.setVisible(false);
 			this.active.setDisabled(true);
 		} else {
-			this.interfaceName.setReadonly(true);
-			this.mappingColumn.setDisabled(true);
+			this.interfaceName.setReadonly(isReadOnly("InterfaceMappingDialog_InterfaceName"));
+			this.mappingColumn.setDisabled(isReadOnly("InterfaceMappingDialog_MappingColumn"));
 			this.mappingValue.setReadonly(true);
 			this.active.setDisabled(isReadOnly("InterfaceMappingDialog_Active"));
 			this.btnCancel.setVisible(true);
