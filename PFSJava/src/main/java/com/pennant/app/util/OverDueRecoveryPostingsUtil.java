@@ -50,15 +50,18 @@ import org.apache.log4j.Logger;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -77,7 +80,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
 	private AccountInterfaceService		accountInterfaceService;
 	private PostingsPreparationUtil		postingsPreparationUtil;
-
+	private FeeTypeDAO					feeTypeDAO;
 	private AEEvent						aeEvent				= null;
 
 	/**
@@ -100,7 +103,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	public AEEvent recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, FinRepayQueue repayQueue,
-			Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay, List<ManualAdviseMovements> penalityMovements) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String finReference = financeMain.getFinReference();
@@ -153,6 +156,19 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		dataMap.put("LPP_UGST_P", repayQueue.getPaidPenaltyUGST());
 		dataMap.put("LPP_IGST_P", repayQueue.getPaidPenaltyIGST());
 		
+		ManualAdviseMovements movement = new ManualAdviseMovements();
+		movement.setPaidCGST(repayQueue.getPaidPenaltyCGST());
+		movement.setPaidSGST(repayQueue.getPaidPenaltySGST());
+		movement.setPaidUGST(repayQueue.getPaidPenaltyUGST());
+		movement.setPaidIGST(repayQueue.getPaidPenaltyIGST());
+		FeeType feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+		movement.setFeeTypeCode(feeType.getFeeTypeCode());
+		movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
+		movement.setTaxApplicable(feeType.isTaxApplicable());
+		movement.setTaxComponent(feeType.getTaxComponent());
+		movement.setMovementAmount(repayQueue.getPenaltyPayNow());
+		penalityMovements.add(movement);
+		
 		if (rpyQueueHeader.getProfit().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getPrincipal().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getTds().compareTo(BigDecimal.ZERO) == 0
@@ -202,7 +218,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
 			detail.setTotWaived(repayQueue.getWaivedAmount());
 			getFinODDetailsDAO().updateTotals(detail);
-
 		}
 
 		logger.debug("Leaving");
@@ -902,4 +917,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
 }

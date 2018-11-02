@@ -1296,6 +1296,13 @@ public class ReceiptCalculator implements Serializable {
 												movement.setWaivedAmount(BigDecimal.ZERO);
 												movement.setFeeTypeCode(advise.getFeeTypeCode());
 												
+												//if it is bounce fee
+												if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
+													FeeType fee = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+													movement.setFeeTypeCode(fee.getFeeTypeCode());
+													movement.setFeeTypeDesc(fee.getFeeTypeCode());
+												}
+												
 												// Total Paid/Adjusted GST amount
 												BigDecimal totalTaxAmount = BigDecimal.ZERO;
 												BigDecimal actTaxAmount = BigDecimal.ZERO;
@@ -2034,6 +2041,13 @@ public class ReceiptCalculator implements Serializable {
 										movement.setMovementAmount(balAdvise);
 										movement.setWaivedAmount(BigDecimal.ZERO);
 										movement.setFeeTypeCode(advise.getFeeTypeCode());
+										
+										//if it is bounce fee
+										if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
+											FeeType fee = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+											movement.setFeeTypeCode(fee.getFeeTypeCode());
+											movement.setFeeTypeDesc(fee.getFeeTypeCode());
+										}
 										
 										// Total Paid/Adjusted GST amount
 										BigDecimal totalTaxAmount = BigDecimal.ZERO;

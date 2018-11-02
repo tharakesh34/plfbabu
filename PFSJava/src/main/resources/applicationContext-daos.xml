@@ -5332,6 +5332,8 @@
 		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -5376,6 +5378,7 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<bean id="finODDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl" parent="basicDao" />
@@ -8334,6 +8337,8 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
 		<property name="paymentTaxDetailDAO" ref="paymentTaxDetailDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean name="paymentInstructionService" class="com.pennant.backend.service.payment.impl.PaymentInstructionServiceImpl">

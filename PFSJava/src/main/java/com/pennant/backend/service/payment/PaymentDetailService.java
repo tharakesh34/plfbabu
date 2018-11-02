@@ -72,7 +72,7 @@ public interface PaymentDetailService {
 
 	List<PaymentDetail> getPaymentDetailList(long paymentId, String type);
 
-	List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName);
+	List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName, long linkedTranId, String finReference);
 
 	void paymentReversal(PaymentInstruction paymentInstruction);
 

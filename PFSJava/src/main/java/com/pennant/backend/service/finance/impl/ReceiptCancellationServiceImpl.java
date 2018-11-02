@@ -94,6 +94,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
@@ -795,7 +796,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
 		//getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
-		getPostingsPreparationUtil().postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
+		long postingSeqId = 0;
+		FinanceDetail financeDetailTemp = null;
+		List<ReturnDataSet> returnDataSets =  getPostingsPreparationUtil().postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
+		if (CollectionUtils.isNotEmpty(returnDataSets)) {
+			postingSeqId = returnDataSets.get(0).getLinkedTranId();
+		}
 
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
@@ -926,7 +932,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 				}
 
-				// Manual Advise Movements Reversal
+				// Manual Advise Movements Reversal for receivable advises/bounce
 				List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(
 						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "_AView");
 				List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
@@ -947,6 +953,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						advise.setPaidSGST(movement.getPaidSGST().negate());
 						advise.setPaidIGST(movement.getPaidIGST().negate());
 						advise.setPaidUGST(movement.getPaidUGST().negate());
+						
+						ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
+							FeeType fee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+							movement.setFeeTypeCode(fee.getFeeTypeCode());
+							movement.setFeeTypeDesc(fee.getFeeTypeCode());
+						}
 						advMovementsTemp.add(movement);
 
 						getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
@@ -956,11 +969,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					getManualAdviseDAO().updateMovementStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus(), "");
 
-					// GST Invoice Preparation
-					long postingSeqId = 0; //TODO should be pass linkedTranId
-					FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
-					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetail, null, advMovementsTemp,
-							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
+					if (CollectionUtils.isNotEmpty(advMovementsTemp)) {
+						if (financeDetailTemp == null) {
+							financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+						}
+						
+						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null, advMovementsTemp,
+								PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
+					}
 				}
 
 			}
@@ -1141,6 +1157,37 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						}
 					}
 				}
+				
+				// prepare GST Invoice Report for Penality reversal
+				List<ManualAdviseMovements> penalityList = new ArrayList<ManualAdviseMovements>();
+				for (RepayScheduleDetail rpySchd : rpySchdList) {
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					gstAmount = rpySchd.getPaidPenaltyCGST().add(rpySchd.getPaidPenaltySGST()).add(rpySchd.getPaidPenaltyUGST()).add(rpySchd.getPaidPenaltyIGST());
+					if (BigDecimal.ZERO.compareTo(gstAmount) >= 0) {
+						continue;
+					}
+					ManualAdviseMovements penalities = new ManualAdviseMovements();
+					penalities.setPaidCGST(rpySchd.getPaidPenaltyCGST());
+					penalities.setPaidSGST(rpySchd.getPaidPenaltySGST());
+					penalities.setPaidUGST(rpySchd.getPaidPenaltyUGST());
+					penalities.setPaidIGST(rpySchd.getPaidPenaltyIGST());
+					FeeType feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+					penalities.setFeeTypeCode(feeType.getFeeTypeCode());
+					penalities.setFeeTypeDesc(feeType.getFeeTypeDesc());
+					penalities.setTaxApplicable(feeType.isTaxApplicable());
+					penalities.setTaxComponent(feeType.getTaxComponent());
+					penalities.setMovementAmount(rpySchd.getPenaltyPayNow());
+					penalityList.add(penalities);
+				}
+				
+				if (CollectionUtils.isNotEmpty(penalityList)) {
+					if (financeDetailTemp == null) {
+						financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+					}
+					
+					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
+							penalityList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
+				}
 
 				// Schedule Details Updation
 				if (!updateSchdList.isEmpty()) {
@@ -1262,9 +1309,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						return aeEvent.getErrorMessage();
 					}
 
-					// GST Invoice Preparation
+					// GST Invoice Preparation for Receivable Advise/ Bounce
 					if (aeEvent != null) {
-						long postingSeqId = aeEvent.getLinkedTranId();
+						long linkedTranId = aeEvent.getLinkedTranId();
 						ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
 						ManualAdvise advise = receiptHeader.getManualAdvise();
 						adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
@@ -1274,12 +1321,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						adviseMovements.setPaidSGST(advise.getPaidSGST());
 						adviseMovements.setPaidIGST(advise.getPaidIGST());
 						adviseMovements.setPaidUGST(advise.getPaidUGST());
-						List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
-						advMovementsTemp.add(adviseMovements);
-						FinanceDetail financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "",
-								false);
-						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
-								advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference,
+						
+						if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
+							FeeType fee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+							adviseMovements.setFeeTypeCode(fee.getFeeTypeCode());
+							adviseMovements.setFeeTypeDesc(fee.getFeeTypeCode());
+						}
+
+						List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
+						advMovements.add(adviseMovements);
+						if (financeDetailTemp == null) {
+							financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+						}
+						
+						this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null,
+								advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference,
 								false);
 					}
 				}

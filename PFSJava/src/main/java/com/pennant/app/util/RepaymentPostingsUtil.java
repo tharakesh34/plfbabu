@@ -56,6 +56,7 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -78,21 +79,28 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -119,6 +127,8 @@ public class RepaymentPostingsUtil implements Serializable {
 	private LatePayBucketService		latePayBucketService;
 	private AccrualService 				accrualService;
 	private ManualAdviseDAO             manualAdviseDAO;
+	private FinanceTypeDAO				financeTypeDAO;
+	private GSTInvoiceTxnService		gstInvoiceTxnService;
 	
 	public RepaymentPostingsUtil() {
 		super();
@@ -264,22 +274,39 @@ public class RepaymentPostingsUtil implements Serializable {
 			Date dateValueDate, FinanceMain financeMain, FinRepayQueueHeader repayQueueHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
+		
 		int count = 0;
+		List<ManualAdviseMovements> penalityMovements = new ArrayList<ManualAdviseMovements>();
+
 		for (int i = 0; i < finRepayQueueList.size(); i++) {
 			
 			FinRepayQueue repayQueue = finRepayQueueList.get(i);
 			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0) {
 
 				aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, repayQueue,  
-						dateValueDate, aeEvent, repayQueueHeader, count == 0);
+						dateValueDate, aeEvent, repayQueueHeader, count == 0, penalityMovements);
 
-				count = count +1;
+				count = count + 1;
 				if (!aeEvent.isPostingSucess()) {
 					return aeEvent;
 				} 
 			}
 		}
+		
+		// GST Invoice Preparation for Penality (debit notes)
+		if (CollectionUtils.isNotEmpty(penalityMovements)) {
+			FinanceDetail financeDetail = new FinanceDetail();
+			FinScheduleData finScheduleData = new FinScheduleData();
+			finScheduleData.setFinanceMain(financeMain);
+			FinanceType financeType = this.financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "");
+			finScheduleData.setFinanceType(financeType);
+			financeDetail.setFinScheduleData(finScheduleData);
+			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null, penalityMovements,
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(), false);
+		}
+		
 		logger.debug("Leaving");
+		
 		return aeEvent;
 	}
 
@@ -1704,6 +1731,22 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public GSTInvoiceTxnService getGstInvoiceTxnService() {
+		return gstInvoiceTxnService;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
 }

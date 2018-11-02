@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -62,12 +63,15 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -88,6 +92,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private PaymentTaxDetailDAO paymentTaxDetailDAO;
+	//GST Invoice Report changes
+	private GSTInvoiceTxnService	gstInvoiceTxnService;
+	private FinanceDetailService	financeDetailService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -130,6 +137,22 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	}
 	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
 		this.paymentInstructionDAO = paymentInstructionDAO;
+	}
+	
+	public GSTInvoiceTxnService getGstInvoiceTxnService() {
+		return gstInvoiceTxnService;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 	/**
@@ -414,13 +437,16 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	}
 
 	@Override
-	public List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName) {
+	public List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName, long linkedTranId, String finReference) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
+		
+		List<ManualAdviseMovements> adviseMovements = new ArrayList<ManualAdviseMovements>();
+		
 		for (int i = 0; i < auditDetails.size(); i++) {
 			PaymentDetail paymentDetail = (PaymentDetail) auditDetails.get(i).getModelData();
 			saveRecord = false;
@@ -479,7 +505,10 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 				// Payments processing
 				if ("doApprove".equals(methodName)) {
-					doApprove(paymentDetail);
+					ManualAdviseMovements movement = doApprove(paymentDetail);
+					if (movement != null) {
+						adviseMovements.add(movement);
+					}
 				} else {
 					saveOrUpdate(paymentDetail);
 				}
@@ -518,6 +547,12 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				}
 			}
 			auditDetails.get(i).setModelData(paymentDetail);
+		}
+		
+		//GST Invoice preparation for Receivable Advises
+		if (CollectionUtils.isNotEmpty(adviseMovements)) {
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false); 
+			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, adviseMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 		}
 		logger.debug("Leaving");
 		return auditDetails;
@@ -645,9 +680,10 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug("Leaving");
 	}
 
-	private void doApprove(PaymentDetail paymentDetail) {
+	private ManualAdviseMovements doApprove(PaymentDetail paymentDetail) {
 		logger.debug("Entering");
 
+		ManualAdviseMovements manualMovement = null;
 		// Excess Amounts
 		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
@@ -665,7 +701,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 			movement.setAmount(paymentDetail.getAmount());
 			getFinExcessAmountDAO().saveExcessMovement(movement);
-
+			
 		} else {
 			
 			ManualAdvise advise = new ManualAdvise();
@@ -692,24 +728,33 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					paymentDetail.getReferenceId());
 
 			// Payable Advise Movement Creation
-			ManualAdviseMovements movement = new ManualAdviseMovements();
-			movement.setAdviseID(paymentDetail.getReferenceId());
-			movement.setReceiptID(paymentDetail.getPaymentDetailId());
-			movement.setReceiptSeqID(0);
-			movement.setMovementDate(DateUtility.getAppDate());
-			movement.setMovementAmount(amount);
-			movement.setPaidAmount(amount);
+			manualMovement = new ManualAdviseMovements();
+			manualMovement.setAdviseID(paymentDetail.getReferenceId());
+			manualMovement.setReceiptID(paymentDetail.getPaymentDetailId());
+			manualMovement.setReceiptSeqID(0);
+			manualMovement.setMovementDate(DateUtility.getAppDate());
+			manualMovement.setMovementAmount(amount);
+			manualMovement.setPaidAmount(amount);
 			
 			// GST Details
 			if(paymentDetail.getPaymentTaxDetail() != null){
-				movement.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
-				movement.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
-				movement.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
-				movement.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
+				manualMovement.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
+				manualMovement.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
+				manualMovement.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
+				manualMovement.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
 			}
-			getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+			getManualAdviseDAO().saveMovement(manualMovement, TableType.MAIN_TAB.getSuffix());
+			
+			ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(paymentDetail.getReferenceId(), "_AView");
+			
+			manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+			manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+			manualMovement.setTaxApplicable(manualAdvise.isTaxApplicable());
+			manualMovement.setTaxComponent(manualAdvise.getTaxComponent());
+			
+			logger.debug("Leaving");
 		}
-		logger.debug("Leaving");
+		return manualMovement;
 	}
 
 

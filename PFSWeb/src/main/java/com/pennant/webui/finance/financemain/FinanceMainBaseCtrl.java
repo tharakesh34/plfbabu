@@ -12412,7 +12412,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
 		// On Origination processing based on Service instructions is not required
 		boolean feesExecuted = false;
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.isBlank(moduleDefiner)) {
 
 			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 
