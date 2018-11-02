@@ -1554,10 +1554,10 @@ public class ScheduleCalculator {
 			if (DateUtility.compare(schdDate, evtFromDate) == 0) {
 				// To make sure the flags are TRUE when repayment happens
 				curSchd.setPftOnSchDate(true);
-				
-				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
+				curSchd.setRepayOnSchDate(true);
+				/*if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
 					curSchd.setRepayOnSchDate(true);
-				}
+				}*/
 				
 				isRepaymentFoundInSD = true;
 				break;
@@ -1570,10 +1570,10 @@ public class ScheduleCalculator {
 			finScheduleData = addSchdRcd(finScheduleData, evtFromDate, prvIndex);
 			curSchd = finSchdDetails.get(prvIndex + 1);
 			curSchd.setPftOnSchDate(true);
-
-			if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
+			curSchd.setRepayOnSchDate(true);
+			/*if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
 				curSchd.setRepayOnSchDate(true);
-			}
+			}*/
 
 			curSchd.setRepayAmount(repayAmount);
 		}
@@ -4190,6 +4190,15 @@ public class ScheduleCalculator {
 			// Then leave actual scheduled else calculate
 			if (!finMain.isProtectSchdPft()) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
+				
+				// If Grace exists and Schedule date is before Grace end period date and having PFTCAP Schedule Method
+				if(DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) < 0 &&
+						StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)){
+					
+					if(schdInterest.compareTo(finMain.getGrcMaxAmount()) > 0){
+						schdInterest = finMain.getGrcMaxAmount();
+					}
+				}
 
 				//FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for testing 
 				/*if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) {
