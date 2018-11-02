@@ -3802,7 +3802,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		FinanceScheduleDetail prvSchd = new FinanceScheduleDetail();
 				
-		if (advEMITerms>0) {
+		if (advEMITerms > 0 && finMain.isAdjustClosingBal()) {
 			derivedMDT = schdDetails.get(schdDetails.size() - advEMITerms - 1).getSchDate();
 			finMain.setNewMaturityIndex(schdDetails.size()- advEMITerms - 1);
 		}else {
@@ -3962,7 +3962,13 @@ public class ScheduleCalculator {
 						curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
 
 					} else {
-						curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
+						if(StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && 
+								!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE)
+								&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)){
+							curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+						}else{
+							curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
+						}
 						curSchd.setRepayAmount(curSchd.getProfitSchd());
 						curSchd.setPrincipalSchd(BigDecimal.ZERO);
 					}
@@ -4110,8 +4116,7 @@ public class ScheduleCalculator {
 		if (CalculationConstants.SCHMTHD_NOPAY.equals(curSchd.getSchdMethod())) {
 			if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 					&& (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
-							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE)
-							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHD_FIRSTEMI))) {
+							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE))) {
 				schdInterest = curSchd.getProfitCalc();
 
 				//FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for testing 
@@ -4226,8 +4231,16 @@ public class ScheduleCalculator {
 								finMain.getRoundingTarget());
 					}
 				}*/
-
-				curSchd.setProfitSchd(schdInterest);
+				
+				if(finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)){
+					if(curSchd.getInstNumber() == 1){
+						curSchd.setProfitSchd(schdInterest);
+					}else{
+						curSchd.setProfitSchd(BigDecimal.ZERO);
+					}
+				}else{
+					curSchd.setProfitSchd(schdInterest);
+				}
 			} else {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
 
@@ -5547,7 +5560,7 @@ public class ScheduleCalculator {
 		int sdSize = finSchdDetails.size();
 		
 		if(!isAdjustClosingBal){
-			sdSize = finSchdDetails.size()-finMain.getAdvEMITerms();
+			sdSize = finSchdDetails.size() - finMain.getAdvEMITerms();
 		}
 		
 		int riSize = repayInstructions.size();
