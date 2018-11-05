@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -265,7 +266,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> filtersList;
 
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
-
+	private static List<ValueLabel> queryDetailExtRolesList= new ArrayList<>();
+	
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -4276,5 +4278,21 @@ public class PennantStaticListUtil {
 			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_OR), Labels.getLabel("label_Filter.OP_OR")));
 		}
 		return filtersList;
+	}
+
+	public static List<ValueLabel> getQueryDetailExtRolesList(){
+		return queryDetailExtRolesList;
+	}
+	/**
+	 * Adds the custom extended field master.
+	 * 
+	 * @param code
+	 *            The master code.
+	 */
+	public void addQueryDetailExtRoles(List<ValueLabel> list) {
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
+		queryDetailExtRolesList.addAll(list);
 	}
 }
