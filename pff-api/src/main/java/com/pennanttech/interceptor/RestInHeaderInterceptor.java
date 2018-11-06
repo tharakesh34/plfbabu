@@ -239,9 +239,17 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			} else if (APIHeader.API_SERVICENAME.equalsIgnoreCase(key)) {
 				isHeaderContainSrvcName = true;
 				String serviceName = headerMap.get(key).toString().replace("[", "").replace("]", "");
-				if (!StringUtils.equalsIgnoreCase(apiLogDetail.getServiceName(), serviceName)) {
+				//In Case Of Get or Delete calls ServiceName in Header should be equal to one of the Last two Values in the URL.
+				if (apiLogDetail.getServiceName().contains("/")) {
+					String[] serviceNameArray = apiLogDetail.getServiceName().split("/");
+					if (!StringUtils.equalsIgnoreCase(serviceNameArray[0], serviceName)
+							&& !StringUtils.equalsIgnoreCase(serviceNameArray[1], serviceName)) {
+						getErrorDetails("92007", new String[] { APIHeader.API_SERVICENAME });
+					}
+				} else if (!StringUtils.equalsIgnoreCase(apiLogDetail.getServiceName(), serviceName)) {
 					getErrorDetails("92007", new String[] { APIHeader.API_SERVICENAME });
 				}
+
 			} else if (APIHeader.API_REQ_TIME.equalsIgnoreCase(key)) {
 				isHeaderContainReqTime = true;
 				String requestTime = headerMap.get(key).toString().replace("[", "").replace("]", "");

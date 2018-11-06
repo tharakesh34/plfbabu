@@ -128,8 +128,9 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 		String[] values = endPoint.split("/");
 		if (StringUtils.equalsIgnoreCase(method, HttpMethod.DELETE)
 				|| StringUtils.equalsIgnoreCase(method, HttpMethod.GET)) {
+			serviceName = values[values.length-1];
 			if (values.length >= 2) {
-				serviceName = values[values.length - 2];
+				serviceName = serviceName + "/" + values[values.length - 2];
 			}
 		} else {
 			serviceName = values[values.length - 1];
