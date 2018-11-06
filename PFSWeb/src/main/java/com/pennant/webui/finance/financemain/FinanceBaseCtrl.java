@@ -4739,8 +4739,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 										Labels.getLabel("label_FinanceMainDialog_GraceCpzFrq.value") }));
 					}
 				} else {
-					aFinanceMain.setNextGrcCpzDate(this.nextGrcCpzDate.getValue());
-				}
+					if (this.nextGrcCpzDate.getValue()!=null) {
+						aFinanceMain.setNextGrcCpzDate(this.nextGrcCpzDate.getValue());
+					} else {
+						aFinanceMain.setNextGrcCpzDate(this.nextGrcCpzDate_two.getValue());
+					}				}
 
 			} catch (WrongValueException we) {
 				wve.add(we);
