@@ -19,16 +19,16 @@ import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.webui.applicationmaster.MMAgreement.model.MMAgreementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/MMAgreements/MMAgreementsList.zul file.
  */
 public class MMAgreementsListCtrl extends GFCBaseListCtrl<MMAgreement> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(MMAgreement.class);
+	private static final Logger logger = Logger.getLogger(MMAgreementsListCtrl.class);
 
 	protected Window window_MMAgreementsList;
 	protected Borderlayout borderLayout_MMAgreementsList;

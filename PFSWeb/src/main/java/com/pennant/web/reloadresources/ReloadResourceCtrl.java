@@ -14,10 +14,9 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.interfacebajaj.FileDownloadListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.ApplicationStartup;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -28,7 +27,7 @@ import com.pennanttech.pennapps.web.ApplicationStartup;
 
 public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FileDownloadListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReloadResourceCtrl.class);
 
 	protected Window window_ReloadConfig;
 	protected Borderlayout borderLayout_ReloadConfig;
