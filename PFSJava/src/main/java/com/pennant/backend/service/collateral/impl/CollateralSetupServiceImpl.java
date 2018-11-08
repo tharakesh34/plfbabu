@@ -2389,8 +2389,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 				return auditDetail;
 			}
+			
 			if (collateralSetup.getExtendedDetails() != null && !collateralSetup.getExtendedDetails().isEmpty()) {
+				
 				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
+					List<ExtendedFieldData>extList= defultExtendedValues(details.getExtendedFieldDataList(), exdFldConfig);
+					details.setExtendedFieldDataList(extList);
 					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
@@ -2483,6 +2487,43 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	
+
+	
+
+	private List<ExtendedFieldData> defultExtendedValues(List<ExtendedFieldData> list, List<ExtendedFieldDetail> exdFldConfig) {
+		for (ExtendedFieldDetail exdFldConfigDeatil : exdFldConfig) {
+			
+			boolean isExists = false;
+			for (ExtendedFieldData deail : list) {
+					if (StringUtils.equals(exdFldConfigDeatil.getFieldName(), deail.getFieldName())) {
+						isExists = true;
+					}
+					if (isExists) {
+						break;
+					}
+				}
+			if (!isExists) {
+				String feildType=exdFldConfigDeatil.getFieldType();
+				if(StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_ACTRATE)||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_AMOUNT) ||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_INT)||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_LONG)||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN) ||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_DECIMAL)||
+					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_INT)) {
+				ExtendedFieldData extendedFieldData = new ExtendedFieldData();
+				extendedFieldData.setFieldName(exdFldConfigDeatil.getFieldName());
+				extendedFieldData.setFieldValue(0);
+				list.add(extendedFieldData);
+				}
+			}
+		}
+		
+		return list;
 	}
 
 	/**
