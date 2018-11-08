@@ -2824,6 +2824,9 @@ public class FinanceDataValidation {
 
 		//Validate Advised Rates
 		errorDetails = repayAdvRateValidation(finScheduleData);
+		
+		//Validate Repay Dates
+		errorDetails = repayDatesValidation(finScheduleData);
 
 		//Validate BPI
 		if (financeType.isAlwBPI()) {
@@ -4278,6 +4281,46 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
 		}
 
+		return errorDetails;
+
+	}
+
+	
+	/*
+	 * _______________________________________________________________________________________________________________
+	 * RepayDates Validation
+	 * _______________________________________________________________________________________________________________
+	 */	
+		
+	private List<ErrorDetail> repayDatesValidation(FinScheduleData finScheduleData) {
+
+		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		// it should match with frequency
+		if ((StringUtils.isNotBlank(finMain.getRepayFrq())) && (finMain.getNextRepayDate() != null)) {
+			if (!FrequencyUtil.isFrqDate(finMain.getRepayFrq(), finMain.getNextRepayDate())) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90183", null)));
+			}
+		}
+		//it should match with frequency
+		if ((StringUtils.isNotBlank(finMain.getRepayRvwFrq())) && (finMain.getNextRepayRvwDate() != null)) {
+			if (!FrequencyUtil.isFrqDate(finMain.getRepayRvwFrq(), finMain.getNextRepayRvwDate())) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90181", null)));
+			}
+		}
+
+		//it should match with frequency
+		if ((StringUtils.isNotBlank(finMain.getRepayCpzFrq())) && (finMain.getNextRepayCpzDate() != null)) {
+			if (!FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), finMain.getNextRepayCpzDate())) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90182", null)));
+			}
+		}
+		if ((StringUtils.isNotBlank(finMain.getRepayPftFrq())) && (finMain.getNextRepayPftDate() != null)) {
+			if (!FrequencyUtil.isFrqDate(finMain.getRepayPftFrq(), finMain.getNextRepayPftDate())) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90180", null)));
+			}
+		}
 		return errorDetails;
 
 	}
