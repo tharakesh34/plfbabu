@@ -4,25 +4,23 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class InterfaceLogDetail implements Serializable {
+	private static final long serialVersionUID = 1221821037156917579L;
 
-	private static final long	serialVersionUID	= 1221821037156917579L;
-
-	private long				seqId = Long.MIN_VALUE;
-	private String				reference;
-	private String				serviceName;
-	private String				endPoint;
-	private String				request;
-	private String				response;
-	private Timestamp			reqSentOn;
-	private Timestamp			respReceivedOn;
-	private String				status;
-	private String				errorCode;
-	private String				errorDesc;
+	private long seqId = Long.MIN_VALUE;
+	private String reference;
+	private String serviceName;
+	private String endPoint;
+	private String request;
+	private String response;
+	private Timestamp reqSentOn;
+	private Timestamp respReceivedOn;
+	private String status;
+	private String errorCode;
+	private String errorDesc;
 
 	public InterfaceLogDetail() {
 		super();
 	}
-
 
 	public long getSeqId() {
 		return seqId;

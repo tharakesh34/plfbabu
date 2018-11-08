@@ -11,13 +11,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennanttech.bajaj.process.DisbursemenIMPSResponseProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.services.DisbursementResponseService;
+import com.pennanttech.pff.disbursement.DisbursementResponse;
 
 public class DisbursementIMPSResponseService extends BajajService {
 	private static final Logger logger = Logger.getLogger(DisbursementIMPSResponseService.class);
 
 	@Autowired
-	private DisbursementResponseService disbursementResponse;
+	private DisbursementResponse disbursementResponse;
 
 	public DisbursementIMPSResponseService() {
 		super();

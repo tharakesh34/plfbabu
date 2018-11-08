@@ -22,10 +22,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.model.Branch;
-import com.pennanttech.bajaj.model.Province;
-import com.pennanttech.bajaj.model.TaxDetail;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;

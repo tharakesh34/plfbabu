@@ -7,19 +7,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennanttech.pff.core.services.DisbursementRequestService;
+import com.pennanttech.pff.external.DisbursementRequest;
 
 public class TestDisbursement {
 
-	private DisbursementRequestService	disbursementRequestService;
+	private DisbursementRequest	disbursementRequest;
 
 	@BeforeTest
 	public void start() {
 		ApplicationContext context = null;
 		try {
 			context  = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			disbursementRequestService = context.getBean(DisbursementRequestService.class);
+			disbursementRequest = context.getBean(DisbursementRequest.class);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -105,7 +106,7 @@ public class TestDisbursement {
 			list.add(fa);
 			
 			
-			disbursementRequestService.sendReqest("PBD", list, new Long(1000));
+			disbursementRequest.sendReqest("PBD", list, new Long(1000));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

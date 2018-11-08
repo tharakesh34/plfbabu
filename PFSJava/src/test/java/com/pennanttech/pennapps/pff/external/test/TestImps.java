@@ -11,7 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
+import com.pennanttech.pff.external.disbursment.DisbursemenIMPSRequestProcess;
 
 public class TestImps {
 

@@ -7,5 +7,11 @@ public interface InterfaceLoggingDAO {
 	void save(InterfaceLogDetail interfaceLogDetail);
 
 	String getPreviousDataifAny(String reference, String service, String status);
-	
+
+	void update(InterfaceLogDetail interfaceLogDetail);
+
+	long getSequence();
+
+	public long getSequence(String seqName);
+
 }

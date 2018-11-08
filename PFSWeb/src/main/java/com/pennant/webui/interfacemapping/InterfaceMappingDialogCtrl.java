@@ -87,38 +87,37 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/InterfaceMapping/InterfaceMappingDialog.zul file.
  */
 public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
-	private static final long					serialVersionUID	= 3184249234920071313L;
-	private static final Logger					logger				= Logger.getLogger(InterfaceMappingDialogCtrl.class);
+	private static final long serialVersionUID = 3184249234920071313L;
+	private static final Logger logger = Logger.getLogger(InterfaceMappingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_InterfaceMappingDialog;
-	protected ExtendedCombobox					interfaceName;
-	protected ExtendedCombobox					interfaceField;
-	protected ExtendedCombobox					mappingTable;
-	protected Combobox							mappingColumn;
-	protected ExtendedCombobox					mappingValue;
-	protected Checkbox							active;
+	protected Window window_InterfaceMappingDialog;
+	protected ExtendedCombobox interfaceName;
+	protected ExtendedCombobox interfaceField;
+	protected ExtendedCombobox mappingTable;
+	protected Combobox mappingColumn;
+	protected ExtendedCombobox mappingValue;
+	protected Checkbox active;
 
-	protected Row								row1;
-	protected Row								row2;
-	protected Listbox							listBoxInterfaceMapping;
+	protected Row row1;
+	protected Row row2;
+	protected Listbox listBoxInterfaceMapping;
 
 	// not autoWired Var's
-	private InterfaceMapping					interfaceMapping;
-	private transient InterfaceMappingListCtrl	interfaceMappingListCtrl;
-	private List<MasterMapping>					masterMappingList	= new ArrayList<MasterMapping>();
-	private String								mappingType			= null;
-	private Long								id;
+	private InterfaceMapping interfaceMapping;
+	private transient InterfaceMappingListCtrl interfaceMappingListCtrl;
+	private List<MasterMapping> masterMappingList = new ArrayList<MasterMapping>();
+	private String mappingType = null;
+	private Long id;
 
 	// parameters
-	private transient boolean					validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient InterfaceMappingService	interfaceMappingService;
-
+	private transient InterfaceMappingService interfaceMappingService;
 
 	/**
 	 * default constructor.<br>
@@ -146,10 +145,10 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 
 		// Set the page level components.
 		setPageComponents(window_InterfaceMappingDialog);
-		
+
 		/* set components visible dependent of the users rights */
 		try {
-			
+
 			doCheckRights();
 			// Get the required arguments.
 			this.interfaceMapping = (InterfaceMapping) arguments.get("interfaceMapping");
@@ -161,7 +160,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			setInterfaceMapping(this.interfaceMapping);
 			setInterfaceMappingListCtrl((InterfaceMappingListCtrl) arguments.get("interfaceMappingListCtrl"));
 
-			doLoadWorkFlow(this.interfaceMapping.isWorkflow(), this.interfaceMapping.getWorkflowId(), this.interfaceMapping.getNextTaskId());
+			doLoadWorkFlow(this.interfaceMapping.isWorkflow(), this.interfaceMapping.getWorkflowId(),
+					this.interfaceMapping.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -173,7 +173,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(this.interfaceMapping);
-			
+
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -208,7 +208,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -227,7 +227,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_InterfaceMappingDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_InterfaceMappingDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -239,9 +239,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		doSave();
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -252,9 +252,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		doEdit();
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -266,9 +266,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		MessageUtil.showHelpWindow(event, window_InterfaceMappingDialog);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -280,9 +280,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		doDelete();
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -293,9 +293,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		doCancel();
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -317,12 +317,12 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
-		
+
 		doWriteBeanToComponents(this.interfaceMapping.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -334,17 +334,17 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void doWriteBeanToComponents(InterfaceMapping ainterfaceMapping) {
 		logger.debug("Entering");
-	
+
 		if (!ainterfaceMapping.isNew()) {
-			
+
 			this.interfaceName.setValue(ainterfaceMapping.getInterfaceName());
 			this.interfaceField.setValue(ainterfaceMapping.getInterfaceField());
 			this.active.setChecked(ainterfaceMapping.isActive());
-			
+
 			doFillMappingType(ainterfaceMapping);
-		
+
 		} else {
-			
+
 			this.interfaceName.setValue("");
 			this.interfaceField.setValue("");
 			this.mappingValue.setValue("");
@@ -361,46 +361,46 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 * 
 	 * @param ainterfaceMapping
 	 */
-	public void doWriteComponentsToBean(InterfaceMapping ainterfaceMapping,boolean condition) {
+	public void doWriteComponentsToBean(InterfaceMapping ainterfaceMapping, boolean condition) {
 		logger.debug("Entering");
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			ainterfaceMapping.setInterfaceName(this.interfaceName.getValue());
 			ainterfaceMapping.setInterfaceId(getId());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			ainterfaceMapping.setInterfaceField(this.interfaceField.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		//if mapping type is column,validation will check
 		if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_COLUMN)) {
-			
+
 			try {
 				ainterfaceMapping.setMappingTable(this.mappingTable.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				if ("#".equals(getComboboxValue(this.mappingColumn))) {
 					throw new WrongValueException(this.mappingColumn, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_InterfaceMappingDialog_MappingColumn.value") }));
 				}
-					ainterfaceMapping.setMappingColumn(this.mappingColumn.getValue());
+				ainterfaceMapping.setMappingColumn(this.mappingColumn.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
-		
+
 		//if mapping type is Value,validation will check
 		if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_VALUE)) {
 			try {
@@ -409,7 +409,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				wve.add(we);
 			}
 		}
-		
+
 		try {
 			ainterfaceMapping.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -425,7 +425,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
-		} else {	
+		} else {
 			if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_MASTER) && !condition) {
 				validateMappingListItems(getMasterMappingList());
 			} else {
@@ -447,7 +447,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 
 		ainterfaceMapping.setRecordStatus(this.recordStatus.getValue());
 		ainterfaceMapping.setMasterMappingList(this.masterMappingList);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -492,7 +492,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		} catch (Exception e) {
 			throw e;
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -532,14 +532,14 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
-	
+
 		setValidationOn(false);
 		this.interfaceName.setConstraint("");
 		this.interfaceField.setConstraint("");
 		this.mappingTable.setConstraint("");
 		this.mappingColumn.setConstraint("");
 		this.mappingValue.setConstraint("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -561,13 +561,13 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
-		
+
 		this.interfaceName.setErrorMessage("");
 		this.interfaceField.setErrorMessage("");
 		this.mappingTable.setErrorMessage("");
 		this.mappingColumn.setErrorMessage("");
 		this.mappingValue.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -589,9 +589,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_InterfaceMappingDialog_InterfaceName.value") + " : "
 				+ interfaceMapping.getInterfaceName();
-		
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			
+
 			if (StringUtils.isBlank(interfaceMapping.getRecordType())) {
 				interfaceMapping.setVersion(interfaceMapping.getVersion() + 1);
 				interfaceMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -599,24 +599,25 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				if (isWorkFlowEnabled()) {
 					interfaceMapping.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
-					
-					if (interfaceMapping.getMasterMappingList() != null && !interfaceMapping.getMasterMappingList().isEmpty()) {
-						
-						for (int i = 0; i< interfaceMapping.getMasterMappingList().size();  i++) {
+
+					if (interfaceMapping.getMasterMappingList() != null
+							&& !interfaceMapping.getMasterMappingList().isEmpty()) {
+
+						for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
 							MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
-							
+
 							if (StringUtils.isBlank(masterMapping.getInterfaceValue())) {
 								interfaceMapping.getMasterMappingList().remove(i);
 								i = 0;
 							}
 						}
 					}
-					
+
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
-		
+
 			try {
 				if (doProcess(interfaceMapping, tranType)) {
 					refreshList();
@@ -627,7 +628,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				MessageUtil.showError(e);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -638,7 +639,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		logger.debug("Entering");
 
 		if (getInterfaceMapping().isNewRecord()) {
-			this.interfaceName.setReadonly(isReadOnly("InterfaceMappingDialog_InterfaceName")); 
+			this.interfaceName.setReadonly(isReadOnly("InterfaceMappingDialog_InterfaceName"));
 			this.mappingColumn.setDisabled(isReadOnly("InterfaceMappingDialog_MappingColumn"));
 			this.mappingValue.setReadonly(isReadOnly("InterfaceMappingDialog_MappingValue"));
 			this.btnCancel.setVisible(false);
@@ -650,10 +651,10 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.active.setDisabled(isReadOnly("InterfaceMappingDialog_Active"));
 			this.btnCancel.setVisible(true);
 		}
-		
+
 		this.interfaceField.setReadonly(true);
 		this.mappingTable.setReadonly(true);
-	
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -668,7 +669,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -695,7 +696,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -704,7 +705,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-	
+
 		// remove validation, if there are a save before
 		this.interfaceName.setValue("");
 		this.interfaceField.setValue("");
@@ -712,7 +713,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		this.mappingColumn.setValue("");
 		this.mappingValue.setValue("");
 		this.active.setChecked(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -727,8 +728,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		final InterfaceMapping ainterfaceMapping = new InterfaceMapping();
 		BeanUtils.copyProperties(getInterfaceMapping(), ainterfaceMapping);
 		boolean isNew = false;
-		boolean condition=false;
-		
+		boolean condition = false;
+
 		if (this.userAction.getSelectedItem() != null) {
 			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 					|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -738,9 +739,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		}
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-		
+
 		// fill the InterfaceMapping object with the components data
-		doWriteComponentsToBean(ainterfaceMapping,condition);
+		doWriteComponentsToBean(ainterfaceMapping, condition);
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
@@ -751,7 +752,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			
+
 			if (StringUtils.isBlank(ainterfaceMapping.getRecordType())) {
 				ainterfaceMapping.setVersion(ainterfaceMapping.getVersion() + 1);
 				if (isNew) {
@@ -761,7 +762,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 					ainterfaceMapping.setNewRecord(true);
 				}
 			}
-			
+
 		} else {
 			ainterfaceMapping.setVersion(ainterfaceMapping.getVersion() + 1);
 			if (isNew) {
@@ -781,7 +782,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -873,9 +874,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			auditHeader = getAuditHeader(ainterfaceMapping, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return processCompleted;
 	}
 
@@ -955,12 +956,12 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return processCompleted;
 	}
-	
+
 	/**
 	 * change interface field based on interfaceName
 	 * 
@@ -968,10 +969,10 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	public void onFulfill$interfaceName(Event event) {
 		logger.debug("Entering");
-	
+
 		Object dataObject = interfaceName.getObject();
 		this.interfaceField.setValue("");
-		
+
 		if (dataObject instanceof String) {
 			this.row1.setVisible(false);
 			this.row2.setVisible(false);
@@ -980,14 +981,14 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.mappingColumn.setValue("");
 			this.mappingTable.setValue("");
 		} else if (!(dataObject instanceof String)) {
-			
+
 			InterfaceFields interfaceField = (InterfaceFields) dataObject;
-			
+
 			if (interfaceField != null) {
 				this.interfaceField.setValue(interfaceField.getField());
 				processMappingData(interfaceField);
 			} else {
-				
+
 				this.row1.setVisible(false);
 				this.row2.setVisible(false);
 				this.listBoxInterfaceMapping.setVisible(false);
@@ -997,19 +998,18 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Based on interfaceField and module type from event,
-	 * screen will display 
+	 * Based on interfaceField and module type from event, screen will display
 	 * 
 	 * @param event
 	 */
 
 	public void onFulfill$interfaceField(Event event) {
 		logger.debug("Entering");
-		
+
 		Object dataObject = interfaceField.getObject();
-		
+
 		if (dataObject instanceof String) {
 			this.row1.setVisible(false);
 			this.row2.setVisible(false);
@@ -1018,9 +1018,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.mappingColumn.setValue("");
 			this.mappingTable.setValue("");
 		} else if (!(dataObject instanceof String)) {
-			
+
 			InterfaceFields interfaceField = (InterfaceFields) dataObject;
-			
+
 			if (interfaceField != null) {
 				processMappingData(interfaceField);
 			} else {
@@ -1032,10 +1032,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Based on interfaceField and module type from event,
-	 * screen will display 
+	 * Based on interfaceField and module type from event, screen will display
 	 * 
 	 * @param interfaceField
 	 */
@@ -1051,7 +1050,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.listBoxInterfaceMapping.setVisible(false);
 			this.mappingValue.setMandatoryStyle(true);
 			String[] vale = ModuleUtil.getLovFields(interfaceField.getModule());
-			
+
 			this.mappingValue.setModuleName(interfaceField.getModule());
 			this.mappingValue.setValueColumn(vale[0]);
 			this.mappingValue.setDescColumn(vale[1]);
@@ -1066,16 +1065,17 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.mappingTable.setButtonDisabled(true);
 
 			//List of column Name will retrieve based on interfaceField table name
-			List<String> tableColumnsList = getInterfaceMappingService().getTableNameColumnsList(interfaceField.getTableName());
-			
+			List<String> tableColumnsList = getInterfaceMappingService()
+					.getTableNameColumnsList(interfaceField.getTableName());
+
 			List<ValueLabel> columnsList = new ArrayList<>();
 			if (tableColumnsList != null && !tableColumnsList.isEmpty()) {
 				for (String column : tableColumnsList) {
 					columnsList.add(new ValueLabel(column, column));
 				}
 			}
-			
-			fillComboBox(this.mappingColumn,null, columnsList, "");
+
+			fillComboBox(this.mappingColumn, null, columnsList, "");
 
 		} else if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_MASTER)) {
 			this.row1.setVisible(false);
@@ -1084,9 +1084,10 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			getMasterMappingList().clear();
 			doFillMasterList(interfaceField);
 		}
-		
+
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Based on interface Mapping Type,interface Mapping bean data setting
 	 * 
@@ -1097,14 +1098,14 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		logger.debug("Entering");
 
 		mappingType = interfaceMapping.getMappingType();
-        id = interfaceMapping.getInterfaceId();
+		id = interfaceMapping.getInterfaceId();
 		if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_VALUE)) {
 			this.row1.setVisible(false);
 			this.row2.setVisible(true);
 			this.listBoxInterfaceMapping.setVisible(false);
 
 			String[] vale = ModuleUtil.getLovFields(interfaceMapping.getModule());
-			
+
 			this.mappingValue.setModuleName(interfaceMapping.getModule());
 			this.mappingValue.setValueColumn(vale[0]);
 			this.mappingValue.setDescColumn(vale[1]);
@@ -1115,9 +1116,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.row1.setVisible(true);
 			this.row2.setVisible(false);
 			this.listBoxInterfaceMapping.setVisible(false);
-			
+
 			this.mappingTable.setValue(interfaceMapping.getMappingTable());
-			
+
 			List<String> tableColumnsList = getInterfaceMappingService()
 					.getTableNameColumnsList(interfaceMapping.getMappingTable());
 
@@ -1127,27 +1128,27 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 					columnsList.add(new ValueLabel(column, column));
 				}
 			}
-			fillComboBox(this.mappingColumn,interfaceMapping.getMappingColumn(), columnsList, "");
+			fillComboBox(this.mappingColumn, interfaceMapping.getMappingColumn(), columnsList, "");
 
 		} else if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_MASTER)) {
-			
+
 			this.row1.setVisible(false);
 			this.row2.setVisible(false);
 			this.listBoxInterfaceMapping.setVisible(true);
 
 			//Get the Latest data from the Master Mapping Table
 			//boolean condition = isReadOnly("InterfaceMappingDialog_List");
-			
+
 			if (!PennantConstants.RECORD_TYPE_DEL.equals(interfaceMapping.getRecordType())) {
 				prepareMasterMappingList(interfaceMapping.getMasterMappingList(), interfaceMapping.getModule());
 			}
-			
+
 			doFulfillMastermapping(interfaceMapping.getMasterMappingList());
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to set List item based on mappingList
 	 * 
@@ -1164,26 +1165,26 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		Textbox interfaceValue = null;
 		Textbox interfaceSequence = null;
 		boolean condition = isReadOnly("InterfaceMappingDialog_List");
-		
+
 		setMasterMappingList(mappingList);
-		
+
 		if (mappingList != null && !mappingList.isEmpty()) {
 
 			for (MasterMapping masterMapping : mappingList) {
-				
+
 				if (!masterMapping.isNewRecord()) {
 					MasterMapping befImage = new MasterMapping();
 					BeanUtils.copyProperties(masterMapping, befImage);
 					masterMapping.setBefImage(befImage);
 				}
-				
+
 				Listitem item = new Listitem();
 				Listcell lc;
 
 				//PLF Value
 				lc = new Listcell(masterMapping.getPlfValue());
 				lc.setParent(item);
-				
+
 				lc = new Listcell();
 				hbox = new Hbox();
 				hbox.setParent(lc);
@@ -1192,7 +1193,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				space.setSpacing("2px");
 				space.setSclass(PennantConstants.mandateSclass);
 				space.setParent(hbox);
-				
+
 				space = new Space();
 				space.setSpacing("2px");
 				space.setParent(hbox);
@@ -1203,33 +1204,33 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				interfaceValue.setValue(masterMapping.getInterfaceValue());
 				interfaceValue.setReadonly(condition);
 				hbox.appendChild(interfaceValue);
-				
+
 				List<Object> interfaceList = new ArrayList<Object>(11);
 				interfaceList.add(interfaceValue);
 				interfaceList.add(masterMapping);
-				interfaceValue.addForward("onChange", window_InterfaceMappingDialog, "onChangeInterfaceValue", interfaceList);
-				
-				
+				interfaceValue.addForward("onChange", window_InterfaceMappingDialog, "onChangeInterfaceValue",
+						interfaceList);
+
 				item.appendChild(lc);
-				
+
 				lc = new Listcell();
 				hbox2 = new Hbox();
 				hbox2.setParent(lc);
 
-				
 				// Sequence Value
 				interfaceSequence = new Textbox();
 				interfaceSequence.setMaxlength(100);
 				interfaceSequence.setValue(masterMapping.getInterfaceSequence());
 				interfaceSequence.setReadonly(condition);
 				hbox2.appendChild(interfaceSequence);
-				
+
 				List<Object> interfaceList1 = new ArrayList<Object>(11);
 				interfaceList1.add(interfaceSequence);
 				interfaceList1.add(masterMapping);
-				
-				interfaceSequence.addForward("onChange", window_InterfaceMappingDialog, "onChangeInterfaceSequence", interfaceList1);
-				
+
+				interfaceSequence.addForward("onChange", window_InterfaceMappingDialog, "onChangeInterfaceSequence",
+						interfaceList1);
+
 				item.appendChild(lc);
 
 				this.listBoxInterfaceMapping.appendChild(item);
@@ -1239,18 +1240,18 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		logger.debug("Leaving");
 
 	}
-   
+
 	public void onChangeInterfaceValue(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>) event.getData();
 
 		Textbox interfaceValueBox = (Textbox) list.get(0);
 		MasterMapping masterMapping = (MasterMapping) list.get(1);
-		
+
 		interfaceValueBox.setErrorMessage("");
-		
+
 		if (StringUtils.isBlank(masterMapping.getRecordType())) {
 			if (isWorkFlowEnabled()) {
 				masterMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1259,21 +1260,21 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		}
 
 		masterMapping.setInterfaceValue(interfaceValueBox.getValue());
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onChangeInterfaceSequence(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>) event.getData();
 
 		Textbox interfaceSequence = (Textbox) list.get(0);
 		MasterMapping masterMapping = (MasterMapping) list.get(1);
-		
+
 		interfaceSequence.setErrorMessage("");
-		
+
 		if (StringUtils.isBlank(masterMapping.getRecordType())) {
 			if (isWorkFlowEnabled()) {
 				masterMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1282,9 +1283,10 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		}
 
 		masterMapping.setInterfaceSequence(interfaceSequence.getValue());
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * Method doListModelItemRender to extact data based on data given and added to mastermappinglist
 	 * 
@@ -1293,22 +1295,22 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 */
 	private void validateMappingListItems(List<MasterMapping> masterMappingList) {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		if (masterMappingList != null && !masterMappingList.isEmpty()) {
 			List<Listitem> listItems = this.listBoxInterfaceMapping.getItems();
-			
+
 			for (Listitem item : listItems) {
 				Listcell lc = (Listcell) item.getChildren().get(0);
 				Textbox interfaceValueBox = (Textbox) item.getChildren().get(1).getFirstChild().getChildren().get(2);
 				interfaceValueBox.setErrorMessage("");
-				
+
 				if (StringUtils.isBlank(interfaceValueBox.getValue())) {
 					wve.add(new WrongValueException(interfaceValueBox, "Please Enter " + lc.getLabel() + " Value"));
 				}
 			}
-			
+
 			if (!wve.isEmpty()) {
 				WrongValueException[] wvea = new WrongValueException[wve.size()];
 				for (int i = 0; i < wve.size(); i++) {
@@ -1316,14 +1318,16 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				}
 				throw new WrongValuesException(wvea);
 			}
-		} 
+		}
 
 		logger.debug("Leaving");
 	}
-    /**
-     * Based on interface Module Type,Retrive List of data of first column from Module type table.
-     * @param interfaceField
-     */
+
+	/**
+	 * Based on interface Module Type,Retrive List of data of first column from Module type table.
+	 * 
+	 * @param interfaceField
+	 */
 	public void doFillMasterList(InterfaceFields interfaceField) {
 
 		logger.debug("Entering");
@@ -1343,7 +1347,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 * @param module
 	 * @return list of MasterMapping
 	 */
-	
+
 	public void prepareMasterMappingList(List<MasterMapping> masterList, String module) {
 		logger.debug("Entering");
 
@@ -1352,21 +1356,21 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		String[] vale = ModuleUtil.getLovFields(module);
 
 		List<String> mappedColumnsList = getInterfaceMappingService().getMappings(tableName, vale[0]);
-		
+
 		if (mappedColumnsList != null && !mappedColumnsList.isEmpty()) {
-			
+
 			MasterMapping masterMapping = null;
-			
+
 			for (String columnValue : mappedColumnsList) {
 				boolean recordFound = false;
-				
-				for(MasterMapping mapping : masterList) {
+
+				for (MasterMapping mapping : masterList) {
 					if (StringUtils.equals(columnValue, mapping.getPlfValue())) {
 						recordFound = true;
 						break;
 					}
 				}
-				
+
 				if (!recordFound) {
 					masterMapping = new MasterMapping();
 					masterMapping.setPlfValue(columnValue);
@@ -1376,7 +1380,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1457,7 +1461,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	public void setMasterMappingList(List<MasterMapping> masterMappingList) {
 		this.masterMappingList = masterMappingList;
 	}
-	
+
 	public InterfaceMappingService getInterfaceMappingService() {
 		return interfaceMappingService;
 	}
@@ -1465,7 +1469,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	public void setInterfaceMappingService(InterfaceMappingService interfaceMappingService) {
 		this.interfaceMappingService = interfaceMappingService;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
