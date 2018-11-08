@@ -167,6 +167,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		movement.setTaxApplicable(feeType.isTaxApplicable());
 		movement.setTaxComponent(feeType.getTaxComponent());
 		movement.setMovementAmount(repayQueue.getPenaltyPayNow());
+		movement.setPaidAmount(repayQueue.getPenaltyPayNow());
 		penalityMovements.add(movement);
 		
 		if (rpyQueueHeader.getProfit().compareTo(BigDecimal.ZERO) == 0

@@ -25,6 +25,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -46,6 +47,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
@@ -109,7 +111,8 @@ public class RepaymentProcessUtil {
 	private CustomerAddresDAO			customerAddresDAO;
 	
 	//GST Invoice Report changes
-	private GSTInvoiceTxnService				gstInvoiceTxnService;
+	private GSTInvoiceTxnService		gstInvoiceTxnService;
+	private FeeTypeDAO					feeTypeDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -975,12 +978,26 @@ public class RepaymentProcessUtil {
 		// Accounting Entry Execution
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 		
-		// preparing GST Invoice Report
+		// preparing GST Invoice Report(Receivable Advises and Bounce Debit notes)
 		if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
 			List<ManualAdviseMovements> manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
 			for (ManualAdviseMovements movement: movements) {
 				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
 				if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
+					ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+					
+					if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
+						FeeType fee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+						movement.setFeeTypeCode(fee.getFeeTypeCode());
+						movement.setFeeTypeDesc(fee.getFeeTypeDesc());
+						movement.setTaxApplicable(fee.isTaxApplicable());
+						movement.setTaxComponent(fee.getTaxComponent());
+					} else {
+						movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+						movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+						movement.setTaxApplicable(manualAdvise.isTaxApplicable());
+						movement.setTaxComponent(manualAdvise.getTaxComponent());
+					}
 					manualAdviseMovementsList.add(movement);
 				}
 			}
@@ -1295,7 +1312,7 @@ public class RepaymentProcessUtil {
 						// Delete Reserved Log against Advise and Receipt Seq ID
 						getManualAdviseDAO().deletePayableReserve(receiptSeqID, payAgainstID);
 
-						// Payable Advise Movement Creation
+						// Payable Advise Movement Creation (Debit Note)
 						ManualAdviseMovements movement = new ManualAdviseMovements();
 						movement.setAdviseID(payAgainstID);
 						movement.setReceiptID(receiptID);
@@ -1304,6 +1321,8 @@ public class RepaymentProcessUtil {
 						movement.setMovementAmount(payableAmt);
 						movement.setPaidAmount(payableAmt);
 						getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+						
+						//TODO invoice report credit note for excess amount
 					}else{
 						// Payable Amount make utilization
 						ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, payAgainstID);
@@ -2140,5 +2159,13 @@ public class RepaymentProcessUtil {
 
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 }

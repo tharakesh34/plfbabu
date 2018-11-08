@@ -1300,7 +1300,12 @@ public class ReceiptCalculator implements Serializable {
 												if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
 													FeeType fee = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 													movement.setFeeTypeCode(fee.getFeeTypeCode());
-													movement.setFeeTypeDesc(fee.getFeeTypeCode());
+													movement.setFeeTypeDesc(fee.getFeeTypeDesc());
+													movement.setTaxApplicable(fee.isTaxApplicable());
+													movement.setTaxComponent(fee.getTaxComponent());
+												} else {
+													movement.setTaxApplicable(advise.isTaxApplicable());
+													movement.setTaxComponent(advise.getTaxComponent());
 												}
 												
 												// Total Paid/Adjusted GST amount
@@ -1957,7 +1962,9 @@ public class ReceiptCalculator implements Serializable {
 						
 						if((advise.isTaxApplicable() || (feeType != null && feeType.isTaxApplicable())) && taxPercmap == null){
 							taxPercmap = getTaxPercentages(receiptData.getFinanceDetail());
-							
+						}  
+						
+						if (taxPercmap != null){
 							cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 							sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
 							ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
@@ -2046,7 +2053,12 @@ public class ReceiptCalculator implements Serializable {
 										if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
 											FeeType fee = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 											movement.setFeeTypeCode(fee.getFeeTypeCode());
-											movement.setFeeTypeDesc(fee.getFeeTypeCode());
+											movement.setFeeTypeDesc(fee.getFeeTypeDesc());
+											movement.setTaxApplicable(fee.isTaxApplicable());
+											movement.setTaxComponent(fee.getTaxComponent());
+										} else {
+											movement.setTaxApplicable(advise.isTaxApplicable());
+											movement.setTaxComponent(advise.getTaxComponent());
 										}
 										
 										// Total Paid/Adjusted GST amount

@@ -831,6 +831,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				FinReceiptDetail receiptDetail = receiptDetails.get(i);
 
+				//TODO GST Invoice debit note
 				if (isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(),
 						RepayConstants.RECEIPTMODE_EXCESS)
 						|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
@@ -958,7 +959,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
 							FeeType fee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 							movement.setFeeTypeCode(fee.getFeeTypeCode());
-							movement.setFeeTypeDesc(fee.getFeeTypeCode());
+							movement.setFeeTypeDesc(fee.getFeeTypeDesc());
+							movement.setTaxApplicable(fee.isTaxApplicable());
+							movement.setTaxComponent(fee.getTaxComponent());
+						} else {
+							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
+							movement.setTaxComponent(manualAdvise.getTaxComponent());
 						}
 						advMovementsTemp.add(movement);
 
@@ -1177,6 +1185,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					penalities.setTaxApplicable(feeType.isTaxApplicable());
 					penalities.setTaxComponent(feeType.getTaxComponent());
 					penalities.setMovementAmount(rpySchd.getPenaltyPayNow());
+					penalities.setPaidAmount(rpySchd.getPenaltyPayNow());
 					penalityList.add(penalities);
 				}
 				
@@ -1317,6 +1326,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
 						adviseMovements.setFeeTypeDesc(advise.getFeeTypeDesc());
 						adviseMovements.setMovementAmount(advise.getAdviseAmount());
+						BigDecimal gstAmount = advise.getPaidCGST().add(advise.getPaidSGST()).add(advise.getPaidIGST()).add(advise.getPaidUGST());
+						adviseMovements.setPaidAmount(advise.getAdviseAmount().subtract(gstAmount));
 						adviseMovements.setPaidCGST(advise.getPaidCGST());
 						adviseMovements.setPaidSGST(advise.getPaidSGST());
 						adviseMovements.setPaidIGST(advise.getPaidIGST());
@@ -1325,18 +1336,24 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
 							FeeType fee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 							adviseMovements.setFeeTypeCode(fee.getFeeTypeCode());
-							adviseMovements.setFeeTypeDesc(fee.getFeeTypeCode());
+							adviseMovements.setFeeTypeDesc(fee.getFeeTypeDesc());
+							adviseMovements.setTaxApplicable(fee.isTaxApplicable());
+							adviseMovements.setTaxComponent(fee.getTaxComponent());
+						} else {
+							adviseMovements.setTaxApplicable(advise.isTaxApplicable());
+							adviseMovements.setTaxComponent(advise.getTaxComponent());
 						}
 
-						List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
-						advMovements.add(adviseMovements);
-						if (financeDetailTemp == null) {
-							financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+						if (gstAmount.compareTo(BigDecimal.ZERO) > 0) {
+							List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
+							advMovements.add(adviseMovements);
+							if (financeDetailTemp == null) {
+								financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+							}
+							
+							this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null,
+									advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 						}
-						
-						this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null,
-								advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference,
-								false);
 					}
 				}
 

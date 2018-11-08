@@ -1555,8 +1555,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					adviseMovements.setPaidSGST(advise.getPaidSGST());
 					adviseMovements.setPaidIGST(advise.getPaidIGST());
 					adviseMovements.setPaidUGST(advise.getPaidUGST());
+					BigDecimal gst = BigDecimal.ZERO;
+					gst = advise.getPaidCGST().add(advise.getPaidSGST()).add(advise.getPaidIGST()).add(advise.getPaidUGST());
+					adviseMovements.setPaidAmount(advise.getAdviseAmount().subtract(gst));
+					
 					List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
 					advMovementsTemp.add(adviseMovements);
+					
 					FinanceDetail financeDetailTemp = rceiptData.getFinanceDetail();
 					String finReference = "";
 					if (financeDetailTemp == null) {

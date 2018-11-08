@@ -38,6 +38,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -323,16 +324,17 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						BigDecimal gstAmount = movement.getPaidCGST().add(movement.getPaidIGST())
 								.add(movement.getPaidSGST()).add(movement.getPaidUGST());
 						if (StringUtils.isBlank(movement.getFeeTypeCode())
-								|| BigDecimal.ZERO.compareTo(movement.getMovementAmount()) == 0
+								|| BigDecimal.ZERO.compareTo(movement.getPaidAmount()) == 0
 								|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
 							continue;
 						}
 						advTran.setFeeCode(movement.getFeeTypeCode());
 						advTran.setFeeDescription(movement.getFeeTypeDesc());
-						if (movement.isTaxApplicable()) {
-							advTran.setFeeAmount(movement.getMovementAmount().subtract(gstAmount)); //Fee Amount with out GST
+						
+						if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
+							advTran.setFeeAmount(movement.getPaidAmount().subtract(gstAmount)); //Fee Amount with out GST
 						} else {
-							advTran.setFeeAmount(movement.getMovementAmount()); //Fee Amount with out GST
+							advTran.setFeeAmount(movement.getPaidAmount()); //Fee Amount with out GST
 						}
 
 						advTran.setCGST_RATE(cgstPerc);
