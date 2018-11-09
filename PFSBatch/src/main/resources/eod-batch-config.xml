@@ -7,6 +7,7 @@
 	<import resource="eod-batch-config-beans.xml" />
 	<import resource="eod-batch-config-tasklet.xml" />
 	<import resource="eod-batch-config-service.xml" />
+		<import resource="interfaceBatchContext.xml" />
 	<!-- _____________________________________________ JOB FLOW DEFINITION _________________________________________ -->
 	<!-- The job definition for the PLF End of Day -->
 	<job id="plfEodJob" xmlns="http://www.springframework.org/schema/batch" incrementer="PFSJobParametersIncrementer">
@@ -44,8 +45,26 @@
 			<tasklet ref="datesUpdateTaskLet" />
 			<!-- <next on="*" to="posidex" /> -->
 			<fail on="FAILED" />
-			<end on="*" exit-code="COMPLETED" />
+			<next on="*" to="collectionDataDownLoad" />
 		</step>
+
+		<step id="collectionDataDownLoad">
+			<tasklet ref="collectionDataDownLoadTaskLet" />
+			<fail on="FAILED" />
+			<next on="*" to="collectionNotification" />
+		</step>
+		
+		<step id="collectionNotification">
+			<tasklet ref="collectionNotificationTaskLet" />
+			<fail on="FAILED" />
+			<next on="*" to="ledgerNotification" />
+		</step>
+
+		<step id="ledgerNotification">
+			<tasklet ref="ledgerNotificationTaskLet" />
+			<fail on="FAILED" />
+			<end on="*" exit-code="COMPLETED" />
+		</step> 
 		
 <!-- 		<step id="posidex">
 			<tasklet ref="posidexTaskLet">

@@ -282,4 +282,8 @@
 		<property name="finMaturityService" ref="finMaturityService" />
 	</bean>
 	
+	<bean id="collectionDataDownLoadTaskLet" class="com.pennant.backend.endofday.tasklet.CollectionDataDownload"/>
+	<bean id="collectionNotificationTaskLet" class="com.pennant.backend.endofday.tasklet.CollectionNotification"/>
+	<bean id="ledgerNotificationTaskLet" class="com.pennant.backend.endofday.tasklet.LedgerNotification"/>	
+	
 </beans>

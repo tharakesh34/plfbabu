@@ -149,7 +149,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		dmDisbDetailsMonthly,
 		profitDetailsUpdate,
 		processInActiveFinances,
-		incomeAmortization
+		incomeAmortization,
+		collectionDataDownLoad,
+		collectionNotification,
+		ledgerNotification
 	}
 
 	public BatchAdminCtrl() {
