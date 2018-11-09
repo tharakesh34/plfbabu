@@ -48,6 +48,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,6 +72,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
 import com.pennanttech.pff.core.TableType;
 
 
@@ -83,6 +86,10 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	private QueryDetailDAO queryDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentManagerDAO documentManagerDAO;
+
+	@Autowired(required = false)
+	@Qualifier("queryPostExteranalServiceHook")
+	private PostExteranalServiceHook postExteranalServiceHook;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -167,6 +174,9 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			}
 		}
 
+		if(postExteranalServiceHook!=null){
+			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
+		}
 		//getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
