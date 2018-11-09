@@ -1,3 +1,11 @@
+pff 4.11.3.5 2018-11-09
+----------------
+-PSD #129660  Two due dates in same month issue 
+-bugs #969 Issue in Create Collateral API Service
+-PPM #18475   Bounce & Overdue Charges
+-PPM #18476 Payable to display in credit form
+-story #962 while doing  loan maintainence NextGraceCaptilizedDate is coming as  null
+
 pff 4.11.3.4 2018-11-05
 ----------------
 -PPM # 18471 Getting unhandled exception while creting a new hostgl mapping is fixed
