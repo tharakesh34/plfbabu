@@ -1954,6 +1954,59 @@ public class ExtendedFieldDetailsService {
 				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
+	
+	public List<ExtendedField> getExtndedFieldDetails(String moduleName, String subModuleName, String event,String reference) {
+
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				moduleName, subModuleName,event, "");
+		List<ExtendedField> extendedDetails = new ArrayList<ExtendedField>();
+		if (extendedFieldHeader != null) {
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			if (event != null) {
+				tableName.append("_");
+				tableName.append(StringUtils.trimToEmpty(PennantStaticListUtil.getFinEventCode(event)));
+			}
+			tableName.append("_ED");
+
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO
+					.getExtendedFieldMap(reference, tableName.toString(), "_View ");
+
+			if (renderMapList != null) {
+
+				for (Map<String, Object> mapValues : renderMapList) {
+					mapValues.remove("Reference");
+					mapValues.remove("SeqNo");
+					mapValues.remove("Version");
+					mapValues.remove("LastMntOn");
+					mapValues.remove("LastMntBy");
+					mapValues.remove("RecordStatus");
+					mapValues.remove("RoleCode");
+					mapValues.remove("NextRoleCode");
+					mapValues.remove("TaskId");
+					mapValues.remove("NextTaskId");
+					mapValues.remove("RecordType");
+					mapValues.remove("WorkflowId");
+					List<ExtendedFieldData> extendedFieldDataList = new ArrayList<ExtendedFieldData>();
+					for (Entry<String, Object> entry : mapValues.entrySet()) {
+						ExtendedFieldData exdFieldData = new ExtendedFieldData();
+						if (StringUtils.isNotBlank(String.valueOf(entry.getValue()))
+								&& !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
+							exdFieldData.setFieldName(entry.getKey());
+							exdFieldData.setFieldValue(entry.getValue());
+							extendedFieldDataList.add(exdFieldData);
+						}
+					}
+					ExtendedField extendedField = new ExtendedField();
+					extendedField.setExtendedFieldDataList(extendedFieldDataList);
+					extendedDetails.add(extendedField);
+				}
+			}
+		}
+		return extendedDetails;
+	}
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set

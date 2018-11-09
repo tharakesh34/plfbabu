@@ -666,6 +666,9 @@ public class CustomerController {
 						documents.setCustDocImage(custDocImage);
 					}
 				}
+				response.setExtendedDetails(extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_CUSTOMER,
+						response.getCustomer().getCustCtgCode(),null, response.getCustomer().getCustCIF()));
+
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 			} else {

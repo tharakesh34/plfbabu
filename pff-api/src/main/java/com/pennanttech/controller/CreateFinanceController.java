@@ -1148,6 +1148,9 @@ public class CreateFinanceController extends SummaryDetailService {
 					FinanceConstants.FINSER_EVENT_ORG, "");
 
 			if (financeDetail != null) {
+				List<ExtendedField> extData=extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
+						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),FinanceConstants.FINSER_EVENT_ORG, finReference);
+				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
 				financeDetail = new FinanceDetail();
@@ -1319,6 +1322,9 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				financeDetail.getFinScheduleData().setFinODPenaltyRate(finODPenaltyRate);
 				prepareResponse(financeDetail);
+				List<ExtendedField> extData=extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
+						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),FinanceConstants.FINSER_EVENT_ORG, finReference);
+				financeDetail.setExtendedDetails(extData);				
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
 				financeDetail = new FinanceDetail();

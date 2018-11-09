@@ -95,7 +95,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
-		"returnDataSetList", "collateralSetup", "financeTaxDetails", "returnStatus" })
+		"returnDataSetList", "collateralSetup", "financeTaxDetails","extendedDetails", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {

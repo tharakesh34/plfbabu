@@ -73,7 +73,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "custCIF", "custCoreBank", "custCtgCode", "custDftBranch", "custBaseCcy",
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
-		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","returnStatus","customerDedupList" })
+		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","extendedDetails","returnStatus","customerDedupList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
