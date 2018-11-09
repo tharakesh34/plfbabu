@@ -130,4 +130,10 @@ public class ImplementationConstants {
 	// 2. FALSE : Check Schedule is on Lock Period or not, if not Capitalize amount will reset
 	public static final boolean DFT_CPZ_RESET_ON_RECAL_LOCK = true;
 
+	// Collateral Assignment Percentage calculation based on parameter
+	// 1. NO_ADJ : No Adjustment
+	// 2. FULL_ADJ : Full Adjustment(100%)
+	// 3. REQ_ADJ : Requested Adjustment based on Utilization
+	public static final String COLLATERAL_ADJ = "NO_ADJ";
+
 }

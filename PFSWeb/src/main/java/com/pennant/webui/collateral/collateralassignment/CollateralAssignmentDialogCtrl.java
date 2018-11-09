@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
@@ -26,6 +27,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -33,8 +35,11 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -718,7 +723,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		if (dataObject != null) {
 			if (dataObject instanceof CollateralSetup) {
 				collateralSetup = (CollateralSetup) dataObject;
-				setAssignment(collateralSetup);
+				setAssignment(collateralSetup, true);
 			} else {
 				// Bank Valuation
 				this.bankValuation.setValue(BigDecimal.ZERO);
@@ -767,14 +772,14 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		}
 		setCollateralTypeList(getFinanceDetail().getCollaterals());
 		this.collateralRef.setValue(collateralSetup.getCollateralRef());
-		setAssignment(collateralSetup);
+		setAssignment(collateralSetup, false);
 	}
 
 	/**
 	 * Setting the collateral assignment from new collateralsetup
 	 * @param collateralSetup
 	 */
-	private void setAssignment(CollateralSetup collateralSetup) {
+	private void setAssignment(CollateralSetup collateralSetup, boolean resetPerc) {
 		// Calculate Field from Collateral Setup
 		int formatter = CurrencyUtil.getFormat(collateralSetup.getCollateralCcy());
 
@@ -818,6 +823,68 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		getCollateralAssignment().setTotAssignedPerc(totAssignedPerc);
 		this.collateralInfo.setVisible(true);
 		setEditCollateralVisibility(collateralSetup.getCollateralRef());
+
+		// Resetting Collateral Assignment Percentage based on Requirement
+		if (resetPerc) {
+			resetCollateralAssignPerc(collateralSetup);
+		}
+
+	}
+
+	/**
+	 * Assigned Value field Percentage based on Loan Value and Collateral availability
+	 * 
+	 * @param collateralSetup
+	 */
+	public void resetCollateralAssignPerc(CollateralSetup collateralSetup) {
+		logger.debug("Entering");
+		// No Collateral Adjustment
+		if (StringUtils.equals(ImplementationConstants.COLLATERAL_ADJ, CollateralConstants.COLLATERAL_NO_ADJ)) {
+			return;
+		}
+
+		// Full Collateral Adjustment Calculation
+		if (StringUtils.equals(ImplementationConstants.COLLATERAL_ADJ, CollateralConstants.COLLATERAL_FULL_ADJ)) {
+			this.assignValuePerc.setValue(this.availableAssignPerc.getValue());
+		}
+
+		// Requested Collateral Adjustment Calculation
+		if (StringUtils.equals(ImplementationConstants.COLLATERAL_ADJ, CollateralConstants.COLLATERAL_REQ_ADJ)) {
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			BigDecimal utilizedAmt = BigDecimal.ZERO;
+			if (StringUtils.equals(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT, financeType.getFinLTVCheck())) {
+				utilizedAmt = financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount());
+			} else {
+				utilizedAmt = financeMain.getFinAssetValue().subtract(financeMain.getFinRepaymentAmount());
+			}
+			BigDecimal assignedVal = BigDecimal.ZERO;
+
+			// If already exists any Collateral
+			if (collateralAssignments != null) {
+				for (CollateralAssignment assignment : collateralAssignments) {
+					assignedVal = assignedVal.add((assignment.getAssignPerc().multiply(assignment.getBankValuation()))
+							.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
+				}
+			}
+			utilizedAmt = utilizedAmt.subtract(assignedVal);
+			BigDecimal reqAssignPerc = BigDecimal.ZERO;
+			//If loan amount is higher than Collateral amount
+			if (utilizedAmt.compareTo(collateralSetup.getBankValuation()) > 0) {
+				reqAssignPerc = BigDecimal.valueOf(100);
+			} else {
+				//If loan amount is lesser than Collateral amount
+				reqAssignPerc = utilizedAmt.multiply(new BigDecimal(100)).divide(collateralSetup.getBankValuation(), 0,
+						RoundingMode.HALF_DOWN);
+			}
+			if (reqAssignPerc.compareTo(BigDecimal.valueOf(100)) > 0) {
+				reqAssignPerc = BigDecimal.valueOf(100);
+			}
+			this.assignValuePerc.setValue(reqAssignPerc);
+		}
+
+		Events.sendEvent("onChange", assignValuePerc, null);
+		logger.debug("Leaving");
 	}
 	
 	/**

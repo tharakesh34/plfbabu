@@ -19,4 +19,9 @@ public class CollateralConstants {
 	public static final String SAMPLING_MODULE = "SAMPLING";
 	public static final String LEGAL_MODULE = "LEGAL";
 
+	public static final String COLLATERAL_NO_ADJ = "NO_ADJ";
+	public static final String COLLATERAL_FULL_ADJ = "FULL_ADJ";
+	public static final String COLLATERAL_REQ_ADJ = "REQ_ADJ";
+
+
 }
