@@ -25,6 +25,7 @@ public class ManualAdviseMovements {
 	
 	private boolean		taxApplicable;
 	private String		taxComponent;
+	private int adviseType;
 	
 	// Enquiry Purpose
 	private String receiptMode;
@@ -162,6 +163,12 @@ public class ManualAdviseMovements {
 	}
 	public void setTaxApplicable(boolean taxApplicable) {
 		this.taxApplicable = taxApplicable;
+	}
+	public int getAdviseType() {
+		return adviseType;
+	}
+	public void setAdviseType(int adviseType) {
+		this.adviseType = adviseType;
 	}
 	
 }

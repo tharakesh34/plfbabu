@@ -4671,6 +4671,8 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
+		
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>

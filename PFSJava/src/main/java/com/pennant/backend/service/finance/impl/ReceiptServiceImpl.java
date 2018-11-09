@@ -356,7 +356,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						}
 
 						// Manual Advise Movements
-						receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), "_TView"));
+						int advisetype = Integer.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+						receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), advisetype, "_TView"));
 
 						// Excess Reserve Amounts
 						excessReserves.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));
@@ -1193,7 +1194,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setWorkflowId(0);
 
 		// save Receipt Details
-		repayProcessUtil.doSaveReceipts(receiptHeader, scheduleData.getFinFeeDetailList(), true);
+		repayProcessUtil.doSaveReceipts(receiptHeader, scheduleData.getFinFeeDetailList(), true, rceiptData.getFinanceDetail());
 		long receiptID = receiptHeader.getReceiptID();
 		
 		//Save Deposit Details
@@ -1605,7 +1606,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setWorkflowId(0);
 
 		//save Receipt Details
-		repayProcessUtil.doSaveReceipts(receiptHeader, null, false);
+		repayProcessUtil.doSaveReceipts(receiptHeader, null, false, null);
 		long receiptID = receiptHeader.getReceiptID();
 
 		// Bounce reason Code
@@ -1617,6 +1618,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		String finReference = receiptHeader.getReference();
 		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
+			
 
 			// Save Document Details
 			if (rceiptData.getFinanceDetail().getDocumentDetailsList() != null

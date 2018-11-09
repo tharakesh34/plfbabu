@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -419,7 +420,7 @@ public class RepaymentProcessUtil {
 		}
 		
 		
-		doSaveReceipts(receiptHeader, null, true);
+		doSaveReceipts(receiptHeader, null, true, detail);
 		financeMainDAO.updatePaymentInEOD(financeMain);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
 		logger.debug("Leaving");
@@ -1141,7 +1142,7 @@ public class RepaymentProcessUtil {
 	 * 
 	 * @param receiptHeader
 	 */
-	public void doSaveReceipts(FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetails, boolean isApproval) {
+	public void doSaveReceipts(FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetails, boolean isApproval, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 		
 		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
@@ -1230,6 +1231,8 @@ public class RepaymentProcessUtil {
 
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		List<ManualAdviseMovements> payableMovements = new ArrayList<>();
+		String finReference = "";
 		for (FinReceiptDetail receiptDetail : receiptDetails) {
 			receiptDetail.setReceiptID(receiptID);
 			if(isApproval){
@@ -1294,8 +1297,12 @@ public class RepaymentProcessUtil {
 					if(isApproval){
 						
 						BigDecimal payableAmt = receiptDetail.getAmount();
+						boolean gstExist = false;
+						boolean exclusiveGST = false;
 						if(receiptDetail.getReceiptTaxDetail() != null){
+							gstExist = true;
 							if(StringUtils.equals(receiptDetail.getReceiptTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+								exclusiveGST = true;
 								payableAmt = payableAmt.subtract(receiptDetail.getReceiptTaxDetail().getTotalGST());
 							}
 						}
@@ -1303,7 +1310,9 @@ public class RepaymentProcessUtil {
 						getManualAdviseDAO().updateUtilise(payAgainstID, payableAmt);
 						
 						// Tax Details Deletion against Receipt Seq ID
+						ReceiptTaxDetail receiptTaxDetail = null;
 						if(receiptDetail.getReceiptTaxDetail() != null){
+							receiptTaxDetail = receiptDetail.getReceiptTaxDetail();
 							receiptDetail.getReceiptTaxDetail().setReceiptID(receiptID);
 							receiptDetail.getReceiptTaxDetail().setReceiptSeqID(receiptSeqID);
 							getReceiptTaxDetailDAO().save(receiptDetail.getReceiptTaxDetail(), TableType.MAIN_TAB);
@@ -1318,11 +1327,33 @@ public class RepaymentProcessUtil {
 						movement.setReceiptID(receiptID);
 						movement.setReceiptSeqID(receiptSeqID);
 						movement.setMovementDate(DateUtility.getAppDate());
-						movement.setMovementAmount(payableAmt);
+						if (exclusiveGST) {
+							movement.setMovementAmount(payableAmt.add(receiptDetail.getReceiptTaxDetail().getTotalGST()));
+						}else{
+							movement.setMovementAmount(payableAmt);
+						}
 						movement.setPaidAmount(payableAmt);
+						
+						if (gstExist) {
+							ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+							finReference = manualAdvise.getFinReference();
+							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
+							movement.setTaxComponent(manualAdvise.getTaxComponent());
+							movement.setPaidCGST(receiptTaxDetail.getPaidCGST());
+							movement.setPaidSGST(receiptTaxDetail.getPaidSGST());
+							movement.setPaidIGST(receiptTaxDetail.getPaidIGST());
+							movement.setPaidUGST(receiptTaxDetail.getPaidUGST());
+						}
+						
 						getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 						
-						//TODO invoice report credit note for excess amount
+						// For Adding GST Invoice based on List at Once
+						if(isApproval){
+							payableMovements.add(movement);
+						}
+						
 					}else{
 						// Payable Amount make utilization
 						ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, payAgainstID);
@@ -1378,6 +1409,12 @@ public class RepaymentProcessUtil {
 					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
 				}
 			}
+		}
+		
+		if (CollectionUtils.isNotEmpty(payableMovements)) {
+			long linkedTranId = 0;
+			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, payableMovements,
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 		}
 		
 		allocationPaidMap = null;

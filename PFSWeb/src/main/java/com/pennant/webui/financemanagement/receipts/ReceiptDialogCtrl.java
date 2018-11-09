@@ -2579,36 +2579,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						BigDecimal igstPerc = taxPercMap.get(RuleConstants.CODE_IGST);
 						BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
 
-						String taxType = payableAdv.getTaxComponent();
-						if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
-
-							if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
-								BigDecimal cgst =  (payableBal.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								cgst = CalculationUtil.roundAmount(cgst, taxRoundMode,taxRoundingTarget);
-								taxDetail.setPaidCGST(cgst);
-								gstAmount = gstAmount.add(cgst);
-							}
-							if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
-								BigDecimal sgst =  (payableBal.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								sgst = CalculationUtil.roundAmount(sgst, taxRoundMode,taxRoundingTarget);
-								taxDetail.setPaidSGST(sgst);
-								gstAmount = gstAmount.add(sgst);
-							}
-							if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
-								BigDecimal ugst =  (payableBal.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								ugst = CalculationUtil.roundAmount(ugst, taxRoundMode,taxRoundingTarget);
-								taxDetail.setPaidUGST(ugst);
-								gstAmount = gstAmount.add(ugst);
-							}
-							if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
-								BigDecimal igst =  (payableBal.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-								igst = CalculationUtil.roundAmount(igst, taxRoundMode,taxRoundingTarget);
-								taxDetail.setPaidIGST(igst);
-								gstAmount = gstAmount.add(igst);
-							}
-
-						}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
-
+						if (StringUtils.isNotBlank(payableAdv.getTaxComponent())) {
 							BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 							BigDecimal actualAmt = payableBal.divide(percentage, 9, RoundingMode.HALF_DOWN);
 							actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);

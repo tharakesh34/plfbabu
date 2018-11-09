@@ -85,6 +85,7 @@ import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.receipts.ReceiptTaxDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -113,6 +114,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -170,6 +172,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	//GST Invoice Report
 	private FinanceDetailService financeDetailService;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private ReceiptTaxDetailDAO	 receiptTaxDetailDAO;
+	
 	private DepositChequesDAO depositChequesDAO;
 	private DepositDetailsDAO depositDetailsDAO;
 
@@ -826,12 +830,65 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		BigDecimal unRealizeLpiGst = BigDecimal.ZERO;
 		BigDecimal unRealizeLpp = BigDecimal.ZERO;
 		BigDecimal unRealizeLppGst = BigDecimal.ZERO;
+		
+		List<ManualAdviseMovements> payableMovements = new ArrayList<>();
 		if (receiptDetails != null && !receiptDetails.isEmpty()) {
 			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
 
 				FinReceiptDetail receiptDetail = receiptDetails.get(i);
 
-				//TODO GST Invoice debit note
+				// GST Invoice debit note for Payable Advise Usage
+				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+					BigDecimal payableAmt = receiptDetail.getAmount();
+					boolean gstExist = false;
+					long payAgainstID = receiptDetail.getPayAgainstID();
+
+					// Payable Advise Amount make utilization
+					if (payAgainstID != 0) {
+						if(receiptDetail.getReceiptTaxDetail() == null){
+							ReceiptTaxDetail taxDetail = getReceiptTaxDetailDAO().getTaxDetailByID(receiptDetail.getReceiptSeqID(), "");
+							receiptDetail.setReceiptTaxDetail(taxDetail);
+						}
+						ReceiptTaxDetail receiptTaxDetail = null;
+						boolean exclusiveGST = false;
+						if(receiptDetail.getReceiptTaxDetail() != null){
+							receiptTaxDetail = receiptDetail.getReceiptTaxDetail();
+							gstExist = true;
+							if(StringUtils.equals(receiptDetail.getReceiptTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+								exclusiveGST = true;
+								payableAmt = payableAmt.subtract(receiptDetail.getReceiptTaxDetail().getTotalGST());
+							}
+						}
+						
+						if (gstExist) {
+							
+							ManualAdviseMovements movement = new ManualAdviseMovements();
+							movement.setAdviseID(payAgainstID);
+							movement.setReceiptID(receiptDetail.getReceiptID());
+							movement.setReceiptSeqID(receiptDetail.getReceiptSeqID());
+							movement.setMovementDate(DateUtility.getAppDate());
+							if (exclusiveGST) {
+								movement.setMovementAmount(payableAmt.add(receiptDetail.getReceiptTaxDetail().getTotalGST()));
+							}else{
+								movement.setMovementAmount(payableAmt);
+							}
+							movement.setPaidAmount(payableAmt);
+							
+							ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+							finReference = manualAdvise.getFinReference();
+							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
+							movement.setTaxComponent(manualAdvise.getTaxComponent());
+							movement.setPaidCGST(receiptTaxDetail.getPaidCGST());
+							movement.setPaidSGST(receiptTaxDetail.getPaidSGST());
+							movement.setPaidIGST(receiptTaxDetail.getPaidIGST());
+							movement.setPaidUGST(receiptTaxDetail.getPaidUGST());
+							payableMovements.add(movement);
+						}
+					}
+				}
+				
 				if (isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(),
 						RepayConstants.RECEIPTMODE_EXCESS)
 						|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
@@ -934,8 +991,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 
 				// Manual Advise Movements Reversal for receivable advises/bounce
+				int advisetype = Integer.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 				List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(
-						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "_AView");
+						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), advisetype, "_AView");
+				
 				List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
 				if (advMovements != null && !advMovements.isEmpty()) {
 					isRcdFound = true;
@@ -1294,6 +1353,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							FinanceConstants.FINSTSRSN_MANUAL, true, false);
 				}
 			}
+		}
+		
+		if (CollectionUtils.isNotEmpty(payableMovements)) {
+			long linkedTranId = 0;
+			if (financeDetailTemp == null) {
+				financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+			}
+			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null, payableMovements,
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
 		}
 
 		if (!isRcdFound) {
@@ -1970,5 +2038,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	public ReceiptTaxDetailDAO getReceiptTaxDetailDAO() {
+		return receiptTaxDetailDAO;
+	}
+
+	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
+		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
 	}
 }

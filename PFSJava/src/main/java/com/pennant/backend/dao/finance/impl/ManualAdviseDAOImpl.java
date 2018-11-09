@@ -421,12 +421,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String type) {
+	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, int adviseType, String type) {
 		logger.debug("Entering");
 
 		ManualAdviseMovements movements = new ManualAdviseMovements();
 		movements.setReceiptID(receiptID);
 		movements.setReceiptSeqID(receiptSeqID);
+		movements.setAdviseType(adviseType);
 
 		StringBuilder selectSql = new StringBuilder(
 				" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
@@ -437,6 +438,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		selectSql.append(" From ManualAdviseMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID = :ReceiptSeqID ");
+		if (StringUtils.contains(type, "View")) {
+			selectSql.append(" AND AdviseType = :AdviseType ");
+		}
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);

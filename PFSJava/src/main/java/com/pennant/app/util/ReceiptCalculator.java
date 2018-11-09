@@ -2048,6 +2048,7 @@ public class ReceiptCalculator implements Serializable {
 										movement.setMovementAmount(balAdvise);
 										movement.setWaivedAmount(BigDecimal.ZERO);
 										movement.setFeeTypeCode(advise.getFeeTypeCode());
+										movement.setFeeTypeDesc(advise.getFeeTypeDesc());
 										
 										//if it is bounce fee
 										if (StringUtils.isBlank(advise.getFeeTypeCode()) && advise.getBounceID() > 0) {
@@ -2075,8 +2076,13 @@ public class ReceiptCalculator implements Serializable {
 										}else{
 											if(paidGSTMap.containsKey(allocateType)){
 												totalTaxAmount = paidGSTMap.get(allocateType);
-												actTaxAmount = paidGSTMap.get(allocateType);
+												//actTaxAmount = paidGSTMap.get(allocateType);
 											}
+											
+											BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+											BigDecimal actualAmt = balAdvise.divide(percentage, 9, RoundingMode.HALF_DOWN);
+											actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode,taxRoundingTarget);
+											actTaxAmount = balAdvise.subtract(actualAmt);
 										}
 										
 										if ((advise.getBounceID() > 0 && (feeType != null && feeType.isTaxApplicable())) ||
