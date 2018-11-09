@@ -28,7 +28,7 @@ public abstract class JsonService<T> {
 	protected static Logger logger = Logger.getLogger(JsonService.class.getClass());
 	
 	protected static final String READ_TIMEOUT = "exteranal.interface.read.timeout";
-	protected static final String CONNECTION_TIMEOUT = "exteranal.interface.onnection.timeout";
+	protected static final String CONNECTION_TIMEOUT = "exteranal.interface.connection.timeout";
 	
 	protected int readTimeout = 0;
 	protected int connTimeout = 0;
