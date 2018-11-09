@@ -8,4 +8,10 @@ public interface InterfaceLoggingDAO {
 
 	String getPreviousDataifAny(String reference, String service, String status);
 	
+	void update(InterfaceLogDetail interfaceLogDetail);
+
+	long getSequence();
+
+	long getSequence(String seqName);
+	
 }
