@@ -23,7 +23,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.external.alm.ALMExtarct;
 import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
 import com.pennanttech.pennapps.pff.external.posidex.PosidexDataExtarct;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.external.cibil.RetailCibilReport;
 import com.pennanttech.pff.external.datamart.DataMartExtarct;
 import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
@@ -105,9 +104,9 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			}
 
 			if ("POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)) {
-				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS = dataEngineConfig
+				PosidexDataExtarct.EXTRACT_STATUS = dataEngineConfig
 						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
-				doFillPanel(config, BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
+				doFillPanel(config, PosidexDataExtarct.EXTRACT_STATUS);
 			}
 
 			if ("DATA_MART_REQUEST".equals(configName)) {

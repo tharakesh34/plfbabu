@@ -16,15 +16,13 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
+import com.pennanttech.pff.external.PosidexProcess;
 
 public class PosidexResponseProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(PosidexResponseProcess.class);
 
 	public PosidexResponseProcess(DataSource dataSource, long userId, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, false, valueDate,
-				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
+		super(dataSource, App.DATABASE.name(), userId, false, valueDate, PosidexProcess.EXTRACT_STATUS);
 	}
 
 	@Override
@@ -36,7 +34,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 		sql.append("SELECT UCIN_NO, CUSTOMER_NO FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
 		parmMap = new MapSqlParameterSource();
 
-		parmMap.addValue("PROCESSED_FLAG", Status.N.name());
+		parmMap.addValue("PROCESSED_FLAG", "N");
 
 		destinationJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			TransactionStatus txnStatus = null;
@@ -74,7 +72,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("PROCESSED_FLAG", Status.Y.name());
+		map.addValue("PROCESSED_FLAG", "Y");
 		map.addValue("UCIN_NO", rs.getObject("UCIN_NO"));
 		map.addValue("CUSTOMER_NO", rs.getObject("CUSTOMER_NO"));
 		return map;

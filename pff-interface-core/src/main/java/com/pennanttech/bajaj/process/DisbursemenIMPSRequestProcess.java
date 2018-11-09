@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 
 public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 	private static final Logger	logger	= Logger.getLogger(DisbursemenIMPSRequestProcess.class);
@@ -86,7 +85,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		map.addValue("AMOUNT", rs.getBigDecimal("DISBURSEMENT_AMOUNT"));
 		map.addValue("REMARKS", StringUtils.substring(rs.getString("REMARKS"), 0, 9));
 		map.addValue("CHANNELPARTNERREFNO", rs.getString("ID"));
-		map.addValue("PICKUPFLAG", Status.N.name());
+		map.addValue("PICKUPFLAG", "N");
 		
 		String appId = null;
 		String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
