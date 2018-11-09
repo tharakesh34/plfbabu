@@ -2185,7 +2185,7 @@ public class PennantJavaUtil {
 		
 		/*Payment Instructions*/
 		ModuleUtil.register("PaymentHeader", new ModuleMapping("PaymentHeader", PaymentHeader.class, new String[] { "PaymentHeader",
-		"PaymentHeader_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","ApprovedOn","Status"},null, 600));
+		"PaymentHeader_AView" }, PaymentWF, new String[] {"PaymentType","PaymentAmount","ApprovedOn","Status"},null, 600));
 		
 		ModuleUtil.register("PaymentDetail", new ModuleMapping("PaymentDetail", PaymentDetail.class, new String[] { "PaymentDetails",
 		"PaymentDetails_AView" }, masterWF, new String[] {"AmountType","ReferenceId"},null, 600));
