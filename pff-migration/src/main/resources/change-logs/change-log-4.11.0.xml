@@ -2859,4 +2859,31 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		<column name="Value" type="int"/>
 	</createTable>
 </changeSet>
+
+	<changeSet id="29" author="Kesav">
+		<comment>advisetype column added</comment>
+		<createView viewName="manualadvisemovements_Aview" replaceIfExists="true">
+			SELECT 		T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 			 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
+						T2.advisetype, 
+						T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent,
+						T3.feetypedesc
+			FROM 		ManualadviseMovements T1  
+			JOIN 		Manualadvise T2 ON T1.adviseid = T2.adviseid  
+			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid		
+		</createView>
+	</changeSet>
+	<changeSet id="30" author="Kesav">
+		<comment>advisetype column added</comment>
+		<createView viewName="manualadvisemovements_Tview" replaceIfExists="true">
+			SELECT 		T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 			 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
+						T2.advisetype, 
+						T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent,
+						T3.feetypedesc
+			FROM 		ManualadviseMovements_Temp T1  
+			JOIN 		Manualadvise T2 ON T1.adviseid = T2.adviseid  
+			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid		
+		</createView>
+	</changeSet>
 </databaseChangeLog>
