@@ -273,9 +273,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.setNextRoleCode("");
 					finFeeDetail.setTaskId("");
 					finFeeDetail.setNextTaskId("");
+					finFeeDetail.setWorkflowId(0);
 				}
 
-				//	finFeeDetail.setWorkflowId(0);		
 				if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
 				} else if (finFeeDetail.isNewRecord()) {
