@@ -2892,4 +2892,11 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	     VALUES ('55', 'COLVALD', 'Collateral Validation', '1');
     </sql>
 </changeSet>
+
+	<changeSet id="32" author="Siva">
+	<comment>SMT Parameter Addition</comment>
+		<sql>
+		INSERT INTO SMTparameters VALUES (N'ALLOW_ZERO_POSTINGS', N'Zero Postings required', N'String',1, N'Y', 1, 0, NULL, NULL, N'Zero Postings required', 1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet> 
 </databaseChangeLog>
