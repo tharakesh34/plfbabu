@@ -2,11 +2,16 @@ package com.pennanttech.external.services;
 
 import java.net.ConnectException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -56,18 +61,18 @@ public abstract class JsonService<T> {
 		}
 	}
 
-	protected T processMessage(RequestDetails request, Class<T> valueType) {
+	protected JsonServiceDetail processMessage(JsonServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
-		String responseData = null;
-		String requestData = getObjectToJson(request);
+
+		serviceDetail.setRequestString(getObjectToJson(serviceDetail));
 		Timestamp reqSentOn = null;
 
-		String url = App.getProperty(request.getServiceUrl());
-		HttpMethod method = request.getMethod();
-		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(), requestData));
+		String url = App.getProperty(serviceDetail.getServiceUrl());
+		HttpMethod method = serviceDetail.getMethod();
+		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(), serviceDetail.getRequestString()));
 
-		HttpEntity<String> httpEntity = new HttpEntity<>(requestData, request.getHeaders());
-		getHttpHeader(request.getHeaders());
+		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(), serviceDetail.getHeaders());
+		getHttpHeader(serviceDetail.getHeaders());
 
 		ResponseEntity<String> response = null;
 		InterfaceLogDetail logDetail = null;
@@ -79,16 +84,15 @@ public abstract class JsonService<T> {
 			logDetail = new InterfaceLogDetail();
 			reqSentOn = new Timestamp(System.currentTimeMillis());
 
-			logDetail.setReference(request.getReference());
-			logDetail.setServiceName(request.getServiceName());
-			logDetail.setEndPoint(request.getServiceUrl());
-			logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(requestData), 1000));
+			logDetail.setReference(serviceDetail.getReference());
+			logDetail.setServiceName(serviceDetail.getServiceName());
+			logDetail.setEndPoint(serviceDetail.getServiceUrl());
+			logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
-
 			response = getTemplate().exchange(url, method, httpEntity, String.class);
-			responseData = response.getBody();
-
+			
+			serviceDetail.setResponseString(response.getBody());
 		} catch (ResourceAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			if (e.getCause() != null && e.getCause() instanceof ConnectException) {
@@ -109,32 +113,32 @@ public abstract class JsonService<T> {
 			throw new InterfaceException("8904", e.getMessage(), e);
 
 		} finally {
-			logger.trace(String.format("Response Data %s", responseData));
+			logger.trace(String.format("Response Data %s", serviceDetail.getResponseString()));
 			if (logDetail != null) {
-				logDetail.setResponse(StringUtils.left(StringUtils.trimToEmpty(responseData), 1000));
+				logDetail.setResponse(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getResponseString()), 1000));
 				logDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
 				logDetail.setStatus(status);
 				logDetail.setErrorCode(errorCode);
-				logDetail.setErrorDesc(errorDesc);
+				logDetail.setErrorDesc(StringUtils.left(StringUtils.trimToEmpty(errorDesc), 200));
 				updateResponse(logDetail);
 			}
 		}
-
 		logger.debug(Literal.LEAVING);
-		return getResponse(responseData, valueType);
+		return serviceDetail;
 	}
 
-	protected String getObjectToJson(RequestDetails request) {
+	protected T processMessage(JsonServiceDetail serviceDetail, Class<T> valueType) {
+		logger.debug(Literal.ENTERING);
+		processMessage(serviceDetail, valueType);
+		logger.debug(Literal.LEAVING);
+		return getResponse(serviceDetail.getResponseString(), valueType);
+	}
+
+	public String getObjectToJson(JsonServiceDetail jsonServiceDetail) {
 		String resuestData = null;
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			if (request.isExcludeNull()) {
-				mapper.setSerializationInclusion(Inclusion.NON_NULL);
-			}
-			if (request.isExcludeEmpty()) {
-				mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
-			}
-			resuestData = mapper.writeValueAsString(request.getRequestData());
+			ObjectMapper mapper = getObjectMapper(jsonServiceDetail);
+			resuestData = mapper.writeValueAsString(jsonServiceDetail.getRequestData());
 		} catch (Exception e) {
 			throw new InterfaceException("8902", "RequesrGeneration Expection", e);
 		}
@@ -160,7 +164,7 @@ public abstract class JsonService<T> {
 		return headers;
 	}
 
-	protected T getResponse(String content, Class<T> valueType) {
+	public T getResponse(String content, Class<T> valueType) {
 		T resp = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
@@ -171,6 +175,27 @@ public abstract class JsonService<T> {
 		return resp;
 	}
 
+	private ObjectMapper getObjectMapper(JsonServiceDetail jsonServiceDetail ) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		dateFormat.setLenient(false);
+		mapper.setDateFormat(dateFormat);
+
+		if (jsonServiceDetail.isExcludeNull()) {
+			mapper.setSerializationInclusion(Inclusion.NON_NULL);
+		}
+		if (jsonServiceDetail.isExcludeEmpty()) {
+			mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
+		}
+
+		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+
+		return mapper;
+
+	}
 	protected void logRequest(InterfaceLogDetail logDetail) {
 		logger.debug(Literal.ENTERING);
 		if (interfaceLoggingDAO != null) {

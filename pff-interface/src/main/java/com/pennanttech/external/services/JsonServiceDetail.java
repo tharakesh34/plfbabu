@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
-public class RequestDetails implements Serializable {
+public class JsonServiceDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String reference;
@@ -17,7 +17,9 @@ public class RequestDetails implements Serializable {
 	private String serviceName;
 	
 	private transient Object requestData;
-
+	private String requestString;
+	private String responseString;
+	
 	public String getReference() {
 		return reference;
 	}
@@ -80,6 +82,22 @@ public class RequestDetails implements Serializable {
 
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
+	}
+
+	public String getRequestString() {
+		return requestString;
+	}
+
+	public void setRequestString(String requestString) {
+		this.requestString = requestString;
+	}
+
+	public String getResponseString() {
+		return responseString;
+	}
+
+	public void setResponseString(String responseString) {
+		this.responseString = responseString;
 	}
 
 }
