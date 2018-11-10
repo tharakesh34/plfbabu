@@ -716,4 +716,9 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
 		return FinanceCheckListReferenceDAO;
 	}
+
+	@Override
+	public String getAllowedRolesByCode(String finType, int finRefType, String collValCode) {
+		return financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, collValCode);
+	}
 }

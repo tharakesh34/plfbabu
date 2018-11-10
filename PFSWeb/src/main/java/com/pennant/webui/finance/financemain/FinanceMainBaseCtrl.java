@@ -6427,19 +6427,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				boolean isValid = collateralHeaderDialogCtrl.validCollateralValue(utilizedAmt);
 				if (!isValid) {
-					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(finType.getFinLTVCheck())) {
-						String msg = Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt");
-						if (finType.isPartiallySecured()) {
-							if (MessageUtil.confirm(msg,
-									MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
-								return;
+					// Collateral validation based on roles given in process editor
+					int finRefType = FinanceConstants.PROCEDT_LIMIT;
+					String collValCode = FinanceConstants.COLLATERAL_VALIDATION;
+					String roles = financeReferenceDetailService.getAllowedRolesByCode(finType.getFinType(), finRefType,
+							collValCode);
+					boolean reqValidation = false;
+					if (StringUtils.isNotBlank(roles)) {
+						String[] roleCodes = roles.split(PennantConstants.DELIMITER_COMMA);
+						for (String roleCod : roleCodes) {
+							if (StringUtils.equals(getRole(), roleCod)) {
+								reqValidation = true;
+								break;
 							}
-						} else {
-							MessageUtil.showError(msg);
-							return;
 						}
 					} else {
-						String msg = Labels.getLabel("label_CollateralAssignment_InSufficient");
+						reqValidation = true;
+					}
+					if (reqValidation) {
+						String msg = null;
+						// validation message based on FinLTVCheck
+						if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(finType.getFinLTVCheck())) {
+							msg = Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt");
+						} else {
+							msg = Labels.getLabel("label_CollateralAssignment_InSufficient");
+						}
 						if (finType.isPartiallySecured()) {
 							if (MessageUtil.confirm(msg,
 									MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {

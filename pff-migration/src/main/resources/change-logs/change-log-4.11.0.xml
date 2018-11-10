@@ -2885,5 +2885,11 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 			JOIN 		Manualadvise T2 ON T1.adviseid = T2.adviseid  
 			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid		
 		</createView>
-	</changeSet>
+</changeSet>
+	<changeSet id="31" author="aditya">
+    <sql>
+         INSERT INTO plf.limitcodedetail(limitid, limitcode, limitdesc, active)
+	     VALUES ('55', 'COLVALD', 'Collateral Validation', '1');
+    </sql>
+</changeSet>
 </databaseChangeLog>
