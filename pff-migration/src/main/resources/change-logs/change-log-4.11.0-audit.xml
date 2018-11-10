@@ -51,4 +51,10 @@
 	<changeSet id="3" author="Vinay">
 		<modifyDataType tableName="adtFinTypeExpenses" columnName="active" newDataType="boolean"/>
 	</changeSet>
+	
+	 <changeSet id="4" author="swami">
+		<addColumn tableName="adtdocumentdetails">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+	</addColumn>
+</changeSet>
 	</databaseChangeLog>

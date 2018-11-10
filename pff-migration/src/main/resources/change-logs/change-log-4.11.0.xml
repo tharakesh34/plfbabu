@@ -2899,4 +2899,123 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		INSERT INTO SMTparameters VALUES (N'ALLOW_ZERO_POSTINGS', N'Zero Postings required', N'String',1, N'Y', 1, 0, NULL, NULL, N'Zero Postings required', 1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet> 
+	
+		<changeSet id="31" author="swami">
+		<addColumn tableName="documentdetails">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+	</addColumn>
+	</changeSet>
+
+
+
+	<changeSet id="32" author="swami">
+		<addColumn tableName="documentdetails_temp">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+	</addColumn>
+	</changeSet>
+
+
+	<changeSet id="33" author="swami">
+		<addColumn tableName="documentdetails_pa">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+	</addColumn>
+	</changeSet>
+
+
+	<changeSet id="34" author="swami">
+		<comment>Column Added t1.DocOriginal</comment>
+		<createView viewName="documentdetails_tview" replaceIfExists="true" >
+SELECT t1.docid,
+    t1.docmodule,
+    t1.doccategory,
+    t1.doctype,
+    t1.docname,
+    t1.docimage,
+    t1.finevent,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.referenceid,
+    t1.docrefid,
+    t1.docpurpose,
+    t1.docuri,"documentdetails_view"
+    t1.docreceiveddate,
+    t1.docreceived,
+    t1.instructionuid,
+    t1.DocOriginaldocumentdetails_view
+   FROM documentdetails_temp t1
+
+        </createView>
+</changeSet>
+
+
+
+<changeSet id="35" author="swami">
+		<comment> Column Added t1.DocOriginal</comment>
+		<createView viewName="documentdetails_view" replaceIfExists="true" >
+SELECT t1.docid,
+    t1.docmodule,
+    t1.doccategory,
+    t1.doctype,
+    t1.docname,
+    t1.docimage,
+    t1.finevent,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.referenceid,
+    t1.docrefid,
+    t1.docpurpose,
+    t1.docuri,
+    t1.docreceiveddate,
+    t1.docreceived,
+    t1.instructionuid,
+    t1.DocOriginal
+   FROM documentdetails_temp t1
+UNION ALL
+ SELECT t1.docid,
+    t1.docmodule,
+    t1.doccategory,
+    t1.doctype,
+    t1.docname,
+    t1.docimage,
+    t1.finevent,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.referenceid,
+    t1.docrefid,
+    t1.docpurpose,
+    t1.docuri,
+    t1.docreceiveddate,
+    t1.docreceived,
+    t1.instructionuid,
+    t1.DocOriginal
+   FROM documentdetails t1
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM documentdetails_temp
+          WHERE documentdetails_temp.docid = t1.docid))
+ 	</createView>
+	</changeSet>
 </databaseChangeLog>

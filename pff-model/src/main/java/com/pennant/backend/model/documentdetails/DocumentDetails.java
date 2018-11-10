@@ -61,6 +61,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private boolean newRecord = false;
 	private Date docReceivedDate;
 	private boolean docReceived;
+	private boolean docOriginal;
 	private String password;
 	private boolean docIsPasswordProtected = false;
 	private long pdfMappingRef = Long.MIN_VALUE;
@@ -410,5 +411,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	public void setDoumentType(int doumentType) {
 		this.doumentType = doumentType;
 	}
+
+	public boolean isDocOriginal() {
+		return docOriginal;
+	}
+
+	public void setDocOriginal(boolean docOriginal) {
+		this.docOriginal = docOriginal;
+	}
+
 
 }

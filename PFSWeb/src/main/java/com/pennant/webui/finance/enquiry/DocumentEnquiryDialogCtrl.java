@@ -52,6 +52,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -194,6 +195,14 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			
 			lc = new Listcell(doc.getDocName());
 			listitem.appendChild(lc);
+			
+			lc = new Listcell();
+			final Checkbox documentIsActive = new Checkbox();
+			documentIsActive.setDisabled(true);
+			documentIsActive.setChecked(doc.isDocOriginal());
+			lc.appendChild(documentIsActive);
+			listitem.appendChild(lc);
+
 			
 			lc = new Listcell();
 			Button viewBtn = new Button("View");

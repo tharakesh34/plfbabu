@@ -109,6 +109,16 @@
 										<datebox id="docReceivedDt" readonly="true"
 											width="150px"/>
 									</hbox>
+									
+								</row>
+								<row>
+									<label
+										id="label_FinDocumentDetailDialog_isOriginalDocument"
+										value="${c:l('label_FinDocumentDetailDialog_isOriginalDocument.value')}" />
+									<hbox>
+										<checkbox
+											id="docOriginal" />
+									</hbox>
 								</row>
 
 								<row id="statusRow">

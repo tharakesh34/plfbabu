@@ -62,6 +62,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -440,6 +441,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			listitem.appendChild(listcell);
 			listcell = new Listcell(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 			listitem.appendChild(listcell);
+
+			listcell = new Listcell();
+			final Checkbox documentIsActive = new Checkbox();
+			documentIsActive.setDisabled(true);
+			documentIsActive.setChecked(documentDetail.isDocOriginal());
+			listcell.appendChild(documentIsActive);
+			listitem.appendChild(listcell);
+
 			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
 			listitem.appendChild(listcell);
 			listitem.setAttribute("data", documentDetail);

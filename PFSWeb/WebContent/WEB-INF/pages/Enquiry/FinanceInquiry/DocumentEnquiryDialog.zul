@@ -37,6 +37,8 @@
 										<listheader
 											label="${c:l('listheader_DocName.label')}" hflex="min" />
 										<listheader
+											label="${c:l('listheader_DocOriginal.label')}" hflex="min" />
+										<listheader
 											label="${c:l('listheader_ViewDoc.label')}" hflex="min" />
 									</listhead>
 								</listbox>

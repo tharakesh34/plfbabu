@@ -116,6 +116,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected ExtendedCombobox            docCategory;                                                                // autowired
 	protected Textbox	                  documnetName;	                                                             // autowired
 	protected Checkbox                    docReceived;
+	protected Checkbox docOriginal;
 	protected Datebox                     docReceivedDt;
 	protected Space                       space_documentName;
 	protected Space                       space_docReceivedDt;
@@ -485,6 +486,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.documnetName.setValue(aDocumentDetails.getDocName());
 		this.documnetName.setAttribute("data", aDocumentDetails);
 		
+
 		AMedia amedia = null;
 		if (aDocumentDetails.getDocImage() != null) {
 //			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
@@ -516,6 +518,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docReceived.setChecked(aDocumentDetails.isDocReceived());
 		this.docReceivedDt.setValue(aDocumentDetails.getDocReceivedDate());
 		
+		this.docOriginal.setChecked(aDocumentDetails.isDocOriginal());
+
 		this.documnetName.setReadonly(true);
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setReadonly(false);
@@ -594,7 +598,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			wve.add(we);
 		}
 		
-		
+		try {
+			aDocumentDetails.setDocOriginal(this.docOriginal.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
