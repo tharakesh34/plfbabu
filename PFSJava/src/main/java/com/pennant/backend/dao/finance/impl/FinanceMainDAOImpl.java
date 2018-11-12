@@ -2366,16 +2366,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * 
 	 */
 	@Override
-	public int loanMandateSwapping(String finReference, long newMandateID) {
+	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod) {
 		logger.debug("Entering");
 
 		int recordCount = 0;
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finReference);
 		financeMain.setMandateID(newMandateID);
+		financeMain.setFinRepayMethod(repayMethod);
 
 		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
 		updateSql.append(" Set MandateID =:MandateID ");
+		if (StringUtils.isNotBlank(repayMethod)) {
+			updateSql.append(" ,FinRepayMethod =:FinRepayMethod");
+		}
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());

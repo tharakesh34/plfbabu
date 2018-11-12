@@ -20,6 +20,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
@@ -28,7 +29,9 @@ import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
@@ -55,6 +58,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private FinanceMainService financeMainService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private EntityService entityService;
+	private FinanceTypeService financeTypeService;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -413,6 +417,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			for (String finReference : finRefList) {
 				if (StringUtils.equals(finReference, mandate.getOrgReference())) {
 					validFinrefernce = false;
+					break;
 				}
 			}
 			if (validFinrefernce) {
@@ -657,6 +662,94 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		return response;
 	}
 
+	@Override
+	public Mandate approveMandate(Mandate mandate) throws ServiceException {
+		logger.debug("Entering");
+
+		Mandate response = null;
+
+		// bean validations
+		validationUtility.validate(mandate, SaveValidationGroup.class);
+
+		WSReturnStatus returnStatus = doMandateValidation(mandate);
+
+		//for logging purpose
+		String[] logFields = new String[3];
+		logFields[0] = mandate.getCustCIF();
+		logFields[1] = mandate.getAccNumber();
+		logFields[2] = mandate.getAccHolderName();
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
+			if (StringUtils.isBlank(mandate.getMandateRef())) {
+				response = new Mandate();
+				String[] paramValue = new String[1];
+				paramValue[0] = "mandateRef";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
+				return response;
+			}
+			if (mandate.isSwapIsActive() && StringUtils.isBlank(mandate.getOrgReference())) {
+				response = new Mandate();
+				String[] paramValue = new String[1];
+				paramValue[0] = "finReference";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
+				return response;
+			} 
+			if (mandate.isSwapIsActive()) {
+				List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
+						.getFinScheduleDetails(mandate.getOrgReference(), "", false);
+				BigDecimal repayAmt = BigDecimal.ZERO;
+				if (financeScheduleDetails != null) {
+					for (int i = 0; i < financeScheduleDetails.size(); i++) {
+						FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+						if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
+								&& curSchd.isRepayOnSchDate()) {
+							repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
+									.add(curSchd.getInsSchd());
+							break;
+						}
+					}
+				}
+				if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
+					returnStatus = APIErrorHandlerService.getFailedStatus("90320");
+					response = new Mandate();
+					response.setReturnStatus(returnStatus);
+					return response;
+				}
+				FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
+				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finMain.getFinType());
+				if (StringUtils.isNotBlank(allowedRepayModes)) {
+					boolean isTypeFound = false;
+					String[] types = allowedRepayModes.split(PennantConstants.DELIMITER_COMMA);
+					for (String type : types) {
+						if (StringUtils.equals(type, mandate.getMandateType())) {
+							isTypeFound = true;
+							break;
+						}
+					}
+					if (!isTypeFound) {
+						String[] valueParm = new String[2];
+						valueParm[0] = mandate.getMandateType();
+						returnStatus = APIErrorHandlerService.getFailedStatus("90307", valueParm);
+						response = new Mandate();
+						response.setReturnStatus(returnStatus);
+						return response;
+					}
+				}
+			}
+			
+			response = mandateController.doApproveMandate(mandate);
+		} else {
+			response = new Mandate();
+			response.setReturnStatus(returnStatus);
+		}
+		//for logging purpose
+		if (response.getMandateID() != Long.MIN_VALUE) {
+			APIErrorHandlerService.logReference(String.valueOf(response.getMandateID()));
+		}
+		logger.debug("Leaving");
+		return response;
+	}
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
@@ -700,5 +793,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	@Autowired
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+
+	@Autowired
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
 	}
 }

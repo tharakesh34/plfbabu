@@ -89,4 +89,6 @@ public interface FinanceTypeDAO {
 	boolean isCostOfFundsExist(String costOfFunds, String type);
 	
 	FinanceType getFinLtvCheckByFinType(String finType);
+
+	String getAllowedRepayMethods(String finType, String type);
 }

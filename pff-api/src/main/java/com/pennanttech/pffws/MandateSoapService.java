@@ -23,5 +23,6 @@ public interface MandateSoapService {
 
 	public WSReturnStatus loanMandateSwapping(@WebParam(name = "mandate") MandateDetial mandate)
 			throws ServiceException;
+	public Mandate approveMandate(@WebParam(name = "mandate") Mandate mandate) throws ServiceException;
 
 }

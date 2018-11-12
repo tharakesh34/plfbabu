@@ -646,7 +646,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				&& !mandate.isSecondaryMandate()
 				&& !((StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
 						|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED))))
-				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
+				&& !StringUtils.equals(method, PennantConstants.method_doReject)
+				&& !StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_RELEASE)) {
 			boolean exists = getMandateDAO().checkMandates(mandate.getOrgReference(), mandate.getMandateID());
 			if (exists) {
 				String[] valueParm2 = new String[1];

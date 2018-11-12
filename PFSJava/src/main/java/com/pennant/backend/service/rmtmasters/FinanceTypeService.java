@@ -82,4 +82,5 @@ public interface FinanceTypeService {
 	FinanceType getApprovedFinanceType(String finType);
 	
 	FinanceType getFinLtvCheckByFinType(String finType);
+	String getAllowedRepayMethods(String finType);
 }

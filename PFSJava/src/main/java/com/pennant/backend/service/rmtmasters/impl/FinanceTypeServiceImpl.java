@@ -1982,5 +1982,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	public FinanceType getFinLtvCheckByFinType(String finType) {
 		return financeTypeDAO.getFinLtvCheckByFinType(finType);
 	}
+
+	@Override
+	public String getAllowedRepayMethods(String finType) {
+		return getFinanceTypeDAO().getAllowedRepayMethods(finType, " ");
+
+	}
 	
 }

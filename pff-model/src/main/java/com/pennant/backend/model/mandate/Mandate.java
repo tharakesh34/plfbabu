@@ -146,6 +146,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private boolean useExisting;
 	private String mandateCcy;
+	@XmlElement(name = "finReference")
 	private String orgReference;
 	private String sourceId;
 	@XmlElement
@@ -167,6 +168,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String barCodeNumber;
 	@XmlElement
 	private String amountInWords;
+	@XmlElement(name = "swap")
 	private boolean swapIsActive;
 	private long primaryMandateId = 0;
 	private boolean secondaryMandate;

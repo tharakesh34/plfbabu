@@ -55,7 +55,7 @@ public interface FinanceMainService {
 
 	int getFinanceCountById(String finReference, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateId);
+	int loanMandateSwapping(String finReference, long newMandateId, String repayMethod);
 
 	int getFinanceCountById(String finReference, boolean isWIF);
 

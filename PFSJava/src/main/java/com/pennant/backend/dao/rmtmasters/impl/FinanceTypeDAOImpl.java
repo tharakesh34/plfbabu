@@ -807,4 +807,31 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		return financeType;
 	}
 
+	@Override
+	public String getAllowedRepayMethods(String finType, String type) {
+
+		logger.debug("Entering");
+
+		String finTypeDesc = "";
+		FinanceType financeType = new FinanceType();
+		financeType.setFinType(finType);
+
+		StringBuilder selectSql = new StringBuilder("SELECT AlwdRpyMethods ");
+		selectSql.append(" From RMTFinanceTypes ");
+		selectSql.append(" Where FinType =:FinType");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
+
+		try {
+			finTypeDesc = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			finTypeDesc = "";
+		}
+		logger.debug("Leaving");
+		return finTypeDesc;
+	
+	}
+
 }

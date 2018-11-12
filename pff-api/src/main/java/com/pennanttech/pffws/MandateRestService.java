@@ -39,4 +39,7 @@ public interface MandateRestService {
 	@Path("/mandateService/loanMandateSwapping")
 	public WSReturnStatus loanMandateSwapping(MandateDetial mandate) throws ServiceException;
 
+	@POST
+	@Path("/mandateService/approveMandate")
+	public Mandate approveMandate(Mandate mandate) throws ServiceException;
 }

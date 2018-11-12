@@ -279,7 +279,7 @@ public class MandateController {
 		WSReturnStatus response = null;
 		try {
 			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
-					mandateDetail.getNewMandateId());
+					mandateDetail.getNewMandateId(),null);
 			if (count > 0) {
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {
@@ -293,6 +293,84 @@ public class MandateController {
 		}
 		logger.debug("Leaving");
 		return response;
+	}
+
+	/**
+	 * Method for create Mandate in PLF system.
+	 * 
+	 * @param mandate
+	 * @return Mandate
+	 */
+	public Mandate doApproveMandate(Mandate mandate) {
+		logger.debug("Entering");
+		Mandate response = null;
+		AuditHeader auditHeader = null;
+		//set status
+		mandate.setStatus(MandateConstants.STATUS_RELEASE);
+
+		//set mandate detail and get audit header detail
+		auditHeader = doSetMandateDefault(mandate);
+
+		try {
+			auditHeader = mandateService.doApprove(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new Mandate();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				response = (Mandate) auditHeader.getAuditDetail().getModelData();
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				if (mandate.isSwapIsActive()) {
+					financeMainService.loanMandateSwapping(response.getOrgReference(), response.getMandateID(),mandate.getMandateType());
+				}
+				doEmptyResponseObject(response);
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new Mandate();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug("Leaving");
+
+		return response;
+	}
+	
+
+	/**
+	 * do mandate doSetMandateDefault(for create and approve mandate)
+	 * 
+	 * @param mandate
+	 * 
+	 * @return AuditHeader
+	 */
+	private AuditHeader doSetMandateDefault(Mandate mandate) {
+		logger.debug("Entering");
+
+		// setting required values which are not received from API
+		prepareRequiredData(mandate);
+		Customer customer = customerDetailsService.getCustomerByCIF(mandate.getCustCIF());
+
+		mandate.setCustID(customer.getCustID());
+		mandate.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		mandate.setNewRecord(true);
+		mandate.setActive(true);
+		mandate.setVersion(1);
+		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
+
+		//get the header details from the request
+		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
+		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
+
+		//set the headerDetails to AuditHeader
+		auditHeader.setApiHeader(reqHeaderDetails);
+
+		logger.debug("Leaving");
+		return auditHeader;
 	}
 
 	/**
@@ -332,7 +410,6 @@ public class MandateController {
 	 */
 	private void doEmptyResponseObject(Mandate response) {
 		response.setCustCIF(null);
-		response.setMandateRef(null);
 		response.setMandateType(null);
 		response.setBankCode(null);
 		response.setBranchCode(null);
