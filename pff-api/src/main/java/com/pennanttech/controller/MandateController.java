@@ -65,6 +65,7 @@ public class MandateController {
 			mandate.setActive(true);
 			mandate.setVersion(1);
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
+			mandate.setStatus(MandateConstants.STATUS_NEW);
 			//get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -150,6 +151,7 @@ public class MandateController {
 			mandate.setVersion(prvMandate.getVersion() + 1);
 			mandate.setActive(true);
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
+			mandate.setStatus(MandateConstants.STATUS_NEW);
 			// copy properties
 			BeanUtils.copyProperties(mandate, prvMandate);
 
@@ -306,7 +308,8 @@ public class MandateController {
 		Mandate response = null;
 		AuditHeader auditHeader = null;
 		//set status
-		mandate.setStatus(MandateConstants.STATUS_RELEASE);
+		mandate.setApproveMandate(true);
+		mandate.setStatus(MandateConstants.STATUS_APPROVED);
 
 		//set mandate detail and get audit header detail
 		auditHeader = doSetMandateDefault(mandate);

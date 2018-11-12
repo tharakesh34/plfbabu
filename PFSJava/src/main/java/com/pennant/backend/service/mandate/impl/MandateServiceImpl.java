@@ -345,7 +345,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
 				mandate.setStatus(MandateConstants.STATUS_NEW);
 			}
-
+			
+			if (StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+				if (mandate.isApproveMandate()) {
+					mandate.setStatus(MandateConstants.STATUS_APPROVED);
+				} else {
+					mandate.setStatus(MandateConstants.STATUS_NEW);
+				}
+			}
+						
 			getDocument(mandate);
 
 			if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -646,8 +654,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				&& !mandate.isSecondaryMandate()
 				&& !((StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
 						|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED))))
-				&& !StringUtils.equals(method, PennantConstants.method_doReject)
-				&& !StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_RELEASE)) {
+				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
 			boolean exists = getMandateDAO().checkMandates(mandate.getOrgReference(), mandate.getMandateID());
 			if (exists) {
 				String[] valueParm2 = new String[1];

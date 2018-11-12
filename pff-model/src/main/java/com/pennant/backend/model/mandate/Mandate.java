@@ -195,6 +195,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String entityCode;
 	private String entityDesc;
+	private boolean approveMandate;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -255,6 +256,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("amountInWords");
 		excludeFields.add("finReference");
 		excludeFields.add("entityDesc");
+		excludeFields.add("approveMandate");
 		return excludeFields;
 	}
 
@@ -903,6 +905,14 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
+	}
+
+	public boolean isApproveMandate() {
+		return approveMandate;
+	}
+
+	public void setApproveMandate(boolean approveMandate) {
+		this.approveMandate = approveMandate;
 	}
 
 }
