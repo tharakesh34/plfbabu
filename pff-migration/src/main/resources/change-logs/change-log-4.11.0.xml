@@ -2921,10 +2921,10 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	</addColumn>
 	</changeSet>
 
-
-	<changeSet id="34" author="swami">
-		<comment>Column Added t1.DocOriginal</comment>
+<changeSet id="34.0" author="swami">
+		<comment>mistake has happend in documentdetails_tview</comment>
 		<createView viewName="documentdetails_tview" replaceIfExists="true" >
+		
 SELECT t1.docid,
     t1.docmodule,
     t1.doccategory,
@@ -2945,12 +2945,12 @@ SELECT t1.docid,
     t1.referenceid,
     t1.docrefid,
     t1.docpurpose,
-    t1.docuri,"documentdetails_view"
+    t1.docuri,
     t1.docreceiveddate,
     t1.docreceived,
     t1.instructionuid,
-    t1.DocOriginaldocumentdetails_view
-   FROM documentdetails_temp t1
+    t1.docoriginal
+   FROM documentdetails_temp t1;
 
         </createView>
 </changeSet>
