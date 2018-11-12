@@ -2969,13 +2969,13 @@ SELECT t1.docid,
         </createView>
 </changeSet>
 
-<changeSet id="35.1_Pre" author="Swami">
+<changeSet id="35.1_Pre" author="Swami" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','documentdetails_view');
 	</sql>
 </changeSet>
 
-<changeSet id="35.1" author="swami" dbms="postgresql">
+<changeSet id="35.1" author="swami">
 		<comment> Column Added t1.DocOriginal</comment>
 		<createView viewName="documentdetails_view" replaceIfExists="true" >
 SELECT t1.docid,
