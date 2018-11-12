@@ -1961,7 +1961,11 @@ UNION ALL
           WHERE securityuserdivbranch_temp.usrid = t1.usrid))
 		</createView>
 	</changeSet>
-	
+	<changeSet id="23_Pre" author="Vinay" dbms="postgres">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','customers_aview');
+		</sql>
+	</changeSet>
 	<changeSet id="23" author="Vinay">
 		<createView viewName="customers_aview" replaceIfExists="true">
 			SELECT t1.custid,
@@ -2179,7 +2183,11 @@ UNION ALL
      LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd
 		</createView>
 	</changeSet>
-	
+	<changeSet id="23_Post" author="Vinay" dbms="postgres">
+		<sql>
+			select deps_restore_dependencies('plf','customers_aview');
+		</sql>
+	</changeSet>
 	<changeSet id="24" author="Vinay">
 		<createView viewName="customers_tview" replaceIfExists="true">
 			SELECT t1.custid,
