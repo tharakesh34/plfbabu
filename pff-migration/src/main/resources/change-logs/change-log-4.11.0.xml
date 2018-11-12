@@ -795,6 +795,13 @@ UNION ALL
 		<createSequence sequenceName="SeqFinTypeExpense" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 </changeSet>
 
+<changeSet id="15.0" author="Vinay" dbms="mssql">
+	<createTable tableName="SeqFinTypeExpense">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"/>
+	</createTable>
+</changeSet>
+
 <changeSet id="16_Pre" author="Jayant" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','fintypeexpenses');
@@ -2144,7 +2151,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc , fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
+    COALESCE(t34.roledesc , ${add.schema}fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
     t1.margindeviation,
     t1.applicationno,
 	t17.branchprovince
@@ -2366,7 +2373,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc , fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
+    COALESCE(t34.roledesc , ${add.schema}fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
     t1.margindeviation,
     t1.applicationno,
     t17.branchprovince
@@ -2590,7 +2597,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc , fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
+    COALESCE(t34.roledesc , ${add.schema}fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
     t1.margindeviation,
     t1.applicationno,
     t17.branchprovince
@@ -2804,7 +2811,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE(t34.roledesc, fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
+    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode )) AS lovdescrequeststage,
     t1.margindeviation,
     t1.applicationno,
     t17.branchprovince
