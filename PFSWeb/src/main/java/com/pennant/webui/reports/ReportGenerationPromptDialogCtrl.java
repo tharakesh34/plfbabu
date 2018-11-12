@@ -906,7 +906,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						filter = getFilter(aReportFieldsDetails);
 					}
 					try {
-						if (StringUtils.isNotEmpty(filter) && !("").equals(textbox.getValue().trim())) {
+						if (StringUtils.isNotEmpty(filter) && !("").equals(textbox.getValue().trim()) && 
+								!StringUtils.equals(textbox.getValue().trim(), "SELECTALL")) {
 							// Prepare Where Condition
 							if (isWhereCondition) {
 								whereCondition = addAndCondition(whereCondition);
@@ -2507,15 +2508,20 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 					while (itr.hasNext()) {
 						String str = itr.next();
-
-						if (lovSearchMap.get(str) != null) {
-							// get Label and Value by reflection methods
-							codes = codes + lovSearchMap.get(str).getClass()
-									.getMethod(aReportFieldsDetails.getLovHiddenFieldMethod())
-									.invoke(lovSearchMap.get(str)) + ",";
-							descs = descs + lovSearchMap.get(str).getClass()
-									.getMethod(aReportFieldsDetails.getLovTextFieldMethod())
-									.invoke(lovSearchMap.get(str)) + ",";
+						
+						if(StringUtils.equals(str, "SELECTALL")){
+							codes = "SELECTALL"+ ",";
+							descs = "Select All"+ ",";
+						}else{
+							if (lovSearchMap.get(str) != null) {
+								// get Label and Value by reflection methods
+								codes = codes + lovSearchMap.get(str).getClass()
+										.getMethod(aReportFieldsDetails.getLovHiddenFieldMethod())
+										.invoke(lovSearchMap.get(str)) + ",";
+								descs = descs + lovSearchMap.get(str).getClass()
+										.getMethod(aReportFieldsDetails.getLovTextFieldMethod())
+										.invoke(lovSearchMap.get(str)) + ",";
+							}
 						}
 					}
 					valuestextBox

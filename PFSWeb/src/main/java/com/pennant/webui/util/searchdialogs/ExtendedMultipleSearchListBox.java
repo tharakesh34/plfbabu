@@ -56,7 +56,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hbox;
@@ -155,6 +154,10 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			Filter[] filters) {
 		super();
 		this.selectedValuesMap = selectedValuesMap;
+		if(selectedValuesMap.containsKey("SELECTALL")){
+			selectedValuesMap.clear();
+			selectAll = true;
+		}
 		this.filters = filters;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
@@ -318,15 +321,12 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 				}
 
 				final Listcell lc = new Listcell(fieldValue);
-				if (selectedValuesMap.containsKey(fieldValue)) {
+				if (selectedValuesMap.containsKey(fieldValue) || selectAll) {
 					item.setSelected(true);
 				}
-
 				lc.setParent(item);
 			}
-
 			item.setAttribute("data", data);
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onDoubleClicked");
 		}
 	}
 
@@ -379,6 +379,8 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			}
 			if (item.isSelected()) {
 				selectedValuesMap.put(fieldValue, obj);
+			}else{
+				selectAll = false;
 			}
 		}
 	}
@@ -422,12 +424,24 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 	public void onClick$clear(Event event) {
 		selectedValuesMap.clear();
-		setObject(selectedValuesMap);
-		onClose();
+		selectAll = false;
+		doClose();
 	}
 
 	public void onClick$ok(Event event) {
 		setSelectedItems();
+		if(selectAll){
+			selectedValuesMap.clear();
+			selectedValuesMap.put("SELECTALL", "Select All");
+		}
+		doClose();
+	}
+	
+	private void doClose(){
+		if(selectAll){
+			selectedValuesMap.clear();
+			selectedValuesMap.put("SELECTALL", "Select All");
+		}
 		setObject(selectedValuesMap);
 		onClose();
 	}
@@ -457,8 +471,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	}
 
 	public void onClick$close(Event event) {
-		setObject(selectedValuesMap);
-		onClose();
+		doClose();
 	}
 
 	/**
