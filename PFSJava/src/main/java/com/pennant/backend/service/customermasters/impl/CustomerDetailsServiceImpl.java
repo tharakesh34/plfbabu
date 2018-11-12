@@ -2398,10 +2398,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		if (customer.getCasteId() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("Caste", customer.getCasteId()));
+			auditDetail.setErrorDetail(validateMasterCode("Caste","CasteId", customer.getCasteId()));
 		}
 		if (customer.getReligionId() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("Religion", customer.getReligionId()));
+			auditDetail.setErrorDetail(validateMasterCode("Religion","ReligionId", customer.getReligionId()));
 		}
 		if (StringUtils.isNotBlank(customer.getSubCategory())) {
 			List<ValueLabel> subCategories = PennantStaticListUtil.getSubCategoriesList();
@@ -2499,7 +2499,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return errorDetail;
 	}
 
-	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
 		logger.debug("Entering");
 
 		ErrorDetail errorDetail = new ErrorDetail();
@@ -2509,7 +2509,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (count <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
-			valueParm[1] = value;
+			valueParm[1] = Objects.toString(value);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
 		}
 
