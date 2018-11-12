@@ -77,7 +77,7 @@
 							<column />
 						</columns>
 						<rows>
-							<row>
+							<row height="24px">
 								<label
 									id="label_DocumentTypeDialog_DocTypeCode"
 									value="${c:l('label_DocumentTypeDialog_DocTypeCode.value')}" />
@@ -100,11 +100,11 @@
 							<row>
 								<space spacing="10px" />
 							</row>
-							<row>
+							<row height="24px">
 								<label
 									id="label_DocumentTypeDialog_DocCategory"
 									value="${c:l('label_DocumentTypeDialog_DocCategory.value')}" />
-									<extendedcombobox id="docCategory" />
+								<extendedcombobox id="docCategory" />
 								<label
 									id="label_DocumentTypeDialog_DocIsMandatory"
 									value="${c:l('label_DocumentTypeDialog_DocIsMandatory.value')}" />
@@ -114,7 +114,7 @@
 										checked="false" />
 								</hbox>
 							</row>
-							<row>
+							<row height="24px">
 								<label
 									id="label_DocumentTypeDialog_DocIsExDateMandatory"
 									value="${c:l('label_DocumentTypeDialog_DocIsExDateMandatory.value')}" />
@@ -132,7 +132,7 @@
 										checked="false" />
 								</hbox>
 							</row>
-							<row>
+							<row height="24px">
 								<label
 									id="label_DocumentTypeDialog_docIdNumMand"
 									value="${c:l('label_DocumentTypeDialog_docIdNumMand.value')}" />
@@ -150,38 +150,39 @@
 										id="docIssuedAuthorityMand" checked="false" />
 								</hbox>
 							</row>
-							<row>
-								<space spacing="10px" />
-							</row>
-							<row>
-								<label value="${c:l('label_DocumentTypeDialog_PDD.value')}" />
+							<row height="24px">
+								<label
+									value="${c:l('label_DocumentTypeDialog_PDD.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="pddDoc" checked="false"/>
+									<checkbox id="pddDoc"
+										checked="false" />
 								</hbox>
-								<label value="${c:l('label_DocumentTypeDialog_OTC.value')}" />
+								<label
+									value="${c:l('label_DocumentTypeDialog_OTC.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="otcDoc" checked="false" />
+									<checkbox id="otcDoc"
+										checked="false" />
 								</hbox>
 							</row>
-							<row>
+							<row height="24px">
 								<label
 									value="${c:l('label_DocumentTypeDialog_LVReq.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="lvReq" checked="false" />
+									<checkbox id="lvReq"
+										checked="false" />
 								</hbox>
-								<label value="${c:l('label_DocumentTypeDialog_RCUReq.value')}" />
+								<label
+									value="${c:l('label_DocumentTypeDialog_RCUReq.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="rcuReq" checked="false" />
+									<checkbox id="rcuReq"
+										checked="false" />
 								</hbox>
 							</row>
-							<row>
-								<space spacing="10px" />
-							</row>
-							<row>
+							<row height="24px">
 								<label id="label_IsPdf_Ext_Required"
 									value="${c:l('label_DocumentTypeDialog_PdfExtRequired.value')}" />
 								<hbox>
@@ -197,16 +198,17 @@
 										id="docIsPasswordProtected" checked="false" />
 								</hbox>
 							</row>
-							<row id="rowMappingRef" visible="true">
+							<row id="rowMappingRef" visible="true"  height="24px">
 								<label id="label_MappingRef"
 									value="${c:l('label_DocumentTypeDialog_MappingRef.value')}" />
 								<extendedcombobox id="mappingRef" />
 
 								<label id="label_ExternalReference"
 									value="${c:l('label_DocumentTypeDialog_ExternalReference')}" />
-								<textbox id="docExternalRef"  maxlength="100" width="350px" />
+								<textbox id="docExternalRef"
+									maxlength="100" width="350px" />
 							</row>
-							<row>
+							<row  height="24px">
 								<label
 									id="label_DocumentTypeDialog_DocTypeIsActive"
 									value="${c:l('label_DocumentTypeDialog_DocTypeIsActive.value')}" />
