@@ -128,8 +128,7 @@
 								value="${c:l('label_CreditApplicationReviewDialog_AuditedDate.value')}" />
 							<hbox>
 								<space spacing="2px" sclass="mandatory" />
-								<datebox id="auditedDate" width="150px"
-									constraint="no future:" />
+								<datebox id="auditedDate" width="150px" />
 							</hbox>
 						</row>
 

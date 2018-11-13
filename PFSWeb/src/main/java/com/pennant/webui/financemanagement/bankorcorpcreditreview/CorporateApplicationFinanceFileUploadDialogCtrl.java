@@ -112,6 +112,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -126,9 +127,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	private static final Logger logger = Logger.getLogger(CorporateApplicationFinanceFileUploadDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CorporateCreditRevFinanceFileUploadDialog; // autoWired
 	protected Borderlayout borderLayout_FinanceTypeList; // autoWired
@@ -208,6 +208,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	Set<String> plYearData = null;
 	Set<String> bsYearData = null;
 	ByteArrayInputStream inputStream = null;
+	private List<String> auditYearsList = null;
 
 	/**
 	 * default constructor.<br>
@@ -217,9 +218,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceType object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -300,6 +300,20 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	}
 
 	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		logger.debug("Entering");
+		
+		if (!this.auditedDate.isReadonly()) {
+			this.auditedDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_AuditedDate.value"), true, null, true, true));
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	/**
 	 * To load the customerSelect filter dialog
 	 * 
 	 * @throws SuspendNotAllowedException
@@ -319,11 +333,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 	private List<Filter> getFilterList() {
 		filterList = new ArrayList<Filter>();
-		filterList.add(new Filter("lovDescCustCtgType",
-				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME, PennantConstants.PFF_CUSTCTG_INDIV }, Filter.OP_IN));
+		filterList.add(new Filter("lovDescCustCtgType", new String[] { PennantConstants.PFF_CUSTCTG_CORP,
+				PennantConstants.PFF_CUSTCTG_SME, PennantConstants.PFF_CUSTCTG_INDIV }, Filter.OP_IN));
 		return filterList;
 	}
-
 
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
@@ -391,9 +404,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			}
 		}
 	}
-	
-	public void onUploadDocumentValidation(){
-		FinCreditReviewDetails aCreditReviewDetails=new FinCreditReviewDetails();
+
+	public void onUploadDocumentValidation() {
+		FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
 		List<WrongValueException> wveList = new ArrayList<WrongValueException>();
 		try {
 			if ((this.documentName.getValue() == null || StringUtils.isEmpty(this.documentName.getValue()))) {
@@ -499,11 +512,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("creditReviewDetails", creditReviewDetail);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listBox ListModel. This is
-		 * fine for synchronizing the data in the CreditReviewDetailsListbox
-		 * from the dialog when we do a delete, edit or insert a
-		 * FinCreditReviewDetails.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listBox ListModel. This is fine for synchronizing the data in the CreditReviewDetailsListbox from the dialog
+		 * when we do a delete, edit or insert a FinCreditReviewDetails.
 		 */
 		map.put("creditApplicationReviewListCtrl", creditApplicationReviewListCtrl);
 
@@ -550,9 +561,16 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				this.fileImport = new ExcelFileImport(media, filePath);
 
 			}
-			
-			/*BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
-			doWriteComponentsToBean(aCreditReviewDetails);*/
+
+			finCreditReviewDetailsList = getCreditApplicationReviewService()
+					.getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_View");
+			/*
+			 * if (finCreditReviewDetailsList.size() >= 3) { String errorMsg =
+			 * "3 Years Credit Review For The Customer with CIF Number: " + customer.getCustCIF() +
+			 * " is already in process please process it"; MessageUtil.showError(errorMsg);
+			 * this.documentName.setValue(""); return; }
+			 */
+
 			setListDetails();
 		} catch (Exception e) {
 			this.errorMsg = e.getMessage();
@@ -644,11 +662,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				}
 				if (k >= 4) {
 					Calendar cal = Calendar.getInstance();
+					cal.setTime(DateUtility.getAppDate());
 					double year = cal.get(cal.YEAR);
-					if (plYearData == null)
-						plYearData = new HashSet<String>();
-					if (bsYearData == null)
-						bsYearData = new HashSet<String>();
+					plYearData = new HashSet<String>();
+					bsYearData = new HashSet<String>();
 					if (StringUtils.equalsIgnoreCase("P&L", sheetName)) {
 						if (plYearData.contains(readYearCell)) {
 							MessageUtil.showMessage(
@@ -675,8 +692,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 						documentName.setValue("");
 						return true;
 					}
-					if (Double.parseDouble(readYearCell) >= year) {
-						MessageUtil.showMessage(readYearCell + " Invalid column Header, Please upload valid data");
+					if (Double.parseDouble(readYearCell) > year) {
+						MessageUtil.showMessage(
+								readYearCell + " Invalid audit year column header, Please upload valid data");
 						documentName.setValue("");
 						return true;
 					}
@@ -689,7 +707,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 	private Map<String, List<Object[]>> readSheet(HSSFSheet sheet, int sheetNumber) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		auditYearsList = new ArrayList<>();
 		Map<String, List<Object[]>> yearDataMap = new HashMap<>();
 		List<Object[]> list;
 
@@ -713,7 +731,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					documentName.setValue("");
 					break;
 				}
-				if(validateHeaderRow(headerRow, sheet.getSheetName())){
+				if (validateHeaderRow(headerRow, sheet.getSheetName())) {
 					return null;
 				}
 				// validation for valid years in both sheets in EXCEL File
@@ -741,7 +759,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					}
 					cell = row.getCell(k);
 					String year = cell.toString();
-					year = getYear(year);
+					year = getYear(year, true);
 					list = yearDataMap.get(year);
 					if (list == null) {
 						list = new ArrayList<Object[]>();
@@ -757,7 +775,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					break;
 				}
 				String year = cell.toString();
-				year = getYear(year);
+				year = getYear(year, false);
 				list = yearDataMap.get(year);
 				Object[] dataArray = new Object[3];
 
@@ -792,12 +810,25 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			}
 
 		}
+
+		// validating audit years from excel sheet headers with existing data
+		for (String auditYear : auditYearsList) {
+			for (FinCreditReviewDetails details : finCreditReviewDetailsList) {
+				if (StringUtils.equals(auditYear, details.getAuditYear())) {
+					String errorMsg = "Credit Review For The Customer with CIF Number: " + customer.getCustCIF()
+							+ " and Audit Year: " + auditYear + " is already in process please process it";
+					MessageUtil.showError(errorMsg);
+					this.documentName.setValue("");
+					return null;
+				}
+			}
+		}
 		logger.debug(Literal.LEAVING);
 		return yearDataMap;
 	}
 
 	// set audit year read from excel file
-	private String getYear(String year) {
+	private String getYear(String year, boolean exlHdrYears) {
 		logger.debug(Literal.ENTERING);
 		String[] array = StringUtils.split(year, ".");
 
@@ -807,14 +838,16 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			year = array[0];
 		}
 		logger.debug(Literal.LEAVING);
+		if (exlHdrYears) {
+			auditYearsList.add(year);
+		}
 		return year;
 	}
 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCreditReviewDetails
 	 * @throws Exception
@@ -1006,19 +1039,11 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public void doWriteComponentsToBean(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug(Literal.ENTERING);
 		List<WrongValueException> wveList = new ArrayList<WrongValueException>();
-
+		doSetValidation();
 		if (StringUtils.isNotBlank(this.lovDescCustCIF.getValue())) {
 			this.lovDescCustCIF.clearErrorMessage();
 			customer = (Customer) PennantAppUtil.getCustomerObject(this.lovDescCustCIF.getValue(), getFilterList());
 			if (customer != null) {
-				finCreditReviewDetailsList = getCreditApplicationReviewService()
-						.getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_Temp");
-				if (finCreditReviewDetailsList.size() >= 3) {
-					String errorMsg = "3 Years Credit Review For The Customer with CIF Number: " + customer.getCustCIF()
-							+ " is already in process please process it";
-					MessageUtil.showError(errorMsg);
-					return;
-				}
 				aCreditReviewDetails.setLovDescCustCIF(this.lovDescCustCIF.getValue());
 				aCreditReviewDetails.setCreditRevCode(customer.getCustCtgCode());
 				aCreditReviewDetails.setCustomerId(customer.getCustID());
@@ -1064,13 +1089,15 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		String category = "";
 		// Duplicate Audit Year Validation
 		if (StringUtils.isNotBlank(this.lovDescCustCIF.getValue())) {
-			customer = (Customer) PennantAppUtil.getCustomerObject(this.lovDescCustCIF.getValue(), getFilterList());
+			if (customer == null) {
+				customer = (Customer) PennantAppUtil.getCustomerObject(this.lovDescCustCIF.getValue(), getFilterList());
+			}
 			if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, customer.getCustCtgCode())) {
 				category = PennantConstants.PFF_CUSTCTG_SME;
 				aCreditReviewDetails.setLovDescCustCtgCode(category);
 			} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
-					category = PennantConstants.PFF_CUSTCTG_INDIV;
-					aCreditReviewDetails.setLovDescCustCtgCode(category);
+				category = PennantConstants.PFF_CUSTCTG_INDIV;
+				aCreditReviewDetails.setLovDescCustCtgCode(category);
 			} else {
 				category = PennantConstants.PFF_CUSTCTG_CORP;
 				aCreditReviewDetails.setLovDescCustCtgCode(category);
@@ -1190,17 +1217,17 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			wveList.add(wve);
 		}
 		for (int i = 0; i < wveList.size(); i++) {
-		if(wveList.isEmpty()){
-			try {
-				if ((this.documentName.getValue() == null || StringUtils.isEmpty(this.documentName.getValue()))) {
-					throw new WrongValueException(this.documentName, Labels.getLabel("MUST_BE_UPLOADED",
-							new String[] { Labels.getLabel("label_CreditRevSelectCategory_CorporateDoc.value") }));
+			if (wveList.isEmpty()) {
+				try {
+					if ((this.documentName.getValue() == null || StringUtils.isEmpty(this.documentName.getValue()))) {
+						throw new WrongValueException(this.documentName, Labels.getLabel("MUST_BE_UPLOADED",
+								new String[] { Labels.getLabel("label_CreditRevSelectCategory_CorporateDoc.value") }));
+					}
+					aCreditReviewDetails.setDocument(this.documentName.getValue());
+				} catch (WrongValueException wve) {
+					wveList.add(wve);
 				}
-				aCreditReviewDetails.setDocument(this.documentName.getValue());
-			} catch (WrongValueException wve) {
-				wveList.add(wve);
 			}
-		}
 		}
 
 		doRemoveValidation();
@@ -1327,7 +1354,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public FinCreditRevSubCategoryService getFinCreditRevSubCategoryService() {
 		return finCreditRevSubCategoryService;
 	}
-
 
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
