@@ -384,7 +384,8 @@ public class FinanceConstants {
 
 	// Query Management
 	public static final String QUERY_MANAGEMENT = "QUERY_MGMT";
-
+	public static final String FEE_UPFRONT_REQ    = "FEE_UPFRONT_REQ";
+	
 	// Fee Waivers
 	public static final String FINSER_EVENT_FEEWAIVERS = "FeeWaivers";
 }

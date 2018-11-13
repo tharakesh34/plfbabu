@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -352,5 +353,41 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		return finReceiptDetailsList;
 
+	}
+	
+	@Override
+	public BigDecimal getFinReceiptDetailsByFinRef(String finReference) {
+		logger.debug("Entering");
+		
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("Status", "C");
+		source.addValue("ReceiptPurpose", "FeePayment");
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" select SUM(Amount) Amount from ( select coalesce(sum(T2.AMOUNT), 0) Amount ");
+		selectSql.append(" From FINRECEIPTHEADER_Temp T1 ");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL_Temp T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(" where T1.Reference = :FinReference");
+		selectSql.append(" UNION ALL ");
+		selectSql.append(" select coalesce(sum(T2.AMOUNT), 0) Amount ");
+		selectSql.append(" From FINRECEIPTHEADER T1 ");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status And T1.Reference = :FinReference and NOT (EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_Temp WHERE FINRECEIPTHEADER_Temp.Reference = T1.Reference))) T");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		
+		try {
+			totalAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			totalAmount = BigDecimal.ZERO;
+		}
+		
+		logger.debug("Leaving");
+		
+		return totalAmount;
 	}
 }

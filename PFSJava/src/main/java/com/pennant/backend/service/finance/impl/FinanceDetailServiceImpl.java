@@ -1978,6 +1978,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		case FinanceConstants.PROCEDT_LEGAL_INIT:
 			financeDetail.setLegalInitiator(true);
 			break;
+		case FinanceConstants.FEE_UPFRONT_REQ:
+			financeDetail.setUpFrentFee(true);
+			break;
 
 		default:
 			break;

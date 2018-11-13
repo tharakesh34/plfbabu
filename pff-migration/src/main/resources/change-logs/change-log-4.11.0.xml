@@ -3039,4 +3039,24 @@ UNION ALL
 		select deps_restore_dependencies('plf','documentdetails_view');
 	</sql>
 </changeSet>
+
+<changeSet id="36" author="Vinay">
+	<sql>
+		update reportfilterfields set modulename='ClosedFinance' where reportid=()select reportid from reportconfiguration where menuitemcode='menu_Item_IndemnityReport');
+	</sql>
+</changeSet>
+
+<changeSet id="37" author="Vinay">
+		<sql>
+			delete from errordetails where code='FUF001';
+			insert into errordetails values ('FUF001','EN','E','Fees not paid','','Approved','','','','','','0',CURRENT_TIMESTAMP,'1000',0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="38" author="Vinay">
+		<sql>
+			delete from LimitCodeDetail where limitcode='FEE_UPFRONT_REQ';
+			Insert into LimitCodeDetail values ((select max(limitid) from LimitCodeDetail)+1,'FEE_UPFRONT_REQ','Upfrent Fee Validation',1);
+		</sql>
+	</changeSet>
 </databaseChangeLog>

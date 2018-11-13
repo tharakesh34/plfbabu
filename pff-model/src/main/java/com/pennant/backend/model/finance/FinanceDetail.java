@@ -254,7 +254,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean secondaryDedup = false;
 	private FinNomineeDetail finNomineeDetail;
 	private FinBeneficiary finBeneficiary;
-
+	private boolean upFrentFee;
+	
 	public FinanceDetail() {
 		super();
 	}
@@ -1247,5 +1248,13 @@ public class FinanceDetail implements java.io.Serializable {
 			lovDescExtendedFieldValues.remove(string);
 		}
 		this.lovDescExtendedFieldValues.put(string, object);
+	}
+
+	public boolean isUpFrentFee() {
+		return upFrentFee;
+	}
+
+	public void setUpFrentFee(boolean upFrentFee) {
+		this.upFrentFee = upFrentFee;
 	}
 }

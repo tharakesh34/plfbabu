@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.receipts;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -22,5 +23,5 @@ public interface FinReceiptDetailDAO {
 	void cancelReceiptDetails(List<Long> receiptID);
 	List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference);
 	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
-	 
+	BigDecimal getFinReceiptDetailsByFinRef(String finReference);
 }

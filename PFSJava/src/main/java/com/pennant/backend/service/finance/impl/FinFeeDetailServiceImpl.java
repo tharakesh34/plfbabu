@@ -903,7 +903,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		List<FinFeeReceipt> finFeeReceipts = finScheduleData.getFinFeeReceipts();
 		AuditDetail detail = new AuditDetail();
-		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
+		if (finFeeReceipts != null) {
 			finFeeAuditDetails = getFinFeeReceiptAuditDetail(finFeeReceipts, auditTranType, method, workflowId);
 
 			for (AuditDetail auditDetail : finFeeAuditDetails) {
@@ -911,7 +911,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			//auditDetails.addAll(finFeeAuditDetails);
-			if (!financeDetail.isActionSave()) {
+			BigDecimal totalFee = BigDecimal.ZERO;
+			boolean error = false;
+			
+			if (!financeDetail.isActionSave() && financeDetail.isUpFrentFee()) {
 				for (int i = 0; i < finScheduleData.getFinFeeDetailActualList().size(); i++) {
 					FinFeeDetail finFeeDetail = finScheduleData.getFinFeeDetailActualList().get(i);
 					BigDecimal totalPaidAmount = BigDecimal.ZERO;
@@ -946,6 +949,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 									new ErrorDetail(PennantConstants.KEY_FIELD, "65019", errParm, valueParm),
 									usrLanguage));
 							auditDetails.add(detail);
+							error = true;
 							break;
 						} else if (finFeeDetail.getPaidAmount().compareTo(totalPaidAmount) != 0) {
 							String[] errParm = new String[2];
@@ -957,11 +961,24 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 									new ErrorDetail(PennantConstants.KEY_FIELD, "65018", errParm, valueParm),
 									usrLanguage));
 							auditDetails.add(detail);
+							error = true;
 							break;
 						}
+						totalFee = totalFee.add(finFeeDetail.getPaidAmount());
+
 					}
 				}
 			}
+			
+			if (!financeDetail.isActionSave() && financeDetail.isUpFrentFee() && !error) {
+				BigDecimal totalPaidAmt = getFinReceiptDetailDAO().getFinReceiptDetailsByFinRef(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+				if(totalPaidAmt.compareTo(totalFee) != 0){
+					detail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "FUF001", null, null), usrLanguage));
+					auditDetails.add(detail);
+				}
+			}
+
 		}
 
 		logger.debug("Leaving");
