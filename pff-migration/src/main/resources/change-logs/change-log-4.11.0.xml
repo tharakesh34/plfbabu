@@ -2901,10 +2901,13 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid		
 		</createView>
 </changeSet>
-	<changeSet id="31" author="aditya">
+
+<changeSet id="31.1" author="aditya">
     <sql>
-         INSERT INTO plf.limitcodedetail(limitid, limitcode, limitdesc, active)
-	     VALUES ('55', 'COLVALD', 'Collateral Validation', '1');
+    	<![CDATA[
+    	INSERT INTO limitcodedetail(limitid, limitcode, limitdesc, active) 
+         VALUES ((select max(limitid)+1 from limitcodedetail), 'COLVALD', 'Collateral Validation', '1');
+    	]]> 
     </sql>
 </changeSet>
 
