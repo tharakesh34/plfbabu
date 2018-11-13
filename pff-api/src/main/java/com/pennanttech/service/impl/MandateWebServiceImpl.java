@@ -72,7 +72,17 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 		// bean validations
 		validationUtility.validate(mandate, SaveValidationGroup.class);
+		Mandate response = null;
+
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
+		if(StringUtils.isNotBlank(mandate.getMandateRef())) {
+			response = new Mandate();
+			String[] paramValue = new String[2];
+			paramValue[0] = "mandateRef";
+			paramValue[1] = "createMandate";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90329", paramValue));
+			return response;
+		}
 		//for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = mandate.getCustCIF();
@@ -80,7 +90,6 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		logFields[2] = mandate.getAccHolderName();
 		APIErrorHandlerService.logKeyFields(logFields);
 
-		Mandate response = null;
 		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 			response = mandateController.createMandate(mandate);
 		} else {
@@ -143,6 +152,13 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
 
 			returnStatus = doMandateValidation(mandate);
+			if(StringUtils.isNotBlank(mandate.getMandateRef())) {
+				String[] paramValue = new String[2];
+				paramValue[0] = "mandateRef";
+				paramValue[1] = "updateMandate";
+				 returnStatus= APIErrorHandlerService.getFailedStatus("90329", paramValue);
+				return returnStatus;
+			}
 			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 				if (StringUtils.equals(MandateConstants.STATUS_AWAITCON, mandateDetails.getStatus())) {
 					String[] valueParm = new String[1];
@@ -427,6 +443,26 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				valueParm[1] = mandate.getOrgReference();
 				return APIErrorHandlerService.getFailedStatus("90406", valueParm);
 			}
+			
+			List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(mandate.getOrgReference(), "", false);
+			BigDecimal repayAmt = BigDecimal.ZERO;
+			if (financeScheduleDetails != null) {
+				for (int i = 0; i < financeScheduleDetails.size(); i++) {
+					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+					if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
+							&& curSchd.isRepayOnSchDate()) {
+						repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
+								.add(curSchd.getInsSchd());
+						break;
+					}
+				}
+			}
+			if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
+				String[] valueParm = new String[1];
+				returnStatus = APIErrorHandlerService.getFailedStatus("90320");
+				return getErrorDetails("90320",valueParm);
+			}
 		}
 
 		// validate MandateType
@@ -696,26 +732,6 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return response;
 			} 
 			if (mandate.isSwapIsActive()) {
-				List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
-						.getFinScheduleDetails(mandate.getOrgReference(), "", false);
-				BigDecimal repayAmt = BigDecimal.ZERO;
-				if (financeScheduleDetails != null) {
-					for (int i = 0; i < financeScheduleDetails.size(); i++) {
-						FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-						if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
-								&& curSchd.isRepayOnSchDate()) {
-							repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
-									.add(curSchd.getInsSchd());
-							break;
-						}
-					}
-				}
-				if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
-					returnStatus = APIErrorHandlerService.getFailedStatus("90320");
-					response = new Mandate();
-					response.setReturnStatus(returnStatus);
-					return response;
-				}
 				FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
 				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finMain.getFinType());
 				if (StringUtils.isNotBlank(allowedRepayModes)) {
