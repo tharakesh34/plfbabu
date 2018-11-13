@@ -1132,6 +1132,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
              }catch (Exception e) {
          	     value = "--";
              } 
+				if(value.contains("-")){
+					valueLabel.setStyle("font-weight:bold;color:#f71111; font-size: 11px;");
+				}
 				valueLabel.setValue(value);
 				
 				if(j==3){
@@ -1162,7 +1165,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					}else {
 						value = PennantApplicationUtil.formatRate(Double.parseDouble(value), 2);
 						value = value + " %";
-					}	
+					}
+					if(value.contains("-")){
+						rLabel.setStyle("font-weight:bold;color:#f71111; font-size: 11px;");
+					}
 					rLabel.setValue(value);
 					if(j==3){
 						creditReviewSubCtgDetails.setYera1BreakDown(value);
@@ -1216,6 +1222,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 							logger.error("Exception: ", e);
 						}
 					}	
+					if(value.contains("-")){
+						diffLabel.setStyle("font-weight:bold;color:#f71111; font-size: 11px;");
+					}
 					diffLabel.setValue(value);
 					diffLabel.setParent(lc);
 					lc.setParent(item);
