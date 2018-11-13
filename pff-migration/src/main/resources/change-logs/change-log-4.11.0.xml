@@ -3047,7 +3047,7 @@ UNION ALL
 
 <changeSet id="36" author="Vinay">
 	<sql>
-		update reportfilterfields set modulename='ClosedFinance' where reportid=()select reportid from reportconfiguration where menuitemcode='menu_Item_IndemnityReport');
+		update reportfilterfields set modulename='ClosedFinance' where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_IndemnityReport');
 	</sql>
 </changeSet>
 
