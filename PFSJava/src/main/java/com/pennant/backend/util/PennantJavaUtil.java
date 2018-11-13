@@ -2433,6 +2433,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("MasterDef", new ModuleMapping("MasterDef", MasterDef.class,
 				new String[] { "master_def", "master_def" }, null, new String[] { "masterType,keyType,keyCode" }, null, 600));
 
+		//Indemnity Report
+		ModuleUtil.register("ClosedFinance", new ModuleMapping("ClosedFinance", FinanceMain.class, new String[] {
+				"FinanceMain", "FinanceMain_View" }, null, new String[] { "FinReference"}, 
+				new Object[][] { {"FinIsActive", "0", 0 } , { "ClosingStatus", "1", "C" } }, 350));
+		
 		registerCustomModules();
 	}
 
