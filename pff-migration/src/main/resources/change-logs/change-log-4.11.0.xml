@@ -2902,6 +2902,7 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		</createView>
 </changeSet>
 
+
 <changeSet id="31.1" author="aditya">
     <sql>
     	<![CDATA[
@@ -2910,6 +2911,7 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
     	]]> 
     </sql>
 </changeSet>
+
 
 	<changeSet id="32" author="Siva">
 	<comment>SMT Parameter Addition</comment>
