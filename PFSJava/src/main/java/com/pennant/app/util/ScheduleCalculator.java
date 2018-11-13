@@ -1138,7 +1138,7 @@ public class ScheduleCalculator {
 
 		// Current Schedule Date is after current business date
 		//PV 02JUN18: isException is not in use. To overcome Business Date comparison in TestNG cases it is introduced.
-		if (evtFromDate.before(curBussniessDate) && !finMain.isException()) {
+		if (DateUtility.compare(evtFromDate , curBussniessDate) < 0 && !finMain.isException()) {
 			// Through Error
 			finScheduleData.setErrorDetail(new ErrorDetail("SCH36",
 					"REQUETSED DELETED TERMS DATE IS BEFORE CURRENT BUSINESS DATE. DELETION OF TERMS NOT POSSIBLE",
@@ -1940,7 +1940,7 @@ public class ScheduleCalculator {
 			schdDate = curSchd.getSchDate();
 
 			// Schedule Date before event from date
-			if (curSchd.getSchDate().before(evtFromDate)) {
+			if (DateUtility.compare(curSchd.getSchDate(), evtFromDate) < 0) {
 				disbIndex = i;
 				continue;
 
@@ -2237,11 +2237,11 @@ public class ScheduleCalculator {
 		finMain.setRecalFromDate(evtFromDate);
 		finMain.setRecalToDate(evtToDate);
 
-		if (finMain.getRecalFromDate().before(finMain.getGrcPeriodEndDate())) {
+		if (DateUtility.compare(finMain.getRecalFromDate() , finMain.getGrcPeriodEndDate()) < 0) {
 			int size = finScheduleData.getFinanceScheduleDetails().size();
 			for (int i = 0; i < size; i++) {
 				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (curSchd.getSchDate().after(finMain.getGrcPeriodEndDate())) {
+				if (DateUtility.compare(curSchd.getSchDate() , finMain.getGrcPeriodEndDate()) > 0) {
 					finMain.setRecalFromDate(curSchd.getSchDate());
 					break;
 				}
@@ -2526,7 +2526,7 @@ public class ScheduleCalculator {
 										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 								PennantConstants.dateFormat));
 
-		if (nextSchdDate.after(lastDateLimit)) {
+		if (DateUtility.compare(nextSchdDate , lastDateLimit) > 0) {
 			// Through Error
 			finScheduleData.setErrorDetail(new ErrorDetail("SCH30",
 					"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
@@ -2544,7 +2544,7 @@ public class ScheduleCalculator {
 				break;
 			}
 
-			if (finSchdDetails.get(i).getSchDate().after(nextSchdDate)) {
+			if (DateUtility.compare(finSchdDetails.get(i).getSchDate() , nextSchdDate) > 0) {
 				isSchdExist = false;
 				break;
 			}
@@ -2733,7 +2733,7 @@ public class ScheduleCalculator {
 			curSchd = finSchdDetails.get(sdSize - 1);
 
 			// Next Schedule Date is after last repayment date
-			if (nextSchdDate.after(finScheduleData.getFinanceMain().getCalMaturity())) {
+			if (DateUtility.compare(nextSchdDate , finScheduleData.getFinanceMain().getCalMaturity()) > 0) {
 				break;
 			}
 
@@ -2747,7 +2747,7 @@ public class ScheduleCalculator {
 					curStartDate = nextSchdDate;
 					break;
 				} else {
-					if (nextSchdDate.after(curSchd.getSchDate()) && DateUtility.compare(nextSchdDate,
+					if (DateUtility.compare(nextSchdDate, curSchd.getSchDate()) > 0 && DateUtility.compare(nextSchdDate,
 							finScheduleData.getFinanceMain().getCalMaturity()) <= 0) {
 						// Set Schedule Dates in between Previous schedule (Cur
 						// Schedule and
@@ -2825,7 +2825,7 @@ public class ScheduleCalculator {
 			for (int i = 0; i < sdSize; i++) {
 				curSchd = finSchdDetails.get(i);
 
-				if (curSchd.getSchDate().after(toDate) && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
+				if (DateUtility.compare(curSchd.getSchDate(),toDate) > 0 && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
 					nextInstructDate = curSchd.getSchDate();
 					nextInstructSchdMethod = curSchd.getSchdMethod();
 					break;
@@ -2967,7 +2967,7 @@ public class ScheduleCalculator {
 		for (int i = 0; i < riSize; i++) {
 			RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(i);
 
-			if (curInstruction.getRepayDate().after(instructDate)) {
+			if (DateUtility.compare(curInstruction.getRepayDate() , instructDate) > 0) {
 				break;
 			}
 
@@ -3030,7 +3030,7 @@ public class ScheduleCalculator {
 			}
 
 			if (DateUtility.compare(curSchdDate, fromDate) >= 0
-					&& (curSchdDate.before(toDate) || (finMain.getNextRolloverDate() != null
+					&& (DateUtility.compare(curSchdDate , toDate) < 0 || (finMain.getNextRolloverDate() != null
 							&& DateUtility.compare(curSchd.getSchDate(), finMain.getNextRolloverDate()) == 0))) {
 
 				curSchd.setSchdMethod(schdMethod);
@@ -3399,7 +3399,7 @@ public class ScheduleCalculator {
 			curSchd = finSchdDetails.get(i);
 			finMain.setSchdIndex(i);
 
-			if (curSchd.getSchDate().before(dateAllowedChange)) {
+			if (DateUtility.compare(curSchd.getSchDate(),dateAllowedChange) < 0) {
 				continue;
 			}
 
@@ -3470,7 +3470,7 @@ public class ScheduleCalculator {
 		for (int i = schdIndex; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
 
-			if (curSchd.getSchDate().before(dateAllowedChange)) {
+			if (DateUtility.compare(curSchd.getSchDate() , dateAllowedChange) < 0) {
 				continue;
 			}
 
@@ -4264,6 +4264,11 @@ public class ScheduleCalculator {
 			if (!finMain.isProtectSchdPft()) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
 				
+				if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
+						&& finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
+					schdInterest = BigDecimal.ZERO;
+				}
+				
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO)==0 || schdInterest.compareTo(curSchd.getRepayAmount())<0) {
 					curSchd.setProfitSchd(schdInterest);
 				} else {
@@ -4444,7 +4449,7 @@ public class ScheduleCalculator {
 
 		Date curSchdDate = newSchdDate;
 
-		if (newSchdDate.after(lastDateLimit)) {
+		if (DateUtility.compare(newSchdDate , lastDateLimit) > 0) {
 			// Through Error
 			finScheduleData.setErrorDetail(
 					new ErrorDetail("SCH30", "ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS", new String[] { " " }));

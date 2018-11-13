@@ -800,7 +800,8 @@ public class FrequencyUtil implements Serializable {
 			calendarList.add((Calendar) freqDate.clone());
 		}
 
-		frequencyDetails.setNextFrequencyDate(calendarList.get(0).getTime());
+		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
+				PennantConstants.DBDateFormat)));
 		frequencyDetails.setScheduleList(calendarList);
 		return frequencyDetails;
 	}
@@ -856,7 +857,9 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(calendarList.get(0).getTime());
+		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
+				PennantConstants.DBDateFormat)));
+		
 		return frequencyDetails;
 
 	}
@@ -896,7 +899,8 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(calendarList.get(0).getTime());
+		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
+				PennantConstants.DBDateFormat)));
 		return frequencyDetails;
 
 	}
@@ -958,7 +962,8 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(calendarList.get(0).getTime());
+		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
+				PennantConstants.DBDateFormat)));
 		return frequencyDetails;
 
 	}
@@ -984,7 +989,8 @@ public class FrequencyUtil implements Serializable {
 			calendarList.add((Calendar) baseDate.clone());
 		}
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(calendarList.get(0).getTime());
+		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
+				PennantConstants.DBDateFormat)));
 		return frequencyDetails;
 
 	}
