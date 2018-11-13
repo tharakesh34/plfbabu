@@ -57,4 +57,18 @@
 			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
 	</addColumn>
 </changeSet>
+
+<changeSet id="5" author="swami">
+<comment>New Columns added for Direct Selling Agent </comment>
+	<addColumn tableName="adtamtvehicledealer">
+			<column name="PANNumber" type="nvarchar(10)" />
+            <column name="UIDNumber" type="nvarchar(20)" />
+            <column name="TaxNumber" type="nvarchar(15)" />
+            <column name="FromProvince" type="nvarchar(8)" />
+            <column name="ToProvince" type="nvarchar(8)" />
+            <column name="AccountNo" type="nvarchar(50)" />
+            <column name="AccountType" type="nvarchar(8)" />
+            <column name="BankBranchID" type="bigint" />
+    </addColumn>
+</changeSet>
 	</databaseChangeLog>
