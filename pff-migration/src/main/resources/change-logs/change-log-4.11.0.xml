@@ -2903,7 +2903,7 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 </changeSet>
 	<changeSet id="31" author="aditya">
     <sql>
-         INSERT INTO limitcodedetail(limitid, limitcode, limitdesc, active)
+         INSERT INTO plf.limitcodedetail(limitid, limitcode, limitdesc, active)
 	     VALUES ('55', 'COLVALD', 'Collateral Validation', '1');
     </sql>
 </changeSet>
