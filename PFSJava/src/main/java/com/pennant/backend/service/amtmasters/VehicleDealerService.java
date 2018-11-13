@@ -59,4 +59,5 @@ public interface VehicleDealerService {
 	boolean SearchByName(String dealerName, String dealerType);
 	int getVASManufactureCode(String dealerName);
 	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
+	VehicleDealer getApprovedVehicleDealerById(String code, String delarType,String type);
 }

@@ -3385,6 +3385,8 @@
 		<property name="loanPurposeDAO" ref="loanPurposeDAO" />
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
+		<property name="generalDepartmentService" ref="generalDepartmentService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->

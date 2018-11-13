@@ -92,6 +92,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
@@ -111,6 +112,7 @@ import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
+import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -167,6 +169,7 @@ public class FinanceDataValidation {
 	private LoanPurposeDAO					loanPurposeDAO;
 	private PinCodeDAO						pinCodeDAO;
 	private FinReceiptHeaderDAO             finReceiptHeaderDAO;
+	private GeneralDepartmentService		generalDepartmentService;
 
 	public FinanceDataValidation() {
 		super();
@@ -1082,39 +1085,72 @@ public class FinanceDataValidation {
 			}
 		}
 		if (StringUtils.isNotBlank(finMain.getDsaCode())) {
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+			/*RelationshipOfficer relationshipOfficer = relationshipOfficerService
 					.getApprovedRelationshipOfficerById(finMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getDsaCode();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			}*/
+			
+			VehicleDealer vehicleDealer=vehicleDealerService.getApprovedVehicleDealerById(finMain.getDsaCode(),"DSA","");
+			if (vehicleDealer== null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDsaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			} else {
+				finMain.setDsaCode(String.valueOf(vehicleDealer.getDealerId()));
 			}
 		}
 		if (finMain.getAccountsOfficer() != 0) {
-			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain
+			/*VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain
 					.getAccountsOfficer());
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(finMain.getAccountsOfficer());
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			}*/
+			VehicleDealer vehicleDealer=vehicleDealerService.getApprovedVehicleDealerById(String.valueOf(finMain.getAccountsOfficer()),VASConsatnts.VASAGAINST_PARTNER,"");
+			if (vehicleDealer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDsaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			} else {
+				finMain.setAccountsOfficer(vehicleDealer.getDealerId());
 			}
 		}
 		if (StringUtils.isNotBlank(finMain.getSalesDepartment())) {
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(finMain
+			/*RelationshipOfficer relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(finMain
 					.getSalesDepartment());
 			if (relationshipOfficer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getSalesDepartment();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			}*/
+			GeneralDepartment	generalDepartment=generalDepartmentService.getApprovedGeneralDepartmentById(finMain.getSalesDepartment());
+			
+			if (generalDepartment == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getSalesDepartment();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			}
 		}
 		if (StringUtils.isNotBlank(finMain.getDmaCode())) {
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+			/*RelationshipOfficer relationshipOfficer = relationshipOfficerService
 					.getApprovedRelationshipOfficerById(finMain.getDmaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getDsaCode();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			}
+			*/
+			VehicleDealer vehicleDealer=vehicleDealerService.getApprovedVehicleDealerById(finMain.getDmaCode(),"DMA","");
+			if (vehicleDealer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDsaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			} else {
+				finMain.setDmaCode(String.valueOf(vehicleDealer.getDealerId()));
 			}
 		}
 		if (StringUtils.isNotBlank(finMain.getReferralId())) {
@@ -5156,6 +5192,14 @@ public class FinanceDataValidation {
 
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public GeneralDepartmentService getGeneralDepartmentService() {
+		return generalDepartmentService;
+	}
+
+	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
+		this.generalDepartmentService = generalDepartmentService;
 	}
 
 }

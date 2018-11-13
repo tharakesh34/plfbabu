@@ -461,4 +461,35 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
+
+	@Override
+	public VehicleDealer getVehicleDealerById(String code, String dealerType,String type) {
+
+		logger.debug("Entering");
+		VehicleDealer vehicleDealer = new VehicleDealer();
+
+		vehicleDealer.setDealerType(dealerType);
+		vehicleDealer.setCode(code);
+		vehicleDealer.setActive(true);
+		StringBuilder selectSql = new StringBuilder("SELECT DealerId");
+		selectSql.append(" From AMTVehicleDealer");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DealerType =:DealerType AND Code =:Code AND Active =:Active");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VehicleDealer.class);
+
+		try {
+			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			vehicleDealer = null;
+		}
+		logger.debug("Leaving");
+		return vehicleDealer;
+	
+	}
+
 }

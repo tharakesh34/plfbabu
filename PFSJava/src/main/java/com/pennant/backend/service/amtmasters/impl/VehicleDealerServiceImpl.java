@@ -521,4 +521,9 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 		this.customerDAO = customerDAO;
 	}
 
+	@Override
+	public VehicleDealer getApprovedVehicleDealerById(String code, String delarType,String type) {
+		return vehicleDealerDAO.getVehicleDealerById(code,delarType,type);
+	}
+
 }
