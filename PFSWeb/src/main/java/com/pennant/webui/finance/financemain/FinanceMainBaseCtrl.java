@@ -7599,6 +7599,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						autoDownloadLst.add(documentDetails);
 					}
 				}
+				if (aFinanceDetail.getDocumentDetailsList() == null) {
+					aFinanceDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
+				}
+				aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
 				autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
 				agrdefMap = null;
 				finRefMap = null;
