@@ -3060,7 +3060,7 @@ UNION ALL
 	<changeSet id="38" author="Vinay">
 		<sql>
 			delete from LimitCodeDetail where limitcode='FEE_UPFRONT_REQ';
-			Insert into LimitCodeDetail values ((select max(limitid) from LimitCodeDetail)+1,'FEE_UPFRONT_REQ','Upfrent Fee Validation',1);
+			Insert into LimitCodeDetail values ((select max(limitid) from LimitCodeDetail)+1,'UPFTFEE','Upfrent Fee Validation',1);
 		</sql>
 	</changeSet>
 	
@@ -3318,6 +3318,107 @@ SELECT
      
  </createView>
 	</changeSet>
+	
+	<changeSet id="43" author="Vinay">
+ 		<createTable tableName="FinCovenantTypeLogs">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FinCovenantTypeLogs_Id"/>
+			</column>
+ 			<column name="Finreference" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>		
+ 			<column name="CovenantType" type="varchar(50)">
+				<constraints nullable="false"/>
+			</column>				
+ 			<column name="FromStatus" type="varchar(20)">
+			</column>		
+			<column name="FromStatusDate" type="datetime">
+			</column>		
+ 			<column name="ToStatus" type="varchar(20)">
+			</column>
+ 			<column name="ToStatusDate" type="datetime">
+			</column>
+ 			<column name="ModifiedDate" type="datetime">
+			</column>
+ 			<column name="InitiatedBy" type="bigint">
+			</column>
+ 			<column name="ApprovedBy" type="bigint">
+			</column>
+ 			<column name="Status" type="varchar(20)">
+			</column>
+ 			<column name="Remarks" type="varchar(2000)">
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>		
+ 		</createTable>
+ 	</changeSet>
+	
+	
+	<changeSet id="44" author="Vinay">
+ 		<createTable tableName="FinCovenantTypeLogs_Temp">
+ 			<column name="Id" type="bigint">
+					<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FinCovenantTypeLogs_Temp_Id"/>
+			</column>
+			<column name="Finreference" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>			
+ 			<column name="CovenantType" type="varchar(50)">
+				<constraints nullable="false"/>
+			</column>				
+ 			<column name="FromStatus" type="varchar(20)">
+			</column>		
+			<column name="FromStatusDate" type="datetime">
+			</column>		
+ 			<column name="ToStatus" type="varchar(20)">
+			</column>
+ 			<column name="ToStatusDate" type="datetime">
+			</column>
+ 			<column name="ModifiedDate" type="datetime">
+			</column>
+ 			<column name="InitiatedBy" type="bigint">
+			</column>
+ 			<column name="ApprovedBy" type="bigint">
+			</column>
+ 			<column name="Status" type="varchar(20)">
+			</column>
+ 			<column name="Remarks" type="varchar(2000)">
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>		
+ 		</createTable>
+ 	</changeSet>
+	
+	<changeSet id="45" author="Vinay" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqFinCovenantTypeLogs" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	
+	<changeSet id="46" author="Vinay" dbms="mssql">
+		<createTable tableName="SeqFinCovenantTypeLogs">
+			<column name="SeqNo" type="bigint" autoIncrement="true"/>
+			<column name="Value" type="int"/>
+		</createTable>
+	</changeSet>
+
 <changeSet id="43" author="aditya">
 <comment> Added rightname(menuItem_Enquiry_ChequeDetailEnquiry) to secrights and assigned to secgrouprights</comment>
 <sql>
