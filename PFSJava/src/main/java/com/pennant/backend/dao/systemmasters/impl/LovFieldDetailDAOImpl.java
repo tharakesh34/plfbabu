@@ -309,4 +309,26 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 		return exists;
 	}
 
+	@Override
+	public int getApprovedLovFieldDetailCountById(long fieldCodeId, String fieldCode, String type) {
+		logger.debug("Entering");
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
+
+		lovFieldDetail.setFieldCodeId(fieldCodeId);
+		lovFieldDetail.setFieldCode(fieldCode);
+		lovFieldDetail.setIsActive(true);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From RMTLovFieldDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FieldCodeId =:FieldCodeId AND fieldCode =:fieldCode AND IsActive =:IsActive");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
+
 }

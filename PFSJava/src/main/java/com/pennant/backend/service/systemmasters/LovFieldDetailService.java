@@ -63,4 +63,5 @@ public interface LovFieldDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+	int getApprovedLovFieldDetailCountById(long fieldCodeId,String fieldCode);
 }

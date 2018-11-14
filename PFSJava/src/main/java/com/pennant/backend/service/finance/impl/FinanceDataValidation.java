@@ -113,6 +113,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
+import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -170,6 +171,7 @@ public class FinanceDataValidation {
 	private PinCodeDAO pinCodeDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private GeneralDepartmentService generalDepartmentService;
+	private LovFieldDetailService			lovFieldDetailService;
 
 	public FinanceDataValidation() {
 		super();
@@ -1177,7 +1179,38 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			}
 		}
-
+		//employee Name Validation
+		if (StringUtils.isNotBlank(finMain.getEmployeeName())) {
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+					.getApprovedRelationshipOfficerById(finMain.getEmployeeName());
+			if (relationshipOfficer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getEmployeeName();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			}
+		}
+		//eligibulity method Validation
+		if (finMain.getEligibilityMethod() > 0) {
+			int count = lovFieldDetailService.getApprovedLovFieldDetailCountById(finMain.getEligibilityMethod(), "ELGMETHOD");
+			if (count <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ELGMETHOD";
+				valueParm[1] = String.valueOf(finMain.getEligibilityMethod());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+			}
+		}
+		//Validate Connecter
+		if (finMain.getConnector() > 0) {
+			VehicleDealer vehicleDealer = vehicleDealerService
+					.getApprovedVehicleDealerById(String.valueOf(finMain.getConnector()), "CONN", "");
+			if (vehicleDealer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(finMain.getConnector());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			} else {
+				finMain.setConnector(vehicleDealer.getDealerId());
+			}
+		}
 		// validate finance branch
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getFinBranch())) {
 			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
@@ -5260,6 +5293,10 @@ public class FinanceDataValidation {
 
 	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
 		this.generalDepartmentService = generalDepartmentService;
+	}
+	
+	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
+		this.lovFieldDetailService = lovFieldDetailService;
 	}
 
 }

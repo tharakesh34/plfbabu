@@ -367,4 +367,9 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail> im
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
+	@Override
+	public int getApprovedLovFieldDetailCountById(long fieldCodeId, String fieldCode) {
+		return getLovFieldDetailDAO().getApprovedLovFieldDetailCountById(fieldCodeId, fieldCode, "_AView");
+	}
 }

@@ -3428,6 +3428,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<property name="generalDepartmentService" ref="generalDepartmentService" />
+		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
