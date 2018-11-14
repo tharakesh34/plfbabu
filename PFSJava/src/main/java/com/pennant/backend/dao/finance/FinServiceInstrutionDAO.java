@@ -14,5 +14,5 @@ public interface FinServiceInstrutionDAO {
 			String serviceReqNo, String finEvent);
 	List<FinServiceInstruction> getFinServiceInstAddDisbDetail(String finReference, Date fromDate, String finEvent);
 	boolean getFinServInstDetails(String finEvent, String serviceReqNo);
-
+	List<FinServiceInstruction> getFinServiceInstDetailsByServiceReqNo(String finReference, String serviceReqNo);
 }

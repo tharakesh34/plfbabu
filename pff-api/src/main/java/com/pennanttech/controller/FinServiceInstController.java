@@ -34,6 +34,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -162,13 +163,11 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceTypeDAO financeTypeDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+    private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
 	private ExtendedFieldDetailsService			extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 
-	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
-		this.changeScheduleMethodService = changeScheduleMethodService;
-	}
 
 	/**
 	 * Method for fetch DisbursementInquiryDetails by FinReference and linkedTranId
@@ -182,12 +181,12 @@ public class FinServiceInstController extends SummaryDetailService {
 	public DisbursementServiceReq doDisbursementInquiry(DisbursementServiceReq disbursementServiceReq) {
 		logger.debug("Entering");
 
-		DisbursementServiceReq inquiryDetails = new DisbursementServiceReq();
+		DisbursementServiceReq inquiryDetails = null;
 		List<FinAdvancePayments> finAdvancePayments = null;
 		FinanceMain financeMain = null;
 		List<ReturnDataSet> postingList;
 		List<Long> tranIdList = new ArrayList<>();
-
+		
 		financeMain = financeMainService.getFinanceMainByFinRef(disbursementServiceReq.getFinReference());
 		if (financeMain == null) {
 			DisbursementServiceReq error = new DisbursementServiceReq();
@@ -196,20 +195,34 @@ public class FinServiceInstController extends SummaryDetailService {
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
 			return error;
 		}
+		List<FinServiceInstruction> finServiceInstruction = finServiceInstructionDAO.getFinServiceInstDetailsByServiceReqNo(disbursementServiceReq.getFinReference(),
+						disbursementServiceReq.getServiceReqNo());
+		
+		if(CollectionUtils.isNullOrEmpty(finServiceInstruction)) {
+			inquiryDetails = new DisbursementServiceReq();
+			String valueParam[] = new String[1];
+			valueParam[0] = disbursementServiceReq.getFinReference();
+			inquiryDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return inquiryDetails;
+		}
+		inquiryDetails = new DisbursementServiceReq();
 		inquiryDetails.setFinCurrAssetValue(financeMain.getFinCurrAssetValue());
 		inquiryDetails.setMaturityDate(financeMain.getMaturityDate());
 		inquiryDetails.setFinReference(financeMain.getFinReference());
 		inquiryDetails.setFinStartDate(financeMain.getFinStartDate());
 
-		finAdvancePayments = finAdvancePaymentsService.getFinAdvancePaymentByFinRef(disbursementServiceReq.getFinReference());
+		finAdvancePayments = finAdvancePaymentsService.getFinAdvancePaymentByFinRef(disbursementServiceReq.getFinReference(),finServiceInstruction.get(0).getFromDate());
 		if (CollectionUtils.isNullOrEmpty(finAdvancePayments)) {
-			DisbursementServiceReq error = new DisbursementServiceReq();
+			inquiryDetails = new DisbursementServiceReq();
 			String valueParam[] = new String[1];
 			valueParam[0] = disbursementServiceReq.getFinReference();
-			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
-			return error;
+			inquiryDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return inquiryDetails;
 		}
-		inquiryDetails.setFinAdvancePayments(finAdvancePayments);
+		//TODO temporary FIX
+		List<FinAdvancePayments> finAdvPayments = new ArrayList<>();
+		finAdvPayments.add(finAdvancePayments.get(0));
+		inquiryDetails.setFinAdvancePayments(finAdvPayments);
 
 		for (FinAdvancePayments advancePayments : finAdvancePayments) {
 			tranIdList.add(advancePayments.getLinkedTranId());
@@ -3095,6 +3108,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setzIPCodeDetailsService(ZIPCodeDetailsService zIPCodeDetailsService) {
 		this.zIPCodeDetailsService = zIPCodeDetailsService;
 	}
+	
+	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
+		this.changeScheduleMethodService = changeScheduleMethodService;
+	}
 
 	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
 		return extendedFieldHeaderDAO;
@@ -3118,6 +3135,14 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
+		return finServiceInstructionDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
        
 }

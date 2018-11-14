@@ -839,4 +839,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.partnerBankService = partnerBankService;
 	}
 
+	@Override
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate) {
+		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finRefernce,toDate, "");
+	}
+
 }

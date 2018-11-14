@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -563,6 +564,40 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			count = 0;
 		}
 		return count;
+	}
+
+	@Override
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate,String type) {
+		logger.debug(Literal.ENTERING);
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setFinReference(finRefernce);
+		finAdvancePayments.setLLDate(toDate);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("Select FinReference,PaymentId, PaymentSeq,DisbSeq, PaymentDetail, AmtToBeReleased,");
+		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description,PaymentType,BankCode,  ");
+		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
+		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
+		selectSql.append(
+				" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId, TransactionRef,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType,PartnerBankAc");
+		}
+		selectSql.append(" From FinAdvancePayments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference = :FinReference AND LlDate = :LlDate");
+
+		logger.trace("selectSql: " + selectSql.toString());
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinAdvancePayments.class);
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 }

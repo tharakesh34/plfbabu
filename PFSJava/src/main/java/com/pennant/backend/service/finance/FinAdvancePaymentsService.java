@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.finance;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -89,4 +90,6 @@ public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce);
 
 	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> tranIdList, String finReference);
+	
+	List<FinAdvancePayments>getFinAdvancePaymentByFinRef(String finRefernce,Date toDate);
 }

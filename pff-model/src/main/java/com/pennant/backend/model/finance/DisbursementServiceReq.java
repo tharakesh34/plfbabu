@@ -37,7 +37,10 @@ public class DisbursementServiceReq extends AbstractWorkflowEntity implements En
 	private List<ReturnDataSet> postingList;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+	@XmlElement
+	private String serviceReqNo;
 
+	
 	public String getFinReference() {
 		return finReference;
 	}
@@ -115,6 +118,14 @@ public class DisbursementServiceReq extends AbstractWorkflowEntity implements En
 	@Override
 	public void setId(long id) {
 
+	}
+
+	public String getServiceReqNo() {
+		return serviceReqNo;
+	}
+
+	public void setServiceReqNo(String serviceReqNo) {
+		this.serviceReqNo = serviceReqNo;
 	}
 
 }

@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.finance;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -83,4 +84,6 @@ public interface FinAdvancePaymentsDAO {
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
 	
 	int getCountByFinReference(String finReference);
+	
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate,String type);
 }
