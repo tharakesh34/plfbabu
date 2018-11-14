@@ -2902,8 +2902,8 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		</createView>
 </changeSet>
 
-
 <changeSet id="31.1" author="aditya">
+<comment>Removed plf.(schema) before table</comment>
     <sql>
     	<![CDATA[
     	INSERT INTO limitcodedetail(limitid, limitcode, limitdesc, active) 
@@ -2911,7 +2911,6 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
     	]]> 
     </sql>
 </changeSet>
-
 
 	<changeSet id="32" author="Siva">
 	<comment>SMT Parameter Addition</comment>
